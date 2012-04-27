@@ -1,0 +1,2 @@
+	"name"	"random_seed"	"number_of_agents"	"number_of_rounds"	"endowment"	"endowment_other"	"trading_partner_cost"	"trade_rounds"	"decrease_in_expectations"	"innovation_frequency"	"cobb_douglas_max"	"research_weight"	"number_factors_of_production"	"max_partners"
+1	"multithreading"	343434	12	5	50	1	2	50	0.8	5	0.5	0.5	4	3
