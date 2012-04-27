@@ -38,5 +38,8 @@ for parameter in world.read_parameter('parameter.csv'):
 
     w.declare_resource(resource='labor_endowment', productivity=1, product='labor')
     w.declare_resource(resource='capital_endowment', productivity=1, product='capital')
+
+    w.panel_db('firm', command='after_sales_before_consumption')
+
     w.run()
 

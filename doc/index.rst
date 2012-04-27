@@ -29,10 +29,14 @@ Contents:
 .. toctree::
    :maxdepth: 4
 
+   installation
+
    start
    agent
 
    world
+
+   simulation_results
 
    write
 
