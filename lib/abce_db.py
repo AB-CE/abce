@@ -59,7 +59,7 @@ class DbFollowAgent(multiprocessing.Process):
     def add(self, group, number):
         with self.db_connection:
             cursor = self.db_connection.cursor()
-            ex_str = "CREATE TABLE " + group + '_' + str(number) + "(round INT, subround INT, command CHAR(20))"
+            ex_str = "CREATE TABLE " + group + '_' + str(number) + "(round INT, command CHAR(20), name CHAR(20))"
             cursor.execute(ex_str)
             self.follow_agent_list.append("db_agent:" + group_address(group))
 
@@ -72,7 +72,6 @@ class DbFollowAgent(multiprocessing.Process):
             self.in_sok.setsockopt(zmq.SUBSCRIBE, sub)
         self.in_sok.setsockopt(zmq.SUBSCRIBE, "db_agent:close")
         self.in_sok.setsockopt(zmq.SUBSCRIBE, "db_agent:advance_round")
-        self.subround = 0
         while True:
             address_command = self.in_sok.recv()
             if address_command == "db_agent:close":
@@ -83,11 +82,10 @@ class DbFollowAgent(multiprocessing.Process):
             name = self.in_sok.recv()[0:-1]
             command = self.in_sok.recv()
             data_to_write = self.in_sok.recv_json()
+            data_to_write['name'] = name
             data_to_write['command'] = command
-            data_to_write['subround'] = self.subround
             data_to_write['round'] = self.round
             write(self.db_connection, name, data_to_write)
-            self.subround += 1
 
 def write(db_connection, table_name, data_to_write):
     values = ") VALUES (%s)"
@@ -106,8 +104,8 @@ def write(db_connection, table_name, data_to_write):
                 new_columns = set(data_to_write.keys()).difference(existing_columns)
                 for column in new_columns:
                     cursor.execute(""" ALTER TABLE """ + table_name + """ ADD """ + column + """ FLOAT;""")
-                format_strings = ','.join(['%s'] * len(rows_to_write))
-                cursor.execute(ex_str % format_strings, rows_to_write)
+            format_strings = ','.join(['%s'] * len(rows_to_write))
+            cursor.execute(ex_str % format_strings, rows_to_write)
 
 
 def create_database(simulation_name):
