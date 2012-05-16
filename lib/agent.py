@@ -1,4 +1,3 @@
-#ABCE 0.1
 """
 The Agent class contains and registers an agents actions. Actions need to be
 registerd in order to be accessable from outside the class.
@@ -8,8 +7,8 @@ ModelSwarm class.
 Example::
 
  class Agent(AgentEngine):
-    def __init__(self, arguments):
-        AgentEngine.__init__(self, *arguments)
+    def __init__(self, _pass_to_engine):
+        AgentEngine.__init__(self, *_pass_to_engine)
         self.create('red_ball', self.idn)
         self.create('money', 10)
         self.red_to_blue = create_production_function('blue_ball=red_ball')
@@ -60,10 +59,10 @@ class Agent(AgentEngine, Firm, Household):
 
      class Agent(AgentEngine, Household):
     """
-    def __init__(self, parameter, arguments):
+    def __init__(self, world_parameter, own_parameters, _pass_to_engine):
         """ all parameters in parameter.csv can be accessed in the agent's
         __init__(...) function. parameter['column name']. For example:
 
         self.number_of_firms = parameter['number_of_firms']
         """
-        AgentEngine.__init__(self, *arguments)
+        AgentEngine.__init__(self, *_pass_to_engine)

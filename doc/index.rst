@@ -38,8 +38,6 @@ Contents:
 
    simulation_results
 
-   write
-
 Indices and tables
 ==================
 

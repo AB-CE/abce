@@ -12,7 +12,6 @@ world during the simulation. self.column_header
 import csv
 import datetime
 import os
-from string import digits, letters
 import time
 import zmq
 import inspect
@@ -22,14 +21,14 @@ import abce_db
 import itertools
 
 
-def read_parameter(parameter_file, delimiter='\t', quotechar='"'):
+def read_parameter(parameter_file='world_parameters.csv', delimiter='\t', quotechar='"'):
     """ reads a parameter file line by line and gives a list. Where each entry
     contains all parameter for a particular run of the simulation.
 
 
     This code reads the file and runs a simulation for every line::
 
-     for parameter in world.read_parameter('parameter.csv'):
+     for parameter in world.read_parameter('world_parameters.csv'):
         w = world.World(parameter)
         w.build_agents(Agent, 'agent', 'number_of_agents')
         w.run()
@@ -39,41 +38,88 @@ def read_parameter(parameter_file, delimiter='\t', quotechar='"'):
     parameter_array = []
     reader = csv.reader(open(parameter_file),
                                 delimiter=delimiter, quotechar=quotechar)
-    keys = []
-    for key in reader.next():
-        keys.append(filter(_valid, key))
-    for parameter_raw in reader:
-        parameter_numed = [_number_or_string(para) for para in parameter_raw]
-        parameter_dict = dict(zip(keys, parameter_numed))
-        parameter_dict['name'] = parameter_dict['name'].strip("""\"""").strip("""\'""")
+    keys = [key for key in reader.next()]
+    for line in reader:
+        cells = [_number_or_string(cell) for cell in line]
+        parameter = dict(zip(keys, cells))
+        if ('name' not in keys) and ('Name' not in keys) or 'number_of_rounds' not in keys:
+            raise SystemExit('No "name" or "number_of_rounds" column in ' + parameter_file)
+        if 'name' not in parameter:
+            parameter['name'] = parameter['Name']
+
         try:
-            if parameter_dict['random_seed'] == 0:
-                parameter_dict['random_seed'] = None
+            parameter['name'] = parameter['name'].strip("""\"""").strip("""\'""")
         except KeyError:
-            parameter_dict['random_seed'] = None
-        parameter_dict['_path'] = parameter_dict['name'] + '_' + start_time
-        parameter_dict['_sim_name'] = parameter_dict['name'] + '_' + start_time_compact
+            print("no 'name' (lowercase) column in " + parameter_file)
+            parameter['name'] = 'abce'
         try:
-            os.makedirs('./Result/' + parameter_dict['_path'])
+            if parameter['random_seed'] == 0:
+                parameter['random_seed'] = None
+        except KeyError:
+            parameter['random_seed'] = None
+        parameter['_path'] = parameter['name'] + '_' + start_time
+        parameter['_sim_name'] = parameter['name'] + '_' + start_time_compact
+        try:
+            os.makedirs('./Result/' + parameter['_path'])
         except OSError:
             print("CAN NOT CREATE DIRECTORY")
-        for key in parameter_dict:
+        for key in parameter:
             if key == '' or key[0] == '#' or key[0] == '_':
                 del key
-        parameter_array.append(parameter_dict)
+        parameter_array.append(parameter)
     return parameter_array
-
+    #TODO put the initialisation in the init so that it can eat a dict
 
 class WorldEngine:
-    def __init__(self, parameter):
-        self.parameter = parameter
+    """ This class is the world in which the simulation is run. It takes
+    the world_parameters to set up the world. Actions and agents have to be
+    added. databases and resource declarations can be added. Than run runs
+    the simulation.
+
+    Usually the parameters are specified in a tab separated csv file. The first
+    line are column headers.
+
+    Args::
+
+     world_parameters: a dictionary with all parameters. "name" and
+     "number_of_rounds" are mandatory.
+
+
+    Example::
+     for world_parameters in world.read_parameter('parameter.csv'):
+        action_list = [
+        ('household', 'recieve_connections'),
+        ('household', 'offer_capital'),
+        ('firm', 'buy_capital'),
+        ('firm', 'production'),
+        ('household', 'buy_product')
+        'after_sales_before_consumption'
+        ('household', 'consume')
+        ]
+        w = world.World(world_parameters)
+        w.add_action_list(action_list)
+        w.build_agents(Firm, 'firm', 'number_of_firms')
+        w.build_agents(Household, 'household', 'number_of_households')
+
+        w.declare_resource(resource='labor_endowment', productivity=1, product='labor')
+        w.declare_resource(resource='capital_endowment', productivity=1, product='capital')
+
+        w.panel_db('firm', command='after_sales_before_consumption')
+
+        w.run()
+
+
+
+
+    """
+    def __init__(self, world_parameters):
+        self.parameter = world_parameters
         self._action_groups = {}
-        self._register_action_groups()
         self.agent_list = {}
         self._action_list = []
         self._resource_commands = {}
         self._resource_command_group = {}
-        self._db_agent_list= []
+        self._db_agent_list = []
         self._db_commands = {}
         self._db_created = False
         self._db_follow_agent = {}
@@ -81,7 +127,7 @@ class WorldEngine:
         self.num_agents_in_group = {}
         self.context = zmq.Context()
         self.commands = self.context.socket(zmq.PUB)
-        comm = _Communication().start()
+        _Communication().start()
         time.sleep(1)  #TODO
         self.__command_addresse = "ipc://commands.ipc"
         self.commands.bind(self.__command_addresse)
@@ -92,6 +138,11 @@ class WorldEngine:
         time.sleep(1)  #TODO
 
     def add_action_list(self, action_list):
+        """ add a list of actions: suples of an agents goup name and an actions
+
+        Example::
+         w.action_list([('firm', 'sell'), ('household', 'buy')]
+        """
         self.action_list = action_list
 
     def add_action_list_from_file(self, parameter_name='action_list'):
@@ -99,8 +150,10 @@ class WorldEngine:
         NOT YET IMPLEMENTED """
         raise SystemExit('add_action_list NOT YET IMPLEMENTED')
 
-    def _register_action_groups(self):
-        reserved_words = ['build_agents', 'run', 'ask_agent', 'ask_each_agent_in']
+    def register_action_groups(self):
+        """ makes methods accessable for the action_list """
+        reserved_words = ['build_agents', 'run', 'ask_agent',
+                'ask_each_agent_in', 'register_action_groups']
         for method in inspect.getmembers(self):
             if (inspect.ismethod(method[1]) and method[0][0] != '_'
                     and method[0] not in reserved_words):
@@ -108,19 +161,19 @@ class WorldEngine:
         self._action_groups['_advance_round'] = self._advance_round
 
     def declare_resource(self, resource, productivity, product, command='default_resource', group='all'):
-        """ every resource you declare here produces productivity units of the product per
-        round. For example, 'gold_mine' produces productivity units of 'gold', 'land'
-        produces productivity units of 'harvest' and 'labor_endowment' produces
-        productivity units of 'labor'. By default the resource is replentished
-        at the begin of the round. You can change this. Insert the command
-        string you chose it self.action_list. One command can be associated
-        with several resources.
+        """ every resource you declare here produces productivity units of the
+        product per round. For example, 'gold_mine' produces productivity units
+        of 'gold', 'land' produces productivity units of 'harvest' and
+        'labor_endowment' produces productivity units of 'labor'. By default the
+        resource is replentished at the begin of the round. You can change this.
+        Insert the command string you chose it self.action_list. One command can
+        be associated with several resources.
 
         resources can be goupe specific, that means that when somebody except
         this group holds them they do not produce. The default is all and its
-        better to keep the default 'all' except you have a very good reason to do so
-        or if your model is running and you are optimizing. We recommend not
-        to optimize before the simulation is working perfectly.
+        better to keep the default 'all' except you have a very good reason to
+        do so or if your model is running and you are optimizing. We recommend
+        not to optimize before the simulation is working perfectly.
         """
         productivity = str(productivity)
         if command not in self._resource_commands:
@@ -138,15 +191,15 @@ class WorldEngine:
         group = self._resource_command_group[command]
         group_and_method = [group, '_produce_resource_rent_and_labor']
         def send_resource_command():
-            for resource_productivity_product in resources_in_this_command:
-                self.commands.send_multipart(group_and_method + resource_productivity_product)
+            for productivity in resources_in_this_command:
+                self.commands.send_multipart(group_and_method + productivity)
                 self._add_agents_to_wait_for(self.num_agents_in_group[group])
         return send_resource_command
         #TODO make perishable resources, depreciating resources
 
 
     #TODO also for other variables
-    def start_db(self, group, variables='goods', typ='FLOAT',command='round_end'):
+    def panel_db(self, group, variables='goods', typ='FLOAT', command='round_end'):
         """ writes variables of a group of agents into the database, by default
         the db write is at the end of the round. You can also specify a command
         and insert the command you choose in the action_list. If you choose a
@@ -179,6 +232,7 @@ class WorldEngine:
         """
         if variables != 'goods':
             raise SystemExit('Not implemented')
+        #TODO make this manual, with nome and password
         if not(self._db_created):
             self.parameter['_sim_name'] = abce_db.create_database(self.parameter['_sim_name'])
             self._db_created = True
@@ -213,6 +267,7 @@ class WorldEngine:
         self.commands.send_multipart([agent_name(group_name, number), '!', 'follow'])
 
     def run(self):
+        """ This runs the simulation """
         if not(self.agent_list):
             raise SystemExit('No Agents Created')
         if not(self.action_list) and not(self._action_list):
@@ -249,7 +304,7 @@ class WorldEngine:
             print("\nRound" + str("%3d" % year))
             for action in self._action_list:
                 self._action_groups[action]()
-                self._wait_for_agents_and_than_signal_end_of_comm()
+                self._wait_for_agents_than_signal_end_of_comm()
                 self.ask_each_agent_in('all', '_end_of_subround_clearing')
                 self._wait_for_agents()
 
@@ -298,32 +353,97 @@ class WorldEngine:
         self._add_agents_to_wait_for(1)
         self.commands.send_multipart([agent, command])
 
-    def build_agents(self, Agent, group_name, parameter_num_agents):
+    def build_agents(self, AgentClass, number=None, agents_parameters=None):
         """ This method creates agents, the first parameter is the agent class,
         the second parameter is a string with the group name of the agents
         the third parameter gives the name of the variable in parameter.csv
 
-        parameter_num_agents: number of agents to be created either a number or
+        number: number of agents to be created either a number or
         a string that is the header of a column in parameter.csv
+
+        Args::
+
+         AgentClass: is the name of the AgentClass that you imported
+         number: specifies either the column name in parameter.csv that
+         contains the row number or a integer number
+
+        Example::
+
+         w.build_agents(Firm, 'number_of_Firms')
+         w.build_agents(Bank, 1)
         """
         #TODO doc string
         #TODO single agent groups get extra name without number
         #TODO when there is a group with a single agent the ask_agent has a confusingname
+        group_name = AgentClass.__name__
+        if not(number):
+            try:
+                number = len(agents_parameters)
+            except TypeError:
+                raise SystemExit("in build_agents number of agents needs to be specified:")
+        elif not(agents_parameters):
+            agents_parameters = [None for _ in range(number)]
 
         try:
-            num_agents_this_group = int(parameter_num_agents)
+            num_agents_this_group = int(number)
         except ValueError:
-            num_agents_this_group = self.parameter[parameter_num_agents]
+            num_agents_this_group = self.parameter[number]
 
         self.num_agents += num_agents_this_group
         self.num_agents_in_group[group_name] = num_agents_this_group
         self.num_agents_in_group['all'] = self.num_agents
         self.agent_list[group_name] = []
         for idn in range(num_agents_this_group):
-            agent = Agent(self.parameter, [idn, group_name, self.__command_addresse])
+            agent = AgentClass(self.parameter, agents_parameters[idn], [idn, group_name, self.__command_addresse])
             agent.name = agent_name(group_name, idn)
             agent.start()
             self.agent_list[group_name].append(agent)
+
+
+    def build_agents_from_file(self, AgentClass, parameter_file=None, multiply=1, delimiter='\t', quotechar='"'):
+        """ This command builds agents of the class AgentClass from an csv file.
+        This way you can build agents and give every single one different
+        parameters.
+
+        The file must be tab separated. The first line contains the column
+        headers. The first column "agent_class" specifies the agent_class. The
+        second column "number" (optional) allows you to create more than one
+        agent of this type. The other columns are parameters that you can
+        access in own_parameters the __init__ function of the agent.
+
+        Agent created from a csv-file::
+
+         class Agent(AgentEngine):
+            def __init__(self, world_parameter, own_parameters, _pass_to_engine):
+                AgentEngine.__init__(self, *_pass_to_engine)
+                self.size = own_parameters['firm_size']
+        """
+        if parameter_file == None:
+            try:
+                parameter_file = self.parameter['agent_parameter_file']
+            except KeyError:
+                parameter_file = 'agent_parameter_file.csv'
+        agent_class = AgentClass.__name__
+        agents_parameters = []
+        agent_file = csv.reader(open(parameter_file), delimiter=delimiter, quotechar=quotechar)
+        keys = [key for key in agent_file.next()]
+        if not('agent_class' in keys):
+            keys[0] = 'agent_class'
+        for line in agent_file:
+            cells = [_number_or_string(cell) for cell in line]
+            agent = dict(zip(keys, cells))
+            if agent['agent_class'] == agent_class:
+                agents_parameters.extend([agent for _ in range(agent.get('number', 1) * multiply)])
+
+        self.build_agents(AgentClass, agents_parameters=agents_parameters)
+
+
+
+
+
+
+
+
 
     def _advance_round(self):
         """ advances round by 1 """
@@ -333,7 +453,7 @@ class WorldEngine:
     def _add_agents_to_wait_for(self, number):
         self.communication_channel.send_multipart(['!', '+', str(number)])
 
-    def _wait_for_agents_and_than_signal_end_of_comm(self):
+    def _wait_for_agents_than_signal_end_of_comm(self):
         self.communication_channel.send_multipart(['!', '}'])
         self.ready.recv()
 
@@ -402,19 +522,14 @@ def _number_or_string(word):
     """ returns a int if possible otherwise a float from a string
     """
     try:
-        integer = int(word)
         floating_number = float(word)
-        if integer == floating_number:
-            return integer
-        else:
-            return floating_number
     except ValueError:
         return word
-
-def _valid(char):
-    """ checks whether char a number a letter or '_' """
-    #TODO replace with parsing
-    if char in '_' + digits + letters:
-        return True
+    try:
+        integer = int(word)
+    except ValueError:
+        return floating_number
+    if integer == floating_number:
+        return integer
     else:
-        return False
+        return floating_number
