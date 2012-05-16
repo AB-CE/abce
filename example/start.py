@@ -16,41 +16,39 @@ from household import Household
 from nature import Nature
 from abce_common import agent_name, group_address
 
-for parameter in world.read_parameter('parameter.csv'):
+for parameter in world.read_parameters('world_parameters.csv'):
     action_list = [
-        ('nature', 'assign'),
+        ('Nature', 'assign'),
         ('all', 'recieve_connections'),
-        ('household', 'offer_capital'),
-        ('firm', 'buy_capital'),
-        ('household', 'offer_labor'),
-        ('firm', 'hire_labor'),
-        ('household', 'accept_job_offer'),
+        ('Household', 'offer_capital'),
+        ('Firm', 'buy_capital'),
+        ('Household', 'offer_labor'),
+        ('Firm', 'hire_labor'),
+        ('Household', 'accept_job_offer'),
         'before_production',
-        ('firm', 'production'),
-        ('firm', 'sell_good'),
-        ('household', 'buy_good'),
+        ('Firm', 'production'),
+        ('Firm', 'sell_good'),
+        ('Household', 'buy_good'),
         'after_sales_before_consumption',
-        ('household', 'consumption')
+        ('Household', 'consumption')
         ]
     w = world.World(parameter)
     w.add_action_list(action_list)
+    #w.add_action_list_from_file()
 
-    w.build_agents(Firm, 'firm', 'number_of_firms')
-    w.build_agents(Household, 'household', 'number_of_households')
-    w.build_agents(Nature, 'nature', 1)
+
+    w.build_agents(Firm, number='number_of_firms')
+    w.build_agents(Household, number='number_of_households')
+    w.build_agents(Nature, 1)
 
 
     w.declare_resource(resource='labor_endowment', productivity=1000, product='labor')
     w.declare_resource(resource='capital_endowment', productivity=1000, product='capital')
-    for i in range(parameter['number_of_households']):
-        if i % 50 == 0:
-            w.follow_agent('household', i)
-    for i in range(parameter['number_of_firms']):
-        if i % 5 == 0:
-            w.follow_agent('firm', i)
+    w.follow_agent('Household', 0)
+    w.follow_agent('Firm', 0)
 
-    w.start_db('household', command='after_sales_before_consumption')
-    w.start_db('firm', command='after_sales_before_consumption')
-    w.start_db('firm', command='before_production')
+    w.panel_db('Household', command='after_sales_before_consumption')
+    w.panel_db('Firm', command='after_sales_before_consumption')
+    w.panel_db('Firm', command='before_production')
     w.run()
 

@@ -1,4 +1,3 @@
-#ABCE 0.1
 """
 The Agent class contains and registers an agents actions. Actions need to be
 registerd in order to be accessable from outside the class.
@@ -53,21 +52,21 @@ import random
 
 class Household(AgentEngine, Household):
     """ The Agent class contains and registers agents actions. """
-    def __init__(self, parameter, arguments):
-        AgentEngine.__init__(self, *arguments)
+    def __init__(self, world_parameters, own_parameters, _pass_to_engine):
+        AgentEngine.__init__(self, *_pass_to_engine)
         self.create('labor_endowment', 1)
         self.create('capital_endowment', 1)
         self.set_cobb_douglas_utility_function(1.980, {"MLK": 0.300, "BRD": 0.700})
         self._prices = {}
         self._prices['labor'] = 1
-        self.employer = random.randint(0, parameter['number_of_firms'])
-        self.number_of_firms = parameter['number_of_firms']
+        self.employer = random.randint(0, world_parameters['number_of_firms'])
+        self.number_of_firms = world_parameters['number_of_firms']
         self.renter = random.randint(0, 100)
         self.last_utility = None
 
 
     def recieve_connections(self):
-        self.potential_buyer = self.messages('address')
+        self.potential_buyer = self.get_messages('address')
 
     def offer_labor(self):
         self._prices['labor'] = random.randint(0,3)

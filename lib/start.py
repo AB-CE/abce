@@ -19,17 +19,15 @@ import world
 from firm import Firm
 from household import Household
 
-for parameter in world.read_parameter('parameter.csv'):
+for parameter in world.read_parameter('world_parameters.csv'):
     action_list = [
     ('household', 'recieve_connections'),
-    ('household',  'report'),
     ('household', 'offer_capital'),
     ('firm', 'buy_capital'),
     ('household', 'search_work'),
     ('firm', 'hire_labor'),
-    ('firm', 'report'),
     ('firm', 'production'),
-    ('firm', 'report')
+    'after_sales_before_consumption'
     ]
     w = world.World(parameter)
     w.add_action_list(action_list)

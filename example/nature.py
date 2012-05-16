@@ -1,4 +1,3 @@
-#ABCE 0.1
 """
 The Agent class contains and registers an agents actions. Actions need to be
 registerd in order to be accessable from outside the class.
@@ -53,8 +52,8 @@ import random
 
 class Nature(AgentEngine):
     """ The Agent class contains and registers agents actions. """
-    def __init__(self, parameter, arguments):
-        AgentEngine.__init__(self, *arguments)
+    def __init__(self, world_parameter, own_parameters, _pass_to_engine):
+        AgentEngine.__init__(self, *_pass_to_engine)
 
     def assign(self):
         """ randomly pairs one household with one firm

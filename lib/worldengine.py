@@ -58,11 +58,11 @@ def read_parameter(parameter_file='world_parameters.csv', delimiter='\t', quotec
         except KeyError:
             parameter['random_seed'] = None
         parameter['_path'] = parameter['name'] + '_' + start_time
-        parameter['_sim_name'] = parameter['name'] + '_' + start_time_compact
         try:
             os.makedirs('./Result/' + parameter['_path'])
         except OSError:
             print("CAN NOT CREATE DIRECTORY")
+        parameter['_sim_name'] = './Result/' + parameter['_path'] + '/' + 'database'
         for key in parameter:
             if key == '' or key[0] == '#' or key[0] == '_':
                 del key
@@ -86,7 +86,7 @@ class WorldEngine:
 
 
     Example::
-     for world_parameters in world.read_parameter('parameter.csv'):
+     for world_parameters in world.read_parameter('world_parameters.csv'):
         action_list = [
         ('household', 'recieve_connections'),
         ('household', 'offer_capital'),
@@ -118,10 +118,9 @@ class WorldEngine:
         self.agent_list = {}
         self._action_list = []
         self._resource_commands = {}
+        self._perish_commands = {}
         self._resource_command_group = {}
-        self._db_agent_list = []
         self._db_commands = {}
-        self._db_created = False
         self._db_follow_agent = {}
         self.num_agents = 0
         self.num_agents_in_group = {}
@@ -136,6 +135,8 @@ class WorldEngine:
         self.communication_channel = self.context.socket(zmq.PUSH)
         self.communication_channel.connect("ipc://frontend.ipc")
         time.sleep(1)  #TODO
+        self._register_action_groups()
+        self._db = abce_db.Database(world_parameters['_sim_name'])
 
     def add_action_list(self, action_list):
         """ add a list of actions: suples of an agents goup name and an actions
@@ -150,7 +151,7 @@ class WorldEngine:
         NOT YET IMPLEMENTED """
         raise SystemExit('add_action_list NOT YET IMPLEMENTED')
 
-    def register_action_groups(self):
+    def _register_action_groups(self):
         """ makes methods accessable for the action_list """
         reserved_words = ['build_agents', 'run', 'ask_agent',
                 'ask_each_agent_in', 'register_action_groups']
@@ -195,7 +196,42 @@ class WorldEngine:
                 self.commands.send_multipart(group_and_method + productivity)
                 self._add_agents_to_wait_for(self.num_agents_in_group[group])
         return send_resource_command
-        #TODO make perishable resources, depreciating resources
+        #TODO could be made much faster by sending all resource simultaneously
+        #as in _make_perish_command
+
+    def declare_perishable(self, good, command='perish_at_the_round_end'):
+        """ This good only lasts one round and than disappers. For example
+        labor, if the labor is not used today todays labor is lost.
+        In combination with resoure this is useful to model labor or capital.
+
+        In the example below a worker has an endowment of labor and capital.
+        Every round he can sell his labor service and rent his capital. If
+        he does not the labor service for this round and the rent is lost.
+
+        Args::
+
+         good: the good that perishes
+         [command: In order to perish at another point in time you can choose
+         a commmand and insert that command in the action list.
+
+         Example::
+
+             w.declare_resource(resource='LAB_endowment', productivity=1000, product='LAB')
+             w.declare_resource(resource='CAP_endowment', productivity=1000, product='CAP')
+             w.declare_perishable(good='LAB')
+             w.declare_perishable(good='CAP')
+
+        """
+        if command not in self._perish_commands:
+            self._perish_commands[command] = []
+        self._perish_commands[command].append(good)
+
+    def _make_perish_command(self, command):
+        goods = self._perish_commands[command][:]
+        def send_perish_command():
+            self.commands.send_multipart(['all', '_perish'] + goods)
+            self._add_agents_to_wait_for(self.num_agents_in_group['all'])
+        return send_perish_command
 
 
     #TODO also for other variables
@@ -232,17 +268,10 @@ class WorldEngine:
         """
         if variables != 'goods':
             raise SystemExit('Not implemented')
-        #TODO make this manual, with nome and password
-        if not(self._db_created):
-            self.parameter['_sim_name'] = abce_db.create_database(self.parameter['_sim_name'])
-            self._db_created = True
-        db_agent = abce_db.DbAgent(self.parameter['_sim_name'], group, command)
-        db_agent.start()
-        self._db_agent_list.append(db_agent)
-        #SPEED when monitoring commands are done we chould skipp _end_of_subround_clearing
         if command not in self._db_commands:
             self._db_commands[command] = []
         self._db_commands[command].append([group, variables, typ])
+        self._db.add_panel(group, command)
 
     def _make_db_command(self, command):
         db_in_this_command = self._db_commands[command][:]
@@ -258,16 +287,12 @@ class WorldEngine:
         custom follow(self) method that returns a dictionary in the agent.
         (details under agent.follow())
         """
-        if not(self._db_created):
-            self.parameter['_sim_name'] = abce_db.create_database(self.parameter['_sim_name'])
-            self._db_created = True
-        if not(self._db_follow_agent):
-            self._db_follow_agent = abce_db.DbFollowAgent(self.parameter['_sim_name'])
-        self._db_follow_agent.add(group_name, number)
+        self._db.add_follow(agent_name(group_name, number))
         self.commands.send_multipart([agent_name(group_name, number), '!', 'follow'])
 
     def run(self):
         """ This runs the simulation """
+        self._db.start()
         if not(self.agent_list):
             raise SystemExit('No Agents Created')
         if not(self.action_list) and not(self._action_list):
@@ -291,6 +316,11 @@ class WorldEngine:
             if command not in self._action_list:
                 self._action_list.insert(0, command)
 
+        for command in self._perish_commands:
+            self._action_groups[command] = self._make_perish_command(command)
+            if command not in self._action_list:
+                self._action_list.append(command)
+
         self._action_list.insert(0, '_advance_round')
 
         if self._db_follow_agent:
@@ -312,10 +342,12 @@ class WorldEngine:
 
         print(str("%6.2f" % (time.time() - start_time)))
         self.commands.send_multipart(["all", "!", "die"])
-        self.communication_channel.send("db_agent:close")
-        for agent in list(itertools.chain(*self.agent_list.values())) + self._db_agent_list:
+        for agent in list(itertools.chain(*self.agent_list.values())):
             while agent.is_alive():
-                time.sleep(0.05)
+                time.sleep(0.1)
+        self.communication_channel.send("db_agent:close")
+        while self._db.is_alive():
+            time.sleep(0.05)
 
 
     def _make_ask_each_agent_in(self, action):
@@ -354,40 +386,39 @@ class WorldEngine:
         self.commands.send_multipart([agent, command])
 
     def build_agents(self, AgentClass, number=None, agents_parameters=None):
-        """ This method creates agents, the first parameter is the agent class,
-        the second parameter is a string with the group name of the agents
-        the third parameter gives the name of the variable in parameter.csv
-
-        number: number of agents to be created either a number or
-        a string that is the header of a column in parameter.csv
+        """ This method creates agents, the first parameter is the agent class.
+        "number_of_agent_class" (e.G. "number_of_firm") should be difined in
+        world_parameters.csv. Alternatively you can also specify number = 1.s
 
         Args::
 
          AgentClass: is the name of the AgentClass that you imported
-         number: specifies either the column name in parameter.csv that
-         contains the row number or a integer number
+         [number: number of agents to be created]
 
         Example::
 
-         w.build_agents(Firm, 'number_of_Firms')
+         w.build_agents(Firm,)
+         # 'number_of_firms' is a column in world_parameters.csv
          w.build_agents(Bank, 1)
         """
-        #TODO doc string
         #TODO single agent groups get extra name without number
         #TODO when there is a group with a single agent the ask_agent has a confusingname
         group_name = AgentClass.__name__
-        if not(number):
-            try:
-                number = len(agents_parameters)
-            except TypeError:
-                raise SystemExit("in build_agents number of agents needs to be specified:")
-        elif not(agents_parameters):
-            agents_parameters = [None for _ in range(number)]
-
-        try:
+        if number and agents_parameters == None:
             num_agents_this_group = int(number)
-        except ValueError:
-            num_agents_this_group = self.parameter[number]
+            self.parameter['number_of_' + group_name.lower()] = num_agents_this_group
+            agents_parameters = [None for _ in range(num_agents_this_group)]
+        elif number == None and agents_parameters == None:
+            try:
+                num_agents_this_group = self.parameter['number_of_' + group_name.lower()]
+            except KeyError:
+                raise SystemExit('number_of_' + group_name + ' is not in world_parameters.csv')
+            agents_parameters = [None for _ in range(num_agents_this_group)]
+        elif number == None and agents_parameters:
+            num_agents_this_group = len(agents_parameters)
+            self.parameter['number_of_' + group_name.lower()] = num_agents_this_group
+        else:
+            raise SystemExit('Either number_or_parameter_column or agents_parameters must be specied, NOT both.')
 
         self.num_agents += num_agents_this_group
         self.num_agents_in_group[group_name] = num_agents_this_group
@@ -422,7 +453,7 @@ class WorldEngine:
             try:
                 parameter_file = self.parameter['agent_parameter_file']
             except KeyError:
-                parameter_file = 'agent_parameter_file.csv'
+                parameter_file = 'agents_parameters.csv'
         agent_class = AgentClass.__name__
         agents_parameters = []
         agent_file = csv.reader(open(parameter_file), delimiter=delimiter, quotechar=quotechar)

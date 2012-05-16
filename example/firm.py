@@ -1,4 +1,3 @@
-#ABCE 0.1
 """
 The Agent class contains and registers an agents actions. Actions need to be
 registerd in order to be accessable from outside the class.
@@ -52,20 +51,20 @@ from random import choice
 
 class Firm(AgentEngine, Firm):
     """ The Agent class contains and registers agents actions. """
-    def __init__(self, parameter, arguments):
-        AgentEngine.__init__(self, *arguments)
+    def __init__(self, world_parameter, own_parameters, _pass_to_engine):
+        AgentEngine.__init__(self, *_pass_to_engine)
         self.create('money', 1000000)
         if self.idn < 5:
-            self.technology = create_cobb_douglas('BRD', 1.890, {"capital": 0.333, "labor": 0.667})
+            self.set_cobb_douglas('BRD', 1.890, {"capital": 0.333, "labor": 0.667})
             self.output = 'BRD'
         if self.idn >= 5:
-            self.technology = create_cobb_douglas("MLK", 1.980, {"capital": 0.571, "labor": 0.492})
+            self.set_cobb_douglas("MLK", 1.980, {"capital": 0.571, "labor": 0.492})
             self.output = 'MLK'
         self.capacity = 10
         potential_buyer = {}
 
     def recieve_connections(self):
-        self.potential_buyer = self.messages('address')
+        self.potential_buyer = self.get_messages('address')
 
     def buy_capital(self):
         offers = self.open_offers('capital')
@@ -81,7 +80,7 @@ class Firm(AgentEngine, Firm):
 
     def production(self):
         try:
-            self.produce(self.technology, {'labor': self.count('labor'), 'capital': self.count('capital')})
+            self.produce({'labor': self.possession('labor'), 'capital': self.possession('capital')})
         except GoodDoesNotExist:
             pass
 

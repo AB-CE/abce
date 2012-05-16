@@ -2,124 +2,75 @@
 import zmq
 import multiprocessing
 from abce_common import agent_name, group_address
-import MySQLdb as mdb
+from collections import defaultdict
+import sqlite3
 
-
-class DbAgent(multiprocessing.Process):
-    """ must be inherited by all agents as first line in def ' __init__(self)':
-    (see agent.py prototype)
-    """
-    def __init__(self, simulation_name, group, command):
+class Database(multiprocessing.Process):
+    def __init__(self, db_name):
         multiprocessing.Process.__init__(self)
-        self.db_connection = mdb.connect('localhost', 'abce', 'ictilo', simulation_name);
-        self.command = command
-        self.table_name = command + '_' + group
-        self.group = group
+        self.db = sqlite3.connect(db_name + '.db')
+        self.database = self.db.cursor()
+        self.index = defaultdict(lambda: 0)
         self.round = 0
 
-    def run(self):
-        """ internal """
-        context = zmq.Context()
-        self.in_sok = context.socket(zmq.SUB)
-        self.in_sok.connect("ipc://backend.ipc")
-        self.in_sok.setsockopt(zmq.SUBSCRIBE, "db_agent:" + self.command + ":" + self.group)
-        self.in_sok.setsockopt(zmq.SUBSCRIBE, "db_agent:close")
-        self.in_sok.setsockopt(zmq.SUBSCRIBE, "db_agent:advance_round")
-        begin = "INSERT INTO " + self.table_name + "(round, id,"
+    def add_panel(self, group, command):
+        table_name = command + '_' + group
+        begin = "INSERT INTO " + table_name + "(round, id,"
         values = ") VALUES (%s)"
-        with self.db_connection:
-            cursor = self.db_connection.cursor()
-            ex_str = "CREATE TABLE " + self.table_name + "(round INT, id INT)"
-            cursor.execute(ex_str)
-
-        while True:
-            address_command = self.in_sok.recv()
-            if address_command == "db_agent:close":
-                break
-            if address_command == "db_agent:advance_round":
-                self.round += 1
-                continue
-            idn = int(self.in_sok.recv())
-            data_to_write = self.in_sok.recv_json()
-            data_to_write['round'] = self.round
-            data_to_write['id'] = idn
-            write(self.db_connection, self.table_name, data_to_write)
+        ex_str = "CREATE TABLE " + table_name + "(round INT, id INT, i INT)"
+        self.database.execute(ex_str)
 
 
-class DbFollowAgent(multiprocessing.Process):
-    """ must be inherited by all agents as first line in def ' __init__(self)':
-    (see agent.py prototype)
-    """
-    def __init__(self, simulation_name):
-        multiprocessing.Process.__init__(self)
-        self.db_connection = mdb.connect('localhost', 'abce', 'ictilo', simulation_name);
-        self.round = 0
-        self.follow_agent_list = []
-
-    def add(self, group, number):
-        with self.db_connection:
-            cursor = self.db_connection.cursor()
-            ex_str = "CREATE TABLE " + group + '_' + str(number) + "(round INT, command CHAR(20), name CHAR(20))"
-            cursor.execute(ex_str)
-            self.follow_agent_list.append("db_agent:" + group_address(group))
+    def add_follow(self, name):
+        ex_str = "CREATE TABLE " + name[0:-1] + "(round INT, command VARCHAR(50), name VARCHAR(50), i INT)"
+        self.database.execute(ex_str)
 
     def run(self):
-        """ internal """
         context = zmq.Context()
         self.in_sok = context.socket(zmq.SUB)
         self.in_sok.connect("ipc://backend.ipc")
-        for sub in self.follow_agent_list:
-            self.in_sok.setsockopt(zmq.SUBSCRIBE, sub)
-        self.in_sok.setsockopt(zmq.SUBSCRIBE, "db_agent:close")
-        self.in_sok.setsockopt(zmq.SUBSCRIBE, "db_agent:advance_round")
+        self.in_sok.setsockopt(zmq.SUBSCRIBE, "db_agent:")
+        self.index = defaultdict(lambda: 0)
         while True:
             address_command = self.in_sok.recv()
             if address_command == "db_agent:close":
+                self.db.close()
                 break
             if address_command == "db_agent:advance_round":
                 self.round += 1
+                print('(' + str(self.round) + ')')
                 continue
-            name = self.in_sok.recv()[0:-1]
-            command = self.in_sok.recv()
-            data_to_write = self.in_sok.recv_json()
-            data_to_write['name'] = name
-            data_to_write['command'] = command
-            data_to_write['round'] = self.round
-            write(self.db_connection, name, data_to_write)
-
-def write(db_connection, table_name, data_to_write):
-    values = ") VALUES (%s)"
-    with db_connection:
-        cursor = db_connection.cursor()
-        rows_to_write = (data_to_write.values())
-        format_strings = ','.join(['%s'] * len(rows_to_write))
-        begin = "INSERT INTO " + table_name + "("
-        ex_str = begin + ','.join(data_to_write.keys()) + values
-        try:
-            cursor.execute(ex_str % format_strings, rows_to_write)
-        except (TypeError, mdb.OperationalError):
-            for key in data_to_write:
-                cursor.execute(""" SHOW columns FROM """ + table_name)
-                existing_columns = [row[0] for row in cursor]
-                new_columns = set(data_to_write.keys()).difference(existing_columns)
-                for column in new_columns:
-                    cursor.execute(""" ALTER TABLE """ + table_name + """ ADD """ + column + """ FLOAT;""")
-            format_strings = ','.join(['%s'] * len(rows_to_write))
-            cursor.execute(ex_str % format_strings, rows_to_write)
-
-
-def create_database(simulation_name):
-    db_connection = mdb.connect('localhost', 'abce', 'ictilo');
-    with db_connection:
-        cursor = db_connection.cursor()
-        suffix = ''
-        while cursor.execute(
-                "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '"
-                + simulation_name + suffix + "'"):
-            if not(suffix):
-                suffix = 'a'
+            typ = self.in_sok.recv()
+            if typ == 'panel':
+                idn = int(self.in_sok.recv())
+                command = self.in_sok.recv()
+                group = self.in_sok.recv()
+                data_to_write = self.in_sok.recv_json()
+                data_to_write['round'] = self.round
+                data_to_write['id'] = idn
+                table_name = command + '_' + group
+                self.write(table_name, data_to_write)
             else:
-                suffix = chr(ord(suffix) + 1)
-        ex_str = "CREATE DATABASE " + simulation_name + suffix
-        cursor.execute(ex_str)
-    return simulation_name + suffix
+                name = self.in_sok.recv()[0:-1]
+                command = self.in_sok.recv()
+                self.index[name] += 1
+                data_to_write = self.in_sok.recv_json()
+                data_to_write['name'] = name
+                data_to_write['command'] = command
+                data_to_write['round'] = self.round
+                data_to_write['i'] = self.index[name]
+                self.write(name, data_to_write)
+
+    def write(self, table_name, data_to_write):
+        rows_to_write = data_to_write.values()
+        ex_str = "INSERT INTO " + table_name + "(" + ','.join(data_to_write.keys()) + ") VALUES (%s)"
+        format_strings = ','.join(['?'] * len(rows_to_write))
+        try:
+            self.database.execute(ex_str % format_strings, rows_to_write)
+        except (TypeError, sqlite3.OperationalError):
+            self.database.execute("""PRAGMA table_info(""" + table_name + """)""")
+            existing_columns = [row[1] for row in self.database]
+            new_columns = set(data_to_write.keys()).difference(existing_columns)
+            for column in new_columns:
+                self.database.execute(""" ALTER TABLE """ + table_name + """ ADD """ + column + """ FLOAT;""")
+            self.database.execute(ex_str % format_strings, rows_to_write)

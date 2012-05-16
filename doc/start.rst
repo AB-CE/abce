@@ -21,7 +21,7 @@ Example::
  from household import Household
  from nature import Nature
 
- for parameter in world.read_parameter('parameter.csv'):
+ for parameter in world.read_parameter('world_parameters.csv'):
     action_list = [('nature', 'assign'), ('household', 'recieve_connections'),
     ('household',  'report'), ('household', 'offer_capital'),
     ('firm', 'buy_capital'), ('household', 'search_work'),

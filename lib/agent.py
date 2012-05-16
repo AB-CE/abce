@@ -59,7 +59,7 @@ class Agent(AgentEngine, Firm, Household):
 
      class Agent(AgentEngine, Household):
     """
-    def __init__(self, world_parameter, own_parameters, _pass_to_engine):
+    def __init__(self, world_parameters, own_parameters, _pass_to_engine):
         """ all parameters in parameter.csv can be accessed in the agent's
         __init__(...) function. parameter['column name']. For example:
 

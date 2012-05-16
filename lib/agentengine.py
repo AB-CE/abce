@@ -6,6 +6,7 @@ from inspect import getmembers, ismethod
 from random import shuffle
 import compiler
 import pyparsing as pp
+from collections import OrderedDict
 
 class AgentEngine(multiprocessing.Process):
     """ must be inherited by all agents as first line in def ' __init__(self)':
@@ -29,6 +30,7 @@ class AgentEngine(multiprocessing.Process):
 
         self.given_offers = {}
         self._open_offers = {}
+        self._answered_offers = OrderedDict()
         self._offer_count = 0
 
         self.round = 0
@@ -39,10 +41,11 @@ class AgentEngine(multiprocessing.Process):
             if (ismethod(method[1]) and
                     not(method[0] in vars(AgentEngine) or method[0].startswith('_') or method[0] in vars(multiprocessing.Process))):
                 self.__methods__[method[0]] = method[1]
-            self.__methods__['_end_of_subround_clearing'] = self._end_of_subround_clearing
-            self.__methods__['_produce_resource_rent_and_labor'] = self._produce_resource_rent_and_labor
-            self.__methods__['_db_haves'] = self._db_haves
             self.__methods__['_advance_round'] = self._advance_round
+            self.__methods__['_end_of_subround_clearing'] = self._end_of_subround_clearing
+            self.__methods__['_db_haves'] = self._db_haves
+            self.__methods__['_perish'] = self._perish
+            self.__methods__['_produce_resource_rent_and_labor'] = self._produce_resource_rent_and_labor
             #TODO inherited classes provide methods that should not be callable
             #change _ policy _ callable from outside __ not and exception lists
 
@@ -75,18 +78,18 @@ class AgentEngine(multiprocessing.Process):
                     self.__signal_finished()
                     break
                 elif subcommand == 'follow':
-                    self._loop_protocol()
+                    self._loop_with_db()
                     break
             try:
                 self.__methods__[command]()
             except KeyError:
                 if command not in self.__methods__:
-                    raise SystemExit(command + ' not declared (' + self.name + ' in agent.py)')
+                    raise SystemExit('The method - ' + command + ' - called in the agent_list is not declared (' + self.name)
                 else:
                     raise
             self.__signal_finished()
 
-    def _loop_protocol(self):
+    def _loop_with_db(self):
         while True:
             msg = self.commands.recv()
             command = self.commands.recv()
@@ -115,17 +118,37 @@ class AgentEngine(multiprocessing.Process):
             except KeyError:
                 self._haves[product] = float(units) * self._haves[resource]
 
+    def _perish(self):
+        goods = self.commands.recv_multipart()
+        for good in goods:
+            if good in self._haves:
+                self._haves[good] = 0
+            for key in self._open_offers.keys():
+                if self._open_offers[key]['good'] == good:
+                    del self._open_offers[key]
+
+            for key in self.given_offers.keys():
+                if self.given_offers[key].good == good:
+                    del self.given_offers[key]
+
     def _db_haves(self):
         command = self.commands.recv()
         try:
             data_to_track = self.__methods__[command]()
         except KeyError:
             data_to_track = self._haves
-        self._send("db_agent:" + command + ":" + self.group_name, str(self.idn), data_to_track)
+        self.out.send("db_agent:", zmq.SNDMORE)
+        self.out.send("panel", zmq.SNDMORE)
+        self.out.send(str(self.idn), zmq.SNDMORE)
+        self.out.send(command, zmq.SNDMORE)
+        self.out.send(self.group_name, zmq.SNDMORE)
+        self.out.send_json(data_to_track)
 
 
     def _follow(self, last_command):
-        self.out.send("db_agent:" + self.group_name + ':', zmq.SNDMORE)
+        self.out.send("db_agent:", zmq.SNDMORE)
+        self.out.send('follow', zmq.SNDMORE)
+        #self.out.send(self.group_name, zmq.SNDMORE)
         self.out.send(self.name, zmq.SNDMORE)
         self.out.send(last_command, zmq.SNDMORE)
         try:
@@ -202,17 +225,17 @@ class AgentEngine(multiprocessing.Process):
             elif typ == '_p':
                 self._recieve_partial_accept(msg)
             elif typ == '_r':
-                self._delete_given_offer(msg)
+                self._delete_rejected_given_offer(msg)
             else:
                 self._msgs.setdefault(typ, []).append(msg)
         for offer_id in self._del_given_offers_end_subround:
             try:
-                self._delete_given_offer(offer_id)
+                self._delete_given_offer_(offer_id)
             except KeyError:
                 pass
         self._del_given_offers_end_subround = []
 
-    def messages(self, typ='m'):
+    def get_messages(self, typ='m'):
         """ self.messages() returns all new messages send before this step
         (typ='m'). The order is randomized self.messages(typ) returns all
         messages with a particular non standard type typ e.G. 'n'.
@@ -230,7 +253,7 @@ class AgentEngine(multiprocessing.Process):
             self._msgs[typ] = []
         return self._msgs.pop(typ)
 
-    def messages_biased(self, typ='m'):
+    def get_messages_biased(self, typ='m'):
         """ like self.messages(typ), but the order is not properly randomized, but
         its faster. use whenever you are sure that the way you process messages
         is not affected by the order
@@ -363,8 +386,8 @@ class AgentEngine(multiprocessing.Process):
         """
         self._send(receiver, typ, self.name)
 
-    def count(self, good):
-        """ returns how much of good an agent has (0 when unknown) """
+    def possession(self, good):
+        """ returns how much of good an agent possesses (0 when unknown) """
         try:
             return self._haves[good]
         except KeyError:
@@ -377,6 +400,20 @@ class AgentEngine(multiprocessing.Process):
         return str(self.name) + str(self._offer_count)
 
     def _advance_round(self):
+        offer_iterator = self._answered_offers.iteritems()
+        recent_answerd_offers = OrderedDict()
+        try:
+            while True:
+                offer_id, offer = next(offer_iterator)
+                if offer.round == self.round:  # message from prelast round
+                    recent_answerd_offers[offer_id] = offer
+                    break
+            while True:
+                offer_id, offer = next(offer_iterator)
+                recent_answerd_offers[offer_id] = offer
+        except StopIteration:
+            pass
+            self._answered_offers = recent_answerd_offers
         self.round += 1
 
     def quote_sell(self, receiver, good, quantity, price):
@@ -482,6 +519,61 @@ class AgentEngine(multiprocessing.Process):
         self._send(offer.receiver, '_d', offer.idn)
         self._del_given_offers_end_subround.append(offer.idn)
 
+    def was_offer_accepted(self, offer_id):
+        """ Checks whether an offer was accepeted or rejected
+        only offers that have given this or last round can be checked
+
+        Args::
+
+         offer_id: is the id a sell or buy statement returns
+
+        Returns::
+         True: if the offer was accepetd
+         False: if the offer was rejected
+
+        Raises::
+
+         Pending: If the offer was not yet answered
+         KeyError: If the offer never existed or when it was acceped/rejected
+         more than two rounds ago
+
+        Example::
+         def sell_product(self):
+            self.offer_id = self.sell(...)
+
+         ... between one subround and one round later ...
+
+         def adjust_price(self):
+            count = 0
+            for offer in self.check_orders:
+                if self.was_offer_accepted(offer):
+                    count += 1
+            if count < len(self.check_orders):
+                self.prices = self.prices * 0.9
+            else:
+                self.prices = self.prices * 1.1
+
+
+        Advanced Example::
+
+         def sell_product(self):
+            for buyer in self.buyers:
+                offer_id = self.sell(buyer, self.sector, self.possession(self.sector)/len(self.buyers), self.prices[self.sector])
+                self.check_orders.append(offer_id)
+
+            ... between one subround and one round later ...
+
+
+
+        """
+        try:
+            self._answered_offers[offer_id]
+        except KeyError:
+            if offer_id in self.given_offers:
+                raise Pending
+
+
+
     def accept(self, offer):
         ##TODO needs a whole bunch of trys to avoid KeyError
         """ The offer is accepted and cleared
@@ -550,6 +642,9 @@ class AgentEngine(multiprocessing.Process):
                 self._haves[offer.good] += offer.quantity
             except KeyError:
                 self._haves[offer.good] = offer.quantity
+        self._answered_offers[offer_id] = offer
+        self._answered_offers[offer_id].accepted = True
+        self._answered_offers[offer_id].round = self.round
 
 
     def _recieve_partial_accept(self, offer_id):
@@ -559,13 +654,19 @@ class AgentEngine(multiprocessing.Process):
         """
         pass
 
-    def _delete_given_offer(self, offer_id):
+    def _delete_rejected_given_offer(self, offer_id):
         """ delets a given offer
 
         is used by _end_of_subround_clearing, when the other party rejects
         or at the end of the subround when agent retracted the offer
 
         """
+        self._answered_offers[offer_id] = self.given_offers[offer_id]
+        self._answered_offers[offer_id].accepted = True
+        self._answered_offers[offer_id].round = self.round
+        self._delete_given_offer(offer_id)
+
+    def _delete_given_offer(self, offer_id):
         offer = self.given_offers.pop(offer_id)
         if offer.buysell == 's':
             self._haves[offer.good] += offer.quantity
@@ -627,7 +728,7 @@ class AgentEngine(multiprocessing.Process):
         return quantity_destroyed
 
 
-class Firm:
+class FirmMultiTechnologies:
     def produce_use_everything(self, production_function):
         """ Produces output goods from all input goods, used in this
         production_function, the agent owns.
@@ -644,9 +745,12 @@ class Firm:
 
         Example::
 
-            self.produce(car_production_function)
+            self.produce_use_everything(car_production_function)
         """
-        self.produce(production_function, dict((inp, self._haves) for inp in production_function['input']))
+        try:
+            self.produce(production_function, dict((inp, self._haves[inp]) for inp in production_function['input']))
+        except GoodDoesNotExist:
+            pass
 
     def produce(self, production_function, input_goods):
         """ Produces output goods given the specified amount of inputs.
@@ -669,17 +773,17 @@ class Firm:
 
         Example::
 
-            self.car = {'tire': 4, 'metal': 2000, 'plastic':  40}
-            self.bike = {'tire': 2, 'metal': 400, 'plastic':  20}
+            car = {'tire': 4, 'metal': 2000, 'plastic':  40}
+            bike = {'tire': 2, 'metal': 400, 'plastic':  20}
             try:
-                self.produce(car_production_function, self.car)
+                self.produce(car_production_function, car)
             except NotEnoughGoods:
-                A.produce(bike_production_function, self.bike)
+                A.produce(bike_production_function, bike)
         """
         for good in production_function['input']:
             try:
                 if self._haves[good] < input_goods[good]:
-                    raise NotEnoughGoods(self.name, good, production_function['input'][good] - self._haves[good])
+                    raise NotEnoughGoods(self.name, good, (input_goods[good] - self._haves[good]))
             except KeyError:
                 raise GoodDoesNotExist(self.name, good)
         for good in production_function['input']:
@@ -687,7 +791,7 @@ class Firm:
         goods_vector = input_goods.copy()
         for good in production_function['output']:
             goods_vector[good] = None
-        exec(production_function['formula'], {}, goods_vector)
+        exec(production_function['code'], {}, goods_vector)
         for good in production_function['output']:
             try:
                 self._haves[good] += goods_vector[good]
@@ -724,7 +828,7 @@ def create_production_function(formula, typ='from_formula'):
 
     Example:
         formula = 'golf_ball = (ball) * (paint / 2); waste = 0.1 * paint'
-        self.production_function = create_production_function(formula, 'golf', 'waste')
+        self.production_function = create_production_function(formula)
         self.produce(self.production_function, {'ball' : 1, 'paint' : 2}
 
     //exponential is ** not ^
@@ -737,8 +841,8 @@ def create_production_function(formula, typ='from_formula'):
 
     production_function = {}
     production_function['type'] = typ
-    production_function['parameters'] = formula
-    production_function['formula'] = compiler.compile(formula, '<string>', 'exec')
+    production_function['formula'] = formula
+    production_function['code'] = compiler.compile(formula, '<string>', 'exec')
     production_function['output'] = list(parse_output.parseString(formula))
     production_function['input']= list(parse_input.parseString(formula))
     return production_function
@@ -762,15 +866,15 @@ def create_production_function_fast(formula, output_goods, input_goods, typ='fro
 
     Example:
         formula = 'golf_ball = (ball) * (paint / 2); waste = 0.1 * paint'
-        self.production_function = create_production_function(formula, 'golf', 'waste')
+        self.production_function = create_production_function(formula, 'golf', ['waste', 'paint'])
         self.produce(self.production_function, {'ball' : 1, 'paint' : 2}
 
     //exponential is ** not ^
     """
     production_function = {}
     production_function['type'] = typ
-    production_function['parameters'] = formula
-    production_function['formula'] = compiler.compile(formula, '<string>', 'exec')
+    production_function['formula'] = formula
+    production_function['code'] = compiler.compile(formula, '<string>', 'exec')
     production_function['output'] = output_goods
     production_function['input'] = input_goods
     return production_function
@@ -802,8 +906,9 @@ def create_cobb_douglas(output, multiplier, exponents):
     production_function = {}
     production_function['type'] = 'cobb-douglas'
     production_function['parameters'] = exponents
+    production_function['formula'] = formula
     production_function['multiplier'] = multiplier
-    production_function['formula'] = compiler.compile(formula, '<string>', 'exec')
+    production_function['code'] = compiler.compile(formula, '<string>', 'exec')
     production_function['output'] = [output]
     production_function['input'] = [input_good for input_good in exponents]
     return production_function
@@ -830,7 +935,6 @@ def create_leontief(output, utilization_quantities, multiplier=1, isinteger='int
         isinteger='int' or isinteger='': When 'int' produce only integer
         amounts of the good. When '', produces floating amounts.
 
-, str(input_quantity)
     Returns:
         A production_function that can be used in produce etc.
 
@@ -846,9 +950,10 @@ def create_leontief(output, utilization_quantities, multiplier=1, isinteger='int
     production_function = {}
     production_function['type'] = 'leontief'
     production_function['parameters'] = utilization_quantities
+    production_function['formula'] = formula
     production_function['multiplier'] = multiplier
     production_function['isinteger'] = isinteger
-    production_function['formula'] = compiler.compile(formula, '<string>', 'exec')
+    production_function['code'] = compiler.compile(formula, '<string>', 'exec')
     production_function['output'] = [output]
     production_function['input'] = [input_good for input_good in utilization_quantities]
     return production_function
@@ -875,7 +980,7 @@ def predict_produce_output(production_function, input_goods):
     goods_vector = input_goods.copy()
     for good in production_function['output']:
         goods_vector[good] = None
-    exec(production_function['formula'], {}, goods_vector)
+    exec(production_function['code'], {}, goods_vector)
     output = {}
     for good in production_function['output']:
         output[good] = goods_vector[good]
@@ -909,7 +1014,7 @@ def predict_produce(production_function, input_goods):
     goods_vector = input_goods.copy()
     for good in production_function['output']:
         goods_vector[good] = None
-    exec(production_function['formula'], {}, goods_vector)
+    exec(production_function['code'], {}, goods_vector)
     for goods in production_function['output']:
         result[good] = goods_vector[good]
     for goods in production_function['input']:
@@ -947,6 +1052,194 @@ def net_value(goods_vector, price_vector):
         ret += price_vector[good] * quantity
     return ret
 
+
+class Firm(FirmMultiTechnologies):
+    def produce_use_everything(self):
+        """ Produces output goods from all input goods.
+
+        Raises::
+
+            GoodDoesNotExist: This is raised when unknown goods are used.
+
+        Example::
+
+            self.produce_use_everything()
+        """
+        FirmMultiTechnologies.produce_use_everything(self, self.production_function)
+
+    def produce(self, input_goods):
+        """ Produces output goods given the specified amount of inputs.
+
+        Transforms the Agent's goods specified in input goods
+        according to a given production_function to output goods.
+        Automatically changes the agent's belonging. Raises an
+        exception, when the agent does not have sufficient resources.
+
+        Args:
+            {'input_good1': amount1, 'input_good2': amount2 ...}: dictionary
+            containing the amount of input good used for the production.
+
+        Raises:
+            NotEnoughGoods: This is raised when the goods are insufficient.
+            GoodDoesNotExist: This is raised when unknown goods are used.
+
+        Example::
+            self.set_cobb_douglas_production_function('car' ..)
+            car = {'tire': 4, 'metal': 2000, 'plastic':  40}
+            try:
+                self.produce(car)
+            except NotEnoughGoods:
+                print('today no cars')
+        """
+        FirmMultiTechnologies.produce(self, self.production_function, input_goods)
+
+    def sufficient_goods(self, input_goods):
+        """ checks whether the agent has all the goods in the vector input """
+        FirmMultiTechnologies.sufficient_goods(self)
+
+
+    def set_production_function(self, formula, typ='from_formula'):
+        """  sets the firm to use a Cobb-Douglas production function from a
+        formula.
+
+        A production function is a produceation process that produces the given
+        input given input goods according to the formula to the output goods.
+        Production_functions are than used to produce, predict_vector_produce and
+        predict_output_produce.
+
+        create_production_function_fast is faster but more complicated
+
+        Args:
+            "formula": equation or set of equations that describe the
+            production process. (string) Several equation are seperated by a ;
+
+        Example:
+            formula = 'golf_ball = (ball) * (paint / 2); waste = 0.1 * paint'
+            self.set_production_function(formula)
+            self.produce({'ball' : 1, 'paint' : 2}
+
+        //exponential is ** not ^
+        """
+        self.production_function =create_production_function(formula, typ)
+
+    def set_production_function_fast(self, formula, output_goods, input_goods, typ='from_formula'):
+        """  sets the firm to use a Cobb-Douglas production function from a
+        formula, with given outputs
+
+        A production function is a produceation process that produces the given
+        input given input goods according to the formula to the output goods.
+        Production_functions are than used to produce, predict_vector_produce and
+        predict_output_produce.
+
+        Args:
+            "formula": equation or set of equations that describe the
+            production process. (string) Several equation are seperated by a ;
+            [output]: list of all output goods (left hand sides of the equations)
+
+        Example:
+            formula = 'golf_ball = (ball) * (paint / 2); waste = 0.1 * paint'
+            self.production_function_fast(formula, 'golf', ['waste'])
+            self.produce(self.production_function, {'ball' : 1, 'paint' : 2}
+
+        //exponential is ** not ^
+        """
+        self.production_function = create_production_function_fast(formula, output_goods, input_goods, typ)
+
+    def set_cobb_douglas(self, output, multiplier, exponents):
+        """  sets the firm to use a Cobb-Douglas production function.
+
+        A production function is a produceation process that produces the
+        given input given input goods according to the formula to the output
+        good.
+
+        Args:
+            'output': Name of the output good
+            multiplier: Cobb-Douglas multiplier
+            {'input1': exponent1, 'input2': exponent2 ...}: dictionary
+            containing good names 'input' and correstponding exponents
+
+        Example:
+        self.plastic_production_function = create_cobb_douglas('plastic', {'oil' : 10, 'labor' : 1}, 0.000001)
+        self.produce(self.plastic_production_function, {'oil' : 20, 'labor' : 1})
+
+        """
+        self.production_function = create_cobb_douglas(output, multiplier, exponents)
+
+
+    def set_leontief(self, output, utilization_quantities, multiplier=1, isinteger='int'):
+        """ sets the firm to use a Leontief production function.
+
+        A production function is a production process that produces the
+        given input given input goods according to the formula to the output
+        good.
+
+        Warning, when you produce with a Leontief production_function all goods you
+        put in the produce(...) function are used up. Regardless whether it is an
+        efficient or wastefull bundle
+
+        Args:
+            'output': Name of the output good
+            {'input1': utilization_quantity1, 'input2': utilization_quantity2 ...}: dictionary
+            containing good names 'input' and correstponding exponents
+            multiplier: multipler
+            isinteger='int' or isinteger='': When 'int' produce only integer
+            amounts of the good. When '', produces floating amounts.
+
+        Example:
+        self.car_technology = create_leontief('car', {'tire' : 4, 'metal' : 1000, 'plastic' : 20}, 1)
+        two_cars = {'tire': 8, 'metal': 2000, 'plastic':  40}
+        self.produce(self.car_technology, two_cars)
+        """
+        self.production_function = create_leontief(output, utilization_quantities, multiplier, isinteger)
+
+
+    def predict_produce_output(production_function, input_goods):
+        """ Calculates the output of a production (but does not preduce)
+
+            Predicts the production of produce(production_function, input_goods)
+            see also: Predict_produce(.) as it returns a calculatable vector
+
+        Args:
+            production_function: A production_function produced with
+            create_production_function, create_cobb_douglas or create_leontief
+            {'input_good1': amount1, 'input_good2': amount2 ...}: dictionary
+            containing the amount of input good used for the production.
+
+        Example::
+
+            print(A.predict_output_produce(car_production_function, two_cars))
+            >>> {'car': 2}
+
+        """
+        self.production_function = predict_produce_output(production_function, input_goods)
+
+
+    def predict_produce(production_function, input_goods):
+        """ Returns a vector with input (negative) and output (positive) goods
+
+            Predicts the production of produce(production_function, input_goods) and
+            the use of input goods.
+            net_value(.) uses a price_vector (dictionary) to calculate the
+            net value of this production.
+
+        Args:
+            production_function: A production_function produced with
+            create_production_function, create_cobb_douglas or create_leontief
+            {'input_good1': amount1, 'input_good2': amount2 ...}: dictionary
+            containing the amount of input good used for the production.
+
+        Example::
+
+        prices = {'car': 50000, 'tire': 100, 'metal': 10, 'plastic':  0.5}
+        value_one_car = net_value(predict_produce(car_production_function, one_car), prices)
+        value_two_cars = net_value(predict_produce(car_production_function, two_cars), prices)
+        if value_one_car > value_two_cars:
+            A.produce(car_production_function, one_car)
+        else:
+            A.produce(car_production_function, two_cars)
+        """
+        return predict_produce(self.production_function, input_goods)
+
 class Household:
     def utility_function(self):
         """ the utility function should be created with:
@@ -954,7 +1247,7 @@ class Household:
         create_utility_function or
         create_utility_function_fast
         """
-        return self._utility_functionconsume_all
+        return self._utility_function
 
     def consume_everything(self):
         """ consumes everything that is in the utility function
@@ -976,7 +1269,7 @@ class Household:
         try:
             return self.consume(dict((inp, self._haves[inp]) for inp in self._utility_function['input']))
         except KeyError:
-            raise GoodDoesNotExist(self.name, '*')
+            pass
 
     def consume(self, input_goods):
         """ consumes input_goods returns utility according consumption
@@ -1007,7 +1300,7 @@ class Household:
             self._haves[good] -= input_goods[good]
         goods_vector = input_goods.copy()
         goods_vector['utility'] = None
-        exec(self._utility_function['formula'], {}, goods_vector)
+        exec(self._utility_function['code'], {}, goods_vector)
         return goods_vector['utility']
 
 
@@ -1040,8 +1333,8 @@ class Household:
 
         self._utility_function = {}
         self._utility_function['type'] = typ
-        self._utility_function['parameters'] = formula
-        self._utility_function['formula'] = compiler.compile(formula, '<string>', 'exec')
+        self._utility_function['formula'] = formula
+        self._utility_function['code'] = compiler.compile(formula, '<string>', 'exec')
         self._utility_function['input']= list(parse_input.parseString(formula))
 
 
@@ -1071,8 +1364,8 @@ class Household:
         """
         self._utility_function = {}
         self._utility_function['type'] = typ
-        self._utility_function['parameters'] = formula
-        self._utility_function['formula'] = compiler.compile(formula, '<string>', 'exec')
+        self._utility_function['formula'] = formula
+        self._utility_function['code'] = compiler.compile(formula, '<string>', 'exec')
         self._utility_function['input'] = input_goods
 
 
@@ -1097,7 +1390,8 @@ class Household:
         self._utility_function = {}
         self._utility_function['type'] = 'cobb-douglas'
         self._utility_function['parameters'] = exponents
-        self._utility_function['formula'] = compiler.compile(formula, '<string>', 'exec')
+        self._utility_function['formula'] = formula
+        self._utility_function['code'] = compiler.compile(formula, '<string>', 'exec')
         self._utility_function['input'] = exponents.keys()
 
 def predict_utility(utility_function, input_goods):
@@ -1124,7 +1418,7 @@ def predict_utility(utility_function, input_goods):
     """
     goods_vector = input_goods.copy()
     goods_vector['utility'] = None
-    exec(utility_function['formula'], {}, goods_vector)
+    exec(utility_function['code'], {}, goods_vector)
     return goods_vector['utility']
 
 def sort(objects, key='price', reverse=False):
@@ -1183,4 +1477,8 @@ class GoodDoesNotExist(KeyError):
         self.good = good
         self.name = agent_name
     def __str__(self):
-        return repr(self.name + " '" + self.good + "' does not exist")
+        return repr(self.name + ' '  + self.good + ' does not exist')
+
+class Pending(Warning):
+    """ offer has neither been acceped nor rejected """
+    pass

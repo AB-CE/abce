@@ -1,16 +1,10 @@
 Retrival of the simulation results
 ==================================
 
-To recive a simulation::
+the results are stored in a subfolder of the ./results/ folder.
 
- mysql -u abce -p
- --ictilo
- SHOW DATABASES;
- USE simulation_name_1204281421;
- SHOW TABLES;
- SELECT * FROM household_0;
- SELECT * FROM after_sales_before_consumption_firm ORDER BY round, id;
- DROP DATABASE simulation_name_1204281421;
+The tables are stored as '.csv' files which can be opened with excel and
+libreoffice. 
 
-
-There are also graphical tools, such as emma or SQL query browser
+The same data is also as a sqlite database 'database.db' available. 
+It can be opened by 'sqlitebrowser' in ubuntu. 
