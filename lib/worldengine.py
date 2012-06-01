@@ -19,16 +19,26 @@ from abce_common import agent_name, group_address
 import multiprocessing
 import abce_db
 import itertools
+import pyparsing as pp
 
 
-def read_parameter(parameter_file='world_parameters.csv', delimiter='\t', quotechar='"'):
-    """ reads a parameter file line by line and gives a list. Where each entry
-    contains all parameter for a particular run of the simulation.
+def read_parameters(parameter_file='world_parameters.csv', delimiter='\t', quotechar='"'):
+    """ reads a parameter file line by line and gives a list. Where each line
+    contains all parameters for a particular run of the simulation.
+
+    Args::
+    parameter_file (optional): filename of the csv file.
+                    default:'world_parameters.csv'
+    delimiter (optional): delimiter of the csv file.
+                    default: tabs
+    quotechar (optional): for single entries that contain the delimiter.
+                    default: "
+                    See python csv lib http://docs.python.org/library/csv.html
 
 
     This code reads the file and runs a simulation for every line::
 
-     for parameter in world.read_parameter('world_parameters.csv'):
+     for parameter in world.read_parameters('world_parameters.csv'):
         w = world.World(parameter)
         w.build_agents(Agent, 'agent', 'number_of_agents')
         w.run()
@@ -57,12 +67,16 @@ def read_parameter(parameter_file='world_parameters.csv', delimiter='\t', quotec
                 parameter['random_seed'] = None
         except KeyError:
             parameter['random_seed'] = None
-        parameter['_path'] = parameter['name'] + '_' + start_time
+        parameter['_path'] = './result/' + parameter['name'] + '_' + start_time
         try:
-            os.makedirs('./Result/' + parameter['_path'])
+            os.makedirs('./result/')
         except OSError:
-            print("CAN NOT CREATE DIRECTORY")
-        parameter['_sim_name'] = './Result/' + parameter['_path'] + '/' + 'database'
+            pass
+        try:
+            os.makedirs(parameter['_path'])
+        except OSError:
+            parameter['_path'] = parameter['_path'] + 'a'
+            os.makedirs(parameter['_path'])
         for key in parameter:
             if key == '' or key[0] == '#' or key[0] == '_':
                 del key
@@ -86,7 +100,7 @@ class WorldEngine:
 
 
     Example::
-     for world_parameters in world.read_parameter('world_parameters.csv'):
+     for world_parameters in world.read_parameters('world_parameters.csv'):
         action_list = [
         ('household', 'recieve_connections'),
         ('household', 'offer_capital'),
@@ -136,20 +150,97 @@ class WorldEngine:
         self.communication_channel.connect("ipc://frontend.ipc")
         time.sleep(1)  #TODO
         self._register_action_groups()
-        self._db = abce_db.Database(world_parameters['_sim_name'])
+        self._db = abce_db.Database(world_parameters['_path'], 'database')
 
     def add_action_list(self, action_list):
-        """ add a list of actions: suples of an agents goup name and an actions
+        """ add a list of actions: Either::
+         tuples of an goup_names and and action
+         tuples of an agent name and and action
+         a single command string for panel_db or follow_db
+
 
         Example::
-         w.action_list([('firm', 'sell'), ('household', 'buy')]
+         action_list = [
+            ('firm', 'sell'),
+            ('household', 'buy'),
+            ('household_03', 'dance')
+            'panel_db_end_of_round_befor consumption',
+            ('household', 'consume'),
+            ]
+         w.add_action_list(action_list)
         """
         self.action_list = action_list
 
-    def add_action_list_from_file(self, parameter_name='action_list'):
-        """ reads the action_list from the parameter file
-        NOT YET IMPLEMENTED """
-        raise SystemExit('add_action_list NOT YET IMPLEMENTED')
+    def add_action_list_from_file(self, action_list_file='action_list.csv'):
+        """ alternative to add_action_list(...) reads the action_list from the
+        parameter file. Reads the action list from a file. The file has one
+        entry per row! Every row has either a command for panel_db or follow_db.
+        Or a tuple to send a command to a group.
+        "self.action_list =" and sqare brackets are optional
+
+        You can use this to make a batch operation with different action lists
+        in every simulation.
+
+        //see also add_action_list(...)
+
+        Args::
+         action_list_file (optional): name of the file. default: 'action_list.csv'
+
+        Example action_list.csv:
+
+         action_list = [
+            ('firm', 'sell'),
+            ('household', 'buy'),
+            'panel_db_end_of_round_befor consumption',
+            ('household', 'consume'),
+            ]
+
+        Example many simulations::
+
+         in 'world_parameters.csv', there is a column 'action_list_file_name'
+         specfing a different action_list per simulation. The corresponding
+         files exist.
+
+         ...
+         w.add_action_list_from_file(parameter['action_list_file_name'])
+         ...
+        """
+        S = pp.Suppress
+        Ot = pp.Optional
+        before = Ot('self') + Ot('.') + Ot('action_list') + Ot('=') + Ot('[') + Ot(',')
+        after = Ot(',') + Ot(']')
+        unnecessary = before + after
+        group_name = action_str = S(Ot("'")) + S(Ot('"')) + pp.Word(pp.alphas, pp.alphanums + '_') + S(Ot("'")) + S(Ot('"'))
+        single_command_str = S(before) + action_str + S(after)
+        tuple_command_str = S(before) + S('(') + group_name + S(',') + action_str + S(')') + S(after)
+        reader = open(action_list_file)
+        self.action_list = []
+        for line in reader:
+            print(line)
+            try:
+                group, action = tuple_command_str.parseString(line)
+                print("(,)", group, action)
+                self.action_list.append((group, action))
+                continue
+            except pp.ParseException:
+                pass
+            try:
+                command = single_command_str.parseString(line)
+                print(" __ ", command)
+                self.action_list.append(command[0])
+                continue
+            except pp.ParseException:
+                pass
+            try:
+                unnecessary.parseString(line)
+                continue
+            except pp.ParseException:
+                pass
+            if line:
+                print('add_action_list_from_file(' + action_list_file + '): '
+                      'can not understand "' + line + '"')
+        print(self.action_list)
+
 
     def _register_action_groups(self):
         """ makes methods accessable for the action_list """
@@ -348,6 +439,7 @@ class WorldEngine:
         self.communication_channel.send("db_agent:close")
         while self._db.is_alive():
             time.sleep(0.05)
+        abce_db.convert_to_csv(self.parameter['_path'], 'database')
 
 
     def _make_ask_each_agent_in(self, action):
@@ -385,7 +477,7 @@ class WorldEngine:
         self._add_agents_to_wait_for(1)
         self.commands.send_multipart([agent, command])
 
-    def build_agents(self, AgentClass, number=None, agents_parameters=None):
+    def build_agents(self, AgentClass,  number=None, group_name=None, agents_parameters=None):
         """ This method creates agents, the first parameter is the agent class.
         "number_of_agent_class" (e.G. "number_of_firm") should be difined in
         world_parameters.csv. Alternatively you can also specify number = 1.s
@@ -393,32 +485,49 @@ class WorldEngine:
         Args::
 
          AgentClass: is the name of the AgentClass that you imported
-         [number: number of agents to be created]
+         number (optional): number of agents to be created. or the colum name
+         of the row in world_parameters.csv that contains this number. If not
+         specified the colum name is assumed to be 'number_of_' + agent_name
+         (all lowercase). For example number_of_firm, if the class is called
+         Firm or name = Firm.
+         [group_name (optional): to give the group a different name than the
+         class_name. (do not use this if you have not a specific reason]
 
         Example::
 
-         w.build_agents(Firm,)
+         w.build_agents(Firm, number='number_of_firms')
          # 'number_of_firms' is a column in world_parameters.csv
          w.build_agents(Bank, 1)
+         w.build_agents(CentralBank, number=1)
         """
         #TODO single agent groups get extra name without number
         #TODO when there is a group with a single agent the ask_agent has a confusingname
-        group_name = AgentClass.__name__
-        if number and agents_parameters == None:
-            num_agents_this_group = int(number)
-            self.parameter['number_of_' + group_name.lower()] = num_agents_this_group
-            agents_parameters = [None for _ in range(num_agents_this_group)]
-        elif number == None and agents_parameters == None:
+        if not(group_name):
+            group_name = AgentClass.__name__
+        if number and not(agents_parameters):
+            try:
+                num_agents_this_group = int(number)
+            except ValueError:
+                try:
+                    num_agents_this_group = self.parameter[number]
+                except KeyError:
+                    print('build_agents ' + group_name + ': ' + number +
+                    ' is not a number or a column name in world_parameters.csv'
+                    'or the parameterfile you choose')
+        elif not(number) and not(agents_parameters):
             try:
                 num_agents_this_group = self.parameter['number_of_' + group_name.lower()]
             except KeyError:
                 raise SystemExit('number_of_' + group_name + ' is not in world_parameters.csv')
-            agents_parameters = [None for _ in range(num_agents_this_group)]
-        elif number == None and agents_parameters:
+        elif not(number) and agents_parameters:
             num_agents_this_group = len(agents_parameters)
             self.parameter['number_of_' + group_name.lower()] = num_agents_this_group
         else:
-            raise SystemExit('Either number_or_parameter_column or agents_parameters must be specied, NOT both.')
+            raise SystemExit('build_agents ' + group_name + ': Either '
+                'number_or_parameter_column or agents_parameters must be'
+                'specied, NOT both.')
+        if not(agents_parameters):
+            agents_parameters = [None for _ in range(num_agents_this_group)]
 
         self.num_agents += num_agents_this_group
         self.num_agents_in_group[group_name] = num_agents_this_group
@@ -494,7 +603,7 @@ class WorldEngine:
 
     def _write_description_file(self):
         description = open(
-                os.path.abspath('./Result/' + self.parameter['_path'] + '/description.txt'), 'w')
+                os.path.abspath(self.parameter['_path'] + '/description.txt'), 'w')
         description.write('Path: ' + str(self.parameter['_path']))
         description.write('\n')
         description.write('\n')
@@ -503,7 +612,7 @@ class WorldEngine:
 
     def _displaydescribtion(self):
         os.system('cls' if os.name=='nt' else 'clear')
-        description = open(os.path.abspath('./Result/' + self.parameter['_path'] + '/description.txt'), 'r')
+        description = open(self.parameter['_path'] + '/description.txt', 'r')
         print(description.read())
 
 
