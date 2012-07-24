@@ -6,37 +6,35 @@
 Welcome to ABCE's documentation!
 ================================
 
-ABCE is a Python Agent-Based Complete Economy Protocol. Written by Davoud Taghawi-Nejad.
-
-
-To write a ABCE model there are three steps:
-
- (1) define agent in AgentName.py using the 'Agent.py' prototype
- (2) modify this file
-    (a) import agents
-    (b) define action_list below [('which_agent', 'does_what'), ...]
-    (c) define parameter suchs as the number_of_each_agent_type in parameter.csv
-    (d) build_agents
-    (e) declare some goods as resources
-
-Further instructions contained in the files.
+ABCE is a Python Agent-Based Complete Economy Platform, written by Davoud Taghawi-Nejad.
+The walk through, explains you how to set up a simulation. In the agent model you learn
+how to set up an agent and how to trade with other agents. The households and firms
+classes allow you to produce with different production functions and consume with according
+production functions. In order to get result you need to use the logging and panel data
+creation tools described in Obserning Agents.
 
 
 
 
-Contents:
 
 .. toctree::
    :maxdepth: 4
 
    installation
-
-   start
-   agent
-
-   world
-
+   Walk_through
+   Agent_class
+   Trade
+   Firm
+   Household
+   Messaging
+   Database
+   FirmMultiTechnologies
+   simulation
+   parameters
    simulation_results
+   abcetools
+   files
+   amazon_ec2
 
 Indices and tables
 ==================

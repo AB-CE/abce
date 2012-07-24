@@ -1,0 +1,29 @@
+from __future__ import division
+import abceagent
+from abcetools import is_zero, is_positive, is_negative, NotEnoughGoods
+
+
+class Firm(abceagent.Agent, abceagent.Firm):
+    def __init__(self, world_parameters, own_parameters, _pass_to_engine):
+        """ 1. Gets an initial amount of money
+        2. create a cobb_douglas function: GOOD = 1 * labor ** 1.
+        """
+        abceagent.Agent.__init__(self, *_pass_to_engine)
+        self.create('money', 1)
+        self.set_cobb_douglas("GOOD", 1, {"labor": 1})
+
+    def buy_labor(self):
+        """ recieves the offers and accepts them one by one """
+        oo = self.get_offers("labor")
+        for offer in oo:
+            self.accept(offer)
+
+    def production(self):
+        """ uses all labor that is available and produces
+        according to the set cobb_douglas function """
+        self.produce_use_everything()
+
+    def sell_intermediary_goods(self):
+        """ offers one unit of labor to firm 0, for the price of 1 "money" """
+        self.sell('household', 0, "GOOD", self.possession("GOOD"), 1)
+
