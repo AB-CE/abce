@@ -1,0 +1,867 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>abce &mdash; ABCE 0.2alpha documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.2alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="ABCE 0.2alpha documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">ABCE 0.2alpha documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for abce</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot; The best way to start creating a simulation is by copying the start.py file and other</span>
+<span class="sd">files from &#39;abce/template&#39;. Than you have to change the `sys.path.append(&#39;../abce/lib&#39;)`</span>
+<span class="sd">path so that it leads to the folder in your system.</span>
+
+<span class="sd">To see how to create a simulation read :doc:`Walk_through`. In this module you</span>
+<span class="sd">will find the explenation for the command.</span>
+
+<span class="sd">This is a minimal template for a start.py::</span>
+
+<span class="sd">    from __future__ import division  # makes / division work correct in python !</span>
+<span class="sd">    import sys</span>
+<span class="sd">    sys.path.append(&#39;../abce/lib&#39;)  # &lt;--- ADJUST</span>
+<span class="sd">    from agent import Agent</span>
+<span class="sd">    from abce import *</span>
+
+
+<span class="sd">    for parameters in read_parameters(&#39;simulation_parameters.csv&#39;):</span>
+<span class="sd">        s = Simulation(parameters)</span>
+<span class="sd">        action_list = [</span>
+<span class="sd">        (&#39;all&#39;, &#39;one&#39;),</span>
+<span class="sd">        (&#39;all&#39;, &#39;two&#39;),</span>
+<span class="sd">        (&#39;all&#39;, &#39;three&#39;),</span>
+<span class="sd">        ]</span>
+<span class="sd">        s.add_action_list(action_list)</span>
+<span class="sd">        s.build_agents(Agent, 2)</span>
+<span class="sd">        s.run()</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">csv</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">zmq</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">from</span> <span class="nn">abcetools</span> <span class="kn">import</span> <span class="n">agent_name</span><span class="p">,</span> <span class="n">group_address</span>
+<span class="kn">import</span> <span class="nn">multiprocessing</span>
+<span class="kn">import</span> <span class="nn">abce_db</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+
+
+<div class="viewcode-block" id="read_parameters"><a class="viewcode-back" href="../simulation.html#abce.read_parameters">[docs]</a><span class="k">def</span> <span class="nf">read_parameters</span><span class="p">(</span><span class="n">parameters_file</span><span class="o">=</span><span class="s">&#39;simulation_parameters.csv&#39;</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s">&#39;</span><span class="se">\t</span><span class="s">&#39;</span><span class="p">,</span> <span class="n">quotechar</span><span class="o">=</span><span class="s">&#39;&quot;&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; reads a parameter file line by line and gives a list. Where each line</span>
+<span class="sd">    contains all parameters for a particular run of the simulation.</span>
+
+<span class="sd">    Args:</span>
+
+<span class="sd">        parameters_file (optional):</span>
+<span class="sd">            filename of the csv file. (default:`simulation_parameters.csv`)</span>
+
+<span class="sd">        delimiter (optional):</span>
+<span class="sd">            delimiter of the csv file. (default: tabs)</span>
+
+<span class="sd">        quotechar (optional):</span>
+<span class="sd">            for single entries that contain the delimiter. (default: &quot;)</span>
+<span class="sd">            See python csv lib http://docs.python.org/library/csv.html</span>
+
+
+<span class="sd">    This code reads the file and runs a simulation for every line::</span>
+
+<span class="sd">     for parameter in read_parameters(&#39;simulation_parameters.csv&#39;):</span>
+<span class="sd">        w = Simulation(parameter)</span>
+<span class="sd">        w.build_agents(Agent, &#39;agent&#39;, &#39;num_agents&#39;)</span>
+<span class="sd">        w.run()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s">&quot;%Y-%m-</span><span class="si">%d</span><span class="s">_%H:%M&quot;</span><span class="p">)</span>
+    <span class="n">parameter_array</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">parameters_file</span><span class="p">),</span>
+                                <span class="n">delimiter</span><span class="o">=</span><span class="n">delimiter</span><span class="p">,</span> <span class="n">quotechar</span><span class="o">=</span><span class="n">quotechar</span><span class="p">)</span>
+    <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">key</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">reader</span><span class="o">.</span><span class="n">next</span><span class="p">()]</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
+        <span class="n">cells</span> <span class="o">=</span> <span class="p">[</span><span class="n">_number_or_string</span><span class="p">(</span><span class="n">cell</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span> <span class="k">for</span> <span class="n">cell</span> <span class="ow">in</span> <span class="n">line</span><span class="p">]</span>
+        <span class="n">parameter</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="n">cells</span><span class="p">))</span>
+        <span class="k">if</span> <span class="s">&#39;name&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="s">&#39;No &quot;name&quot; column in &#39;</span> <span class="o">+</span> <span class="n">parameters_file</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s">&#39;num_rounds&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="s">&#39;No &quot;num_rounds&quot; column in &#39;</span> <span class="o">+</span> <span class="n">parameters_file</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s">&#39;name&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">parameter</span><span class="p">:</span>
+            <span class="n">parameter</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">parameter</span><span class="p">[</span><span class="s">&#39;Name&#39;</span><span class="p">]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">parameter</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">parameter</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s">&quot;&quot;&quot;</span><span class="se">\&quot;</span><span class="s">&quot;&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s">&quot;&quot;&quot;</span><span class="se">\&#39;</span><span class="s">&quot;&quot;&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&quot;no &#39;name&#39; (lowercase) column in &quot;</span> <span class="o">+</span> <span class="n">parameters_file</span><span class="p">)</span>
+            <span class="n">parameter</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;abce&#39;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">parameter</span><span class="p">[</span><span class="s">&#39;random_seed&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">parameter</span><span class="p">[</span><span class="s">&#39;random_seed&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">parameter</span><span class="p">[</span><span class="s">&#39;random_seed&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">parameter</span><span class="p">[</span><span class="s">&#39;_path&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;./result/&#39;</span> <span class="o">+</span> <span class="n">parameter</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;_&#39;</span> <span class="o">+</span> <span class="n">start_time</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="s">&#39;./result/&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">parameter</span><span class="p">[</span><span class="s">&#39;_path&#39;</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+            <span class="n">parameter</span><span class="p">[</span><span class="s">&#39;_path&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">parameter</span><span class="p">[</span><span class="s">&#39;_path&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;a&#39;</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">parameter</span><span class="p">[</span><span class="s">&#39;_path&#39;</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">parameter</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s">&#39;&#39;</span> <span class="ow">or</span> <span class="n">key</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;#&#39;</span> <span class="ow">or</span> <span class="n">key</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;_&#39;</span><span class="p">:</span>
+                <span class="k">del</span> <span class="n">key</span>
+        <span class="n">parameter_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">parameter_array</span>
+    <span class="c">#TODO put the initialisation in the init so that it can eat a dict</span>
+
+
+</div>
+<div class="viewcode-block" id="Simulation"><a class="viewcode-back" href="../simulation.html#abce.Simulation">[docs]</a><span class="k">class</span> <span class="nc">Simulation</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; This class in which the simulation is run. It takes</span>
+<span class="sd">    the simulation_parameters to set up the simulation. Actions and agents have to be</span>
+<span class="sd">    added. databases and resource declarations can be added. Than run runs</span>
+<span class="sd">    the simulation.</span>
+
+<span class="sd">    Usually the parameters are specified in a tab separated csv file. The first</span>
+<span class="sd">    line are column headers.</span>
+
+<span class="sd">    Args::</span>
+
+<span class="sd">     simulation_parameters: a dictionary with all parameters. &quot;name&quot; and</span>
+<span class="sd">     &quot;num_rounds&quot; are mandatory.</span>
+
+
+<span class="sd">    Example::</span>
+<span class="sd">     for simulation_parameters in read_parameters(&#39;simulation_parameters.csv&#39;):</span>
+<span class="sd">        action_list = [</span>
+<span class="sd">        (&#39;household&#39;, &#39;recieve_connections&#39;),</span>
+<span class="sd">        (&#39;household&#39;, &#39;offer_capital&#39;),</span>
+<span class="sd">        (&#39;firm&#39;, &#39;buy_capital&#39;),</span>
+<span class="sd">        (&#39;firm&#39;, &#39;production&#39;),</span>
+<span class="sd">        (&#39;household&#39;, &#39;buy_product&#39;)</span>
+<span class="sd">        &#39;after_sales_before_consumption&#39;</span>
+<span class="sd">        (&#39;household&#39;, &#39;consume&#39;)</span>
+<span class="sd">        ]</span>
+<span class="sd">        w = Simulation(simulation_parameters)</span>
+<span class="sd">        w.add_action_list(action_list)</span>
+<span class="sd">        w.build_agents(Firm, &#39;firm&#39;, &#39;num_firms&#39;)</span>
+<span class="sd">        w.build_agents(Household, &#39;household&#39;, &#39;num_households&#39;)</span>
+
+<span class="sd">        w.declare_round_endowment(resource=&#39;labor_endowment&#39;, productivity=1, product=&#39;labor&#39;)</span>
+<span class="sd">        w.declare_round_endowment(resource=&#39;capital_endowment&#39;, productivity=1, product=&#39;capital&#39;)</span>
+
+<span class="sd">        w.panel_data(&#39;firm&#39;, command=&#39;after_sales_before_consumption&#39;)</span>
+
+<span class="sd">        w.run()</span>
+
+
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simulation_parameters</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simulation_parameters</span> <span class="o">=</span> <span class="n">simulation_parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_action_groups</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">agent_list</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_action_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_resource_commands</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_perish_commands</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_resource_command_group</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_db_commands</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_agents</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_agents_in_group</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">context</span> <span class="o">=</span> <span class="n">zmq</span><span class="o">.</span><span class="n">Context</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">commands</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">zmq</span><span class="o">.</span><span class="n">PUB</span><span class="p">)</span>
+        <span class="n">_Communication</span><span class="p">()</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c"># TODO</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__command_addresse</span> <span class="o">=</span> <span class="s">&quot;ipc://commands.ipc&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__command_addresse</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ready</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">zmq</span><span class="o">.</span><span class="n">PULL</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ready</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s">&quot;ipc://ready.ipc&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">communication_channel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">zmq</span><span class="o">.</span><span class="n">PUSH</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">communication_channel</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s">&quot;ipc://frontend.ipc&quot;</span><span class="p">)</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c"># TODO</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_register_action_groups</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_db</span> <span class="o">=</span> <span class="n">abce_db</span><span class="o">.</span><span class="n">Database</span><span class="p">(</span><span class="n">simulation_parameters</span><span class="p">[</span><span class="s">&#39;_path&#39;</span><span class="p">],</span> <span class="s">&#39;database&#39;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">trade_logging_mode</span> <span class="o">=</span> <span class="n">simulation_parameters</span><span class="p">[</span><span class="s">&#39;trade_logging&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">trade_logging_mode</span> <span class="o">=</span> <span class="s">&#39;individual&#39;</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&quot;&#39;trade_logging&#39; in simulation_parameters.csv not set&quot;</span>
+                <span class="s">&quot;, default to &#39;individual&#39;, possible values &quot;</span>
+                <span class="s">&quot;(&#39;group&#39; (fast) or &#39;individual&#39; (slow) or &#39;off&#39;)&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trade_logging_mode</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;individual&#39;</span><span class="p">,</span> <span class="s">&#39;group&#39;</span><span class="p">,</span> <span class="s">&#39;off&#39;</span><span class="p">]):</span>
+            <span class="k">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trade_logging_mode</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">trade_logging_mode</span><span class="p">,</span> <span class="s">&#39;error&#39;</span><span class="p">)</span>
+            <span class="ne">SystemExit</span><span class="p">(</span><span class="s">&quot;&#39;trade_logging&#39; in simulation_parameters.csv can be &quot;</span>
+                        <span class="s">&quot;&#39;group&#39; (fast) or &#39;individual&#39; (slow) or &#39;off&#39;&quot;</span>
+                        <span class="s">&quot;&gt;&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">trade_logging_mode</span> <span class="o">+</span> <span class="s">&quot;&lt; not accepted&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">trade_logging_mode</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;individual&#39;</span><span class="p">,</span> <span class="s">&#39;group&#39;</span><span class="p">,</span> <span class="s">&#39;off&#39;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="Simulation.add_action_list"><a class="viewcode-back" href="../simulation.html#abce.Simulation.add_action_list">[docs]</a>    <span class="k">def</span> <span class="nf">add_action_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action_list</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; add an `action_list`, which is a list of either:</span>
+
+<span class="sd">        - tuples of an goup_names and and action</span>
+<span class="sd">        - a single command string for panel_data or follow_agent</span>
+<span class="sd">        - [tuples of an agent name and and action, currently not unit tested!]</span>
+
+
+<span class="sd">        Example::</span>
+
+<span class="sd">         action_list = [</span>
+<span class="sd">            repeat([</span>
+<span class="sd">                    (&#39;Firm&#39;, &#39;sell&#39;),</span>
+<span class="sd">                    (&#39;Household&#39;, &#39;buy&#39;)</span>
+<span class="sd">                ],</span>
+<span class="sd">                repetitions=10</span>
+<span class="sd">            ),</span>
+<span class="sd">            (&#39;Household_03&#39;, &#39;dance&#39;)</span>
+<span class="sd">            &#39;panel_data_end_of_round_befor consumption&#39;,</span>
+<span class="sd">            (&#39;Household&#39;, &#39;consume&#39;),</span>
+<span class="sd">            ]</span>
+<span class="sd">         w.add_action_list(action_list)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_list</span> <span class="o">=</span> <span class="n">action_list</span>
+</div>
+<div class="viewcode-block" id="Simulation.add_action_list_from_table"><a class="viewcode-back" href="../simulation.html#abce.Simulation.add_action_list_from_table">[docs]</a>    <span class="k">def</span> <span class="nf">add_action_list_from_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The action list can also be declared in the simulation_parameters.csv</span>
+<span class="sd">        file. Which allows you to run a batch of simulations with different</span>
+<span class="sd">        orders. In simulation_parameters.csv there must be a column with which</span>
+<span class="sd">        contains the a declaration of the action lists:</span>
+
+<span class="sd">        +-------------+-------------+--------------------------------------------+-----------+</span>
+<span class="sd">        | num_rounds  | num_agents  | action_list                                | endowment |</span>
+<span class="sd">        +=============+=============+============================================+===========+</span>
+<span class="sd">        | 1000,       | 10,         | [ (&#39;firm&#39;, &#39;sell&#39;), (&#39;household&#39;, &#39;buy&#39;)], | (5,5)     |</span>
+<span class="sd">        +-------------+-------------+--------------------------------------------+-----------+</span>
+<span class="sd">        | 1000,       | 10,         | [ (&#39;firm&#39;, &#39;buf&#39;), (&#39;household&#39;, &#39;sell&#39;)], | (5,5)     |</span>
+<span class="sd">        +-------------+-------------+--------------------------------------------+-----------+</span>
+<span class="sd">        | 1000,       | 10,         | [ (&#39;firm&#39;, &#39;sell&#39;),                        |           |</span>
+<span class="sd">        |             |             | (&#39;household&#39;, &#39;calculate_net_wealth&#39;),     |           |</span>
+<span class="sd">        |             |             | (&#39;household&#39;, &#39;buy&#39;)],                     | (5,5)     |</span>
+<span class="sd">        +-------------+-------------+--------------------------------------------+-----------+</span>
+
+<span class="sd">        The command::</span>
+
+<span class="sd">            self.add_action_list_from_table(&#39;parameters[&#39;action_list&#39;])</span>
+
+<span class="sd">        Args::</span>
+
+<span class="sd">            parameter</span>
+<span class="sd">                a string that contains the action_list. The string can be read</span>
+<span class="sd">                from the simulation_parameters file: parameters[&#39;action_list&#39;], where action_list</span>
+<span class="sd">                is the column header in simulation_parameters.</span>
+
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_action_list</span><span class="p">(</span><span class="nb">eval</span><span class="p">(</span><span class="n">parameter</span><span class="p">))</span>
+        <span class="c">#TODO test</span>
+</div>
+    <span class="k">def</span> <span class="nf">_register_action_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; makes methods accessable for the action_list &quot;&quot;&quot;</span>
+        <span class="n">reserved_words</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;build_agents&#39;</span><span class="p">,</span> <span class="s">&#39;run&#39;</span><span class="p">,</span> <span class="s">&#39;ask_agent&#39;</span><span class="p">,</span>
+                <span class="s">&#39;ask_each_agent_in&#39;</span><span class="p">,</span> <span class="s">&#39;register_action_groups&#39;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmembers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">ismethod</span><span class="p">(</span><span class="n">method</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="ow">and</span> <span class="n">method</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s">&#39;_&#39;</span>
+                    <span class="ow">and</span> <span class="n">method</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">reserved_words</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_action_groups</span><span class="p">[</span><span class="n">method</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">method</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_action_groups</span><span class="p">[</span><span class="s">&#39;_advance_round_agents&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_advance_round_agents</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_action_groups</span><span class="p">[</span><span class="s">&#39;_advance_round_db&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_advance_round_db</span>
+
+<div class="viewcode-block" id="Simulation.declare_round_endowment"><a class="viewcode-back" href="../simulation.html#abce.Simulation.declare_round_endowment">[docs]</a>    <span class="k">def</span> <span class="nf">declare_round_endowment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resource</span><span class="p">,</span> <span class="n">productivity</span><span class="p">,</span> <span class="n">product</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="s">&#39;default_resource&#39;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="s">&#39;all&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Every round the agent gets &#39;productivity&#39; units of good &#39;product&#39; for</span>
+<span class="sd">        every &#39;resource&#39; he possesses.</span>
+
+<span class="sd">        By default the this happens at the beginning of the round. You can change this.</span>
+<span class="sd">        Insert the command string you chose it self.action_list. One command can</span>
+<span class="sd">        be associated with several resources.</span>
+
+<span class="sd">        Round endowments can be goup specific, that means that when somebody except</span>
+<span class="sd">        this group holds them they do not produce. The default is &#39;all&#39;. Restricting</span>
+<span class="sd">        this to a group could have small speed gains.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">productivity</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">productivity</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">command</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resource_commands</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_resource_commands</span><span class="p">[</span><span class="n">command</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="n">command</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resource_command_group</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resource_command_group</span><span class="p">[</span><span class="n">command</span><span class="p">]</span> <span class="o">!=</span> <span class="n">group</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="s">&#39;Different groups assigned to the same command&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_resource_command_group</span><span class="p">[</span><span class="n">command</span><span class="p">]</span> <span class="o">=</span> <span class="n">group</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_resource_commands</span><span class="p">[</span><span class="n">command</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">resource</span><span class="p">,</span> <span class="n">productivity</span><span class="p">,</span> <span class="n">product</span><span class="p">])</span>
+</div>
+    <span class="k">def</span> <span class="nf">_make_resource_command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">):</span>
+        <span class="n">resources_in_this_command</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resource_commands</span><span class="p">[</span><span class="n">command</span><span class="p">][:]</span>
+        <span class="n">group</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resource_command_group</span><span class="p">[</span><span class="n">command</span><span class="p">]</span>
+        <span class="n">group_and_method</span> <span class="o">=</span> <span class="p">[</span><span class="n">group</span><span class="p">,</span> <span class="s">&#39;_produce_resource_rent_and_labor&#39;</span><span class="p">]</span>
+
+        <span class="k">def</span> <span class="nf">send_resource_command</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">productivity</span> <span class="ow">in</span> <span class="n">resources_in_this_command</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="o">.</span><span class="n">send_multipart</span><span class="p">(</span><span class="n">group_and_method</span> <span class="o">+</span> <span class="n">productivity</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_add_agents_to_wait_for</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_agents_in_group</span><span class="p">[</span><span class="n">group</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">send_resource_command</span>
+        <span class="c">#TODO could be made much faster by sending all resource simultaneously</span>
+        <span class="c">#as in _make_perish_command</span>
+
+<div class="viewcode-block" id="Simulation.declare_perishable"><a class="viewcode-back" href="../simulation.html#abce.Simulation.declare_perishable">[docs]</a>    <span class="k">def</span> <span class="nf">declare_perishable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">good</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="s">&#39;perish_at_the_round_end&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; This good only lasts one round and than disappers. For example</span>
+<span class="sd">        labor, if the labor is not used today todays labor is lost.</span>
+<span class="sd">        In combination with resoure this is useful to model labor or capital.</span>
+
+<span class="sd">        In the example below a worker has an endowment of labor and capital.</span>
+<span class="sd">        Every round he can sell his labor service and rent his capital. If</span>
+<span class="sd">        he does not the labor service for this round and the rent is lost.</span>
+
+<span class="sd">        Args::</span>
+
+<span class="sd">         good: the good that perishes</span>
+<span class="sd">         [command: In order to perish at another point in time you can choose</span>
+<span class="sd">         a commmand and insert that command in the action list.</span>
+
+<span class="sd">         Example::</span>
+
+<span class="sd">             w.declare_round_endowment(resource=&#39;LAB_endowment&#39;, productivity=1000, product=&#39;LAB&#39;)</span>
+<span class="sd">             w.declare_round_endowment(resource=&#39;CAP_endowment&#39;, productivity=1000, product=&#39;CAP&#39;)</span>
+<span class="sd">             w.declare_perishable(good=&#39;LAB&#39;)</span>
+<span class="sd">             w.declare_perishable(good=&#39;CAP&#39;)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">command</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perish_commands</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_perish_commands</span><span class="p">[</span><span class="n">command</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_perish_commands</span><span class="p">[</span><span class="n">command</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">good</span><span class="p">)</span>
+</div>
+    <span class="k">def</span> <span class="nf">_make_perish_command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">):</span>
+        <span class="n">goods</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perish_commands</span><span class="p">[</span><span class="n">command</span><span class="p">][:]</span>
+
+        <span class="k">def</span> <span class="nf">send_perish_command</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="o">.</span><span class="n">send_multipart</span><span class="p">([</span><span class="s">&#39;all&#39;</span><span class="p">,</span> <span class="s">&#39;_perish&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">goods</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_add_agents_to_wait_for</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_agents_in_group</span><span class="p">[</span><span class="s">&#39;all&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">send_perish_command</span>
+
+    <span class="c">#TODO also for other variables</span>
+<div class="viewcode-block" id="Simulation.panel_data"><a class="viewcode-back" href="../simulation.html#abce.Simulation.panel_data">[docs]</a>    <span class="k">def</span> <span class="nf">panel_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="s">&#39;goods&#39;</span><span class="p">,</span> <span class="n">typ</span><span class="o">=</span><span class="s">&#39;FLOAT&#39;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="s">&#39;round_end&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; writes variables of a group of agents into the database, by default</span>
+<span class="sd">        the db write is at the end of the round. You can also specify a command</span>
+<span class="sd">        and insert the command you choose in the action_list.</span>
+<span class="sd">        If you choose a custom command, you can declare a method that</span>
+<span class="sd">        returns the variable you want to track. This function in the class of the</span>
+<span class="sd">        agent must have the same name as the command.</span>
+
+<span class="sd">        You can use the same command for several groups, that report at the</span>
+<span class="sd">        same time.</span>
+
+
+<span class="sd">        Args:</span>
+<span class="sd">            agentgroup:</span>
+<span class="sd">                can be either a group or &#39;all&#39; for all agents</span>
+<span class="sd">            variables:</span>
+<span class="sd">                default=&#39;goods&#39; monitors all the goods the agent owns</span>
+<span class="sd">                you can insert any variable your agent possesses. For</span>
+<span class="sd">                self.knows_latin you insert &#39;knows_latin&#39;. If your agent</span>
+<span class="sd">                has self.technology you can use &#39;technology[&#39;formula&#39;]&#39;</span>
+<span class="sd">                (typ=&#39;CHAR(50)&#39;.</span>
+<span class="sd">            typ:</span>
+<span class="sd">                the type of the sql variable (FLOAT, INT, CHAR(length))</span>
+<span class="sd">                command</span>
+
+<span class="sd">        Example in start.py::</span>
+
+<span class="sd">         w.panel_data(group=&#39;Firm&#39;, command=&#39;after_production&#39;)</span>
+
+<span class="sd">         or</span>
+
+<span class="sd">         w.panel_data(agents_list=[agent_name(&#39;firm&#39;, 5), agent_name(&#39;household&#39;, 10)])</span>
+
+<span class="sd">        Optional in the agent::</span>
+
+<span class="sd">            class Firm(AgentEngine):</span>
+
+<span class="sd">            ...</span>
+<span class="sd">            def after_production(self):</span>
+<span class="sd">                track = {}</span>
+<span class="sd">                track[&#39;t&#39;] = &#39;yes&#39;</span>
+<span class="sd">                for key in self.prices:</span>
+<span class="sd">                    track[&#39;p_&#39; + key] = self.prices[key]</span>
+<span class="sd">                track.update(self.product[key])</span>
+<span class="sd">                return track</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">variables</span> <span class="o">!=</span> <span class="s">&#39;goods&#39;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="s">&#39;Not implemented&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">command</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_db_commands</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_db_commands</span><span class="p">[</span><span class="n">command</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_db_commands</span><span class="p">[</span><span class="n">command</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">group</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span> <span class="n">typ</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="o">.</span><span class="n">add_panel</span><span class="p">(</span><span class="n">group</span><span class="p">,</span> <span class="n">command</span><span class="p">)</span>
+</div>
+    <span class="k">def</span> <span class="nf">_make_db_command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">):</span>
+        <span class="n">db_in_this_command</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_db_commands</span><span class="p">[</span><span class="n">command</span><span class="p">][:]</span>
+
+        <span class="k">def</span> <span class="nf">send_db_command</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">db_good</span> <span class="ow">in</span> <span class="n">db_in_this_command</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="o">.</span><span class="n">send_multipart</span><span class="p">([</span><span class="n">group_address</span><span class="p">(</span><span class="n">db_good</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="s">&#39;_db_panel&#39;</span><span class="p">,</span> <span class="n">command</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_add_agents_to_wait_for</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_agents_in_group</span><span class="p">[</span><span class="n">db_good</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+        <span class="k">return</span> <span class="n">send_db_command</span>
+
+    <span class="k">def</span> <span class="nf">_process_action_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action_list</span><span class="p">):</span>
+        <span class="n">processed_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="n">action_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">action</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">tuple</span><span class="p">:</span>
+                <span class="n">action_name</span> <span class="o">=</span> <span class="s">&#39;_&#39;</span> <span class="o">+</span> <span class="n">action</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;|&#39;</span> <span class="o">+</span> <span class="n">action</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_action_groups</span><span class="p">[</span><span class="n">action_name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_ask_each_agent_in</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+                <span class="n">processed_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">action_name</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="n">repeat</span><span class="p">):</span>
+                <span class="n">nested_action_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_action_list</span><span class="p">(</span><span class="n">action</span><span class="o">.</span><span class="n">action_list</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">action</span><span class="o">.</span><span class="n">repetitions</span><span class="p">):</span>
+                    <span class="n">processed_list</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">nested_action_list</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">processed_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">processed_list</span>
+
+<div class="viewcode-block" id="Simulation.run"><a class="viewcode-back" href="../simulation.html#abce.Simulation.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; This runs the simulation &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">agent_list</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="s">&#39;No Agents Created&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">action_list</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_action_list</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="s">&#39;No action_list declared&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_action_list</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_action_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_action_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">action_list</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">command</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_db_commands</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_action_groups</span><span class="p">[</span><span class="n">command</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_db_command</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">command</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_action_list</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_action_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">command</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resource_commands</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_action_groups</span><span class="p">[</span><span class="n">command</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_resource_command</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">command</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_action_list</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_action_list</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">command</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">command</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perish_commands</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_action_groups</span><span class="p">[</span><span class="n">command</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_perish_command</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">command</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_action_list</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_action_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_action_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;_advance_round_agents&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_action_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;_advance_round_db&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_write_description_file</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_displaydescribtion</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_agents_to_wait_for</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_agents</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wait_for_agents</span><span class="p">()</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">year</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">simulation_parameters</span><span class="p">[</span><span class="s">&#39;num_rounds&#39;</span><span class="p">]):</span>
+                <span class="k">print</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">Round&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%3d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">year</span><span class="p">))</span>
+                <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_action_list</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_action_groups</span><span class="p">[</span><span class="n">action</span><span class="p">]()</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_wait_for_agents_than_signal_end_of_comm</span><span class="p">()</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">ask_each_agent_in</span><span class="p">(</span><span class="s">&#39;all&#39;</span><span class="p">,</span> <span class="s">&#39;_clearing__end_of_subround&#39;</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_wait_for_agents</span><span class="p">()</span>
+        <span class="k">finally</span><span class="p">:</span>
+
+            <span class="c">#TODO actions that have no interaction need to signal in order to skip communication step</span>
+
+            <span class="k">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%6.2f</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="o">.</span><span class="n">send_multipart</span><span class="p">([</span><span class="s">&quot;all&quot;</span><span class="p">,</span> <span class="s">&quot;!&quot;</span><span class="p">,</span> <span class="s">&quot;die&quot;</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">agent</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">agent_list</span><span class="o">.</span><span class="n">values</span><span class="p">())):</span>
+                <span class="k">while</span> <span class="n">agent</span><span class="o">.</span><span class="n">is_alive</span><span class="p">():</span>
+                    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">communication_channel</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s">&quot;db_agent:close&quot;</span><span class="p">)</span>
+            <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="o">.</span><span class="n">is_alive</span><span class="p">():</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.05</span><span class="p">)</span>
+            <span class="n">abce_db</span><span class="o">.</span><span class="n">convert_to_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">simulation_parameters</span><span class="p">[</span><span class="s">&#39;_path&#39;</span><span class="p">],</span> <span class="s">&#39;database&#39;</span><span class="p">)</span>
+</div>
+    <span class="k">def</span> <span class="nf">_make_ask_each_agent_in</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+        <span class="n">group_address_var</span> <span class="o">=</span> <span class="n">group_address</span><span class="p">(</span><span class="n">action</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">number</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_agents_in_group</span><span class="p">[</span><span class="n">action</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+
+        <span class="k">def</span> <span class="nf">ask_each_agent_with_address</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_add_agents_to_wait_for</span><span class="p">(</span><span class="n">number</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="o">.</span><span class="n">send_multipart</span><span class="p">([</span><span class="n">group_address_var</span><span class="p">,</span> <span class="n">action</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+        <span class="k">return</span> <span class="n">ask_each_agent_with_address</span>
+
+<div class="viewcode-block" id="Simulation.ask_each_agent_in"><a class="viewcode-back" href="../simulation.html#abce.Simulation.ask_each_agent_in">[docs]</a>    <span class="k">def</span> <span class="nf">ask_each_agent_in</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group_name</span><span class="p">,</span> <span class="n">command</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; This is only relevant when you derive your custom world/swarm not</span>
+<span class="sd">        in start.py</span>
+<span class="sd">        applying a method to a group of agents group_name, method.</span>
+
+<span class="sd">        Args::</span>
+
+<span class="sd">         agent_group: using group_address(&#39;group_name&#39;, number)</span>
+<span class="sd">         method: as string</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_agents_to_wait_for</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_agents_in_group</span><span class="p">[</span><span class="n">group_name</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="o">.</span><span class="n">send_multipart</span><span class="p">([</span><span class="n">group_address</span><span class="p">(</span><span class="n">group_name</span><span class="p">),</span> <span class="n">command</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="Simulation.ask_agent"><a class="viewcode-back" href="../simulation.html#abce.Simulation.ask_agent">[docs]</a>    <span class="k">def</span> <span class="nf">ask_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">,</span> <span class="n">command</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; This is only relevant when you derive your custom world/swarm not</span>
+<span class="sd">        in start.py</span>
+<span class="sd">        applying a method to a single agent</span>
+
+<span class="sd">        Args::</span>
+
+<span class="sd">         agent_name as string or using agent_name(&#39;group_name&#39;, number)</span>
+<span class="sd">         method: as string</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_agents_to_wait_for</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="o">.</span><span class="n">send_multipart</span><span class="p">([</span><span class="n">agent</span><span class="p">,</span> <span class="n">command</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="Simulation.build_agents"><a class="viewcode-back" href="../simulation.html#abce.Simulation.build_agents">[docs]</a>    <span class="k">def</span> <span class="nf">build_agents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">AgentClass</span><span class="p">,</span>  <span class="n">number</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">agents_parameters</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; This method creates agents, the first parameter is the agent class.</span>
+<span class="sd">        &quot;num_agent_class&quot; (e.G. &quot;num_firm&quot;) should be difined in</span>
+<span class="sd">        simulation_parameters.csv. Alternatively you can also specify number = 1.s</span>
+
+<span class="sd">        Args::</span>
+
+<span class="sd">         AgentClass: is the name of the AgentClass that you imported</span>
+<span class="sd">         number (optional): number of agents to be created. or the colum name</span>
+<span class="sd">         of the row in simulation_parameters.csv that contains this number. If not</span>
+<span class="sd">         specified the colum name is assumed to be &#39;num_&#39; + agent_name</span>
+<span class="sd">         (all lowercase). For example num_firm, if the class is called</span>
+<span class="sd">         Firm or name = Firm.</span>
+<span class="sd">         [group_name (optional): to give the group a different name than the</span>
+<span class="sd">         class_name. (do not use this if you have not a specific reason]</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">         w.build_agents(Firm, number=&#39;num_firms&#39;)</span>
+<span class="sd">         # &#39;num_firms&#39; is a column in simulation_parameters.csv</span>
+<span class="sd">         w.build_agents(Bank, 1)</span>
+<span class="sd">         w.build_agents(CentralBank, number=1)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c">#TODO single agent groups get extra name without number</span>
+        <span class="c">#TODO when there is a group with a single agent the ask_agent has a confusingname</span>
+        <span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">group_name</span><span class="p">):</span>
+            <span class="n">group_name</span> <span class="o">=</span> <span class="n">AgentClass</span><span class="o">.</span><span class="n">__name__</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">number</span> <span class="ow">and</span> <span class="ow">not</span><span class="p">(</span><span class="n">agents_parameters</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">num_agents_this_group</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">number</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">num_agents_this_group</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">simulation_parameters</span><span class="p">[</span><span class="n">number</span><span class="p">]</span>
+                <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                    <span class="ne">SystemExit</span><span class="p">(</span><span class="s">&#39;build_agents &#39;</span> <span class="o">+</span> <span class="n">group_name</span> <span class="o">+</span> <span class="s">&#39;: &#39;</span> <span class="o">+</span> <span class="n">number</span> <span class="o">+</span>
+                    <span class="s">&#39; is not a number or a column name in simulation_parameters.csv&#39;</span>
+                    <span class="s">&#39;or the parameterfile you choose&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="ow">not</span><span class="p">(</span><span class="n">number</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span><span class="p">(</span><span class="n">agents_parameters</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">num_agents_this_group</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">simulation_parameters</span><span class="p">[</span><span class="s">&#39;num_&#39;</span> <span class="o">+</span> <span class="n">group_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="s">&#39;num_&#39;</span> <span class="o">+</span> <span class="n">group_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">+</span> <span class="s">&#39; is not in simulation_parameters.csv&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="ow">not</span><span class="p">(</span><span class="n">number</span><span class="p">)</span> <span class="ow">and</span> <span class="n">agents_parameters</span><span class="p">:</span>
+            <span class="n">num_agents_this_group</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">agents_parameters</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">simulation_parameters</span><span class="p">[</span><span class="s">&#39;num_&#39;</span> <span class="o">+</span> <span class="n">group_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span> <span class="o">=</span> <span class="n">num_agents_this_group</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="s">&#39;build_agents &#39;</span> <span class="o">+</span> <span class="n">group_name</span> <span class="o">+</span> <span class="s">&#39;: Either &#39;</span>
+                <span class="s">&#39;number_or_parameter_column or agents_parameters must be&#39;</span>
+                <span class="s">&#39;specied, NOT both.&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">agents_parameters</span><span class="p">):</span>
+            <span class="n">agents_parameters</span> <span class="o">=</span> <span class="p">[</span><span class="bp">None</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_agents_this_group</span><span class="p">)]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_agents</span> <span class="o">+=</span> <span class="n">num_agents_this_group</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_agents_in_group</span><span class="p">[</span><span class="n">group_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">num_agents_this_group</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_agents_in_group</span><span class="p">[</span><span class="s">&#39;all&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_agents</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">agent_list</span><span class="p">[</span><span class="n">group_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">idn</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_agents_this_group</span><span class="p">):</span>
+            <span class="n">agent</span> <span class="o">=</span> <span class="n">AgentClass</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">simulation_parameters</span><span class="p">,</span> <span class="n">agents_parameters</span><span class="p">[</span><span class="n">idn</span><span class="p">],</span> <span class="p">[</span><span class="n">idn</span><span class="p">,</span> <span class="n">group_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__command_addresse</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">trade_logging_mode</span><span class="p">])</span>
+            <span class="n">agent</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">agent_name</span><span class="p">(</span><span class="n">group_name</span><span class="p">,</span> <span class="n">idn</span><span class="p">)</span>
+            <span class="n">agent</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">agent_list</span><span class="p">[</span><span class="n">group_name</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">agent</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Simulation.build_agents_from_file"><a class="viewcode-back" href="../simulation.html#abce.Simulation.build_agents_from_file">[docs]</a>    <span class="k">def</span> <span class="nf">build_agents_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">AgentClass</span><span class="p">,</span> <span class="n">parameters_file</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">multiply</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s">&#39;</span><span class="se">\t</span><span class="s">&#39;</span><span class="p">,</span> <span class="n">quotechar</span><span class="o">=</span><span class="s">&#39;&quot;&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; This command builds agents of the class AgentClass from an csv file.</span>
+<span class="sd">        This way you can build agents and give every single one different</span>
+<span class="sd">        parameters.</span>
+
+<span class="sd">        The file must be tab separated. The first line contains the column</span>
+<span class="sd">        headers. The first column &quot;agent_class&quot; specifies the agent_class. The</span>
+<span class="sd">        second column &quot;number&quot; (optional) allows you to create more than one</span>
+<span class="sd">        agent of this type. The other columns are parameters that you can</span>
+<span class="sd">        access in own_parameters the __init__ function of the agent.</span>
+
+<span class="sd">        Agent created from a csv-file::</span>
+
+<span class="sd">         class Agent(AgentEngine):</span>
+<span class="sd">            def __init__(self, simulation_parameter, own_parameters, _pass_to_engine):</span>
+<span class="sd">                AgentEngine.__init__(self, *_pass_to_engine)</span>
+<span class="sd">                self.size = own_parameters[&#39;firm_size&#39;]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c">#TODO declare all self.simulation_parameters[&#39;num_XXXXX&#39;], when this is called the first time</span>
+        <span class="k">if</span> <span class="n">parameters_file</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">parameters_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">simulation_parameters</span><span class="p">[</span><span class="s">&#39;agent_parameters_file&#39;</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="n">parameters_file</span> <span class="o">=</span> <span class="s">&#39;agents_parameters.csv&#39;</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_agent_parameters</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">parameters_file</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_agent_parameters</span><span class="p">:</span>
+                <span class="ne">SystemExit</span><span class="p">(</span><span class="s">&#39;All agents must be declared in the same agent_parameters.csv file&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_agent_parameters</span> <span class="o">=</span> <span class="n">parameters_file</span>
+
+        <span class="n">agent_class</span> <span class="o">=</span> <span class="n">AgentClass</span><span class="o">.</span><span class="n">__name__</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="n">agents_parameters</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">agent_file</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">parameters_file</span><span class="p">),</span> <span class="n">delimiter</span><span class="o">=</span><span class="n">delimiter</span><span class="p">,</span> <span class="n">quotechar</span><span class="o">=</span><span class="n">quotechar</span><span class="p">)</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">key</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">agent_file</span><span class="o">.</span><span class="n">next</span><span class="p">()]</span>
+        <span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="nb">set</span><span class="p">((</span><span class="s">&#39;agent_class&#39;</span><span class="p">,</span> <span class="s">&#39;number&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">keys</span><span class="p">)):</span>
+            <span class="ne">SystemExit</span><span class="p">(</span><span class="n">parameters_file</span> <span class="o">+</span> <span class="s">&quot; does not have a column &#39;agent_class&#39;&quot;</span>
+                <span class="s">&quot;and/or &#39;number&#39;&quot;</span><span class="p">)</span>
+
+        <span class="n">agents_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">agent_file</span><span class="p">:</span>
+            <span class="n">cells</span> <span class="o">=</span> <span class="p">[</span><span class="n">_number_or_string</span><span class="p">(</span><span class="n">cell</span><span class="p">)</span> <span class="k">for</span> <span class="n">cell</span> <span class="ow">in</span> <span class="n">line</span><span class="p">]</span>
+            <span class="n">agents_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="n">cells</span><span class="p">)))</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_build_first_run</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">agents_list</span><span class="p">:</span>
+                <span class="n">num_entry</span> <span class="o">=</span> <span class="s">&#39;num_&#39;</span> <span class="o">+</span> <span class="n">line</span><span class="p">[</span><span class="s">&#39;agent_class&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">num_entry</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">simulation_parameters</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">simulation_parameters</span><span class="p">[</span><span class="n">num_entry</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">simulation_parameters</span><span class="p">[</span><span class="n">num_entry</span><span class="p">]</span> <span class="o">+=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="s">&#39;number&#39;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_build_first_run</span> <span class="o">=</span> <span class="bp">False</span>
+
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">agents_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">line</span><span class="p">[</span><span class="s">&#39;agent_class&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">agent_class</span><span class="p">:</span>
+                <span class="n">agents_parameters</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">line</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="s">&#39;number&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">multiply</span><span class="p">)])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">build_agents</span><span class="p">(</span><span class="n">AgentClass</span><span class="p">,</span> <span class="n">agents_parameters</span><span class="o">=</span><span class="n">agents_parameters</span><span class="p">)</span>
+</div>
+    <span class="k">def</span> <span class="nf">_advance_round_agents</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; advances round by 1 &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ask_each_agent_in</span><span class="p">(</span><span class="s">&#39;all&#39;</span><span class="p">,</span> <span class="s">&#39;_advance_round&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_advance_round_db</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; advances round by 1 &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">communication_channel</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s">&#39;db_agent:advance_round&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_add_agents_to_wait_for</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">number</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">communication_channel</span><span class="o">.</span><span class="n">send_multipart</span><span class="p">([</span><span class="s">&#39;!&#39;</span><span class="p">,</span> <span class="s">&#39;+&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">number</span><span class="p">)])</span>
+
+    <span class="k">def</span> <span class="nf">_wait_for_agents_than_signal_end_of_comm</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">communication_channel</span><span class="o">.</span><span class="n">send_multipart</span><span class="p">([</span><span class="s">&#39;!&#39;</span><span class="p">,</span> <span class="s">&#39;}&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ready</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_wait_for_agents</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">communication_channel</span><span class="o">.</span><span class="n">send_multipart</span><span class="p">([</span><span class="s">&#39;!&#39;</span><span class="p">,</span> <span class="s">&#39;)&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ready</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_write_description_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">description</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">simulation_parameters</span><span class="p">[</span><span class="s">&#39;_path&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;/description.txt&#39;</span><span class="p">),</span> <span class="s">&#39;w&#39;</span><span class="p">)</span>
+        <span class="n">description</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;Path: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">simulation_parameters</span><span class="p">[</span><span class="s">&#39;_path&#39;</span><span class="p">]))</span>
+        <span class="n">description</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+        <span class="n">description</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">simulation_parameters</span><span class="p">:</span>
+            <span class="n">description</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">key</span> <span class="o">+</span> <span class="s">&quot;: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">simulation_parameters</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_displaydescribtion</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">description</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">simulation_parameters</span><span class="p">[</span><span class="s">&#39;_path&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;/description.txt&#39;</span><span class="p">,</span> <span class="s">&#39;r&#39;</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">description</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+
+</div>
+<div class="viewcode-block" id="repeat"><a class="viewcode-back" href="../simulation.html#abce.repeat">[docs]</a><span class="k">class</span> <span class="nc">repeat</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Repeats the contained list of actions several times</span>
+
+<span class="sd">    Args:</span>
+
+<span class="sd">     action_list:</span>
+<span class="sd">        action_list that is repeated</span>
+
+<span class="sd">     repetitions:</span>
+<span class="sd">        the number of times that an actionlist is repeated or the name of</span>
+<span class="sd">        the corresponding parameter in simulation_parameters.csv</span>
+
+<span class="sd">    Example with number of repetitions in simulation_parameters.csv::</span>
+
+<span class="sd">        action_list = [</span>
+<span class="sd">            repeat([</span>
+<span class="sd">                    (&#39;firm&#39;, &#39;sell&#39;),</span>
+<span class="sd">                    (&#39;household&#39;, &#39;buy&#39;)</span>
+<span class="sd">                ],</span>
+<span class="sd">                repetitions=parameter[&#39;number_of_trade_repetitions&#39;]</span>
+<span class="sd">            ),</span>
+<span class="sd">            (&#39;household_03&#39;, &#39;dance&#39;)</span>
+<span class="sd">            &#39;panel_data_end_of_round_before consumption&#39;,</span>
+<span class="sd">            (&#39;household&#39;, &#39;consume&#39;),</span>
+<span class="sd">            ]</span>
+<span class="sd">        s.add_action_list(action_list)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action_list</span><span class="p">,</span> <span class="n">repetitions</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_list</span> <span class="o">=</span> <span class="n">action_list</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">repetitions</span> <span class="o">=</span> <span class="n">repetitions</span>
+
+</div>
+<div class="viewcode-block" id="repeat_while"><a class="viewcode-back" href="../simulation.html#abce.repeat_while">[docs]</a><span class="k">class</span> <span class="nc">repeat_while</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; NOT IMPLEMENTED Repeats the contained list of actions until all agents_risponed</span>
+<span class="sd">    done. Optional a maximum can be set.</span>
+
+<span class="sd">    Args::</span>
+
+<span class="sd">     action_list: action_list that is repeated</span>
+<span class="sd">     repetitions: the number of times that an actionlist is repeated or the name of</span>
+<span class="sd">     the corresponding parameter in simulation_parameters.csv</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#TODO implement into _process_action_list</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action_list</span><span class="p">,</span> <span class="n">repetitions</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="ne">SystemExit</span><span class="p">(</span><span class="s">&#39;repeat_while not implement yet&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_list</span> <span class="o">=</span> <span class="n">action_list</span>
+        <span class="k">if</span> <span class="n">repetitions</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">repetitions</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">repetitions</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">repetitions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">simulation_parameters</span><span class="p">[</span><span class="n">repetitions</span><span class="p">]</span>
+                <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                    <span class="ne">SystemExit</span><span class="p">(</span><span class="s">&#39;add_action_list/repeat &#39;</span> <span class="o">+</span> <span class="n">repetitions</span> <span class="o">+</span> <span class="s">&#39; is not a number or&#39;</span>
+                    <span class="s">&#39;a column name in simulation_parameters.csv or the parameterfile&#39;</span>
+                    <span class="s">&#39;you choose&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">repetitions</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="s">&#39;repeat_while not implemented&#39;</span><span class="p">)</span>
+        <span class="c">#TODO implement repeat_while</span>
+
+</div>
+<span class="k">class</span> <span class="nc">_Communication</span><span class="p">(</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">Process</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Process</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">daemon</span> <span class="o">=</span> <span class="bp">True</span>
+
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">context</span> <span class="o">=</span> <span class="n">zmq</span><span class="o">.</span><span class="n">Context</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">in_soc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">zmq</span><span class="o">.</span><span class="n">PULL</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">in_soc</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s">&quot;ipc://frontend.ipc&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">zmq</span><span class="o">.</span><span class="n">PUB</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s">&quot;ipc://backend.ipc&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ready</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">zmq</span><span class="o">.</span><span class="n">PUSH</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ready</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s">&quot;ipc://ready.ipc&quot;</span><span class="p">)</span>
+        <span class="n">agents_finished</span><span class="p">,</span> <span class="n">total_number</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+        <span class="n">total_number_known</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_soc</span><span class="o">.</span><span class="n">recv_multipart</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">msg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;!&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">msg</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;.&#39;</span><span class="p">:</span>
+                    <span class="n">agents_finished</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">elif</span> <span class="n">msg</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;+&#39;</span><span class="p">:</span>
+                    <span class="n">total_number</span> <span class="o">+=</span> <span class="nb">int</span><span class="p">(</span><span class="n">msg</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+                    <span class="k">continue</span>
+                <span class="k">elif</span> <span class="n">msg</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;}&#39;</span><span class="p">:</span>
+                    <span class="n">total_number_known</span> <span class="o">=</span> <span class="bp">True</span>
+                    <span class="n">send_end_of_communication_sign</span> <span class="o">=</span> <span class="bp">True</span>
+                <span class="k">elif</span> <span class="n">msg</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;)&#39;</span><span class="p">:</span>
+                    <span class="n">total_number_known</span> <span class="o">=</span> <span class="bp">True</span>
+                    <span class="n">send_end_of_communication_sign</span> <span class="o">=</span> <span class="bp">False</span>
+                <span class="k">if</span> <span class="n">total_number_known</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">agents_finished</span> <span class="o">==</span> <span class="n">total_number</span><span class="p">:</span>
+                        <span class="n">agents_finished</span><span class="p">,</span> <span class="n">total_number</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+                        <span class="n">total_number_known</span> <span class="o">=</span> <span class="bp">False</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">ready</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">send_end_of_communication_sign</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s">&#39;all.&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">send_multipart</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_number_or_string</span><span class="p">(</span><span class="n">word</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; returns a int if possible otherwise a float from a string</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">floating_number</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">word</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">integer</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">floating_number</span>
+    <span class="k">if</span> <span class="n">integer</span> <span class="o">==</span> <span class="n">floating_number</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">integer</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">floating_number</span>
+
+<span class="k">try</span><span class="p">:</span>  <span class="c"># Clears screen right at the start</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s">&#39;cls&#39;</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s">&#39;nt&#39;</span> <span class="k">else</span> <span class="s">&#39;clear&#39;</span><span class="p">)</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="k">pass</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">ABCE 0.2alpha documentation</a> &raquo;</li>
+          <li><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Davoud Taghawi-Nejad.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

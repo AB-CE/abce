@@ -1,0 +1,360 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>FirmMultiTechnologies &mdash; ABCE 0.2alpha documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.2alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="ABCE 0.2alpha documentation" href="index.html" />
+    <link rel="next" title="The simulation in start.py" href="simulation.html" />
+    <link rel="prev" title="Observing agents" href="Database.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="simulation.html" title="The simulation in start.py"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Database.html" title="Observing agents"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">ABCE 0.2alpha documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="firmmultitechnologies">
+<h1>FirmMultiTechnologies<a class="headerlink" href="#firmmultitechnologies" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="abceagent.FirmMultiTechnologies">
+<em class="property">class </em><tt class="descclassname">abceagent.</tt><tt class="descname">FirmMultiTechnologies</tt><a class="reference internal" href="_modules/abceagent.html#FirmMultiTechnologies"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.FirmMultiTechnologies" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="abceagent.FirmMultiTechnologies.create_cobb_douglas">
+<tt class="descname">create_cobb_douglas</tt><big>(</big><em>output</em>, <em>multiplier</em>, <em>exponents</em><big>)</big><a class="reference internal" href="_modules/abceagent.html#FirmMultiTechnologies.create_cobb_douglas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.FirmMultiTechnologies.create_cobb_douglas" title="Permalink to this definition">¶</a></dt>
+<dd><p>creates a Cobb-Douglas production function</p>
+<p>A production function is a produceation process that produces the
+given input given input goods according to the formula to the output
+good.
+Production_functions are than used as an argument in produce,
+predict_vector_produce and predict_output_produce.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>&#8216;output&#8217;: Name of the output good
+multiplier: Cobb-Douglas multiplier
+{&#8216;input1&#8217;: exponent1, &#8216;input2&#8217;: exponent2 ...}: dictionary
+containing good names &#8216;input&#8217; and correstponding exponents</dd>
+<dt>Returns:</dt>
+<dd>A production_function that can be used in produce etc.</dd>
+</dl>
+<p>Example:
+self.plastic_production_function = self.create_cobb_douglas(&#8216;plastic&#8217;, {&#8216;oil&#8217; : 10, &#8216;labor&#8217; : 1}, 0.000001)
+self.produce(self.plastic_production_function, {&#8216;oil&#8217; : 20, &#8216;labor&#8217; : 1})</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="abceagent.FirmMultiTechnologies.create_leontief">
+<tt class="descname">create_leontief</tt><big>(</big><em>output</em>, <em>utilization_quantities</em>, <em>isinteger=''</em><big>)</big><a class="reference internal" href="_modules/abceagent.html#FirmMultiTechnologies.create_leontief"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.FirmMultiTechnologies.create_leontief" title="Permalink to this definition">¶</a></dt>
+<dd><p>creates a Leontief production function</p>
+<p>A production function is a produceation process that produces the
+given input given input goods according to the formula to the output
+good.
+Production_functions are than used as an argument in produce,
+predict_vector_produce and predict_output_produce.</p>
+<p>Warning, when you produce with a Leontief production_function all goods you
+put in the produce(...) function are used up. Regardless whether it is an
+efficient or wastefull bundle</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>&#8216;output&#8217;:</dt>
+<dd>Name of the output good</dd>
+<dt>utilization_quantities:</dt>
+<dd>a dictionary containing good names and correstponding exponents</dd>
+<dt>isinteger=&#8217;int&#8217; or isinteger=&#8217;&#8216;:</dt>
+<dd>When &#8216;int&#8217; produce only integer amounts of the good.
+When &#8216;&#8217;, produces floating amounts. (default)</dd>
+</dl>
+</dd>
+<dt>Returns:</dt>
+<dd>A production_function that can be used in produce etc.</dd>
+</dl>
+<p>Example:
+self.car_technology = self.create_leontief(&#8216;car&#8217;, {&#8216;tire&#8217; : 4, &#8216;metal&#8217; : 1000, &#8216;plastic&#8217; : 20}, 1)
+two_cars = {&#8216;tire&#8217;: 8, &#8216;metal&#8217;: 2000, &#8216;plastic&#8217;:  40}
+self.produce(self.car_technology, two_cars)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="abceagent.FirmMultiTechnologies.create_production_function">
+<tt class="descname">create_production_function</tt><big>(</big><em>formula</em>, <em>typ='from_formula'</em><big>)</big><a class="reference internal" href="_modules/abceagent.html#FirmMultiTechnologies.create_production_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.FirmMultiTechnologies.create_production_function" title="Permalink to this definition">¶</a></dt>
+<dd><p>creates a production function from formula</p>
+<p>A production function is a produceation process that produces the
+given input given input goods according to the formula to the output
+goods.
+Production_functions are than used as an argument in produce,
+predict_vector_produce and predict_output_produce.</p>
+<p>create_production_function_fast is faster but more complicated</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>&#8220;formula&#8221;: equation or set of equations that describe the
+production process. (string) Several equation are seperated by a ;</dd>
+<dt>Returns:</dt>
+<dd>A production_function that can be used in produce etc.</dd>
+<dt>Example:</dt>
+<dd>formula = &#8216;golf_ball = (ball) * (paint / 2); waste = 0.1 * paint&#8217;
+self.production_function = self.create_production_function(formula)
+self.produce(self.production_function, {&#8216;ball&#8217; : 1, &#8216;paint&#8217; : 2}</dd>
+</dl>
+<p>//exponential is ** not ^</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="abceagent.FirmMultiTechnologies.create_production_function_fast">
+<tt class="descname">create_production_function_fast</tt><big>(</big><em>formula</em>, <em>output_goods</em>, <em>input_goods</em>, <em>typ='from_formula'</em><big>)</big><a class="reference internal" href="_modules/abceagent.html#FirmMultiTechnologies.create_production_function_fast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.FirmMultiTechnologies.create_production_function_fast" title="Permalink to this definition">¶</a></dt>
+<dd><p>creates a production function from formula, with given outputs</p>
+<p>A production function is a producetion process that produces the
+given input given input goods according to the formula to the output
+goods.
+Production_functions are than used as an argument in produce,
+predict_vector_produce and predict_output_produce.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>&#8220;formula&#8221;: equation or set of equations that describe the
+production process. (string) Several equation are seperated by a ;
+[output]: list of all output goods (left hand sides of the equations)</dd>
+<dt>Returns:</dt>
+<dd>A production_function that can be used in produce etc.</dd>
+<dt>Example:</dt>
+<dd>formula = &#8216;golf_ball = (ball) * (paint / 2); waste = 0.1 * paint&#8217;
+self.production_function = self.create_production_function(formula, &#8216;golf&#8217;, [&#8216;waste&#8217;, &#8216;paint&#8217;])
+self.produce(self.production_function, {&#8216;ball&#8217; : 1, &#8216;paint&#8217; : 2}</dd>
+</dl>
+<p>//exponential is ** not ^</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="abceagent.FirmMultiTechnologies.net_value">
+<tt class="descname">net_value</tt><big>(</big><em>goods_vector</em>, <em>price_vector</em><big>)</big><a class="reference internal" href="_modules/abceagent.html#FirmMultiTechnologies.net_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.FirmMultiTechnologies.net_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the net_value of a goods_vector given a price_vector</p>
+<blockquote>
+<div>goods_vectors are vector, where the input goods are negative and
+the output goods are positive. When we multiply every good with its
+according price we can calculate the net_value of the correstponding
+production.
+goods_vectors are produced by predict_produce(.)</div></blockquote>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>goods_vector: a dictionary with goods and quantities
+e.G. {&#8216;car&#8217;: 1, &#8216;metal&#8217;: -1200, &#8216;tire&#8217;: -4, &#8216;plastic&#8217;: -21}
+price_vector: a dictionary with goods and prices (see example)</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">prices</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;car&#39;</span><span class="p">:</span> <span class="mi">50000</span><span class="p">,</span> <span class="s">&#39;tire&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s">&#39;metal&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s">&#39;plastic&#39;</span><span class="p">:</span>  <span class="mf">0.5</span><span class="p">}</span>
+<span class="n">value_one_car</span> <span class="o">=</span> <span class="n">net_value</span><span class="p">(</span><span class="n">predict_produce</span><span class="p">(</span><span class="n">car_production_function</span><span class="p">,</span> <span class="n">one_car</span><span class="p">),</span> <span class="n">prices</span><span class="p">)</span>
+<span class="n">value_two_cars</span> <span class="o">=</span> <span class="n">net_value</span><span class="p">(</span><span class="n">predict_produce</span><span class="p">(</span><span class="n">car_production_function</span><span class="p">,</span> <span class="n">two_cars</span><span class="p">),</span> <span class="n">prices</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">value_one_car</span> <span class="o">&gt;</span> <span class="n">value_two_cars</span><span class="p">:</span>
+   <span class="n">produce</span><span class="p">(</span><span class="n">car_production_function</span><span class="p">,</span> <span class="n">one_car</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+   <span class="n">produce</span><span class="p">(</span><span class="n">car_production_function</span><span class="p">,</span> <span class="n">two_cars</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="abceagent.FirmMultiTechnologies.predict_produce">
+<tt class="descname">predict_produce</tt><big>(</big><em>production_function</em>, <em>input_goods</em><big>)</big><a class="reference internal" href="_modules/abceagent.html#FirmMultiTechnologies.predict_produce"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.FirmMultiTechnologies.predict_produce" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a vector with input (negative) and output (positive) goods</p>
+<blockquote>
+<div>Predicts the production of produce(production_function, input_goods) and
+the use of input goods.
+net_value(.) uses a price_vector (dictionary) to calculate the
+net value of this production.</div></blockquote>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>production_function: A production_function produced with
+create_production_function, create_cobb_douglas or create_leontief
+{&#8216;input_good1&#8217;: amount1, &#8216;input_good2&#8217;: amount2 ...}: dictionary
+containing the amount of input good used for the production.</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">prices</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;car&#39;</span><span class="p">:</span> <span class="mi">50000</span><span class="p">,</span> <span class="s">&#39;tire&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s">&#39;metal&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s">&#39;plastic&#39;</span><span class="p">:</span>  <span class="mf">0.5</span><span class="p">}</span>
+<span class="n">value_one_car</span> <span class="o">=</span> <span class="n">net_value</span><span class="p">(</span><span class="n">predict_produce</span><span class="p">(</span><span class="n">car_production_function</span><span class="p">,</span> <span class="n">one_car</span><span class="p">),</span> <span class="n">prices</span><span class="p">)</span>
+<span class="n">value_two_cars</span> <span class="o">=</span> <span class="n">net_value</span><span class="p">(</span><span class="n">predict_produce</span><span class="p">(</span><span class="n">car_production_function</span><span class="p">,</span> <span class="n">two_cars</span><span class="p">),</span> <span class="n">prices</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">value_one_car</span> <span class="o">&gt;</span> <span class="n">value_two_cars</span><span class="p">:</span>
+   <span class="n">A</span><span class="o">.</span><span class="n">produce</span><span class="p">(</span><span class="n">car_production_function</span><span class="p">,</span> <span class="n">one_car</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+   <span class="n">A</span><span class="o">.</span><span class="n">produce</span><span class="p">(</span><span class="n">car_production_function</span><span class="p">,</span> <span class="n">two_cars</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="abceagent.FirmMultiTechnologies.predict_produce_output">
+<tt class="descname">predict_produce_output</tt><big>(</big><em>production_function</em>, <em>input_goods</em><big>)</big><a class="reference internal" href="_modules/abceagent.html#FirmMultiTechnologies.predict_produce_output"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.FirmMultiTechnologies.predict_produce_output" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predicts the output of a certain input vector and for a given
+production function</p>
+<blockquote>
+<div>Predicts the production of produce(production_function, input_goods)
+see also: Predict_produce(.) as it returns a calculatable vector</div></blockquote>
+<p>Args:</p>
+<div class="highlight-python"><pre>production_function: A production_function produced with
+create_production_function, create_cobb_douglas or create_leontief
+{'input_good1': amount1, 'input_good2': amount2 ...}: dictionary
+containing the amount of input good used for the production.</pre>
+</div>
+<p>Returns:</p>
+<div class="highlight-python"><pre>A dictionary of the predicted output</pre>
+</div>
+<p>Example:</p>
+<div class="highlight-python"><pre>print(A.predict_output_produce(car_production_function, two_cars))
+&gt;&gt;&gt; {'car': 2}</pre>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="abceagent.FirmMultiTechnologies.produce">
+<tt class="descname">produce</tt><big>(</big><em>production_function</em>, <em>input_goods</em><big>)</big><a class="reference internal" href="_modules/abceagent.html#FirmMultiTechnologies.produce"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.FirmMultiTechnologies.produce" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produces output goods given the specified amount of inputs.</p>
+<p>Transforms the Agent&#8217;s goods specified in input goods
+according to a given production_function to output goods.
+Automatically changes the agent&#8217;s belonging. Raises an
+exception, when the agent does not have sufficient resources.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>production_function:</dt>
+<dd>A production_function produced with py:meth:<cite>.create_production_function</cite>,
+py:meth:<cite>.create_cobb_douglas</cite> or py:meth:<cite>.create_leontief</cite></dd>
+<dt>input goods {dictionary}:</dt>
+<dd>dictionary containing the amount of input good used for the production.</dd>
+</dl>
+</dd>
+<dt>Raises:</dt>
+<dd>NotEnoughGoods: This is raised when the goods are insufficient.</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">car</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;tire&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s">&#39;metal&#39;</span><span class="p">:</span> <span class="mi">2000</span><span class="p">,</span> <span class="s">&#39;plastic&#39;</span><span class="p">:</span>  <span class="mi">40</span><span class="p">}</span>
+<span class="n">bike</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;tire&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;metal&#39;</span><span class="p">:</span> <span class="mi">400</span><span class="p">,</span> <span class="s">&#39;plastic&#39;</span><span class="p">:</span>  <span class="mi">20</span><span class="p">}</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">produce</span><span class="p">(</span><span class="n">car_production_function</span><span class="p">,</span> <span class="n">car</span><span class="p">)</span>
+<span class="k">except</span> <span class="n">NotEnoughGoods</span><span class="p">:</span>
+    <span class="n">A</span><span class="o">.</span><span class="n">produce</span><span class="p">(</span><span class="n">bike_production_function</span><span class="p">,</span> <span class="n">bike</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="abceagent.FirmMultiTechnologies.produce_use_everything">
+<tt class="descname">produce_use_everything</tt><big>(</big><em>production_function</em><big>)</big><a class="reference internal" href="_modules/abceagent.html#FirmMultiTechnologies.produce_use_everything"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.FirmMultiTechnologies.produce_use_everything" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produces output goods from all input goods, used in this
+production_function, the agent owns.</p>
+<p>Args:</p>
+<div class="highlight-python"><pre>production_function: A production_function produced with
+py:meth:`create_production_function`, py:meth:`create_cobb_douglas` or
+py:meth:`create_leontief`</pre>
+</div>
+<p>Example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="bp">self</span><span class="o">.</span><span class="n">produce_use_everything</span><span class="p">(</span><span class="n">car_production_function</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="abceagent.FirmMultiTechnologies.sufficient_goods">
+<tt class="descname">sufficient_goods</tt><big>(</big><em>input_goods</em><big>)</big><a class="reference internal" href="_modules/abceagent.html#FirmMultiTechnologies.sufficient_goods"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.FirmMultiTechnologies.sufficient_goods" title="Permalink to this definition">¶</a></dt>
+<dd><p>checks whether the agent has all the goods in the vector input</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Database.html"
+                        title="previous chapter">Observing agents</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="simulation.html"
+                        title="next chapter">The simulation in start.py</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/FirmMultiTechnologies.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="simulation.html" title="The simulation in start.py"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="Database.html" title="Observing agents"
+             >previous</a> |</li>
+        <li><a href="index.html">ABCE 0.2alpha documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Davoud Taghawi-Nejad.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

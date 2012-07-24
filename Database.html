@@ -1,0 +1,329 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Observing agents &mdash; ABCE 0.2alpha documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.2alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="ABCE 0.2alpha documentation" href="index.html" />
+    <link rel="next" title="FirmMultiTechnologies" href="FirmMultiTechnologies.html" />
+    <link rel="prev" title="Messaging" href="Messaging.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="FirmMultiTechnologies.html" title="FirmMultiTechnologies"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Messaging.html" title="Messaging"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">ABCE 0.2alpha documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="observing-agents">
+<h1>Observing agents<a class="headerlink" href="#observing-agents" title="Permalink to this headline">¶</a></h1>
+<p>There are three different ways of observing your agents:</p>
+<dl class="docutils">
+<dt>Trade Logging</dt>
+<dd>ABCE by default logs all trade and creates a SAM or IO matrix.</dd>
+<dt>Manual in agent logging</dt>
+<dd>An agent is instructed to log a variable with <a class="reference internal" href="#abceagent.Database.log" title="abceagent.Database.log"><tt class="xref py py-meth docutils literal"><span class="pre">log()</span></tt></a> or a
+change in a variable with <a class="reference internal" href="#abceagent.Database.log_change" title="abceagent.Database.log_change"><tt class="xref py py-meth docutils literal"><span class="pre">log_change()</span></tt></a>.</dd>
+<dt>Panel Data</dt>
+<dd><a class="reference internal" href="simulation.html#abce.Simulation.panel_data" title="abce.Simulation.panel_data"><tt class="xref py py-meth docutils literal"><span class="pre">panel_data()</span></tt></a> creates panel data for all agents in a specific
+agent group at a specific point in every round. It is set in start.py</dd>
+</dl>
+<p>How to retrieve the Simulation results is explained in <a class="reference internal" href="simulation_results.html"><em>Retrival of the simulation results</em></a></p>
+<div class="section" id="trade-logging">
+<h2>Trade Logging<a class="headerlink" href="#trade-logging" title="Permalink to this headline">¶</a></h2>
+<p>By default ABCE logs all trade and creates a social accounting matrix or
+input output matrix. Because the creation of the trade log is very time consuming
+you can change the default behavior in world_parameter.csv. In the column
+&#8216;trade_logging&#8217; you can choose &#8216;individual&#8217;, &#8216;group&#8217; or &#8216;off&#8217;. (Without the
+apostrophs!).</p>
+</div>
+<div class="section" id="manual-logging">
+<h2>Manual logging<a class="headerlink" href="#manual-logging" title="Permalink to this headline">¶</a></h2>
+<p>All functions except the trade related functions can be logged. The following
+code logs the production function and the change of the production from last
+year:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">produce</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">)</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s">&#39;production&#39;</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">log_change</span><span class="p">(</span><span class="s">&#39;production&#39;</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Log loggs dictionaries. To log your own variable:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s">&#39;price&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;input&#39;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span> <span class="s">&#39;output&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span>
+</pre></div>
+</div>
+<p>Further you can write the change of a varibale between a start and an end point with:
+<a class="reference internal" href="#abceagent.Database.observe_begin" title="abceagent.Database.observe_begin"><tt class="xref py py-meth docutils literal"><span class="pre">observe_begin()</span></tt></a> and <a class="reference internal" href="#abceagent.Database.observe_end" title="abceagent.Database.observe_end"><tt class="xref py py-meth docutils literal"><span class="pre">observe_end()</span></tt></a>.</p>
+<dl class="class">
+<dt id="abceagent.Database">
+<em class="property">class </em><tt class="descclassname">abceagent.</tt><tt class="descname">Database</tt><a class="reference internal" href="_modules/abceagent.html#Database"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.Database" title="Permalink to this definition">¶</a></dt>
+<dd><p>The database class</p>
+<dl class="method">
+<dt id="abceagent.Database.log">
+<tt class="descname">log</tt><big>(</big><em>action_name</em>, <em>data_to_log</em><big>)</big><a class="reference internal" href="_modules/abceagent.html#Database.log"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.Database.log" title="Permalink to this definition">¶</a></dt>
+<dd><p>This command puts in a database called log, what ever values you
+want values need to be delivered as a dictionary:</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>&#8216;name&#8217;(string):</dt>
+<dd>the name of the current action/method the agent executes</dd>
+<dt>data_to_log:</dt>
+<dd>a dictianary with data for the database</dd>
+</dl>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s">&#39;profit&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;&#39;</span><span class="p">:</span> <span class="n">profit</span><span class="p">})</span>
+
+<span class="o">...</span> <span class="n">different</span> <span class="n">method</span> <span class="o">...</span>
+
+<span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s">&#39;employment_and_rent&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;employment&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">possession</span><span class="p">(</span><span class="s">&#39;LAB&#39;</span><span class="p">),</span>
+                                 <span class="s">&#39;rent&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">possession</span><span class="p">(</span><span class="s">&#39;CAP&#39;</span><span class="p">),</span> <span class="s">&#39;composite&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">composite</span><span class="p">})</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_households</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s">&#39;give</span><span class="si">%i</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">i</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">give</span><span class="p">(</span><span class="s">&#39;Household&#39;</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="s">&#39;money&#39;</span><span class="p">,</span> <span class="n">payout</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_households</span><span class="p">))</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="abceagent.Database.log_change">
+<tt class="descname">log_change</tt><big>(</big><em>action_name</em>, <em>data_to_log</em><big>)</big><a class="reference internal" href="_modules/abceagent.html#Database.log_change"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.Database.log_change" title="Permalink to this definition">¶</a></dt>
+<dd><p>This command logs the change in the variable from the round before.
+Important, use only once with the same action_name.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>&#8216;name&#8217;(string):</dt>
+<dd>the name of the current action/method the agent executes</dd>
+<dt>data_to_log:</dt>
+<dd>a dictianary with data for the database</dd>
+</dl>
+</dd>
+</dl>
+<p>Examples:</p>
+<div class="highlight-python"><pre>self.log_change('profit', {'money': self.possession('money')]})
+self.log_change('inputs', {'money': self.possessions(['money', 'gold', 'CAP', 'LAB')]})</pre>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="abceagent.Database.observe_begin">
+<tt class="descname">observe_begin</tt><big>(</big><em>action_name</em>, <em>data_to_observe</em><big>)</big><a class="reference internal" href="_modules/abceagent.html#Database.observe_begin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.Database.observe_begin" title="Permalink to this definition">¶</a></dt>
+<dd><p>observe_start and observe_end, observe the change of a variable.
+observe_start(...), takes a list of variables to be observed.
+observe_end(...) writes the change in this vars into the log file</p>
+<p>you can use nested observe_start / observe_end combinations</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>&#8216;name&#8217;(string):</dt>
+<dd>the name of the current action/method the agent executes</dd>
+<dt>data_to_log:</dt>
+<dd>a dictianary with data for the database</dd>
+</dl>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s">&#39;production&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;composite&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">composite</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">sector</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">final_product</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">sector</span><span class="p">]})</span>
+
+<span class="o">...</span> <span class="n">different</span> <span class="n">method</span> <span class="o">...</span>
+
+<span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s">&#39;employment_and_rent&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;employment&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">possession</span><span class="p">(</span><span class="s">&#39;LAB&#39;</span><span class="p">),</span>
+                                <span class="s">&#39;rent&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">possession</span><span class="p">(</span><span class="s">&#39;CAP&#39;</span><span class="p">)})</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="abceagent.Database.observe_end">
+<tt class="descname">observe_end</tt><big>(</big><em>action_name</em>, <em>data_to_observe</em><big>)</big><a class="reference internal" href="_modules/abceagent.html#Database.observe_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.Database.observe_end" title="Permalink to this definition">¶</a></dt>
+<dd><p>This command puts in a database called log, what ever values you
+want values need to be delivered as a dictionary:</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>&#8216;name&#8217;(string):</dt>
+<dd>the name of the current action/method the agent executes</dd>
+<dt>data_to_log:</dt>
+<dd>a dictianary with data for the database</dd>
+</dl>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s">&#39;production&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;composite&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">composite</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">sector</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">final_product</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">sector</span><span class="p">]})</span>
+
+<span class="o">...</span> <span class="n">different</span> <span class="n">method</span> <span class="o">...</span>
+
+<span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s">&#39;employment_and_rent&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;employment&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">possession</span><span class="p">(</span><span class="s">&#39;LAB&#39;</span><span class="p">),</span>
+                                <span class="s">&#39;rent&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">possession</span><span class="p">(</span><span class="s">&#39;CAP&#39;</span><span class="p">)})</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="panel-data">
+<h2>Panel Data<a class="headerlink" href="#panel-data" title="Permalink to this headline">¶</a></h2>
+<dl class="method">
+<dt id="abce.Simulation.panel_data">
+<tt class="descclassname">Simulation.</tt><tt class="descname">panel_data</tt><big>(</big><em>group</em>, <em>variables='goods'</em>, <em>typ='FLOAT'</em>, <em>command='round_end'</em><big>)</big><a class="reference internal" href="_modules/abce.html#Simulation.panel_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Simulation.panel_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>writes variables of a group of agents into the database, by default
+the db write is at the end of the round. You can also specify a command
+and insert the command you choose in the action_list.
+If you choose a custom command, you can declare a method that
+returns the variable you want to track. This function in the class of the
+agent must have the same name as the command.</p>
+<p>You can use the same command for several groups, that report at the
+same time.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>agentgroup:</dt>
+<dd>can be either a group or &#8216;all&#8217; for all agents</dd>
+<dt>variables:</dt>
+<dd>default=&#8217;goods&#8217; monitors all the goods the agent owns
+you can insert any variable your agent possesses. For
+self.knows_latin you insert &#8216;knows_latin&#8217;. If your agent
+has self.technology you can use &#8216;technology[&#8216;formula&#8217;]&#8217;
+(typ=&#8217;CHAR(50)&#8217;.</dd>
+<dt>typ:</dt>
+<dd>the type of the sql variable (FLOAT, INT, CHAR(length))
+command</dd>
+</dl>
+</dd>
+</dl>
+<p>Example in start.py:</p>
+<div class="highlight-python"><pre>w.panel_data(group='Firm', command='after_production')
+
+or
+
+w.panel_data(agents_list=[agent_name('firm', 5), agent_name('household', 10)])</pre>
+</div>
+<p>Optional in the agent:</p>
+<div class="highlight-python"><pre>class Firm(AgentEngine):
+
+...
+def after_production(self):
+    track = {}
+    track['t'] = 'yes'
+    for key in self.prices:
+        track['p_' + key] = self.prices[key]
+    track.update(self.product[key])
+    return track</pre>
+</div>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Observing agents</a><ul>
+<li><a class="reference internal" href="#trade-logging">Trade Logging</a></li>
+<li><a class="reference internal" href="#manual-logging">Manual logging</a></li>
+<li><a class="reference internal" href="#panel-data">Panel Data</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Messaging.html"
+                        title="previous chapter">Messaging</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="FirmMultiTechnologies.html"
+                        title="next chapter">FirmMultiTechnologies</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/Database.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="FirmMultiTechnologies.html" title="FirmMultiTechnologies"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="Messaging.html" title="Messaging"
+             >previous</a> |</li>
+        <li><a href="index.html">ABCE 0.2alpha documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Davoud Taghawi-Nejad.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

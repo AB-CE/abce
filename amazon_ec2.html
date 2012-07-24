@@ -1,0 +1,132 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Using Amazon Elastic Cloud Server &mdash; ABCE 0.2alpha documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.2alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="ABCE 0.2alpha documentation" href="index.html" />
+    <link rel="prev" title="Files in this package" href="files.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="files.html" title="Files in this package"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">ABCE 0.2alpha documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="using-amazon-elastic-cloud-server">
+<h1>Using Amazon Elastic Cloud Server<a class="headerlink" href="#using-amazon-elastic-cloud-server" title="Permalink to this headline">¶</a></h1>
+<ol class="arabic simple">
+<li>Create an amazon ec2 account</li>
+<li>Launch an ubuntu instance</li>
+<li>Open two bash / command lines. On for your local computer one to login to the server</li>
+<li>In the management console find your server address</li>
+</ol>
+<p>(replace the addesses below with <a class="reference external" href="mailto:ubuntu&#37;&#52;&#48;your_server_string&#46;compute&#46;amazonaws&#46;com">ubuntu<span>&#64;</span>your_server_string<span>&#46;</span>compute<span>&#46;</span>amazonaws<span>&#46;</span>com</a>)</p>
+<p>Log on the amazon server:</p>
+<div class="highlight-python"><pre>ssh -i ./ec2/ec2.pem ubuntu@ec2-79-125-32-99.eu-west-1.compute.amazonaws.com</pre>
+</div>
+<p>on amazon ec2 ubuntu server:</p>
+<div class="highlight-python"><pre>mkdir cce
+mkdir abce
+mkdir abce/lib</pre>
+</div>
+<p>on local computer:</p>
+<div class="highlight-python"><pre>SPATH="ubuntu@ec2-79-125-32-99.eu-west-1.compute.amazonaws.com"
+scp -r -i ./ec2/ec2.pem ./abce/lib/*.py  $SPATH:~/abce/lib/
+scp -r -i ./ec2/ec2.pem ./cce/*.py  $SPATH:~/cce/
+scp -r -i ./ec2/ec2.pem ./cce/*.csv  $SPATH:~/cce/</pre>
+</div>
+<p>To shut down your ubuntu instance from the command line:</p>
+<div class="highlight-python"><pre>sudo shutdown -P now</pre>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="files.html"
+                        title="previous chapter">Files in this package</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/amazon_ec2.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="files.html" title="Files in this package"
+             >previous</a> |</li>
+        <li><a href="index.html">ABCE 0.2alpha documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Davoud Taghawi-Nejad.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

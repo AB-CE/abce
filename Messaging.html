@@ -1,0 +1,183 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Messaging &mdash; ABCE 0.2alpha documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.2alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="ABCE 0.2alpha documentation" href="index.html" />
+    <link rel="next" title="Observing agents" href="Database.html" />
+    <link rel="prev" title="Household and consumption" href="Household.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Database.html" title="Observing agents"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Household.html" title="Household and consumption"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">ABCE 0.2alpha documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="messaging">
+<h1>Messaging<a class="headerlink" href="#messaging" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="abceagent.Messaging">
+<em class="property">class </em><tt class="descclassname">abceagent.</tt><tt class="descname">Messaging</tt><a class="reference internal" href="_modules/abceagent.html#Messaging"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.Messaging" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="abceagent.Messaging.get_messages">
+<tt class="descname">get_messages</tt><big>(</big><em>topic='m'</em><big>)</big><a class="reference internal" href="_modules/abceagent.html#Messaging.get_messages"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.Messaging.get_messages" title="Permalink to this definition">¶</a></dt>
+<dd><p>self.messages() returns all new messages send before this step
+(topic=&#8217;m&#8217;). The order is randomized self.messages(topic) returns all
+messages with a particular non standard topice topic e.G. &#8216;n&#8217;.
+The order of the messages is randomized.</p>
+<p>Example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="o">...</span> <span class="n">agent_01</span> <span class="o">...</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">send_messages</span><span class="p">(</span><span class="s">&#39;firm_01&#39;</span><span class="p">,</span> <span class="s">&#39;m&#39;</span><span class="p">,</span> <span class="s">&#39;hello message&#39;</span><span class="p">)</span>
+
+<span class="o">...</span> <span class="n">firm_01</span> <span class="o">-</span> <span class="n">one</span> <span class="n">subround</span> <span class="n">later</span> <span class="o">...</span>
+<span class="n">potential_buyers</span> <span class="o">=</span> <span class="n">get_messages</span><span class="p">(</span><span class="s">&#39;m&#39;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">buyer</span> <span class="ow">in</span> <span class="n">potential_buyers</span><span class="p">:</span>
+   <span class="k">print</span><span class="p">(</span><span class="n">buyer</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Example2: see send_message</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="abceagent.Messaging.get_messages_all">
+<tt class="descname">get_messages_all</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/abceagent.html#Messaging.get_messages_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.Messaging.get_messages_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns all messages irregardless of the topic, in a dictionary by topic</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="abceagent.Messaging.get_messages_biased">
+<tt class="descname">get_messages_biased</tt><big>(</big><em>topic='m'</em><big>)</big><a class="reference internal" href="_modules/abceagent.html#Messaging.get_messages_biased"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.Messaging.get_messages_biased" title="Permalink to this definition">¶</a></dt>
+<dd><p>like self.messages(topic), but the order is not properly randomized, but
+its faster. use whenever you are sure that the way you process messages
+is not affected by the order</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="abceagent.Messaging.message">
+<tt class="descname">message</tt><big>(</big><em>receiver_group</em>, <em>receiver_idn</em>, <em>topic</em>, <em>content</em><big>)</big><a class="reference internal" href="_modules/abceagent.html#Messaging.message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.Messaging.message" title="Permalink to this definition">¶</a></dt>
+<dd><p>sends a message to agent, agent_group or &#8216;all&#8217;. Agents receive it
+at the beginning of next round with self.get_messages()</p>
+<p>Args:</p>
+<div class="highlight-python"><pre>receiver_group: agent, agent_group or 'all'
+topic: string, with which this message can be received
+content: string, dictionary or class, that is send.</pre>
+</div>
+<p>Example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="o">...</span> <span class="n">household_01</span> <span class="o">...</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="s">&#39;firm_01&#39;</span><span class="p">,</span> <span class="s">&#39;quote_sell&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;good&#39;</span><span class="p">:</span><span class="s">&#39;BRD&#39;</span><span class="p">,</span> <span class="s">&#39;quantity&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">})</span>
+
+<span class="o">...</span> <span class="n">firm_01</span> <span class="o">-</span> <span class="n">one</span> <span class="n">subround</span> <span class="n">later</span> <span class="o">...</span>
+<span class="n">requests</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_messages</span><span class="p">(</span><span class="s">&#39;quote_sell&#39;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">req</span> <span class="ow">in</span> <span class="n">requests</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">sell</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">sender</span><span class="p">,</span> <span class="n">req</span><span class="o">.</span><span class="n">good</span><span class="p">,</span> <span class="n">reg</span><span class="o">.</span><span class="n">quantity</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">price</span><span class="p">[</span><span class="n">req</span><span class="o">.</span><span class="n">good</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Example2:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="bp">self</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="s">&#39;firm_01&#39;</span><span class="p">,</span> <span class="s">&#39;m&#39;</span><span class="p">,</span> <span class="s">&quot;hello my message&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Household.html"
+                        title="previous chapter">Household and consumption</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Database.html"
+                        title="next chapter">Observing agents</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/Messaging.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Database.html" title="Observing agents"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="Household.html" title="Household and consumption"
+             >previous</a> |</li>
+        <li><a href="index.html">ABCE 0.2alpha documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Davoud Taghawi-Nejad.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
