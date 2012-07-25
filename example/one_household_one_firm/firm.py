@@ -1,10 +1,10 @@
-from __future__ import division
+from __future__ import division  # makes division work correctly
 import abceagent
 from abcetools import is_zero, is_positive, is_negative, NotEnoughGoods
 
 
 class Firm(abceagent.Agent, abceagent.Firm):
-    def __init__(self, world_parameters, own_parameters, _pass_to_engine):
+    def __init__(self, simulation_parameters, agent_parameters, _pass_to_engine):
         """ 1. Gets an initial amount of money
         2. create a cobb_douglas function: GOOD = 1 * labor ** 1.
         """
@@ -23,7 +23,7 @@ class Firm(abceagent.Agent, abceagent.Firm):
         according to the set cobb_douglas function """
         self.produce_use_everything()
 
-    def sell_intermediary_goods(self):
+    def sell_goods(self):
         """ offers one unit of labor to firm 0, for the price of 1 "money" """
         self.sell('household', 0, "GOOD", self.possession("GOOD"), 1)
 

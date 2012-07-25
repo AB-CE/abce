@@ -6,15 +6,15 @@ from household import Household
 from abce import *
 
 
-for parameters in read_parameters('simulation_parameters.csv'):
-    s = Simulation(parameters)
+for simulation_parameters in read_parameters('simulation_parameters.csv'):
+    s = Simulation(simulation_parameters)
     action_list = [
     repeat([
-        ('Firm', 'one'),
-        ('Household', 'two'),
-        repetitions=10)
-        'buy_log'
-        ('all', 'three')]
+        ('firm', 'one'),
+        ('household', 'two'),
+        ], simulation_parameters['trade_repetitions']),
+        'buy_log',
+        ('all', 'three')
     ]
     s.add_action_list(action_list)
 
@@ -24,8 +24,8 @@ for parameters in read_parameters('simulation_parameters.csv'):
     s.declare_round_endowment(resource='labor_endowment', productivity=1, product='labor')
     s.declare_perishable(good='labor')
 
-    s.panel_data('Household', command='buy_log')
-    s.panel_data('Firm', command='buy_log')
+    s.panel_data('household', command='buy_log')
+    s.panel_data('firm', command='buy_log')
 
     s.run()
 

@@ -5,7 +5,7 @@ The installation has two parts. Installing the necessary software packages. Retr
 
  In terminal (necessary software) [1]_ ::
 
-  sudo apt-get install python-pyparsing python-numpy python-scipy python-zmq r-base
+  sudo apt-get install python-pyparsing python-numpy python-scipy python-zmq r-base python-rpy2
 
 
  Alternative 1 as a zip (EASY):

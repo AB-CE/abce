@@ -1,22 +1,6 @@
 library(RSQLite)
 library(reshape)
 
-print("Import:")
-rm(list=ls())
-m <-dbDriver("SQLite")
-con <-dbConnect(m, dbname = 'database.db')
-rs <-dbSendQuery(con, "SELECT name FROM sqlite_master WHERE type='table';")
-table_index_lst <- fetch(rs, n = -1)
-table_index <- unlist(table_index_lst)
-for (i in 1:length(table_index)) {
-	rs <-dbSendQuery(con, paste("select * from",  table_index[i]))
-	assign(table_index[i], fetch(rs, n = -1))
-}
-dbHasCompleted(rs)
-dbClearResult(rs)
-dbListTables(con)
-print(table_index_lst)
-rm(con, rs, m, table_index_lst)
 
 print("functions:")
 print("sam_cell(seller, buyer, cell='quantity'), returns you the evolution over time of a cell")
@@ -40,13 +24,32 @@ sam_ext <- function (t=1) {
 	cast(trade[which(trade$round == t),], seller + good ~ buyer, sum, margins=c("grand_row","grand_col"))
 }
 
+
+# ************************* MAIN **********************
+print("Import:")
+rm(list=ls())
+m <-dbDriver("SQLite")
+con <-dbConnect(m, dbname = 'database.db')
+rs <-dbSendQuery(con, "SELECT name FROM sqlite_master WHERE type='table';")
+table_index_lst <- fetch(rs, n = -1)
+table_index <- unlist(table_index_lst)
+for (i in 1:length(table_index)) {
+	rs <-dbSendQuery(con, paste("select * from",  table_index[i]))
+	assign(table_index[i], fetch(rs, n = -1))
+}
+dbHasCompleted(rs)
+dbClearResult(rs)
+dbListTables(con)
+print(table_index_lst)
+rm(con, rs, m, table_index_lst, table_index)
+
 print("Transformations:")
 print("Unify households in trade")
 tt <- trade
 seller_table_index_lst <- matrix(1, nrow=nrow(tt), ncol=1)
 for (i in 1:nrow(tt)) {
 	seller_table_index_lst[i] = i
-	if (unlist(strsplit(tt$seller[i], "_"))[1] == 'Firm') {
+	if (unlist(strsplit(tt$seller[i], "_"))[1] == 'firm') {
 		seller_table_index_lst[i] <-tt$seller[i]
 	} else {
 		seller_table_index_lst[i] <- unlist(strsplit(tt$seller[i], "_"))[1]
@@ -56,7 +59,7 @@ for (i in 1:nrow(tt)) {
 buyer_table_index_lst <- matrix(1, nrow=nrow(tt), ncol=1)
 for (i in 1:nrow(tt)) {
 	buyer_table_index_lst[i] = i
-	if (unlist(strsplit(tt$buyer[i], "_"))[1] == 'Firm') {
+	if (unlist(strsplit(tt$buyer[i], "_"))[1] == 'firm') {
 		buyer_table_index_lst[i] <- tt$buyer[i]
 	} else {
 		buyer_table_index_lst[i] <- unlist(strsplit(tt$buyer[i], "_"))[1]
@@ -74,9 +77,6 @@ print("Compress 'trade' to 'trade_unified'")
 trade_unified <- ddply(tt, c('round', 'buyer', 'seller','good'), summarize, quantity=sum(quantity), price=mean(price))
 rm(tt)
 print('OK')
-
-save(list = ls(all=TRUE), file = "database.RData")
-
 #INTERACTIVE
 # a <- 1
 # i <-1

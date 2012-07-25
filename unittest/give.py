@@ -51,12 +51,12 @@ class Give(abceagent.Agent):
         self.destroy_all('cookies')
 
     def all_tests_completed(self):
-            assert all(self.tests.values()), self.tests
-            if self.round == self.last_round and self.idn == 0:
-                print('Test abceagent.give:\t\t\t\t\tOK')
-                print('Test abceagent.message:\t\t\t\t\tOK')
-                print('Test abceagent.get_messages:\t\t\t\tOK')
-                print('Test abceagent.get_messages_all:\t\t\tOK')
-                print('Test abceagent.get_messages_biased:\t\t\tOK')
+        assert all(self.tests.values()), 'not all tests have been run; ABCE workes correctly, restart the unittesting to do all tests %s' % self.tests
+        if self.round == self.last_round and self.idn == 0:
+            print('Test abceagent.give:\t\t\t\t\tOK')
+            print('Test abceagent.message:\t\t\t\t\tOK')
+            print('Test abceagent.get_messages:\t\t\t\tOK')
+            print('Test abceagent.get_messages_all:\t\t\tOK')
+            print('Test abceagent.get_messages_biased:\t\t\tOK')
 
 

@@ -21,8 +21,8 @@ for parameters in read_parameters():
     ('firm', 'buy_labor'),
     ('firm', 'production'),
     'production_log',
-    ('firm', 'sell_intermediary_goods'),
-    ('household', 'buy_intermediary_goods'),
+    ('firm', 'sell_goods'),
+    ('household', 'buy_goods'),
     'buy_log',
     ('household', 'consumption')
     ]

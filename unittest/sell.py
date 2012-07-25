@@ -26,6 +26,7 @@ class Sell(abceagent.Agent):
             self.create('money', random.uniform(0, 10000))
             money = self.possession('money')
             oo = self.get_offers('cookies')
+            assert oo
             for offer in oo:
                 if random.randrange(0, 10) == 0:
                     self.tests['not_answered'] = True
@@ -64,13 +65,15 @@ class Sell(abceagent.Agent):
                 test = self.possession('money') - offer['final_quantity'] * offer['price']
                 assert is_zero(test), test
                 self.tests['partial'] = True
+            else:
+                SystemExit('Error in sell')
 
     def clean_up(self):
         self.destroy_all('cookies')
         self.destroy_all('money')
 
     def all_tests_completed(self):
-        assert all(self.tests.values()), self.tests
+        assert all(self.tests.values()), 'not all tests have been run; ABCE workes correctly, restart the unittesting to do all tests %s' % self.tests
         if self.round == self.last_round and self.idn == 0:
             print('Test abceagent.buy:\t\t\t\t\tOK')
             print('Test abceagent.accept\t(abceagent.buy):\t\tOK')

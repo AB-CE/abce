@@ -14,6 +14,8 @@ class Buy(abceagent.Agent):
             self.tests['not_answered'] = False
 
     def one(self):
+        """ Acts only if he is agent 0: sends an buy offer to agent 1 offer
+        """
         if self.idn == 0:
             self.create('money', random.uniform(0, 10000))
             self.money = self.possession('money')
@@ -23,10 +25,14 @@ class Buy(abceagent.Agent):
             assert self.possession('money') == self.money - quantity * self.price
 
     def two(self):
+        """ Acts only if he is agent 1: recieves offers and accepts;
+        rejects; partially accepts and leaves offers unanswerd.
+        """
         if self.idn == 1:
             self.create('cookies', random.uniform(0, 10000))
             cookies = self.possession('cookies')
             oo = self.get_offers('cookies')
+            assert oo
             for offer in oo:
                 if random.randint(0, 10) == 0:
                     self.tests['not_answered'] = True
@@ -49,6 +55,8 @@ class Buy(abceagent.Agent):
                     self.tests['partial'] = True
 
     def three(self):
+        """
+        """
         if self.idn == 0:
             offer = self.info(self.offer)
             if offer['status'] == 'rejected':
@@ -65,17 +73,19 @@ class Buy(abceagent.Agent):
                 test = self.possession('cookies') - offer['final_quantity']
                 assert is_zero(test), test
                 self.tests['partial'] = True
+            else:
+                SystemExit('Error in buy')
 
     def clean_up(self):
         self.destroy_all('money')
         self.destroy_all('cookies')
 
     def all_tests_completed(self):
-            assert all(self.tests.values()), self.tests
-            if self.round == self.last_round and self.idn == 0:
-                print('Test abceagent.buy:\t\t\t\t\tOK')
-                print('Test abceagent.accept\t(abceagent.buy):\t\tOK')
-                print('Test abceagent.reject\t(abceagent.buy):\t\tOK')
-                print('Test abceagent.accept_partial\t(abceagent.buy):\tOK')
-                print('Test reject pending automatic \t(abceagent.buy):\tOK')
+        assert all(self.tests.values()), 'not all tests have been run; ABCE workes correctly, restart the unittesting to do all tests %s' % self.tests
+        if self.round == self.last_round and self.idn == 0:
+            print('Test abceagent.buy:\t\t\t\t\tOK')
+            print('Test abceagent.accept\t(abceagent.buy):\t\tOK')
+            print('Test abceagent.reject\t(abceagent.buy):\t\tOK')
+            print('Test abceagent.accept_partial\t(abceagent.buy):\tOK')
+            print('Test reject pending automatic \t(abceagent.buy):\tOK')
 

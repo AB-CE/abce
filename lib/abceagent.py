@@ -79,7 +79,7 @@ class Messaging:
         self._send(receiver_group, receiver_idn, topic, msg)
 
     def get_messages(self, topic='m'):
-        """ self.messages() returns all new messages send with :meth:`~abceagent.Messaging.message`
+        """ returns all new messages send with :meth:`~abceagent.Messaging.message`
         (topic='m'). The order is randomized. self.messages(topic) returns all
         messages with a topic.
 
@@ -151,11 +151,14 @@ class Message():
     def __init__(self, msg):
         self.__dict__ = msg
 
-    def __repr__(self):
-        return str(self.content)
+    def __get__(self):
+        return self.content
 
     def __str__(self):
         return str(self.content)
+
+    def __getitem__(self, key):
+        return self.content[key]
 
 
 class Trade:
@@ -247,6 +250,22 @@ class Trade:
         """ lets you access all fields of a **given** offer.
         This allows you to check whether an offer was accepted, partially accepted
         or rejected and retrieve the quantity actually traded.
+
+        If in your first round the value your are testing is not set, set the variable
+        to `None`. None in the first round returns an empty trade with quantity = 0 and price = 1.
+        The status in accepted.
+
+        Example::
+
+            class Example:
+                def __init__(self):
+                    self.last_offer = None
+                    self.price = 5
+
+                def selling(self):
+                    if self.info(self.last_offer)['status'] == 'accept':
+                        self.price += 1
+                    self.last_offer = self.sell('Household', 1, 'cookies', 5, self.price)
 
         Returns a dictionary; Fields:
             ['status']:
@@ -405,7 +424,7 @@ class Trade:
         return offers_by_good
 
     def get_offers(self, good, descending=False):
-        """ returns all open offers of the 'good' ordered by price.
+        """ returns all offers of the 'good' ordered by price.
 
         *Offers that are not accepted in the same subround (def block) are
         automatically rejected.* However you can also manualy reject.
@@ -515,8 +534,8 @@ class Trade:
                     offer['status'] == 'rejected':
                     print('On diet')
         """
-        assert price >= - epsilon
-        assert quantity > - epsilon
+        assert price >= - epsilon, price
+        assert quantity > - epsilon, quantity
         if self._haves[good] < quantity - epsilon:
             raise NotEnoughGoods(self.name, good, quantity - self._haves[good])
         self._haves[good] -= quantity
@@ -601,7 +620,7 @@ class Trade:
             Returns a dictionary with the good's quantity and the amount paid.
         """
         assert not(is_negative(quantity)), quantity
-        assert quantity <= offer['quantity']
+        assert quantity <= offer['quantity'], 'accepted more than offered %s: %f > %s' % (offer['good'], quantity, offer['quantity'])
         money_amount = quantity * offer['price']
         if offer['buysell'] == 's':
             if self._haves['money'] < money_amount - epsilon:
@@ -1065,6 +1084,18 @@ class FirmMultiTechnologies:
 
 
 class Firm(FirmMultiTechnologies):
+    """ The firm class allows you to declare a production function for a firm.
+    :meth:`~Firm.set_leontief`, :meth:`~abecagent.Firm.set_production_function`
+    :meth:`~Firm.set_cobb_douglas`,
+    :meth:`~Firm.set_production_function_fast`
+    (FirmMultiTechnologies, allows you to declare several) With :meth:`~Firm.produce`
+    and :meth:`~Firm.produce_use_everything` you can produce using the
+    according production function. You have several auxiliarifunctions
+    for example to predict the production. When you multiply
+    :meth:`~Firm.predict_produce` with the price vector you get the
+    profitability of the prodiction.
+    """
+    #TODO Example
     def produce_use_everything(self):
         """ Produces output goods from all input goods.
 
@@ -1120,7 +1151,8 @@ class Firm(FirmMultiTechnologies):
             "formula": equation or set of equations that describe the
             production process. (string) Several equation are seperated by a ;
 
-        Example:
+        Example::
+
             formula = 'golf_ball = (ball) * (paint / 2); waste = 0.1 * paint'
             self.set_production_function(formula)
             self.produce({'ball' : 1, 'paint' : 2}
@@ -1143,7 +1175,8 @@ class Firm(FirmMultiTechnologies):
             production process. (string) Several equation are seperated by a ;
             [output]: list of all output goods (left hand sides of the equations)
 
-        Example:
+        Example::
+
             formula = 'golf_ball = (ball) * (paint / 2); waste = 0.1 * paint'
             self.production_function_fast(formula, 'golf', ['waste'])
             self.produce(self, {'ball' : 1, 'paint' : 2}
@@ -1165,9 +1198,10 @@ class Firm(FirmMultiTechnologies):
             {'input1': exponent1, 'input2': exponent2 ...}: dictionary
             containing good names 'input' and correstponding exponents
 
-        Example:
-        self.plastic_production_function = self.create_cobb_douglas('plastic', {'oil' : 10, 'labor' : 1}, 0.000001)
-        self.produce(self.plastic_production_function, {'oil' : 20, 'labor' : 1})
+        Example::
+
+            self.create_cobb_douglas('plastic', 0.000001, {'oil' : 10, 'labor' : 1})
+            self.produce({'oil' : 20, 'labor' : 1})
 
         """
         self._production_function = self.create_cobb_douglas(output, multiplier, exponents)
@@ -1191,10 +1225,11 @@ class Firm(FirmMultiTechnologies):
             isinteger='int' or isinteger='': When 'int' produce only integer
             amounts of the good. When '', produces floating amounts.
 
-        Example:
-        self.car_technology = self.create_leontief('car', {'tire' : 4, 'metal' : 1000, 'plastic' : 20}, 1)
-        two_cars = {'tire': 8, 'metal': 2000, 'plastic':  40}
-        self.produce(self.car_technology, two_cars)
+        Example::
+
+            self.create_leontief('car', {'tire' : 4, 'metal' : 1000, 'plastic' : 20}, 1)
+            two_cars = {'tire': 8, 'metal': 2000, 'plastic':  40}
+            self.produce(two_cars)
         """
         self._production_function = self.create_leontief(output, utilization_quantities, multiplier, isinteger)
 
@@ -1273,7 +1308,8 @@ class Household:
         return self.consume(dict((inp, self._haves[inp]) for inp in self._utility_function['input']))
 
     def consume(self, input_goods):
-        """ consumes input_goods returns utility according consumption
+        """ consumes input_goods returns utility according to the agent's
+        consumption function
 
         A utility_function, has to be set before see
         py:meth:`~abceagent.Household.set_   utility_function`,
@@ -1399,7 +1435,7 @@ class Household:
         self._utility_function['input'] = exponents.keys()
 
     def predict_utility(self, input_goods):
-        """ Calculates the utility of a production (but does not consume)
+        """ Predicts the utility of a vecor of input goods
 
             Predicts the utility of consume_with_utility(utility_function, input_goods)
 
@@ -1441,8 +1477,9 @@ def sort(objects, key='price', reverse=False):
 class Database:
     """ The database class """
     def log(self, action_name, data_to_log):
-        """ This command puts in a database called log, what ever values you
-        want values need to be delivered as a dictionary:
+        """ With log you can write the models data. Log can save variable states
+        and and the working of individual functions such as production,
+        consumption, give, but not trade(as its handled automatically).
 
         Args:
             'name'(string):
@@ -1462,15 +1499,45 @@ class Database:
             for i in range(self.num_households):
                 self.log('give%i' % i, self.give('Household', i, 'money', payout / self.num_households))
 
+        See also:
+            :meth:`~abecagent.Database.log_nested`:
+                handles nested dictianaries
+            :meth:`~abecagent.Database.log_change`:
+                loges the change from last round
+            :meth:`~abecagent.Database.observe_begin`:
+
         """
-        data_to_write = {}
-        for key in data_to_log:
-            data_to_write['%s_%s' % (action_name, key)] = data_to_log[key]
+        data_to_write = {'%s_%s' % (action_name, key): data_to_log[key] for key in data_to_log}
         data_to_write['id'] = self.idn
-        self.out.send("db_agent:", zmq.SNDMORE)
-        self.out.send("log", zmq.SNDMORE)
-        self.out.send(self.group, zmq.SNDMORE)
-        self.out.send_json(data_to_write)
+        self.database_connection.send("log", zmq.SNDMORE)
+        self.database_connection.send(self.group, zmq.SNDMORE)
+        self.database_connection.send_json(data_to_write, zmq.SNDMORE)
+        self.database_connection.send(str(self.round))
+
+    def log_value(self, name, value):
+        """ logs a value, with a name
+
+        Args:
+            'name'(string):
+                the name of the value/variable
+            value(int/float):
+                the variable = value to log
+        """
+        self.database_connection.send("log", zmq.SNDMORE)
+        self.database_connection.send(self.group, zmq.SNDMORE)
+        self.database_connection.send_json({'id': self.idn, name: value}, zmq.SNDMORE)
+        self.database_connection.send(str(self.round))
+
+    def log_dict(self, action_name, data_to_log):
+        """ same as the log function, only that it supports nested dictionaries
+        see: :meth:`~abecagent.Database.log`.
+        """
+        data_to_write = flatten(data_to_log, '%s_' % action_name)
+        data_to_write['id'] = self.idn
+        self.database_connection.send("log", zmq.SNDMORE)
+        self.database_connection.send(self.group, zmq.SNDMORE)
+        self.database_connection.send_json(data_to_write, zmq.SNDMORE)
+        self.database_connection.send(str(self.round))
 
     def log_change(self, action_name, data_to_log):
         """ This command logs the change in the variable from the round before.
@@ -1495,18 +1562,19 @@ class Database:
             for key in data_to_log:
                 data_to_write['%s_change_%s' % (action_name, key)] = data_to_log[key]
         data_to_write['id'] = self.idn
-        self.out.send("db_agent:", zmq.SNDMORE)
-        self.out.send("log", zmq.SNDMORE)
-        self.out.send(self.group, zmq.SNDMORE)
-        self.out.send_json(data_to_write)
+        self.database_connection.send("log", zmq.SNDMORE)
+        self.database_connection.send(self.group, zmq.SNDMORE)
+        self.database_connection.send_json(data_to_write, zmq.SNDMORE)
+        self.database_connection.send(str(self.round))
+
         self._data_to_log_1[action_name] = data_to_log
 
     def observe_begin(self, action_name, data_to_observe):
-        """ observe_start and observe_end, observe the change of a variable.
-        observe_start(...), takes a list of variables to be observed.
+        """ observe_begin and observe_end, observe the change of a variable.
+        observe_begin(...), takes a list of variables to be observed.
         observe_end(...) writes the change in this vars into the log file
 
-        you can use nested observe_start / observe_end combinations
+        you can use nested observe_begin / observe_end combinations
 
         Args:
             'name'(string):
@@ -1552,10 +1620,10 @@ class Database:
             data_to_write['%s_delta_%s' % (action_name, key)] = \
                                             data_to_observe[key] - before[key]
         data_to_write['id'] = self.idn
-        self.out.send("db_agent:", zmq.SNDMORE)
-        self.out.send("log", zmq.SNDMORE)
-        self.out.send(self.group, zmq.SNDMORE)
-        self.out.send_json(data_to_write)
+        self.database_connection.send("log", zmq.SNDMORE)
+        self.database_connection.send(self.group, zmq.SNDMORE)
+        self.database_connection.send_json(data_to_write, zmq.SNDMORE)
+        self.database_connection.send(str(self.round))
 
 
 def Offer(sender_group, sender_idn, receiver_group, receiver_idn, good, quantity, price, buysell='s', idn=None):
@@ -1585,14 +1653,14 @@ class Agent(Database, Trade, Messaging, multiprocessing.Process):
             def __init__(self, simulation_parameters, agent_parameters, _pass_to_engine):
             abceagent.Agent.__init__(self, *_pass_to_engine)
     """
-    def __init__(self, idn, group, __command_addresse, trade_logging):
+    def __init__(self, idn, group, _addresses, trade_logging):
         multiprocessing.Process.__init__(self)
         self.idn = idn
         self.name = '%s_%i:' % (group, idn)
         self.group = group
         #TODO should be group_address(group), but it would not work
         # when fired manual + ':' and manual group_address need to be removed
-        self.__command_addresse = __command_addresse
+        self._addresses = _addresses
         self._methods = {}
         self._register_actions()
         if trade_logging == 'individual':
@@ -1613,6 +1681,9 @@ class Agent(Database, Trade, Messaging, multiprocessing.Process):
         self._msgs = {}
 
         self.given_offers = OrderedDict()
+        self.given_offers[None] = Offer(self.group, self.idn, '', '', '', 0, 1, buysell='', idn=None)
+        self.given_offers[None]['status'] = 'accepted'
+        self.given_offers[None]['status_round'] = 0
         self._open_offers = {}
         self._answered_offers = OrderedDict()
         self._offer_count = 0
@@ -1624,7 +1695,7 @@ class Agent(Database, Trade, Messaging, multiprocessing.Process):
         self.round = 0
 
     def possession(self, good):
-        """ returns how much of good an agent possesses (0 when unknown)
+        """ returns how much of good an agent possesses.
 
         Returns:
             A number.
@@ -1726,6 +1797,7 @@ class Agent(Database, Trade, Messaging, multiprocessing.Process):
             self._methods['_db_panel'] = self._db_panel
             self._methods['_perish'] = self._perish
             self._methods['_produce_resource_rent_and_labor'] = self._produce_resource_rent_and_labor
+            self._methods['_aesof'] = self._aesof
             #TODO inherited classes provide methods that should not be callable
             #change _ policy _ callable from outside __ not and exception lists
 
@@ -1752,17 +1824,13 @@ class Agent(Database, Trade, Messaging, multiprocessing.Process):
                 keep[key] = self.given_offers[key]
         self.given_offers = keep
 
-        self.out.send("db_agent: ", zmq.SNDMORE)
-        self.out.send("trade_log", zmq.SNDMORE)
-        self.out.send_json(self._trade_log)
+        self.database_connection.send("trade_log", zmq.SNDMORE)
+        self.database_connection.send_json(self._trade_log, zmq.SNDMORE)
+        self.database_connection.send(str(self.round))
+
         self._trade_log = defaultdict(int)
 
         self.round += 1
-        self.round_begin()
-
-    def round_begin(self):
-        """ If you declare a round_begin methode in your agent, it will be called at the begin of each round """
-        pass
 
     def create(self, good, quantity):
         """ creates quantity of the good out of nothing
@@ -1808,26 +1876,26 @@ class Agent(Database, Trade, Messaging, multiprocessing.Process):
         return quantity_destroyed
 
     def run(self):
-        context = zmq.Context()
-        self.commands = context.socket(zmq.SUB)
-        self.commands.connect(self.__command_addresse)
+        self.context = zmq.Context()
+        self.commands = self.context.socket(zmq.SUB)
+        self.commands.connect(self._addresses['command_addresse'])
         self.commands.setsockopt(zmq.SUBSCRIBE, "all")
         self.commands.setsockopt(zmq.SUBSCRIBE, self.name)
         self.commands.setsockopt(zmq.SUBSCRIBE, group_address(self.group))
 
-        self.out = context.socket(zmq.PUSH)
-        self.out.connect("ipc://frontend.ipc")
-        self.in_sok = context.socket(zmq.SUB)
-        self.in_sok.connect("ipc://backend.ipc")
-        self.in_sok.setsockopt(zmq.SUBSCRIBE, "all")
-        self.in_sok.setsockopt(zmq.SUBSCRIBE, self.name)
-        self.in_sok.setsockopt(zmq.SUBSCRIBE, group_address(self.group))
-        self.__signal_finished()
-        self._loop()
+        self.out = self.context.socket(zmq.PUSH)
+        self.out.connect(self._addresses['frontend'])
 
-    def _loop(self):
+        self.database_connection = self.context.socket(zmq.PUSH)
+        self.database_connection.connect(self._addresses['database'])
+
+        self.messages_in = self.context.socket(zmq.DEALER)
+        self.messages_in.setsockopt(zmq.IDENTITY, self.name)
+        self.messages_in.connect(self._addresses['backend'])
+        self.out.send_multipart(['!', '!', 'register_agent', self.name])
+
         while True:
-            msg = self.commands.recv()
+            addressee = self.commands.recv()
             command = self.commands.recv()
             if command == "!":
                 subcommand = self.commands.recv()
@@ -1843,7 +1911,8 @@ class Agent(Database, Trade, Messaging, multiprocessing.Process):
                     raise
             if command[0] != '_':
                 self.__reject_polled_but_not_accepted_offers()
-            self.__signal_finished()
+                self.__signal_finished()
+        #self.context.destroy()
 
     def _produce_resource_rent_and_labor(self):
         resource, units, product = self.commands.recv_multipart()
@@ -1874,12 +1943,12 @@ class Agent(Database, Trade, Messaging, multiprocessing.Process):
             data_to_track = self._haves
         #TODO this leads to ambigues errors when there is a KeyError in the data_to_track
         #method (which is common), but testing takes to much time
-        self.out.send("db_agent:", zmq.SNDMORE)
-        self.out.send("panel", zmq.SNDMORE)
-        self.out.send(str(self.idn), zmq.SNDMORE)
-        self.out.send(command, zmq.SNDMORE)
-        self.out.send(self.group, zmq.SNDMORE)
-        self.out.send_json(data_to_track)
+        self.database_connection.send("panel", zmq.SNDMORE)
+        self.database_connection.send(command, zmq.SNDMORE)
+        self.database_connection.send_json(data_to_track, zmq.SNDMORE)
+        self.database_connection.send(str(self.idn), zmq.SNDMORE)
+        self.database_connection.send(self.group, zmq.SNDMORE)
+        self.database_connection.send(str(self.round))
 
     def __reject_polled_but_not_accepted_offers(self):
         to_reject = []
@@ -1894,6 +1963,21 @@ class Agent(Database, Trade, Messaging, multiprocessing.Process):
         for offer_id in to_reject:
             self.reject(self._open_offers[offer_id])
 
+    def aesof_exec(self, column_name):
+        """ executes a command in your excel file. see instruction of pythons exec commmand """
+        try:
+            exec(self.aesof[column_name], globals(), locals())
+            del self.aesof[column_name]
+        except KeyError:
+            pass
+
+    def aesof_eval(self, column_name):
+        """ evaluates an expression' in your excel file. see instruction of pythons eval commmand """
+        return eval(self.aesof[column_name], globals(), locals())
+
+    def _aesof(self):
+        self.aesof = self.commands.recv_json()
+
     #TODO go to trade
     def _clearing__end_of_subround(self):
         """ agent receives all messages and objects that have been send in this
@@ -1907,11 +1991,10 @@ class Agent(Database, Trade, Messaging, multiprocessing.Process):
         '_g': recive a 'free' good from another party
         """
         while True:
-            address = self.in_sok.recv()
-            if address == 'all.':
+            typ = self.messages_in.recv()
+            if typ == '.':
                 break
-            typ = self.in_sok.recv()
-            msg = self.in_sok.recv_json()
+            msg = self.messages_in.recv_json()
             if   typ == '_o':
                 msg['status'] = 'received'
                 self._open_offers[msg['idn']] = msg
@@ -1948,3 +2031,12 @@ class Agent(Database, Trade, Messaging, multiprocessing.Process):
         self.out.send(typ, zmq.SNDMORE)
         self.out.send_json(msg)
 
+
+def flatten(d, parent_key=''):
+    items = []
+    for k, v in d.items():
+        try:
+            items.extend(flatten(v, '%s%s_' % (parent_key, k)).items())
+        except AttributeError:
+            items.append(('%s%s' % (parent_key, k), v))
+    return dict(items)
