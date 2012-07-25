@@ -1,3 +1,19 @@
+# Copyright 2012 Davoud Taghawi-Nejad
+#
+# Module Author: Davoud Taghawi-Nejad
+#
+# ABCE is open-source software. If you are using ABCE for your research you are
+# requested the quote the use of this software.
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not
+# use this file except in compliance with the License and quotation of the
+# author. You may obtain a copy of the License at
+#       http://www.apache.org/licenses/LICENSE-2.0
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations under
+# the License.
 """
 The :class:`abceagent.Agent` class is the basic class for creating your agent. It automatically handles the
 possession of goods of an agent. In order to produce/transforme goods you need to also subclass
@@ -35,7 +51,8 @@ class Messaging:
     #TODO public way of sending messages and objects
     def message(self, receiver_group, receiver_idn, topic, content):
         """ sends a message to agent, agent_group or 'all'. Agents receive it
-        at the beginning of next round with self.get_messages()
+        at the beginning of next round with :meth:`~abceagent.Messaging.get_messages` or
+        :meth:`~abceagent.Messaging.get_messages_all`.
 
         Args::
 
@@ -46,7 +63,7 @@ class Messaging:
         Example::
 
             ... household_01 ...
-            self.send_message('firm_01', 'quote_sell', {'good':'BRD', 'quantity': 5})
+            self.message('firm_01', 'quote_sell', {'good':'BRD', 'quantity': 5})
 
             ... firm_01 - one subround later ...
             requests = self.get_messages('quote_sell')
@@ -55,29 +72,38 @@ class Messaging:
 
         Example2::
 
-         self.send_message('firm_01', 'm', "hello my message")
+         self.message('firm_01', 'm', "hello my message")
 
         """
-        msg = Message(self.group, self.idn, receiver_group, receiver_idn, topic, content)
+        msg = message(self.group, self.idn, receiver_group, receiver_idn, topic, content)
         self._send(receiver_group, receiver_idn, topic, msg)
 
     def get_messages(self, topic='m'):
-        """ self.messages() returns all new messages send before this step
-        (topic='m'). The order is randomized self.messages(topic) returns all
-        messages with a particular non standard topice topic e.G. 'n'.
-        The order of the messages is randomized.
+        """ self.messages() returns all new messages send with :meth:`~abceagent.Messaging.message`
+        (topic='m'). The order is randomized. self.messages(topic) returns all
+        messages with a topic.
+
+        A message is a string with the message. You can also retrieve the sender
+        by `message.sender_group` and `message.sender_idn` and view the topic with
+        'message.topic'. (see example)
+
+        If you are sending a float or an integer you need to access the message
+        content with `message.content` instead of only `message`.
 
         Example::
 
          ... agent_01 ...
-         self.send_messages('firm_01', 'm', 'hello message')
+         self.messages('firm_01', 'potential_buyers', 'hello message')
 
          ... firm_01 - one subround later ...
-         potential_buyers = get_messages('m')
-         for buyer in potential_buyers:
-            print(buyer.content)
+         potential_buyers = get_messages('potential_buyers')
+         for msg in potential_buyers:
+            print('message: ', msg)
+            print('message: ', msg.content)
+            print('group name: ', msg.sender_group)
+            print('sender id: ', msg.sender_idn)
+            print('topic: ', msg.topic)
 
-        Example2: see send_message
         """
         try:
             shuffle(self._msgs[topic])
@@ -86,7 +112,15 @@ class Messaging:
         return self._msgs.pop(topic)
 
     def get_messages_all(self):
-        """ returns all messages irregardless of the topic, in a dictionary by topic """
+        """ returns all messages irregardless of the topic, in a dictionary by topic
+
+        A message is a string with the message. You can also retrieve the sender
+        by `message.sender_group` and `message.sender_idn` and view the topic with
+        'message.topic'. (see example)
+
+        If you are sending a float or an integer you need to access the message
+        content with `message.content` instead of only `message`.
+        """
         ret = self._msgs
         self._msgs = {}
         return ret
@@ -102,7 +136,7 @@ class Messaging:
             return []
 
 
-def Message(sender_group, sender_idn, receiver_group, receiver_idn, topic, content):
+def message(sender_group, sender_idn, receiver_group, receiver_idn, topic, content):
     msg = {}
     msg['sender_group'] = sender_group
     msg['sender_idn'] = sender_idn
@@ -113,17 +147,28 @@ def Message(sender_group, sender_idn, receiver_group, receiver_idn, topic, conte
     return msg
 
 
+class Message():
+    def __init__(self, msg):
+        self.__dict__ = msg
+
+    def __repr__(self):
+        return str(self.content)
+
+    def __str__(self):
+        return str(self.content)
+
+
 class Trade:
     """ Agents can trade with each other. The clearing of the trade is taken care
     of fully by ABCE.
     Selling a good works in the following way:
 
-    1. An agent sends an offer. :meth:`sell`
+    1. An agent sends an offer. :meth:`~abceagent.Trade.sell`
 
        *The good offered is blocked and self.possession(...) does not account for it.*
 
-    2. **Next subround:** An agent receives the offer :meth:`get_offers`, and can
-       :meth:`accept`, :meth:`reject` or partially accept it. :meth:`accept_partial`
+    2. **Next subround:** An agent receives the offer :meth:`~abceagent.Trade.get_offers`, and can
+       :meth:`~abceagent.Trade.accept`, :meth:`~abceagent.Trade.reject` or partially accept it. :meth:`~abceagent.Trade.accept_partial`
 
        *The good is credited and the price is deducted from the agent's possesions.*
 
@@ -133,7 +178,7 @@ class Trade:
        - in case of partial acceptance *the money is credited and part of the blocked good is unblocked.*
        - in case of rejection *the good is unblocked.*
 
-    Analogously for buying. (:meth:`buy`)
+    Analogously for buying. (:meth:`~buy`)
 
     Example::
 
@@ -162,8 +207,8 @@ class Trade:
                 self.price *= offer['final_quantity'] / offer['quantity']
 
     Quotes on the other hand allow you to ask a trade partner to send you a not committed price quote.
-    The modeller has to implement a response mechanism. For convenience :meth:`accept_quote` and
-    :meth:`accept_quote_partial`, send a committed offer that its the uncommitted price quote.
+    The modeller has to implement a response mechanism. For convenience :meth:`~abceagent.Trade.accept_quote` and
+    :meth:`~abceagent.Trade.accept_quote_partial`, send a committed offer that its the uncommitted price quote.
 
 
     """
@@ -704,8 +749,8 @@ class FirmMultiTechnologies:
         Args::
 
             production_function: A production_function produced with
-            py:meth:`create_production_function`, py:meth:`create_cobb_douglas` or
-            py:meth:`create_leontief`
+            py:meth:`~abceagent.FirmMultiTechnologies.create_production_function`, py:meth:`~abceagent.FirmMultiTechnologies.create_cobb_douglas` or
+            py:meth:`~abceagent.FirmMultiTechnologies.create_leontief`
 
         Example::
 
@@ -723,8 +768,8 @@ class FirmMultiTechnologies:
 
         Args:
             production_function:
-                A production_function produced with py:meth:`.create_production_function`,
-                py:meth:`.create_cobb_douglas` or py:meth:`.create_leontief`
+                A production_function produced with py:meth:`~abceagent.FirmMultiTechnologies..create_production_function`,
+                py:meth:`~abceagent.FirmMultiTechnologies..create_cobb_douglas` or py:meth:`~abceagent.FirmMultiTechnologies..create_leontief`
             input goods {dictionary}:
                 dictionary containing the amount of input good used for the production.
 
@@ -1214,8 +1259,8 @@ class Household:
         returns utility according consumption
 
         A utility_function, has to be set before see
-        py:meth:`set_   utility_function`,
-        py:meth:`set_cobb_douglas_utility_function`
+        py:meth:`~abceagent.Household.set_   utility_function`,
+        py:meth:`~abceagent.Household.set_cobb_douglas_utility_function`
 
         Returns:
             A the utility a number. To log it see example.
@@ -1231,8 +1276,8 @@ class Household:
         """ consumes input_goods returns utility according consumption
 
         A utility_function, has to be set before see
-        py:meth:`set_   utility_function`,
-        py:meth:`set_cobb_douglas_utility_function` or
+        py:meth:`~abceagent.Household.set_   utility_function`,
+        py:meth:`~abceagent.Household.set_cobb_douglas_utility_function` or
 
         Args:
             {'input_good1': amount1, 'input_good2': amount2 ...}:
@@ -1885,7 +1930,7 @@ class Agent(Database, Trade, Messaging, multiprocessing.Process):
             elif typ == '_g':
                 self._haves[msg[0]] += msg[1]
             else:
-                self._msgs.setdefault(typ, []).append(msg)
+                self._msgs.setdefault(typ, []).append(Message(msg))
 
     def __signal_finished(self):
         """ signals modelswarm via communication that the agent has send all

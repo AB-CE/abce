@@ -10,6 +10,10 @@ consume. ABCE makes sure the economy is closed, that means no goods appear, disa
 or are otherwise unaccounted for. It is therefore particularly useful for macre models.
 ABCE's model output are compatible with R, Excel and sqlite.
 
+.. sidebar:: **The full documentation**
+
+    http://davoudtaghawinejad.github.com/abce/
+
 Walk through
 ============
 
@@ -140,7 +144,6 @@ Or you can create panal data from agoup of agents::
     s.panel_db('Firm', command='after_sales_before_consumption')
     s.panel_db('all')  # at the beginning
 
-For both follow_agent and panal_db you can controll what they log see [todo]
 
     ...
 
@@ -149,7 +152,7 @@ For both follow_agent and panal_db you can controll what they log see [todo]
 In the remainder of this Walk through, we will see how the timeline, the goods and
 the agents are created.
 
-.. [#db_order] follow_agent and panal_db must be after the declaration of the agents.
+.. [#db_order] panal_db must be called after the declaration of the agents.
 
 The timeline: The order of actions within a round
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

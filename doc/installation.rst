@@ -1,11 +1,11 @@
-Installation
-============
+Download and Installation
+=========================
 
 The installation has two parts. Installing the necessary software packages. Retrieving ABCE with git or as a zip file.
 
  In terminal (necessary software) [1]_ ::
 
-  sudo apt-get install python-pyparsing python-numpy python-scipy python-zmq
+  sudo apt-get install python-pyparsing python-numpy python-scipy python-zmq r-base
 
 
  Alternative 1 as a zip (EASY):
