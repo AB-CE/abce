@@ -62,27 +62,39 @@
 <dd><dl class="method">
 <dt id="abceagent.Messaging.get_messages">
 <tt class="descname">get_messages</tt><big>(</big><em>topic='m'</em><big>)</big><a class="reference internal" href="_modules/abceagent.html#Messaging.get_messages"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.Messaging.get_messages" title="Permalink to this definition">¶</a></dt>
-<dd><p>self.messages() returns all new messages send before this step
-(topic=&#8217;m&#8217;). The order is randomized self.messages(topic) returns all
-messages with a particular non standard topice topic e.G. &#8216;n&#8217;.
-The order of the messages is randomized.</p>
+<dd><p>self.messages() returns all new messages send with <a class="reference internal" href="#abceagent.Messaging.message" title="abceagent.Messaging.message"><tt class="xref py py-meth docutils literal"><span class="pre">message()</span></tt></a>
+(topic=&#8217;m&#8217;). The order is randomized. self.messages(topic) returns all
+messages with a topic.</p>
+<p>A message is a string with the message. You can also retrieve the sender
+by <cite>message.sender_group</cite> and <cite>message.sender_idn</cite> and view the topic with
+&#8216;message.topic&#8217;. (see example)</p>
+<p>If you are sending a float or an integer you need to access the message
+content with <cite>message.content</cite> instead of only <cite>message</cite>.</p>
 <p>Example:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="o">...</span> <span class="n">agent_01</span> <span class="o">...</span>
-<span class="bp">self</span><span class="o">.</span><span class="n">send_messages</span><span class="p">(</span><span class="s">&#39;firm_01&#39;</span><span class="p">,</span> <span class="s">&#39;m&#39;</span><span class="p">,</span> <span class="s">&#39;hello message&#39;</span><span class="p">)</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">messages</span><span class="p">(</span><span class="s">&#39;firm_01&#39;</span><span class="p">,</span> <span class="s">&#39;potential_buyers&#39;</span><span class="p">,</span> <span class="s">&#39;hello message&#39;</span><span class="p">)</span>
 
 <span class="o">...</span> <span class="n">firm_01</span> <span class="o">-</span> <span class="n">one</span> <span class="n">subround</span> <span class="n">later</span> <span class="o">...</span>
-<span class="n">potential_buyers</span> <span class="o">=</span> <span class="n">get_messages</span><span class="p">(</span><span class="s">&#39;m&#39;</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">buyer</span> <span class="ow">in</span> <span class="n">potential_buyers</span><span class="p">:</span>
-   <span class="k">print</span><span class="p">(</span><span class="n">buyer</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+<span class="n">potential_buyers</span> <span class="o">=</span> <span class="n">get_messages</span><span class="p">(</span><span class="s">&#39;potential_buyers&#39;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">potential_buyers</span><span class="p">:</span>
+   <span class="k">print</span><span class="p">(</span><span class="s">&#39;message: &#39;</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+   <span class="k">print</span><span class="p">(</span><span class="s">&#39;message: &#39;</span><span class="p">,</span> <span class="n">msg</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+   <span class="k">print</span><span class="p">(</span><span class="s">&#39;group name: &#39;</span><span class="p">,</span> <span class="n">msg</span><span class="o">.</span><span class="n">sender_group</span><span class="p">)</span>
+   <span class="k">print</span><span class="p">(</span><span class="s">&#39;sender id: &#39;</span><span class="p">,</span> <span class="n">msg</span><span class="o">.</span><span class="n">sender_idn</span><span class="p">)</span>
+   <span class="k">print</span><span class="p">(</span><span class="s">&#39;topic: &#39;</span><span class="p">,</span> <span class="n">msg</span><span class="o">.</span><span class="n">topic</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Example2: see send_message</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="abceagent.Messaging.get_messages_all">
 <tt class="descname">get_messages_all</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/abceagent.html#Messaging.get_messages_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.Messaging.get_messages_all" title="Permalink to this definition">¶</a></dt>
 <dd><p>returns all messages irregardless of the topic, in a dictionary by topic</p>
+<p>A message is a string with the message. You can also retrieve the sender
+by <cite>message.sender_group</cite> and <cite>message.sender_idn</cite> and view the topic with
+&#8216;message.topic&#8217;. (see example)</p>
+<p>If you are sending a float or an integer you need to access the message
+content with <cite>message.content</cite> instead of only <cite>message</cite>.</p>
 </dd></dl>
 
 <dl class="method">
@@ -97,7 +109,8 @@ is not affected by the order</p>
 <dt id="abceagent.Messaging.message">
 <tt class="descname">message</tt><big>(</big><em>receiver_group</em>, <em>receiver_idn</em>, <em>topic</em>, <em>content</em><big>)</big><a class="reference internal" href="_modules/abceagent.html#Messaging.message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.Messaging.message" title="Permalink to this definition">¶</a></dt>
 <dd><p>sends a message to agent, agent_group or &#8216;all&#8217;. Agents receive it
-at the beginning of next round with self.get_messages()</p>
+at the beginning of next round with <a class="reference internal" href="#abceagent.Messaging.get_messages" title="abceagent.Messaging.get_messages"><tt class="xref py py-meth docutils literal"><span class="pre">get_messages()</span></tt></a> or
+<a class="reference internal" href="#abceagent.Messaging.get_messages_all" title="abceagent.Messaging.get_messages_all"><tt class="xref py py-meth docutils literal"><span class="pre">get_messages_all()</span></tt></a>.</p>
 <p>Args:</p>
 <div class="highlight-python"><pre>receiver_group: agent, agent_group or 'all'
 topic: string, with which this message can be received
@@ -105,7 +118,7 @@ content: string, dictionary or class, that is send.</pre>
 </div>
 <p>Example:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="o">...</span> <span class="n">household_01</span> <span class="o">...</span>
-<span class="bp">self</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="s">&#39;firm_01&#39;</span><span class="p">,</span> <span class="s">&#39;quote_sell&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;good&#39;</span><span class="p">:</span><span class="s">&#39;BRD&#39;</span><span class="p">,</span> <span class="s">&#39;quantity&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">})</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">(</span><span class="s">&#39;firm_01&#39;</span><span class="p">,</span> <span class="s">&#39;quote_sell&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;good&#39;</span><span class="p">:</span><span class="s">&#39;BRD&#39;</span><span class="p">,</span> <span class="s">&#39;quantity&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">})</span>
 
 <span class="o">...</span> <span class="n">firm_01</span> <span class="o">-</span> <span class="n">one</span> <span class="n">subround</span> <span class="n">later</span> <span class="o">...</span>
 <span class="n">requests</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_messages</span><span class="p">(</span><span class="s">&#39;quote_sell&#39;</span><span class="p">)</span>
@@ -114,7 +127,7 @@ content: string, dictionary or class, that is send.</pre>
 </pre></div>
 </div>
 <p>Example2:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="bp">self</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="s">&#39;firm_01&#39;</span><span class="p">,</span> <span class="s">&#39;m&#39;</span><span class="p">,</span> <span class="s">&quot;hello my message&quot;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">(</span><span class="s">&#39;firm_01&#39;</span><span class="p">,</span> <span class="s">&#39;m&#39;</span><span class="p">,</span> <span class="s">&quot;hello my message&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>

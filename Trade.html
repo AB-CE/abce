@@ -63,11 +63,11 @@
 of fully by ABCE.
 Selling a good works in the following way:</p>
 <ol class="arabic">
-<li><p class="first">An agent sends an offer. <tt class="xref py py-meth docutils literal"><span class="pre">sell()</span></tt></p>
+<li><p class="first">An agent sends an offer. <a class="reference internal" href="#abceagent.Trade.sell" title="abceagent.Trade.sell"><tt class="xref py py-meth docutils literal"><span class="pre">sell()</span></tt></a></p>
 <p><em>The good offered is blocked and self.possession(...) does not account for it.</em></p>
 </li>
-<li><p class="first"><strong>Next subround:</strong> An agent receives the offer <tt class="xref py py-meth docutils literal"><span class="pre">get_offers()</span></tt>, and can
-<tt class="xref py py-meth docutils literal"><span class="pre">accept()</span></tt>, <tt class="xref py py-meth docutils literal"><span class="pre">reject()</span></tt> or partially accept it. <tt class="xref py py-meth docutils literal"><span class="pre">accept_partial()</span></tt></p>
+<li><p class="first"><strong>Next subround:</strong> An agent receives the offer <a class="reference internal" href="#abceagent.Trade.get_offers" title="abceagent.Trade.get_offers"><tt class="xref py py-meth docutils literal"><span class="pre">get_offers()</span></tt></a>, and can
+<a class="reference internal" href="#abceagent.Trade.accept" title="abceagent.Trade.accept"><tt class="xref py py-meth docutils literal"><span class="pre">accept()</span></tt></a>, <a class="reference internal" href="#abceagent.Trade.reject" title="abceagent.Trade.reject"><tt class="xref py py-meth docutils literal"><span class="pre">reject()</span></tt></a> or partially accept it. <a class="reference internal" href="#abceagent.Trade.accept_partial" title="abceagent.Trade.accept_partial"><tt class="xref py py-meth docutils literal"><span class="pre">accept_partial()</span></tt></a></p>
 <p><em>The good is credited and the price is deducted from the agent&#8217;s possesions.</em></p>
 </li>
 <li><p class="first"><strong>Next subround:</strong></p>
@@ -105,8 +105,8 @@ def learning(self):
         self.price *= offer['final_quantity'] / offer['quantity']</pre>
 </div>
 <p>Quotes on the other hand allow you to ask a trade partner to send you a not committed price quote.
-The modeller has to implement a response mechanism. For convenience <tt class="xref py py-meth docutils literal"><span class="pre">accept_quote()</span></tt> and
-<tt class="xref py py-meth docutils literal"><span class="pre">accept_quote_partial()</span></tt>, send a committed offer that its the uncommitted price quote.</p>
+The modeller has to implement a response mechanism. For convenience <a class="reference internal" href="#abceagent.Trade.accept_quote" title="abceagent.Trade.accept_quote"><tt class="xref py py-meth docutils literal"><span class="pre">accept_quote()</span></tt></a> and
+<a class="reference internal" href="#abceagent.Trade.accept_quote_partial" title="abceagent.Trade.accept_quote_partial"><tt class="xref py py-meth docutils literal"><span class="pre">accept_quote_partial()</span></tt></a>, send a committed offer that its the uncommitted price quote.</p>
 <dl class="method">
 <dt id="abceagent.Trade.accept">
 <tt class="descname">accept</tt><big>(</big><em>offer</em><big>)</big><a class="reference internal" href="_modules/abceagent.html#Trade.accept"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.Trade.accept" title="Permalink to this definition">¶</a></dt>

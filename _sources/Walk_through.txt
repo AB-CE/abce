@@ -127,9 +127,6 @@ Or you can create panal data from agoup of agents::
 
     s.panel_db('Firm', command='after_sales_before_consumption')
     s.panel_db('all')  # at the beginning
-
-For both follow_agent and panal_db you can controll what they log see [todo]
-
     ...
 
     s.run()
@@ -137,7 +134,7 @@ For both follow_agent and panal_db you can controll what they log see [todo]
 In the remainder of this Walk through, we will see how the timeline, the goods and
 the agents are created.
 
-.. [#db_order] follow_agent and panal_db must be after the declaration of the agents.
+.. [#db_order] panal_db must be declared after the declaration of the agents.
 
 The timeline: The order of actions within a round
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
