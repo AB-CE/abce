@@ -79,7 +79,7 @@ class Messaging:
         self._send(receiver_group, receiver_idn, topic, msg)
 
     def get_messages(self, topic='m'):
-        """ returns all new messages send with :meth:`~abceagent.Messaging.message`
+        """ self.messages() returns all new messages send with :meth:`~abceagent.Messaging.message`
         (topic='m'). The order is randomized. self.messages(topic) returns all
         messages with a topic.
 
