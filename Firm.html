@@ -60,6 +60,16 @@
 <dt id="abceagent.Firm">
 <em class="property">class </em><tt class="descclassname">abceagent.</tt><tt class="descname">Firm</tt><a class="reference internal" href="_modules/abceagent.html#Firm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.Firm" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="FirmMultiTechnologies.html#abceagent.FirmMultiTechnologies" title="abceagent.FirmMultiTechnologies"><tt class="xref py py-class docutils literal"><span class="pre">abceagent.FirmMultiTechnologies</span></tt></a></p>
+<p>The firm class allows you to declare a production function for a firm.
+<tt class="xref py py-meth docutils literal"><span class="pre">set_leontief()</span></tt>, <tt class="xref py py-meth docutils literal"><span class="pre">set_production_function()</span></tt>
+<tt class="xref py py-meth docutils literal"><span class="pre">set_cobb_douglas()</span></tt>,
+<tt class="xref py py-meth docutils literal"><span class="pre">set_production_function_fast()</span></tt>
+(FirmMultiTechnologies, allows you to declare several) With <tt class="xref py py-meth docutils literal"><span class="pre">produce()</span></tt>
+and <tt class="xref py py-meth docutils literal"><span class="pre">produce_use_everything()</span></tt> you can produce using the
+according production function. You have several auxiliarifunctions
+for example to predict the production. When you multiply
+<tt class="xref py py-meth docutils literal"><span class="pre">predict_produce()</span></tt> with the price vector you get the
+profitability of the prodiction.</p>
 <dl class="method">
 <dt id="abceagent.Firm.predict_produce">
 <tt class="descname">predict_produce</tt><big>(</big><em>production_function</em>, <em>input_goods</em><big>)</big><a class="reference internal" href="_modules/abceagent.html#Firm.predict_produce"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.Firm.predict_produce" title="Permalink to this definition">¶</a></dt>
@@ -164,9 +174,11 @@ multiplier: Cobb-Douglas multiplier
 {&#8216;input1&#8217;: exponent1, &#8216;input2&#8217;: exponent2 ...}: dictionary
 containing good names &#8216;input&#8217; and correstponding exponents</dd>
 </dl>
-<p>Example:
-self.plastic_production_function = self.create_cobb_douglas(&#8216;plastic&#8217;, {&#8216;oil&#8217; : 10, &#8216;labor&#8217; : 1}, 0.000001)
-self.produce(self.plastic_production_function, {&#8216;oil&#8217; : 20, &#8216;labor&#8217; : 1})</p>
+<p>Example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="bp">self</span><span class="o">.</span><span class="n">create_cobb_douglas</span><span class="p">(</span><span class="s">&#39;plastic&#39;</span><span class="p">,</span> <span class="mf">0.000001</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;oil&#39;</span> <span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s">&#39;labor&#39;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">})</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">produce</span><span class="p">({</span><span class="s">&#39;oil&#39;</span> <span class="p">:</span> <span class="mi">20</span><span class="p">,</span> <span class="s">&#39;labor&#39;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">})</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -188,10 +200,12 @@ multiplier: multipler
 isinteger=&#8217;int&#8217; or isinteger=&#8217;&#8216;: When &#8216;int&#8217; produce only integer
 amounts of the good. When &#8216;&#8217;, produces floating amounts.</dd>
 </dl>
-<p>Example:
-self.car_technology = self.create_leontief(&#8216;car&#8217;, {&#8216;tire&#8217; : 4, &#8216;metal&#8217; : 1000, &#8216;plastic&#8217; : 20}, 1)
-two_cars = {&#8216;tire&#8217;: 8, &#8216;metal&#8217;: 2000, &#8216;plastic&#8217;:  40}
-self.produce(self.car_technology, two_cars)</p>
+<p>Example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="bp">self</span><span class="o">.</span><span class="n">create_leontief</span><span class="p">(</span><span class="s">&#39;car&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;tire&#39;</span> <span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s">&#39;metal&#39;</span> <span class="p">:</span> <span class="mi">1000</span><span class="p">,</span> <span class="s">&#39;plastic&#39;</span> <span class="p">:</span> <span class="mi">20</span><span class="p">},</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">two_cars</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;tire&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s">&#39;metal&#39;</span><span class="p">:</span> <span class="mi">2000</span><span class="p">,</span> <span class="s">&#39;plastic&#39;</span><span class="p">:</span>  <span class="mi">40</span><span class="p">}</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">produce</span><span class="p">(</span><span class="n">two_cars</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -208,11 +222,12 @@ predict_output_produce.</p>
 <dt>Args:</dt>
 <dd>&#8220;formula&#8221;: equation or set of equations that describe the
 production process. (string) Several equation are seperated by a ;</dd>
-<dt>Example:</dt>
-<dd>formula = &#8216;golf_ball = (ball) * (paint / 2); waste = 0.1 * paint&#8217;
-self.set_production_function(formula)
-self.produce({&#8216;ball&#8217; : 1, &#8216;paint&#8217; : 2}</dd>
 </dl>
+<p>Example:</p>
+<div class="highlight-python"><pre>formula = 'golf_ball = (ball) * (paint / 2); waste = 0.1 * paint'
+self.set_production_function(formula)
+self.produce({'ball' : 1, 'paint' : 2}</pre>
+</div>
 <p>//exponential is ** not ^</p>
 </dd></dl>
 
@@ -230,11 +245,12 @@ predict_output_produce.</p>
 <dd>&#8220;formula&#8221;: equation or set of equations that describe the
 production process. (string) Several equation are seperated by a ;
 [output]: list of all output goods (left hand sides of the equations)</dd>
-<dt>Example:</dt>
-<dd>formula = &#8216;golf_ball = (ball) * (paint / 2); waste = 0.1 * paint&#8217;
-self.production_function_fast(formula, &#8216;golf&#8217;, [&#8216;waste&#8217;])
-self.produce(self, {&#8216;ball&#8217; : 1, &#8216;paint&#8217; : 2}</dd>
 </dl>
+<p>Example:</p>
+<div class="highlight-python"><pre>formula = 'golf_ball = (ball) * (paint / 2); waste = 0.1 * paint'
+self.production_function_fast(formula, 'golf', ['waste'])
+self.produce(self, {'ball' : 1, 'paint' : 2}</pre>
+</div>
 <p>//exponential is ** not ^</p>
 </dd></dl>
 

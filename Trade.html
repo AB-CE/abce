@@ -177,7 +177,7 @@ price: price per unit</dd>
 <dl class="method">
 <dt id="abceagent.Trade.get_offers">
 <tt class="descname">get_offers</tt><big>(</big><em>good</em>, <em>descending=False</em><big>)</big><a class="reference internal" href="_modules/abceagent.html#Trade.get_offers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.Trade.get_offers" title="Permalink to this definition">¶</a></dt>
-<dd><p>returns all open offers of the &#8216;good&#8217; ordered by price.</p>
+<dd><p>returns all offers of the &#8216;good&#8217; ordered by price.</p>
 <p><em>Offers that are not accepted in the same subround (def block) are
 automatically rejected.</em> However you can also manualy reject.</p>
 <p>Args:</p>
@@ -292,6 +292,21 @@ is not affected by the order.</p>
 <dd><p>lets you access all fields of a <strong>given</strong> offer.
 This allows you to check whether an offer was accepted, partially accepted
 or rejected and retrieve the quantity actually traded.</p>
+<p>If in your first round the value your are testing is not set, set the variable
+to <cite>None</cite>. None in the first round returns an empty trade with quantity = 0 and price = 1.
+The status in accepted.</p>
+<p>Example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Example</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_offer</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">price</span> <span class="o">=</span> <span class="mi">5</span>
+
+    <span class="k">def</span> <span class="nf">selling</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">last_offer</span><span class="p">)[</span><span class="s">&#39;status&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;accept&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">price</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_offer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sell</span><span class="p">(</span><span class="s">&#39;Household&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s">&#39;cookies&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">price</span><span class="p">)</span>
+</pre></div>
+</div>
 <dl class="docutils">
 <dt>Returns a dictionary; Fields:</dt>
 <dd><dl class="first last docutils">

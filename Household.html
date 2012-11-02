@@ -62,7 +62,8 @@
 <dd><dl class="method">
 <dt id="abceagent.Household.consume">
 <tt class="descname">consume</tt><big>(</big><em>input_goods</em><big>)</big><a class="reference internal" href="_modules/abceagent.html#Household.consume"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.Household.consume" title="Permalink to this definition">¶</a></dt>
-<dd><p>consumes input_goods returns utility according consumption</p>
+<dd><p>consumes input_goods returns utility according to the agent&#8217;s
+consumption function</p>
 <p>A utility_function, has to be set before see
 py:meth:<cite>~abceagent.Household.set_   utility_function</cite>,
 py:meth:<cite>~abceagent.Household.set_cobb_douglas_utility_function</cite> or</p>
@@ -110,7 +111,7 @@ self.log('utility': {'u': utility})</pre>
 <dl class="method">
 <dt id="abceagent.Household.predict_utility">
 <tt class="descname">predict_utility</tt><big>(</big><em>input_goods</em><big>)</big><a class="reference internal" href="_modules/abceagent.html#Household.predict_utility"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.Household.predict_utility" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculates the utility of a production (but does not consume)</p>
+<dd><p>Predicts the utility of a vecor of input goods</p>
 <blockquote>
 <div>Predicts the utility of consume_with_utility(utility_function, input_goods)</div></blockquote>
 <p>Args:</p>

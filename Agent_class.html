@@ -90,7 +90,7 @@ should be encapsulated by a try except block:</p>
 </table>
 <dl class="class">
 <dt id="abceagent.Agent">
-<em class="property">class </em><tt class="descclassname">abceagent.</tt><tt class="descname">Agent</tt><big>(</big><em>idn</em>, <em>group</em>, <em>_Agent__command_addresse</em>, <em>trade_logging</em><big>)</big><a class="reference internal" href="_modules/abceagent.html#Agent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.Agent" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">abceagent.</tt><tt class="descname">Agent</tt><big>(</big><em>idn</em>, <em>group</em>, <em>_addresses</em>, <em>trade_logging</em><big>)</big><a class="reference internal" href="_modules/abceagent.html#Agent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.Agent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="Database.html#abceagent.Database" title="abceagent.Database"><tt class="xref py py-class docutils literal"><span class="pre">abceagent.Database</span></tt></a>, <a class="reference internal" href="Trade.html#abceagent.Trade" title="abceagent.Trade"><tt class="xref py py-class docutils literal"><span class="pre">abceagent.Trade</span></tt></a>, <a class="reference internal" href="Messaging.html#abceagent.Messaging" title="abceagent.Messaging"><tt class="xref py py-class docutils literal"><span class="pre">abceagent.Messaging</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">multiprocessing.process.Process</span></tt></p>
 <p>Every agent has to inherit this class. It connects the agent to the simulation
 and to other agent. The <a class="reference internal" href="Trade.html#abceagent.Trade" title="abceagent.Trade"><tt class="xref py py-class docutils literal"><span class="pre">abceagent.Trade</span></tt></a>, <a class="reference internal" href="Database.html#abceagent.Database" title="abceagent.Database"><tt class="xref py py-class docutils literal"><span class="pre">abceagent.Database</span></tt></a> and
@@ -102,6 +102,18 @@ or <a class="reference internal" href="Household.html#abceagent.Household" title
     def __init__(self, simulation_parameters, agent_parameters, _pass_to_engine):
     abceagent.Agent.__init__(self, *_pass_to_engine)</pre>
 </div>
+<dl class="method">
+<dt id="abceagent.Agent.aesof_eval">
+<tt class="descname">aesof_eval</tt><big>(</big><em>column_name</em><big>)</big><a class="reference internal" href="_modules/abceagent.html#Agent.aesof_eval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.Agent.aesof_eval" title="Permalink to this definition">¶</a></dt>
+<dd><p>evaluates an expression&#8217; in your excel file. see instruction of pythons eval commmand</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="abceagent.Agent.aesof_exec">
+<tt class="descname">aesof_exec</tt><big>(</big><em>column_name</em><big>)</big><a class="reference internal" href="_modules/abceagent.html#Agent.aesof_exec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.Agent.aesof_exec" title="Permalink to this definition">¶</a></dt>
+<dd><p>executes a command in your excel file. see instruction of pythons exec commmand</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="abceagent.Agent.create">
 <tt class="descname">create</tt><big>(</big><em>good</em>, <em>quantity</em><big>)</big><a class="reference internal" href="_modules/abceagent.html#Agent.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.Agent.create" title="Permalink to this definition">¶</a></dt>
@@ -140,7 +152,7 @@ quantity: number</pre>
 <dl class="method">
 <dt id="abceagent.Agent.possession">
 <tt class="descname">possession</tt><big>(</big><em>good</em><big>)</big><a class="reference internal" href="_modules/abceagent.html#Agent.possession"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.Agent.possession" title="Permalink to this definition">¶</a></dt>
-<dd><p>returns how much of good an agent possesses (0 when unknown)</p>
+<dd><p>returns how much of good an agent possesses.</p>
 <dl class="docutils">
 <dt>Returns:</dt>
 <dd>A number.</dd>
@@ -223,12 +235,6 @@ for good in have:
 <span class="c"># This is redundant if money is not in the utility function</span>
 </pre></div>
 </div>
-</dd></dl>
-
-<dl class="method">
-<dt id="abceagent.Agent.round_begin">
-<tt class="descname">round_begin</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/abceagent.html#Agent.round_begin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.Agent.round_begin" title="Permalink to this definition">¶</a></dt>
-<dd><p>If you declare a round_begin methode in your agent, it will be called at the begin of each round</p>
 </dd></dl>
 
 <dl class="method">

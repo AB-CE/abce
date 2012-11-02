@@ -64,7 +64,7 @@
 <dd>An agent is instructed to log a variable with <a class="reference internal" href="#abceagent.Database.log" title="abceagent.Database.log"><tt class="xref py py-meth docutils literal"><span class="pre">log()</span></tt></a> or a
 change in a variable with <a class="reference internal" href="#abceagent.Database.log_change" title="abceagent.Database.log_change"><tt class="xref py py-meth docutils literal"><span class="pre">log_change()</span></tt></a>.</dd>
 <dt>Panel Data</dt>
-<dd><a class="reference internal" href="#abce.Simulation.panel_data" title="abce.Simulation.panel_data"><tt class="xref py py-meth docutils literal"><span class="pre">panel_data()</span></tt></a> creates panel data for all agents in a specific
+<dd><a class="reference internal" href="simulation.html#abce.Simulation.panel_data" title="abce.Simulation.panel_data"><tt class="xref py py-meth docutils literal"><span class="pre">panel_data()</span></tt></a> creates panel data for all agents in a specific
 agent group at a specific point in every round. It is set in start.py</dd>
 </dl>
 <p>How to retrieve the Simulation results is explained in <a class="reference internal" href="simulation_results.html"><em>Retrival of the simulation results</em></a></p>
@@ -99,8 +99,9 @@ year:</p>
 <dl class="method">
 <dt id="abceagent.Database.log">
 <tt class="descname">log</tt><big>(</big><em>action_name</em>, <em>data_to_log</em><big>)</big><a class="reference internal" href="_modules/abceagent.html#Database.log"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.Database.log" title="Permalink to this definition">¶</a></dt>
-<dd><p>This command puts in a database called log, what ever values you
-want values need to be delivered as a dictionary:</p>
+<dd><p>With log you can write the models data. Log can save variable states
+and and the working of individual functions such as production,
+consumption, give, but not trade(as its handled automatically).</p>
 <dl class="docutils">
 <dt>Args:</dt>
 <dd><dl class="first last docutils">
@@ -123,6 +124,17 @@ want values need to be delivered as a dictionary:</p>
     <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s">&#39;give</span><span class="si">%i</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">i</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">give</span><span class="p">(</span><span class="s">&#39;Household&#39;</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="s">&#39;money&#39;</span><span class="p">,</span> <span class="n">payout</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_households</span><span class="p">))</span>
 </pre></div>
 </div>
+<dl class="docutils">
+<dt>See also:</dt>
+<dd><dl class="first docutils">
+<dt><tt class="xref py py-meth docutils literal"><span class="pre">log_nested()</span></tt>:</dt>
+<dd>handles nested dictianaries</dd>
+<dt><tt class="xref py py-meth docutils literal"><span class="pre">log_change()</span></tt>:</dt>
+<dd>loges the change from last round</dd>
+</dl>
+<p class="last"><tt class="xref py py-meth docutils literal"><span class="pre">observe_begin()</span></tt>:</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -147,12 +159,35 @@ self.log_change('inputs', {'money': self.possessions(['money', 'gold', 'CAP', 'L
 </dd></dl>
 
 <dl class="method">
+<dt id="abceagent.Database.log_dict">
+<tt class="descname">log_dict</tt><big>(</big><em>action_name</em>, <em>data_to_log</em><big>)</big><a class="reference internal" href="_modules/abceagent.html#Database.log_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.Database.log_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>same as the log function, only that it supports nested dictionaries
+see: <tt class="xref py py-meth docutils literal"><span class="pre">log()</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="abceagent.Database.log_value">
+<tt class="descname">log_value</tt><big>(</big><em>name</em>, <em>value</em><big>)</big><a class="reference internal" href="_modules/abceagent.html#Database.log_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.Database.log_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>logs a value, with a name</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>&#8216;name&#8217;(string):</dt>
+<dd>the name of the value/variable</dd>
+<dt>value(int/float):</dt>
+<dd>the variable = value to log</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
 <dt id="abceagent.Database.observe_begin">
 <tt class="descname">observe_begin</tt><big>(</big><em>action_name</em>, <em>data_to_observe</em><big>)</big><a class="reference internal" href="_modules/abceagent.html#Database.observe_begin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.Database.observe_begin" title="Permalink to this definition">¶</a></dt>
-<dd><p>observe_start and observe_end, observe the change of a variable.
-observe_start(...), takes a list of variables to be observed.
+<dd><p>observe_begin and observe_end, observe the change of a variable.
+observe_begin(...), takes a list of variables to be observed.
 observe_end(...) writes the change in this vars into the log file</p>
-<p>you can use nested observe_start / observe_end combinations</p>
+<p>you can use nested observe_begin / observe_end combinations</p>
 <dl class="docutils">
 <dt>Args:</dt>
 <dd><dl class="first last docutils">

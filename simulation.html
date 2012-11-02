@@ -198,7 +198,7 @@ contains the a declaration of the action lists:</p>
 
 <dl class="method">
 <dt id="abce.Simulation.ask_agent">
-<tt class="descname">ask_agent</tt><big>(</big><em>agent</em>, <em>command</em><big>)</big><a class="reference internal" href="_modules/abce.html#Simulation.ask_agent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Simulation.ask_agent" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">ask_agent</tt><big>(</big><em>group</em>, <em>idn</em>, <em>command</em><big>)</big><a class="reference internal" href="_modules/abce.html#Simulation.ask_agent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Simulation.ask_agent" title="Permalink to this definition">¶</a></dt>
 <dd><p>This is only relevant when you derive your custom world/swarm not
 in start.py
 applying a method to a single agent</p>
@@ -263,6 +263,40 @@ access in own_parameters the __init__ function of the agent.</p>
        <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="n">own_parameters</span><span class="p">[</span><span class="s">&#39;firm_size&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
+</dd></dl>
+
+<dl class="method">
+<dt id="abce.Simulation.declare_aesof">
+<tt class="descname">declare_aesof</tt><big>(</big><em>aesof_file='aesof.csv'</em><big>)</big><a class="reference internal" href="_modules/abce.html#Simulation.declare_aesof"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Simulation.declare_aesof" title="Permalink to this definition">¶</a></dt>
+<dd><p>AESOF lets you determine agents behaviour from an comma sepertated sheet.</p>
+<p>First row must be column headers. There must be one column header &#8216;round&#8217; and
+a column header name. A name can be a goup are and individal (goup_id
+e.G. firm_01) it can also be &#8216;all&#8217; for all agents.
+Every round, the agents self.aesof parameters get updated, if a row with
+the correstponding round and agent name exists.</p>
+<p>Therefore an agent can access the parameters <cite>self.aesof[column_name]</cite> for
+the current round. (or the precedent one when there was no update)
+parameter is set. You can use it in your source code. It is persistent
+until the next round for which a correstponding row exists.</p>
+<dl class="docutils">
+<dt>You can alse put commands or call methods in the excel file. For example:</dt>
+<dd><cite>self.aesof_exec(column_name)</cite>.</dd>
+</dl>
+<p>Alternatively you can declare a variable according to a
+function: <cite>willingness_to_pay = self.aesof_eval(column_name)</cite>.</p>
+<p>There is a big difference between <cite>self.aesof_exec</cite> and <cite>self.aesof_eval</cite>.
+exec is only executed in rounds that have correstponding rows in aesof.csv.
+<cite>self.aesof_eval</cite> is persistent every round the expression of the row
+correstponding to the current round round or the last declared round is
+executed.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>aesof_file(optional):</dt>
+<dd>name of the csv_file. Default is the group name plus &#8216;aesof.csv&#8217;.</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">

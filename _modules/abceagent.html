@@ -49,6 +49,22 @@
           <div class="body">
             
   <h1>Source code for abceagent</h1><div class="highlight"><pre>
+<span class="c"># Copyright 2012 Davoud Taghawi-Nejad</span>
+<span class="c">#</span>
+<span class="c"># Module Author: Davoud Taghawi-Nejad</span>
+<span class="c">#</span>
+<span class="c"># ABCE is open-source software. If you are using ABCE for your research you are</span>
+<span class="c"># requested the quote the use of this software.</span>
+<span class="c">#</span>
+<span class="c"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not</span>
+<span class="c"># use this file except in compliance with the License and quotation of the</span>
+<span class="c"># author. You may obtain a copy of the License at</span>
+<span class="c">#       http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT</span>
+<span class="c"># WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the</span>
+<span class="c"># License for the specific language governing permissions and limitations under</span>
+<span class="c"># the License.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">The :class:`abceagent.Agent` class is the basic class for creating your agent. It automatically handles the</span>
 <span class="sd">possession of goods of an agent. In order to produce/transforme goods you need to also subclass</span>
@@ -86,7 +102,8 @@
     <span class="c">#TODO public way of sending messages and objects</span>
 <div class="viewcode-block" id="Messaging.message"><a class="viewcode-back" href="../Messaging.html#abceagent.Messaging.message">[docs]</a>    <span class="k">def</span> <span class="nf">message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">receiver_group</span><span class="p">,</span> <span class="n">receiver_idn</span><span class="p">,</span> <span class="n">topic</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; sends a message to agent, agent_group or &#39;all&#39;. Agents receive it</span>
-<span class="sd">        at the beginning of next round with self.get_messages()</span>
+<span class="sd">        at the beginning of next round with :meth:`~abceagent.Messaging.get_messages` or</span>
+<span class="sd">        :meth:`~abceagent.Messaging.get_messages_all`.</span>
 
 <span class="sd">        Args::</span>
 
@@ -97,7 +114,7 @@
 <span class="sd">        Example::</span>
 
 <span class="sd">            ... household_01 ...</span>
-<span class="sd">            self.send_message(&#39;firm_01&#39;, &#39;quote_sell&#39;, {&#39;good&#39;:&#39;BRD&#39;, &#39;quantity&#39;: 5})</span>
+<span class="sd">            self.message(&#39;firm_01&#39;, &#39;quote_sell&#39;, {&#39;good&#39;:&#39;BRD&#39;, &#39;quantity&#39;: 5})</span>
 
 <span class="sd">            ... firm_01 - one subround later ...</span>
 <span class="sd">            requests = self.get_messages(&#39;quote_sell&#39;)</span>
@@ -106,29 +123,38 @@
 
 <span class="sd">        Example2::</span>
 
-<span class="sd">         self.send_message(&#39;firm_01&#39;, &#39;m&#39;, &quot;hello my message&quot;)</span>
+<span class="sd">         self.message(&#39;firm_01&#39;, &#39;m&#39;, &quot;hello my message&quot;)</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="n">Message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">idn</span><span class="p">,</span> <span class="n">receiver_group</span><span class="p">,</span> <span class="n">receiver_idn</span><span class="p">,</span> <span class="n">topic</span><span class="p">,</span> <span class="n">content</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">idn</span><span class="p">,</span> <span class="n">receiver_group</span><span class="p">,</span> <span class="n">receiver_idn</span><span class="p">,</span> <span class="n">topic</span><span class="p">,</span> <span class="n">content</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="n">receiver_group</span><span class="p">,</span> <span class="n">receiver_idn</span><span class="p">,</span> <span class="n">topic</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="Messaging.get_messages"><a class="viewcode-back" href="../Messaging.html#abceagent.Messaging.get_messages">[docs]</a>    <span class="k">def</span> <span class="nf">get_messages</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">topic</span><span class="o">=</span><span class="s">&#39;m&#39;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; self.messages() returns all new messages send before this step</span>
-<span class="sd">        (topic=&#39;m&#39;). The order is randomized self.messages(topic) returns all</span>
-<span class="sd">        messages with a particular non standard topice topic e.G. &#39;n&#39;.</span>
-<span class="sd">        The order of the messages is randomized.</span>
+        <span class="sd">&quot;&quot;&quot; returns all new messages send with :meth:`~abceagent.Messaging.message`</span>
+<span class="sd">        (topic=&#39;m&#39;). The order is randomized. self.messages(topic) returns all</span>
+<span class="sd">        messages with a topic.</span>
+
+<span class="sd">        A message is a string with the message. You can also retrieve the sender</span>
+<span class="sd">        by `message.sender_group` and `message.sender_idn` and view the topic with</span>
+<span class="sd">        &#39;message.topic&#39;. (see example)</span>
+
+<span class="sd">        If you are sending a float or an integer you need to access the message</span>
+<span class="sd">        content with `message.content` instead of only `message`.</span>
 
 <span class="sd">        Example::</span>
 
 <span class="sd">         ... agent_01 ...</span>
-<span class="sd">         self.send_messages(&#39;firm_01&#39;, &#39;m&#39;, &#39;hello message&#39;)</span>
+<span class="sd">         self.messages(&#39;firm_01&#39;, &#39;potential_buyers&#39;, &#39;hello message&#39;)</span>
 
 <span class="sd">         ... firm_01 - one subround later ...</span>
-<span class="sd">         potential_buyers = get_messages(&#39;m&#39;)</span>
-<span class="sd">         for buyer in potential_buyers:</span>
-<span class="sd">            print(buyer.content)</span>
+<span class="sd">         potential_buyers = get_messages(&#39;potential_buyers&#39;)</span>
+<span class="sd">         for msg in potential_buyers:</span>
+<span class="sd">            print(&#39;message: &#39;, msg)</span>
+<span class="sd">            print(&#39;message: &#39;, msg.content)</span>
+<span class="sd">            print(&#39;group name: &#39;, msg.sender_group)</span>
+<span class="sd">            print(&#39;sender id: &#39;, msg.sender_idn)</span>
+<span class="sd">            print(&#39;topic: &#39;, msg.topic)</span>
 
-<span class="sd">        Example2: see send_message</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">shuffle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_msgs</span><span class="p">[</span><span class="n">topic</span><span class="p">])</span>
@@ -137,7 +163,15 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_msgs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">topic</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="Messaging.get_messages_all"><a class="viewcode-back" href="../Messaging.html#abceagent.Messaging.get_messages_all">[docs]</a>    <span class="k">def</span> <span class="nf">get_messages_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; returns all messages irregardless of the topic, in a dictionary by topic &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot; returns all messages irregardless of the topic, in a dictionary by topic</span>
+
+<span class="sd">        A message is a string with the message. You can also retrieve the sender</span>
+<span class="sd">        by `message.sender_group` and `message.sender_idn` and view the topic with</span>
+<span class="sd">        &#39;message.topic&#39;. (see example)</span>
+
+<span class="sd">        If you are sending a float or an integer you need to access the message</span>
+<span class="sd">        content with `message.content` instead of only `message`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_msgs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_msgs</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">return</span> <span class="n">ret</span>
@@ -153,7 +187,7 @@
             <span class="k">return</span> <span class="p">[]</span>
 
 </div></div>
-<span class="k">def</span> <span class="nf">Message</span><span class="p">(</span><span class="n">sender_group</span><span class="p">,</span> <span class="n">sender_idn</span><span class="p">,</span> <span class="n">receiver_group</span><span class="p">,</span> <span class="n">receiver_idn</span><span class="p">,</span> <span class="n">topic</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">message</span><span class="p">(</span><span class="n">sender_group</span><span class="p">,</span> <span class="n">sender_idn</span><span class="p">,</span> <span class="n">receiver_group</span><span class="p">,</span> <span class="n">receiver_idn</span><span class="p">,</span> <span class="n">topic</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
     <span class="n">msg</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">msg</span><span class="p">[</span><span class="s">&#39;sender_group&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sender_group</span>
     <span class="n">msg</span><span class="p">[</span><span class="s">&#39;sender_idn&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sender_idn</span>
@@ -164,17 +198,31 @@
     <span class="k">return</span> <span class="n">msg</span>
 
 
+<span class="k">class</span> <span class="nc">Message</span><span class="p">():</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span> <span class="o">=</span> <span class="n">msg</span>
+
+    <span class="k">def</span> <span class="nf">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">content</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+
 <div class="viewcode-block" id="Trade"><a class="viewcode-back" href="../Trade.html#abceagent.Trade">[docs]</a><span class="k">class</span> <span class="nc">Trade</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; Agents can trade with each other. The clearing of the trade is taken care</span>
 <span class="sd">    of fully by ABCE.</span>
 <span class="sd">    Selling a good works in the following way:</span>
 
-<span class="sd">    1. An agent sends an offer. :meth:`sell`</span>
+<span class="sd">    1. An agent sends an offer. :meth:`~abceagent.Trade.sell`</span>
 
 <span class="sd">       *The good offered is blocked and self.possession(...) does not account for it.*</span>
 
-<span class="sd">    2. **Next subround:** An agent receives the offer :meth:`get_offers`, and can</span>
-<span class="sd">       :meth:`accept`, :meth:`reject` or partially accept it. :meth:`accept_partial`</span>
+<span class="sd">    2. **Next subround:** An agent receives the offer :meth:`~abceagent.Trade.get_offers`, and can</span>
+<span class="sd">       :meth:`~abceagent.Trade.accept`, :meth:`~abceagent.Trade.reject` or partially accept it. :meth:`~abceagent.Trade.accept_partial`</span>
 
 <span class="sd">       *The good is credited and the price is deducted from the agent&#39;s possesions.*</span>
 
@@ -184,7 +232,7 @@
 <span class="sd">       - in case of partial acceptance *the money is credited and part of the blocked good is unblocked.*</span>
 <span class="sd">       - in case of rejection *the good is unblocked.*</span>
 
-<span class="sd">    Analogously for buying. (:meth:`buy`)</span>
+<span class="sd">    Analogously for buying. (:meth:`~buy`)</span>
 
 <span class="sd">    Example::</span>
 
@@ -213,8 +261,8 @@
 <span class="sd">                self.price *= offer[&#39;final_quantity&#39;] / offer[&#39;quantity&#39;]</span>
 
 <span class="sd">    Quotes on the other hand allow you to ask a trade partner to send you a not committed price quote.</span>
-<span class="sd">    The modeller has to implement a response mechanism. For convenience :meth:`accept_quote` and</span>
-<span class="sd">    :meth:`accept_quote_partial`, send a committed offer that its the uncommitted price quote.</span>
+<span class="sd">    The modeller has to implement a response mechanism. For convenience :meth:`~abceagent.Trade.accept_quote` and</span>
+<span class="sd">    :meth:`~abceagent.Trade.accept_quote_partial`, send a committed offer that its the uncommitted price quote.</span>
 
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -253,6 +301,22 @@
         <span class="sd">&quot;&quot;&quot; lets you access all fields of a **given** offer.</span>
 <span class="sd">        This allows you to check whether an offer was accepted, partially accepted</span>
 <span class="sd">        or rejected and retrieve the quantity actually traded.</span>
+
+<span class="sd">        If in your first round the value your are testing is not set, set the variable</span>
+<span class="sd">        to `None`. None in the first round returns an empty trade with quantity = 0 and price = 1.</span>
+<span class="sd">        The status in accepted.</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            class Example:</span>
+<span class="sd">                def __init__(self):</span>
+<span class="sd">                    self.last_offer = None</span>
+<span class="sd">                    self.price = 5</span>
+
+<span class="sd">                def selling(self):</span>
+<span class="sd">                    if self.info(self.last_offer)[&#39;status&#39;] == &#39;accept&#39;:</span>
+<span class="sd">                        self.price += 1</span>
+<span class="sd">                    self.last_offer = self.sell(&#39;Household&#39;, 1, &#39;cookies&#39;, 5, self.price)</span>
 
 <span class="sd">        Returns a dictionary; Fields:</span>
 <span class="sd">            [&#39;status&#39;]:</span>
@@ -411,7 +475,7 @@
         <span class="k">return</span> <span class="n">offers_by_good</span>
 </div>
 <div class="viewcode-block" id="Trade.get_offers"><a class="viewcode-back" href="../Trade.html#abceagent.Trade.get_offers">[docs]</a>    <span class="k">def</span> <span class="nf">get_offers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">good</span><span class="p">,</span> <span class="n">descending</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; returns all open offers of the &#39;good&#39; ordered by price.</span>
+        <span class="sd">&quot;&quot;&quot; returns all offers of the &#39;good&#39; ordered by price.</span>
 
 <span class="sd">        *Offers that are not accepted in the same subround (def block) are</span>
 <span class="sd">        automatically rejected.* However you can also manualy reject.</span>
@@ -521,8 +585,8 @@
 <span class="sd">                    offer[&#39;status&#39;] == &#39;rejected&#39;:</span>
 <span class="sd">                    print(&#39;On diet&#39;)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">assert</span> <span class="n">price</span> <span class="o">&gt;=</span> <span class="o">-</span> <span class="n">epsilon</span>
-        <span class="k">assert</span> <span class="n">quantity</span> <span class="o">&gt;</span> <span class="o">-</span> <span class="n">epsilon</span>
+        <span class="k">assert</span> <span class="n">price</span> <span class="o">&gt;=</span> <span class="o">-</span> <span class="n">epsilon</span><span class="p">,</span> <span class="n">price</span>
+        <span class="k">assert</span> <span class="n">quantity</span> <span class="o">&gt;</span> <span class="o">-</span> <span class="n">epsilon</span><span class="p">,</span> <span class="n">quantity</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_haves</span><span class="p">[</span><span class="n">good</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">quantity</span> <span class="o">-</span> <span class="n">epsilon</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">NotEnoughGoods</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">good</span><span class="p">,</span> <span class="n">quantity</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_haves</span><span class="p">[</span><span class="n">good</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_haves</span><span class="p">[</span><span class="n">good</span><span class="p">]</span> <span class="o">-=</span> <span class="n">quantity</span>
@@ -607,7 +671,7 @@
 <span class="sd">            Returns a dictionary with the good&#39;s quantity and the amount paid.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="ow">not</span><span class="p">(</span><span class="n">is_negative</span><span class="p">(</span><span class="n">quantity</span><span class="p">)),</span> <span class="n">quantity</span>
-        <span class="k">assert</span> <span class="n">quantity</span> <span class="o">&lt;=</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;quantity&#39;</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">quantity</span> <span class="o">&lt;=</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;quantity&#39;</span><span class="p">],</span> <span class="s">&#39;accepted more than offered </span><span class="si">%s</span><span class="s">: </span><span class="si">%f</span><span class="s"> &gt; </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">offer</span><span class="p">[</span><span class="s">&#39;good&#39;</span><span class="p">],</span> <span class="n">quantity</span><span class="p">,</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;quantity&#39;</span><span class="p">])</span>
         <span class="n">money_amount</span> <span class="o">=</span> <span class="n">quantity</span> <span class="o">*</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;price&#39;</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;buysell&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;s&#39;</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_haves</span><span class="p">[</span><span class="s">&#39;money&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">money_amount</span> <span class="o">-</span> <span class="n">epsilon</span><span class="p">:</span>
@@ -755,8 +819,8 @@
 <span class="sd">        Args::</span>
 
 <span class="sd">            production_function: A production_function produced with</span>
-<span class="sd">            py:meth:`create_production_function`, py:meth:`create_cobb_douglas` or</span>
-<span class="sd">            py:meth:`create_leontief`</span>
+<span class="sd">            py:meth:`~abceagent.FirmMultiTechnologies.create_production_function`, py:meth:`~abceagent.FirmMultiTechnologies.create_cobb_douglas` or</span>
+<span class="sd">            py:meth:`~abceagent.FirmMultiTechnologies.create_leontief`</span>
 
 <span class="sd">        Example::</span>
 
@@ -774,8 +838,8 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            production_function:</span>
-<span class="sd">                A production_function produced with py:meth:`.create_production_function`,</span>
-<span class="sd">                py:meth:`.create_cobb_douglas` or py:meth:`.create_leontief`</span>
+<span class="sd">                A production_function produced with py:meth:`~abceagent.FirmMultiTechnologies..create_production_function`,</span>
+<span class="sd">                py:meth:`~abceagent.FirmMultiTechnologies..create_cobb_douglas` or py:meth:`~abceagent.FirmMultiTechnologies..create_leontief`</span>
 <span class="sd">            input goods {dictionary}:</span>
 <span class="sd">                dictionary containing the amount of input good used for the production.</span>
 
@@ -1071,6 +1135,18 @@
 
 </div></div>
 <div class="viewcode-block" id="Firm"><a class="viewcode-back" href="../Firm.html#abceagent.Firm">[docs]</a><span class="k">class</span> <span class="nc">Firm</span><span class="p">(</span><span class="n">FirmMultiTechnologies</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; The firm class allows you to declare a production function for a firm.</span>
+<span class="sd">    :meth:`~Firm.set_leontief`, :meth:`~abecagent.Firm.set_production_function`</span>
+<span class="sd">    :meth:`~Firm.set_cobb_douglas`,</span>
+<span class="sd">    :meth:`~Firm.set_production_function_fast`</span>
+<span class="sd">    (FirmMultiTechnologies, allows you to declare several) With :meth:`~Firm.produce`</span>
+<span class="sd">    and :meth:`~Firm.produce_use_everything` you can produce using the</span>
+<span class="sd">    according production function. You have several auxiliarifunctions</span>
+<span class="sd">    for example to predict the production. When you multiply</span>
+<span class="sd">    :meth:`~Firm.predict_produce` with the price vector you get the</span>
+<span class="sd">    profitability of the prodiction.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#TODO Example</span>
 <div class="viewcode-block" id="Firm.produce_use_everything"><a class="viewcode-back" href="../Firm.html#abceagent.Firm.produce_use_everything">[docs]</a>    <span class="k">def</span> <span class="nf">produce_use_everything</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Produces output goods from all input goods.</span>
 
@@ -1126,7 +1202,8 @@
 <span class="sd">            &quot;formula&quot;: equation or set of equations that describe the</span>
 <span class="sd">            production process. (string) Several equation are seperated by a ;</span>
 
-<span class="sd">        Example:</span>
+<span class="sd">        Example::</span>
+
 <span class="sd">            formula = &#39;golf_ball = (ball) * (paint / 2); waste = 0.1 * paint&#39;</span>
 <span class="sd">            self.set_production_function(formula)</span>
 <span class="sd">            self.produce({&#39;ball&#39; : 1, &#39;paint&#39; : 2}</span>
@@ -1149,7 +1226,8 @@
 <span class="sd">            production process. (string) Several equation are seperated by a ;</span>
 <span class="sd">            [output]: list of all output goods (left hand sides of the equations)</span>
 
-<span class="sd">        Example:</span>
+<span class="sd">        Example::</span>
+
 <span class="sd">            formula = &#39;golf_ball = (ball) * (paint / 2); waste = 0.1 * paint&#39;</span>
 <span class="sd">            self.production_function_fast(formula, &#39;golf&#39;, [&#39;waste&#39;])</span>
 <span class="sd">            self.produce(self, {&#39;ball&#39; : 1, &#39;paint&#39; : 2}</span>
@@ -1171,9 +1249,10 @@
 <span class="sd">            {&#39;input1&#39;: exponent1, &#39;input2&#39;: exponent2 ...}: dictionary</span>
 <span class="sd">            containing good names &#39;input&#39; and correstponding exponents</span>
 
-<span class="sd">        Example:</span>
-<span class="sd">        self.plastic_production_function = self.create_cobb_douglas(&#39;plastic&#39;, {&#39;oil&#39; : 10, &#39;labor&#39; : 1}, 0.000001)</span>
-<span class="sd">        self.produce(self.plastic_production_function, {&#39;oil&#39; : 20, &#39;labor&#39; : 1})</span>
+<span class="sd">        Example::</span>
+
+<span class="sd">            self.create_cobb_douglas(&#39;plastic&#39;, 0.000001, {&#39;oil&#39; : 10, &#39;labor&#39; : 1})</span>
+<span class="sd">            self.produce({&#39;oil&#39; : 20, &#39;labor&#39; : 1})</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_production_function</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_cobb_douglas</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">multiplier</span><span class="p">,</span> <span class="n">exponents</span><span class="p">)</span>
@@ -1197,10 +1276,11 @@
 <span class="sd">            isinteger=&#39;int&#39; or isinteger=&#39;&#39;: When &#39;int&#39; produce only integer</span>
 <span class="sd">            amounts of the good. When &#39;&#39;, produces floating amounts.</span>
 
-<span class="sd">        Example:</span>
-<span class="sd">        self.car_technology = self.create_leontief(&#39;car&#39;, {&#39;tire&#39; : 4, &#39;metal&#39; : 1000, &#39;plastic&#39; : 20}, 1)</span>
-<span class="sd">        two_cars = {&#39;tire&#39;: 8, &#39;metal&#39;: 2000, &#39;plastic&#39;:  40}</span>
-<span class="sd">        self.produce(self.car_technology, two_cars)</span>
+<span class="sd">        Example::</span>
+
+<span class="sd">            self.create_leontief(&#39;car&#39;, {&#39;tire&#39; : 4, &#39;metal&#39; : 1000, &#39;plastic&#39; : 20}, 1)</span>
+<span class="sd">            two_cars = {&#39;tire&#39;: 8, &#39;metal&#39;: 2000, &#39;plastic&#39;:  40}</span>
+<span class="sd">            self.produce(two_cars)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_production_function</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_leontief</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">utilization_quantities</span><span class="p">,</span> <span class="n">multiplier</span><span class="p">,</span> <span class="n">isinteger</span><span class="p">)</span>
 </div>
@@ -1265,8 +1345,8 @@
 <span class="sd">        returns utility according consumption</span>
 
 <span class="sd">        A utility_function, has to be set before see</span>
-<span class="sd">        py:meth:`set_   utility_function`,</span>
-<span class="sd">        py:meth:`set_cobb_douglas_utility_function`</span>
+<span class="sd">        py:meth:`~abceagent.Household.set_   utility_function`,</span>
+<span class="sd">        py:meth:`~abceagent.Household.set_cobb_douglas_utility_function`</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A the utility a number. To log it see example.</span>
@@ -1279,11 +1359,12 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">consume</span><span class="p">(</span><span class="nb">dict</span><span class="p">((</span><span class="n">inp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_haves</span><span class="p">[</span><span class="n">inp</span><span class="p">])</span> <span class="k">for</span> <span class="n">inp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_utility_function</span><span class="p">[</span><span class="s">&#39;input&#39;</span><span class="p">]))</span>
 </div>
 <div class="viewcode-block" id="Household.consume"><a class="viewcode-back" href="../Household.html#abceagent.Household.consume">[docs]</a>    <span class="k">def</span> <span class="nf">consume</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_goods</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; consumes input_goods returns utility according consumption</span>
+        <span class="sd">&quot;&quot;&quot; consumes input_goods returns utility according to the agent&#39;s</span>
+<span class="sd">        consumption function</span>
 
 <span class="sd">        A utility_function, has to be set before see</span>
-<span class="sd">        py:meth:`set_   utility_function`,</span>
-<span class="sd">        py:meth:`set_cobb_douglas_utility_function` or</span>
+<span class="sd">        py:meth:`~abceagent.Household.set_   utility_function`,</span>
+<span class="sd">        py:meth:`~abceagent.Household.set_cobb_douglas_utility_function` or</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            {&#39;input_good1&#39;: amount1, &#39;input_good2&#39;: amount2 ...}:</span>
@@ -1405,7 +1486,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_utility_function</span><span class="p">[</span><span class="s">&#39;input&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">exponents</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
 </div>
 <div class="viewcode-block" id="Household.predict_utility"><a class="viewcode-back" href="../Household.html#abceagent.Household.predict_utility">[docs]</a>    <span class="k">def</span> <span class="nf">predict_utility</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_goods</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Calculates the utility of a production (but does not consume)</span>
+        <span class="sd">&quot;&quot;&quot; Predicts the utility of a vecor of input goods</span>
 
 <span class="sd">            Predicts the utility of consume_with_utility(utility_function, input_goods)</span>
 
@@ -1447,8 +1528,9 @@
 <div class="viewcode-block" id="Database"><a class="viewcode-back" href="../Database.html#abceagent.Database">[docs]</a><span class="k">class</span> <span class="nc">Database</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; The database class &quot;&quot;&quot;</span>
 <div class="viewcode-block" id="Database.log"><a class="viewcode-back" href="../Database.html#abceagent.Database.log">[docs]</a>    <span class="k">def</span> <span class="nf">log</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action_name</span><span class="p">,</span> <span class="n">data_to_log</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; This command puts in a database called log, what ever values you</span>
-<span class="sd">        want values need to be delivered as a dictionary:</span>
+        <span class="sd">&quot;&quot;&quot; With log you can write the models data. Log can save variable states</span>
+<span class="sd">        and and the working of individual functions such as production,</span>
+<span class="sd">        consumption, give, but not trade(as its handled automatically).</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            &#39;name&#39;(string):</span>
@@ -1468,15 +1550,45 @@
 <span class="sd">            for i in range(self.num_households):</span>
 <span class="sd">                self.log(&#39;give%i&#39; % i, self.give(&#39;Household&#39;, i, &#39;money&#39;, payout / self.num_households))</span>
 
+<span class="sd">        See also:</span>
+<span class="sd">            :meth:`~abecagent.Database.log_nested`:</span>
+<span class="sd">                handles nested dictianaries</span>
+<span class="sd">            :meth:`~abecagent.Database.log_change`:</span>
+<span class="sd">                loges the change from last round</span>
+<span class="sd">            :meth:`~abecagent.Database.observe_begin`:</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">data_to_write</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data_to_log</span><span class="p">:</span>
-            <span class="n">data_to_write</span><span class="p">[</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">_</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">action_name</span><span class="p">,</span> <span class="n">key</span><span class="p">)]</span> <span class="o">=</span> <span class="n">data_to_log</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="n">data_to_write</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">_</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">action_name</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span> <span class="n">data_to_log</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data_to_log</span><span class="p">}</span>
         <span class="n">data_to_write</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">idn</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s">&quot;db_agent:&quot;</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s">&quot;log&quot;</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">send_json</span><span class="p">(</span><span class="n">data_to_write</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s">&quot;log&quot;</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">send_json</span><span class="p">(</span><span class="n">data_to_write</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">round</span><span class="p">))</span>
+</div>
+<div class="viewcode-block" id="Database.log_value"><a class="viewcode-back" href="../Database.html#abceagent.Database.log_value">[docs]</a>    <span class="k">def</span> <span class="nf">log_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; logs a value, with a name</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            &#39;name&#39;(string):</span>
+<span class="sd">                the name of the value/variable</span>
+<span class="sd">            value(int/float):</span>
+<span class="sd">                the variable = value to log</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s">&quot;log&quot;</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">send_json</span><span class="p">({</span><span class="s">&#39;id&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">idn</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="n">value</span><span class="p">},</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">round</span><span class="p">))</span>
+</div>
+<div class="viewcode-block" id="Database.log_dict"><a class="viewcode-back" href="../Database.html#abceagent.Database.log_dict">[docs]</a>    <span class="k">def</span> <span class="nf">log_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action_name</span><span class="p">,</span> <span class="n">data_to_log</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; same as the log function, only that it supports nested dictionaries</span>
+<span class="sd">        see: :meth:`~abecagent.Database.log`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data_to_write</span> <span class="o">=</span> <span class="n">flatten</span><span class="p">(</span><span class="n">data_to_log</span><span class="p">,</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">_&#39;</span> <span class="o">%</span> <span class="n">action_name</span><span class="p">)</span>
+        <span class="n">data_to_write</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">idn</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s">&quot;log&quot;</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">send_json</span><span class="p">(</span><span class="n">data_to_write</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">round</span><span class="p">))</span>
 </div>
 <div class="viewcode-block" id="Database.log_change"><a class="viewcode-back" href="../Database.html#abceagent.Database.log_change">[docs]</a>    <span class="k">def</span> <span class="nf">log_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action_name</span><span class="p">,</span> <span class="n">data_to_log</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; This command logs the change in the variable from the round before.</span>
@@ -1501,18 +1613,19 @@
             <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data_to_log</span><span class="p">:</span>
                 <span class="n">data_to_write</span><span class="p">[</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">_change_</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">action_name</span><span class="p">,</span> <span class="n">key</span><span class="p">)]</span> <span class="o">=</span> <span class="n">data_to_log</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
         <span class="n">data_to_write</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">idn</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s">&quot;db_agent:&quot;</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s">&quot;log&quot;</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">send_json</span><span class="p">(</span><span class="n">data_to_write</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s">&quot;log&quot;</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">send_json</span><span class="p">(</span><span class="n">data_to_write</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">round</span><span class="p">))</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_data_to_log_1</span><span class="p">[</span><span class="n">action_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_to_log</span>
 </div>
 <div class="viewcode-block" id="Database.observe_begin"><a class="viewcode-back" href="../Database.html#abceagent.Database.observe_begin">[docs]</a>    <span class="k">def</span> <span class="nf">observe_begin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action_name</span><span class="p">,</span> <span class="n">data_to_observe</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; observe_start and observe_end, observe the change of a variable.</span>
-<span class="sd">        observe_start(...), takes a list of variables to be observed.</span>
+        <span class="sd">&quot;&quot;&quot; observe_begin and observe_end, observe the change of a variable.</span>
+<span class="sd">        observe_begin(...), takes a list of variables to be observed.</span>
 <span class="sd">        observe_end(...) writes the change in this vars into the log file</span>
 
-<span class="sd">        you can use nested observe_start / observe_end combinations</span>
+<span class="sd">        you can use nested observe_begin / observe_end combinations</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            &#39;name&#39;(string):</span>
@@ -1558,10 +1671,10 @@
             <span class="n">data_to_write</span><span class="p">[</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">_delta_</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">action_name</span><span class="p">,</span> <span class="n">key</span><span class="p">)]</span> <span class="o">=</span> \
                                             <span class="n">data_to_observe</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">-</span> <span class="n">before</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
         <span class="n">data_to_write</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">idn</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s">&quot;db_agent:&quot;</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s">&quot;log&quot;</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">send_json</span><span class="p">(</span><span class="n">data_to_write</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s">&quot;log&quot;</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">send_json</span><span class="p">(</span><span class="n">data_to_write</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">round</span><span class="p">))</span>
 
 </div></div>
 <span class="k">def</span> <span class="nf">Offer</span><span class="p">(</span><span class="n">sender_group</span><span class="p">,</span> <span class="n">sender_idn</span><span class="p">,</span> <span class="n">receiver_group</span><span class="p">,</span> <span class="n">receiver_idn</span><span class="p">,</span> <span class="n">good</span><span class="p">,</span> <span class="n">quantity</span><span class="p">,</span> <span class="n">price</span><span class="p">,</span> <span class="n">buysell</span><span class="o">=</span><span class="s">&#39;s&#39;</span><span class="p">,</span> <span class="n">idn</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
@@ -1591,14 +1704,14 @@
 <span class="sd">            def __init__(self, simulation_parameters, agent_parameters, _pass_to_engine):</span>
 <span class="sd">            abceagent.Agent.__init__(self, *_pass_to_engine)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idn</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">__command_addresse</span><span class="p">,</span> <span class="n">trade_logging</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idn</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">_addresses</span><span class="p">,</span> <span class="n">trade_logging</span><span class="p">):</span>
         <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Process</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">idn</span> <span class="o">=</span> <span class="n">idn</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">_</span><span class="si">%i</span><span class="s">:&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">group</span><span class="p">,</span> <span class="n">idn</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">group</span> <span class="o">=</span> <span class="n">group</span>
         <span class="c">#TODO should be group_address(group), but it would not work</span>
         <span class="c"># when fired manual + &#39;:&#39; and manual group_address need to be removed</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__command_addresse</span> <span class="o">=</span> <span class="n">__command_addresse</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_addresses</span> <span class="o">=</span> <span class="n">_addresses</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_methods</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_register_actions</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">trade_logging</span> <span class="o">==</span> <span class="s">&#39;individual&#39;</span><span class="p">:</span>
@@ -1619,6 +1732,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_msgs</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">given_offers</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">given_offers</span><span class="p">[</span><span class="bp">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">Offer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">idn</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">buysell</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">idn</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">given_offers</span><span class="p">[</span><span class="bp">None</span><span class="p">][</span><span class="s">&#39;status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;accepted&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">given_offers</span><span class="p">[</span><span class="bp">None</span><span class="p">][</span><span class="s">&#39;status_round&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_open_offers</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_answered_offers</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_offer_count</span> <span class="o">=</span> <span class="mi">0</span>
@@ -1630,7 +1746,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">round</span> <span class="o">=</span> <span class="mi">0</span>
 
 <div class="viewcode-block" id="Agent.possession"><a class="viewcode-back" href="../Agent_class.html#abceagent.Agent.possession">[docs]</a>    <span class="k">def</span> <span class="nf">possession</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">good</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; returns how much of good an agent possesses (0 when unknown)</span>
+        <span class="sd">&quot;&quot;&quot; returns how much of good an agent possesses.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A number.</span>
@@ -1732,6 +1848,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_methods</span><span class="p">[</span><span class="s">&#39;_db_panel&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_db_panel</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_methods</span><span class="p">[</span><span class="s">&#39;_perish&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perish</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_methods</span><span class="p">[</span><span class="s">&#39;_produce_resource_rent_and_labor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_produce_resource_rent_and_labor</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_methods</span><span class="p">[</span><span class="s">&#39;_aesof&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_aesof</span>
             <span class="c">#TODO inherited classes provide methods that should not be callable</span>
             <span class="c">#change _ policy _ callable from outside __ not and exception lists</span>
 
@@ -1758,18 +1875,14 @@
                 <span class="n">keep</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">given_offers</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">given_offers</span> <span class="o">=</span> <span class="n">keep</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s">&quot;db_agent: &quot;</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s">&quot;trade_log&quot;</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">send_json</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_trade_log</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s">&quot;trade_log&quot;</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">send_json</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_trade_log</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">round</span><span class="p">))</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_trade_log</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">round</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">round_begin</span><span class="p">()</span>
 
-<div class="viewcode-block" id="Agent.round_begin"><a class="viewcode-back" href="../Agent_class.html#abceagent.Agent.round_begin">[docs]</a>    <span class="k">def</span> <span class="nf">round_begin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; If you declare a round_begin methode in your agent, it will be called at the begin of each round &quot;&quot;&quot;</span>
-        <span class="k">pass</span>
-</div>
 <div class="viewcode-block" id="Agent.create"><a class="viewcode-back" href="../Agent_class.html#abceagent.Agent.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">good</span><span class="p">,</span> <span class="n">quantity</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; creates quantity of the good out of nothing</span>
 
@@ -1814,26 +1927,26 @@
         <span class="k">return</span> <span class="n">quantity_destroyed</span>
 </div>
 <div class="viewcode-block" id="Agent.run"><a class="viewcode-back" href="../Agent_class.html#abceagent.Agent.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">context</span> <span class="o">=</span> <span class="n">zmq</span><span class="o">.</span><span class="n">Context</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">commands</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">zmq</span><span class="o">.</span><span class="n">SUB</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__command_addresse</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">context</span> <span class="o">=</span> <span class="n">zmq</span><span class="o">.</span><span class="n">Context</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">commands</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">zmq</span><span class="o">.</span><span class="n">SUB</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_addresses</span><span class="p">[</span><span class="s">&#39;command_addresse&#39;</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="o">.</span><span class="n">setsockopt</span><span class="p">(</span><span class="n">zmq</span><span class="o">.</span><span class="n">SUBSCRIBE</span><span class="p">,</span> <span class="s">&quot;all&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="o">.</span><span class="n">setsockopt</span><span class="p">(</span><span class="n">zmq</span><span class="o">.</span><span class="n">SUBSCRIBE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="o">.</span><span class="n">setsockopt</span><span class="p">(</span><span class="n">zmq</span><span class="o">.</span><span class="n">SUBSCRIBE</span><span class="p">,</span> <span class="n">group_address</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">))</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">out</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">zmq</span><span class="o">.</span><span class="n">PUSH</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s">&quot;ipc://frontend.ipc&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">in_sok</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">zmq</span><span class="o">.</span><span class="n">SUB</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">in_sok</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s">&quot;ipc://backend.ipc&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">in_sok</span><span class="o">.</span><span class="n">setsockopt</span><span class="p">(</span><span class="n">zmq</span><span class="o">.</span><span class="n">SUBSCRIBE</span><span class="p">,</span> <span class="s">&quot;all&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">in_sok</span><span class="o">.</span><span class="n">setsockopt</span><span class="p">(</span><span class="n">zmq</span><span class="o">.</span><span class="n">SUBSCRIBE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">in_sok</span><span class="o">.</span><span class="n">setsockopt</span><span class="p">(</span><span class="n">zmq</span><span class="o">.</span><span class="n">SUBSCRIBE</span><span class="p">,</span> <span class="n">group_address</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__signal_finished</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="p">()</span>
-</div>
-    <span class="k">def</span> <span class="nf">_loop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">zmq</span><span class="o">.</span><span class="n">PUSH</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_addresses</span><span class="p">[</span><span class="s">&#39;frontend&#39;</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">zmq</span><span class="o">.</span><span class="n">PUSH</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_addresses</span><span class="p">[</span><span class="s">&#39;database&#39;</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">messages_in</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">zmq</span><span class="o">.</span><span class="n">DEALER</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">messages_in</span><span class="o">.</span><span class="n">setsockopt</span><span class="p">(</span><span class="n">zmq</span><span class="o">.</span><span class="n">IDENTITY</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">messages_in</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_addresses</span><span class="p">[</span><span class="s">&#39;backend&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">send_multipart</span><span class="p">([</span><span class="s">&#39;!&#39;</span><span class="p">,</span> <span class="s">&#39;!&#39;</span><span class="p">,</span> <span class="s">&#39;register_agent&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">])</span>
+
         <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span>
+            <span class="n">addressee</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span>
             <span class="n">command</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span>
             <span class="k">if</span> <span class="n">command</span> <span class="o">==</span> <span class="s">&quot;!&quot;</span><span class="p">:</span>
                 <span class="n">subcommand</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span>
@@ -1849,8 +1962,9 @@
                     <span class="k">raise</span>
             <span class="k">if</span> <span class="n">command</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s">&#39;_&#39;</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">__reject_polled_but_not_accepted_offers</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">__signal_finished</span><span class="p">()</span>
-
+                <span class="bp">self</span><span class="o">.</span><span class="n">__signal_finished</span><span class="p">()</span>
+        <span class="c">#self.context.destroy()</span>
+</div>
     <span class="k">def</span> <span class="nf">_produce_resource_rent_and_labor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">resource</span><span class="p">,</span> <span class="n">units</span><span class="p">,</span> <span class="n">product</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="o">.</span><span class="n">recv_multipart</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">resource</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_haves</span><span class="p">:</span>
@@ -1880,12 +1994,12 @@
             <span class="n">data_to_track</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_haves</span>
         <span class="c">#TODO this leads to ambigues errors when there is a KeyError in the data_to_track</span>
         <span class="c">#method (which is common), but testing takes to much time</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s">&quot;db_agent:&quot;</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s">&quot;panel&quot;</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">idn</span><span class="p">),</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">send_json</span><span class="p">(</span><span class="n">data_to_track</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s">&quot;panel&quot;</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">send_json</span><span class="p">(</span><span class="n">data_to_track</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">idn</span><span class="p">),</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">round</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">__reject_polled_but_not_accepted_offers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">to_reject</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1900,6 +2014,21 @@
         <span class="k">for</span> <span class="n">offer_id</span> <span class="ow">in</span> <span class="n">to_reject</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">reject</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_open_offers</span><span class="p">[</span><span class="n">offer_id</span><span class="p">])</span>
 
+<div class="viewcode-block" id="Agent.aesof_exec"><a class="viewcode-back" href="../Agent_class.html#abceagent.Agent.aesof_exec">[docs]</a>    <span class="k">def</span> <span class="nf">aesof_exec</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; executes a command in your excel file. see instruction of pythons exec commmand &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">exec</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">aesof</span><span class="p">[</span><span class="n">column_name</span><span class="p">],</span> <span class="nb">globals</span><span class="p">(),</span> <span class="nb">locals</span><span class="p">())</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">aesof</span><span class="p">[</span><span class="n">column_name</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">pass</span>
+</div>
+<div class="viewcode-block" id="Agent.aesof_eval"><a class="viewcode-back" href="../Agent_class.html#abceagent.Agent.aesof_eval">[docs]</a>    <span class="k">def</span> <span class="nf">aesof_eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; evaluates an expression&#39; in your excel file. see instruction of pythons eval commmand &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">eval</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">aesof</span><span class="p">[</span><span class="n">column_name</span><span class="p">],</span> <span class="nb">globals</span><span class="p">(),</span> <span class="nb">locals</span><span class="p">())</span>
+</div>
+    <span class="k">def</span> <span class="nf">_aesof</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aesof</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="o">.</span><span class="n">recv_json</span><span class="p">()</span>
+
     <span class="c">#TODO go to trade</span>
     <span class="k">def</span> <span class="nf">_clearing__end_of_subround</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; agent receives all messages and objects that have been send in this</span>
@@ -1913,11 +2042,10 @@
 <span class="sd">        &#39;_g&#39;: recive a &#39;free&#39; good from another party</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
-            <span class="n">address</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_sok</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">address</span> <span class="o">==</span> <span class="s">&#39;all.&#39;</span><span class="p">:</span>
+            <span class="n">typ</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">messages_in</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">typ</span> <span class="o">==</span> <span class="s">&#39;.&#39;</span><span class="p">:</span>
                 <span class="k">break</span>
-            <span class="n">typ</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_sok</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_sok</span><span class="o">.</span><span class="n">recv_json</span><span class="p">()</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">messages_in</span><span class="o">.</span><span class="n">recv_json</span><span class="p">()</span>
             <span class="k">if</span>   <span class="n">typ</span> <span class="o">==</span> <span class="s">&#39;_o&#39;</span><span class="p">:</span>
                 <span class="n">msg</span><span class="p">[</span><span class="s">&#39;status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;received&#39;</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_open_offers</span><span class="p">[</span><span class="n">msg</span><span class="p">[</span><span class="s">&#39;idn&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">msg</span>
@@ -1936,7 +2064,7 @@
             <span class="k">elif</span> <span class="n">typ</span> <span class="o">==</span> <span class="s">&#39;_g&#39;</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_haves</span><span class="p">[</span><span class="n">msg</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">+=</span> <span class="n">msg</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_msgs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">typ</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_msgs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">typ</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Message</span><span class="p">(</span><span class="n">msg</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">__signal_finished</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; signals modelswarm via communication that the agent has send all</span>
@@ -1953,7 +2081,17 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">_</span><span class="si">%i</span><span class="s">:&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">receiver_group</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&#39;ascii&#39;</span><span class="p">),</span> <span class="n">receiver_idn</span><span class="p">),</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">typ</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">send_json</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-</pre></div></div>
+
+</div>
+<span class="k">def</span> <span class="nf">flatten</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">parent_key</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
+    <span class="n">items</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">items</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">flatten</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="s">&#39;</span><span class="si">%s%s</span><span class="s">_&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">parent_key</span><span class="p">,</span> <span class="n">k</span><span class="p">))</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s">&#39;</span><span class="si">%s%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">parent_key</span><span class="p">,</span> <span class="n">k</span><span class="p">),</span> <span class="n">v</span><span class="p">))</span>
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">items</span><span class="p">)</span>
+</pre></div>
 
           </div>
         </div>
