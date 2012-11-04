@@ -678,11 +678,17 @@ class Simulation:
 
     def _wait_for_agents_than_signal_end_of_comm(self):
         self.communication_channel.send_multipart(['!', '}'])
-        self.ready.recv()
+        try:
+            self.ready.recv()
+        except KeyboardInterrupt:
+            print('KeyboardInterrupt: abce_db: _wait_for_agents_than_signal_end_of_comm(self) ~654')
 
     def _wait_for_agents(self):
         self.communication_channel.send_multipart(['!', ')'])
-        self.ready.recv()
+        try:
+            self.ready.recv()
+        except KeyboardInterrupt:
+            print('KeyboardInterrupt: abce_db: _wait_for_agents(self) ~662')
 
     def _end_Communication(self):
         self.communication_channel.send_multipart(['!', '!', 'end_simulation'])
@@ -848,7 +854,11 @@ class _Communication(multiprocessing.Process):
         self.ready.send('working')
         all_agents = []
         while True:
-            msg = self.in_soc.recv_multipart()
+            try:
+                msg = self.in_soc.recv_multipart()
+            except KeyboardInterrupt:
+                print('KeyboardInterrupt: _Communication: msg = self.in_soc.recv_multipart() ~825')
+                break
             if msg[0] == '!':
                 if msg[1] == '.':
                     agents_finished += 1

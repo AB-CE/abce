@@ -1890,7 +1890,11 @@ class Agent(Database, Trade, Messaging, multiprocessing.Process):
         self.out.send_multipart(['!', '!', 'register_agent', self.name])
 
         while True:
-            addressee = self.commands.recv()
+            try:
+                self.commands.recv()  # catches the group adress.
+            except KeyboardInterrupt:
+                print('KeyboardInterrupt: %s, Last command: %s in self.commands.recv() to catch own adress ~1888' % (self.name, command))
+                break
             command = self.commands.recv()
             if command == "!":
                 subcommand = self.commands.recv()
