@@ -39,8 +39,6 @@ import compiler
 import pyparsing as pp
 from collections import OrderedDict, defaultdict
 import numpy as np
-from scipy import optimize
-from math import isnan
 from abcetools import *
 from inspect import getmembers, ismethod
 from random import shuffle
@@ -48,9 +46,8 @@ save_err = np.seterr(invalid='ignore')
 
 
 class Messaging:
-    #TODO public way of sending messages and objects
     def message(self, receiver_group, receiver_idn, topic, content):
-        """ sends a message to agent, agent_group or 'all'. Agents receive it
+        """ sends a message to agent. Agents receive it
         at the beginning of next round with :meth:`~abceagent.Messaging.get_messages` or
         :meth:`~abceagent.Messaging.get_messages_all`.
 
@@ -63,7 +60,7 @@ class Messaging:
         Example::
 
             ... household_01 ...
-            self.message('firm_01', 'quote_sell', {'good':'BRD', 'quantity': 5})
+            self.message('firm', 01, 'quote_sell', {'good':'BRD', 'quantity': 5})
 
             ... firm_01 - one subround later ...
             requests = self.get_messages('quote_sell')
@@ -72,7 +69,7 @@ class Messaging:
 
         Example2::
 
-         self.message('firm_01', 'm', "hello my message")
+         self.message('firm', 01, 'm', "hello my message")
 
         """
         msg = message(self.group, self.idn, receiver_group, receiver_idn, topic, content)
@@ -841,7 +838,7 @@ class FirmMultiTechnologies:
 
         //exponential is ** not ^
         """
-        parse_single_output = pp.Word(pp.alphas+"_", pp.alphanums+"_") + pp.Suppress('=') + pp.Suppress(pp.Word(pp.alphanums + '*/+-().[]{} '))
+        parse_single_output = pp.Word(pp.alphas + "_", pp.alphanums + "_") + pp.Suppress('=') + pp.Suppress(pp.Word(pp.alphanums + '*/+-().[]{} '))
         parse_output = pp.delimitedList(parse_single_output, ';')
         parse_single_input = pp.Suppress(pp.Word(pp.alphas + "_", pp.alphanums + "_")) + pp.Suppress('=') \
                 + pp.OneOrMore(pp.Suppress(pp.Optional(pp.Word(pp.nums + '*/+-().[]{} '))) + pp.Word(pp.alphas + "_", pp.alphanums + "_"))
@@ -854,7 +851,6 @@ class FirmMultiTechnologies:
         production_function['output'] = list(parse_output.parseString(formula))
         production_function['input'] = list(parse_input.parseString(formula))
         return production_function
-
 
     def create_production_function_fast(self, formula, output_goods, input_goods, typ='from_formula'):
         """ creates a production function from formula, with given outputs
@@ -888,11 +884,10 @@ class FirmMultiTechnologies:
         production_function['input'] = input_goods
         return production_function
 
-
     def create_cobb_douglas(self, output, multiplier, exponents):
         """ creates a Cobb-Douglas production function
 
-        A production function is a produceation process that produces the
+        A production function is a production process that produces the
         given input given input goods according to the formula to the output
         good.
         Production_functions are than used as an argument in produce,
@@ -973,7 +968,6 @@ class FirmMultiTechnologies:
         production_function['input'] = ordered_input
         production_function['optimization'] = optimization
         return production_function
-
 
     def predict_produce_output(self, production_function, input_goods):
         """ Predicts the output of a certain input vector and for a given
@@ -1424,7 +1418,6 @@ class Household:
         Example:
         self._utility_function = self.create_cobb_douglas({'bread' : 10, 'milk' : 1})
         self.produce(self.plastic_utility_function, {'bread' : 20, 'milk' : 1})
-
         """
         formula = 'utility=' + ('*'.join(['**'.join([input_good, str(input_quantity)]) for input_good, input_quantity in exponents.iteritems()]))
         self._utility_function = {}
@@ -1734,7 +1727,6 @@ class Agent(Database, Trade, Messaging, multiprocessing.Process):
                 if have[good] > 5:
                     rich = True
         """
-        assert not isinstance(list_of_goods, basestring), "possession takes a list of good names (string)"
         return {good: self._haves[good] for good in list_of_goods}
 
     def possessions_all(self):
@@ -1742,13 +1734,14 @@ class Agent(Database, Trade, Messaging, multiprocessing.Process):
         return self._haves.copy()
 
     def possessions_filter(self, goods=None, but=None, match=None, typ=None):
-        """ returns a subset of the goods an agent owns:
+        """ returns a subset of the goods an agent owns, all arguments
+        can be combined.
 
         Args:
             goods (list, optional):
                 a list of goods to return
             but(list, optional):
-                all goods but the list of goods here
+                all goods but the list of goods here.
             match(string, optional TODO):
                 goods that match pattern
             begin_with(string, optional TODO):
@@ -1781,7 +1774,7 @@ class Agent(Database, Trade, Messaging, multiprocessing.Process):
         return dict((good, self._haves[good]) for good in goods)
 
     def _offer_counter(self):
-        """ returns a uniqe number for an offer (containing the agent's name)
+        """ returns a unique number for an offer (containing the agent's name)
         """
         self._offer_count += 1
         return str(self.name) + str(self._offer_count)
