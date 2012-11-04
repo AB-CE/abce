@@ -51,6 +51,9 @@ class Messaging:
         at the beginning of next round with :meth:`~abceagent.Messaging.get_messages` or
         :meth:`~abceagent.Messaging.get_messages_all`.
 
+        See:
+            message_to_group for messages to multiple agents
+
         Args::
 
          receiver_group: agent, agent_group or 'all'
@@ -74,6 +77,36 @@ class Messaging:
         """
         msg = message(self.group, self.idn, receiver_group, receiver_idn, topic, content)
         self._send(receiver_group, receiver_idn, topic, msg)
+
+    def message_to_group(self, receiver_group, topic, content):
+        """ sends a message to agent, agent_group or 'all'. Agents receive it
+        at the beginning of next round with :meth:`~abceagent.Messaging.get_messages` or
+        :meth:`~abceagent.Messaging.get_messages_all`.
+
+        Args::
+
+         receiver_group: agent, agent_group or 'all'
+         topic: string, with which this message can be received
+         content: string, dictionary or class, that is send.
+
+        Example::
+
+            ... household_01 ...
+            self.message('firm_01', 'quote_sell', {'good':'BRD', 'quantity': 5})
+
+            ... firm_01 - one subround later ...
+            requests = self.get_messages('quote_sell')
+            for req in requests:
+                self.sell(req.sender, req.good, reg.quantity, self.price[req.good])
+
+        Example2::
+
+         self.message('firm_01', 'm', "hello my message")
+
+        """
+        msg = message(self.group, self.idn, receiver_group, None, topic, content)
+        self._send_to_group(receiver_group, topic, msg)
+
 
     def get_messages(self, topic='m'):
         """ returns all new messages send with :meth:`~abceagent.Messaging.message`
@@ -1885,6 +1918,13 @@ class Agent(Database, Trade, Messaging, multiprocessing.Process):
         self.messages_in = self.context.socket(zmq.DEALER)
         self.messages_in.setsockopt(zmq.IDENTITY, self.name)
         self.messages_in.connect(self._addresses['backend'])
+
+        self.shout = self.context.socket(zmq.SUB)
+        self.shout.connect(self._addresses['group_backend'])
+        self.shout.setsockopt(zmq.SUBSCRIBE, "all")
+        self.shout.setsockopt(zmq.SUBSCRIBE, self.name)
+        self.shout.setsockopt(zmq.SUBSCRIBE, group_address(self.group))
+
         self.out.send_multipart(['!', '!', 'register_agent', self.name])
 
         while True:
@@ -2008,6 +2048,16 @@ class Agent(Database, Trade, Messaging, multiprocessing.Process):
             else:
                 self._msgs.setdefault(typ, []).append(Message(msg))
 
+        while True:
+            address = self.shout.recv()
+            if address == 'all.':
+                break
+            typ = self.shout.recv()
+            msg = self.shout.recv_json()
+            print msg
+            self._msgs.setdefault(typ, []).append(Message(msg))
+
+
     def __signal_finished(self):
         """ signals modelswarm via communication that the agent has send all
         messages and finish his action """
@@ -2021,6 +2071,20 @@ class Agent(Database, Trade, Messaging, multiprocessing.Process):
         reserved for internally processed offers.
         """
         self.out.send('%s_%i:' % (receiver_group.encode('ascii'), receiver_idn), zmq.SNDMORE)
+        self.out.send(typ, zmq.SNDMORE)
+        self.out.send_json(msg)
+
+    def _send_to_group(self, receiver_group, typ, msg):
+        """ sends a message to 'receiver_group', who can be an agent, a group or
+        'all'. The agents receives it at the begin of each round in
+        self.messages(typ) is 'm' for mails.
+        typ =(_o,c,u,r) are
+        reserved for internally processed offers.
+        """
+        print '! ', receiver_group.encode('ascii'), typ, msg
+        self.out.send('!', zmq.SNDMORE)
+        self.out.send('s', zmq.SNDMORE)
+        self.out.send('%s:' % receiver_group.encode('ascii'), zmq.SNDMORE)
         self.out.send(typ, zmq.SNDMORE)
         self.out.send_json(msg)
 
