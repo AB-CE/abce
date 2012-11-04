@@ -45,6 +45,10 @@ from random import shuffle
 save_err = np.seterr(invalid='ignore')
 
 
+INDIVIDUAL_AGENT_SUBSCRIBE = '%s_%s:'
+GROUP_SUBSCRIBE = '%s:'
+
+
 class Messaging:
     def message(self, receiver_group, receiver_idn, topic, content):
         """ sends a message to agent. Agents receive it
@@ -532,12 +536,12 @@ class Trade:
                     print('On diet')
         """
         assert price >= - epsilon, price
-        assert quantity > - epsilon, quantity
         if self._haves[good] < quantity - epsilon:
             raise NotEnoughGoods(self.name, good, quantity - self._haves[good])
         self._haves[good] -= quantity
         offer = Offer(self.group, self.idn, receiver_group, receiver_idn, good, quantity, price, buysell='s', idn=self._offer_counter())
-        self._send(receiver_group, receiver_idn, '_o', offer)
+        if quantity > 0:
+            self._send(receiver_group, receiver_idn, '_o', offer)
         self.given_offers[offer['idn']] = offer
         return offer['idn']
 
@@ -562,7 +566,8 @@ class Trade:
 
         self._haves['money'] -= money_amount
         offer = Offer(self.group, self.idn, receiver_group, receiver_idn, good, quantity, price, 'b', self._offer_counter())
-        self._send(receiver_group, receiver_idn, '_o', offer)
+        if quantity > 0:
+            self._send(receiver_group, receiver_idn, '_o', offer)
         self.given_offers[offer['idn']] = offer
         return offer['idn']
 
@@ -1777,7 +1782,7 @@ class Agent(Database, Trade, Messaging, multiprocessing.Process):
         """ returns a unique number for an offer (containing the agent's name)
         """
         self._offer_count += 1
-        return str(self.name) + str(self._offer_count)
+        return '%s:%i' % (self.name, self._offer_count)
 
     def _register_actions(self):
         """ registers all actions of the Agent, which do not start with '_' """
@@ -1835,10 +1840,7 @@ class Agent(Database, Trade, Messaging, multiprocessing.Process):
             'good': is the name of the good
             quantity: number
         """
-        try:
-            self._haves[good] += quantity
-        except KeyError:
-            self._haves[good] = quantity
+        self._haves[good] += quantity
 
     def destroy(self, good, quantity):
         """ destroys quantity of the good,
