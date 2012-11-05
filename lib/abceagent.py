@@ -161,6 +161,12 @@ class Message():
     def __getitem__(self, key):
         return self.content[key]
 
+    def __float__(self):
+        return float(self.content)
+
+    def __int__(self):
+        return int(self.content)
+
 
 class Trade:
     """ Agents can trade with each other. The clearing of the trade is taken care
