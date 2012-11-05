@@ -185,6 +185,7 @@ class Simulation:
                 'ready': "inproc://ready",
                 'frontend': "inproc://frontend",
                 'backend': "inproc://backend",
+                'group_backend': "inproc://group_backend",
                 'database': "inproc://database"
             }
         if zmq_transport == 'ipc':
@@ -193,6 +194,7 @@ class Simulation:
                 'ready': "ipc://ready.ipc",
                 'frontend': "ipc://frontend.ipc",
                 'backend': "ipc://backend.ipc",
+                'group_backend': "ipc://group_backend",
                 'database': "ipc://database.ipc"
             }
         if zmq_transport == 'tcp':
@@ -202,6 +204,7 @@ class Simulation:
                 'ready': config_tcp['ready'],
                 'frontend': config_tcp['frontend'],
                 'backend': config_tcp['backend'],
+                'group_backend':  config_tcp['group_backend'],
                 'database': config_tcp['database'],
             }
         self.commands.bind(self._addresses['command_addresse'])
@@ -845,8 +848,13 @@ class _Communication(multiprocessing.Process):
         self.context = zmq.Context()
         self.in_soc = self.context.socket(zmq.PULL)
         self.in_soc.bind(self._addresses['frontend'])
+
         self.out = self.context.socket(zmq.ROUTER)
         self.out.bind(self._addresses['backend'])
+
+        self.shout = self.context.socket(zmq.PUB)
+        self.shout.bind(self._addresses['group_backend'])
+
         self.ready = self.context.socket(zmq.PUSH)
         self.ready.connect(self._addresses['ready'])
         agents_finished, total_number = 0, 0
@@ -862,6 +870,10 @@ class _Communication(multiprocessing.Process):
             if msg[0] == '!':
                 if msg[1] == '.':
                     agents_finished += 1
+                if msg[1] == 's':
+                    self.shout.send_multipart(msg[2:])
+                    print '=>', msg
+                    continue
                 elif msg[1] == '+':
                     total_number += int(msg[2])
                     continue
@@ -885,6 +897,7 @@ class _Communication(multiprocessing.Process):
                         if send_end_of_communication_sign:
                             for agent in all_agents:
                                 self.out.send_multipart([agent, '.'])
+                            self.shout.send('all.')
             else:
                 self.out.send_multipart(msg)
         self.context.destroy()
