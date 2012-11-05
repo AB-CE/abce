@@ -84,8 +84,12 @@ def read_parameters(parameters_file='simulation_parameters.csv', delimiter='\t',
     """
     start_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
     parameter_array = []
-    reader = csv.reader(open(parameters_file),
-                                delimiter=delimiter, quotechar=quotechar)
+
+    csvfile = open(parameters_file)
+    dialect = csv.Sniffer().sniff(csvfile.read(1024))
+    csvfile.seek(0)
+    reader = csv.reader(csvfile, dialect)
+
     keys = [key.lower() for key in reader.next()]
     for line in reader:
         if line == []:
