@@ -872,7 +872,6 @@ class _Communication(multiprocessing.Process):
                     agents_finished += 1
                 if msg[1] == 's':
                     self.shout.send_multipart(msg[2:])
-                    print '=>', msg
                     continue
                 elif msg[1] == '+':
                     total_number += int(msg[2])

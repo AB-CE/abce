@@ -124,6 +124,20 @@ class Messaging:
         If you are sending a float or an integer you need to access the message
         content with `message.content` instead of only `message`.
 
+        ! if you want to recieve a **float** or an **int**, you must msg.content
+
+        Returns a message object:
+            msg.content:
+                returns the message content string, int, float, ...
+            msg:
+                returns also the message content, but only as a string
+            sender_group:
+                returns the group name of the sender
+            sender_idn:
+                returns the id of the sender
+            topic:
+                returns the topic
+
         Example::
 
          ... agent_01 ...
@@ -2078,7 +2092,6 @@ class Agent(Database, Trade, Messaging, multiprocessing.Process):
                 break
             typ = self.shout.recv()
             msg = self.shout.recv_json()
-            print msg
             self._msgs.setdefault(typ, []).append(Message(msg))
 
 
@@ -2105,7 +2118,6 @@ class Agent(Database, Trade, Messaging, multiprocessing.Process):
         typ =(_o,c,u,r) are
         reserved for internally processed offers.
         """
-        print '! ', receiver_group.encode('ascii'), typ, msg
         self.out.send('!', zmq.SNDMORE)
         self.out.send('s', zmq.SNDMORE)
         self.out.send('%s:' % receiver_group.encode('ascii'), zmq.SNDMORE)
