@@ -50,27 +50,26 @@ class Database(multiprocessing.Process):
         in_sok = context.socket(zmq.PULL)
         in_sok.bind(self._addresses['database'])
         trade_ex_str = self.add_trade_log()
-        trade_log = defaultdict(int)
         while True:
             typ = in_sok.recv()
             if typ == "close":
                 break
             if typ == 'panel':
                 command = in_sok.recv()
-                data_to_write = in_sok.recv_json()
+                data_to_write = in_sok.recv_pyobj()
                 data_to_write['id'] = int(in_sok.recv())
                 group = in_sok.recv()
                 data_to_write['round'] = int(in_sok.recv())
                 table_name = command + '_' + group
                 self.write(table_name, data_to_write)
             elif typ == 'trade_log':
-                individual_log = in_sok.recv_json()
+                individual_log = in_sok.recv_pyobj()
                 round = int(in_sok.recv())
                 for key in individual_log:
                     self.database.execute(trade_ex_str, [round] + key.split(',') + [individual_log[key]])
             elif typ == 'log':
                 group_name = in_sok.recv()
-                data_to_write = in_sok.recv_json()
+                data_to_write = in_sok.recv_pyobj()
                 data_to_write['round'] = int(in_sok.recv())
                 table_name = group_name
                 try:
