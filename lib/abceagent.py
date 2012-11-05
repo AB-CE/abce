@@ -1755,9 +1755,9 @@ class Agent(Database, Trade, Messaging, multiprocessing.Process):
                 all goods but the list of goods here.
             match(string, optional TODO):
                 goods that match pattern
-            begin_with(string, optional TODO):
+            begins_with(string, optional):
                 all goods that begin with string
-            end_with(string, optional TODO)
+            ends_with(string, optional)
                 all goods that end with string
             is(string, optional TODO)
                 'resources':
@@ -1782,6 +1782,18 @@ class Agent(Database, Trade, Messaging, multiprocessing.Process):
                 goods = set(goods) - set(but)
             except TypeError:
                 raise SystemExit("goods and/or but must be a list e.G. ['element1', 'element2']")
+        if begins_with:
+            new_goods = []
+            for good in goods:
+                if good.startswith(begins_with):
+                    new_goods.append(good)
+            goods = new_goods
+        if ends_with:
+            new_goods = []
+            for good in goods:
+                if good.endswith(begins_with):
+                    new_goods.append(good)
+            goods = new_goods
         return dict((good, self._haves[good]) for good in goods)
 
     def _offer_counter(self):
