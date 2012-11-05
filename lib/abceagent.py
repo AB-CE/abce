@@ -2004,7 +2004,8 @@ class Agent(Database, Trade, Messaging, multiprocessing.Process):
 
             for key in self.given_offers.keys():
                 if self.given_offers[key]['good'] == good:
-                    self.given_offers[key]['status'] == 'perished'
+                    self.given_offers[key]['status'] = 'perished'
+                    self.given_offers[key]['status_round'] = self.round
 
     def _db_panel(self):
         command = self.commands.recv()
