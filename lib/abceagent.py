@@ -113,7 +113,7 @@ class Messaging:
 
 
     def get_messages(self, topic='m'):
-        """ returns all new messages send with :meth:`~abceagent.Messaging.message`
+        """ self.messages() returns all new messages send with :meth:`~abceagent.Messaging.message`
         (topic='m'). The order is randomized. self.messages(topic) returns all
         messages with a topic.
 
@@ -1791,7 +1791,7 @@ class Agent(Database, Trade, Messaging, multiprocessing.Process):
         """ returns all possessions """
         return self._haves.copy()
 
-    def possessions_filter(self, goods=None, but=None, match=None, typ=None):
+    def possessions_filter(self, goods=None, but=None, match=None, beginswith=None, endswith=None):
         """ returns a subset of the goods an agent owns, all arguments
         can be combined.
 
@@ -1802,9 +1802,9 @@ class Agent(Database, Trade, Messaging, multiprocessing.Process):
                 all goods but the list of goods here.
             match(string, optional TODO):
                 goods that match pattern
-            begins_with(string, optional):
+            beginswith(string, optional):
                 all goods that begin with string
-            ends_with(string, optional)
+            endswith(string, optional)
                 all goods that end with string
             is(string, optional TODO)
                 'resources':
@@ -1824,21 +1824,21 @@ class Agent(Database, Trade, Messaging, multiprocessing.Process):
         """
         if not(goods):
             goods = self._haves.keys()
-        if but:
+        if but != None:
             try:
                 goods = set(goods) - set(but)
             except TypeError:
                 raise SystemExit("goods and/or but must be a list e.G. ['element1', 'element2']")
-        if begins_with:
+        if beginswith != None:
             new_goods = []
             for good in goods:
-                if good.startswith(begins_with):
+                if good.startswith(beginswith):
                     new_goods.append(good)
             goods = new_goods
-        if ends_with:
+        if endswith != None:
             new_goods = []
             for good in goods:
-                if good.endswith(begins_with):
+                if good.endswith(endswith):
                     new_goods.append(good)
             goods = new_goods
         return dict((good, self._haves[good]) for good in goods)
