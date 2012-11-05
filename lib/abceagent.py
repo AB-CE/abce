@@ -39,17 +39,50 @@ import compiler
 import pyparsing as pp
 from collections import OrderedDict, defaultdict
 import numpy as np
-from scipy import optimize
-from math import isnan
 from abcetools import *
 from inspect import getmembers, ismethod
 from random import shuffle
 save_err = np.seterr(invalid='ignore')
 
 
+INDIVIDUAL_AGENT_SUBSCRIBE = '%s_%s:'
+GROUP_SUBSCRIBE = '%s:'
+
+
 class Messaging:
-    #TODO public way of sending messages and objects
     def message(self, receiver_group, receiver_idn, topic, content):
+        """ sends a message to agent. Agents receive it
+        at the beginning of next round with :meth:`~abceagent.Messaging.get_messages` or
+        :meth:`~abceagent.Messaging.get_messages_all`.
+
+        See:
+            message_to_group for messages to multiple agents
+
+        Args::
+
+         receiver_group: agent, agent_group or 'all'
+         topic: string, with which this message can be received
+         content: string, dictionary or class, that is send.
+
+        Example::
+
+            ... household_01 ...
+            self.message('firm', 01, 'quote_sell', {'good':'BRD', 'quantity': 5})
+
+            ... firm_01 - one subround later ...
+            requests = self.get_messages('quote_sell')
+            for req in requests:
+                self.sell(req.sender, req.good, reg.quantity, self.price[req.good])
+
+        Example2::
+
+         self.message('firm', 01, 'm', "hello my message")
+
+        """
+        msg = message(self.group, self.idn, receiver_group, receiver_idn, topic, content)
+        self._send(receiver_group, receiver_idn, topic, msg)
+
+    def message_to_group(self, receiver_group, topic, content):
         """ sends a message to agent, agent_group or 'all'. Agents receive it
         at the beginning of next round with :meth:`~abceagent.Messaging.get_messages` or
         :meth:`~abceagent.Messaging.get_messages_all`.
@@ -75,8 +108,9 @@ class Messaging:
          self.message('firm_01', 'm', "hello my message")
 
         """
-        msg = message(self.group, self.idn, receiver_group, receiver_idn, topic, content)
-        self._send(receiver_group, receiver_idn, topic, msg)
+        msg = message(self.group, self.idn, receiver_group, None, topic, content)
+        self._send_to_group(receiver_group, topic, msg)
+
 
     def get_messages(self, topic='m'):
         """ self.messages() returns all new messages send with :meth:`~abceagent.Messaging.message`
@@ -89,6 +123,20 @@ class Messaging:
 
         If you are sending a float or an integer you need to access the message
         content with `message.content` instead of only `message`.
+
+        ! if you want to recieve a **float** or an **int**, you must msg.content
+
+        Returns a message object:
+            msg.content:
+                returns the message content string, int, float, ...
+            msg:
+                returns also the message content, but only as a string
+            sender_group:
+                returns the group name of the sender
+            sender_idn:
+                returns the id of the sender
+            topic:
+                returns the topic
 
         Example::
 
@@ -159,6 +207,12 @@ class Message():
 
     def __getitem__(self, key):
         return self.content[key]
+
+    def __float__(self):
+        return float(self.content)
+
+    def __int__(self):
+        return int(self.content)
 
 
 class Trade:
@@ -535,12 +589,12 @@ class Trade:
                     print('On diet')
         """
         assert price >= - epsilon, price
-        assert quantity > - epsilon, quantity
         if self._haves[good] < quantity - epsilon:
             raise NotEnoughGoods(self.name, good, quantity - self._haves[good])
         self._haves[good] -= quantity
         offer = Offer(self.group, self.idn, receiver_group, receiver_idn, good, quantity, price, buysell='s', idn=self._offer_counter())
-        self._send(receiver_group, receiver_idn, '_o', offer)
+        if quantity > 0:
+            self._send(receiver_group, receiver_idn, '_o', offer)
         self.given_offers[offer['idn']] = offer
         return offer['idn']
 
@@ -565,7 +619,8 @@ class Trade:
 
         self._haves['money'] -= money_amount
         offer = Offer(self.group, self.idn, receiver_group, receiver_idn, good, quantity, price, 'b', self._offer_counter())
-        self._send(receiver_group, receiver_idn, '_o', offer)
+        if quantity > 0:
+            self._send(receiver_group, receiver_idn, '_o', offer)
         self.given_offers[offer['idn']] = offer
         return offer['idn']
 
@@ -841,7 +896,7 @@ class FirmMultiTechnologies:
 
         //exponential is ** not ^
         """
-        parse_single_output = pp.Word(pp.alphas+"_", pp.alphanums+"_") + pp.Suppress('=') + pp.Suppress(pp.Word(pp.alphanums + '*/+-().[]{} '))
+        parse_single_output = pp.Word(pp.alphas + "_", pp.alphanums + "_") + pp.Suppress('=') + pp.Suppress(pp.Word(pp.alphanums + '*/+-().[]{} '))
         parse_output = pp.delimitedList(parse_single_output, ';')
         parse_single_input = pp.Suppress(pp.Word(pp.alphas + "_", pp.alphanums + "_")) + pp.Suppress('=') \
                 + pp.OneOrMore(pp.Suppress(pp.Optional(pp.Word(pp.nums + '*/+-().[]{} '))) + pp.Word(pp.alphas + "_", pp.alphanums + "_"))
@@ -854,7 +909,6 @@ class FirmMultiTechnologies:
         production_function['output'] = list(parse_output.parseString(formula))
         production_function['input'] = list(parse_input.parseString(formula))
         return production_function
-
 
     def create_production_function_fast(self, formula, output_goods, input_goods, typ='from_formula'):
         """ creates a production function from formula, with given outputs
@@ -888,11 +942,10 @@ class FirmMultiTechnologies:
         production_function['input'] = input_goods
         return production_function
 
-
     def create_cobb_douglas(self, output, multiplier, exponents):
         """ creates a Cobb-Douglas production function
 
-        A production function is a produceation process that produces the
+        A production function is a production process that produces the
         given input given input goods according to the formula to the output
         good.
         Production_functions are than used as an argument in produce,
@@ -973,7 +1026,6 @@ class FirmMultiTechnologies:
         production_function['input'] = ordered_input
         production_function['optimization'] = optimization
         return production_function
-
 
     def predict_produce_output(self, production_function, input_goods):
         """ Predicts the output of a certain input vector and for a given
@@ -1424,7 +1476,6 @@ class Household:
         Example:
         self._utility_function = self.create_cobb_douglas({'bread' : 10, 'milk' : 1})
         self.produce(self.plastic_utility_function, {'bread' : 20, 'milk' : 1})
-
         """
         formula = 'utility=' + ('*'.join(['**'.join([input_good, str(input_quantity)]) for input_good, input_quantity in exponents.iteritems()]))
         self._utility_function = {}
@@ -1734,7 +1785,6 @@ class Agent(Database, Trade, Messaging, multiprocessing.Process):
                 if have[good] > 5:
                     rich = True
         """
-        assert not isinstance(list_of_goods, basestring), "possession takes a list of good names (string)"
         return {good: self._haves[good] for good in list_of_goods}
 
     def possessions_all(self):
@@ -1742,18 +1792,19 @@ class Agent(Database, Trade, Messaging, multiprocessing.Process):
         return self._haves.copy()
 
     def possessions_filter(self, goods=None, but=None, match=None, typ=None):
-        """ returns a subset of the goods an agent owns:
+        """ returns a subset of the goods an agent owns, all arguments
+        can be combined.
 
         Args:
             goods (list, optional):
                 a list of goods to return
             but(list, optional):
-                all goods but the list of goods here
+                all goods but the list of goods here.
             match(string, optional TODO):
                 goods that match pattern
-            begin_with(string, optional TODO):
+            begins_with(string, optional):
                 all goods that begin with string
-            end_with(string, optional TODO)
+            ends_with(string, optional)
                 all goods that end with string
             is(string, optional TODO)
                 'resources':
@@ -1778,13 +1829,25 @@ class Agent(Database, Trade, Messaging, multiprocessing.Process):
                 goods = set(goods) - set(but)
             except TypeError:
                 raise SystemExit("goods and/or but must be a list e.G. ['element1', 'element2']")
+        if begins_with:
+            new_goods = []
+            for good in goods:
+                if good.startswith(begins_with):
+                    new_goods.append(good)
+            goods = new_goods
+        if ends_with:
+            new_goods = []
+            for good in goods:
+                if good.endswith(begins_with):
+                    new_goods.append(good)
+            goods = new_goods
         return dict((good, self._haves[good]) for good in goods)
 
     def _offer_counter(self):
-        """ returns a uniqe number for an offer (containing the agent's name)
+        """ returns a unique number for an offer (containing the agent's name)
         """
         self._offer_count += 1
-        return str(self.name) + str(self._offer_count)
+        return '%s:%i' % (self.name, self._offer_count)
 
     def _register_actions(self):
         """ registers all actions of the Agent, which do not start with '_' """
@@ -1842,10 +1905,7 @@ class Agent(Database, Trade, Messaging, multiprocessing.Process):
             'good': is the name of the good
             quantity: number
         """
-        try:
-            self._haves[good] += quantity
-        except KeyError:
-            self._haves[good] = quantity
+        self._haves[good] += quantity
 
     def destroy(self, good, quantity):
         """ destroys quantity of the good,
@@ -1892,10 +1952,21 @@ class Agent(Database, Trade, Messaging, multiprocessing.Process):
         self.messages_in = self.context.socket(zmq.DEALER)
         self.messages_in.setsockopt(zmq.IDENTITY, self.name)
         self.messages_in.connect(self._addresses['backend'])
+
+        self.shout = self.context.socket(zmq.SUB)
+        self.shout.connect(self._addresses['group_backend'])
+        self.shout.setsockopt(zmq.SUBSCRIBE, "all")
+        self.shout.setsockopt(zmq.SUBSCRIBE, self.name)
+        self.shout.setsockopt(zmq.SUBSCRIBE, group_address(self.group))
+
         self.out.send_multipart(['!', '!', 'register_agent', self.name])
 
         while True:
-            addressee = self.commands.recv()
+            try:
+                self.commands.recv()  # catches the group adress.
+            except KeyboardInterrupt:
+                print('KeyboardInterrupt: %s, Last command: %s in self.commands.recv() to catch own adress ~1888' % (self.name, command))
+                break
             command = self.commands.recv()
             if command == "!":
                 subcommand = self.commands.recv()
@@ -1933,7 +2004,8 @@ class Agent(Database, Trade, Messaging, multiprocessing.Process):
 
             for key in self.given_offers.keys():
                 if self.given_offers[key]['good'] == good:
-                    self.given_offers[key]['status'] == 'perished'
+                    self.given_offers[key]['status'] = 'perished'
+                    self.given_offers[key]['status_round'] = self.round
 
     def _db_panel(self):
         command = self.commands.recv()
@@ -2015,6 +2087,15 @@ class Agent(Database, Trade, Messaging, multiprocessing.Process):
             else:
                 self._msgs.setdefault(typ, []).append(Message(msg))
 
+        while True:
+            address = self.shout.recv()
+            if address == 'all.':
+                break
+            typ = self.shout.recv()
+            msg = self.shout.recv_json()
+            self._msgs.setdefault(typ, []).append(Message(msg))
+
+
     def __signal_finished(self):
         """ signals modelswarm via communication that the agent has send all
         messages and finish his action """
@@ -2028,6 +2109,19 @@ class Agent(Database, Trade, Messaging, multiprocessing.Process):
         reserved for internally processed offers.
         """
         self.out.send('%s_%i:' % (receiver_group.encode('ascii'), receiver_idn), zmq.SNDMORE)
+        self.out.send(typ, zmq.SNDMORE)
+        self.out.send_json(msg)
+
+    def _send_to_group(self, receiver_group, typ, msg):
+        """ sends a message to 'receiver_group', who can be an agent, a group or
+        'all'. The agents receives it at the begin of each round in
+        self.messages(typ) is 'm' for mails.
+        typ =(_o,c,u,r) are
+        reserved for internally processed offers.
+        """
+        self.out.send('!', zmq.SNDMORE)
+        self.out.send('s', zmq.SNDMORE)
+        self.out.send('%s:' % receiver_group.encode('ascii'), zmq.SNDMORE)
         self.out.send(typ, zmq.SNDMORE)
         self.out.send_json(msg)
 
