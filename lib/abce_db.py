@@ -76,6 +76,7 @@ class Database(multiprocessing.Process):
             elif typ == 'log':
                 group_name = in_sok.recv()
                 data_to_write = in_sok.recv_pyobj()
+                data_to_write = {key: _number_or_string(data_to_write[key]) for key in data_to_write}
                 data_to_write['round'] = int(in_sok.recv())
                 table_name = group_name
                 try:
@@ -155,4 +156,16 @@ def is_convertable_to_float(x):
             raise TypeError
         return False
     return True
+
+
+def _number_or_string(word):
+    """ returns a int if possible otherwise a float from a string
+    """
+    try:
+        return int(word)
+    except ValueError:
+        try:
+            return float(word)
+        except ValueError:
+            return word
 

@@ -724,9 +724,9 @@ class Trade:
 
     def _log_receive_accept_agent(self, offer):
         if offer['buysell'] == 's':
-            self._trade_log['%s,%s,%s,%f' % (offer['good'], self.name, agent_name(offer['receiver_group'], offer['receiver_idn']), offer['price'])] += offer['quantity']
+            self._trade_log['%s,%s,%s,%f' % (offer['good'], self.name_without_colon, '%s_%i' % (offer['receiver_group'], offer['receiver_idn']), offer['price'])] += offer['quantity']
         else:
-            self._trade_log['%s,%s,%s,%f' % (offer['good'], agent_name(offer['receiver_group'], offer['receiver_idn']), self.name, offer['price'])] += offer['quantity']
+            self._trade_log['%s,%s,%s,%f' % (offer['good'], '%s_%i' % (offer['receiver_group'], offer['receiver_idn']), self.name_without_colon, offer['price'])] += offer['quantity']
 
     def _receive_partial_accept(self, offer):
         """ When the other party partially accepted the  money or good is
@@ -752,9 +752,9 @@ class Trade:
 
     def _log_receive_partial_accept_agent(self, offer):
         if offer['buysell'] == 's':
-            self._trade_log['%s,%s,%s,%f' % (offer['good'], self.name, agent_name(offer['receiver_group'], offer['receiver_idn']), offer['price'])] += offer['final_quantity']
+            self._trade_log['%s,%s,%s,%f' % (offer['good'], self.name_without_colon, '%s_%i' % (offer['receiver_group'], offer['receiver_idn']), offer['price'])] += offer['final_quantity']
         else:
-            self._trade_log['%s,%s,%s,%f' % (offer['good'], agent_name(offer['receiver_group'], offer['receiver_idn']), self.name, offer['price'])] += offer['final_quantity']
+            self._trade_log['%s,%s,%s,%f' % (offer['good'], '%s_%i' % (offer['receiver_group'], offer['receiver_idn']), self.name_without_colon, offer['price'])] += offer['final_quantity']
 
     def _receive_reject(self, offer_id):
         """ delets a given offer
@@ -1708,6 +1708,7 @@ class Agent(Database, Trade, Messaging, multiprocessing.Process):
         multiprocessing.Process.__init__(self)
         self.idn = idn
         self.name = '%s_%i:' % (group, idn)
+        self.name_without_colon = '%s_%i' % (group, idn)
         self.group = group
         #TODO should be group_address(group), but it would not work
         # when fired manual + ':' and manual group_address need to be removed
