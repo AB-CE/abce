@@ -1562,7 +1562,7 @@ class Database:
         data_to_write['id'] = self.idn
         self.database_connection.send("log", zmq.SNDMORE)
         self.database_connection.send(self.group, zmq.SNDMORE)
-        self.database_connection.send_json(data_to_write, zmq.SNDMORE)
+        self.database_connection.send_pyobj(data_to_write, zmq.SNDMORE)
         self.database_connection.send(str(self.round))
 
     def log_value(self, name, value):
@@ -1576,7 +1576,7 @@ class Database:
         """
         self.database_connection.send("log", zmq.SNDMORE)
         self.database_connection.send(self.group, zmq.SNDMORE)
-        self.database_connection.send_json({'id': self.idn, name: value}, zmq.SNDMORE)
+        self.database_connection.send_pyobj({'id': self.idn, name: value}, zmq.SNDMORE)
         self.database_connection.send(str(self.round))
 
     def log_dict(self, action_name, data_to_log):
@@ -1587,7 +1587,7 @@ class Database:
         data_to_write['id'] = self.idn
         self.database_connection.send("log", zmq.SNDMORE)
         self.database_connection.send(self.group, zmq.SNDMORE)
-        self.database_connection.send_json(data_to_write, zmq.SNDMORE)
+        self.database_connection.send_pyobj(data_to_write, zmq.SNDMORE)
         self.database_connection.send(str(self.round))
 
     def log_change(self, action_name, data_to_log):
@@ -1615,7 +1615,7 @@ class Database:
         data_to_write['id'] = self.idn
         self.database_connection.send("log", zmq.SNDMORE)
         self.database_connection.send(self.group, zmq.SNDMORE)
-        self.database_connection.send_json(data_to_write, zmq.SNDMORE)
+        self.database_connection.send_pyobj(data_to_write, zmq.SNDMORE)
         self.database_connection.send(str(self.round))
 
         self._data_to_log_1[action_name] = data_to_log
@@ -1673,7 +1673,7 @@ class Database:
         data_to_write['id'] = self.idn
         self.database_connection.send("log", zmq.SNDMORE)
         self.database_connection.send(self.group, zmq.SNDMORE)
-        self.database_connection.send_json(data_to_write, zmq.SNDMORE)
+        self.database_connection.send_pyobj(data_to_write, zmq.SNDMORE)
         self.database_connection.send(str(self.round))
 
 
@@ -1888,7 +1888,7 @@ class Agent(Database, Trade, Messaging, multiprocessing.Process):
         self.given_offers = keep
 
         self.database_connection.send("trade_log", zmq.SNDMORE)
-        self.database_connection.send_json(self._trade_log, zmq.SNDMORE)
+        self.database_connection.send_pyobj(self._trade_log, zmq.SNDMORE)
         self.database_connection.send(str(self.round))
 
         self._trade_log = defaultdict(int)
@@ -2017,7 +2017,7 @@ class Agent(Database, Trade, Messaging, multiprocessing.Process):
         #method (which is common), but testing takes to much time
         self.database_connection.send("panel", zmq.SNDMORE)
         self.database_connection.send(command, zmq.SNDMORE)
-        self.database_connection.send_json(data_to_track, zmq.SNDMORE)
+        self.database_connection.send_pyobj(data_to_track, zmq.SNDMORE)
         self.database_connection.send(str(self.idn), zmq.SNDMORE)
         self.database_connection.send(self.group, zmq.SNDMORE)
         self.database_connection.send(str(self.round))
@@ -2048,7 +2048,7 @@ class Agent(Database, Trade, Messaging, multiprocessing.Process):
         return eval(self.aesof[column_name], globals(), locals())
 
     def _aesof(self):
-        self.aesof = self.commands.recv_json()
+        self.aesof = self.commands.recv_pyobj()
 
     #TODO go to trade
     def _clearing__end_of_subround(self):
@@ -2066,7 +2066,7 @@ class Agent(Database, Trade, Messaging, multiprocessing.Process):
             typ = self.messages_in.recv()
             if typ == '.':
                 break
-            msg = self.messages_in.recv_json()
+            msg = self.messages_in.recv_pyobj()
             if   typ == '_o':
                 msg['status'] = 'received'
                 self._open_offers[msg['idn']] = msg
@@ -2092,7 +2092,7 @@ class Agent(Database, Trade, Messaging, multiprocessing.Process):
             if address == 'all.':
                 break
             typ = self.shout.recv()
-            msg = self.shout.recv_json()
+            msg = self.shout.recv_pyobj()
             self._msgs.setdefault(typ, []).append(Message(msg))
 
 
@@ -2110,7 +2110,7 @@ class Agent(Database, Trade, Messaging, multiprocessing.Process):
         """
         self.out.send('%s_%i:' % (receiver_group.encode('ascii'), receiver_idn), zmq.SNDMORE)
         self.out.send(typ, zmq.SNDMORE)
-        self.out.send_json(msg)
+        self.out.send_pyobj(msg)
 
     def _send_to_group(self, receiver_group, typ, msg):
         """ sends a message to 'receiver_group', who can be an agent, a group or
@@ -2123,7 +2123,7 @@ class Agent(Database, Trade, Messaging, multiprocessing.Process):
         self.out.send('s', zmq.SNDMORE)
         self.out.send('%s:' % receiver_group.encode('ascii'), zmq.SNDMORE)
         self.out.send(typ, zmq.SNDMORE)
-        self.out.send_json(msg)
+        self.out.send_pyobj(msg)
 
 
 def flatten(d, parent_key=''):
