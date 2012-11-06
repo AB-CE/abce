@@ -123,6 +123,9 @@ class Database(multiprocessing.Process):
                 raise
             self.new_column(table_name, data_to_write)
             self.write(table_name, data_to_write)
+        except sqlite3.InterfaceError:
+            print(ex_str % format_strings, rows_to_write)
+            raise
 
     def new_column(self, table_name, data_to_write):
         rows_to_write = data_to_write.values()
