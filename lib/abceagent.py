@@ -1980,6 +1980,10 @@ class Agent(Database, Trade, Messaging, multiprocessing.Process):
                     raise SystemExit('The method - ' + command + ' - called in the agent_list is not declared (' + self.name)
                 else:
                     raise
+            except KeyboardInterrupt:
+                print('KeyboardInterrupt: %s, Current command: %s ~1984' % (self.name, command))
+                break
+
             if command[0] != '_':
                 self.__reject_polled_but_not_accepted_offers()
                 self.__signal_finished()

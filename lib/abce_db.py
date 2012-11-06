@@ -16,8 +16,8 @@
 # the License.
 import zmq
 import multiprocessing
-from collections import defaultdict
 import sqlite3
+import numpy as np
 
 
 class Database(multiprocessing.Process):
@@ -30,13 +30,16 @@ class Database(multiprocessing.Process):
         self.database.execute('PRAGMA count_changes=OFF')
         self.database.execute('PRAGMA temp_store=OFF')
         self.database.execute('PRAGMA default_temp_store=OFF')
+        for t in (np.int8, np.int16, np.int32, np.int64,
+                                    np.uint8, np.uint16, np.uint32, np.uint64):
+            sqlite3.register_adapter(t, long)
         self._addresses = _addresses
 
     def add_trade_log(self):
         table_name = 'trade'
         self.database.execute("CREATE TABLE " + table_name +
-            "(round INT, seller VARCHAR(50), buyer VARCHAR(50), good VARCHAR(50), price FLOAT, quantity FLOAT)")
-        return "INSERT INTO trade (round, good, seller, buyer, price, quantity) VALUES (?,?,?,?,?,?)"
+            "(round INT, good VARCHAR(50), seller VARCHAR(50), buyer VARCHAR(50), price FLOAT, quantity FLOAT)")
+        return 'INSERT INTO trade (round, good, seller, buyer, price, quantity) VALUES (%i, "%s", "%s", "%s", "%s", %f)'
 
     def add_log(self, table_name):
         self.database.execute("CREATE TABLE " + table_name + "(round INT, id INT, PRIMARY KEY(round, id))")
@@ -66,7 +69,10 @@ class Database(multiprocessing.Process):
                 individual_log = in_sok.recv_pyobj()
                 round = int(in_sok.recv())
                 for key in individual_log:
-                    self.database.execute(trade_ex_str, [round] + key.split(',') + [individual_log[key]])
+                    split_key = key[:].split(',')
+                    self.database.execute(trade_ex_str % (round,
+                                                        split_key[0], split_key[1], split_key[2], split_key[3],
+                                                        individual_log[key]))
             elif typ == 'log':
                 group_name = in_sok.recv()
                 data_to_write = in_sok.recv_pyobj()
