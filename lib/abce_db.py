@@ -76,7 +76,7 @@ class Database(multiprocessing.Process):
             elif typ == 'log':
                 group_name = in_sok.recv()
                 data_to_write = in_sok.recv_pyobj()
-                data_to_write = {key: _number_or_string(data_to_write[key]) for key in data_to_write}
+                data_to_write = {key: float(data_to_write[key]) for key in data_to_write}
                 data_to_write['round'] = int(in_sok.recv())
                 table_name = group_name
                 try:
