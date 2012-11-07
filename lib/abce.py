@@ -53,7 +53,7 @@ import abce_db
 import itertools
 import postprocess
 from glob import glob
-
+import subround
 
 BASEPATH = os.path.dirname(os.path.realpath(__file__))
 
@@ -179,8 +179,7 @@ class Simulation:
         self._db_commands = {}
         self.num_agents = 0
         self.num_agents_in_group = {}
-        self.context = zmq.Context()
-        self.commands = self.context.socket(zmq.PUB)
+
         from config import zmq_transport
         if zmq_transport == 'inproc':
             self._addresses = {
@@ -211,6 +210,9 @@ class Simulation:
                 'group_backend':  config_tcp['group_backend'],
                 'database': config_tcp['database'],
             }
+        #time.sleep(1)
+        self.context = zmq.Context()
+        self.commands = self.context.socket(zmq.PUB)
         self.commands.bind(self._addresses['command_addresse'])
         self.ready = self.context.socket(zmq.PULL)
         self.ready.bind(self._addresses['ready'])
@@ -222,6 +224,7 @@ class Simulation:
         self._register_action_groups()
         self._db = abce_db.Database(simulation_parameters['_path'], 'database', self._addresses)
         self._db.start()
+
         self.aesof = False
         self.round = 0
         try:
@@ -674,6 +677,10 @@ class Simulation:
                 agents_parameters.extend([line for _ in range(line['number'] * multiply)])
 
         self.build_agents(AgentClass, agents_parameters=agents_parameters)
+
+    def debug_subround(self):
+            self.subround = subround.Subround(self._addresses)
+            self.subround.start()
 
     def _advance_round_agents(self):
         """ advances round by 1 """
