@@ -1986,7 +1986,7 @@ class Agent(Database, Trade, Messaging, multiprocessing.Process):
                 break
 
             if command[0] != '_':
-                self.__reject_polled_but_not_accepted_offers()
+                self.__reject_polled_but_not_accepted_offers(command)
                 self.__signal_finished()
         #self.context.destroy()
 
@@ -2027,16 +2027,16 @@ class Agent(Database, Trade, Messaging, multiprocessing.Process):
         self.database_connection.send(self.group, zmq.SNDMORE)
         self.database_connection.send(str(self.round))
 
-    def __reject_polled_but_not_accepted_offers(self):
+    def __reject_polled_but_not_accepted_offers(self, command):
         to_reject = []
         for offer_id in self._open_offers:
             if self._open_offers[offer_id]['status'] == 'polled':
                 to_reject.append(offer_id)
             elif self._open_offers[offer_id]['status'] == 'received':
                 good = self._open_offers[offer_id]['good']
-                print('Warning:     %s has received offers that have not been polled with '
+                print('Warning: In subround %s, agent %s has received offers that have not been polled with '
                 'get_offers(...) or get_offers_all() in this round the '
-                'offer_id is: "%s" and the good is "%s"' % (self.name, offer_id, good))
+                'offer_id is: "%s" and the good is "%s"' % (command, self.name, offer_id, good))
         for offer_id in to_reject:
             self.reject(self._open_offers[offer_id])
 
