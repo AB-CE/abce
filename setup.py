@@ -1,17 +1,63 @@
 #!/usr/bin/env python
 
 from distutils.core import setup
-import subprocess
-setup(name='abce',
+import os
+
+
+setup(
+      name='abce',
       version='0.3',
-      description='Agent-Based Complete Economy modelling platform',
       author='Davoud Taghawi-Nejad',
       author_email='Davoud@Taghawi-Nejad.de',
+      description='Agent-Based Complete Economy modelling platform',
       url='https://github.com/DavoudTaghawiNejad/abce/downloads',
-      packages=['lib'],
+      package_dir = {'': 'lib'},
+      packages=[''],
+      modules=['abce', 'abceagent', 'abce_db', 'abcetools', 'postprocess'],
+      long_description=open('README.rst').read(),
+      install_requires=['pyparsing', 'numpy','scipy', 'rpy2', 'pyzmq'],
+      data_files=[('', ['lib/postprocess.R'])],
      )
 
-packs = ['python-pyparsing', 'python-numpy', 'python-scipy', 'python-zmq', 'r-base', 'python-rpy2']
+if os.name == 'posix':
+    try:
+        subprocess.call(["sudo apt-get", "install r-base"])
+    except:
+        print('** *************************************************************************')
+        print('**                                                                        **')
+        print('**  please download and install R from http://cran.r-project.org          **')
+        print('**                                                                        **')
+        print('****************************************************************************')
+    print('** **************************************************************************')
+    print('**                                                                         **')
+    print('** - In the abce-0.X subdirectory you will find  examples ond templates    **')
+    print('**                                                                         **')
+    print('** - documentation http://davoudtaghawinejad.github.com/abce/              **')
+    print('**                                                                         **')
+    print('*****************************************************************************')
+    try:
+        subprocess.call(["tar", "xf abce-0.3.tar.gz"])
+    except:
+        print('** Please unzip abce-0.3.tar.gz. There you will find examples, templates and documentation')
+        print('** - documentation http://davoudtaghawinejad.github.com/abce/')
 
-for pack in packs:
-    subprocess.call(["apt-get", "install %s" % pack])
+elif os.name == 'Darwin':
+    print('************************************************************************************')
+    print('**                                                                                **')
+    print('** - please download and install R from http://cran.r-project.org/bin/macosx/     **')
+    print('**                                                                                **')
+    print('** - documentation http://davoudtaghawinejad.github.com/abce/                     **')
+    print('**                                                                                **')
+    print('** - please unzip abce-0.X.tar.gz, in there you will find examples and templates  **')
+    print('**                                                                                **')
+    print('************************************************************************************')
+else:
+    print('************************************************************************************')
+    print('**                                                                                **')
+    print('** - pls download and install R from http://cran.r-project.org/bin/windows/base/  **')
+    print('**                                                                                **')
+    print('** - documentation http://davoudtaghawinejad.github.com/abce/                     **')
+    print('**                                                                                **')
+    print('** - please unzip abce-0.X.tar.gz, in there you will find examples and templates  **')
+    print('**                                                                                **')
+    print('************************************************************************************')
