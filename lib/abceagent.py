@@ -200,19 +200,19 @@ class Message():
         self.__dict__ = msg
 
     def __get__(self):
-        return self.content
+        return self.__dict__
 
     def __str__(self):
-        return str(self.content)
+        return str(self.__dict__)
 
     def __getitem__(self, key):
-        return self.content[key]
+        return self.__dict__[key]
 
     def __float__(self):
-        return float(self.content)
+        return float(self.__dict__)
 
     def __int__(self):
-        return int(self.content)
+        return int(self.__dict__)
 
 
 class Trade:
