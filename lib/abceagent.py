@@ -525,6 +525,40 @@ class Trade:
         ret.sort(key=lambda objects: objects['price'], reverse=descending)
         return ret
 
+    def peak_offers(self, good, descending=False):
+        """ returns a peak on all offers of the 'good' ordered by price.
+        Peaked offers can not be accepted or rejected, but they do not
+        expire.
+        Args:
+            good:
+                the good which should be retrieved
+            descending(bool,default=False):
+                False for descending True for ascending by price
+
+        Returns:
+            A list of offers ordered by price
+
+        Example::
+
+            offers = get_offers('books')
+            for offer in offers:
+                if offer['price'] < 50:
+                    self.accept(offer)
+                elif offer['price'] < 100:
+                    self.accept_partial(offer, 1)
+                else:
+                    self.reject(offer)  # optional
+        """
+        ret = []
+        for offer_idn in self._open_offers:
+            if self._open_offers[offer_idn]['good'] == good:
+                offer = self._open_offers[offer_idn]
+                offer.idn = None
+                ret.append(offer)
+        shuffle(ret)
+        ret.sort(key=lambda objects: objects['price'], reverse=descending)
+        return ret
+
     def quote_sell(self, receiver_group, receiver_idn, good, quantity, price):
         """ quotes a price to sell quantity of 'good' to a receiver
 
