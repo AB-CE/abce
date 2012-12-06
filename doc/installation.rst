@@ -1,6 +1,24 @@
 Download and Installation
 =========================
 
+Installation of stable version Ubuntu
+-------------------------------------
+
+1. Download stable version form:  https://github.com/DavoudTaghawiNejad/abce/downloads
+2. If pip is not installed in terminal::
+
+    sudo apt-get install python-pip
+
+3. In terminal::
+
+    sudo pip install abce-0.3.tar.gz
+
+
+
+
+Installation of development version
+-----------------------------------
+
 The installation has two parts. Installing the necessary software packages. Retrieving ABCE with git or as a zip file.
 
  In terminal (necessary software) [1]_ ::
