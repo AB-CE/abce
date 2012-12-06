@@ -269,21 +269,34 @@ class Trade:
 
 
     """
-    def get_quotes(self):
+    def get_quotes(self, good, descending=False):
         """ self.quotes() returns all new quotes and removes them. The order
         is randomized.
+
+        Args:
+            good:
+                the good which should be retrieved
+            descending(bool,default=False):
+                False for descending True for ascending by price
+
+        Returns:
+         list of quotes ordered by price
 
         Example::
 
          quotes = self.get_quotes()
-
-        Returns::
-         list of quotes
         """
-        if 'q' not in self._msgs:
-            return []
-        shuffle(self._msgs['q'])
-        return self._msgs.pop('q')
+        ret = []
+        other_goods = []
+        for quote in self._msgs['q']:
+            if quote['good'] == good:
+                ret.append(quote)
+            else:
+                other_goods.append(quote)
+        self._msgs['q'] = other_goods
+        shuffle(ret)
+        ret.sort(key=lambda objects: objects['price'], reverse=descending)
+        return ret
 
     def get_quotes_biased(self):
         """ like self.quotes(), but the order is not randomized, so
@@ -483,11 +496,14 @@ class Trade:
         *Offers that are not accepted in the same subround (def block) are
         automatically rejected.* However you can also manualy reject.
 
-        Args::
+        Args:
+            good:
+                the good which should be retrieved
+            descending(bool,default=False):
+                False for descending True for ascending by price
 
-         good: the good which should be retrieved
-         descending(=False): is a bool. False for descending True for
-                             ascending by price
+        Returns:
+            A list of offers ordered by price
 
         Example::
 
