@@ -553,7 +553,7 @@ class Trade:
         for offer_idn in self._open_offers:
             if self._open_offers[offer_idn]['good'] == good:
                 offer = self._open_offers[offer_idn]
-                offer.idn = None
+                offer['status'] = 'peak_only'
                 ret.append(offer)
         shuffle(ret)
         ret.sort(key=lambda objects: objects['price'], reverse=descending)
@@ -648,6 +648,16 @@ class Trade:
         self.given_offers[offer['idn']] = offer
         return offer['idn']
 
+    def sell_max_possible(self, receiver_group, receiver_idn, good, quantity, price):
+        """ Same as sell but if the possession of good smaller than the number,
+        it executes the deal with a lower amount of goods using everything
+        available of this good.
+        """
+        try:
+            self.sell(receiver_group, receiver_idn, good, quantity, price)
+        except NotEnoughGoods:
+            self.sell(receiver_group, receiver_idn, good, quantity=self.possession(good), price=price)
+
     def buy(self, receiver_group, receiver_idn, good, quantity, price):
         """ commits to sell the quantity of good at price
 
@@ -673,6 +683,16 @@ class Trade:
             self._send(receiver_group, receiver_idn, '_o', offer)
         self.given_offers[offer['idn']] = offer
         return offer['idn']
+
+    def buy_max_possible(self, receiver_group, receiver_idn, good, quantity, price):
+        """ Same as buy but if money is insufficient, it executes the deal with
+        a lower amount of goods using all available money.
+        """
+        try:
+            self.buy(receiver_group, receiver_idn, good, quantity, price)
+        except NotEnoughGoods:
+            self.buy(receiver_group, receiver_idn, good, quantity=self.possession('money') / price, price=price)
+
 
     def retract(self, offer_idn):
         """ The agent who made a buy or sell offer can retract it
@@ -741,6 +761,43 @@ class Trade:
         self._send(offer['sender_group'], offer['sender_idn'], '_p', offer)
         del self._open_offers[offer['idn']]
         return {offer['good']: quantity, 'money': money_amount}
+
+    def accept_max_possible(self, offer):
+        """ TODO The offer is partly accepted and cleared
+
+        Args:
+            offer: the offer the other party made
+            (offer not quote!)
+
+        Return:
+            Returns a dictionary with the good's quantity and the amount paid.
+        """
+        try:
+            self.accept(offer)
+        except NotEnoughGoods:
+            if offer['buysell'] == 's':
+                self.accept_partial(offer, self.possession('money') / offer['price'])
+            else:
+                self.accept_partial(offer, self.possession(offer['good']))
+
+    def accept_partial_max_possible(self, offer, quantity):
+        """ TODO The offer is partly accepted and cleared
+
+        Args:
+            offer: the offer the other party made
+            (offer not quote!)
+
+        Return:
+            Returns a dictionary with the good's quantity and the amount paid.
+        """
+        try:
+            self.accept_partial(offer, quantity)
+        except NotEnoughGoods:
+            if offer['buysell'] == 's':
+                self.accept_partial(offer, self.possession('money') / offer['price'])
+            else:
+                self.accept_partial(offer, self.possession(offer['good']))
+
 
     def reject(self, offer):
         """ The offer is rejected
@@ -1302,7 +1359,7 @@ class Firm(FirmMultiTechnologies):
 
         Example::
 
-            self.create_cobb_douglas('plastic', 0.000001, {'oil' : 10, 'labor' : 1})
+            self.set_cobb_douglas('plastic', 0.000001, {'oil' : 10, 'labor' : 1})
             self.produce({'oil' : 20, 'labor' : 1})
 
         """
@@ -2084,9 +2141,6 @@ class Agent(Database, Trade, Messaging, multiprocessing.Process):
                 to_reject.append(offer_id)
             elif self._open_offers[offer_id]['status'] == 'received':
                 good = self._open_offers[offer_id]['good']
-                print('Warning: In subround %s, agent %s has received offers that have not been polled with '
-                'get_offers(...) or get_offers_all() in this round the '
-                'offer_id is: "%s" and the good is "%s"' % (command, self.name, offer_id, good))
         for offer_id in to_reject:
             self.reject(self._open_offers[offer_id])
 

@@ -14,6 +14,33 @@ Installation of stable version Ubuntu
     sudo pip install abce-0.3.tar.gz
 
 
+Installation of stable version Windows
+--------------------------------------
+
+1. Install Python2.7 (preferably 32bit)
+
+2. Next, set the system’s PATH variable to include directories
+  that include Python components and packages we’ll add later. To do this:
+  - Right-click Computer and select Properties.
+  - In the dialog box, select Advanced  System Settings.
+  - In the next dialog, select Environment Variables.
+  - In the User Variables section, edit the PATH statement to include this::
+
+     C:\Python27;C:\Python27\Lib\site-packages\;C:\Python27\Scripts\;
+
+
+2. Install Setuptools from http://pypi.python.org/pypi/setuptools#downloads
+3. install pip::
+
+  easy_install pip
+
+4. Download stable version form:  https://github.com/DavoudTaghawiNejad/abce/downloads
+5. install ABCE::
+
+  pip install abce-0.3.tar.gz
+
+In case of problems reinstall python
+http://www.anthonydebarros.com/2011/10/15/setting-up-python-in-windows-7/
 
 
 Installation of development version
