@@ -553,7 +553,7 @@ class Trade:
         for offer_idn in self._open_offers:
             if self._open_offers[offer_idn]['good'] == good:
                 offer = self._open_offers[offer_idn]
-                offer.idn = None
+                offer['idn'] = None
                 ret.append(offer)
         shuffle(ret)
         ret.sort(key=lambda objects: objects['price'], reverse=descending)
@@ -1727,6 +1727,27 @@ class Database:
         self.database_connection.send(str(self.round))
 
 
+class Logger:
+    def log_network(self, list_of_nodes, color=0, style=False, shape=False):
+        """ loggs a network. List of not is a list with the numbers of all agents,
+        this agent is connected to.
+
+        Args:
+            list_of_nodes:
+                list of nodes that the agent is linked to.
+            color:
+                integer for the color
+            style(True/False):
+                filled or not
+            shape(True/False):
+                form of the bubble
+        """
+        data_to_write = [self.round, self.idn, 0, False, False] + list_of_nodes
+        self.logger_connection.send("network", zmq.SNDMORE)
+        self.logger_connection.send_pyobj(data_to_write)
+
+
+
 def Offer(sender_group, sender_idn, receiver_group, receiver_idn, good, quantity, price, buysell='s', idn=None):
     offer = {}
     offer['sender_group'] = sender_group
@@ -1741,7 +1762,7 @@ def Offer(sender_group, sender_idn, receiver_group, receiver_idn, good, quantity
     return offer
 
 
-class Agent(Database, Trade, Messaging, multiprocessing.Process):
+class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
     """ Every agent has to inherit this class. It connects the agent to the simulation
     and to other agent. The :class:`abceagent.Trade`, :class:`abceagent.Database` and
     :class:`abceagent.Messaging` classes are include. You can enhance an agent, by also
@@ -1780,7 +1801,7 @@ class Agent(Database, Trade, Messaging, multiprocessing.Process):
         self._haves = defaultdict(int)
         #TODO make defaultdict; delete all key errors regarding self._haves as defaultdict, does not have missing keys
         self._haves['money'] = 0
-        self._msgs = {}
+        self._msgs = defaultdict(list)
 
         self.given_offers = OrderedDict()
         self.given_offers[None] = Offer(self.group, self.idn, '', '', '', 0, 1, buysell='', idn=None)
@@ -1999,6 +2020,9 @@ class Agent(Database, Trade, Messaging, multiprocessing.Process):
 
         self.database_connection = self.context.socket(zmq.PUSH)
         self.database_connection.connect(self._addresses['database'])
+
+        self.logger_connection = self.context.socket(zmq.PUSH)
+        self.logger_connection.connect(self._addresses['logger'])
 
         self.messages_in = self.context.socket(zmq.DEALER)
         self.messages_in.setsockopt(zmq.IDENTITY, self.name)

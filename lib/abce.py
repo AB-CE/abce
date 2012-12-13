@@ -50,6 +50,7 @@ import inspect
 from abcetools import agent_name, group_address
 import multiprocessing
 import abce_db
+import abce_logger
 import itertools
 import postprocess
 from glob import glob
@@ -189,7 +190,8 @@ class Simulation:
                 'frontend': "inproc://frontend",
                 'backend': "inproc://backend",
                 'group_backend': "inproc://group_backend",
-                'database': "inproc://database"
+                'database': "inproc://database",
+                'logger': "inproc://logger"
             }
         if zmq_transport == 'ipc':
             self._addresses = {
@@ -198,7 +200,8 @@ class Simulation:
                 'frontend': "ipc://frontend.ipc",
                 'backend': "ipc://backend.ipc",
                 'group_backend': "ipc://group_backend",
-                'database': "ipc://database.ipc"
+                'database': "ipc://database.ipc",
+                'logger': "ipc://logger.ipc"
             }
         if zmq_transport == 'tcp':
             from config import config_tcp
@@ -209,6 +212,8 @@ class Simulation:
                 'backend': config_tcp['backend'],
                 'group_backend':  config_tcp['group_backend'],
                 'database': config_tcp['database'],
+                'logger': config_tcp['logger'],
+
             }
         #time.sleep(1)
         self.context = zmq.Context()
@@ -223,7 +228,9 @@ class Simulation:
         self.communication_channel.connect(self._addresses['frontend'])
         self._register_action_groups()
         self._db = abce_db.Database(simulation_parameters['_path'], 'database', self._addresses)
+        self._logger = abce_logger.Logger(simulation_parameters['_path'], 'logger', self._addresses)
         self._db.start()
+        self._logger.start()
 
         self.aesof = False
         self.round = 0
@@ -512,6 +519,9 @@ class Simulation:
         database = self.context.socket(zmq.PUSH)
         database.connect(self._addresses['database'])
         database.send('close')
+        logger = self.context.socket(zmq.PUSH)
+        logger.connect(self._addresses['logger'])
+        logger.send('close')
         while self._db.is_alive():
             time.sleep(0.05)
         while self._communication.is_alive():
