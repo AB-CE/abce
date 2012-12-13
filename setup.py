@@ -3,6 +3,14 @@
 from distutils.core import setup
 import os
 
+if os.name in ('posix', 'Darwin'):  # unix compatible
+    install_requires=['python-dev', 'pyparsing', 'numpy','scipy', 'rpy2', 'pyzmq'],
+else:
+    install_requires=['pyparsing', 'numpy','scipy', 'rpy2', 'pyzmq'],
+    if not(os.name in ('nt')):
+        print("Os not recognized, defaulted to tcp (slow) for windows"
+        " compatibility. Edit config.py to choose ipc if you use anything but"
+        "windows and get this message. Please track the bug on Github.")
 
 setup(
       name='abce',
@@ -15,7 +23,7 @@ setup(
       packages=[''],
       modules=['abce', 'abceagent', 'abce_db', 'abcetools', 'postprocess'],
       long_description=open('README.rst').read(),
-      install_requires=['python-dev', 'pyparsing', 'numpy','scipy', 'rpy2', 'pyzmq'],
+      install_requires=install_requires,
       data_files=[('', ['lib/postprocess.R'])],
      )
 

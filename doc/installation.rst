@@ -1,6 +1,13 @@
 Download and Installation
 =========================
 
+
+
++----------------------------------------------------------+
+| R must be installed with the RSQLite and reshape package |
++----------------------------------------------------------+
+
+
 Installation of stable version Ubuntu
 -------------------------------------
 
