@@ -1,6 +1,4 @@
 from __future__ import division
-import sys
-sys.path.append('../lib')
 from buy import Buy
 from sell import Sell
 from give import Give  # tests give and messaging
