@@ -1335,27 +1335,25 @@ class Firm(FirmMultiTechnologies):
         """
         self._production_function = self.create_leontief(output, utilization_quantities, multiplier, isinteger)
 
-    def predict_produce_output(self, production_function, input_goods):
-        """ Calculates the output of a production (but does not preduce)
+    def predict_produce_output_simple(self, input_goods):
+        """ Calculates the output of a production (but does not produce)
 
             Predicts the production of produce(production_function, input_goods)
-            see also: Predict_produce(.) as it returns a calculatable vector
+            see also: Predict_produce(.) as it returns a vector
 
         Args:
-            production_function: A production_function produced with
-            create_production_function, create_cobb_douglas or create_leontief
-            {'input_good1': amount1, 'input_good2': amount2 ...}: dictionary
-            containing the amount of input good used for the production.
+            {'input_good1': amount1, 'input_good2': amount2 ...}:
+                dictionary containing the amount of input good used for the production.
 
         Example::
 
-            print(A.predict_output_produce(car_production_function, two_cars))
+            print(A.predict_output_produce(two_cars))
             >>> {'car': 2}
 
         """
-        return predict_produce_output(self._production_function, input_goods)
+        return self.predict_produce_output(self._production_function, input_goods)
 
-    def predict_produce(self, production_function, input_goods):
+    def predict_produce_simple(self, input_goods):
         """ Returns a vector with input (negative) and output (positive) goods
 
             Predicts the production of produce(production_function, input_goods) and
@@ -1364,22 +1362,20 @@ class Firm(FirmMultiTechnologies):
             net value of this production.
 
         Args:
-            production_function: A production_function produced with
-            create_production_function, create_cobb_douglas or create_leontief
-            {'input_good1': amount1, 'input_good2': amount2 ...}: dictionary
-            containing the amount of input good used for the production.
+            {'input_good1': amount1, 'input_good2': amount2 ...}:
+                dictionary containing the amount of input good used for the production.
 
         Example::
 
          prices = {'car': 50000, 'tire': 100, 'metal': 10, 'plastic':  0.5}
-         value_one_car = net_value(predict_produce(car_production_function, one_car), prices)
-         value_two_cars = net_value(predict_produce(car_production_function, two_cars), prices)
+         value_one_car = net_value(predict_produce(one_car), prices)
+         value_two_cars = net_value(predict_produce(two_cars), prices)
          if value_one_car > value_two_cars:
-             A.produce(car_production_function, one_car)
+             A.produce(one_car)
          else:
-             A.produce(car_production_function, two_cars)
+             A.produce(two_cars)
         """
-        return predict_produce(self._production_function, input_goods)
+        return self.predict_produce(self._production_function, input_goods)
 
 
 class Household:
