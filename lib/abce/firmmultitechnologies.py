@@ -37,7 +37,7 @@ import compiler
 import pyparsing as pp
 from collections import defaultdict
 import numpy as np
-from abcetools import epsilon
+from abce.tools import epsilon
 save_err = np.seterr(invalid='ignore')
 
 

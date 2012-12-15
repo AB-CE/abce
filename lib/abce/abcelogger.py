@@ -16,8 +16,8 @@
 # the License.
 import zmq
 import multiprocessing
-import numpy as np
 import csv
+import numpy as np
 
 
 class Logger(multiprocessing.Process):

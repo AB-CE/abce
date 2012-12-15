@@ -36,7 +36,7 @@ from __future__ import division
 from collections import defaultdict
 import numpy as np
 from random import shuffle
-from abcetools import epsilon, NotEnoughGoods
+from abce.tools import epsilon, NotEnoughGoods
 save_err = np.seterr(invalid='ignore')
 
 

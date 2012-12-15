@@ -47,10 +47,10 @@ import os
 import time
 import zmq
 import inspect
-from abcetools import agent_name, group_address
+from abce.tools import agent_name, group_address
 import multiprocessing
-import abce_db
-import abce_logger
+import abce.db
+import abce.abcelogger
 import itertools
 import postprocess
 from glob import glob
@@ -227,8 +227,8 @@ class Simulation:
         self.communication_channel = self.context.socket(zmq.PUSH)
         self.communication_channel.connect(self._addresses['frontend'])
         self._register_action_groups()
-        self._db = abce_db.Database(simulation_parameters['_path'], 'database', self._addresses)
-        self._logger = abce_logger.Logger(simulation_parameters['_path'], 'logger', self._addresses)
+        self._db = abce.db.Database(simulation_parameters['_path'], 'database', self._addresses)
+        self._logger = abce.abcelogger.Logger(simulation_parameters['_path'], 'logger', self._addresses)
         self._db.start()
         self._logger.start()
 
@@ -705,14 +705,14 @@ class Simulation:
         try:
             self.ready.recv()
         except KeyboardInterrupt:
-            print('KeyboardInterrupt: abce_db: _wait_for_agents_than_signal_end_of_comm(self) ~654')
+            print('KeyboardInterrupt: abce.db: _wait_for_agents_than_signal_end_of_comm(self) ~654')
 
     def _wait_for_agents(self):
         self.communication_channel.send_multipart(['!', ')'])
         try:
             self.ready.recv()
         except KeyboardInterrupt:
-            print('KeyboardInterrupt: abce_db: _wait_for_agents(self) ~662')
+            print('KeyboardInterrupt: abce.db: _wait_for_agents(self) ~662')
 
     def _end_Communication(self):
         self.communication_channel.send_multipart(['!', '!', 'end_simulation'])

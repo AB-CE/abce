@@ -39,7 +39,7 @@ import compiler
 import pyparsing as pp
 from collections import OrderedDict, defaultdict
 import numpy as np
-from abcetools import *
+from abce.tools import *
 from inspect import getmembers, ismethod
 from random import shuffle
 save_err = np.seterr(invalid='ignore')

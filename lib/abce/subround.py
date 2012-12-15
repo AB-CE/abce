@@ -36,7 +36,7 @@ from __future__ import division
 import zmq
 import multiprocessing
 from collections import OrderedDict, defaultdict
-from abcetools import *
+from abce.tools import *
 
 
 class Subround(multiprocessing.Process):
