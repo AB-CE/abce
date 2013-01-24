@@ -30,9 +30,13 @@ class Database(multiprocessing.Process):
         self.database.execute('PRAGMA count_changes=OFF')
         self.database.execute('PRAGMA temp_store=OFF')
         self.database.execute('PRAGMA default_temp_store=OFF')
+        #self.database.execute('PRAGMA cache_size = -100000')
+
         for t in (np.int8, np.int16, np.int32, np.int64,
                                     np.uint8, np.uint16, np.uint32, np.uint64):
             sqlite3.register_adapter(t, long)
+        for t in (np.float, np.float16, np.float32, np.float64):
+            sqlite3.register_adapter(t, float)
         self._addresses = _addresses
 
     def add_trade_log(self):
