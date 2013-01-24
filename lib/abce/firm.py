@@ -186,7 +186,7 @@ class Firm(FirmMultiTechnologies):
             two_cars = {'tire': 8, 'metal': 2000, 'plastic':  40}
             self.produce(two_cars)
         """
-        self._production_function = self.create_leontief(output, utilization_quantities, multiplier, isinteger)
+        self._production_function = self.create_leontief(output, utilization_quantities, isinteger)
 
     def predict_produce_output_simple(self, input_goods):
         """ Calculates the output of a production (but does not produce)
