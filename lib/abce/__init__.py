@@ -180,6 +180,7 @@ class Simulation:
         self._db_commands = {}
         self.num_agents = 0
         self.num_agents_in_group = {}
+        self._build_first_run = True
 
         from config import zmq_transport
         if zmq_transport == 'inproc':
@@ -672,9 +673,7 @@ class Simulation:
             cells = [_number_or_string(cell) for cell in line]
             agents_list.append(dict(zip(keys, cells)))
 
-        try:
-            self._build_first_run
-        except AttributeError:
+        if self._build_first_run:
             for line in agents_list:
                 num_entry = 'num_' + line['agent_class'].lower()
                 if num_entry not in self.simulation_parameters:
