@@ -229,7 +229,7 @@ class Simulation:
         self.communication_channel.connect(self._addresses['frontend'])
         self._register_action_groups()
         self._db = abce.db.Database(simulation_parameters['_path'], 'database', self._addresses)
-        self._logger = abce.abcelogger.Logger(simulation_parameters['_path'], 'logger', self._addresses)
+        self._logger = abce.abcelogger.AbceLogger(simulation_parameters['_path'], 'logger', self._addresses)
         self._db.start()
         self._logger.start()
 

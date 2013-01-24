@@ -20,7 +20,7 @@ import csv
 import numpy as np
 
 
-class Logger(multiprocessing.Process):
+class AbceLogger(multiprocessing.Process):
     def __init__(self, directory, db_name, _addresses):
         multiprocessing.Process.__init__(self)
         self._addresses = _addresses
