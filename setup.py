@@ -1,30 +1,24 @@
 #!/usr/bin/env python
 
-from distutils.core import setup
+from setuptools import setup
 import os
 
-if os.name in ('posix', 'Darwin'):  # unix compatible
-    install_requires=['python-dev', 'pyparsing', 'numpy','scipy', 'rpy2', 'pyzmq'],
-else:
-    install_requires=['pyparsing', 'numpy','scipy', 'rpy2', 'pyzmq'],
-    if not(os.name in ('nt')):
-        print("Os not recognized, defaulted to tcp (slow) for windows"
-        " compatibility. Edit config.py to choose ipc if you use anything but"
-        "windows and get this message. Please track the bug on Github.")
+# MUST ASSERT THAT python-dev is installed
 
 setup(
-      name='abce-numpydict',
+      name='abce',
       version='0.3',
       author='Davoud Taghawi-Nejad',
       author_email='Davoud@Taghawi-Nejad.de',
       description='Agent-Based Complete Economy modelling platform',
       url='https://github.com/DavoudTaghawiNejad/abce/downloads',
-      package_dir = {'': 'lib', 'abce': 'lib/abce'},
+      package_dir = {'abce': 'abce'},
       packages=['abce'],
       modules=['abce_db', 'abcetools', 'postprocess'],
       long_description=open('README.rst').read(),
-      install_requires=install_requires,
-      data_files=[('', ['lib/postprocess.R'])],
+      install_requires=['pyparsing', 'numpy','scipy', 'rpy2', 'pyzmq'],
+      data_files=[('.', ['abce/postprocess.R'])],
+      include_package_data = True,
      )
 
 if os.name == 'posix':
@@ -69,3 +63,5 @@ else:
     print('** - please unzip abce-0.X.tar.gz, in there you will find examples and templates  **')
     print('**                                                                                **')
     print('************************************************************************************')
+    print('')
+    print('os.name: %s' % os.name)
