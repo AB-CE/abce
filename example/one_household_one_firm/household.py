@@ -18,7 +18,7 @@ class Household(abceagent.Agent, abceagent.Household):
         self.sell('firm', 0, "labor", 1, 1)
 
     def buy_goods(self):
-        """ recieves the offers and accepts them one by one """
+        """ receives the offers and accepts them one by one """
         oo = self.get_offers("GOOD")
         for offer in oo:
             self.accept(offer)
@@ -27,5 +27,5 @@ class Household(abceagent.Agent, abceagent.Household):
         """ consumes_everything and logs the aggregate utility. current_utiliy
         """
         current_utiliy = self.consume_everything()
-        self.log('HH', {'': current_utiliy})
+        self.log_value('HH', current_utiliy)
 

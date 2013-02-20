@@ -7,8 +7,6 @@
 """
 
 from __future__ import division
-import sys
-sys.path.append('../../lib')
 from abce import *
 from firm import Firm
 from household import Household
@@ -17,14 +15,14 @@ from household import Household
 for parameters in read_parameters():
     w = Simulation(parameters)
     action_list = [
-    ('household', 'sell_labor'),
-    ('firm', 'buy_labor'),
-    ('firm', 'production'),
-    'production_log',
-    ('firm', 'sell_goods'),
-    ('household', 'buy_goods'),
-    'buy_log',
-    ('household', 'consumption')
+        ('household', 'sell_labor'),
+        ('firm', 'buy_labor'),
+        ('firm', 'production'),
+        'production_log',
+        ('firm', 'sell_goods'),
+        ('household', 'buy_goods'),
+        'buy_log',
+        ('household', 'consumption')
     ]
     w.add_action_list(action_list)
 

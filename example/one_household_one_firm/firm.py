@@ -13,7 +13,7 @@ class Firm(abceagent.Agent, abceagent.Firm):
         self.set_cobb_douglas("GOOD", 1, {"labor": 1})
 
     def buy_labor(self):
-        """ recieves the offers and accepts them one by one """
+        """ receives the offers and accepts them one by one """
         oo = self.get_offers("labor")
         for offer in oo:
             self.accept(offer)

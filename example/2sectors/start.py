@@ -1,10 +1,7 @@
 """ Agents are now build according
 to the line in agents_parameter.csv
 """
-
 from __future__ import division
-import sys
-sys.path.append('../../lib')  # <--------- modify this to your abce/lib path
 from abce import *
 from firm import Firm
 from household import Household
@@ -17,7 +14,6 @@ for parameters in read_parameters('simulation_parameters.csv'):
     ('firm', 'buy_inputs'),
     ('firm', 'production'),
     'production_log',
-
     ('firm', 'sell_intermediary_goods'),
     ('household', 'buy_intermediary_goods'),
     'buy_log',
