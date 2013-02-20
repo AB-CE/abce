@@ -182,6 +182,8 @@ class Trade:
                     for the quantities actually accepted
                 'rejected':
                     trade rejected
+                'pending':
+                    offer has not yet answered, and is not older than one round.
                 'perished':
                     the **perishable** good was not accepted by the end of the round
                     and therefore perished.
@@ -194,17 +196,11 @@ class Trade:
         Raises:
             KeyError:
                 If the offer was answered more than one round ago.
-            KeyError - Dictionary:
-                The dictionary has no status and raises a KeyError, iff the offer
-                was not yet answered.
-                see `Example Pending` below.
-
 
         Example Pending::
 
-            try:
-                status = info(self.offer_idn)['status']
-            except KeyError:
+            status = self.info(self.offer_idn)['status']
+            if status == 'pending':
                 print('offer has not yet been answered')
 
         Example::
@@ -224,14 +220,17 @@ class Trade:
                 self.offer = self.sell('Household', 1, 'car', 1, price)
 
             def learn(self):
-                reinforcement_learner.integrateObservation([offer_status(self.offer)])
-                reinforcement_learner.giveReward([offer_status(self.offer) * price - self.car_cost])
+                reinforcement_learner.integrateObservation([self.info(self.offer)])
+                reinforcement_learner.giveReward([self.info(self.offer) * price - self.car_cost])
         """
         offer = self.given_offers[offer_idn]
-        if offer['status'] == 'accepted':
-            offer['final_quantity'] = offer['quantity']
-        elif  offer['status'] == 'rejected':
-            offer['final_quantity'] = 0
+        try:
+            if offer['status'] == 'accepted':
+                offer['final_quantity'] = offer['quantity']
+            elif  offer['status'] == 'rejected':
+                offer['final_quantity'] = 0
+        except KeyError:
+            offer['status'] = 'pending'
         return offer
 
     def partial_status_percentage(self, offer_idn):
