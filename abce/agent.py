@@ -347,7 +347,7 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
                 break
 
             if command[0] != '_':
-                self.__reject_polled_but_not_accepted_offers(command)
+                self.__reject_polled_but_not_accepted_offers()
                 self.__signal_finished()
         #self.context.destroy()
 
@@ -369,7 +369,8 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
                     del self._open_offers[key]
 
             for key in self.given_offers.keys():
-                if self.given_offers[key]['good'] == good:
+                if (self.given_offers[key]['good'] == good
+                   and not(self.given_offers[key]['status'] == 'perished')):
                     self.given_offers[key]['status'] = 'perished'
                     self.given_offers[key]['status_round'] = self.round
 
@@ -388,7 +389,7 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
         self.database_connection.send(self.group, zmq.SNDMORE)
         self.database_connection.send(str(self.round))
 
-    def __reject_polled_but_not_accepted_offers(self, command):
+    def __reject_polled_but_not_accepted_offers(self):
         to_reject = []
         for offer_id in self._open_offers:
             if self._open_offers[offer_id]['status'] == 'polled':
