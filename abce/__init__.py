@@ -56,6 +56,10 @@ import postprocess
 from glob import glob
 import subround
 
+from firm import *
+from household import *
+from agent import *
+
 BASEPATH = os.path.dirname(os.path.realpath(__file__))
 
 
