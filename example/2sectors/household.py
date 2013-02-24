@@ -1,13 +1,13 @@
 from __future__ import division
-import abceagent
+import abce
 
 
-class Household(abceagent.Agent, abceagent.Household):
+class Household(abce.Agent, abce.Household):
     def __init__(self, simulation_parameters, agent_parameters, _pass_to_engine):
         """ self.employer is the _number_ of the agent that recieves his
         labor offer.
         """
-        abceagent.Agent.__init__(self, *_pass_to_engine)
+        abce.Agent.__init__(self, *_pass_to_engine)
         self.create('labor_endowment', 1)
         self.set_cobb_douglas_utility_function({"consumption_good": 1})
         self.accumulated_utility = 0

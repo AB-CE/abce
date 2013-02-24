@@ -1,12 +1,12 @@
 from __future__ import division
-import abceagent
-from abcetools import *
+import abce
+from abce.tools import *
 import time
 
 
-class Logger(abceagent.Agent):
+class LoggerTest(abce.Agent):
     def __init__(self, simulation_parameters, agent_parameters, _pass_to_engine):
-        abceagent.Agent.__init__(self, *_pass_to_engine)
+        abce.Agent.__init__(self, *_pass_to_engine)
         self.last_round = simulation_parameters['num_rounds'] - 1
         self.create('money', 50)
         self.create('cookies', 3)
@@ -23,14 +23,12 @@ class Logger(abceagent.Agent):
         pass
 
     def clean_up(self):
-        self.nested = {'money': 1, 'cookies': 1, 'nested': {'money': 2, 'cookies': 2, 'third': {'money': 3, 'cookies': 3}}}
-        self.log_dict('table', self.nested)
+        pass
 
     def all_tests_completed(self):
         time.sleep(0.5)
         if self.round == self.last_round:
             print('Check database whether logging succeeded')
-            print('nested should represent', self.nested)
 
 
 

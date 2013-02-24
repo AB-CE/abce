@@ -1,11 +1,11 @@
 from __future__ import division
-import abceagent
-from abcetools import *
+import abce
+from abce.tools import *
 
 
-class Endowment(abceagent.Agent, abceagent.Household):
+class Endowment(abce.Agent, abce.Household):
     def __init__(self, simulation_parameters, agent_parameters, _pass_to_engine):
-        abceagent.Agent.__init__(self, *_pass_to_engine)
+        abce.Agent.__init__(self, *_pass_to_engine)
         self.last_round = simulation_parameters['num_rounds'] - 1
         self.create('labor_endowment', 1)
         self.create('cow', 1)

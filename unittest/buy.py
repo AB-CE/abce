@@ -1,12 +1,12 @@
 from __future__ import division
-import abceagent
-from abcetools import *
+import abce
+from abce.tools import *
 import random
 
 
-class Buy(abceagent.Agent):
+class Buy(abce.Agent):
     def __init__(self, simulation_parameters, own_parameters, _pass_to_engine):
-        abceagent.Agent.__init__(self, *_pass_to_engine)
+        abce.Agent.__init__(self, *_pass_to_engine)
         self.last_round = simulation_parameters['num_rounds'] - 1
         self.cut_of = simulation_parameters['cut_of']
         self.tests = {'accepted': False, 'rejected': False, 'partial': False}
@@ -83,9 +83,9 @@ class Buy(abceagent.Agent):
     def all_tests_completed(self):
         assert all(self.tests.values()), 'not all tests have been run; ABCE workes correctly, restart the unittesting to do all tests %s' % self.tests
         if self.round == self.last_round and self.idn == 0:
-            print('Test abceagent.buy:\t\t\t\t\tOK')
-            print('Test abceagent.accept\t(abceagent.buy):\t\tOK')
-            print('Test abceagent.reject\t(abceagent.buy):\t\tOK')
-            print('Test abceagent.accept_partial\t(abceagent.buy):\tOK')
-            print('Test reject pending automatic \t(abceagent.buy):\tOK')
+            print('Test abce.buy:\t\t\t\t\tOK')
+            print('Test abce.accept\t(abce.buy):\t\tOK')
+            print('Test abce.reject\t(abce.buy):\t\tOK')
+            print('Test abce.accept_partial\t(abce.buy):\tOK')
+            print('Test reject pending automatic \t(abce.buy):\tOK')
 

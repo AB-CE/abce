@@ -1,12 +1,12 @@
 from __future__ import division
-import abceagent
-from abcetools import *
+import abce
+from abce.tools import *
 import random
 
 
-class Give(abceagent.Agent):
+class Give(abce.Agent):
     def __init__(self, simulation_parameters, agent_parameters, _pass_to_engine):
-        abceagent.Agent.__init__(self, *_pass_to_engine)
+        abce.Agent.__init__(self, *_pass_to_engine)
         self.last_round = simulation_parameters['num_rounds'] - 1
         if self.idn == 1:
             self.tests = {'all': False, 'topic': False, 'biased': False}
@@ -53,10 +53,10 @@ class Give(abceagent.Agent):
     def all_tests_completed(self):
         assert all(self.tests.values()), 'not all tests have been run; ABCE workes correctly, restart the unittesting to do all tests %s' % self.tests
         if self.round == self.last_round and self.idn == 0:
-            print('Test abceagent.give:\t\t\t\t\tOK')
-            print('Test abceagent.message:\t\t\t\t\tOK')
-            print('Test abceagent.get_messages:\t\t\t\tOK')
-            print('Test abceagent.get_messages_all:\t\t\tOK')
-            print('Test abceagent.get_messages_biased:\t\t\tOK')
+            print('Test abce.give:\t\t\t\t\tOK')
+            print('Test abce.message:\t\t\t\t\tOK')
+            print('Test abce.get_messages:\t\t\t\tOK')
+            print('Test abce.get_messages_all:\t\t\tOK')
+            print('Test abce.get_messages_biased:\t\t\tOK')
 
 
