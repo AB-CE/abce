@@ -42,7 +42,7 @@ dbListTables(con)
 print(table_index_lst)
 rm(con, rs, m, table_index_lst, table_index)
 
-print("Transformations:")
+# print("Transformations:")
 # print("Unify households in trade")
 # tt <- trade
 # seller_table_index_lst <- matrix(1, nrow=nrow(tt), ncol=1)
