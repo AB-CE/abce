@@ -481,7 +481,7 @@ class Trade:
             raise NotEnoughGoods(self.name, good, quantity - self._haves[good])
         self._haves[good] -= quantity
         offer = Offer(self.group, self.idn, receiver_group, receiver_idn, good, quantity, price, buysell='s', idn=self._offer_counter())
-        if quantity > 0:
+        if quantity >= - epsilon:
             self._send(receiver_group, receiver_idn, '_o', offer)
         self.given_offers[offer['idn']] = offer
         return offer['idn']
@@ -517,7 +517,7 @@ class Trade:
 
         self._haves['money'] -= money_amount
         offer = Offer(self.group, self.idn, receiver_group, receiver_idn, good, quantity, price, 'b', self._offer_counter())
-        if quantity > 0:
+        if quantity >= - epsilon:
             self._send(receiver_group, receiver_idn, '_o', offer)
         self.given_offers[offer['idn']] = offer
         return offer['idn']
