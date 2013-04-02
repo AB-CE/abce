@@ -54,6 +54,7 @@ from glob import glob
 import subround
 
 from firm import *
+from firmmultitechnologies import *
 from household import *
 from agent import *
 
@@ -182,6 +183,7 @@ class Simulation:
         self.num_agents = 0
         self.num_agents_in_group = {}
         self._build_first_run = True
+        self._agent_parameters = None
 
         from config import zmq_transport
         if zmq_transport == 'inproc':
