@@ -14,18 +14,15 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations under
 # the License.
-""" The best way to start creating a simulation is by copying the start.py file and other
-files from 'abce/template'. Than you have to change the `sys.path.append('../abce/lib')`
-path so that it leads to the folder in your system.
+""" The best way to start creating a simulation is by copying the start.py file
+and other files from 'abce/template'.
 
 To see how to create a simulation read :doc:`Walk_through`. In this module you
-will find the explenation for the command.
+will find the explanation for the command.
 
 This is a minimal template for a start.py::
 
     from __future__ import division  # makes / division work correct in python !
-    import sys
-    sys.path.append('../abce/lib')  # <--- ADJUST
     from agent import Agent
     from abce import *
 
@@ -278,7 +275,7 @@ class Simulation:
         """
         self.action_list = action_list
 
-    def add_action_list_from_table(self, parameter):
+    def add_action_list_from_file(self, parameter):
         """ The action list can also be declared in the simulation_parameters.csv
         file. Which allows you to run a batch of simulations with different
         orders. In simulation_parameters.csv there must be a column with which
@@ -298,7 +295,7 @@ class Simulation:
 
         The command::
 
-            self.add_action_list_from_table('parameters['action_list'])
+            self.add_action_list_from_file('parameters['action_list'])
 
         Args::
 
