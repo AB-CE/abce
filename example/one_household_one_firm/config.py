@@ -17,5 +17,7 @@ config_tcp = {
     'ready': "tcp://*:5002",
     'frontend': "tcp://*:5003",
     'backend': "tcp://*:5004",
-    'database': "tcp://*:5005"
+    'database': "tcp://*:5005",
+    'group_backend': "tcp://*:5006",
+    'logger': "tcp://*:5007"
 }

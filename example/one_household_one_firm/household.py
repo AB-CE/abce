@@ -10,7 +10,7 @@ class Household(abce.Agent, abce.Household):
         2. Sets the utility function to utility = consumption of good "GOOD"
         """
         abce.Agent.__init__(self, *_pass_to_engine)
-        self.create('labor_endowment', 1)
+        self.create('adult', 1)
         self.set_cobb_douglas_utility_function({"GOOD": 1})
 
     def sell_labor(self):

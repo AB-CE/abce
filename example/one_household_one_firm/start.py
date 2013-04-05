@@ -29,7 +29,7 @@ for parameters in read_parameters():
     w.build_agents(Firm, 1)
     w.build_agents(Household, 1)
 
-    w.declare_round_endowment(resource='labor_endowment', productivity=1, product='labor')
+    w.declare_round_endowment(resource='adult', productivity=1, product='labor')
     w.declare_perishable(good='labor')
 
     w.panel_data('household', command='buy_log')
