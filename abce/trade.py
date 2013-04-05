@@ -40,7 +40,7 @@ from abce.tools import is_zero, is_positive, is_negative, NotEnoughGoods, epsilo
 save_err = np.seterr(invalid='ignore')
 
 
-def Offer(sender_group, sender_idn, receiver_group, receiver_idn, good, quantity, price, buysell='s', idn=None):
+def Offer(sender_group, sender_idn, receiver_group, receiver_idn, good, quantity, price, buysell, idn):
     offer = {}
     offer['sender_group'] = sender_group
     offer['sender_idn'] = sender_idn
@@ -109,7 +109,7 @@ class Trade:
 
     """
     def get_quotes(self, good, descending=False):
-        """ self.quotes() returns all new quotes and removes them. The order
+        """ self.get_quotes() returns all new quotes and removes them. The order
         is randomized.
 
         Args:
@@ -126,31 +126,39 @@ class Trade:
          quotes = self.get_quotes()
         """
         ret = []
-        other_goods = []
-        for quote in self._msgs['q']:
-            if quote['good'] == good:
-                ret.append(quote)
-            else:
-                other_goods.append(quote)
-        self._msgs['q'] = other_goods
-        shuffle(ret)
+        for offer_idn in self._quotes.keys():
+            if self._quotes[offer_idn]['good'] == good:
+                ret.append(self._quotes[offer_idn])
+                del self._quotes[offer_idn]
         ret.sort(key=lambda objects: objects['price'], reverse=descending)
         return ret
 
-    def get_quotes_biased(self):
-        """ like self.quotes(), but the order is not randomized, so
-        its faster.
+    def get_quotes_all(self, descending=False):
+        """ self.get_quotes_all() returns a dictionary with all now new quotes ordered
+        by the good type and removes them. The order is randomized.
 
-        self.quotes() returns all new quotes and removes them. The order
-        is randomized.
+        Args:
+            descending(bool,default=False):
+                False for descending True for ascending by price
 
-        Use whenever you are sure that the way you process messages
-        is not affected by the order.
+        Returns:
+            dictionary of list of quotes ordered by price. The dictionary
+            itself is ordered by price.
+
+        Example::
+
+            quotes = self.get_quotes()
         """
-        if 'q' in self._msgs:
-            return self._msgs.pop('q')
-        else:
-            return []
+        ret = defaultdict(list)
+
+        for quote in self._quotes:
+            key = self._quotes[quote]['good']
+            ret[key].append(self._quotes[quote])
+        for key in ret.keys():
+            shuffle(ret[key])
+            ret[key].sort(key=lambda objects: objects['price'], reverse=descending)
+        self._quotes = {}
+        return ret
 
     def info(self, offer_idn):
         """ lets you access all fields of a **given** offer.
@@ -266,9 +274,9 @@ class Trade:
 
         """
         if quote['buysell'] == 'qs':
-            self.buy(quote['sender'], quote['good'], quote['quantity'], quote['price'])
+            self.buy(quote['sender_group'], quote['sender_idn'], quote['good'], quote['quantity'], quote['price'])
         else:
-            self.sell(quote['sender'], quote['good'], quote['quantity'], quote['price'])
+            self.sell(quote['sender_group'], quote['sender_idn'], quote['good'], quote['quantity'], quote['price'])
 
     def accept_quote_partial(self, quote, quantity):
         """ makes a commited buy or sell out of the counterparties quote
@@ -280,9 +288,9 @@ class Trade:
 
         """
         if quote['buysell'] == 'qs':
-            self.buy(quote['sender'], quote['good'], quantity, quote['price'])
+            self.buy(quote['sender_group'], quote['sender_idn'], quote['good'], quantity, quote['price'])
         else:
-            self.sell(quote['sender'], quote['good'], quantity, quote['price'])
+            self.sell(quote['sender_group'], quote['sender_idn'], quote['good'], quantity, quote['price'])
 
     #TODO create assert unanswered offers
 
@@ -415,8 +423,8 @@ class Trade:
             price:
                 price per unit
         """
-        offer = Offer(self.group, self.idn, receiver_group, receiver_idn, good, quantity, price, 'qs')
-        self._send(receiver_group, receiver_idn, 'q', offer)
+        offer = Offer(self.group, self.idn, receiver_group, receiver_idn, good, quantity, price, 'qs', idn=self._offer_counter())
+        self._send(receiver_group, receiver_idn, '_q', offer)
         return offer
 
     def quote_buy(self, receiver_group, receiver_idn, good, quantity, price):
@@ -437,8 +445,8 @@ class Trade:
             price:
                 price per unit
         """
-        offer = Offer(self.group, self.idn, receiver_group, receiver_idn, good, quantity, price, 'qb')
-        self._send(receiver_group, receiver_idn, 'q', offer)
+        offer = Offer(self.group, self.idn, receiver_group, receiver_idn, good, quantity, price, 'qb', idn=self._offer_counter())
+        self._send(receiver_group, receiver_idn, '_q', offer)
         return offer
 
     def sell(self, receiver_group, receiver_idn, good, quantity, price):

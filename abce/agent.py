@@ -86,6 +86,7 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
             SystemExit('trade_logging wrongly defined in agent.__init__' + trade_logging)
 
         self._haves = defaultdict(int)
+
         #TODO make defaultdict; delete all key errors regarding self._haves as defaultdict, does not have missing keys
         self._haves['money'] = 0
         self._msgs = defaultdict(list)
@@ -101,6 +102,7 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
         self._trade_log = defaultdict(int)
         self._data_to_observe = {}
         self._data_to_log_1 = {}
+        self._quotes = {}
 
         self.round = 0
 
@@ -448,6 +450,8 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
                 self._receive_reject(msg)
             elif typ == '_g':
                 self._haves[msg[0]] += msg[1]
+            elif typ == '_q':
+                self._quotes[msg['idn']] = msg
             else:
                 self._msgs.setdefault(typ, []).append(Message(msg))
 
