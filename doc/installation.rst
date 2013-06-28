@@ -6,7 +6,7 @@ Download and Installation
 Installation of stable version Ubuntu
 -------------------------------------
 
-1. Download stable version form:  https://github.com/DavoudTaghawiNejad/abce/downloads
+1. Download stable version form:  https://dl.dropboxusercontent.com/u/3655123/abce-0.3.tar.gz
 2. If pip is not installed in terminal::
 
     sudo apt-get install python-pip
@@ -42,7 +42,7 @@ Installation of stable version Windows
 
   easy_install pip
 
-4. Download stable version form:  https://github.com/DavoudTaghawiNejad/abce/downloads
+4. Download stable version form:  https://dl.dropboxusercontent.com/u/3655123/abce-0.3.tar.gz
 5. install ABCE::
 
   pip install abce-0.3.1.tar.gz
