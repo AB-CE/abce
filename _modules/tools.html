@@ -1,0 +1,193 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>tools &mdash; ABCE 0.3.1alpha documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.3.1alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="ABCE 0.3.1alpha documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for tools</h1><div class="highlight"><pre>
+<span class="c"># Copyright 2012 Davoud Taghawi-Nejad</span>
+<span class="c">#</span>
+<span class="c"># Module Author: Davoud Taghawi-Nejad</span>
+<span class="c">#</span>
+<span class="c"># ABCE is open-source software. If you are using ABCE for your research you are</span>
+<span class="c"># requested the quote the use of this software.</span>
+<span class="c">#</span>
+<span class="c"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not</span>
+<span class="c"># use this file except in compliance with the License and quotation of the</span>
+<span class="c"># author. You may obtain a copy of the License at</span>
+<span class="c">#       http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT</span>
+<span class="c"># WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the</span>
+<span class="c"># License for the specific language governing permissions and limitations under</span>
+<span class="c"># the License.</span>
+<span class="sd">&quot;&quot;&quot; This file contains functions to compare floating point variables to 0. All</span>
+<span class="sd">variables in this simulation as in every computer programm are floating</span>
+<span class="sd">point variables. Floating point variables are not exact. Therefore var_a == var_b</span>
+<span class="sd">has no meaning. Further a variable that is var_c = 9.999999999999966e-30 is for our</span>
+<span class="sd">purpose equal to zero, but var_c == 0 would lead to False.</span>
+<span class="sd">:meth:`is_zero`, :meth:`is_positive` and :meth:`is_negative` work</span>
+<span class="sd">around this problem by defining float epsilon and determine whether the variable is</span>
+<span class="sd">sufficiently close to zero or not.</span>
+
+<span class="sd">This file also defines the :exc:`tools.NotEnoughGoods`</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">sys</span> <span class="kn">import</span> <span class="n">float_info</span>
+<span class="n">epsilon</span> <span class="o">=</span> <span class="mi">10000</span> <span class="o">*</span> <span class="n">float_info</span><span class="o">.</span><span class="n">epsilon</span>
+
+
+<div class="viewcode-block" id="agent_name"><a class="viewcode-back" href="../abcetools.html#tools.agent_name">[docs]</a><span class="k">def</span> <span class="nf">agent_name</span><span class="p">(</span><span class="n">group_name</span><span class="p">,</span> <span class="n">idn</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given a group name and a id-number it returns the</span>
+<span class="sd">    agent_name of the individual agent with the number idn. A message send to</span>
+<span class="sd">    the agent_name, will be received by this individual agent</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">_</span><span class="si">%i</span><span class="s">:&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">group_name</span><span class="p">,</span> <span class="n">idn</span><span class="p">)</span>
+
+</div>
+<span class="k">def</span> <span class="nf">group_address</span><span class="p">(</span><span class="n">group_name</span><span class="p">):</span>
+    <span class="c"># given a group_name it returns a group address with which you can send a message</span>
+    <span class="c"># to a group. (group addresses are group names with a trailing &#39;:&#39;.)</span>
+    <span class="k">return</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">:&#39;</span> <span class="o">%</span> <span class="n">group_name</span>
+
+
+<div class="viewcode-block" id="is_zero"><a class="viewcode-back" href="../abcetools.html#tools.is_zero">[docs]</a><span class="k">def</span> <span class="nf">is_zero</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; checks whether a number is sufficiently close to zero. All variables</span>
+<span class="sd">    in ABCE are floating point numbers. Do to the workings of floating point</span>
+<span class="sd">    arithmetic. If x is 1.0*e^-100 so really close to 0, x == 0 will be false;</span>
+<span class="sd">    is_zero will be true.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="o">-</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">epsilon</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">False</span>
+
+</div>
+<div class="viewcode-block" id="is_positive"><a class="viewcode-back" href="../abcetools.html#tools.is_positive">[docs]</a><span class="k">def</span> <span class="nf">is_positive</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; checks whether a number is positive and sufficiently different from</span>
+<span class="sd">    zero. All variables in ABCE are floating point numbers. Do to the workings</span>
+<span class="sd">    of floating point arithmetic. If x is 1.0*e^-100 so really close to 0,</span>
+<span class="sd">    x &gt; 0 will be true, eventhough it is very very small;</span>
+<span class="sd">    is_zero will be true.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">epsilon</span> <span class="o">&lt;=</span> <span class="n">x</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">False</span>
+
+</div>
+<div class="viewcode-block" id="is_negative"><a class="viewcode-back" href="../abcetools.html#tools.is_negative">[docs]</a><span class="k">def</span> <span class="nf">is_negative</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; see is positive &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="o">-</span> <span class="n">epsilon</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">False</span>
+
+</div>
+<div class="viewcode-block" id="NotEnoughGoods"><a class="viewcode-back" href="../abcetools.html#tools.NotEnoughGoods">[docs]</a><span class="k">class</span> <span class="nc">NotEnoughGoods</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Methods raise this exception when the agent has less goods than needed</span>
+
+<span class="sd">    This functions (self.produce, self.offer, self.sell, self.buy)</span>
+<span class="sd">    should be encapsulated by a try except block::</span>
+
+<span class="sd">     try:</span>
+<span class="sd">        self.produce(...)</span>
+<span class="sd">     except NotEnoughGoods:</span>
+<span class="sd">        alternative_statements()</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_agent_name</span><span class="p">,</span> <span class="n">good</span><span class="p">,</span> <span class="n">amount_missing</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">good</span> <span class="o">=</span> <span class="n">good</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">amount_missing</span> <span class="o">=</span> <span class="n">amount_missing</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">_agent_name</span>
+        <span class="ne">Exception</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s">&quot; &#39;&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">amount_missing</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot; of good &#39;&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">good</span> <span class="o">+</span> <span class="s">&quot;&#39; missing&quot;</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li>
+          <li><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Davoud Taghawi-Nejad.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

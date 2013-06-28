@@ -1,0 +1,565 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Introduction &mdash; ABCE 0.3.1alpha documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.3.1alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="ABCE 0.3.1alpha documentation" href="index.html" />
+    <link rel="next" title="Download and Installation" href="installation.html" />
+    <link rel="prev" title="Welcome to ABCE’s documentation!" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="installation.html" title="Download and Installation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to ABCE’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="introduction">
+<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<p>ABCE is a Python based modeling platform for economic simulations.
+For simulations of trade, production and consumption, ABCE comes
+with standard functions that implement these kinds of interactions
+and actions. The modeler only has to implement
+the logic and decisions of an agent; ABCE takes care of all exchange
+of goods and production and consumption.</p>
+<p>One special feature of ABCE is that goods have the physical properties of
+goods in reality. In other words if agent A gives a good to agent B, then
+- unlike information - agent B receives the good and agent B does not have
+the good anymore. That means that agents can trade, produce or consume a good.
+The ownership and transformations (production or consumption) of goods are
+automatically handled by the platform.</p>
+<p>ABCE has been designed for economic problems where spacial representation
+is not important or the spacial position of the agents is (largely) fixed.
+Therefore instead of representing the simulation graphically, ABCE collects
+data of the simulation and outputs it ready to use for R and Excel.</p>
+<p>ABCE models are programmed in standard Python, stock functions of agents
+are inherited from archetype classes (Agent, Firm or Household). The only
+not-so-standard Python is that agents are executed in parallel by the
+Simulation class (in start.py).</p>
+<p>ABCE allows the modeler to program agents as ordinary Python class-objects,
+but run the simulation on a multi-core/processor computer. It takes no
+effort or intervention from the modeller to run the simulation on a
+multi-core processor production,
+consumption, trade, communication and similar functions are automatically
+handled by the platform. The modeler only needs to instruct ABCE, which
+automatically executes the specific functions.</p>
+<p>ABCE is a scheduler <a class="footnote-reference" href="#scheduler" id="id1">[1]</a> and a set of agent classes.
+According to the schedule the simulation class calls - each sub-round - agents
+to execute some actions. Each agent executes these actions
+using some of the build-in functions, such as trade, production and
+consumption of ABCE. The agents can use the full set of commands of the
+Python general purpose language.</p>
+<p>The audience of ABCE are economists that want to model agent-based
+models of trade and production. It is especially geared towards
+simulations that are similar to standard economic models
+like general or partial equilibrium models <a class="footnote-reference" href="#noeq" id="id2">[2]</a>. What is more ABCE is
+especially designed to make writing the simulation and the execution
+fast. Therefore models can be developed in an interlinked process of
+running and rewriting the simulation.</p>
+<p>ABCE uses Python - a language that is especially beginner friendly, but also
+easy to learn for people who already know object oriented programming
+languages such as Java, C++ or even MATLAB.
+Python allows simple, but fully functional, programming for economists.
+What is more Python is readable even for non Python programmers.</p>
+<table class="docutils footnote" frame="void" id="scheduler" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>the Simulation class</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="noeq" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td>with out the equilibrium of course</td></tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="design">
+<h1>Design<a class="headerlink" href="#design" title="Permalink to this headline">¶</a></h1>
+<p>ABCE&#8217;s first design goal is that, code can be rapidly written,
+to enable a modeler to quickly write down
+code and quickly explore different alternatives of a model.</p>
+<p>Execution speed is a secondary concern to the goal of rapid development.
+Execution speed is achieved by making use of multiple-cores/processors.</p>
+<p>Secondly, the modeler can concentrate on programming the behavior of the agents and
+the specification of goods, production and consumption function.
+The functions for economic simulations such as production, consumption,
+trade, communication are provided and automatically performed by the platform.</p>
+<p>Python has also been chosen as a programming language, because of
+it&#8217;s rich environment of standard libraries. Python for example
+comes with a stock representation of agents in a spacial world,
+which allow the modeler to model a spatial model although ABCE
+was not designed for spatial models.</p>
+<p>Python is a language that lends itself to writing of code fast, because it
+has low overhead. In Python variables do not have to be declared, garbage
+does not have to be collected and classes have no boiler-plate code.</p>
+<p>Python, is slower than Java or C, but its reputation for slow speed is usually
+exaggerated. Various packages for numerical calculations and optimization such as numpy and scipy offer
+the C like speed to numerical problems. Contrary to the common belief
+Python is not an interpreted language. Python is compiled to bytecode and
+than executed. What is more Python in combination with ZeroMQ allows us
+to parallelize the code and gain significant speed advantage over
+single-threaded code, that does not make use of the speed advantage of
+multi-core or multi-processor computers.</p>
+<p>ABCE 0.3.1 supports Python 2.7, Python 3 support is planned for
+the 0.5 release.</p>
+<table class="docutils footnote" frame="void" id="interpreter" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[3]</td><td>Python is often falsely believe to be an interpreted language</td></tr>
+</tbody>
+</table>
+<p>One of the mayor impediments of speed is that the GIL - global interpreter lock -
+of Python forces us to use the processing module instead of the threading module.
+Using multi-threading would allow the usage of ZeroMQ&#8217;s  &#8216;inproc&#8217; socket instead of the
+slower &#8216;ipc&#8217; or &#8216;tpc&#8217; sockets. Once a GIL free version compatible with ZeroMQ is
+available this speed break can readily be removed as the processing and the threading
+module have the same API.</p>
+<p>In the current 3.0.1 version simulations are not entirely deterministic,
+the order of messages depends on which agent is called first. The call
+order of the agents by the virtual parallelization is not necessarily
+consistent. In other words, if your system has less cores than agents,
+not all agents do actually run in parallel. The parallelization is achieved
+by randomizing the message order. This leads to some agents sending the
+messages (or goods) faster than others, which determines the order of
+the messages before the randomization. The randomization in turn is not
+deterministic. In the 4.0.0 the randomization will not depend on the
+message order, but on the message id, which is a deterministic
+combination of the agent&#8217;s name, id and message’s sequence number.</p>
+</div>
+<div class="section" id="differences-to-other-agent-based-modeling-platforms">
+<h1>Differences to other agent-based modeling platforms<a class="headerlink" href="#differences-to-other-agent-based-modeling-platforms" title="Permalink to this headline">¶</a></h1>
+<p>We identified several survey articles as well as
+a quite complete overview of agent-based modeling software
+on Wikipedia. <span class="raw-tex">\cite{Serenko2002}</span>, <span class="raw-tex">\cite{Allan2010}</span>
+<span class="raw-tex">\cite{Societies2009}</span>, <span class="raw-tex">\cite{Tobias2004}</span>, <span class="raw-tex">\cite{Railsback2006}</span>,
+<span class="raw-tex">\cite{abmcomparisonWikipedia2013}</span>. The articles
+&#8216;Tools of the Trade&#8217; by Madey and Nikolai <span class="raw-tex">\cite{Societies2009}</span>
+and &#8216;Survey of Agent Based Modelling and Simulation Tools&#8217; by Allan  <span class="raw-tex">\cite{Allan2010}</span>
+attempt to give a complete overview
+of agent-based modelling platforms/frameworks. The Madey and Nikolai paper
+categorizes the abm-platforms according
+to several categories. (Programming Language, Type of License,
+Operating System and Domain). According to this article, there
+is only one software platform which aims at the specific
+domain of economics: JASA. But JASA is a modeling platform
+that aims specifically at auctions.
+Wikipedia <span class="raw-tex">\cite{abmcomparisonWikipedia2013}</span> lists JAMEL
+as an economic platform, but JAMEL a is closed source and
+an non-programming platform. The &#8216;Survey of Agent Based Modelling and Simulation Tools&#8217;
+by Allan <span class="raw-tex">\cite{Allan2010}</span> draws
+our attention to LSD, which, as it states, is rather a system dynamic,
+than an agent-based modeling platform. We conclude that
+there is a market for a domain specific language for economics.</p>
+<p>While the formerly mentioned modeling platforms aim to give a
+complete overview, &#8216;Evaluation of free Java - libraries for
+social scientific agent based simulation&#8217; <span class="raw-tex">\cite{Tobias2004}</span>
+by Tobias and Hoffman
+chooses to concentrate on a smaller number of simulation packages.
+Tobias and Hoffman discuss: RePast, Swarm, Quicksilver, and VSEit.
+We will follow this approach and concentrate on a subset of
+ABM models. First as economics is a subset of social science we
+dismiss all platforms that are not explicitly targeted at
+social science. The list of social science platforms according
+to <span class="raw-tex">\cite{Societies2009}</span> Madey and Nikolai is:
+AgentSheets, LSD, FAMOJA, MAML, MAS-SOC,  MIMOSE, NetLogo, Repast
+SimBioSys, StarLogo, StarLogoT, StarLogo TNG, Sugarscape, VSEit
+NetLogo and  Moduleco.
+We dismiss some of these frameworks/platforms:</p>
+<dl class="docutils">
+<dt>AgentSheets,</dt>
+<dd>because it is closed source and not &#8216;programable&#8217;</dd>
+<dt>LSD,</dt>
+<dd>because it is a system dynamics rather than an agent-based modeling environment</dd>
+<dt>MAML,</dt>
+<dd>because it does not use a standard programming language, but his its own.</dd>
+<dt>MAS-SOC,</dt>
+<dd>because we could not find it in the Internet and its documentation
+according to <span class="raw-tex">\cite{Allan2010}</span> is sparse.</dd>
+<dt>MIMOSE,</dt>
+<dd>is an interesting language, but we will not analyze as it is based on a completely different
+programming paradigm, functional programming, as opposed to object-oriented
+programming.</dd>
+<dt>SimBioSys,</dt>
+<dd>because it has according to Allan <span class="raw-tex">\cite{Allan2010}</span> and our research  a sparse documentation.</dd>
+<dt>StarLogo, StarLogoT, StarLogo TNG,</dt>
+<dd>because they have been superseded by NetLogo</dd>
+<dt>Moduleco,</dt>
+<dd>because it has  according to Allan <span class="raw-tex">\cite{Allan2010}</span> and our research a sparse documentation.
+Further, it appears not to be updated since roughly 2001</dd>
+</dl>
+<p>We will concentrate on the most widely used ABM frameworks/platforms: MASON, NetLogo, Repast.</p>
+<div class="section" id="general-differences-to-other-agent-based-modeling-platforms">
+<h2>General differences to other agent-based modeling platforms<a class="headerlink" href="#general-differences-to-other-agent-based-modeling-platforms" title="Permalink to this headline">¶</a></h2>
+<p>First of all ABCE is domain specific, that enables it to provide
+the basic functions such as production, consumption, trade and
+communication as fully automated stock methods.
+Because any kind of agent interaction (communication and exchange of
+goods) is handled automatically ABCE, it can run the agents (virtually)
+parallel and run simulations on multi-core/processor systems without
+any intervention by the modeler.</p>
+<p>The second biggest difference between ABCE and other platforms
+is that ABCE introduces the physical good as an ontological object in
+the simulation. Goods can be exchanged and transformed. ABCE handles
+these processes automatically, so that for the model a physical good
+behaves like a physical good and not like a message. That means that
+if a good is transfered between two agents the first agent does not
+have this good anymore, and the second agent has it now. Once, for
+example, two agents decide to trade
+a good ABCE makes sure that the transaction is cleared between
+the two agents.</p>
+<p>Thirdly, ABCE is just a scheduler that schedules the actions of
+the agents and a python base class that enables the agent to
+produce, consume, trade and communicate. A model written
+in ABCE, therefore is standard Python code and the modeler can make
+use of the complete Python language and the Python language environment.
+This is a particular useful feature because Python comes with about 30.000 <a class="footnote-reference" href="#id4" id="id3">[4]</a>
+publicly available packages, that could be used in ABCE. Particularly
+useful packages are:</p>
+<dl class="docutils">
+<dt>pybrain</dt>
+<dd>a neural network package</dd>
+<dt>numpy</dt>
+<dd>a package for numerical computation</dd>
+<dt>scipy</dt>
+<dd>a package for numerical optimization and statistical functions</dd>
+<dt>sympy</dt>
+<dd>a package for symbolic manipulation</dd>
+<dt>turtle</dt>
+<dd>a package for spacial representation ala NetLogo</dd>
+</dl>
+<p>Fourth, many frameworks such as FLAME, NetLogo, StarLogo, Ascape
+and SugerScape and, in a
+more limited sense, Repast are designed with spacial representation in mind.
+For ABCE a spacial representation was explicitly not a design goal.
+However, since agents in ABCE are ordinary Python objects, they can use
+python modules such as python-turtle and therefore gain a spacial
+representation much like NetLogo. This does by no means mean that
+ABCE could not be a good choice for a problem where the spacial
+position plays a role. If for example the model has different
+transport costs or other properties according to the geographical
+position of the agents, but the agent&#8217;s do not move or the movement
+does not have to be represented graphically, ABCE could still be a
+reasonable choice.</p>
+<table class="docutils footnote" frame="void" id="id4" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[4]</a></td><td><a class="reference external" href="https://pypi.python.org/">https://pypi.python.org/</a></td></tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="physical-goods">
+<h2>Physical Goods<a class="headerlink" href="#physical-goods" title="Permalink to this headline">¶</a></h2>
+<p>Physical goods are at the heart of almost every economic model.
+The core feature and main difference to other ABM platforms is the
+implementation of physical goods. In contrast
+to information or messages, sharing a good means having less of it. In other
+words if agent A gives a good to agent B then agent A does not have this good
+anymore. On of the major strength of ABCE is that this is automatically handled.</p>
+<p>In ABCE goods can be created, destroyed, traded, given or changed through
+production and consumption. All these functions are implemented in ABCE and
+can be inherited by an agent as a method. These functions are automatically handled by
+ABCE upon decision from the modeler.</p>
+<p>Every agent in ABCE must inherit from the abce.Agent class. This gives the
+agent a couple of stock methods: create, destroy, trade and give. Create and
+destroy create or destroy a good immediately. Because trade and give involve
+a form of interaction between the agents they run over several sub-rounds.
+Selling of a good for example works like this:</p>
+<ul>
+<li><dl class="first docutils">
+<dt>Sub-round 1. The first agent offers the goods.</dt>
+<dd><p class="first last">The good is automatically subtracted from the agents possessions, to avoid double selling.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Sub-round 2. The counter agent receives the offer. The agent can</dt>
+<dd><ol class="first last arabic simple">
+<li>accept:
+the goods are added to the counter part&#8217;s possessions. Money is subtracted.</li>
+<li>reject (or equivalently ignore):
+Nothing happens in this sub-round</li>
+<li>partially accept the offer:
+The partial amount of goods is added to the counter part&#8217;s possessions. Money is subtracted.</li>
+</ol>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Sub-round 3. In case of</dt>
+<dd><ol class="first last arabic simple">
+<li>acceptance, the money is credited</li>
+<li>rejection the original good is re-credited</li>
+<li>partial acceptance the money is credited and
+the unsold part of the good is re-credited.</li>
+</ol>
+</dd>
+</dl>
+</li>
+</ul>
+</div>
+<div class="section" id="difference-to-mason">
+<h2>Difference to MASON<a class="headerlink" href="#difference-to-mason" title="Permalink to this headline">¶</a></h2>
+<p>Masons is a single-threaded discrete event platform that is intended
+for simulations of social, biological and economical systems.
+<span class="raw-tex">\cite{Luke}</span>. Mason is a platform that was explicitly designed with the goal of
+running it on large platforms. MASON distributes a large number
+of single threaded simulations over deferent computers or processors.
+ABCE on the other hand is multi-threaded it
+allows to run agents in parallel. A single run of a simulation
+in MASON is therefore not faster on a computing cluster than
+on a potent single-processor computer. ABCE on the other hand
+uses the full capacity of multi-core/processor systems for
+a single simulation run. The fast
+execution of a model in ABCE allow a different software
+development process, modelers can &#8216;try&#8217; their models while they
+are developing and adjust the code until it works as desired.
+The different nature of both
+platforms make it necessary to implement a different event
+scheduling system.</p>
+<p>Mason is a discrete event platform. Events can be scheduled by the
+agents. ABCE on the other hand is scheduled -
+it has global list of sub-rounds that establish the sequence
+of actions in every round. Each of these sub-rounds lets a
+number of agents execute the same actions in parallel.</p>
+<p>This, however does not mean that the order of actions is
+fixed. It is possible that one sub-round leads to different
+actions according to the internal logic of the agent. An
+implementation of a discrete event scheduler like in MASON
+is on the TODO list for ABCE.</p>
+<p>MASON, like Repast Java is based on Java, while ABCE is
+based on Python, the advantages have been discussed before.</p>
+<p>MASON comes with a visualization layer. ABCE, does not have
+this feature for several reasons. First spacial models are
+not an explicit design goal of ABCE. Second for models
+that have a spacial representation the Python&#8217;s standard
+turtle library can be used and ad Netlogo like functionality.
+Thirdly ABCE has the ability of detailed statistical output,
+which can be readily visualized with standard software,
+such as R and Excel.</p>
+<p>One form of spacial representation in MASON are networks.
+Networks in ABCE must be created by hand: in ABCE directed links
+of an agent are simply a Python-list with the id-numbers of the
+agents that are connected to it.</p>
+</div>
+<div class="section" id="difference-to-netlogo">
+<h2>Difference to NetLogo<a class="headerlink" href="#difference-to-netlogo" title="Permalink to this headline">¶</a></h2>
+<p>Netlogo is a multi-agent programming language, which is part of
+the Lisp language family. Netlogo is interpreted.
+<span class="raw-tex">\cite{Tisue2004}</span> Python on the
+other hand is a compiled <a class="footnote-reference" href="#compiled" id="id5">[5]</a> general programming language.
+Consequently it is faster than NetLogo.</p>
+<p>NetLogo has the unique feature to integrate the interface with
+with the programming language. ABCE goes a different direction
+rather than integrating the interface it forgoes the interface
+completely and everything is written in Python (even the
+configuration files), parameters are specified in excel-sheets (.csv).</p>
+<p>Netlogo&#8217;s most prominent feature are the turtle agents. To
+have turtle agents in ABCE, Python&#8217;s turtle library has to be
+used. The graphical representation of models is therefore not
+part of ABCE, but of Python itself, but needs to be included by
+the modeler.</p>
+<p>One difference between Netlogo and ABCE is that it has the
+concept of the observer agent, while in ABCE the simulation
+is controlled by the simulation process.</p>
+</div>
+<div class="section" id="difference-repast">
+<h2>Difference Repast<a class="headerlink" href="#difference-repast" title="Permalink to this headline">¶</a></h2>
+<p>Repast is a modeling environment for social science. It was
+originally conceived as a Java recoding of SWARM.
+<span class="raw-tex">\cite{Collier}</span> <span class="raw-tex">\cite{NORTH2005}</span> Repast
+comes in several flavors: Java, .Net, and a Python like
+programming language. Repast has been superseded by
+Repast Symphony which maintains all functionality, but
+is limited to Java. Symphony has a point and click
+interface for simple models. :raw-tex:cite{NORTH2005a}</p>
+<p>Repast does allow static and dynamic scheduling.
+<span class="raw-tex">\cite{Collier}</span>. ABCE,
+does not (yet) allow for dynamic scheduling. In ABCE, the
+order of actions - or in ABCE language order of sub-rounds -
+is fixed and is repeated for every round. This however is not
+as restrictive as it sounds, because in any sub-round an
+agent could freely decide what he does.</p>
+<p>The advantage of the somehow more limited implementation of
+ABCE is ease of use. While in Repast it is necessary to
+subclass the scheduler in ABCE it is sufficient to specify
+the schedule and pass it the Simulation class.</p>
+<p>Repast is vast, it contains 210 classes in 9 packages
+:raw-tex`cite{Collier}`. ABCE, thanks to its limited
+scope and Python, has only 6 classes visible to the
+modeler in a single package.</p>
+</div>
+</div>
+<div class="section" id="parallel-execution-of-agents-and-messaging-with-zeromq">
+<h1>Parallel execution of Agents and messaging with ZeroMQ<a class="headerlink" href="#parallel-execution-of-agents-and-messaging-with-zeromq" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="concurrency">
+<h2>Concurrency<a class="headerlink" href="#concurrency" title="Permalink to this headline">¶</a></h2>
+<p>Agents run in parallel, time consistency is achieved by
+stepping through the simulation sub-round by sub-round.
+Consistency in communication is achieved by allowing the
+communication only between the sub-round. During a sub-round
+messages (or transfer of goods) are collected
+and between the sub-round they are transferred to the recipient.
+The message order is randomized.</p>
+</div>
+<div class="section" id="internal-control-of-the-schedule-and-communication">
+<h2>Internal Control of the schedule and communication<a class="headerlink" href="#internal-control-of-the-schedule-and-communication" title="Permalink to this headline">¶</a></h2>
+<p>There are two command processes. One organize the scheduling of the action
+and the other one the time consistency of the communication between agents.</p>
+<div class="figure">
+<a class="reference internal image-reference" href="messagemodel"><img alt="messagemodel" src="messagemodel" /></a>
+</div>
+<p>A simulation contains a number of rounds comprised of sub-rounds.
+Every sub-round the following sequence of events occurs:</p>
+<p>The simulation process manages the schedule, it sends the sub-round corresponding
+to be executed to the agents and simultaneously sends the number of
+agents that have received the order to execute this sub-round to the
+communication agent. The agents then execute the sub-round, send
+messages for other agents to the communication process; when
+they are finished they signal this to the communication process. Once
+all agents have signaled that they are finished the
+communication process then distributes the messages to the
+recipients. When the agents communicate that they have received
+the messages, the communication process signals the completion
+of a sub-round to simulation. The sub-round is concluded.</p>
+<p>Agents also send messages to the logging process, messages to
+the logging are not synchronized, but time stamped.</p>
+<p>Message passing and synchronization are managed by a third
+party library ZeroMQ <span class="raw-tex">\cite{hintjens2013zeromq}</span>.
+Every agent has four communication
+sockets: one to receive commands, one to receive messages,
+one to send data to the database and the last one to send
+messages and signal the completion of the sub-round and reception
+of messages. It is therefore imperative to have sockets that are
+very small. What is more potentially millions of messages are
+exchanged both in the execution of the program and as messages
+representing the interaction between agents. Messaging speed
+is therefore extremely important. ZeroMQ is a very small and
+efficient transport protocol. <span class="raw-tex">\cite{Piel}</span>. Further
+it might become part of the Linux core.</p>
+<table class="docutils footnote" frame="void" id="compiled" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id5">[5]</a></td><td>Python contrary to the common believe is compiled to bytecode similar to Java&#8217;s compilation to bytecode.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Introduction</a></li>
+<li><a class="reference internal" href="#design">Design</a></li>
+<li><a class="reference internal" href="#differences-to-other-agent-based-modeling-platforms">Differences to other agent-based modeling platforms</a><ul>
+<li><a class="reference internal" href="#general-differences-to-other-agent-based-modeling-platforms">General differences to other agent-based modeling platforms</a></li>
+<li><a class="reference internal" href="#physical-goods">Physical Goods</a></li>
+<li><a class="reference internal" href="#difference-to-mason">Difference to MASON</a></li>
+<li><a class="reference internal" href="#difference-to-netlogo">Difference to NetLogo</a></li>
+<li><a class="reference internal" href="#difference-repast">Difference Repast</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#parallel-execution-of-agents-and-messaging-with-zeromq">Parallel execution of Agents and messaging with ZeroMQ</a><ul>
+<li><a class="reference internal" href="#concurrency">Concurrency</a></li>
+<li><a class="reference internal" href="#internal-control-of-the-schedule-and-communication">Internal Control of the schedule and communication</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome to ABCE&#8217;s documentation!</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="installation.html"
+                        title="next chapter">Download and Installation</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/introduction.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="installation.html" title="Download and Installation"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to ABCE’s documentation!"
+             >previous</a> |</li>
+        <li><a href="index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Davoud Taghawi-Nejad.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

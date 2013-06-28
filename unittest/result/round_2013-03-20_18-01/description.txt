@@ -1,0 +1,9 @@
+
+
+: 1
+random_seed: none
+name: round
+trade_logging: individual
+num_rounds: 3
+cut_of: 1e-08
+_path: /home/taghawi/Dropbox/workspace/abce/unittest/result/round_2013-03-20_18-01

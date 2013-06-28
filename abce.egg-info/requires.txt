@@ -1,0 +1,5 @@
+pyparsing==1.5.7
+numpy
+scipy
+rpy2
+pyzmq

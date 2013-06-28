@@ -1,0 +1,147 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>unit testing &mdash; ABCE 0.3.1alpha documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.3.1alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="ABCE 0.3.1alpha documentation" href="index.html" />
+    <link rel="next" title="Agents" href="Agent_class.html" />
+    <link rel="prev" title="Examples" href="examples.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Agent_class.html" title="Agents"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="examples.html" title="Examples"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="unit-testing">
+<h1>unit testing<a class="headerlink" href="#unit-testing" title="Permalink to this headline">¶</a></h1>
+<p>One of the major problem of doing science with simulations is that
+results found could be a mere result of a mistake in the software
+implementation. This problem is even stronger when emergent phenomena
+are expected. The first hedge against this problem is of course
+carefully checking the code. ABCE and Pythons brevity  and readability
+are certainly helping this. However structured testing procedures
+create more robust software.</p>
+<p>Currently all trade and exchange related as well as endowment and
+data logging facilities are unit tested. It is planned to extend
+unit testing to production and consumption, so that by version 0.4
+all functions of the agents will be fully unit tested.</p>
+<p>The modeler can run the unit testing facilities on his own system and therefore
+assert that on his own system the code runs correctly.</p>
+<p>Unit testing is the testing of the testable part of a the software code.
+<span class="raw-tex">\cite{Xie2007}</span>. As in ABCE the most crucial functions are
+the exchange of goods or information, the smallest testable unit is often
+a combination of two actions <span class="raw-tex">\cite{Aniche}</span>. For example making an offer and then by
+a second agent accepting or rejecting it. The interaction and concurrent
+nature of ABCE simulation make it unpractical to use the standard unit
+testing procedures of Python.</p>
+<p><span class="raw-tex">\cite{Ellims2006}</span> argue that unit-testing is economical. In
+the analysis of three projects they find that unit-testing finds errors
+in the code and argue that its cost is often exaggerated. We can
+therefore conclude that unit-testing is necessary and a cost efficient
+way of ensuring the correctness of the results of the simulation. For
+the modeler this is an additional incentive to use ABCE, if he
+implemented the simulation as a stand alone program he would either have
+to forgo the testing of the agent&#8217;s functions or write his own unit-testing
+facilities.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="examples.html"
+                        title="previous chapter">Examples</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Agent_class.html"
+                        title="next chapter">Agents</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/unit_testing.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Agent_class.html" title="Agents"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="examples.html" title="Examples"
+             >previous</a> |</li>
+        <li><a href="index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Davoud Taghawi-Nejad.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

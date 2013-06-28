@@ -1,0 +1,84 @@
+\begin{thebibliography}{10}
+
+\bibitem{Allan2010}
+RJ~Allan.
+\newblock {Survey of agent based modelling and simulation tools}.
+\newblock Technical Report October, 2010.
+
+\bibitem{Aniche}
+Mauricio~Finavaro Aniche, Gustavo~Ansaldi Oliva, and Marco~Aur\'{e}lio Gerosa.
+\newblock {What Do The Asserts in a Unit Test Tell Us About Code Quality ? A
+  Study on Open Source and Industrial Projects}.
+\newblock 2012.
+
+\bibitem{Collier}
+Nick Collier.
+\newblock {RePast : An Extensible Framework for Agent Simulation}.
+
+\bibitem{Ellims2006}
+Michael Ellims, James Bridges, and Darrel~C. Ince.
+\newblock {The Economics of Unit Testing}.
+\newblock {\em Empirical Software Engineering}, 11(1):5--31, February 2006.
+
+\bibitem{hintjens2013zeromq}
+Pieter Hintjens.
+\newblock {\em {ZeroMQ: Messaging for Many Applications}}.
+\newblock O'Reilly Media, 2013.
+
+\bibitem{Luke}
+Sean Luke, Claudio Cioffi-revilla, Liviu Panait, Keith Sullivan, and Gabriel
+  Balan.
+\newblock {MASON : A Multi-Agent Simulation Environment}.
+
+\bibitem{Societies2009}
+Cynthia Nikolai and Gregory Madey.
+\newblock {Tools of the trade: A survey of various agent based modeling
+  platforms}.
+\newblock {\em Journal of Artificial Societies and Social \ldots}, 12(2), 2009.
+
+\bibitem{NORTH2005}
+M.J. NORTH, T.R. HOWE, N.T. COLLIER, and J.R. VOS.
+\newblock {THE REPAST SIMPHONY RUNTIME SYSTEM}.
+\newblock In {\em Proceedings of the Agent 2005 Conference on Generative Social
+  Processes, Models, and Mechanisms}, page 151, 2005.
+
+\bibitem{Piel}
+Nicholas Pi\"{e}l.
+\newblock {Zeromq an Introduction}.
+
+\bibitem{Railsback2006}
+S.~F. Railsback, S.~L. Lytinen, and S.~K. Jackson.
+\newblock {Agent-based Simulation Platforms: Review and Development
+  Recommendations}.
+\newblock {\em Simulation}, 82(9):609--623, September 2006.
+
+\bibitem{Serenko2002}
+Alexander Serenko and Brian Detlor.
+\newblock {\em {Agent toolkits: A general overview of the market and an
+  assessment of instructor satisfaction with utilizing toolkits in the
+  classroom}}.
+\newblock 2002.
+
+\bibitem{Tisue2004}
+Seth Tisue and Uri Wilensky.
+\newblock {NetLogo: Design and implementation of a multi-agent modeling
+  environment}.
+\newblock {\em Proceedings of Agent 2004}, 2004.
+
+\bibitem{Tobias2004}
+Robert Tobias and Carole Hofmann.
+\newblock {Evaluation of free Java-libraries for social-scientific agent based
+  simulation}.
+\newblock {\em \ldots Societies and Social Simulation}, 7(1), 2004.
+
+\bibitem{abmcomparisonWikipedia2013}
+Wikipedia.
+\newblock {Comparison of agent-based modeling software}, 2013.
+
+\bibitem{Xie2007}
+Tao Xie, Kunal Taneja, Shreyas Kale, and Darko Marinov.
+\newblock {Towards a Framework for Differential Unit Testing of Object-Oriented
+  Programs}.
+\newblock May 2007.
+
+\end{thebibliography}
