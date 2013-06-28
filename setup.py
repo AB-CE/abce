@@ -16,7 +16,7 @@ setup(
       packages=['abce'],
       modules=['abce_db', 'abcetools', 'postprocess'],
       long_description=open('README.rst').read(),
-      install_requires=['pyparsing', 'numpy','scipy', 'rpy2', 'pyzmq'],
+      install_requires=['pyparsing==1.5.7', 'numpy','scipy', 'rpy2', 'pyzmq'],
       data_files=[('abce', ['abce/postprocess.R'])],
       include_package_data = True,
      )
