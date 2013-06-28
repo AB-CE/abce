@@ -70,7 +70,7 @@ class Trade:
 
     3. **Next subround:**
 
-       - in case of acceptal *the money is automatically credited.*
+       - in case of acceptance *the money is automatically credited.*
        - in case of partial acceptance *the money is credited and part of the blocked good is unblocked.*
        - in case of rejection *the good is unblocked.*
 
@@ -104,7 +104,7 @@ class Trade:
 
     Quotes on the other hand allow you to ask a trade partner to send you a not committed price quote.
     The modeller has to implement a response mechanism. For convenience :meth:`~abceagent.Trade.accept_quote` and
-    :meth:`~abceagent.Trade.accept_quote_partial`, send a committed offer that its the uncommitted price quote.
+    :meth:`~abceagent.Trade.accept_quote_partial`, send a committed offer that it is the uncommitted price quote.
 
 
     """
@@ -165,7 +165,7 @@ class Trade:
         This allows you to check whether an offer was accepted, partially accepted
         or rejected and retrieve the quantity actually traded.
 
-        If in your first round the value your are testing is not set, set the variable
+        If in your first round the value you are testing is not set, set the variable
         to `None`. None in the first round returns an empty trade with quantity = 0 and price = 1.
         The status in accepted.
 
@@ -198,7 +198,7 @@ class Trade:
             ['quantity']:
                 the quantity of the original quote.
             ['final_quantity']:
-                This returns the accutal quantity bought or sold. (Equal to quantity
+                This returns the actual quantity bought or sold. (Equal to quantity
                     if the offer was accepted fully)
 
         Raises:
@@ -252,7 +252,7 @@ class Trade:
             A value between [0, 1]
 
         Raises:
-            KeyError, when no answer has not been given or received more than one round before
+            KeyError, when no answer has been given or received more than one round before
         """
         try:
             return (self.given_offers[offer_idn]['final_quantity'] /
@@ -296,7 +296,7 @@ class Trade:
 
     def get_offers_all(self, descending=False):
         """ returns all offers in a dictionary, with goods as key. The in each
-        goods-category the goods are ordert by price. The order can be reverse
+        goods-category the goods are ordered by price. The order can be reversed
         by setting descending=True
 
         *Offers that are not accepted in the same subround (def block) are
@@ -318,7 +318,7 @@ class Trade:
             print(offer['price'], offer['sender'])
 
         Lists can only efficiently pop the last item. Therefore it is more
-        efficient to order backward and buy the last good first::
+        efficient to order backwards and buy the last good first::
 
          def buy_input_good(self):
             offers = self.get_offers_all(descending=True)
@@ -453,8 +453,8 @@ class Trade:
         """ commits to sell the quantity of good at price
 
         The goods are not in haves or self.count(). When the offer is
-        rejected they are automatically reacreditated. When the offer is
-        accepted the money amount is accreditated. (partial acceptance
+        rejected it is automatically re-credited. When the offer is
+        accepted the money amount is credited. (partial acceptance
         accordingly)
 
         Args:
@@ -495,7 +495,7 @@ class Trade:
         return offer['idn']
 
     def sell_max_possible(self, receiver_group, receiver_idn, good, quantity, price):
-        """ Same as sell but if the possession of good smaller than the number,
+        """ Same as sell but if the possession of good is smaller than the number,
         it executes the deal with a lower amount of goods using everything
         available of this good.
         """
@@ -508,13 +508,13 @@ class Trade:
         """ commits to sell the quantity of good at price
 
         The goods are not in haves or self.count(). When the offer is
-        rejected they are automatically reacreditated. When the offer is
-        accepted the money amount is accreditated. (partial acceptance
+        rejected it is automatically re-credited. When the offer is
+        accepted the money amount is credited. (partial acceptance
         accordingly)
 
         Args:
-            receiver_group: an agent name  NEVER a group or 'all'!!!
-            (its an error but with a confusing warning)
+            receiver_group: an agent name  NEVER a group or 'all'!
+            (it is an error but with a confusing warning)
             'good': name of the good
             quantity: maximum units disposed to buy at this price
             price: price per unit
@@ -543,8 +543,8 @@ class Trade:
     def retract(self, offer_idn):
         """ The agent who made a buy or sell offer can retract it
 
-        The offer an agent made is deleted at the end of the subround and the
-        committeg good reapears in the haves. However if another agent
+        The offer an agent made is deleted at the end of the sub-round and the
+        committed good reappears in the haves. However if another agent
         accepts in the same round the trade will be cleared and not retracted.
 
         Args:
@@ -751,7 +751,7 @@ class Trade:
             AssertionError, when good smaller than 0.
 
         Return:
-            Dictionary, with the transfere, which can be used by self.log(...).
+            Dictionary, with the transfer, which can be used by self.log(...).
 
         Example::
 

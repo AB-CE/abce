@@ -15,22 +15,8 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 """
-The :class:`abceagent.Agent` class is the basic class for creating your agent. It automatically handles the
-possession of goods of an agent. In order to produce/transforme goods you need to also subclass
-the :class:`abceagent.Firm` [1]_ or to create a consumer the :class:`abceagent.Household`.
-
-For detailed documentation on:
-
-Trading:
-    see :class:`abceagent.Trade`
-Logging and data creation:
-    see :class:`abceagent.Database` and :doc:`simulation_results`
-Messaging between agents:
-    see :class:`abceagent.Messaging`.
-
-.. autoexception:: abcetools.NotEnoughGoods
-
-.. [1] or :class:`abceagent.FirmMultiTechnologies` for simulations with complex technologies.
+The Firm class gives an Agent the ability to set production functions and
+produce.
 """
 from __future__ import division
 import numpy as np
@@ -45,10 +31,10 @@ class Firm(FirmMultiTechnologies):
     :meth:`~Firm.set_production_function_fast`
     (FirmMultiTechnologies, allows you to declare several) With :meth:`~Firm.produce`
     and :meth:`~Firm.produce_use_everything` you can produce using the
-    according production function. You have several auxiliarifunctions
+    according production function. You have several auxiliary functions
     for example to predict the production. When you multiply
     :meth:`~Firm.predict_produce` with the price vector you get the
-    profitability of the prodiction.
+    profitability of the production.
     """
     #TODO Example
     def produce_use_everything(self):
@@ -95,7 +81,7 @@ class Firm(FirmMultiTechnologies):
         """  sets the firm to use a Cobb-Douglas production function from a
         formula.
 
-        A production function is a produceation process that produces the given
+        A production function is a production process that produces the given
         input given input goods according to the formula to the output goods.
         Production_functions are than used to produce, predict_vector_produce and
         predict_output_produce.
@@ -104,7 +90,7 @@ class Firm(FirmMultiTechnologies):
 
         Args:
             "formula": equation or set of equations that describe the
-            production process. (string) Several equation are seperated by a ;
+            production process. (string) Several equation are separated by a ;
 
         Example::
 
@@ -120,14 +106,14 @@ class Firm(FirmMultiTechnologies):
         """  sets the firm to use a Cobb-Douglas production function from a
         formula, with given outputs
 
-        A production function is a produceation process that produces the given
-        input given input goods according to the formula to the output goods.
+        A production function is a production process that produces the given
+        input given according to the formula to the output goods.
         Production_functions are than used to produce, predict_vector_produce and
         predict_output_produce.
 
         Args:
             "formula": equation or set of equations that describe the
-            production process. (string) Several equation are seperated by a ;
+            production process. (string) Several equation are separated by a ;
             [output]: list of all output goods (left hand sides of the equations)
 
         Example::
@@ -143,15 +129,15 @@ class Firm(FirmMultiTechnologies):
     def set_cobb_douglas(self, output, multiplier, exponents):
         """  sets the firm to use a Cobb-Douglas production function.
 
-        A production function is a produceation process that produces the
-        given input given input goods according to the formula to the output
+        A production function is a production process that produces the
+        given input goods according to the formula to the output
         good.
 
         Args:
             'output': Name of the output good
             multiplier: Cobb-Douglas multiplier
             {'input1': exponent1, 'input2': exponent2 ...}: dictionary
-            containing good names 'input' and correstponding exponents
+            containing good names 'input' and corresponding exponents
 
         Example::
 
@@ -165,19 +151,19 @@ class Firm(FirmMultiTechnologies):
         """ sets the firm to use a Leontief production function.
 
         A production function is a production process that produces the
-        given input given input goods according to the formula to the output
+        given input given according to the formula to the output
         good.
 
         Warning, when you produce with a Leontief production_function all goods you
         put in the produce(...) function are used up. Regardless whether it is an
-        efficient or wastefull bundle
+        efficient or wasteful bundle
 
         Args:
             'output': Name of the output good
             {'input1': utilization_quantity1, 'input2': utilization_quantity2 ...}: dictionary
-            containing good names 'input' and correstponding exponents
-            multiplier: multipler
-            isinteger='int' or isinteger='': When 'int' produce only integer
+            containing good names 'input' and corresponding exponents
+            multiplier: multiplier
+            isinteger='int' or isinteger='': When 'int' produces only integer
             amounts of the good. When '', produces floating amounts.
 
         Example::

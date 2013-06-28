@@ -14,23 +14,14 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations under
 # the License.
-"""
-The :class:`abceagent.Agent` class is the basic class for creating your agent. It automatically handles the
-possession of goods of an agent. In order to produce/transforme goods you need to also subclass
-the :class:`abceagent.Firm` [1]_ or to create a consumer the :class:`abceagent.Household`.
+""" The FirmMultiTechnologies class allows you to set up firm agents with
+complex or several production functions. While the simple Firm automatically
+handles one technology, FirmMultiTechnologies allows you to manage several
+technologies manually.
 
-For detailed documentation on:
-
-Trading:
-    see :class:`abceagent.Trade`
-Logging and data creation:
-    see :class:`abceagent.Database` and :doc:`simulation_results`
-Messaging between agents:
-    see :class:`abceagent.Messaging`.
-
-.. autoexception:: abcetools.NotEnoughGoods
-
-.. [1] or :class:`abceagent.FirmMultiTechnologies` for simulations with complex technologies.
+The create_* functions allow you to create a technology and assign it to
+a variable. :meth:`abce.FirmMultiTechnologies.produce` and similar
+methods use this variable to produce with the according technology.
 """
 from __future__ import division
 import compiler
@@ -100,8 +91,8 @@ class FirmMultiTechnologies:
     def create_production_function(self, formula, typ='from_formula'):
         """ creates a production function from formula
 
-        A production function is a produceation process that produces the
-        given input given input goods according to the formula to the output
+        A production function is a production process that produces the
+        given input  goods according to the formula to the output
         goods.
         Production_functions are than used as an argument in produce,
         predict_vector_produce and predict_output_produce.
@@ -110,7 +101,7 @@ class FirmMultiTechnologies:
 
         Args:
             "formula": equation or set of equations that describe the
-            production process. (string) Several equation are seperated by a ;
+            production process. (string) Several equation are separated by a ;
 
         Returns:
             A production_function that can be used in produce etc.
@@ -139,15 +130,15 @@ class FirmMultiTechnologies:
     def create_production_function_fast(self, formula, output_goods, input_goods, typ='from_formula'):
         """ creates a production function from formula, with given outputs
 
-        A production function is a producetion process that produces the
-        given input given input goods according to the formula to the output
+        A production function is a production process that produces the
+        given input goods according to the formula to the output
         goods.
-        Production_functions are than used as an argument in produce,
+        Production_functions are then used as an argument in produce,
         predict_vector_produce and predict_output_produce.
 
         Args:
             "formula": equation or set of equations that describe the
-            production process. (string) Several equation are seperated by a ;
+            production process. (string) Several equation are separated by a ;
             [output]: list of all output goods (left hand sides of the equations)
 
         Returns:
@@ -172,7 +163,7 @@ class FirmMultiTechnologies:
         """ creates a Cobb-Douglas production function
 
         A production function is a production process that produces the
-        given input given input goods according to the formula to the output
+        given input  goods according to the formula to the output
         good.
         Production_functions are than used as an argument in produce,
         predict_vector_produce and predict_output_produce.
@@ -181,7 +172,7 @@ class FirmMultiTechnologies:
             'output': Name of the output good
             multiplier: Cobb-Douglas multiplier
             {'input1': exponent1, 'input2': exponent2 ...}: dictionary
-            containing good names 'input' and correstponding exponents
+            containing good names 'input' and corresponding exponents
         Returns:
             A production_function that can be used in produce etc.
 
@@ -209,21 +200,21 @@ class FirmMultiTechnologies:
         """ creates a Leontief production function
 
 
-        A production function is a produceation process that produces the
-        given input given input goods according to the formula to the output
+        A production function is a production process that produces the
+        given input  goods according to the formula to the output
         good.
         Production_functions are than used as an argument in produce,
         predict_vector_produce and predict_output_produce.
 
         Warning, when you produce with a Leontief production_function all goods you
         put in the produce(...) function are used up. Regardless whether it is an
-        efficient or wastefull bundle
+        efficient or wasteful bundle
 
         Args:
             'output':
                 Name of the output good
             utilization_quantities:
-                a dictionary containing good names and correstponding exponents
+                a dictionary containing good names and corresponding exponents
             isinteger='int' or isinteger='':
                 When 'int' produce only integer amounts of the good.
                 When '', produces floating amounts. (default)
@@ -329,7 +320,7 @@ class FirmMultiTechnologies:
 
             goods_vectors are vector, where the input goods are negative and
             the output goods are positive. When we multiply every good with its
-            according price we can calculate the net_value of the correstponding
+            according price we can calculate the net_value of the corresponding
             production.
             goods_vectors are produced by predict_produce(.)
 

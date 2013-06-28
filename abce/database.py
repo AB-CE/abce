@@ -136,7 +136,7 @@ class Database:
     def observe_begin(self, action_name, data_to_observe):
         """ observe_begin and observe_end, observe the change of a variable.
         observe_begin(...), takes a list of variables to be observed.
-        observe_end(...) writes the change in this vars into the log file
+        observe_end(...) writes the change in this variables into the log file
 
         you can use nested observe_begin / observe_end combinations
 
@@ -159,7 +159,7 @@ class Database:
         self._data_to_observe[action_name] = data_to_observe
 
     def observe_end(self, action_name, data_to_observe):
-        """ This command puts in a database called log, what ever values you
+        """ This command puts in a database called log, whatever values you
         want values need to be delivered as a dictionary:
 
         Args:

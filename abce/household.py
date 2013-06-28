@@ -15,22 +15,7 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 """
-The :class:`abceagent.Agent` class is the basic class for creating your agent. It automatically handles the
-possession of goods of an agent. In order to produce/transforme goods you need to also subclass
-the :class:`abceagent.Firm` [1]_ or to create a consumer the :class:`abceagent.Household`.
-
-For detailed documentation on:
-
-Trading:
-    see :class:`abceagent.Trade`
-Logging and data creation:
-    see :class:`abceagent.Database` and :doc:`simulation_results`
-Messaging between agents:
-    see :class:`abceagent.Messaging`.
-
-.. autoexception:: abcetools.NotEnoughGoods
-
-.. [1] or :class:`abceagent.FirmMultiTechnologies` for simulations with complex technologies.
+The Household class extends the agent by giving him utility functions and the ability to consume goods.
 """
 from __future__ import division
 import compiler
@@ -44,8 +29,8 @@ class Household:
     def utility_function(self):
         """ the utility function should be created with:
         set_cobb_douglas_utility_function,
-        create_utility_function or
-        create_utility_function_fast
+        set_utility_function or
+        set_utility_function_fast
         """
         return self._utility_function
 
@@ -109,10 +94,10 @@ class Household:
     def set_utility_function(self, formula, typ='from_formula'):
         """ creates a utility function from formula
 
-        Utility_functions are than used as an argument in consume_with_utility,
+        Utility_functions are then used as an argument in consume_with_utility,
         predict_utility and predict_utility_and_consumption.
 
-        create_utility_function_fast is faster but more complicatedutility_function
+        create_utility_function_fast is faster but more complicated utility_function
 
         Args:
             "formula": equation or set of equations that describe the
@@ -142,14 +127,14 @@ class Household:
     def set_utility_function_fast(self, formula, input_goods, typ='from_formula'):
         """ creates a utility function from formula
 
-        Utility_functions are than used as an argument in consume_with_utility,
+        Utility_functions are then used as an argument in consume_with_utility,
         predict_utility and predict_utility_and_consumption.
 
         create_utility_function_fast is faster but more complicated
 
         Args:
             "formula": equation or set of equations that describe the
-            production process. (string) Several equation are seperated by a ;
+            production process. (string) Several equation are separated by a ;
             [output]: list of all output goods (left hand sides of the equations)
 
         Returns:

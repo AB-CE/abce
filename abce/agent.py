@@ -15,22 +15,22 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 """
-The :class:`abceagent.Agent` class is the basic class for creating your agent. It automatically handles the
-possession of goods of an agent. In order to produce/transforme goods you need to also subclass
-the :class:`abceagent.Firm` [1]_ or to create a consumer the :class:`abceagent.Household`.
+The :class:`abce.agent.Agent` class is the basic class for creating your agents. It automatically handles the
+possession of goods of an agent. In order to produce/transforme goods you also need to subclass
+the :class:`abceagent.Firm` [1]_ or to create a consumer the :class:`abce.agent.Household`.
 
 For detailed documentation on:
 
 Trading:
-    see :class:`abceagent.Trade`
+    see :class:`abce.agent.Trade`
 Logging and data creation:
-    see :class:`abceagent.Database` and :doc:`simulation_results`
+    see :class:`abce.agent.Database` and :doc:`simulation_results`
 Messaging between agents:
-    see :class:`abceagent.Messaging`.
+    see :class:`abce.agent.Messaging`.
 
-.. autoexception:: abcetools.NotEnoughGoods
+.. autoexception:: abce.tools.NotEnoughGoods
 
-.. [1] or :class:`abceagent.FirmMultiTechnologies` for simulations with complex technologies.
+.. [1] or :class:`abce.agent.FirmMultiTechnologies` for simulations with complex technologies.
 """
 from __future__ import division
 import zmq
@@ -52,7 +52,7 @@ from messaging import Messaging, Message
 class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
     """ Every agent has to inherit this class. It connects the agent to the simulation
     and to other agent. The :class:`abceagent.Trade`, :class:`abceagent.Database` and
-    :class:`abceagent.Messaging` classes are include. You can enhance an agent, by also
+    :class:`abceagent.Messaging` classes are included. You can enhance an agent, by also
     inheriting from :class:`abceagent.Firm`.:class:`abceagent.FirmMultiTechnologies`
     or :class:`abceagent.Household`.
 
@@ -127,7 +127,7 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
         return self._haves[good]
 
     def possessions(self, list_of_goods):
-        """ returns a dictionary of goods and the correstponding amount an agent owns
+        """ returns a dictionary of goods and the corresponding amount an agent owns
 
         Argument:
             A list with good names. Can be a list with a single element.
@@ -259,7 +259,7 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
     def create(self, good, quantity):
         """ creates quantity of the good out of nothing
 
-        Use this create with care, as long as you use it only for labor and
+        Use create with care, as long as you use it only for labor and
         natural resources your model is macroeconomally complete.
 
         Args:

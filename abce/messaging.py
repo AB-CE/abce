@@ -14,6 +14,12 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations under
 # the License.
+""" This is the agent's facility to send and receive messages. Messages can
+either be sent to an individual with :meth:`messaging.Messaging.message` or to a group with
+:meth:`messaging.Messaging.message_to_group`. The receiving agent can either get all messages
+with  :meth:`messaging.Messaging.get_messages_all` or messages with a specific topic with
+:meth:`messaging.Messaging.get_messages`.
+"""
 from __future__ import division
 from random import shuffle
 
@@ -163,7 +169,7 @@ class Messaging:
 
     def get_messages_biased(self, topic='m'):
         """ like self.messages(topic), but the order is not properly randomized, but
-        its faster. use whenever you are sure that the way you process messages
+        it is faster. use whenever you are sure that the way you process messages
         is not affected by the order
         """
         try:

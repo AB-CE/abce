@@ -135,7 +135,7 @@ def read_parameters(parameters_file='simulation_parameters.csv', delimiter='\t',
 class Simulation:
     """ This class in which the simulation is run. It takes
     the simulation_parameters to set up the simulation. Actions and agents have to be
-    added. databases and resource declarations can be added. Than run runs
+    added. databases and resource declarations can be added. Then runs
     the simulation.
 
     Usually the parameters are specified in a tab separated csv file. The first
@@ -357,9 +357,9 @@ class Simulation:
         #as in _make_perish_command
 
     def declare_perishable(self, good, command='perish_at_the_round_end'):
-        """ This good only lasts one round and than disappers. For example
-        labor, if the labor is not used today todays labor is lost.
-        In combination with resoure this is useful to model labor or capital.
+        """ This good only lasts one round and then disappears. For example
+        labor, if the labor is not used today today's labor is lost.
+        In combination with resource this is useful to model labor or capital.
 
         In the example below a worker has an endowment of labor and capital.
         Every round he can sell his labor service and rent his capital. If
@@ -392,7 +392,7 @@ class Simulation:
 
     #TODO also for other variables
     def panel_data(self, group, variables='goods', typ='FLOAT', command='round_end'):
-        """ writes variables of a group of agents into the database, by default
+        """ Ponel_data writes variables of a group of agents into the database, by default
         the db write is at the end of the round. You can also specify a command
         and insert the command you choose in the action_list.
         If you choose a custom command, you can declare a method that
@@ -404,14 +404,15 @@ class Simulation:
 
 
         Args:
-            agentgroup:
+            group:
                 can be either a group or 'all' for all agents
-            variables:
+            variables (optional):
                 default='goods' monitors all the goods the agent owns
                 you can insert any variable your agent possesses. For
                 self.knows_latin you insert 'knows_latin'. If your agent
                 has self.technology you can use 'technology['formula']'
-                (typ='CHAR(50)'.
+                In this case you must set the type to CHAR(50) with the
+                typ='CHAR(50)' parameter.
             typ:
                 the type of the sql variable (FLOAT, INT, CHAR(length))
                 command
@@ -422,7 +423,7 @@ class Simulation:
 
          or
 
-         w.panel_data(agents_list=[agent_name('firm', 5), agent_name('household', 10)])
+         w.panel_data(group=firm)
 
         Optional in the agent::
 
@@ -579,7 +580,7 @@ class Simulation:
          AgentClass: is the name of the AgentClass that you imported
          number (optional): number of agents to be created. or the colum name
          of the row in simulation_parameters.csv that contains this number. If not
-         specified the colum name is assumed to be 'num_' + agent_name
+         specified the column name is assumed to be 'num_' + agent_name
          (all lowercase). For example num_firm, if the class is called
          Firm or name = Firm.
          [group_name (optional): to give the group a different name than the
@@ -738,12 +739,12 @@ class Simulation:
         a column header name. A name can be a goup are and individal (goup_id
         e.G. firm_01) it can also be 'all' for all agents.
         Every round, the agents self.aesof parameters get updated, if a row with
-        the correstponding round and agent name exists.
+        the corresponding round and agent name exists.
 
         Therefore an agent can access the parameters `self.aesof[column_name]` for
         the current round. (or the precedent one when there was no update)
         parameter is set. You can use it in your source code. It is persistent
-        until the next round for which a correstponding row exists.
+        until the next round for which a corresponding row exists.
 
         You can alse put commands or call methods in the excel file. For example:
          `self.aesof_exec(column_name)`.
@@ -751,9 +752,9 @@ class Simulation:
         function: `willingness_to_pay = self.aesof_eval(column_name)`.
 
         There is a big difference between `self.aesof_exec` and `self.aesof_eval`.
-        exec is only executed in rounds that have correstponding rows in aesof.csv.
+        exec is only executed in rounds that have corresponding rows in aesof.csv.
         `self.aesof_eval` is persistent every round the expression of the row
-        correstponding to the current round round or the last declared round is
+        corresponding to the current round round or the last declared round is
         executed.
 
         Args:
