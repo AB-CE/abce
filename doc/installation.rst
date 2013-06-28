@@ -3,11 +3,6 @@ Download and Installation
 
 
 
-+----------------------------------------------------------+
-| R must be installed with the RSQLite and reshape package |
-+----------------------------------------------------------+
-
-
 Installation of stable version Ubuntu
 -------------------------------------
 
@@ -18,7 +13,13 @@ Installation of stable version Ubuntu
 
 3. In terminal::
 
-    sudo pip install abce-0.3.tar.gz
+    sudo pip install abce-0.3.1.tar.gz
+
+4. If R has not been installed automatically install it::
+
+    sudo apt-get install R
+
+
 
 
 Installation of stable version Windows
@@ -44,21 +45,18 @@ Installation of stable version Windows
 4. Download stable version form:  https://github.com/DavoudTaghawiNejad/abce/downloads
 5. install ABCE::
 
-  pip install abce-0.3.tar.gz
+  pip install abce-0.3.1.tar.gz
 
 In case of problems reinstall python
 http://www.anthonydebarros.com/2011/10/15/setting-up-python-in-windows-7/
+
+6. Install R form www.cran.org
 
 
 Installation of development version
 -----------------------------------
 
 The installation has two parts. Installing the necessary software packages. Retrieving ABCE with git or as a zip file.
-
- In terminal (necessary software) [1]_ ::
-
-  sudo apt-get install python-pyparsing python-numpy python-scipy python-zmq r-base python-rpy2
-
 
  Alternative 1 as a zip (EASY):
 
@@ -74,8 +72,9 @@ The installation has two parts. Installing the necessary software packages. Retr
   git init
   git pull git@github.com:DavoudTaghawiNejad/abce.git
 
-Optional for development you can install sphinx and sphinx-apidoc.  sphinx-apidoc
-currently needs the newest version of sphinx, they system that created this documentation
+Optional for development you can install sphinx and sphinx-apidoc,
+the system that created this documentation.  sphinx-apidoc
+currently needs the newest version of sphinx.
 
 .. [1] possible you have to install sqlite3 and the according python bindings
 
