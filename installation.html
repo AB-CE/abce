@@ -66,16 +66,24 @@
 </div>
 </li>
 <li><p class="first">If R has not been installed automatically install it:</p>
+<<<<<<< HEAD
 <p>Install R from www.CRAN.org, at least version 2.15</p>
+=======
+<div class="highlight-python"><pre>sudo apt-get install r-base</pre>
+</div>
+>>>>>>> 462d9124f9a039bd51276d519bcced4975f1f6be
 </li>
 <li><p class="first">In terminal:</p>
 <div class="highlight-python"><pre>sudo pip install abce-0.3.1.tar.gz</pre>
 </div>
 </li>
+<<<<<<< HEAD
 <li><p class="first">Download templats and examples from: <a class="reference external" href="https://dl.dropboxusercontent.com/u/3655123/abce_templates-0.3.zip">https://dl.dropboxusercontent.com/u/3655123/abce_templates-0.3.zip</a></p>
 </li>
 <li><p class="first">unzip abce_templates-0.3.zip</p>
 </li>
+=======
+>>>>>>> 462d9124f9a039bd51276d519bcced4975f1f6be
 </ol>
 </div>
 <div class="section" id="installation-of-stable-version-windows">
@@ -84,6 +92,7 @@
 <li>Install Python2.7 (preferably 32bit)</li>
 <li>Next, set the system’s PATH variable to include directories</li>
 </ol>
+<<<<<<< HEAD
 <blockquote>
 <div><p>that include Python components and packages we’ll add later. To do this:
 - Right-click Computer and select Properties.
@@ -113,6 +122,35 @@
 <li>unzip abce_templates-0.3.zip</li>
 </ol>
 </div>
+=======
+<blockquote>
+<div><p>that include Python components and packages we’ll add later. To do this:
+- Right-click Computer and select Properties.
+- In the dialog box, select Advanced  System Settings.
+- In the next dialog, select Environment Variables.
+- In the User Variables section, edit the PATH statement to include this:</p>
+<div class="highlight-python"><pre>C:\Python27;C:\Python27\Lib\site-packages\;C:\Python27\Scripts\;</pre>
+</div>
+</div></blockquote>
+<ol class="arabic simple" start="2">
+<li>Install Setuptools from <a class="reference external" href="http://pypi.python.org/pypi/setuptools#downloads">http://pypi.python.org/pypi/setuptools#downloads</a></li>
+<li>install pip:</li>
+</ol>
+<blockquote>
+<div>easy_install pip</div></blockquote>
+<ol class="arabic simple" start="4">
+<li>Download stable version form:  <a class="reference external" href="https://dl.dropboxusercontent.com/u/3655123/abce-0.3.tar.gz">https://dl.dropboxusercontent.com/u/3655123/abce-0.3.tar.gz</a></li>
+<li>install ABCE:</li>
+</ol>
+<blockquote>
+<div>pip install abce-0.3.1.tar.gz</div></blockquote>
+<p>In case of problems reinstall python
+<a class="reference external" href="http://www.anthonydebarros.com/2011/10/15/setting-up-python-in-windows-7/">http://www.anthonydebarros.com/2011/10/15/setting-up-python-in-windows-7/</a></p>
+<ol class="arabic simple" start="6">
+<li>Install R form www.cran.org</li>
+</ol>
+</div>
+>>>>>>> 462d9124f9a039bd51276d519bcced4975f1f6be
 <div class="section" id="installation-of-development-version">
 <h2>Installation of development version<a class="headerlink" href="#installation-of-development-version" title="Permalink to this headline">¶</a></h2>
 <p>The installation has two parts. Installing the necessary software packages. Retrieving ABCE with git or as a zip file.</p>

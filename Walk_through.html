@@ -154,7 +154,11 @@ See <cite>simulation_parameters and agent_parameters</cite> for details.</p>
 <span class="n">s</span><span class="o">.</span><span class="n">add_action_list</span><span class="p">(</span><span class="n">action_list</span><span class="p">)</span>
 </pre></div>
 </div>
+<<<<<<< HEAD
 <p>This establishes the order of the simulation. It can also be read from file <a class="reference internal" href="simulation.html#abce.Simulation.add_action_list_from_file" title="abce.Simulation.add_action_list_from_file"><tt class="xref py py-meth docutils literal"><span class="pre">abce.Simulation.add_action_list_from_file()</span></tt></a></p>
+=======
+<p>This establishes the order of the simulation. It can also be read from file <tt class="xref py py-meth docutils literal"><span class="pre">abce.Simulation.add_action_list_from_file()</span></tt></p>
+>>>>>>> 462d9124f9a039bd51276d519bcced4975f1f6be
 <p>In order to add an agent which was imported before we simply build these agents:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">s</span><span class="o">.</span><span class="n">build_agents</span><span class="p">(</span><span class="n">Firm</span><span class="p">,</span> <span class="s">&#39;number_of_firms&#39;</span><span class="p">)</span>
 <span class="n">s</span><span class="o">.</span><span class="n">build_agents</span><span class="p">(</span><span class="n">Household</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
@@ -212,16 +216,26 @@ blocked good is unblocked.</p>
 <h3>The goods<a class="headerlink" href="#the-goods" title="Permalink to this headline">¶</a></h3>
 <p>A normal good can be traded and used for production or consumption.
 The only thing you have to do is create the amount of goods for every agent with
+<<<<<<< HEAD
 <a class="reference internal" href="Agent_class.html#abce.Agent.create" title="abce.Agent.create"><tt class="xref py py-meth docutils literal"><span class="pre">abce.Agent.create()</span></tt></a> in the agent&#8217;s __init__ method.</p>
 <p>If an agent receives an endowment every round this can be automatically handled,
 with <a class="reference internal" href="simulation.html#abce.Simulation.declare_round_endowment" title="abce.Simulation.declare_round_endowment"><tt class="xref py py-meth docutils literal"><span class="pre">abce.Simulation.declare_round_endowment()</span></tt></a>.
+=======
+<tt class="xref py py-meth docutils literal"><span class="pre">abce.Agent.create()</span></tt> in the agent&#8217;s __init__ method.</p>
+<p>If an agent receives an endowment every round this can be automatically handled,
+with <tt class="xref py py-meth docutils literal"><span class="pre">abce.Simulation.declare_round_endowment()</span></tt>.
+>>>>>>> 462d9124f9a039bd51276d519bcced4975f1f6be
 For example the following command gives, at the beginning of every round,
 to whom who possess one unit of &#8216;field&#8217; 100 units of &#8216;corn&#8217;:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">s</span><span class="o">.</span><span class="n">declare_round_endowment</span><span class="p">(</span><span class="s">&#39;field&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="s">&#39;corn&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>You can also declare goods that last only one round and then automatically perish.
+<<<<<<< HEAD
 <a class="reference internal" href="simulation.html#abce.Simulation.declare_perishable" title="abce.Simulation.declare_perishable"><tt class="xref py py-meth docutils literal"><span class="pre">abce.Simulation.declare_perishable()</span></tt></a></p>
+=======
+<tt class="xref py py-meth docutils literal"><span class="pre">abce.Simulation.declare_perishable()</span></tt></p>
+>>>>>>> 462d9124f9a039bd51276d519bcced4975f1f6be
 <div class="highlight-python"><div class="highlight"><pre><span class="n">s</span><span class="o">.</span><span class="n">declare_perishable</span><span class="p">(</span><span class="s">&#39;corn&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -243,21 +257,34 @@ three agents: agent.py, firm.py and household.py.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
 </pre></div>
 </div>
+<<<<<<< HEAD
 <p>An agent has to import the <a class="reference internal" href="simulation.html#module-abce" title="abce"><tt class="xref py py-mod docutils literal"><span class="pre">abce</span></tt></a> module and some helpers:</p>
+=======
+<p>An agent has to import the <tt class="xref py py-mod docutils literal"><span class="pre">abce</span></tt> module and some helpers:</p>
+>>>>>>> 462d9124f9a039bd51276d519bcced4975f1f6be
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">abce</span>
 <span class="kn">from</span> <span class="nn">abcetools</span> <span class="kn">import</span> <span class="n">is_zero</span><span class="p">,</span> <span class="n">is_positive</span><span class="p">,</span> <span class="n">is_negative</span><span class="p">,</span> <span class="n">NotEnoughGoods</span>
 </pre></div>
 </div>
 <p>This imports the base classes: abce, Household and Firm.</p>
+<<<<<<< HEAD
 <p>An agent is a class and must at least inherit <a class="reference internal" href="Agent_class.html#abce.Agent" title="abce.Agent"><tt class="xref py py-class docutils literal"><span class="pre">abce.Agent</span></tt></a>.
 <a class="reference internal" href="Trade.html#abce.Trade" title="abce.Trade"><tt class="xref py py-class docutils literal"><span class="pre">abce.Trade</span></tt></a> - <a class="reference internal" href="Messaging.html#messaging.Messaging" title="messaging.Messaging"><tt class="xref py py-class docutils literal"><span class="pre">messaging.Messaging</span></tt></a> and <a class="reference internal" href="Database.html#database.Database" title="database.Database"><tt class="xref py py-class docutils literal"><span class="pre">database.Database</span></tt></a>
+=======
+<p>An agent is a class and must at least inherit <tt class="xref py py-class docutils literal"><span class="pre">abce.Agent</span></tt>.
+<tt class="xref py py-class docutils literal"><span class="pre">abce.Trade</span></tt> - <a class="reference internal" href="Messaging.html#messaging.Messaging" title="messaging.Messaging"><tt class="xref py py-class docutils literal"><span class="pre">messaging.Messaging</span></tt></a> and <tt class="xref py py-class docutils literal"><span class="pre">database.Database</span></tt>
+>>>>>>> 462d9124f9a039bd51276d519bcced4975f1f6be
 are automatically inherited:</p>
 <div class="highlight-python"><pre>class Agent(abce.Agent):</pre>
 </div>
 <p>To create an agent that can also consume:</p>
 <div class="highlight-python"><pre>class Household(abce.Agent, abce.Household):</pre>
 </div>
+<<<<<<< HEAD
 <p>You see our Household agent inherits from <a class="reference internal" href="Agent_class.html#abce.Agent" title="abce.Agent"><tt class="xref py py-class docutils literal"><span class="pre">abce.Agent</span></tt></a>, which is compulsory and <a class="reference internal" href="Household.html#abce.Household" title="abce.Household"><tt class="xref py py-class docutils literal"><span class="pre">abce.Household</span></tt></a>.
+=======
+<p>You see our Household agent inherits from <tt class="xref py py-class docutils literal"><span class="pre">abce.Agent</span></tt>, which is compulsory and <tt class="xref py py-class docutils literal"><span class="pre">abce.Household</span></tt>.
+>>>>>>> 462d9124f9a039bd51276d519bcced4975f1f6be
 Household on the other hand are a set of methods that are unique for Household agents.
 (there is also a Firm class)</p>
 <div class="section" id="the-init-method">
@@ -275,9 +302,15 @@ Household on the other hand are a set of methods that are unique for Household a
 </pre></div>
 </div>
 <p>The __init__ method is the method that is called when the agents are created (by
+<<<<<<< HEAD
 the <a class="reference internal" href="simulation.html#abce.Simulation.build_agents" title="abce.Simulation.build_agents"><tt class="xref py py-meth docutils literal"><span class="pre">abce.Simulation.build_agents()</span></tt></a> or <a class="reference internal" href="simulation.html#abce.Simulation.build_agents_from_file" title="abce.Simulation.build_agents_from_file"><tt class="xref py py-meth docutils literal"><span class="pre">abce.Simulation.build_agents_from_file()</span></tt></a> method.)
 In this method agents can access the simulation_parameters from the &#8216;simulation_parameters.csv&#8217;.</p>
 <p>If the agents are built using <a class="reference internal" href="simulation.html#abce.Simulation.build_agents_from_file" title="abce.Simulation.build_agents_from_file"><tt class="xref py py-meth docutils literal"><span class="pre">abce.Simulation.build_agents_from_file()</span></tt></a>. The agents
+=======
+the <tt class="xref py py-meth docutils literal"><span class="pre">abce.Simulation.build_agents()</span></tt> or <tt class="xref py py-meth docutils literal"><span class="pre">abce.Simulation.build_agents_from_file()</span></tt> method.)
+In this method agents can access the simulation_parameters from the &#8216;simulation_parameters.csv&#8217;.</p>
+<p>If the agents are built using <tt class="xref py py-meth docutils literal"><span class="pre">abce.Simulation.build_agents_from_file()</span></tt>. The agents
+>>>>>>> 462d9124f9a039bd51276d519bcced4975f1f6be
 can access the parameters in their row, in &#8216;agents_parameters.csv&#8217;, by
 agent_parameters in the __init__ function.</p>
 <p>Line 2 is compulsory to pass the parameters to the abce.</p>
@@ -285,9 +318,15 @@ agent_parameters in the __init__ function.</p>
 good can be created. Generally speaking. The __init__ method is the only place
 where it is consistent to create a good. (except for money, if you simulate a naive
 central bank).</p>
+<<<<<<< HEAD
 <p>This agent class inherited <a class="reference internal" href="Household.html#abce.Household.set_cobb_douglas_utility_function" title="abce.Household.set_cobb_douglas_utility_function"><tt class="xref py py-meth docutils literal"><span class="pre">abce.Household.set_cobb_douglas_utility_function()</span></tt></a>
 from <a class="reference internal" href="Household.html#abce.Household" title="abce.Household"><tt class="xref py py-class docutils literal"><span class="pre">abce.Household</span></tt></a>. With
 <a class="reference internal" href="Household.html#abce.Household.set_cobb_douglas_utility_function" title="abce.Household.set_cobb_douglas_utility_function"><tt class="xref py py-meth docutils literal"><span class="pre">abce.Household.set_cobb_douglas_utility_function()</span></tt></a> you can create a
+=======
+<p>This agent class inherited <tt class="xref py py-meth docutils literal"><span class="pre">abce.Household.set_cobb_douglas_utility_function()</span></tt>
+from <tt class="xref py py-class docutils literal"><span class="pre">abce.Household</span></tt>. With
+<tt class="xref py py-meth docutils literal"><span class="pre">abce.Household.set_cobb_douglas_utility_function()</span></tt> you can create a
+>>>>>>> 462d9124f9a039bd51276d519bcced4975f1f6be
 cobb-douglas function. Other functional forms are also available.</p>
 <p>self.prices is a dictionary, created by the modeler, that saves prices for
 specific goods. Here the price for labor is set to 1.</p>
@@ -336,7 +375,11 @@ def init(self):
 def production(self):
     self.produce_use_everything()</pre>
 </div>
+<<<<<<< HEAD
 <p>More details in <a class="reference internal" href="Firm.html#abce.Firm" title="abce.Firm"><tt class="xref py py-class docutils literal"><span class="pre">abce.Firm</span></tt></a>. <a class="reference internal" href="FirmMultiTechnologies.html#abce.FirmMultiTechnologies" title="abce.FirmMultiTechnologies"><tt class="xref py py-class docutils literal"><span class="pre">abce.FirmMultiTechnologies</span></tt></a> offers
+=======
+<p>More details in <tt class="xref py py-class docutils literal"><span class="pre">abce.Firm</span></tt>. <tt class="xref py py-class docutils literal"><span class="pre">abce.FirmMultiTechnologies</span></tt> offers
+>>>>>>> 462d9124f9a039bd51276d519bcced4975f1f6be
 a more advanced interface for firms with complicated technologies.</p>
 </div>
 <div class="section" id="trade">
@@ -361,7 +404,11 @@ trade and sets the criteria to accept the trade:</p>
           <span class="bp">self</span><span class="o">.</span><span class="n">reject</span><span class="p">(</span><span class="n">offer</span><span class="p">)</span>
 </pre></div>
 </div>
+<<<<<<< HEAD
 <p>You can find a detailed explanation how trade works in <a class="reference internal" href="Trade.html#abce.Trade" title="abce.Trade"><tt class="xref py py-class docutils literal"><span class="pre">abce.Trade</span></tt></a></p>
+=======
+<p>You can find a detailed explanation how trade works in <tt class="xref py py-class docutils literal"><span class="pre">abce.Trade</span></tt></p>
+>>>>>>> 462d9124f9a039bd51276d519bcced4975f1f6be
 </div>
 <div class="section" id="data-production">
 <h3>Data production<a class="headerlink" href="#data-production" title="Permalink to this headline">¶</a></h3>
@@ -372,9 +419,15 @@ trade and sets the criteria to accept the trade:</p>
 </div>
 <div class="section" id="manual-in-agent-logging">
 <h4>Manual in agent logging<a class="headerlink" href="#manual-in-agent-logging" title="Permalink to this headline">¶</a></h4>
+<<<<<<< HEAD
 <p>An agent can log a variable, <a class="reference internal" href="Agent_class.html#abce.Agent.possessions" title="abce.Agent.possessions"><tt class="xref py py-meth docutils literal"><span class="pre">abce.Agent.possessions()</span></tt></a>, <a class="reference internal" href="Agent_class.html#abce.Agent.possessions_all" title="abce.Agent.possessions_all"><tt class="xref py py-meth docutils literal"><span class="pre">abce.Agent.possessions_all()</span></tt></a>
 and most other methods such as <a class="reference internal" href="Firm.html#abce.Firm.produce" title="abce.Firm.produce"><tt class="xref py py-meth docutils literal"><span class="pre">abce.Firm.produce()</span></tt></a> with <tt class="xref py py-meth docutils literal"><span class="pre">abce.Agent.log()</span></tt> or a
 change in a variable with <a class="reference internal" href="Database.html#database.Database.log_change" title="database.Database.log_change"><tt class="xref py py-meth docutils literal"><span class="pre">log_change()</span></tt></a>:</p>
+=======
+<p>An agent can log a variable, <tt class="xref py py-meth docutils literal"><span class="pre">abce.Agent.possessions()</span></tt>, <tt class="xref py py-meth docutils literal"><span class="pre">abce.Agent.possessions_all()</span></tt>
+and most other methods such as <tt class="xref py py-meth docutils literal"><span class="pre">abce.Firm.produce()</span></tt> with <tt class="xref py py-meth docutils literal"><span class="pre">abce.Agent.log()</span></tt> or a
+change in a variable with <tt class="xref py py-meth docutils literal"><span class="pre">log_change()</span></tt>:</p>
+>>>>>>> 462d9124f9a039bd51276d519bcced4975f1f6be
 <div class="highlight-python"><pre>self.log('possessions', self.possesions_all())
 self.log('custom', {'price_setting': 5: 'production_value': 12})
 prod = self.production_use_everything()
@@ -383,7 +436,7 @@ self.log('current_production', prod)</pre>
 </div>
 <div class="section" id="panel-data">
 <h4>Panel Data<a class="headerlink" href="#panel-data" title="Permalink to this headline">¶</a></h4>
-<p><a class="reference internal" href="simulation.html#abce.Simulation.panel_data" title="abce.Simulation.panel_data"><tt class="xref py py-meth docutils literal"><span class="pre">panel_data()</span></tt></a> creates panel data for all agents in a specific
+<p><tt class="xref py py-meth docutils literal"><span class="pre">panel_data()</span></tt> creates panel data for all agents in a specific
 agent group at a specific point in every round. It is set in start.py:</p>
 <div class="highlight-python"><pre>s.panel_data(’Household’, command=’aftersalesbeforeconsumption’)</pre>
 </div>
