@@ -9,15 +9,20 @@ Installation of stable version Ubuntu
 1. Download stable version form:  https://dl.dropboxusercontent.com/u/3655123/abce-0.3.tar.gz
 2. If pip is not installed in terminal::
 
-    sudo apt-get install python-pip
+    sudo apt-get install python-pip, python-scipy, python-numpy
 
-3. In terminal::
+3. If R has not been installed automatically install it::
+
+    sudo apt-get install r-base
+
+4. In terminal::
 
     sudo pip install abce-0.3.1.tar.gz
 
-4. If R has not been installed automatically install it::
+5. Download templats and examples from: https://dl.dropboxusercontent.com/u/3655123/abce_templates-0.3.zip
 
-    sudo apt-get install R
+6. unzip abce_templates-0.3.zip
+
 
 
 
@@ -42,15 +47,25 @@ Installation of stable version Windows
 
   easy_install pip
 
-4. Download stable version form:  https://dl.dropboxusercontent.com/u/3655123/abce-0.3.tar.gz
-5. install ABCE::
+4. Install R form www.cran.org
+
+5. Download stable version form:  https://dl.dropboxusercontent.com/u/3655123/abce-0.3.tar.gz
+
+6. install ABCE::
 
   pip install abce-0.3.1.tar.gz
 
 In case of problems reinstall python
 http://www.anthonydebarros.com/2011/10/15/setting-up-python-in-windows-7/
 
-6. Install R form www.cran.org
+
+
+7. Download templats and examples from: https://dl.dropboxusercontent.com/u/3655123/abce_templates-0.3.zip
+
+8. unzip abce_templates-0.3.zip
+
+
+
 
 
 Installation of development version
