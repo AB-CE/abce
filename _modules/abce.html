@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>abce &mdash; ABCE 0.2alpha documentation</title>
+    <title>abce &mdash; ABCE 0.3.1alpha documentation</title>
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2alpha',
+        VERSION:     '0.3.1alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="ABCE 0.2alpha documentation" href="../index.html" />
+    <link rel="top" title="ABCE 0.3.1alpha documentation" href="../index.html" />
     <link rel="up" title="Module code" href="index.html" /> 
   </head>
   <body>
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../index.html">ABCE 0.2alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -65,18 +65,15 @@
 <span class="c"># WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the</span>
 <span class="c"># License for the specific language governing permissions and limitations under</span>
 <span class="c"># the License.</span>
-<span class="sd">&quot;&quot;&quot; The best way to start creating a simulation is by copying the start.py file and other</span>
-<span class="sd">files from &#39;abce/template&#39;. Than you have to change the `sys.path.append(&#39;../abce/lib&#39;)`</span>
-<span class="sd">path so that it leads to the folder in your system.</span>
+<span class="sd">&quot;&quot;&quot; The best way to start creating a simulation is by copying the start.py file</span>
+<span class="sd">and other files from &#39;abce/template&#39;.</span>
 
 <span class="sd">To see how to create a simulation read :doc:`Walk_through`. In this module you</span>
-<span class="sd">will find the explenation for the command.</span>
+<span class="sd">will find the explanation for the command.</span>
 
 <span class="sd">This is a minimal template for a start.py::</span>
 
 <span class="sd">    from __future__ import division  # makes / division work correct in python !</span>
-<span class="sd">    import sys</span>
-<span class="sd">    sys.path.append(&#39;../abce/lib&#39;)  # &lt;--- ADJUST</span>
 <span class="sd">    from agent import Agent</span>
 <span class="sd">    from abce import *</span>
 
@@ -98,13 +95,19 @@
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">zmq</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
-<span class="kn">from</span> <span class="nn">abcetools</span> <span class="kn">import</span> <span class="n">agent_name</span><span class="p">,</span> <span class="n">group_address</span>
+<span class="kn">from</span> <span class="nn">abce.tools</span> <span class="kn">import</span> <span class="n">agent_name</span><span class="p">,</span> <span class="n">group_address</span>
 <span class="kn">import</span> <span class="nn">multiprocessing</span>
-<span class="kn">import</span> <span class="nn">abce_db</span>
+<span class="kn">import</span> <span class="nn">abce.db</span>
+<span class="kn">import</span> <span class="nn">abce.abcelogger</span>
 <span class="kn">import</span> <span class="nn">itertools</span>
 <span class="kn">import</span> <span class="nn">postprocess</span>
 <span class="kn">from</span> <span class="nn">glob</span> <span class="kn">import</span> <span class="n">glob</span>
+<span class="kn">import</span> <span class="nn">subround</span>
 
+<span class="kn">from</span> <span class="nn">firm</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">firmmultitechnologies</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">household</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">agent</span> <span class="kn">import</span> <span class="o">*</span>
 
 <span class="n">BASEPATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span>
 
@@ -135,8 +138,12 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">start_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s">&quot;%Y-%m-</span><span class="si">%d</span><span class="s">_%H-%M&quot;</span><span class="p">)</span>
     <span class="n">parameter_array</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">parameters_file</span><span class="p">),</span>
-                                <span class="n">delimiter</span><span class="o">=</span><span class="n">delimiter</span><span class="p">,</span> <span class="n">quotechar</span><span class="o">=</span><span class="n">quotechar</span><span class="p">)</span>
+
+    <span class="n">csvfile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">parameters_file</span><span class="p">)</span>
+    <span class="n">dialect</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">Sniffer</span><span class="p">()</span><span class="o">.</span><span class="n">sniff</span><span class="p">(</span><span class="n">csvfile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1024</span><span class="p">))</span>
+    <span class="n">csvfile</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">csvfile</span><span class="p">,</span> <span class="n">dialect</span><span class="p">)</span>
+
     <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">key</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">reader</span><span class="o">.</span><span class="n">next</span><span class="p">()]</span>
     <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">line</span> <span class="o">==</span> <span class="p">[]:</span>
@@ -179,7 +186,7 @@
 <div class="viewcode-block" id="Simulation"><a class="viewcode-back" href="../simulation.html#abce.Simulation">[docs]</a><span class="k">class</span> <span class="nc">Simulation</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; This class in which the simulation is run. It takes</span>
 <span class="sd">    the simulation_parameters to set up the simulation. Actions and agents have to be</span>
-<span class="sd">    added. databases and resource declarations can be added. Than run runs</span>
+<span class="sd">    added. databases and resource declarations can be added. Then runs</span>
 <span class="sd">    the simulation.</span>
 
 <span class="sd">    Usually the parameters are specified in a tab separated csv file. The first</span>
@@ -226,8 +233,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_db_commands</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_agents</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_agents_in_group</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">context</span> <span class="o">=</span> <span class="n">zmq</span><span class="o">.</span><span class="n">Context</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">commands</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">zmq</span><span class="o">.</span><span class="n">PUB</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_build_first_run</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_agent_parameters</span> <span class="o">=</span> <span class="bp">None</span>
+
         <span class="kn">from</span> <span class="nn">config</span> <span class="kn">import</span> <span class="n">zmq_transport</span>
         <span class="k">if</span> <span class="n">zmq_transport</span> <span class="o">==</span> <span class="s">&#39;inproc&#39;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_addresses</span> <span class="o">=</span> <span class="p">{</span>
@@ -236,7 +244,9 @@
                 <span class="s">&#39;ready&#39;</span><span class="p">:</span> <span class="s">&quot;inproc://ready&quot;</span><span class="p">,</span>
                 <span class="s">&#39;frontend&#39;</span><span class="p">:</span> <span class="s">&quot;inproc://frontend&quot;</span><span class="p">,</span>
                 <span class="s">&#39;backend&#39;</span><span class="p">:</span> <span class="s">&quot;inproc://backend&quot;</span><span class="p">,</span>
-                <span class="s">&#39;database&#39;</span><span class="p">:</span> <span class="s">&quot;inproc://database&quot;</span>
+                <span class="s">&#39;group_backend&#39;</span><span class="p">:</span> <span class="s">&quot;inproc://group_backend&quot;</span><span class="p">,</span>
+                <span class="s">&#39;database&#39;</span><span class="p">:</span> <span class="s">&quot;inproc://database&quot;</span><span class="p">,</span>
+                <span class="s">&#39;logger&#39;</span><span class="p">:</span> <span class="s">&quot;inproc://logger&quot;</span>
             <span class="p">}</span>
         <span class="k">if</span> <span class="n">zmq_transport</span> <span class="o">==</span> <span class="s">&#39;ipc&#39;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_addresses</span> <span class="o">=</span> <span class="p">{</span>
@@ -244,7 +254,9 @@
                 <span class="s">&#39;ready&#39;</span><span class="p">:</span> <span class="s">&quot;ipc://ready.ipc&quot;</span><span class="p">,</span>
                 <span class="s">&#39;frontend&#39;</span><span class="p">:</span> <span class="s">&quot;ipc://frontend.ipc&quot;</span><span class="p">,</span>
                 <span class="s">&#39;backend&#39;</span><span class="p">:</span> <span class="s">&quot;ipc://backend.ipc&quot;</span><span class="p">,</span>
-                <span class="s">&#39;database&#39;</span><span class="p">:</span> <span class="s">&quot;ipc://database.ipc&quot;</span>
+                <span class="s">&#39;group_backend&#39;</span><span class="p">:</span> <span class="s">&quot;ipc://group_backend&quot;</span><span class="p">,</span>
+                <span class="s">&#39;database&#39;</span><span class="p">:</span> <span class="s">&quot;ipc://database.ipc&quot;</span><span class="p">,</span>
+                <span class="s">&#39;logger&#39;</span><span class="p">:</span> <span class="s">&quot;ipc://logger.ipc&quot;</span>
             <span class="p">}</span>
         <span class="k">if</span> <span class="n">zmq_transport</span> <span class="o">==</span> <span class="s">&#39;tcp&#39;</span><span class="p">:</span>
             <span class="kn">from</span> <span class="nn">config</span> <span class="kn">import</span> <span class="n">config_tcp</span>
@@ -253,8 +265,14 @@
                 <span class="s">&#39;ready&#39;</span><span class="p">:</span> <span class="n">config_tcp</span><span class="p">[</span><span class="s">&#39;ready&#39;</span><span class="p">],</span>
                 <span class="s">&#39;frontend&#39;</span><span class="p">:</span> <span class="n">config_tcp</span><span class="p">[</span><span class="s">&#39;frontend&#39;</span><span class="p">],</span>
                 <span class="s">&#39;backend&#39;</span><span class="p">:</span> <span class="n">config_tcp</span><span class="p">[</span><span class="s">&#39;backend&#39;</span><span class="p">],</span>
+                <span class="s">&#39;group_backend&#39;</span><span class="p">:</span>  <span class="n">config_tcp</span><span class="p">[</span><span class="s">&#39;group_backend&#39;</span><span class="p">],</span>
                 <span class="s">&#39;database&#39;</span><span class="p">:</span> <span class="n">config_tcp</span><span class="p">[</span><span class="s">&#39;database&#39;</span><span class="p">],</span>
+                <span class="s">&#39;logger&#39;</span><span class="p">:</span> <span class="n">config_tcp</span><span class="p">[</span><span class="s">&#39;logger&#39;</span><span class="p">],</span>
+
             <span class="p">}</span>
+        <span class="c">#time.sleep(1)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">context</span> <span class="o">=</span> <span class="n">zmq</span><span class="o">.</span><span class="n">Context</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">commands</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">zmq</span><span class="o">.</span><span class="n">PUB</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_addresses</span><span class="p">[</span><span class="s">&#39;command_addresse&#39;</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ready</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">zmq</span><span class="o">.</span><span class="n">PULL</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ready</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_addresses</span><span class="p">[</span><span class="s">&#39;ready&#39;</span><span class="p">])</span>
@@ -264,8 +282,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">communication_channel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">zmq</span><span class="o">.</span><span class="n">PUSH</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">communication_channel</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_addresses</span><span class="p">[</span><span class="s">&#39;frontend&#39;</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_register_action_groups</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_db</span> <span class="o">=</span> <span class="n">abce_db</span><span class="o">.</span><span class="n">Database</span><span class="p">(</span><span class="n">simulation_parameters</span><span class="p">[</span><span class="s">&#39;_path&#39;</span><span class="p">],</span> <span class="s">&#39;database&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_addresses</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_db</span> <span class="o">=</span> <span class="n">abce</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">Database</span><span class="p">(</span><span class="n">simulation_parameters</span><span class="p">[</span><span class="s">&#39;_path&#39;</span><span class="p">],</span> <span class="s">&#39;database&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_addresses</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span> <span class="o">=</span> <span class="n">abce</span><span class="o">.</span><span class="n">abcelogger</span><span class="o">.</span><span class="n">AbceLogger</span><span class="p">(</span><span class="n">simulation_parameters</span><span class="p">[</span><span class="s">&#39;_path&#39;</span><span class="p">],</span> <span class="s">&#39;logger&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_addresses</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">aesof</span> <span class="o">=</span> <span class="bp">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">round</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">try</span><span class="p">:</span>
@@ -307,7 +328,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">action_list</span> <span class="o">=</span> <span class="n">action_list</span>
 </div>
-<div class="viewcode-block" id="Simulation.add_action_list_from_table"><a class="viewcode-back" href="../simulation.html#abce.Simulation.add_action_list_from_table">[docs]</a>    <span class="k">def</span> <span class="nf">add_action_list_from_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
+<div class="viewcode-block" id="Simulation.add_action_list_from_file"><a class="viewcode-back" href="../simulation.html#abce.Simulation.add_action_list_from_file">[docs]</a>    <span class="k">def</span> <span class="nf">add_action_list_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The action list can also be declared in the simulation_parameters.csv</span>
 <span class="sd">        file. Which allows you to run a batch of simulations with different</span>
 <span class="sd">        orders. In simulation_parameters.csv there must be a column with which</span>
@@ -327,7 +348,7 @@
 
 <span class="sd">        The command::</span>
 
-<span class="sd">            self.add_action_list_from_table(&#39;parameters[&#39;action_list&#39;])</span>
+<span class="sd">            self.add_action_list_from_file(&#39;parameters[&#39;action_list&#39;])</span>
 
 <span class="sd">        Args::</span>
 
@@ -387,9 +408,9 @@
         <span class="c">#as in _make_perish_command</span>
 
 <div class="viewcode-block" id="Simulation.declare_perishable"><a class="viewcode-back" href="../simulation.html#abce.Simulation.declare_perishable">[docs]</a>    <span class="k">def</span> <span class="nf">declare_perishable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">good</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="s">&#39;perish_at_the_round_end&#39;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; This good only lasts one round and than disappers. For example</span>
-<span class="sd">        labor, if the labor is not used today todays labor is lost.</span>
-<span class="sd">        In combination with resoure this is useful to model labor or capital.</span>
+        <span class="sd">&quot;&quot;&quot; This good only lasts one round and then disappears. For example</span>
+<span class="sd">        labor, if the labor is not used today today&#39;s labor is lost.</span>
+<span class="sd">        In combination with resource this is useful to model labor or capital.</span>
 
 <span class="sd">        In the example below a worker has an endowment of labor and capital.</span>
 <span class="sd">        Every round he can sell his labor service and rent his capital. If</span>
@@ -422,7 +443,7 @@
 
     <span class="c">#TODO also for other variables</span>
 <div class="viewcode-block" id="Simulation.panel_data"><a class="viewcode-back" href="../simulation.html#abce.Simulation.panel_data">[docs]</a>    <span class="k">def</span> <span class="nf">panel_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="s">&#39;goods&#39;</span><span class="p">,</span> <span class="n">typ</span><span class="o">=</span><span class="s">&#39;FLOAT&#39;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="s">&#39;round_end&#39;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; writes variables of a group of agents into the database, by default</span>
+        <span class="sd">&quot;&quot;&quot; Ponel_data writes variables of a group of agents into the database, by default</span>
 <span class="sd">        the db write is at the end of the round. You can also specify a command</span>
 <span class="sd">        and insert the command you choose in the action_list.</span>
 <span class="sd">        If you choose a custom command, you can declare a method that</span>
@@ -434,14 +455,15 @@
 
 
 <span class="sd">        Args:</span>
-<span class="sd">            agentgroup:</span>
+<span class="sd">            group:</span>
 <span class="sd">                can be either a group or &#39;all&#39; for all agents</span>
-<span class="sd">            variables:</span>
+<span class="sd">            variables (optional):</span>
 <span class="sd">                default=&#39;goods&#39; monitors all the goods the agent owns</span>
 <span class="sd">                you can insert any variable your agent possesses. For</span>
 <span class="sd">                self.knows_latin you insert &#39;knows_latin&#39;. If your agent</span>
 <span class="sd">                has self.technology you can use &#39;technology[&#39;formula&#39;]&#39;</span>
-<span class="sd">                (typ=&#39;CHAR(50)&#39;.</span>
+<span class="sd">                In this case you must set the type to CHAR(50) with the</span>
+<span class="sd">                typ=&#39;CHAR(50)&#39; parameter.</span>
 <span class="sd">            typ:</span>
 <span class="sd">                the type of the sql variable (FLOAT, INT, CHAR(length))</span>
 <span class="sd">                command</span>
@@ -452,7 +474,7 @@
 
 <span class="sd">         or</span>
 
-<span class="sd">         w.panel_data(agents_list=[agent_name(&#39;firm&#39;, 5), agent_name(&#39;household&#39;, 10)])</span>
+<span class="sd">         w.panel_data(group=firm)</span>
 
 <span class="sd">        Optional in the agent::</span>
 
@@ -553,12 +575,15 @@
         <span class="n">database</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">zmq</span><span class="o">.</span><span class="n">PUSH</span><span class="p">)</span>
         <span class="n">database</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_addresses</span><span class="p">[</span><span class="s">&#39;database&#39;</span><span class="p">])</span>
         <span class="n">database</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s">&#39;close&#39;</span><span class="p">)</span>
+        <span class="n">logger</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">zmq</span><span class="o">.</span><span class="n">PUSH</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_addresses</span><span class="p">[</span><span class="s">&#39;logger&#39;</span><span class="p">])</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s">&#39;close&#39;</span><span class="p">)</span>
         <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="o">.</span><span class="n">is_alive</span><span class="p">():</span>
             <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.05</span><span class="p">)</span>
         <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_communication</span><span class="o">.</span><span class="n">is_alive</span><span class="p">():</span>
             <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.025</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">destroy</span><span class="p">()</span>
         <span class="n">postprocess</span><span class="o">.</span><span class="n">to_r_and_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">simulation_parameters</span><span class="p">[</span><span class="s">&#39;_path&#39;</span><span class="p">]),</span> <span class="n">BASEPATH</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">destroy</span><span class="p">()</span>
 </div>
     <span class="k">def</span> <span class="nf">_make_ask_each_agent_in</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
         <span class="n">group_address_var</span> <span class="o">=</span> <span class="n">group_address</span><span class="p">(</span><span class="n">action</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
@@ -606,7 +631,7 @@
 <span class="sd">         AgentClass: is the name of the AgentClass that you imported</span>
 <span class="sd">         number (optional): number of agents to be created. or the colum name</span>
 <span class="sd">         of the row in simulation_parameters.csv that contains this number. If not</span>
-<span class="sd">         specified the colum name is assumed to be &#39;num_&#39; + agent_name</span>
+<span class="sd">         specified the column name is assumed to be &#39;num_&#39; + agent_name</span>
 <span class="sd">         (all lowercase). For example num_firm, if the class is called</span>
 <span class="sd">         Firm or name = Firm.</span>
 <span class="sd">         [group_name (optional): to give the group a different name than the</span>
@@ -703,9 +728,7 @@
             <span class="n">cells</span> <span class="o">=</span> <span class="p">[</span><span class="n">_number_or_string</span><span class="p">(</span><span class="n">cell</span><span class="p">)</span> <span class="k">for</span> <span class="n">cell</span> <span class="ow">in</span> <span class="n">line</span><span class="p">]</span>
             <span class="n">agents_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="n">cells</span><span class="p">)))</span>
 
-        <span class="k">try</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_build_first_run</span>
-        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_first_run</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">agents_list</span><span class="p">:</span>
                 <span class="n">num_entry</span> <span class="o">=</span> <span class="s">&#39;num_&#39;</span> <span class="o">+</span> <span class="n">line</span><span class="p">[</span><span class="s">&#39;agent_class&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
                 <span class="k">if</span> <span class="n">num_entry</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">simulation_parameters</span><span class="p">:</span>
@@ -719,6 +742,10 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">build_agents</span><span class="p">(</span><span class="n">AgentClass</span><span class="p">,</span> <span class="n">agents_parameters</span><span class="o">=</span><span class="n">agents_parameters</span><span class="p">)</span>
 </div>
+    <span class="k">def</span> <span class="nf">debug_subround</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">subround</span> <span class="o">=</span> <span class="n">subround</span><span class="o">.</span><span class="n">Subround</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_addresses</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">subround</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
     <span class="k">def</span> <span class="nf">_advance_round_agents</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; advances round by 1 &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">round</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -729,11 +756,17 @@
 
     <span class="k">def</span> <span class="nf">_wait_for_agents_than_signal_end_of_comm</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">communication_channel</span><span class="o">.</span><span class="n">send_multipart</span><span class="p">([</span><span class="s">&#39;!&#39;</span><span class="p">,</span> <span class="s">&#39;}&#39;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ready</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ready</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&#39;KeyboardInterrupt: abce.db: _wait_for_agents_than_signal_end_of_comm(self) ~654&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_wait_for_agents</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">communication_channel</span><span class="o">.</span><span class="n">send_multipart</span><span class="p">([</span><span class="s">&#39;!&#39;</span><span class="p">,</span> <span class="s">&#39;)&#39;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ready</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ready</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&#39;KeyboardInterrupt: abce.db: _wait_for_agents(self) ~662&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_end_Communication</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">communication_channel</span><span class="o">.</span><span class="n">send_multipart</span><span class="p">([</span><span class="s">&#39;!&#39;</span><span class="p">,</span> <span class="s">&#39;!&#39;</span><span class="p">,</span> <span class="s">&#39;end_simulation&#39;</span><span class="p">])</span>
@@ -757,12 +790,12 @@
 <span class="sd">        a column header name. A name can be a goup are and individal (goup_id</span>
 <span class="sd">        e.G. firm_01) it can also be &#39;all&#39; for all agents.</span>
 <span class="sd">        Every round, the agents self.aesof parameters get updated, if a row with</span>
-<span class="sd">        the correstponding round and agent name exists.</span>
+<span class="sd">        the corresponding round and agent name exists.</span>
 
 <span class="sd">        Therefore an agent can access the parameters `self.aesof[column_name]` for</span>
 <span class="sd">        the current round. (or the precedent one when there was no update)</span>
 <span class="sd">        parameter is set. You can use it in your source code. It is persistent</span>
-<span class="sd">        until the next round for which a correstponding row exists.</span>
+<span class="sd">        until the next round for which a corresponding row exists.</span>
 
 <span class="sd">        You can alse put commands or call methods in the excel file. For example:</span>
 <span class="sd">         `self.aesof_exec(column_name)`.</span>
@@ -770,9 +803,9 @@
 <span class="sd">        function: `willingness_to_pay = self.aesof_eval(column_name)`.</span>
 
 <span class="sd">        There is a big difference between `self.aesof_exec` and `self.aesof_eval`.</span>
-<span class="sd">        exec is only executed in rounds that have correstponding rows in aesof.csv.</span>
+<span class="sd">        exec is only executed in rounds that have corresponding rows in aesof.csv.</span>
 <span class="sd">        `self.aesof_eval` is persistent every round the expression of the row</span>
-<span class="sd">        correstponding to the current round round or the last declared round is</span>
+<span class="sd">        corresponding to the current round round or the last declared round is</span>
 <span class="sd">        executed.</span>
 
 <span class="sd">        Args:</span>
@@ -890,8 +923,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">context</span> <span class="o">=</span> <span class="n">zmq</span><span class="o">.</span><span class="n">Context</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">in_soc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">zmq</span><span class="o">.</span><span class="n">PULL</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">in_soc</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_addresses</span><span class="p">[</span><span class="s">&#39;frontend&#39;</span><span class="p">])</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">zmq</span><span class="o">.</span><span class="n">ROUTER</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_addresses</span><span class="p">[</span><span class="s">&#39;backend&#39;</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">shout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">zmq</span><span class="o">.</span><span class="n">PUB</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shout</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_addresses</span><span class="p">[</span><span class="s">&#39;group_backend&#39;</span><span class="p">])</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">ready</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">zmq</span><span class="o">.</span><span class="n">PUSH</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ready</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_addresses</span><span class="p">[</span><span class="s">&#39;ready&#39;</span><span class="p">])</span>
         <span class="n">agents_finished</span><span class="p">,</span> <span class="n">total_number</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
@@ -899,10 +937,17 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">ready</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s">&#39;working&#39;</span><span class="p">)</span>
         <span class="n">all_agents</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_soc</span><span class="o">.</span><span class="n">recv_multipart</span><span class="p">()</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_soc</span><span class="o">.</span><span class="n">recv_multipart</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+                <span class="k">print</span><span class="p">(</span><span class="s">&#39;KeyboardInterrupt: _Communication: msg = self.in_soc.recv_multipart() ~825&#39;</span><span class="p">)</span>
+                <span class="k">break</span>
             <span class="k">if</span> <span class="n">msg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;!&#39;</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">msg</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;.&#39;</span><span class="p">:</span>
                     <span class="n">agents_finished</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">msg</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;s&#39;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">shout</span><span class="o">.</span><span class="n">send_multipart</span><span class="p">(</span><span class="n">msg</span><span class="p">[</span><span class="mi">2</span><span class="p">:])</span>
+                    <span class="k">continue</span>
                 <span class="k">elif</span> <span class="n">msg</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;+&#39;</span><span class="p">:</span>
                     <span class="n">total_number</span> <span class="o">+=</span> <span class="nb">int</span><span class="p">(</span><span class="n">msg</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
                     <span class="k">continue</span>
@@ -926,6 +971,7 @@
                         <span class="k">if</span> <span class="n">send_end_of_communication_sign</span><span class="p">:</span>
                             <span class="k">for</span> <span class="n">agent</span> <span class="ow">in</span> <span class="n">all_agents</span><span class="p">:</span>
                                 <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">send_multipart</span><span class="p">([</span><span class="n">agent</span><span class="p">,</span> <span class="s">&#39;.&#39;</span><span class="p">])</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">shout</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s">&#39;all.&#39;</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">send_multipart</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">destroy</span><span class="p">()</span>
@@ -979,7 +1025,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../index.html">ABCE 0.2alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li>
           <li><a href="index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>

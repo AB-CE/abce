@@ -1,0 +1,216 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>simulation_parameters and agent_parameters &mdash; ABCE 0.3.1alpha documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.3.1alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="ABCE 0.3.1alpha documentation" href="index.html" />
+    <link rel="next" title="Retrieval of the simulation results" href="simulation_results.html" />
+    <link rel="prev" title="The simulation in start.py" href="simulation.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="simulation_results.html" title="Retrieval of the simulation results"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="simulation.html" title="The simulation in start.py"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="simulation-parameters-and-agent-parameters">
+<h1>simulation_parameters and agent_parameters<a class="headerlink" href="#simulation-parameters-and-agent-parameters" title="Permalink to this headline">¶</a></h1>
+<p>In the file <cite>simulation_parameters.csv</cite>, parameters
+that either govern the simulation or are accessible to all agents, can be specified.
+The file <cite>agent_parameters.csv</cite> is used to create agents from a file with
+<tt class="xref py py-meth docutils literal"><span class="pre">abce.Simulation.build_agents_from_file()</span></tt>. The agents created can access
+the agent_parameters for their agent group. For every simulation all agents are
+specified in the same file. Even though, they are build separately.</p>
+<p>We will first expose the compulsory columns in simulation_parameters.csv
+and agent_parameters respectively and then show how agents can access
+the parameters.</p>
+<p>There are a few conventions:
+- The files must be tab separated
+- First row has column headings
+- All lower case
+- <cite>num_</cite> indicates number of</p>
+<div class="section" id="simulation-parameters-csv">
+<h2>simulation_parameters.csv<a class="headerlink" href="#simulation-parameters-csv" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><dl class="docutils">
+<dt>compulsory fields:</dt>
+<dd><dl class="first last docutils">
+<dt>name:</dt>
+<dd>name of the simulation</dd>
+<dt>num_rounds:</dt>
+<dd>number of rounds of this simulation</dd>
+<dt>trade_logging:</dt>
+<dd>Can be set to <cite>group</cite> (fast) or <cite>individual</cite> (slow, default) or <cite>off</cite>)</dd>
+</dl>
+</dd>
+<dt>optional fields:</dt>
+<dd><dl class="first last docutils">
+<dt>random_seed:</dt>
+<dd>random seed 0 or missing chooses a random_seed at random</dd>
+</dl>
+</dd>
+</dl>
+</div></blockquote>
+</div>
+<div class="section" id="agent-parameters-csv">
+<h2>agent_parameters.csv<a class="headerlink" href="#agent-parameters-csv" title="Permalink to this headline">¶</a></h2>
+<p>This table it self does not create the agents. Rather <tt class="xref py py-meth docutils literal"><span class="pre">abce.Simulation.build_agents_from_file()</span></tt>
+creates the agent. build_agents_from_file, searches for the line(s) with the agent_class,
+specified. It then creates the number of agents of this class, specified in the number
+column.
+There can be several lines with the same agent class, in this case for each line the the number
+of agents are created. These agents get the <cite>agent_parameters</cite> specified in the particular line.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>compulsory fields:</dt>
+<dd><dl class="first last docutils">
+<dt>agent_class:</dt>
+<dd>name of the agent&#8217;s agent class.</dd>
+<dt>number:</dt>
+<dd>number of agents for this class.</dd>
+</dl>
+</dd>
+</dl>
+</div></blockquote>
+</div>
+<div class="section" id="accessing-parameters-in-agents">
+<h2>Accessing parameters in agents<a class="headerlink" href="#accessing-parameters-in-agents" title="Permalink to this headline">¶</a></h2>
+<p>Agents can only access the parameters in the __init__ method.
+You can store parameter separately or store all of them:</p>
+<p>storing single parametern:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Firm</span><span class="p">(</span><span class="n">abceagent</span><span class="o">.</span><span class="n">Agent</span><span class="p">,</span> <span class="n">abceagent</span><span class="o">.</span><span class="n">Firm</span><span class="p">):</span>
+   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simulation_parameters</span><span class="p">,</span> <span class="n">agent_parameters</span><span class="p">,</span> <span class="n">_pass_to_engine</span><span class="p">):</span>
+       <span class="n">abceagent</span><span class="o">.</span><span class="n">Agent</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">_pass_to_engine</span><span class="p">)</span>
+
+       <span class="bp">self</span><span class="o">.</span><span class="n">sector</span> <span class="o">=</span> <span class="n">agents_pameters</span><span class="p">[</span><span class="s">&#39;sector&#39;</span><span class="p">]</span>
+       <span class="c"># saves the value or string from the column sector, for this class of agents</span>
+
+       <span class="bp">self</span><span class="o">.</span><span class="n">gravity</span> <span class="o">=</span> <span class="n">simulation_parameters</span><span class="p">[</span><span class="s">&#39;gravity&#39;</span><span class="p">]</span>
+       <span class="c"># saves the simulation parameter gravity</span>
+
+       <span class="bp">self</span><span class="o">.</span><span class="n">num_households</span> <span class="o">=</span> <span class="n">simulation_parameters</span><span class="p">[</span><span class="s">&#39;num_household&#39;</span><span class="p">]</span>
+       <span class="c"># saves the auto generated number of agents of the type household</span>
+</pre></div>
+</div>
+<p>As you can see above there is an <strong>autogenerated simulation parameter &#8216;num_agent_class&#8217;</strong>
+for every agent class that is created.</p>
+<p>You can also store all parameters as dictionary, but that is not recommended:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simulation_parameters</span><span class="p">,</span> <span class="n">agent_parameters</span><span class="p">,</span> <span class="n">_pass_to_engine</span><span class="p">):</span>
+    <span class="n">abceagent</span><span class="o">.</span><span class="n">Agent</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">_pass_to_engine</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">simulation_parameters</span> <span class="o">=</span> <span class="n">simulation_parameters</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">agent_parameters</span> <span class="o">=</span> <span class="n">agent_parameters</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">simulation_parameters</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">simulation_parameters and agent_parameters</a><ul>
+<li><a class="reference internal" href="#simulation-parameters-csv">simulation_parameters.csv</a></li>
+<li><a class="reference internal" href="#agent-parameters-csv">agent_parameters.csv</a></li>
+<li><a class="reference internal" href="#accessing-parameters-in-agents">Accessing parameters in agents</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="simulation.html"
+                        title="previous chapter">The simulation in start.py</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="simulation_results.html"
+                        title="next chapter">Retrieval of the simulation results</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/parameters.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="simulation_results.html" title="Retrieval of the simulation results"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="simulation.html" title="The simulation in start.py"
+             >previous</a> |</li>
+        <li><a href="index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Davoud Taghawi-Nejad.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

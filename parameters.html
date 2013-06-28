@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>simulation_parameters and agent_parameters &mdash; ABCE 0.2alpha documentation</title>
+    <title>simulation_parameters and agent_parameters &mdash; ABCE 0.3.1alpha documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.2alpha',
+        VERSION:     '0.3.1alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,8 +25,8 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="ABCE 0.2alpha documentation" href="index.html" />
-    <link rel="next" title="Retrival of the simulation results" href="simulation_results.html" />
+    <link rel="top" title="ABCE 0.3.1alpha documentation" href="index.html" />
+    <link rel="next" title="Retrieval of the simulation results" href="simulation_results.html" />
     <link rel="prev" title="The simulation in start.py" href="simulation.html" /> 
   </head>
   <body>
@@ -40,12 +40,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="simulation_results.html" title="Retrival of the simulation results"
+          <a href="simulation_results.html" title="Retrieval of the simulation results"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="simulation.html" title="The simulation in start.py"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">ABCE 0.2alpha documentation</a> &raquo;</li> 
+        <li><a href="index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -56,16 +56,16 @@
             
   <div class="section" id="simulation-parameters-and-agent-parameters">
 <h1>simulation_parameters and agent_parameters<a class="headerlink" href="#simulation-parameters-and-agent-parameters" title="Permalink to this headline">¶</a></h1>
-<p>In the file <cite>simulation_parameters.csv</cite>, parameters can be specified
-that either govern the simulation or are accessable to all agents.
+<p>In the file <cite>simulation_parameters.csv</cite>, parameters
+that either govern the simulation or are accessible to all agents, can be specified.
 The file <cite>agent_parameters.csv</cite> is used to create agents from a file with
-:method:abce.build_agents_from_file. The agents created can access
+<a class="reference internal" href="simulation.html#abce.Simulation.build_agents_from_file" title="abce.Simulation.build_agents_from_file"><tt class="xref py py-meth docutils literal"><span class="pre">abce.Simulation.build_agents_from_file()</span></tt></a>. The agents created can access
 the agent_parameters for their agent group. For every simulation all agents are
-specified in the same file. Eventhough, they are build seperately.</p>
+specified in the same file. Even though, they are build separately.</p>
 <p>We will first expose the compulsory columns in simulation_parameters.csv
-and agent_parameters respectively and than show how agents can access
+and agent_parameters respectively and then show how agents can access
 the parameters.</p>
-<p>There are a few conventions conventions:
+<p>There are a few conventions:
 - The files must be tab separated
 - First row has column headings
 - All lower case
@@ -80,10 +80,14 @@ the parameters.</p>
 <dd>name of the simulation</dd>
 <dt>num_rounds:</dt>
 <dd>number of rounds of this simulation</dd>
-<dt>random_seed (optional):</dt>
-<dd>random seed 0 or missing chooses a random_seed at random</dd>
 <dt>trade_logging:</dt>
 <dd>Can be set to <cite>group</cite> (fast) or <cite>individual</cite> (slow, default) or <cite>off</cite>)</dd>
+</dl>
+</dd>
+<dt>optional fields:</dt>
+<dd><dl class="first last docutils">
+<dt>random_seed:</dt>
+<dd>random seed 0 or missing chooses a random_seed at random</dd>
 </dl>
 </dd>
 </dl>
@@ -91,24 +95,20 @@ the parameters.</p>
 </div>
 <div class="section" id="agent-parameters-csv">
 <h2>agent_parameters.csv<a class="headerlink" href="#agent-parameters-csv" title="Permalink to this headline">¶</a></h2>
-<p>This table it self does not create the agents. Rather :methode:abce.build_agents_from_file
+<p>This table it self does not create the agents. Rather <a class="reference internal" href="simulation.html#abce.Simulation.build_agents_from_file" title="abce.Simulation.build_agents_from_file"><tt class="xref py py-meth docutils literal"><span class="pre">abce.Simulation.build_agents_from_file()</span></tt></a>
 creates the agent. build_agents_from_file, searches for the line(s) with the agent_class,
-specified. It than creates the number of agents of this class, specified in the number
+specified. It then creates the number of agents of this class, specified in the number
 column.
 There can be several lines with the same agent class, in this case for each line the the number
-of agents are create. These agents get the <cite>agent_parameters</cite> specified in the particular line.</p>
+of agents are created. These agents get the <cite>agent_parameters</cite> specified in the particular line.</p>
 <blockquote>
 <div><dl class="docutils">
 <dt>compulsory fields:</dt>
 <dd><dl class="first last docutils">
 <dt>agent_class:</dt>
-<dd><blockquote class="first">
-<div>nome of the agent&#8217;s agent class.</div></blockquote>
-<dl class="last docutils">
+<dd>name of the agent&#8217;s agent class.</dd>
 <dt>number:</dt>
 <dd>number of agents for this class.</dd>
-</dl>
-</dd>
 </dl>
 </dd>
 </dl>
@@ -117,7 +117,7 @@ of agents are create. These agents get the <cite>agent_parameters</cite> specifi
 <div class="section" id="accessing-parameters-in-agents">
 <h2>Accessing parameters in agents<a class="headerlink" href="#accessing-parameters-in-agents" title="Permalink to this headline">¶</a></h2>
 <p>Agents can only access the parameters in the __init__ method.
-You can store parameter seperatly or store all of them:</p>
+You can store parameter separately or store all of them:</p>
 <p>storing single parametern:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Firm</span><span class="p">(</span><span class="n">abceagent</span><span class="o">.</span><span class="n">Agent</span><span class="p">,</span> <span class="n">abceagent</span><span class="o">.</span><span class="n">Firm</span><span class="p">):</span>
    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simulation_parameters</span><span class="p">,</span> <span class="n">agent_parameters</span><span class="p">,</span> <span class="n">_pass_to_engine</span><span class="p">):</span>
@@ -129,7 +129,7 @@ You can store parameter seperatly or store all of them:</p>
        <span class="bp">self</span><span class="o">.</span><span class="n">gravity</span> <span class="o">=</span> <span class="n">simulation_parameters</span><span class="p">[</span><span class="s">&#39;gravity&#39;</span><span class="p">]</span>
        <span class="c"># saves the simulation parameter gravity</span>
 
-       <span class="bp">self</span><span class="o">.</span><span class="n">num_households</span> <span class="o">=</span> <span class="n">world_parameters</span><span class="p">[</span><span class="s">&#39;num_household&#39;</span><span class="p">]</span>
+       <span class="bp">self</span><span class="o">.</span><span class="n">num_households</span> <span class="o">=</span> <span class="n">simulation_parameters</span><span class="p">[</span><span class="s">&#39;num_household&#39;</span><span class="p">]</span>
        <span class="c"># saves the auto generated number of agents of the type household</span>
 </pre></div>
 </div>
@@ -140,6 +140,7 @@ for every agent class that is created.</p>
     <span class="n">abceagent</span><span class="o">.</span><span class="n">Agent</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">_pass_to_engine</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">simulation_parameters</span> <span class="o">=</span> <span class="n">simulation_parameters</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">agent_parameters</span> <span class="o">=</span> <span class="n">agent_parameters</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">simulation_parameters</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -166,7 +167,7 @@ for every agent class that is created.</p>
                         title="previous chapter">The simulation in start.py</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="simulation_results.html"
-                        title="next chapter">Retrival of the simulation results</a></p>
+                        title="next chapter">Retrieval of the simulation results</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/parameters.txt"
@@ -199,12 +200,12 @@ for every agent class that is created.</p>
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="simulation_results.html" title="Retrival of the simulation results"
+          <a href="simulation_results.html" title="Retrieval of the simulation results"
              >next</a> |</li>
         <li class="right" >
           <a href="simulation.html" title="The simulation in start.py"
              >previous</a> |</li>
-        <li><a href="index.html">ABCE 0.2alpha documentation</a> &raquo;</li> 
+        <li><a href="index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

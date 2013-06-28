@@ -1,0 +1,312 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>household &mdash; ABCE 0.3.1alpha documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.3.1alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="ABCE 0.3.1alpha documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for household</h1><div class="highlight"><pre>
+<span class="c"># Copyright 2012 Davoud Taghawi-Nejad</span>
+<span class="c">#</span>
+<span class="c"># Module Author: Davoud Taghawi-Nejad</span>
+<span class="c">#</span>
+<span class="c"># ABCE is open-source software. If you are using ABCE for your research you are</span>
+<span class="c"># requested the quote the use of this software.</span>
+<span class="c">#</span>
+<span class="c"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not</span>
+<span class="c"># use this file except in compliance with the License and quotation of the</span>
+<span class="c"># author. You may obtain a copy of the License at</span>
+<span class="c">#       http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT</span>
+<span class="c"># WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the</span>
+<span class="c"># License for the specific language governing permissions and limitations under</span>
+<span class="c"># the License.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">The Household class extends the agent by giving him utility functions and the ability to consume goods.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
+<span class="kn">import</span> <span class="nn">compiler</span>
+<span class="kn">import</span> <span class="nn">pyparsing</span> <span class="kn">as</span> <span class="nn">pp</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">tools</span> <span class="kn">import</span> <span class="n">epsilon</span>
+<span class="n">save_err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="n">invalid</span><span class="o">=</span><span class="s">&#39;ignore&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Household"><a class="viewcode-back" href="../Household.html#household.Household">[docs]</a><span class="k">class</span> <span class="nc">Household</span><span class="p">:</span>
+<div class="viewcode-block" id="Household.utility_function"><a class="viewcode-back" href="../Household.html#household.Household.utility_function">[docs]</a>    <span class="k">def</span> <span class="nf">utility_function</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; the utility function should be created with:</span>
+<span class="sd">        set_cobb_douglas_utility_function,</span>
+<span class="sd">        set_utility_function or</span>
+<span class="sd">        set_utility_function_fast</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_utility_function</span>
+</div>
+<div class="viewcode-block" id="Household.consume_everything"><a class="viewcode-back" href="../Household.html#household.Household.consume_everything">[docs]</a>    <span class="k">def</span> <span class="nf">consume_everything</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; consumes everything that is in the utility function</span>
+<span class="sd">        returns utility according consumption</span>
+
+<span class="sd">        A utility_function, has to be set before see</span>
+<span class="sd">        py:meth:`~abceagent.Household.set_   utility_function`,</span>
+<span class="sd">        py:meth:`~abceagent.Household.set_cobb_douglas_utility_function`</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A the utility a number. To log it see example.</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            utility = self.consume_everything()</span>
+<span class="sd">            self.log(&#39;utility&#39;: {&#39;u&#39;: utility})</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">consume</span><span class="p">(</span><span class="nb">dict</span><span class="p">((</span><span class="n">inp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_haves</span><span class="p">[</span><span class="n">inp</span><span class="p">])</span> <span class="k">for</span> <span class="n">inp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_utility_function</span><span class="p">[</span><span class="s">&#39;input&#39;</span><span class="p">]))</span>
+</div>
+<div class="viewcode-block" id="Household.consume"><a class="viewcode-back" href="../Household.html#household.Household.consume">[docs]</a>    <span class="k">def</span> <span class="nf">consume</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_goods</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; consumes input_goods returns utility according to the agent&#39;s</span>
+<span class="sd">        consumption function</span>
+
+<span class="sd">        A utility_function, has to be set before see</span>
+<span class="sd">        py:meth:`~abceagent.Household.set_   utility_function`,</span>
+<span class="sd">        py:meth:`~abceagent.Household.set_cobb_douglas_utility_function` or</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            {&#39;input_good1&#39;: amount1, &#39;input_good2&#39;: amount2 ...}:</span>
+<span class="sd">                dictionary containing the amount of input good consumed.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            NotEnoughGoods: This is raised when the goods are insufficient.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A the utility a number. To log it see example.</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            self.consumption_set = {&#39;car&#39;: 1, &#39;ball&#39;: 2000, &#39;bike&#39;:  2}</span>
+<span class="sd">            self.consumption_set = {&#39;car&#39;: 0, &#39;ball&#39;: 2500, &#39;bike&#39;:  20}</span>
+<span class="sd">            try:</span>
+<span class="sd">                utility = self.consume(utility_function, self.consumption_set)</span>
+<span class="sd">            except NotEnoughGoods:</span>
+<span class="sd">                utility = self.consume(utility_function, self.smaller_consumption_set)</span>
+<span class="sd">            self.log(&#39;utility&#39;: {&#39;u&#39;: utility})</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">good</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_utility_function</span><span class="p">[</span><span class="s">&#39;input&#39;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_haves</span><span class="p">[</span><span class="n">good</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">input_goods</span><span class="p">[</span><span class="n">good</span><span class="p">]</span> <span class="o">-</span> <span class="n">epsilon</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">NotEnoughGoods</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">good</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_utility_function</span><span class="p">[</span><span class="s">&#39;input&#39;</span><span class="p">][</span><span class="n">good</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_haves</span><span class="p">[</span><span class="n">good</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">good</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_utility_function</span><span class="p">[</span><span class="s">&#39;input&#39;</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_haves</span><span class="p">[</span><span class="n">good</span><span class="p">]</span> <span class="o">-=</span> <span class="n">input_goods</span><span class="p">[</span><span class="n">good</span><span class="p">]</span>
+        <span class="n">goods_vector</span> <span class="o">=</span> <span class="n">input_goods</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">goods_vector</span><span class="p">[</span><span class="s">&#39;utility&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">exec</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_utility_function</span><span class="p">[</span><span class="s">&#39;code&#39;</span><span class="p">],</span> <span class="p">{},</span> <span class="n">goods_vector</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">goods_vector</span><span class="p">[</span><span class="s">&#39;utility&#39;</span><span class="p">]</span>
+</div>
+<div class="viewcode-block" id="Household.set_utility_function"><a class="viewcode-back" href="../Household.html#household.Household.set_utility_function">[docs]</a>    <span class="k">def</span> <span class="nf">set_utility_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">formula</span><span class="p">,</span> <span class="n">typ</span><span class="o">=</span><span class="s">&#39;from_formula&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; creates a utility function from formula</span>
+
+<span class="sd">        Utility_functions are than used as an argument in consume_with_utility,</span>
+<span class="sd">        predict_utility and predict_utility_and_consumption.</span>
+
+<span class="sd">        create_utility_function_fast is faster but more complicatedutility_function</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            &quot;formula&quot;: equation or set of equations that describe the</span>
+<span class="sd">            utility function. (string) needs to start with &#39;utility = ...&#39;</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A utility_function</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            formula = &#39;utility = ball + paint&#39;</span>
+<span class="sd">            self._utility_function = self.create_utility_function(formula)</span>
+<span class="sd">            self.consume_with_utility(self._utility_function, {&#39;ball&#39; : 1, &#39;paint&#39; : 2})</span>
+
+<span class="sd">        //exponential is ** not ^</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">parse_single_input</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">Suppress</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">Word</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">alphas</span> <span class="o">+</span> <span class="s">&quot;_&quot;</span><span class="p">,</span> <span class="n">pp</span><span class="o">.</span><span class="n">alphanums</span> <span class="o">+</span> <span class="s">&quot;_&quot;</span><span class="p">))</span> <span class="o">+</span> <span class="n">pp</span><span class="o">.</span><span class="n">Suppress</span><span class="p">(</span><span class="s">&#39;=&#39;</span><span class="p">)</span> \
+                <span class="o">+</span> <span class="n">pp</span><span class="o">.</span><span class="n">OneOrMore</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">Suppress</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">Optional</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">Word</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">nums</span> <span class="o">+</span> <span class="s">&#39;*/+-().[]{} &#39;</span><span class="p">)))</span>
+                <span class="o">+</span> <span class="n">pp</span><span class="o">.</span><span class="n">Word</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">alphas</span> <span class="o">+</span> <span class="s">&quot;_&quot;</span><span class="p">,</span> <span class="n">pp</span><span class="o">.</span><span class="n">alphanums</span> <span class="o">+</span> <span class="s">&quot;_&quot;</span><span class="p">))</span>
+        <span class="n">parse_input</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">delimitedList</span><span class="p">(</span><span class="n">parse_single_input</span><span class="p">,</span> <span class="s">&#39;;&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_utility_function</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_utility_function</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">typ</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_utility_function</span><span class="p">[</span><span class="s">&#39;formula&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">formula</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_utility_function</span><span class="p">[</span><span class="s">&#39;code&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">compiler</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="s">&#39;&lt;string&gt;&#39;</span><span class="p">,</span> <span class="s">&#39;exec&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_utility_function</span><span class="p">[</span><span class="s">&#39;input&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">parse_input</span><span class="o">.</span><span class="n">parseString</span><span class="p">(</span><span class="n">formula</span><span class="p">))</span>
+</div>
+<div class="viewcode-block" id="Household.set_utility_function_fast"><a class="viewcode-back" href="../Household.html#household.Household.set_utility_function_fast">[docs]</a>    <span class="k">def</span> <span class="nf">set_utility_function_fast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">formula</span><span class="p">,</span> <span class="n">input_goods</span><span class="p">,</span> <span class="n">typ</span><span class="o">=</span><span class="s">&#39;from_formula&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; creates a utility function from formula</span>
+
+<span class="sd">        Utility_functions are than used as an argument in consume_with_utility,</span>
+<span class="sd">        predict_utility and predict_utility_and_consumption.</span>
+
+<span class="sd">        create_utility_function_fast is faster but more complicated</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            &quot;formula&quot;: equation or set of equations that describe the</span>
+<span class="sd">            production process. (string) Several equation are seperated by a ;</span>
+<span class="sd">            [output]: list of all output goods (left hand sides of the equations)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A utility_function that can be used in produce etc.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            formula = &#39;utility = ball + paint&#39;</span>
+
+<span class="sd">            self._utility_function = self.create_utility_function(formula, [&#39;ball&#39;, &#39;paint&#39;])</span>
+<span class="sd">            self.consume_with_utility(self._utility_function, {&#39;ball&#39; : 1, &#39;paint&#39; : 2}</span>
+
+<span class="sd">        //exponential is ** not ^</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_utility_function</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_utility_function</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">typ</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_utility_function</span><span class="p">[</span><span class="s">&#39;formula&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">formula</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_utility_function</span><span class="p">[</span><span class="s">&#39;code&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">compiler</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="s">&#39;&lt;string&gt;&#39;</span><span class="p">,</span> <span class="s">&#39;exec&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_utility_function</span><span class="p">[</span><span class="s">&#39;input&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">input_goods</span>
+</div>
+<div class="viewcode-block" id="Household.set_cobb_douglas_utility_function"><a class="viewcode-back" href="../Household.html#household.Household.set_cobb_douglas_utility_function">[docs]</a>    <span class="k">def</span> <span class="nf">set_cobb_douglas_utility_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exponents</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; creates a Cobb-Douglas utility function</span>
+
+<span class="sd">        Utility_functions are than used as an argument in consume_with_utility,</span>
+<span class="sd">        predict_utility and predict_utility_and_consumption.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            {&#39;input1&#39;: exponent1, &#39;input2&#39;: exponent2 ...}: dictionary</span>
+<span class="sd">            containing good names &#39;input&#39; and correstponding exponents</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            A utility_function that can be used in consume_with_utility etc.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">        self._utility_function = self.create_cobb_douglas({&#39;bread&#39; : 10, &#39;milk&#39; : 1})</span>
+<span class="sd">        self.produce(self.plastic_utility_function, {&#39;bread&#39; : 20, &#39;milk&#39; : 1})</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">formula</span> <span class="o">=</span> <span class="s">&#39;utility=&#39;</span> <span class="o">+</span> <span class="p">(</span><span class="s">&#39;*&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s">&#39;**&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">input_good</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">input_quantity</span><span class="p">)])</span> <span class="k">for</span> <span class="n">input_good</span><span class="p">,</span> <span class="n">input_quantity</span> <span class="ow">in</span> <span class="n">exponents</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_utility_function</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_utility_function</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;cobb-douglas&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_utility_function</span><span class="p">[</span><span class="s">&#39;parameters&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">exponents</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_utility_function</span><span class="p">[</span><span class="s">&#39;formula&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">formula</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_utility_function</span><span class="p">[</span><span class="s">&#39;code&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">compiler</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="s">&#39;&lt;string&gt;&#39;</span><span class="p">,</span> <span class="s">&#39;exec&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_utility_function</span><span class="p">[</span><span class="s">&#39;input&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">exponents</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Household.predict_utility"><a class="viewcode-back" href="../Household.html#household.Household.predict_utility">[docs]</a>    <span class="k">def</span> <span class="nf">predict_utility</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_goods</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Predicts the utility of a vecor of input goods</span>
+
+<span class="sd">            Predicts the utility of consume_with_utility(utility_function, input_goods)</span>
+
+<span class="sd">        Args::</span>
+
+<span class="sd">            {&#39;input_good1&#39;: amount1, &#39;input_good2&#39;: amount2 ...}: dictionary</span>
+<span class="sd">            containing the amount of input good used for the production.</span>
+
+<span class="sd">        Returns::</span>
+
+<span class="sd">            utility: Number</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            print(A.predict_utility(self._utility_function, {&#39;ball&#39;: 2, &#39;paint&#39;: 1}))</span>
+
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">goods_vector</span> <span class="o">=</span> <span class="n">input_goods</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">goods_vector</span><span class="p">[</span><span class="s">&#39;utility&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">exec</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_utility_function</span><span class="p">[</span><span class="s">&#39;code&#39;</span><span class="p">],</span> <span class="p">{},</span> <span class="n">goods_vector</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">goods_vector</span><span class="p">[</span><span class="s">&#39;utility&#39;</span><span class="p">]</span>
+
+</div></div>
+<span class="k">def</span> <span class="nf">sort</span><span class="p">(</span><span class="n">objects</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s">&#39;price&#39;</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Sorts the object by the key</span>
+
+<span class="sd">    Args::</span>
+
+<span class="sd">     reverse=True for descending</span>
+
+<span class="sd">    Example::</span>
+
+<span class="sd">        quotes_by_price = sort(quotes, &#39;price&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">objects</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">objects</span><span class="p">:</span> <span class="n">objects</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="n">reverse</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li>
+          <li><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Davoud Taghawi-Nejad.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

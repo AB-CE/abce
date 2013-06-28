@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Download and Installation &mdash; ABCE 0.2alpha documentation</title>
+    <title>Download and Installation &mdash; ABCE 0.3.1alpha documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.2alpha',
+        VERSION:     '0.3.1alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,9 +25,9 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="ABCE 0.2alpha documentation" href="index.html" />
-    <link rel="next" title="Walk through" href="Walk_through.html" />
-    <link rel="prev" title="Welcome to ABCE’s documentation!" href="index.html" /> 
+    <link rel="top" title="ABCE 0.3.1alpha documentation" href="index.html" />
+    <link rel="next" title="Walk through / Tutorial" href="Walk_through.html" />
+    <link rel="prev" title="Introduction" href="introduction.html" /> 
   </head>
   <body>
     <div class="related">
@@ -40,12 +40,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Walk_through.html" title="Walk through"
+          <a href="Walk_through.html" title="Walk through / Tutorial"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="Welcome to ABCE’s documentation!"
+          <a href="introduction.html" title="Introduction"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">ABCE 0.2alpha documentation</a> &raquo;</li> 
+        <li><a href="index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -56,19 +56,75 @@
             
   <div class="section" id="download-and-installation">
 <h1>Download and Installation<a class="headerlink" href="#download-and-installation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="installation-of-stable-version-ubuntu">
+<h2>Installation of stable version Ubuntu<a class="headerlink" href="#installation-of-stable-version-ubuntu" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic">
+<li><p class="first">Download stable version form:  <a class="reference external" href="https://dl.dropboxusercontent.com/u/3655123/abce-0.3.tar.gz">https://dl.dropboxusercontent.com/u/3655123/abce-0.3.tar.gz</a></p>
+</li>
+<li><p class="first">If pip is not installed in terminal:</p>
+<div class="highlight-python"><pre>sudo apt-get install python-pip, python-scipy, python-numpy</pre>
+</div>
+</li>
+<li><p class="first">If R has not been installed automatically install it:</p>
+<p>Install R from www.CRAN.org, at least version 2.15</p>
+</li>
+<li><p class="first">In terminal:</p>
+<div class="highlight-python"><pre>sudo pip install abce-0.3.1.tar.gz</pre>
+</div>
+</li>
+<li><p class="first">Download templats and examples from: <a class="reference external" href="https://dl.dropboxusercontent.com/u/3655123/abce_templates-0.3.zip">https://dl.dropboxusercontent.com/u/3655123/abce_templates-0.3.zip</a></p>
+</li>
+<li><p class="first">unzip abce_templates-0.3.zip</p>
+</li>
+</ol>
+</div>
+<div class="section" id="installation-of-stable-version-windows">
+<h2>Installation of stable version Windows<a class="headerlink" href="#installation-of-stable-version-windows" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>Install Python2.7 (preferably 32bit)</li>
+<li>Next, set the system’s PATH variable to include directories</li>
+</ol>
+<blockquote>
+<div><p>that include Python components and packages we’ll add later. To do this:
+- Right-click Computer and select Properties.
+- In the dialog box, select Advanced  System Settings.
+- In the next dialog, select Environment Variables.
+- In the User Variables section, edit the PATH statement to include this:</p>
+<div class="highlight-python"><pre>C:\Python27;C:\Python27\Lib\site-packages\;C:\Python27\Scripts\;</pre>
+</div>
+</div></blockquote>
+<ol class="arabic simple" start="2">
+<li>Install Setuptools from <a class="reference external" href="http://pypi.python.org/pypi/setuptools#downloads">http://pypi.python.org/pypi/setuptools#downloads</a></li>
+<li>install pip:</li>
+</ol>
+<blockquote>
+<div>easy_install pip</div></blockquote>
+<ol class="arabic simple" start="4">
+<li>Install R form www.cran.org</li>
+<li>Download stable version form:  <a class="reference external" href="https://dl.dropboxusercontent.com/u/3655123/abce-0.3.tar.gz">https://dl.dropboxusercontent.com/u/3655123/abce-0.3.tar.gz</a></li>
+<li>install ABCE:</li>
+</ol>
+<blockquote>
+<div>pip install abce-0.3.1.tar.gz</div></blockquote>
+<p>In case of problems reinstall python
+<a class="reference external" href="http://www.anthonydebarros.com/2011/10/15/setting-up-python-in-windows-7/">http://www.anthonydebarros.com/2011/10/15/setting-up-python-in-windows-7/</a></p>
+<ol class="arabic simple" start="7">
+<li>Download templats and examples from: <a class="reference external" href="https://dl.dropboxusercontent.com/u/3655123/abce_templates-0.3.zip">https://dl.dropboxusercontent.com/u/3655123/abce_templates-0.3.zip</a></li>
+<li>unzip abce_templates-0.3.zip</li>
+</ol>
+</div>
+<div class="section" id="installation-of-development-version">
+<h2>Installation of development version<a class="headerlink" href="#installation-of-development-version" title="Permalink to this headline">¶</a></h2>
 <p>The installation has two parts. Installing the necessary software packages. Retrieving ABCE with git or as a zip file.</p>
 <blockquote>
-<div><p>In terminal (necessary software) <a class="footnote-reference" href="#id3" id="id1">[1]</a></p>
-<div class="highlight-python"><pre>sudo apt-get install python-pyparsing python-numpy python-scipy python-zmq r-base python-rpy2</pre>
-</div>
-<p>Alternative 1 as a zip (EASY):</p>
+<div><p>Alternative 1 as a zip (EASY):</p>
 <blockquote>
 <div><ol class="arabic simple">
 <li>download the zip file from: <a class="reference external" href="https://github.com/DavoudTaghawiNejad/abce">https://github.com/DavoudTaghawiNejad/abce</a></li>
 <li>extract zip file</li>
 </ol>
 </div></blockquote>
-<p>Alternative 2 via git <a class="footnote-reference" href="#id4" id="id2">[2]</a> in terminal (RECOMMENDED):</p>
+<p>Alternative 2 via git <a class="footnote-reference" href="#id3" id="id1">[2]</a> in terminal (RECOMMENDED):</p>
 <div class="highlight-python"><pre>[register with git and automatize a secure connection with your computer]
 sudo apt-get install git
 mkdir abce
@@ -77,20 +133,22 @@ git init
 git pull git@github.com:DavoudTaghawiNejad/abce.git</pre>
 </div>
 </div></blockquote>
-<p>Optional for development you can install sphinx and sphinx-apidoc.  sphinx-apidoc
-currently needs the newest version of sphinx, they system that created this documentation</p>
+<p>Optional for development you can install sphinx and sphinx-apidoc,
+the system that created this documentation.  sphinx-apidoc
+currently needs the newest version of sphinx.</p>
+<table class="docutils footnote" frame="void" id="id2" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[1]</td><td>possible you have to install sqlite3 and the according python bindings</td></tr>
+</tbody>
+</table>
 <table class="docutils footnote" frame="void" id="id3" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>possible you have to install sqlite3 and the according python bindings</td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id1">[2]</a></td><td>Git is a a version controll system. It is higly recommended to use it to make your development process more efficient and less error prone. <a class="reference external" href="http://gitimmersion.com/">http://gitimmersion.com/</a></td></tr>
 </tbody>
 </table>
-<table class="docutils footnote" frame="void" id="id4" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td>Git is a a version controll system. It is higly recommended to use it to make your development process more efficient and less error prone. <a class="reference external" href="http://gitimmersion.com/">http://gitimmersion.com/</a></td></tr>
-</tbody>
-</table>
+</div>
 </div>
 
 
@@ -99,12 +157,22 @@ currently needs the newest version of sphinx, they system that created this docu
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Download and Installation</a><ul>
+<li><a class="reference internal" href="#installation-of-stable-version-ubuntu">Installation of stable version Ubuntu</a></li>
+<li><a class="reference internal" href="#installation-of-stable-version-windows">Installation of stable version Windows</a></li>
+<li><a class="reference internal" href="#installation-of-development-version">Installation of development version</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
-  <p class="topless"><a href="index.html"
-                        title="previous chapter">Welcome to ABCE&#8217;s documentation!</a></p>
+  <p class="topless"><a href="introduction.html"
+                        title="previous chapter">Introduction</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="Walk_through.html"
-                        title="next chapter">Walk through</a></p>
+                        title="next chapter">Walk through / Tutorial</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/installation.txt"
@@ -137,12 +205,12 @@ currently needs the newest version of sphinx, they system that created this docu
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Walk_through.html" title="Walk through"
+          <a href="Walk_through.html" title="Walk through / Tutorial"
              >next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="Welcome to ABCE’s documentation!"
+          <a href="introduction.html" title="Introduction"
              >previous</a> |</li>
-        <li><a href="index.html">ABCE 0.2alpha documentation</a> &raquo;</li> 
+        <li><a href="index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

@@ -1,0 +1,283 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>messaging &mdash; ABCE 0.3.1alpha documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.3.1alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="ABCE 0.3.1alpha documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for messaging</h1><div class="highlight"><pre>
+<span class="c"># Copyright 2012 Davoud Taghawi-Nejad</span>
+<span class="c">#</span>
+<span class="c"># Module Author: Davoud Taghawi-Nejad</span>
+<span class="c">#</span>
+<span class="c"># ABCE is open-source software. If you are using ABCE for your research you are</span>
+<span class="c"># requested the quote the use of this software.</span>
+<span class="c">#</span>
+<span class="c"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not</span>
+<span class="c"># use this file except in compliance with the License and quotation of the</span>
+<span class="c"># author. You may obtain a copy of the License at</span>
+<span class="c">#       http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT</span>
+<span class="c"># WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the</span>
+<span class="c"># License for the specific language governing permissions and limitations under</span>
+<span class="c"># the License.</span>
+<span class="sd">&quot;&quot;&quot; This is the agent&#39;s facility to send and receive messages. Messages can</span>
+<span class="sd">either be sent to an individual with :meth:`messaging.Messaging.message` or to a group with</span>
+<span class="sd">:meth:`messaging.Messaging.message_to_group`. The receiving agent can either get all messages</span>
+<span class="sd">with  :meth:`messaging.Messaging.get_messages_all` or messages with a specific topic with</span>
+<span class="sd">:meth:`messaging.Messaging.get_messages`.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
+<span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">shuffle</span>
+
+
+<span class="k">class</span> <span class="nc">Message</span><span class="p">():</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span> <span class="o">=</span> <span class="n">msg</span>
+
+    <span class="k">def</span> <span class="nf">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__float__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__int__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Messaging"><a class="viewcode-back" href="../Messaging.html#messaging.Messaging">[docs]</a><span class="k">class</span> <span class="nc">Messaging</span><span class="p">:</span>
+<div class="viewcode-block" id="Messaging.message"><a class="viewcode-back" href="../Messaging.html#messaging.Messaging.message">[docs]</a>    <span class="k">def</span> <span class="nf">message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">receiver_group</span><span class="p">,</span> <span class="n">receiver_idn</span><span class="p">,</span> <span class="n">topic</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; sends a message to agent. Agents receive it</span>
+<span class="sd">        at the beginning of next round with :meth:`~abceagent.Messaging.get_messages` or</span>
+<span class="sd">        :meth:`~abceagent.Messaging.get_messages_all`.</span>
+
+<span class="sd">        See:</span>
+<span class="sd">            message_to_group for messages to multiple agents</span>
+
+<span class="sd">        Args::</span>
+
+<span class="sd">         receiver_group: agent, agent_group or &#39;all&#39;</span>
+<span class="sd">         topic: string, with which this message can be received</span>
+<span class="sd">         content: string, dictionary or class, that is send.</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            ... household_01 ...</span>
+<span class="sd">            self.message(&#39;firm&#39;, 01, &#39;quote_sell&#39;, {&#39;good&#39;:&#39;BRD&#39;, &#39;quantity&#39;: 5})</span>
+
+<span class="sd">            ... firm_01 - one subround later ...</span>
+<span class="sd">            requests = self.get_messages(&#39;quote_sell&#39;)</span>
+<span class="sd">            for req in requests:</span>
+<span class="sd">                self.sell(req.sender, req.good, reg.quantity, self.price[req.good])</span>
+
+<span class="sd">        Example2::</span>
+
+<span class="sd">         self.message(&#39;firm&#39;, 01, &#39;m&#39;, &quot;hello my message&quot;)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">idn</span><span class="p">,</span> <span class="n">receiver_group</span><span class="p">,</span> <span class="n">receiver_idn</span><span class="p">,</span> <span class="n">topic</span><span class="p">,</span> <span class="n">content</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="n">receiver_group</span><span class="p">,</span> <span class="n">receiver_idn</span><span class="p">,</span> <span class="n">topic</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Messaging.message_to_group"><a class="viewcode-back" href="../Messaging.html#messaging.Messaging.message_to_group">[docs]</a>    <span class="k">def</span> <span class="nf">message_to_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">receiver_group</span><span class="p">,</span> <span class="n">topic</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; sends a message to agent, agent_group or &#39;all&#39;. Agents receive it</span>
+<span class="sd">        at the beginning of next round with :meth:`~abceagent.Messaging.get_messages` or</span>
+<span class="sd">        :meth:`~abceagent.Messaging.get_messages_all`.</span>
+
+<span class="sd">        Args::</span>
+
+<span class="sd">         receiver_group: agent, agent_group or &#39;all&#39;</span>
+<span class="sd">         topic: string, with which this message can be received</span>
+<span class="sd">         content: string, dictionary or class, that is send.</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            ... household_01 ...</span>
+<span class="sd">            self.message(&#39;firm_01&#39;, &#39;quote_sell&#39;, {&#39;good&#39;:&#39;BRD&#39;, &#39;quantity&#39;: 5})</span>
+
+<span class="sd">            ... firm_01 - one subround later ...</span>
+<span class="sd">            requests = self.get_messages(&#39;quote_sell&#39;)</span>
+<span class="sd">            for req in requests:</span>
+<span class="sd">                self.sell(req.sender, req.good, reg.quantity, self.price[req.good])</span>
+
+<span class="sd">        Example2::</span>
+
+<span class="sd">         self.message(&#39;firm_01&#39;, &#39;m&#39;, &quot;hello my message&quot;)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">idn</span><span class="p">,</span> <span class="n">receiver_group</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="n">topic</span><span class="p">,</span> <span class="n">content</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_send_to_group</span><span class="p">(</span><span class="n">receiver_group</span><span class="p">,</span> <span class="n">topic</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="Messaging.get_messages"><a class="viewcode-back" href="../Messaging.html#messaging.Messaging.get_messages">[docs]</a>    <span class="k">def</span> <span class="nf">get_messages</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">topic</span><span class="o">=</span><span class="s">&#39;m&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; self.messages() returns all new messages send with :meth:`~abceagent.Messaging.message`</span>
+<span class="sd">        (topic=&#39;m&#39;). The order is randomized. self.messages(topic) returns all</span>
+<span class="sd">        messages with a topic.</span>
+
+<span class="sd">        A message is a string with the message. You can also retrieve the sender</span>
+<span class="sd">        by `message.sender_group` and `message.sender_idn` and view the topic with</span>
+<span class="sd">        &#39;message.topic&#39;. (see example)</span>
+
+<span class="sd">        If you are sending a float or an integer you need to access the message</span>
+<span class="sd">        content with `message.content` instead of only `message`.</span>
+
+<span class="sd">        ! if you want to recieve a **float** or an **int**, you must msg.content</span>
+
+<span class="sd">        Returns a message object:</span>
+<span class="sd">            msg.content:</span>
+<span class="sd">                returns the message content string, int, float, ...</span>
+<span class="sd">            msg:</span>
+<span class="sd">                returns also the message content, but only as a string</span>
+<span class="sd">            sender_group:</span>
+<span class="sd">                returns the group name of the sender</span>
+<span class="sd">            sender_idn:</span>
+<span class="sd">                returns the id of the sender</span>
+<span class="sd">            topic:</span>
+<span class="sd">                returns the topic</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">         ... agent_01 ...</span>
+<span class="sd">         self.messages(&#39;firm_01&#39;, &#39;potential_buyers&#39;, &#39;hello message&#39;)</span>
+
+<span class="sd">         ... firm_01 - one subround later ...</span>
+<span class="sd">         potential_buyers = get_messages(&#39;potential_buyers&#39;)</span>
+<span class="sd">         for msg in potential_buyers:</span>
+<span class="sd">            print(&#39;message: &#39;, msg)</span>
+<span class="sd">            print(&#39;message: &#39;, msg.content)</span>
+<span class="sd">            print(&#39;group name: &#39;, msg.sender_group)</span>
+<span class="sd">            print(&#39;sender id: &#39;, msg.sender_idn)</span>
+<span class="sd">            print(&#39;topic: &#39;, msg.topic)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">shuffle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_msgs</span><span class="p">[</span><span class="n">topic</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_msgs</span><span class="p">[</span><span class="n">topic</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_msgs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">topic</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Messaging.get_messages_all"><a class="viewcode-back" href="../Messaging.html#messaging.Messaging.get_messages_all">[docs]</a>    <span class="k">def</span> <span class="nf">get_messages_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns all messages irregardless of the topic, in a dictionary by topic</span>
+
+<span class="sd">        A message is a string with the message. You can also retrieve the sender</span>
+<span class="sd">        by `message.sender_group` and `message.sender_idn` and view the topic with</span>
+<span class="sd">        &#39;message.topic&#39;. (see example)</span>
+
+<span class="sd">        If you are sending a float or an integer you need to access the message</span>
+<span class="sd">        content with `message.content` instead of only `message`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_msgs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_msgs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">return</span> <span class="n">ret</span>
+</div>
+<div class="viewcode-block" id="Messaging.get_messages_biased"><a class="viewcode-back" href="../Messaging.html#messaging.Messaging.get_messages_biased">[docs]</a>    <span class="k">def</span> <span class="nf">get_messages_biased</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">topic</span><span class="o">=</span><span class="s">&#39;m&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; like self.messages(topic), but the order is not properly randomized, but</span>
+<span class="sd">        it is faster. use whenever you are sure that the way you process messages</span>
+<span class="sd">        is not affected by the order</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_msgs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">topic</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+
+</div></div>
+<span class="k">def</span> <span class="nf">message</span><span class="p">(</span><span class="n">sender_group</span><span class="p">,</span> <span class="n">sender_idn</span><span class="p">,</span> <span class="n">receiver_group</span><span class="p">,</span> <span class="n">receiver_idn</span><span class="p">,</span> <span class="n">topic</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">msg</span><span class="p">[</span><span class="s">&#39;sender_group&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sender_group</span>
+    <span class="n">msg</span><span class="p">[</span><span class="s">&#39;sender_idn&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sender_idn</span>
+    <span class="n">msg</span><span class="p">[</span><span class="s">&#39;receiver_group&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">receiver_group</span>
+    <span class="n">msg</span><span class="p">[</span><span class="s">&#39;receiver_idn&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">receiver_idn</span>
+    <span class="n">msg</span><span class="p">[</span><span class="s">&#39;topic&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">topic</span>
+    <span class="n">msg</span><span class="p">[</span><span class="s">&#39;content&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">content</span>
+    <span class="k">return</span> <span class="n">msg</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li>
+          <li><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Davoud Taghawi-Nejad.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

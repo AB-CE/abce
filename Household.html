@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Household and consumption &mdash; ABCE 0.2alpha documentation</title>
+    <title>Household and consumption &mdash; ABCE 0.3.1alpha documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.2alpha',
+        VERSION:     '0.3.1alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="ABCE 0.2alpha documentation" href="index.html" />
+    <link rel="top" title="ABCE 0.3.1alpha documentation" href="index.html" />
     <link rel="next" title="Messaging" href="Messaging.html" />
     <link rel="prev" title="Firm and production" href="Firm.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="Firm.html" title="Firm and production"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">ABCE 0.2alpha documentation</a> &raquo;</li> 
+        <li><a href="index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -54,14 +54,15 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="household-and-consumption">
-<h1>Household and consumption<a class="headerlink" href="#household-and-consumption" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-household">
+<span id="household-and-consumption"></span><h1>Household and consumption<a class="headerlink" href="#module-household" title="Permalink to this headline">¶</a></h1>
+<p>The Household class extends the agent by giving him utility functions and the ability to consume goods.</p>
 <dl class="class">
-<dt id="abceagent.Household">
-<em class="property">class </em><tt class="descclassname">abceagent.</tt><tt class="descname">Household</tt><a class="reference internal" href="_modules/abceagent.html#Household"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.Household" title="Permalink to this definition">¶</a></dt>
+<dt id="abce.Household">
+<em class="property">class </em><tt class="descclassname">abce.</tt><tt class="descname">Household</tt><a class="headerlink" href="#abce.Household" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="method">
-<dt id="abceagent.Household.consume">
-<tt class="descname">consume</tt><big>(</big><em>input_goods</em><big>)</big><a class="reference internal" href="_modules/abceagent.html#Household.consume"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.Household.consume" title="Permalink to this definition">¶</a></dt>
+<dt id="abce.Household.consume">
+<tt class="descname">consume</tt><big>(</big><em>input_goods</em><big>)</big><a class="headerlink" href="#abce.Household.consume" title="Permalink to this definition">¶</a></dt>
 <dd><p>consumes input_goods returns utility according to the agent&#8217;s
 consumption function</p>
 <p>A utility_function, has to be set before see
@@ -91,8 +92,8 @@ self.log('utility': {'u': utility})</pre>
 </dd></dl>
 
 <dl class="method">
-<dt id="abceagent.Household.consume_everything">
-<tt class="descname">consume_everything</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/abceagent.html#Household.consume_everything"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.Household.consume_everything" title="Permalink to this definition">¶</a></dt>
+<dt id="abce.Household.consume_everything">
+<tt class="descname">consume_everything</tt><big>(</big><big>)</big><a class="headerlink" href="#abce.Household.consume_everything" title="Permalink to this definition">¶</a></dt>
 <dd><p>consumes everything that is in the utility function
 returns utility according consumption</p>
 <p>A utility_function, has to be set before see
@@ -109,8 +110,8 @@ self.log('utility': {'u': utility})</pre>
 </dd></dl>
 
 <dl class="method">
-<dt id="abceagent.Household.predict_utility">
-<tt class="descname">predict_utility</tt><big>(</big><em>input_goods</em><big>)</big><a class="reference internal" href="_modules/abceagent.html#Household.predict_utility"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.Household.predict_utility" title="Permalink to this definition">¶</a></dt>
+<dt id="abce.Household.predict_utility">
+<tt class="descname">predict_utility</tt><big>(</big><em>input_goods</em><big>)</big><a class="headerlink" href="#abce.Household.predict_utility" title="Permalink to this definition">¶</a></dt>
 <dd><p>Predicts the utility of a vecor of input goods</p>
 <blockquote>
 <div>Predicts the utility of consume_with_utility(utility_function, input_goods)</div></blockquote>
@@ -128,8 +129,8 @@ containing the amount of input good used for the production.</pre>
 </dd></dl>
 
 <dl class="method">
-<dt id="abceagent.Household.set_cobb_douglas_utility_function">
-<tt class="descname">set_cobb_douglas_utility_function</tt><big>(</big><em>exponents</em><big>)</big><a class="reference internal" href="_modules/abceagent.html#Household.set_cobb_douglas_utility_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.Household.set_cobb_douglas_utility_function" title="Permalink to this definition">¶</a></dt>
+<dt id="abce.Household.set_cobb_douglas_utility_function">
+<tt class="descname">set_cobb_douglas_utility_function</tt><big>(</big><em>exponents</em><big>)</big><a class="headerlink" href="#abce.Household.set_cobb_douglas_utility_function" title="Permalink to this definition">¶</a></dt>
 <dd><p>creates a Cobb-Douglas utility function</p>
 <p>Utility_functions are than used as an argument in consume_with_utility,
 predict_utility and predict_utility_and_consumption.</p>
@@ -146,12 +147,12 @@ self.produce(self.plastic_utility_function, {&#8216;bread&#8217; : 20, &#8216;mi
 </dd></dl>
 
 <dl class="method">
-<dt id="abceagent.Household.set_utility_function">
-<tt class="descname">set_utility_function</tt><big>(</big><em>formula</em>, <em>typ='from_formula'</em><big>)</big><a class="reference internal" href="_modules/abceagent.html#Household.set_utility_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.Household.set_utility_function" title="Permalink to this definition">¶</a></dt>
+<dt id="abce.Household.set_utility_function">
+<tt class="descname">set_utility_function</tt><big>(</big><em>formula</em>, <em>typ='from_formula'</em><big>)</big><a class="headerlink" href="#abce.Household.set_utility_function" title="Permalink to this definition">¶</a></dt>
 <dd><p>creates a utility function from formula</p>
-<p>Utility_functions are than used as an argument in consume_with_utility,
+<p>Utility_functions are then used as an argument in consume_with_utility,
 predict_utility and predict_utility_and_consumption.</p>
-<p>create_utility_function_fast is faster but more complicatedutility_function</p>
+<p>create_utility_function_fast is faster but more complicated utility_function</p>
 <dl class="docutils">
 <dt>Args:</dt>
 <dd>&#8220;formula&#8221;: equation or set of equations that describe the
@@ -167,16 +168,16 @@ self.consume_with_utility(self._utility_function, {&#8216;ball&#8217; : 1, &#821
 </dd></dl>
 
 <dl class="method">
-<dt id="abceagent.Household.set_utility_function_fast">
-<tt class="descname">set_utility_function_fast</tt><big>(</big><em>formula</em>, <em>input_goods</em>, <em>typ='from_formula'</em><big>)</big><a class="reference internal" href="_modules/abceagent.html#Household.set_utility_function_fast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.Household.set_utility_function_fast" title="Permalink to this definition">¶</a></dt>
+<dt id="abce.Household.set_utility_function_fast">
+<tt class="descname">set_utility_function_fast</tt><big>(</big><em>formula</em>, <em>input_goods</em>, <em>typ='from_formula'</em><big>)</big><a class="headerlink" href="#abce.Household.set_utility_function_fast" title="Permalink to this definition">¶</a></dt>
 <dd><p>creates a utility function from formula</p>
-<p>Utility_functions are than used as an argument in consume_with_utility,
+<p>Utility_functions are then used as an argument in consume_with_utility,
 predict_utility and predict_utility_and_consumption.</p>
 <p>create_utility_function_fast is faster but more complicated</p>
 <dl class="docutils">
 <dt>Args:</dt>
 <dd>&#8220;formula&#8221;: equation or set of equations that describe the
-production process. (string) Several equation are seperated by a ;
+production process. (string) Several equation are separated by a ;
 [output]: list of all output goods (left hand sides of the equations)</dd>
 <dt>Returns:</dt>
 <dd>A utility_function that can be used in produce etc.</dd>
@@ -190,12 +191,12 @@ self.consume_with_utility(self._utility_function, {&#8216;ball&#8217; : 1, &#821
 </dd></dl>
 
 <dl class="method">
-<dt id="abceagent.Household.utility_function">
-<tt class="descname">utility_function</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/abceagent.html#Household.utility_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.Household.utility_function" title="Permalink to this definition">¶</a></dt>
+<dt id="abce.Household.utility_function">
+<tt class="descname">utility_function</tt><big>(</big><big>)</big><a class="headerlink" href="#abce.Household.utility_function" title="Permalink to this definition">¶</a></dt>
 <dd><p>the utility function should be created with:
 set_cobb_douglas_utility_function,
-create_utility_function or
-create_utility_function_fast</p>
+set_utility_function or
+set_utility_function_fast</p>
 </dd></dl>
 
 </dd></dl>
@@ -251,7 +252,7 @@ create_utility_function_fast</p>
         <li class="right" >
           <a href="Firm.html" title="Firm and production"
              >previous</a> |</li>
-        <li><a href="index.html">ABCE 0.2alpha documentation</a> &raquo;</li> 
+        <li><a href="index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

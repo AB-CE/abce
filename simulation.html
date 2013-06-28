@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>The simulation in start.py &mdash; ABCE 0.2alpha documentation</title>
+    <title>The simulation in start.py &mdash; ABCE 0.3.1alpha documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.2alpha',
+        VERSION:     '0.3.1alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="ABCE 0.2alpha documentation" href="index.html" />
+    <link rel="top" title="ABCE 0.3.1alpha documentation" href="index.html" />
     <link rel="next" title="simulation_parameters and agent_parameters" href="parameters.html" />
     <link rel="prev" title="FirmMultiTechnologies" href="FirmMultiTechnologies.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="FirmMultiTechnologies.html" title="FirmMultiTechnologies"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">ABCE 0.2alpha documentation</a> &raquo;</li> 
+        <li><a href="index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -56,15 +56,12 @@
             
   <div class="section" id="module-abce">
 <span id="the-simulation-in-start-py"></span><h1>The simulation in start.py<a class="headerlink" href="#module-abce" title="Permalink to this headline">¶</a></h1>
-<p>The best way to start creating a simulation is by copying the start.py file and other
-files from &#8216;abce/template&#8217;. Than you have to change the <cite>sys.path.append(&#8216;../abce/lib&#8217;)</cite>
-path so that it leads to the folder in your system.</p>
-<p>To see how to create a simulation read <a class="reference internal" href="Walk_through.html"><em>Walk through</em></a>. In this module you
-will find the explenation for the command.</p>
+<p>The best way to start creating a simulation is by copying the start.py file
+and other files from &#8216;abce/template&#8217;.</p>
+<p>To see how to create a simulation read <a class="reference internal" href="Walk_through.html"><em>Walk through / Tutorial</em></a>. In this module you
+will find the explanation for the command.</p>
 <p>This is a minimal template for a start.py:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>  <span class="c"># makes / division work correct in python !</span>
-<span class="kn">import</span> <span class="nn">sys</span>
-<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;../abce/lib&#39;</span><span class="p">)</span>  <span class="c"># &lt;--- ADJUST</span>
 <span class="kn">from</span> <span class="nn">agent</span> <span class="kn">import</span> <span class="n">Agent</span>
 <span class="kn">from</span> <span class="nn">abce</span> <span class="kn">import</span> <span class="o">*</span>
 
@@ -86,7 +83,7 @@ will find the explenation for the command.</p>
 <em class="property">class </em><tt class="descclassname">abce.</tt><tt class="descname">Simulation</tt><big>(</big><em>simulation_parameters</em><big>)</big><a class="reference internal" href="_modules/abce.html#Simulation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Simulation" title="Permalink to this definition">¶</a></dt>
 <dd><p>This class in which the simulation is run. It takes
 the simulation_parameters to set up the simulation. Actions and agents have to be
-added. databases and resource declarations can be added. Than run runs
+added. databases and resource declarations can be added. Then runs
 the simulation.</p>
 <p>Usually the parameters are specified in a tab separated csv file. The first
 line are column headers.</p>
@@ -145,8 +142,8 @@ w.add_action_list(action_list)</pre>
 </dd></dl>
 
 <dl class="method">
-<dt id="abce.Simulation.add_action_list_from_table">
-<tt class="descname">add_action_list_from_table</tt><big>(</big><em>parameter</em><big>)</big><a class="reference internal" href="_modules/abce.html#Simulation.add_action_list_from_table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Simulation.add_action_list_from_table" title="Permalink to this definition">¶</a></dt>
+<dt id="abce.Simulation.add_action_list_from_file">
+<tt class="descname">add_action_list_from_file</tt><big>(</big><em>parameter</em><big>)</big><a class="reference internal" href="_modules/abce.html#Simulation.add_action_list_from_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Simulation.add_action_list_from_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>The action list can also be declared in the simulation_parameters.csv
 file. Which allows you to run a batch of simulations with different
 orders. In simulation_parameters.csv there must be a column with which
@@ -186,7 +183,7 @@ contains the a declaration of the action lists:</p>
 </tbody>
 </table>
 <p>The command:</p>
-<div class="highlight-python"><pre>self.add_action_list_from_table('parameters['action_list'])</pre>
+<div class="highlight-python"><pre>self.add_action_list_from_file('parameters['action_list'])</pre>
 </div>
 <p>Args:</p>
 <div class="highlight-python"><pre>parameter
@@ -230,7 +227,7 @@ simulation_parameters.csv. Alternatively you can also specify number = 1.s</p>
 <div class="highlight-python"><pre>AgentClass: is the name of the AgentClass that you imported
 number (optional): number of agents to be created. or the colum name
 of the row in simulation_parameters.csv that contains this number. If not
-specified the colum name is assumed to be 'num_' + agent_name
+specified the column name is assumed to be 'num_' + agent_name
 (all lowercase). For example num_firm, if the class is called
 Firm or name = Firm.
 [group_name (optional): to give the group a different name than the
@@ -273,11 +270,11 @@ access in own_parameters the __init__ function of the agent.</p>
 a column header name. A name can be a goup are and individal (goup_id
 e.G. firm_01) it can also be &#8216;all&#8217; for all agents.
 Every round, the agents self.aesof parameters get updated, if a row with
-the correstponding round and agent name exists.</p>
+the corresponding round and agent name exists.</p>
 <p>Therefore an agent can access the parameters <cite>self.aesof[column_name]</cite> for
 the current round. (or the precedent one when there was no update)
 parameter is set. You can use it in your source code. It is persistent
-until the next round for which a correstponding row exists.</p>
+until the next round for which a corresponding row exists.</p>
 <dl class="docutils">
 <dt>You can alse put commands or call methods in the excel file. For example:</dt>
 <dd><cite>self.aesof_exec(column_name)</cite>.</dd>
@@ -285,9 +282,9 @@ until the next round for which a correstponding row exists.</p>
 <p>Alternatively you can declare a variable according to a
 function: <cite>willingness_to_pay = self.aesof_eval(column_name)</cite>.</p>
 <p>There is a big difference between <cite>self.aesof_exec</cite> and <cite>self.aesof_eval</cite>.
-exec is only executed in rounds that have correstponding rows in aesof.csv.
+exec is only executed in rounds that have corresponding rows in aesof.csv.
 <cite>self.aesof_eval</cite> is persistent every round the expression of the row
-correstponding to the current round round or the last declared round is
+corresponding to the current round round or the last declared round is
 executed.</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -302,9 +299,9 @@ executed.</p>
 <dl class="method">
 <dt id="abce.Simulation.declare_perishable">
 <tt class="descname">declare_perishable</tt><big>(</big><em>good</em>, <em>command='perish_at_the_round_end'</em><big>)</big><a class="reference internal" href="_modules/abce.html#Simulation.declare_perishable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Simulation.declare_perishable" title="Permalink to this definition">¶</a></dt>
-<dd><p>This good only lasts one round and than disappers. For example
-labor, if the labor is not used today todays labor is lost.
-In combination with resoure this is useful to model labor or capital.</p>
+<dd><p>This good only lasts one round and then disappears. For example
+labor, if the labor is not used today today&#8217;s labor is lost.
+In combination with resource this is useful to model labor or capital.</p>
 <p>In the example below a worker has an endowment of labor and capital.
 Every round he can sell his labor service and rent his capital. If
 he does not the labor service for this round and the rent is lost.</p>
@@ -338,7 +335,7 @@ this to a group could have small speed gains.</p>
 <dl class="method">
 <dt id="abce.Simulation.panel_data">
 <tt class="descname">panel_data</tt><big>(</big><em>group</em>, <em>variables='goods'</em>, <em>typ='FLOAT'</em>, <em>command='round_end'</em><big>)</big><a class="reference internal" href="_modules/abce.html#Simulation.panel_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Simulation.panel_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>writes variables of a group of agents into the database, by default
+<dd><p>Ponel_data writes variables of a group of agents into the database, by default
 the db write is at the end of the round. You can also specify a command
 and insert the command you choose in the action_list.
 If you choose a custom command, you can declare a method that
@@ -349,14 +346,15 @@ same time.</p>
 <dl class="docutils">
 <dt>Args:</dt>
 <dd><dl class="first last docutils">
-<dt>agentgroup:</dt>
+<dt>group:</dt>
 <dd>can be either a group or &#8216;all&#8217; for all agents</dd>
-<dt>variables:</dt>
+<dt>variables (optional):</dt>
 <dd>default=&#8217;goods&#8217; monitors all the goods the agent owns
 you can insert any variable your agent possesses. For
 self.knows_latin you insert &#8216;knows_latin&#8217;. If your agent
 has self.technology you can use &#8216;technology[&#8216;formula&#8217;]&#8217;
-(typ=&#8217;CHAR(50)&#8217;.</dd>
+In this case you must set the type to CHAR(50) with the
+typ=&#8217;CHAR(50)&#8217; parameter.</dd>
 <dt>typ:</dt>
 <dd>the type of the sql variable (FLOAT, INT, CHAR(length))
 command</dd>
@@ -368,7 +366,7 @@ command</dd>
 
 or
 
-w.panel_data(agents_list=[agent_name('firm', 5), agent_name('household', 10)])</pre>
+w.panel_data(group=firm)</pre>
 </div>
 <p>Optional in the agent:</p>
 <div class="highlight-python"><pre>class Firm(AgentEngine):
@@ -511,7 +509,7 @@ the corresponding parameter in simulation_parameters.csv</pre>
         <li class="right" >
           <a href="FirmMultiTechnologies.html" title="FirmMultiTechnologies"
              >previous</a> |</li>
-        <li><a href="index.html">ABCE 0.2alpha documentation</a> &raquo;</li> 
+        <li><a href="index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

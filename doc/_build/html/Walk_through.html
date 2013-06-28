@@ -1,0 +1,517 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Walk through / Tutorial &mdash; ABCE 0.3.1alpha documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.3.1alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="ABCE 0.3.1alpha documentation" href="index.html" />
+    <link rel="next" title="Examples" href="examples.html" />
+    <link rel="prev" title="Download and Installation" href="installation.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="examples.html" title="Examples"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="installation.html" title="Download and Installation"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="walk-through-tutorial">
+<h1>Walk through / Tutorial<a class="headerlink" href="#walk-through-tutorial" title="Permalink to this headline">¶</a></h1>
+<p>This tutorial is a step by step guide to create an agent-based model with ABCE.
+In the following two text boxes, the two concepts that make ABCE special are
+explained: The explicit modeling of tradeable goods and the optional concept
+of a physically closed economy.</p>
+<div class="sidebar">
+<p class="first sidebar-title">Objects the other ontological object of agent-based models.</p>
+<dl class="last docutils">
+<dt>Objects have a special stance in agent-based modeling:</dt>
+<dd><ul class="first simple">
+<li>objects can be recovered (resources)</li>
+<li>exchanged (trade)</li>
+<li>transformed (production)</li>
+<li>consumed (transformed :-))</li>
+<li>destroyed (not really) and time depreciated</li>
+</ul>
+<p class="last">ABCE, takes care of trade, production / transformation and consumption
+of goods automatically. Good categories can also be made to perish or regrow.</p>
+</dd>
+<dt>Services or labor</dt>
+<dd>We can model services and labor as goods that perish
+and that are replenished every round. This would amount to a worker that can
+sell one unit of labor every round, that disappears if not used.</dd>
+<dt>Closed economy</dt>
+<dd><p class="first">When we impose that goods can only be transformed. The economy is physically
+closed (the economy is stock and flow consistent). When the markets are in a
+complete network our economy is complete. Think &#8220;general&#8221; in equilibrium
+economics.</p>
+<p class="last">Caveats: If agents horde without taking their stock into account it&#8217;s
+like destruction.</p>
+</dd>
+</dl>
+</div>
+<p>With this basic understanding you can now start writing your own model.</p>
+<p>To create a model you basically have to follow three steps:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>Specify endowments that replenish every round and goods / services that perish</li>
+<li>Specify the order of actions</li>
+<li>Write the agents with their actions</li>
+</ol>
+</div></blockquote>
+<p>There is of course a little bit of administrative work you have to do:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>import agents in the model</li>
+<li>specify parameters</li>
+</ol>
+</div></blockquote>
+<div class="section" id="have-a-look-on-the-abce-examples-folder">
+<h2>Have a look on the <cite>abce/examples/</cite> folder<a class="headerlink" href="#have-a-look-on-the-abce-examples-folder" title="Permalink to this headline">¶</a></h2>
+<p>It is instructive to look at a simple example, for example the 2x2 economy.
+Then you can make a working copy of the template or a copy of an example.</p>
+</div>
+<div class="section" id="make-a-working-copy">
+<h2>Make a working copy<a class="headerlink" href="#make-a-working-copy" title="Permalink to this headline">¶</a></h2>
+<p>copy abce/example to your_model_path:</p>
+<div class="highlight-python"><pre>cd your_model_path
+cp path.to/abce/template/* .</pre>
+</div>
+</div>
+<div class="section" id="start-py">
+<h2>start.py<a class="headerlink" href="#start-py" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="overview">
+<h3>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h3>
+<p>In start.py the simulation, thus the parameters, objects, agents and time line are
+set up. Further it is declared, what is observed and written to the database. <a class="footnote-reference" href="#division" id="id1">[3]</a></p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Firm</span> <span class="kn">import</span> <span class="n">Firm</span>
+<span class="kn">from</span> <span class="nn">Household</span> <span class="kn">import</span> <span class="n">Household</span>
+</pre></div>
+</div>
+<p>Here the Agent class Firm is imported from the file Firm.py. Likewise the Household class.</p>
+<p>ABCE, reads the model parameter from a spreed sheet, every line is one simulation:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">for</span> <span class="n">parameters</span> <span class="ow">in</span> <span class="n">simulation</span><span class="o">.</span><span class="n">read_parameters</span><span class="p">(</span><span class="s">&#39;simulation_parameters.csv&#39;</span><span class="p">):</span>
+
+   <span class="o">...</span>
+</pre></div>
+</div>
+<p>With the parameters ABCE loops over the intended line, to create the simulation
+and then runs the simulation. (after that it reads the next line an loops again).
+The variable parameters contain all parameters from &#8216;simulation_parameters.csv&#8217;.
+See <cite>simulation_parameters and agent_parameters</cite> for details.</p>
+<p>To set up a new model, you create a class a that will comprise your model:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">s</span> <span class="o">=</span> <span class="n">Simulation</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+
+<span class="o">...</span>
+</pre></div>
+</div>
+<p>After this the order of actions, agents and objects are added.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">action_list</span> <span class="o">=</span> <span class="p">[</span>
+<span class="p">(</span><span class="s">&#39;Household&#39;</span><span class="p">,</span> <span class="s">&#39;offer_capital&#39;</span><span class="p">),</span>
+
+<span class="o">...</span>
+
+<span class="p">(</span><span class="s">&#39;Household&#39;</span><span class="p">,</span> <span class="s">&#39;consumption&#39;</span><span class="p">)</span>
+<span class="p">]</span>
+<span class="n">s</span><span class="o">.</span><span class="n">add_action_list</span><span class="p">(</span><span class="n">action_list</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This establishes the order of the simulation. It can also be read from file <tt class="xref py py-meth docutils literal"><span class="pre">abce.Simulation.add_action_list_from_file()</span></tt></p>
+<p>In order to add an agent which was imported before we simply build these agents:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">s</span><span class="o">.</span><span class="n">build_agents</span><span class="p">(</span><span class="n">Firm</span><span class="p">,</span> <span class="s">&#39;number_of_firms&#39;</span><span class="p">)</span>
+<span class="n">s</span><span class="o">.</span><span class="n">build_agents</span><span class="p">(</span><span class="n">Household</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The number of firms to be built is read from the column in simulation_parameters.csv called number_of_firms.
+The number of households on the other side is fixed at 10.</p>
+<p>Or you can create panel data for a group of agents:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">s</span><span class="o">.</span><span class="n">panel_db</span><span class="p">(</span><span class="s">&#39;Firm&#39;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="s">&#39;after_sales_before_consumption&#39;</span><span class="p">)</span>
+<span class="n">s</span><span class="o">.</span><span class="n">panel_db</span><span class="p">(</span><span class="s">&#39;Household&#39;</span><span class="p">)</span>  <span class="c"># at the beginning</span>
+<span class="o">...</span>
+
+<span class="n">s</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+<table class="docutils footnote" frame="void" id="db-order" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[1]</td><td>panal_db must be declared after the declaration of the agents.</td></tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="the-order-of-actions-the-order-of-actions-within-a-round">
+<h3>The order of actions: The order of actions within a round<a class="headerlink" href="#the-order-of-actions-the-order-of-actions-within-a-round" title="Permalink to this headline">¶</a></h3>
+<p>Every agents-based model is characterized by the order of which the actions are executed. In ABCE, there are rounds, every round is composed of sub-rounds, in which all agents, a group of agents or a single agent, act in parallel. In the
+code below you see a typical sub-round.</p>
+<p>You have to declare an action_list, that is made of tuples telling ABCE which
+agent or agent group, should execute which method:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">action_list</span> <span class="o">=</span> <span class="p">[</span>
+<span class="n">repeat</span><span class="p">([</span>
+    <span class="p">(</span><span class="s">&#39;Household&#39;</span><span class="p">,</span> <span class="s">&#39;offer_capital&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;Firm&#39;</span><span class="p">,</span> <span class="s">&#39;buy_capital&#39;</span><span class="p">),</span>
+<span class="p">],</span>
+<span class="n">repetitions</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span>
+<span class="p">(</span><span class="s">&#39;Household&#39;</span><span class="p">,</span> <span class="s">&#39;search_work&#39;</span><span class="p">),</span>
+<span class="p">(</span><span class="s">&#39;Firm&#39;</span><span class="p">,</span> <span class="s">&#39;hire_labor&#39;</span><span class="p">),</span>
+<span class="p">(</span><span class="s">&#39;Firm&#39;</span><span class="p">,</span> <span class="s">&#39;production&#39;</span><span class="p">),</span>
+<span class="s">&#39;after_sales_before_consumption&#39;</span><span class="p">,</span>
+<span class="p">(</span><span class="s">&#39;Household&#39;</span><span class="p">,</span> <span class="s">&#39;consumption&#39;</span><span class="p">)</span>
+<span class="p">]</span>
+<span class="n">s</span><span class="o">.</span><span class="n">add_action_list</span><span class="p">(</span><span class="n">action_list</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The first tuple for example tells all Household agents to execute the method &#8220;offer_capital&#8221;.
+The &#8216;after_sales_before_consumption&#8217; is a database command. see <tt class="xref py py-meth docutils literal"><span class="pre">abce.panel_db()</span></tt>.</p>
+<p>The repeat function allows repeating actions within the brackets a determinate amount of times.</p>
+<p>Interactions happen between sub-rounds. An agent, sends a message in one round.
+The receiving agent, receives the message the following sub-round.  A trade is
+finished in three rounds: (1) an agent sends an offer the good is blocked, so it
+can not be sold twice (2) the other agent accepts or rejects it. (3) If
+accepted, the good is automatically delivered. If the trade was rejected: the
+blocked good is unblocked.</p>
+</div>
+<div class="section" id="the-goods">
+<h3>The goods<a class="headerlink" href="#the-goods" title="Permalink to this headline">¶</a></h3>
+<p>A normal good can be traded and used for production or consumption.
+The only thing you have to do is create the amount of goods for every agent with
+<tt class="xref py py-meth docutils literal"><span class="pre">abce.Agent.create()</span></tt> in the agent&#8217;s __init__ method.</p>
+<p>If an agent receives an endowment every round this can be automatically handled,
+with <tt class="xref py py-meth docutils literal"><span class="pre">abce.Simulation.declare_round_endowment()</span></tt>.
+For example the following command gives, at the beginning of every round,
+to whom who possess one unit of &#8216;field&#8217; 100 units of &#8216;corn&#8217;:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">s</span><span class="o">.</span><span class="n">declare_round_endowment</span><span class="p">(</span><span class="s">&#39;field&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="s">&#39;corn&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You can also declare goods that last only one round and then automatically perish.
+<tt class="xref py py-meth docutils literal"><span class="pre">abce.Simulation.declare_perishable()</span></tt></p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">s</span><span class="o">.</span><span class="n">declare_perishable</span><span class="p">(</span><span class="s">&#39;corn&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This example declares &#8216;corn&#8217; perishable and every round the agent gets 100 units of
+of &#8216;corn&#8217; for every unit of field he possesses. If the corn is not consumed, it
+automatically disappears at the end of the round.</p>
+<p>One important remark, for a logically consistent <strong>macro-model</strong> it is best to
+not create any goods during the simulation, but only in
+<tt class="xref py py-meth docutils literal"><span class="pre">abce.Agent.__init__()</span></tt>. During the simulation the only new goods
+should be created by declare_round_endowment. In this way the economy is physically
+closed. An exception is, of course, money.</p>
+</div>
+</div>
+<div class="section" id="the-agents">
+<h2>The agents<a class="headerlink" href="#the-agents" title="Permalink to this headline">¶</a></h2>
+<p>Agents are modeled in a separate file. In the template directory, you will find
+three agents: agent.py, firm.py and household.py.</p>
+<p>At the beginning of each agent you will again find:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
+</pre></div>
+</div>
+<p>An agent has to import the <tt class="xref py py-mod docutils literal"><span class="pre">abce</span></tt> module and some helpers:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">abce</span>
+<span class="kn">from</span> <span class="nn">abcetools</span> <span class="kn">import</span> <span class="n">is_zero</span><span class="p">,</span> <span class="n">is_positive</span><span class="p">,</span> <span class="n">is_negative</span><span class="p">,</span> <span class="n">NotEnoughGoods</span>
+</pre></div>
+</div>
+<p>This imports the base classes: abce, Household and Firm.</p>
+<p>An agent is a class and must at least inherit <tt class="xref py py-class docutils literal"><span class="pre">abce.Agent</span></tt>.
+<tt class="xref py py-class docutils literal"><span class="pre">abce.Trade</span></tt> - <a class="reference internal" href="Messaging.html#messaging.Messaging" title="messaging.Messaging"><tt class="xref py py-class docutils literal"><span class="pre">messaging.Messaging</span></tt></a> and <tt class="xref py py-class docutils literal"><span class="pre">database.Database</span></tt>
+are automatically inherited:</p>
+<div class="highlight-python"><pre>class Agent(abce.Agent):</pre>
+</div>
+<p>To create an agent that can also consume:</p>
+<div class="highlight-python"><pre>class Household(abce.Agent, abce.Household):</pre>
+</div>
+<p>You see our Household agent inherits from <tt class="xref py py-class docutils literal"><span class="pre">abce.Agent</span></tt>, which is compulsory and <tt class="xref py py-class docutils literal"><span class="pre">abce.Household</span></tt>.
+Household on the other hand are a set of methods that are unique for Household agents.
+(there is also a Firm class)</p>
+<div class="section" id="the-init-method">
+<h3>The __init__ method<a class="headerlink" href="#the-init-method" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simulation_parameters</span><span class="p">,</span> <span class="n">agent_parameters</span><span class="p">,</span> <span class="n">_pass_to_engine</span><span class="p">):</span>
+    <span class="n">abce</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">_pass_to_engine</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s">&#39;labor_endowment&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s">&#39;capital_endowment&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">set_cobb_douglas_utility_function</span><span class="p">({</span><span class="s">&quot;MLK&quot;</span><span class="p">:</span> <span class="mf">0.300</span><span class="p">,</span> <span class="s">&quot;BRD&quot;</span><span class="p">:</span> <span class="mf">0.700</span><span class="p">})</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">prices</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">prices</span><span class="p">[</span><span class="s">&#39;labor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">number_of_firms</span> <span class="o">=</span> <span class="n">simulation_parameters</span><span class="p">[</span><span class="s">&#39;number_of_firms&#39;</span><span class="p">]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">renter</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">last_utility</span> <span class="o">=</span> <span class="bp">None</span>
+</pre></div>
+</div>
+<p>The __init__ method is the method that is called when the agents are created (by
+the <tt class="xref py py-meth docutils literal"><span class="pre">abce.Simulation.build_agents()</span></tt> or <tt class="xref py py-meth docutils literal"><span class="pre">abce.Simulation.build_agents_from_file()</span></tt> method.)
+In this method agents can access the simulation_parameters from the &#8216;simulation_parameters.csv&#8217;.</p>
+<p>If the agents are built using <tt class="xref py py-meth docutils literal"><span class="pre">abce.Simulation.build_agents_from_file()</span></tt>. The agents
+can access the parameters in their row, in &#8216;agents_parameters.csv&#8217;, by
+agent_parameters in the __init__ function.</p>
+<p>Line 2 is compulsory to pass the parameters to the abce.</p>
+<p>With self.create the agent creates the good &#8216;labor_endowment&#8217;. Any
+good can be created. Generally speaking. The __init__ method is the only place
+where it is consistent to create a good. (except for money, if you simulate a naive
+central bank).</p>
+<p>This agent class inherited <tt class="xref py py-meth docutils literal"><span class="pre">abce.Household.set_cobb_douglas_utility_function()</span></tt>
+from <tt class="xref py py-class docutils literal"><span class="pre">abce.Household</span></tt>. With
+<tt class="xref py py-meth docutils literal"><span class="pre">abce.Household.set_cobb_douglas_utility_function()</span></tt> you can create a
+cobb-douglas function. Other functional forms are also available.</p>
+<p>self.prices is a dictionary, created by the modeler, that saves prices for
+specific goods. Here the price for labor is set to 1.</p>
+<p>In order to let the agent remember a simulation_parameter it has to be saved in the self
+domain the agent.  <a class="footnote-reference" href="#self" id="id2">[2]</a></p>
+<p>There is a random number assigned to self.renter and self.last_utility is initialized
+with None. It is often necessary to initialize variable in the __init__ method to
+avoid errors in the first round.</p>
+<table class="docutils footnote" frame="void" id="self" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td>(self.number_of_firms = simulation_parameters[&#8216;number_of_firms&#8217;])</td></tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="the-action-methods-and-a-consuming-household">
+<h3>The action methods and a consuming Household<a class="headerlink" href="#the-action-methods-and-a-consuming-household" title="Permalink to this headline">¶</a></h3>
+<p>All the other methods of the agent are executed when the corresponding sub-round is
+called from the Simulation set up in start.py.  <a class="footnote-reference" href="#underscore" id="id3">[4]</a></p>
+<p>For example when in the action list <cite>(&#8216;household&#8217;, &#8216;eat&#8217;)</cite> is called the eat method
+is executed of each household agent is executed:</p>
+<div class="highlight-python"><pre>class Agent(abce.Agent, abce.Household)
+    def __init__(self):
+        self.set_cobb_douglas_utility_function({'cookies': 0.9', 'bread': 0.1})
+        self.create('cookies', 1)
+        self.create('bread', 5)
+
+...
+def eat(self):
+    utility = self.consume_everything()
+    self.log('utility', {'a': utility})</pre>
+</div>
+<p>In the above example we see how a utility function is declared and how the
+agent consumes. The utility is logged and can be retrieved see
+<a class="reference internal" href="simulation_results.html#rsr"><em>retrieval of the simulation results</em></a></p>
+</div>
+<div class="section" id="firms-and-production-functions">
+<h3>Firms and Production functions<a class="headerlink" href="#firms-and-production-functions" title="Permalink to this headline">¶</a></h3>
+<p>Firms do two things they produce (transform) and trade. The following
+code shows you how to declare a technology and produce bread from labor and
+yeast.</p>
+<div class="highlight-python"><pre>class Agent(abce.Agent, abce.Household):
+def init(self):
+   set_cobb_douglas('BRD', 1.890, {"yeast": 0.333, "LAB": 0.667})
+    ..
+def production(self):
+    self.produce_use_everything()</pre>
+</div>
+<p>More details in <tt class="xref py py-class docutils literal"><span class="pre">abce.Firm</span></tt>. <tt class="xref py py-class docutils literal"><span class="pre">abce.FirmMultiTechnologies</span></tt> offers
+a more advanced interface for firms with complicated technologies.</p>
+</div>
+<div class="section" id="trade">
+<h3>Trade<a class="headerlink" href="#trade" title="Permalink to this headline">¶</a></h3>
+<p>ABCE handles trade fully automatically. That means, that goods are automatically
+exchanged, double selling of a good is avoided by subtracting a good from
+the possessions when it is offered
+for sale. The modeler has only to decide when the agent offers a
+trade and sets the criteria to accept the trade:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># Agent 1</span>
+<span class="k">def</span> <span class="nf">selling</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">offerid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sell</span><span class="p">(</span><span class="n">buyer</span><span class="p">,</span> <span class="s">&#39;BRD&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">checkorders</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">offerid</span><span class="p">)</span>
+
+<span class="c"># Agent 2</span>
+<span class="k">def</span> <span class="nf">buying</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">offers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_offers</span><span class="p">(</span><span class="s">&#39;cookies&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">offer</span> <span class="ow">in</span> <span class="n">offers</span><span class="p">:</span>
+       <span class="k">try</span><span class="p">:</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">accept</span><span class="p">(</span><span class="n">offer</span><span class="p">)</span>
+       <span class="k">except</span> <span class="n">NotEnoughGoods</span><span class="p">:</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">reject</span><span class="p">(</span><span class="n">offer</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You can find a detailed explanation how trade works in <tt class="xref py py-class docutils literal"><span class="pre">abce.Trade</span></tt></p>
+</div>
+<div class="section" id="data-production">
+<h3>Data production<a class="headerlink" href="#data-production" title="Permalink to this headline">¶</a></h3>
+<p>There are three different ways of observing your agents:</p>
+<div class="section" id="trade-logging">
+<h4>Trade Logging<a class="headerlink" href="#trade-logging" title="Permalink to this headline">¶</a></h4>
+<p>ABCE by default logs all trade and creates a SAM or IO matrix.</p>
+</div>
+<div class="section" id="manual-in-agent-logging">
+<h4>Manual in agent logging<a class="headerlink" href="#manual-in-agent-logging" title="Permalink to this headline">¶</a></h4>
+<p>An agent can log a variable, <tt class="xref py py-meth docutils literal"><span class="pre">abce.Agent.possessions()</span></tt>, <tt class="xref py py-meth docutils literal"><span class="pre">abce.Agent.possessions_all()</span></tt>
+and most other methods such as <tt class="xref py py-meth docutils literal"><span class="pre">abce.Firm.produce()</span></tt> with <tt class="xref py py-meth docutils literal"><span class="pre">abce.Agent.log()</span></tt> or a
+change in a variable with <tt class="xref py py-meth docutils literal"><span class="pre">log_change()</span></tt>:</p>
+<div class="highlight-python"><pre>self.log('possessions', self.possesions_all())
+self.log('custom', {'price_setting': 5: 'production_value': 12})
+prod = self.production_use_everything()
+self.log('current_production', prod)</pre>
+</div>
+</div>
+<div class="section" id="panel-data">
+<h4>Panel Data<a class="headerlink" href="#panel-data" title="Permalink to this headline">¶</a></h4>
+<p><tt class="xref py py-meth docutils literal"><span class="pre">panel_data()</span></tt> creates panel data for all agents in a specific
+agent group at a specific point in every round. It is set in start.py:</p>
+<div class="highlight-python"><pre>s.panel_data(’Household’, command=’aftersalesbeforeconsumption’)</pre>
+</div>
+<p>The command has to be inserted in the action_list.</p>
+</div>
+<div class="section" id="retrieving-the-logged-data">
+<h4>Retrieving the logged data<a class="headerlink" href="#retrieving-the-logged-data" title="Permalink to this headline">¶</a></h4>
+<p>the results are stored in a subfolder of the ./results/ folder.</p>
+<p>The tables are stored as &#8216;.csv&#8217; files which can be opened with excel and
+libreoffice.
+Further you can import the files with R:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>change to the subfolder of ./results/ that contains your simulation
+results</li>
+<li>start R</li>
+<li><cite>load(&#8216;database.R&#8217;)</cite></li>
+</ol>
+</div></blockquote>
+<table class="docutils footnote" frame="void" id="division" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[3]</a></td><td>from __future__ import division, instructs python to handle division always as a
+floating point division. Use this in all your python code. If you do not use this <tt class="docutils literal"><span class="pre">3</span> <span class="pre">/</span> <span class="pre">2</span> <span class="pre">=</span> <span class="pre">1</span></tt> instead
+of <tt class="docutils literal"><span class="pre">3</span> <span class="pre">/</span> <span class="pre">2</span> <span class="pre">=</span> <span class="pre">1.5</span></tt> (floor division).</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="underscore" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[4]</a></td><td>With the exception of methods, whose names start with a &#8216;_&#8217; underscore.underscoring methods that the agent uses only internally can speed up your code.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="joke" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[5]</td><td>We are aware that this is not entirely accurate, they also lobby to maximize their profit.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Walk through / Tutorial</a><ul>
+<li><a class="reference internal" href="#have-a-look-on-the-abce-examples-folder">Have a look on the <cite>abce/examples/</cite> folder</a></li>
+<li><a class="reference internal" href="#make-a-working-copy">Make a working copy</a></li>
+<li><a class="reference internal" href="#start-py">start.py</a><ul>
+<li><a class="reference internal" href="#overview">Overview</a></li>
+<li><a class="reference internal" href="#the-order-of-actions-the-order-of-actions-within-a-round">The order of actions: The order of actions within a round</a></li>
+<li><a class="reference internal" href="#the-goods">The goods</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#the-agents">The agents</a><ul>
+<li><a class="reference internal" href="#the-init-method">The __init__ method</a></li>
+<li><a class="reference internal" href="#the-action-methods-and-a-consuming-household">The action methods and a consuming Household</a></li>
+<li><a class="reference internal" href="#firms-and-production-functions">Firms and Production functions</a></li>
+<li><a class="reference internal" href="#trade">Trade</a></li>
+<li><a class="reference internal" href="#data-production">Data production</a><ul>
+<li><a class="reference internal" href="#trade-logging">Trade Logging</a></li>
+<li><a class="reference internal" href="#manual-in-agent-logging">Manual in agent logging</a></li>
+<li><a class="reference internal" href="#panel-data">Panel Data</a></li>
+<li><a class="reference internal" href="#retrieving-the-logged-data">Retrieving the logged data</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="installation.html"
+                        title="previous chapter">Download and Installation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="examples.html"
+                        title="next chapter">Examples</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/Walk_through.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="examples.html" title="Examples"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="installation.html" title="Download and Installation"
+             >previous</a> |</li>
+        <li><a href="index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Davoud Taghawi-Nejad.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

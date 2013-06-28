@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Observing agents &mdash; ABCE 0.2alpha documentation</title>
+    <title>Observing agents &mdash; ABCE 0.3.1alpha documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.2alpha',
+        VERSION:     '0.3.1alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="ABCE 0.2alpha documentation" href="index.html" />
+    <link rel="top" title="ABCE 0.3.1alpha documentation" href="index.html" />
     <link rel="next" title="FirmMultiTechnologies" href="FirmMultiTechnologies.html" />
     <link rel="prev" title="Messaging" href="Messaging.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="Messaging.html" title="Messaging"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">ABCE 0.2alpha documentation</a> &raquo;</li> 
+        <li><a href="index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -61,20 +61,20 @@
 <dt>Trade Logging</dt>
 <dd>ABCE by default logs all trade and creates a SAM or IO matrix.</dd>
 <dt>Manual in agent logging</dt>
-<dd>An agent is instructed to log a variable with <a class="reference internal" href="#abceagent.Database.log" title="abceagent.Database.log"><tt class="xref py py-meth docutils literal"><span class="pre">log()</span></tt></a> or a
-change in a variable with <a class="reference internal" href="#abceagent.Database.log_change" title="abceagent.Database.log_change"><tt class="xref py py-meth docutils literal"><span class="pre">log_change()</span></tt></a>.</dd>
+<dd>An agent is instructed to log a variable with <a class="reference internal" href="#database.Database.log" title="database.Database.log"><tt class="xref py py-meth docutils literal"><span class="pre">log()</span></tt></a> or a
+change in a variable with <a class="reference internal" href="#database.Database.log_change" title="database.Database.log_change"><tt class="xref py py-meth docutils literal"><span class="pre">log_change()</span></tt></a>.</dd>
 <dt>Panel Data</dt>
 <dd><a class="reference internal" href="simulation.html#abce.Simulation.panel_data" title="abce.Simulation.panel_data"><tt class="xref py py-meth docutils literal"><span class="pre">panel_data()</span></tt></a> creates panel data for all agents in a specific
 agent group at a specific point in every round. It is set in start.py</dd>
 </dl>
-<p>How to retrieve the Simulation results is explained in <a class="reference internal" href="simulation_results.html"><em>Retrival of the simulation results</em></a></p>
+<p>How to retrieve the Simulation results is explained in <a class="reference internal" href="simulation_results.html"><em>Retrieval of the simulation results</em></a></p>
 <div class="section" id="trade-logging">
 <h2>Trade Logging<a class="headerlink" href="#trade-logging" title="Permalink to this headline">¶</a></h2>
 <p>By default ABCE logs all trade and creates a social accounting matrix or
 input output matrix. Because the creation of the trade log is very time consuming
 you can change the default behavior in world_parameter.csv. In the column
 &#8216;trade_logging&#8217; you can choose &#8216;individual&#8217;, &#8216;group&#8217; or &#8216;off&#8217;. (Without the
-apostrophs!).</p>
+apostrophes!).</p>
 </div>
 <div class="section" id="manual-logging">
 <h2>Manual logging<a class="headerlink" href="#manual-logging" title="Permalink to this headline">¶</a></h2>
@@ -86,19 +86,19 @@ year:</p>
 <span class="bp">self</span><span class="o">.</span><span class="n">log_change</span><span class="p">(</span><span class="s">&#39;production&#39;</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Log loggs dictionaries. To log your own variable:</p>
+<p>Log logs dictionaries. To log your own variable:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s">&#39;price&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;input&#39;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span> <span class="s">&#39;output&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span>
 </pre></div>
 </div>
 <p>Further you can write the change of a varibale between a start and an end point with:
-<a class="reference internal" href="#abceagent.Database.observe_begin" title="abceagent.Database.observe_begin"><tt class="xref py py-meth docutils literal"><span class="pre">observe_begin()</span></tt></a> and <a class="reference internal" href="#abceagent.Database.observe_end" title="abceagent.Database.observe_end"><tt class="xref py py-meth docutils literal"><span class="pre">observe_end()</span></tt></a>.</p>
+<a class="reference internal" href="#database.Database.observe_begin" title="database.Database.observe_begin"><tt class="xref py py-meth docutils literal"><span class="pre">observe_begin()</span></tt></a> and <a class="reference internal" href="#database.Database.observe_end" title="database.Database.observe_end"><tt class="xref py py-meth docutils literal"><span class="pre">observe_end()</span></tt></a>.</p>
 <dl class="class">
-<dt id="abceagent.Database">
-<em class="property">class </em><tt class="descclassname">abceagent.</tt><tt class="descname">Database</tt><a class="reference internal" href="_modules/abceagent.html#Database"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.Database" title="Permalink to this definition">¶</a></dt>
+<dt id="database.Database">
+<em class="property">class </em><tt class="descclassname">database.</tt><tt class="descname">Database</tt><a class="reference internal" href="_modules/database.html#Database"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#database.Database" title="Permalink to this definition">¶</a></dt>
 <dd><p>The database class</p>
 <dl class="method">
-<dt id="abceagent.Database.log">
-<tt class="descname">log</tt><big>(</big><em>action_name</em>, <em>data_to_log</em><big>)</big><a class="reference internal" href="_modules/abceagent.html#Database.log"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.Database.log" title="Permalink to this definition">¶</a></dt>
+<dt id="database.Database.log">
+<tt class="descname">log</tt><big>(</big><em>action_name</em>, <em>data_to_log</em><big>)</big><a class="reference internal" href="_modules/database.html#Database.log"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#database.Database.log" title="Permalink to this definition">¶</a></dt>
 <dd><p>With log you can write the models data. Log can save variable states
 and and the working of individual functions such as production,
 consumption, give, but not trade(as its handled automatically).</p>
@@ -138,8 +138,8 @@ consumption, give, but not trade(as its handled automatically).</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="abceagent.Database.log_change">
-<tt class="descname">log_change</tt><big>(</big><em>action_name</em>, <em>data_to_log</em><big>)</big><a class="reference internal" href="_modules/abceagent.html#Database.log_change"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.Database.log_change" title="Permalink to this definition">¶</a></dt>
+<dt id="database.Database.log_change">
+<tt class="descname">log_change</tt><big>(</big><em>action_name</em>, <em>data_to_log</em><big>)</big><a class="reference internal" href="_modules/database.html#Database.log_change"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#database.Database.log_change" title="Permalink to this definition">¶</a></dt>
 <dd><p>This command logs the change in the variable from the round before.
 Important, use only once with the same action_name.</p>
 <dl class="docutils">
@@ -159,15 +159,15 @@ self.log_change('inputs', {'money': self.possessions(['money', 'gold', 'CAP', 'L
 </dd></dl>
 
 <dl class="method">
-<dt id="abceagent.Database.log_dict">
-<tt class="descname">log_dict</tt><big>(</big><em>action_name</em>, <em>data_to_log</em><big>)</big><a class="reference internal" href="_modules/abceagent.html#Database.log_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.Database.log_dict" title="Permalink to this definition">¶</a></dt>
+<dt id="database.Database.log_dict">
+<tt class="descname">log_dict</tt><big>(</big><em>action_name</em>, <em>data_to_log</em><big>)</big><a class="reference internal" href="_modules/database.html#Database.log_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#database.Database.log_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>same as the log function, only that it supports nested dictionaries
 see: <tt class="xref py py-meth docutils literal"><span class="pre">log()</span></tt>.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="abceagent.Database.log_value">
-<tt class="descname">log_value</tt><big>(</big><em>name</em>, <em>value</em><big>)</big><a class="reference internal" href="_modules/abceagent.html#Database.log_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.Database.log_value" title="Permalink to this definition">¶</a></dt>
+<dt id="database.Database.log_value">
+<tt class="descname">log_value</tt><big>(</big><em>name</em>, <em>value</em><big>)</big><a class="reference internal" href="_modules/database.html#Database.log_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#database.Database.log_value" title="Permalink to this definition">¶</a></dt>
 <dd><p>logs a value, with a name</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -182,11 +182,11 @@ see: <tt class="xref py py-meth docutils literal"><span class="pre">log()</span>
 </dd></dl>
 
 <dl class="method">
-<dt id="abceagent.Database.observe_begin">
-<tt class="descname">observe_begin</tt><big>(</big><em>action_name</em>, <em>data_to_observe</em><big>)</big><a class="reference internal" href="_modules/abceagent.html#Database.observe_begin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.Database.observe_begin" title="Permalink to this definition">¶</a></dt>
+<dt id="database.Database.observe_begin">
+<tt class="descname">observe_begin</tt><big>(</big><em>action_name</em>, <em>data_to_observe</em><big>)</big><a class="reference internal" href="_modules/database.html#Database.observe_begin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#database.Database.observe_begin" title="Permalink to this definition">¶</a></dt>
 <dd><p>observe_begin and observe_end, observe the change of a variable.
 observe_begin(...), takes a list of variables to be observed.
-observe_end(...) writes the change in this vars into the log file</p>
+observe_end(...) writes the change in this variables into the log file</p>
 <p>you can use nested observe_begin / observe_end combinations</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -211,9 +211,9 @@ observe_end(...) writes the change in this vars into the log file</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="abceagent.Database.observe_end">
-<tt class="descname">observe_end</tt><big>(</big><em>action_name</em>, <em>data_to_observe</em><big>)</big><a class="reference internal" href="_modules/abceagent.html#Database.observe_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abceagent.Database.observe_end" title="Permalink to this definition">¶</a></dt>
-<dd><p>This command puts in a database called log, what ever values you
+<dt id="database.Database.observe_end">
+<tt class="descname">observe_end</tt><big>(</big><em>action_name</em>, <em>data_to_observe</em><big>)</big><a class="reference internal" href="_modules/database.html#Database.observe_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#database.Database.observe_end" title="Permalink to this definition">¶</a></dt>
+<dd><p>This command puts in a database called log, whatever values you
 want values need to be delivered as a dictionary:</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -245,7 +245,7 @@ want values need to be delivered as a dictionary:</p>
 <dl class="method">
 <dt id="abce.Simulation.panel_data">
 <tt class="descclassname">Simulation.</tt><tt class="descname">panel_data</tt><big>(</big><em>group</em>, <em>variables='goods'</em>, <em>typ='FLOAT'</em>, <em>command='round_end'</em><big>)</big><a class="reference internal" href="_modules/abce.html#Simulation.panel_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Simulation.panel_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>writes variables of a group of agents into the database, by default
+<dd><p>Ponel_data writes variables of a group of agents into the database, by default
 the db write is at the end of the round. You can also specify a command
 and insert the command you choose in the action_list.
 If you choose a custom command, you can declare a method that
@@ -256,14 +256,15 @@ same time.</p>
 <dl class="docutils">
 <dt>Args:</dt>
 <dd><dl class="first last docutils">
-<dt>agentgroup:</dt>
+<dt>group:</dt>
 <dd>can be either a group or &#8216;all&#8217; for all agents</dd>
-<dt>variables:</dt>
+<dt>variables (optional):</dt>
 <dd>default=&#8217;goods&#8217; monitors all the goods the agent owns
 you can insert any variable your agent possesses. For
 self.knows_latin you insert &#8216;knows_latin&#8217;. If your agent
 has self.technology you can use &#8216;technology[&#8216;formula&#8217;]&#8217;
-(typ=&#8217;CHAR(50)&#8217;.</dd>
+In this case you must set the type to CHAR(50) with the
+typ=&#8217;CHAR(50)&#8217; parameter.</dd>
 <dt>typ:</dt>
 <dd>the type of the sql variable (FLOAT, INT, CHAR(length))
 command</dd>
@@ -275,7 +276,7 @@ command</dd>
 
 or
 
-w.panel_data(agents_list=[agent_name('firm', 5), agent_name('household', 10)])</pre>
+w.panel_data(group=firm)</pre>
 </div>
 <p>Optional in the agent:</p>
 <div class="highlight-python"><pre>class Firm(AgentEngine):
@@ -353,7 +354,7 @@ def after_production(self):
         <li class="right" >
           <a href="Messaging.html" title="Messaging"
              >previous</a> |</li>
-        <li><a href="index.html">ABCE 0.2alpha documentation</a> &raquo;</li> 
+        <li><a href="index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
