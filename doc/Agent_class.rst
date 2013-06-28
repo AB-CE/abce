@@ -1,9 +1,9 @@
 Agents
 ======
 
-.. automodule:: abceagent
+.. automodule:: agent
 
-.. autoclass:: abceagent.Agent
+.. autoclass:: abce.Agent
     :members:
     :undoc-members:
     :show-inheritance:

@@ -14,18 +14,15 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations under
 # the License.
-""" The best way to start creating a simulation is by copying the start.py file and other
-files from 'abce/template'. Than you have to change the `sys.path.append('../abce/lib')`
-path so that it leads to the folder in your system.
+""" The best way to start creating a simulation is by copying the start.py file
+and other files from 'abce/template'.
 
 To see how to create a simulation read :doc:`Walk_through`. In this module you
-will find the explenation for the command.
+will find the explanation for the command.
 
 This is a minimal template for a start.py::
 
     from __future__ import division  # makes / division work correct in python !
-    import sys
-    sys.path.append('../abce/lib')  # <--- ADJUST
     from agent import Agent
     from abce import *
 
@@ -47,13 +44,19 @@ import os
 import time
 import zmq
 import inspect
-from abcetools import agent_name, group_address
+from abce.tools import agent_name, group_address
 import multiprocessing
-import abce_db
+import abce.db
+import abce.abcelogger
 import itertools
 import postprocess
 from glob import glob
+import subround
 
+from firm import *
+from firmmultitechnologies import *
+from household import *
+from agent import *
 
 BASEPATH = os.path.dirname(os.path.realpath(__file__))
 
@@ -84,8 +87,12 @@ def read_parameters(parameters_file='simulation_parameters.csv', delimiter='\t',
     """
     start_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
     parameter_array = []
-    reader = csv.reader(open(parameters_file),
-                                delimiter=delimiter, quotechar=quotechar)
+
+    csvfile = open(parameters_file)
+    dialect = csv.Sniffer().sniff(csvfile.read(1024))
+    csvfile.seek(0)
+    reader = csv.reader(csvfile, dialect)
+
     keys = [key.lower() for key in reader.next()]
     for line in reader:
         if line == []:
@@ -128,7 +135,7 @@ def read_parameters(parameters_file='simulation_parameters.csv', delimiter='\t',
 class Simulation:
     """ This class in which the simulation is run. It takes
     the simulation_parameters to set up the simulation. Actions and agents have to be
-    added. databases and resource declarations can be added. Than run runs
+    added. databases and resource declarations can be added. Then runs
     the simulation.
 
     Usually the parameters are specified in a tab separated csv file. The first
@@ -175,8 +182,9 @@ class Simulation:
         self._db_commands = {}
         self.num_agents = 0
         self.num_agents_in_group = {}
-        self.context = zmq.Context()
-        self.commands = self.context.socket(zmq.PUB)
+        self._build_first_run = True
+        self._agent_parameters = None
+
         from config import zmq_transport
         if zmq_transport == 'inproc':
             self._addresses = {
@@ -186,7 +194,8 @@ class Simulation:
                 'frontend': "inproc://frontend",
                 'backend': "inproc://backend",
                 'group_backend': "inproc://group_backend",
-                'database': "inproc://database"
+                'database': "inproc://database",
+                'logger': "inproc://logger"
             }
         if zmq_transport == 'ipc':
             self._addresses = {
@@ -195,7 +204,8 @@ class Simulation:
                 'frontend': "ipc://frontend.ipc",
                 'backend': "ipc://backend.ipc",
                 'group_backend': "ipc://group_backend",
-                'database': "ipc://database.ipc"
+                'database': "ipc://database.ipc",
+                'logger': "ipc://logger.ipc"
             }
         if zmq_transport == 'tcp':
             from config import config_tcp
@@ -206,7 +216,12 @@ class Simulation:
                 'backend': config_tcp['backend'],
                 'group_backend':  config_tcp['group_backend'],
                 'database': config_tcp['database'],
+                'logger': config_tcp['logger'],
+
             }
+        #time.sleep(1)
+        self.context = zmq.Context()
+        self.commands = self.context.socket(zmq.PUB)
         self.commands.bind(self._addresses['command_addresse'])
         self.ready = self.context.socket(zmq.PULL)
         self.ready.bind(self._addresses['ready'])
@@ -216,8 +231,11 @@ class Simulation:
         self.communication_channel = self.context.socket(zmq.PUSH)
         self.communication_channel.connect(self._addresses['frontend'])
         self._register_action_groups()
-        self._db = abce_db.Database(simulation_parameters['_path'], 'database', self._addresses)
+        self._db = abce.db.Database(simulation_parameters['_path'], 'database', self._addresses)
+        self._logger = abce.abcelogger.AbceLogger(simulation_parameters['_path'], 'logger', self._addresses)
         self._db.start()
+        self._logger.start()
+
         self.aesof = False
         self.round = 0
         try:
@@ -259,7 +277,7 @@ class Simulation:
         """
         self.action_list = action_list
 
-    def add_action_list_from_table(self, parameter):
+    def add_action_list_from_file(self, parameter):
         """ The action list can also be declared in the simulation_parameters.csv
         file. Which allows you to run a batch of simulations with different
         orders. In simulation_parameters.csv there must be a column with which
@@ -279,7 +297,7 @@ class Simulation:
 
         The command::
 
-            self.add_action_list_from_table('parameters['action_list'])
+            self.add_action_list_from_file('parameters['action_list'])
 
         Args::
 
@@ -339,9 +357,9 @@ class Simulation:
         #as in _make_perish_command
 
     def declare_perishable(self, good, command='perish_at_the_round_end'):
-        """ This good only lasts one round and than disappers. For example
-        labor, if the labor is not used today todays labor is lost.
-        In combination with resoure this is useful to model labor or capital.
+        """ This good only lasts one round and then disappears. For example
+        labor, if the labor is not used today today's labor is lost.
+        In combination with resource this is useful to model labor or capital.
 
         In the example below a worker has an endowment of labor and capital.
         Every round he can sell his labor service and rent his capital. If
@@ -374,7 +392,7 @@ class Simulation:
 
     #TODO also for other variables
     def panel_data(self, group, variables='goods', typ='FLOAT', command='round_end'):
-        """ writes variables of a group of agents into the database, by default
+        """ Ponel_data writes variables of a group of agents into the database, by default
         the db write is at the end of the round. You can also specify a command
         and insert the command you choose in the action_list.
         If you choose a custom command, you can declare a method that
@@ -386,14 +404,15 @@ class Simulation:
 
 
         Args:
-            agentgroup:
+            group:
                 can be either a group or 'all' for all agents
-            variables:
+            variables (optional):
                 default='goods' monitors all the goods the agent owns
                 you can insert any variable your agent possesses. For
                 self.knows_latin you insert 'knows_latin'. If your agent
                 has self.technology you can use 'technology['formula']'
-                (typ='CHAR(50)'.
+                In this case you must set the type to CHAR(50) with the
+                typ='CHAR(50)' parameter.
             typ:
                 the type of the sql variable (FLOAT, INT, CHAR(length))
                 command
@@ -404,7 +423,7 @@ class Simulation:
 
          or
 
-         w.panel_data(agents_list=[agent_name('firm', 5), agent_name('household', 10)])
+         w.panel_data(group=firm)
 
         Optional in the agent::
 
@@ -505,12 +524,15 @@ class Simulation:
         database = self.context.socket(zmq.PUSH)
         database.connect(self._addresses['database'])
         database.send('close')
+        logger = self.context.socket(zmq.PUSH)
+        logger.connect(self._addresses['logger'])
+        logger.send('close')
         while self._db.is_alive():
             time.sleep(0.05)
         while self._communication.is_alive():
             time.sleep(0.025)
-        self.context.destroy()
         postprocess.to_r_and_csv(os.path.abspath(self.simulation_parameters['_path']), BASEPATH)
+        self.context.destroy()
 
     def _make_ask_each_agent_in(self, action):
         group_address_var = group_address(action[0])
@@ -558,7 +580,7 @@ class Simulation:
          AgentClass: is the name of the AgentClass that you imported
          number (optional): number of agents to be created. or the colum name
          of the row in simulation_parameters.csv that contains this number. If not
-         specified the colum name is assumed to be 'num_' + agent_name
+         specified the column name is assumed to be 'num_' + agent_name
          (all lowercase). For example num_firm, if the class is called
          Firm or name = Firm.
          [group_name (optional): to give the group a different name than the
@@ -655,9 +677,7 @@ class Simulation:
             cells = [_number_or_string(cell) for cell in line]
             agents_list.append(dict(zip(keys, cells)))
 
-        try:
-            self._build_first_run
-        except AttributeError:
+        if self._build_first_run:
             for line in agents_list:
                 num_entry = 'num_' + line['agent_class'].lower()
                 if num_entry not in self.simulation_parameters:
@@ -670,6 +690,10 @@ class Simulation:
                 agents_parameters.extend([line for _ in range(line['number'] * multiply)])
 
         self.build_agents(AgentClass, agents_parameters=agents_parameters)
+
+    def debug_subround(self):
+            self.subround = subround.Subround(self._addresses)
+            self.subround.start()
 
     def _advance_round_agents(self):
         """ advances round by 1 """
@@ -684,14 +708,14 @@ class Simulation:
         try:
             self.ready.recv()
         except KeyboardInterrupt:
-            print('KeyboardInterrupt: abce_db: _wait_for_agents_than_signal_end_of_comm(self) ~654')
+            print('KeyboardInterrupt: abce.db: _wait_for_agents_than_signal_end_of_comm(self) ~654')
 
     def _wait_for_agents(self):
         self.communication_channel.send_multipart(['!', ')'])
         try:
             self.ready.recv()
         except KeyboardInterrupt:
-            print('KeyboardInterrupt: abce_db: _wait_for_agents(self) ~662')
+            print('KeyboardInterrupt: abce.db: _wait_for_agents(self) ~662')
 
     def _end_Communication(self):
         self.communication_channel.send_multipart(['!', '!', 'end_simulation'])
@@ -715,12 +739,12 @@ class Simulation:
         a column header name. A name can be a goup are and individal (goup_id
         e.G. firm_01) it can also be 'all' for all agents.
         Every round, the agents self.aesof parameters get updated, if a row with
-        the correstponding round and agent name exists.
+        the corresponding round and agent name exists.
 
         Therefore an agent can access the parameters `self.aesof[column_name]` for
         the current round. (or the precedent one when there was no update)
         parameter is set. You can use it in your source code. It is persistent
-        until the next round for which a correstponding row exists.
+        until the next round for which a corresponding row exists.
 
         You can alse put commands or call methods in the excel file. For example:
          `self.aesof_exec(column_name)`.
@@ -728,9 +752,9 @@ class Simulation:
         function: `willingness_to_pay = self.aesof_eval(column_name)`.
 
         There is a big difference between `self.aesof_exec` and `self.aesof_eval`.
-        exec is only executed in rounds that have correstponding rows in aesof.csv.
+        exec is only executed in rounds that have corresponding rows in aesof.csv.
         `self.aesof_eval` is persistent every round the expression of the row
-        correstponding to the current round round or the last declared round is
+        corresponding to the current round round or the last declared round is
         executed.
 
         Args:

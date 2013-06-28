@@ -1,8 +1,8 @@
 from __future__ import division
-import abceagent
+import abce
 
 
-class Firm(abceagent.Agent, abceagent.Firm):
+class Firm(abce.Agent, abce.Firm):
     def __init__(self, simulation_parameters, agent_parameters, _pass_to_engine):
         """ there are now 2 sectors:
         - upstream produces an intermediary good
@@ -10,7 +10,7 @@ class Firm(abceagent.Agent, abceagent.Firm):
 
         there is an initial endowment to avoid bootstrapping problems
         """
-        abceagent.Agent.__init__(self, *_pass_to_engine)
+        abce.Agent.__init__(self, *_pass_to_engine)
         self.price = {}
         self.sector = agent_parameters['sector']
         if self.sector == 'intermediate_good':

@@ -16,8 +16,8 @@
 # the License.
 import zmq
 import multiprocessing
-from collections import defaultdict
 import sqlite3
+import numpy as np
 
 
 class Database(multiprocessing.Process):
@@ -30,13 +30,20 @@ class Database(multiprocessing.Process):
         self.database.execute('PRAGMA count_changes=OFF')
         self.database.execute('PRAGMA temp_store=OFF')
         self.database.execute('PRAGMA default_temp_store=OFF')
+        #self.database.execute('PRAGMA cache_size = -100000')
+
+        for t in (np.int8, np.int16, np.int32, np.int64,
+                                    np.uint8, np.uint16, np.uint32, np.uint64):
+            sqlite3.register_adapter(t, long)
+        for t in (np.float, np.float16, np.float32, np.float64):
+            sqlite3.register_adapter(t, float)
         self._addresses = _addresses
 
     def add_trade_log(self):
         table_name = 'trade'
         self.database.execute("CREATE TABLE " + table_name +
-            "(round INT, seller VARCHAR(50), buyer VARCHAR(50), good VARCHAR(50), price FLOAT, quantity FLOAT)")
-        return "INSERT INTO trade (round, good, seller, buyer, price, quantity) VALUES (?,?,?,?,?,?)"
+            "(round INT, good VARCHAR(50), seller VARCHAR(50), buyer VARCHAR(50), price FLOAT, quantity FLOAT)")
+        return 'INSERT INTO trade (round, good, seller, buyer, price, quantity) VALUES (%i, "%s", "%s", "%s", "%s", %f)'
 
     def add_log(self, table_name):
         self.database.execute("CREATE TABLE " + table_name + "(round INT, id INT, PRIMARY KEY(round, id))")
@@ -50,27 +57,30 @@ class Database(multiprocessing.Process):
         in_sok = context.socket(zmq.PULL)
         in_sok.bind(self._addresses['database'])
         trade_ex_str = self.add_trade_log()
-        trade_log = defaultdict(int)
         while True:
             typ = in_sok.recv()
             if typ == "close":
                 break
             if typ == 'panel':
                 command = in_sok.recv()
-                data_to_write = in_sok.recv_json()
+                data_to_write = in_sok.recv_pyobj()
                 data_to_write['id'] = int(in_sok.recv())
                 group = in_sok.recv()
                 data_to_write['round'] = int(in_sok.recv())
                 table_name = command + '_' + group
                 self.write(table_name, data_to_write)
             elif typ == 'trade_log':
-                individual_log = in_sok.recv_json()
+                individual_log = in_sok.recv_pyobj()
                 round = int(in_sok.recv())
                 for key in individual_log:
-                    self.database.execute(trade_ex_str, [round] + key.split(',') + [individual_log[key]])
+                    split_key = key[:].split(',')
+                    self.database.execute(trade_ex_str % (round,
+                                                        split_key[0], split_key[1], split_key[2], split_key[3],
+                                                        individual_log[key]))
             elif typ == 'log':
                 group_name = in_sok.recv()
-                data_to_write = in_sok.recv_json()
+                data_to_write = in_sok.recv_pyobj()
+                data_to_write = {key: float(data_to_write[key]) for key in data_to_write}
                 data_to_write['round'] = int(in_sok.recv())
                 table_name = group_name
                 try:
@@ -118,6 +128,9 @@ class Database(multiprocessing.Process):
                 raise
             self.new_column(table_name, data_to_write)
             self.write(table_name, data_to_write)
+        except sqlite3.InterfaceError:
+            print(ex_str % format_strings, rows_to_write)
+            raise
 
     def new_column(self, table_name, data_to_write):
         rows_to_write = data_to_write.values()
@@ -147,4 +160,16 @@ def is_convertable_to_float(x):
             raise TypeError
         return False
     return True
+
+
+def _number_or_string(word):
+    """ returns a int if possible otherwise a float from a string
+    """
+    try:
+        return int(word)
+    except ValueError:
+        try:
+            return float(word)
+        except ValueError:
+            return word
 

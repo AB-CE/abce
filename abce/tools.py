@@ -23,7 +23,7 @@ purpose equal to zero, but var_c == 0 would lead to False.
 around this problem by defining float epsilon and determine whether the variable is
 sufficiently close to zero or not.
 
-This file also defines the :exc:`abcetools.NotEnoughGoods`
+This file also defines the :exc:`tools.NotEnoughGoods`
 """
 from sys import float_info
 epsilon = 10000 * float_info.epsilon
@@ -32,7 +32,7 @@ epsilon = 10000 * float_info.epsilon
 def agent_name(group_name, idn):
     """
     Given a group name and a id-number it returns the
-    agent_name of the individual agent with the number idn. A message send to
+    agent_name of the individual agent with the number idn. A message sent to
     the agent_name, will be received by this individual agent
     """
     return '%s_%i:' % (group_name, idn)
@@ -46,7 +46,7 @@ def group_address(group_name):
 
 def is_zero(x):
     """ checks whether a number is sufficiently close to zero. All variables
-    in ABCE are floating point numbers. Do to the workings of floating point
+    in ABCE are floating point numbers. Due to the workings of floating point
     arithmetic. If x is 1.0*e^-100 so really close to 0, x == 0 will be false;
     is_zero will be true.
     """
@@ -58,7 +58,7 @@ def is_zero(x):
 
 def is_positive(x):
     """ checks whether a number is positive and sufficiently different from
-    zero. All variables in ABCE are floating point numbers. Do to the workings
+    zero. All variables in ABCE are floating point numbers. Due to the workings
     of floating point arithmetic. If x is 1.0*e^-100 so really close to 0,
     x > 0 will be true, eventhough it is very very small;
     is_zero will be true.
@@ -80,7 +80,7 @@ def is_negative(x):
 class NotEnoughGoods(Exception):
     """ Methods raise this exception when the agent has less goods than needed
 
-    This functions (self.produce, self.offer, self.sell, self.buy)
+    These functions (self.produce, self.offer, self.sell, self.buy)
     should be encapsulated by a try except block::
 
      try:

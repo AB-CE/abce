@@ -1,9 +1,7 @@
 from __future__ import division
-import sys
-sys.path.append('../abce/lib')
 from firm import Firm
 from household import Household
-from abce import *
+from abce import Simulation, read_parameters, repeat
 
 
 for simulation_parameters in read_parameters('simulation_parameters.csv'):
@@ -21,7 +19,11 @@ for simulation_parameters in read_parameters('simulation_parameters.csv'):
     s.build_agents(Firm, 5)
     s.build_agents(Household, 5)
 
-    s.declare_round_endowment(resource='labor_endowment', productivity=1, product='labor')
+    s.declare_round_endowment(
+                resource='labor_endowment',
+                productivity=1,
+                product='labor'
+    )
     s.declare_perishable(good='labor')
 
     s.panel_data('household', command='buy_log')

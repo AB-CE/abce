@@ -1,12 +1,77 @@
 Download and Installation
 =========================
 
+
+
+Installation of stable version Ubuntu
+-------------------------------------
+
+1. Download stable version form:  https://dl.dropboxusercontent.com/u/3655123/abce-0.3.tar.gz
+2. If pip is not installed in terminal::
+
+    sudo apt-get install python-pip, python-scipy, python-numpy
+
+3. If R has not been installed automatically install it::
+
+   Install R from www.CRAN.org, at least version 2.15
+
+4. In terminal::
+
+    sudo pip install abce-0.3.1.tar.gz
+
+5. Download templats and examples from: https://dl.dropboxusercontent.com/u/3655123/abce_templates-0.3.zip
+
+6. unzip abce_templates-0.3.zip
+
+
+
+
+
+Installation of stable version Windows
+--------------------------------------
+
+1. Install Python2.7 (preferably 32bit)
+
+2. Next, set the system’s PATH variable to include directories
+  that include Python components and packages we’ll add later. To do this:
+  - Right-click Computer and select Properties.
+  - In the dialog box, select Advanced  System Settings.
+  - In the next dialog, select Environment Variables.
+  - In the User Variables section, edit the PATH statement to include this::
+
+     C:\Python27;C:\Python27\Lib\site-packages\;C:\Python27\Scripts\;
+
+
+2. Install Setuptools from http://pypi.python.org/pypi/setuptools#downloads
+3. install pip::
+
+  easy_install pip
+
+4. Install R form www.cran.org
+
+5. Download stable version form:  https://dl.dropboxusercontent.com/u/3655123/abce-0.3.tar.gz
+
+6. install ABCE::
+
+  pip install abce-0.3.1.tar.gz
+
+In case of problems reinstall python
+http://www.anthonydebarros.com/2011/10/15/setting-up-python-in-windows-7/
+
+
+
+7. Download templats and examples from: https://dl.dropboxusercontent.com/u/3655123/abce_templates-0.3.zip
+
+8. unzip abce_templates-0.3.zip
+
+
+
+
+
+Installation of development version
+-----------------------------------
+
 The installation has two parts. Installing the necessary software packages. Retrieving ABCE with git or as a zip file.
-
- In terminal (necessary software) [1]_ ::
-
-  sudo apt-get install python-pyparsing python-numpy python-scipy python-zmq r-base python-rpy2
-
 
  Alternative 1 as a zip (EASY):
 
@@ -22,8 +87,9 @@ The installation has two parts. Installing the necessary software packages. Retr
   git init
   git pull git@github.com:DavoudTaghawiNejad/abce.git
 
-Optional for development you can install sphinx and sphinx-apidoc.  sphinx-apidoc
-currently needs the newest version of sphinx, they system that created this documentation
+Optional for development you can install sphinx and sphinx-apidoc,
+the system that created this documentation.  sphinx-apidoc
+currently needs the newest version of sphinx.
 
 .. [1] possible you have to install sqlite3 and the according python bindings
 

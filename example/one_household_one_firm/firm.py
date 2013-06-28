@@ -1,19 +1,19 @@
 from __future__ import division  # makes division work correctly
-import abceagent
-from abcetools import is_zero, is_positive, is_negative, NotEnoughGoods
+import abce
+from abce.tools import is_zero, is_positive, is_negative, NotEnoughGoods
 
 
-class Firm(abceagent.Agent, abceagent.Firm):
+class Firm(abce.Agent, abce.Firm):
     def __init__(self, simulation_parameters, agent_parameters, _pass_to_engine):
         """ 1. Gets an initial amount of money
         2. create a cobb_douglas function: GOOD = 1 * labor ** 1.
         """
-        abceagent.Agent.__init__(self, *_pass_to_engine)
+        abce.Agent.__init__(self, *_pass_to_engine)
         self.create('money', 1)
         self.set_cobb_douglas("GOOD", 1, {"labor": 1})
 
     def buy_labor(self):
-        """ recieves the offers and accepts them one by one """
+        """ receives the offers and accepts them one by one """
         oo = self.get_offers("labor")
         for offer in oo:
             self.accept(offer)

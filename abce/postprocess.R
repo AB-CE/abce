@@ -1,5 +1,5 @@
-tryCatch(library(RSQLite), error = function(e) install.package('RSQLite'))
-tryCatch(library(reshape), error = function(e) install.package('reshape'))
+tryCatch(library(RSQLite), error = function(e) install.packages('RSQLite'))
+tryCatch(library(reshape), error = function(e) install.packages('reshape'))
 
 print("functions:")
 print("sam_cell(seller, buyer, cell='quantity'), returns you the evolution over time of a cell")
@@ -42,40 +42,40 @@ dbListTables(con)
 print(table_index_lst)
 rm(con, rs, m, table_index_lst, table_index)
 
-print("Transformations:")
-print("Unify households in trade")
-tt <- trade
-seller_table_index_lst <- matrix(1, nrow=nrow(tt), ncol=1)
-for (i in 1:nrow(tt)) {
-	seller_table_index_lst[i] = i
-	if (unlist(strsplit(tt$seller[i], "_"))[1] == 'firm') {
-		seller_table_index_lst[i] <-tt$seller[i]
-	} else {
-		seller_table_index_lst[i] <- unlist(strsplit(tt$seller[i], "_"))[1]
-	}
-}
+# print("Transformations:")
+# print("Unify households in trade")
+# tt <- trade
+# seller_table_index_lst <- matrix(1, nrow=nrow(tt), ncol=1)
+# for (i in 1:nrow(tt)) {
+# 	seller_table_index_lst[i] = i
+# 	if (unlist(strsplit(tt$seller[i], "_"))[1] == 'firm') {
+# 		seller_table_index_lst[i] <-tt$seller[i]
+# 	} else {
+# 		seller_table_index_lst[i] <- unlist(strsplit(tt$seller[i], "_"))[1]
+# 	}
+# }
 
-buyer_table_index_lst <- matrix(1, nrow=nrow(tt), ncol=1)
-for (i in 1:nrow(tt)) {
-	buyer_table_index_lst[i] = i
-	if (unlist(strsplit(tt$buyer[i], "_"))[1] == 'firm') {
-		buyer_table_index_lst[i] <- tt$buyer[i]
-	} else {
-		buyer_table_index_lst[i] <- unlist(strsplit(tt$buyer[i], "_"))[1]
-	}
-}
+# buyer_table_index_lst <- matrix(1, nrow=nrow(tt), ncol=1)
+# for (i in 1:nrow(tt)) {
+# 	buyer_table_index_lst[i] = i
+# 	if (unlist(strsplit(tt$buyer[i], "_"))[1] == 'firm') {
+# 		buyer_table_index_lst[i] <- tt$buyer[i]
+# 	} else {
+# 		buyer_table_index_lst[i] <- unlist(strsplit(tt$buyer[i], "_"))[1]
+# 	}
+# }
 
-tt$buyer <- buyer_table_index_lst
-tt$seller <- seller_table_index_lst
+# tt$buyer <- buyer_table_index_lst
+# tt$seller <- seller_table_index_lst
 
-rm(seller_table_index_lst)
-rm(buyer_table_index_lst)
-rm(i)
-print('OK')
-print("Compress 'trade' to 'trade_unified'")
-trade_unified <- ddply(tt, c('round', 'buyer', 'seller','good'), summarize, quantity=sum(quantity), price=mean(price))
-rm(tt)
-print('OK')
+# rm(seller_table_index_lst)
+# rm(buyer_table_index_lst)
+# rm(i)
+# print('OK')
+#print("Compress 'trade' to 'trade_unified'")
+#trade_unified <- ddply(tt, c('round', 'buyer', 'seller','good'), summarize, quantity=sum(quantity), price=mean(price))
+#rm(tt)
+#print('OK')
 #INTERACTIVE
 # a <- 1
 # i <-1

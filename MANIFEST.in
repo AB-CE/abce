@@ -1,0 +1,6 @@
+include abce/postprocess.R
+include README.rst
+include ABCE.pdf
+recursive-include template/ *
+recursive-include unittest/ *
+recursive-include example/ *

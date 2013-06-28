@@ -7,8 +7,6 @@
 """
 
 from __future__ import division
-import sys
-sys.path.append('../../lib')
 from abce import *
 from firm import Firm
 from household import Household
@@ -17,21 +15,21 @@ from household import Household
 for parameters in read_parameters():
     w = Simulation(parameters)
     action_list = [
-    ('household', 'sell_labor'),
-    ('firm', 'buy_labor'),
-    ('firm', 'production'),
-    'production_log',
-    ('firm', 'sell_goods'),
-    ('household', 'buy_goods'),
-    'buy_log',
-    ('household', 'consumption')
+        ('household', 'sell_labor'),
+        ('firm', 'buy_labor'),
+        ('firm', 'production'),
+        'production_log',
+        ('firm', 'sell_goods'),
+        ('household', 'buy_goods'),
+        'buy_log',
+        ('household', 'consumption')
     ]
     w.add_action_list(action_list)
 
     w.build_agents(Firm, 1)
     w.build_agents(Household, 1)
 
-    w.declare_round_endowment(resource='labor_endowment', productivity=1, product='labor')
+    w.declare_round_endowment(resource='adult', productivity=1, product='labor')
     w.declare_perishable(good='labor')
 
     w.panel_data('household', command='buy_log')
