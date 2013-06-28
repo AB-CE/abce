@@ -1,5 +1,5 @@
-tryCatch(library(RSQLite), error = function(e) install.package('RSQLite'))
-tryCatch(library(reshape), error = function(e) install.package('reshape'))
+tryCatch(library(RSQLite), error = function(e) install.packages('RSQLite'))
+tryCatch(library(reshape), error = function(e) install.packages('reshape'))
 
 print("functions:")
 print("sam_cell(seller, buyer, cell='quantity'), returns you the evolution over time of a cell")
