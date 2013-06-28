@@ -75,51 +75,30 @@
 <span class="sd">around this problem by defining float epsilon and determine whether the variable is</span>
 <span class="sd">sufficiently close to zero or not.</span>
 
-<<<<<<< HEAD
 <span class="sd">This file also defines the :exc:`tools.NotEnoughGoods`</span>
-=======
-<span class="sd">This file also defines the :exc:`abcetools.NotEnoughGoods`</span>
->>>>>>> 462d9124f9a039bd51276d519bcced4975f1f6be
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">sys</span> <span class="kn">import</span> <span class="n">float_info</span>
 <span class="n">epsilon</span> <span class="o">=</span> <span class="mi">10000</span> <span class="o">*</span> <span class="n">float_info</span><span class="o">.</span><span class="n">epsilon</span>
 
 
-<<<<<<< HEAD
 <span class="k">def</span> <span class="nf">agent_name</span><span class="p">(</span><span class="n">group_name</span><span class="p">,</span> <span class="n">idn</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Given a group name and a id-number it returns the</span>
 <span class="sd">    agent_name of the individual agent with the number idn. A message sent to</span>
-=======
-<div class="viewcode-block" id="agent_name"><a class="viewcode-back" href="../../abcetools.html#abce.tools.agent_name">[docs]</a><span class="k">def</span> <span class="nf">agent_name</span><span class="p">(</span><span class="n">group_name</span><span class="p">,</span> <span class="n">idn</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Given a group name and a id-number it returns the</span>
-<span class="sd">    agent_name of the individual agent with the number idn. A message send to</span>
->>>>>>> 462d9124f9a039bd51276d519bcced4975f1f6be
 <span class="sd">    the agent_name, will be received by this individual agent</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">_</span><span class="si">%i</span><span class="s">:&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">group_name</span><span class="p">,</span> <span class="n">idn</span><span class="p">)</span>
 
-<<<<<<< HEAD
 
-=======
-</div>
->>>>>>> 462d9124f9a039bd51276d519bcced4975f1f6be
 <span class="k">def</span> <span class="nf">group_address</span><span class="p">(</span><span class="n">group_name</span><span class="p">):</span>
     <span class="c"># given a group_name it returns a group address with which you can send a message</span>
     <span class="c"># to a group. (group addresses are group names with a trailing &#39;:&#39;.)</span>
     <span class="k">return</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">:&#39;</span> <span class="o">%</span> <span class="n">group_name</span>
 
 
-<<<<<<< HEAD
 <span class="k">def</span> <span class="nf">is_zero</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; checks whether a number is sufficiently close to zero. All variables</span>
 <span class="sd">    in ABCE are floating point numbers. Due to the workings of floating point</span>
-=======
-<div class="viewcode-block" id="is_zero"><a class="viewcode-back" href="../../abcetools.html#abce.tools.is_zero">[docs]</a><span class="k">def</span> <span class="nf">is_zero</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; checks whether a number is sufficiently close to zero. All variables</span>
-<span class="sd">    in ABCE are floating point numbers. Do to the workings of floating point</span>
->>>>>>> 462d9124f9a039bd51276d519bcced4975f1f6be
 <span class="sd">    arithmetic. If x is 1.0*e^-100 so really close to 0, x == 0 will be false;</span>
 <span class="sd">    is_zero will be true.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -128,17 +107,10 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">False</span>
 
-<<<<<<< HEAD
 
 <span class="k">def</span> <span class="nf">is_positive</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; checks whether a number is positive and sufficiently different from</span>
 <span class="sd">    zero. All variables in ABCE are floating point numbers. Due to the workings</span>
-=======
-</div>
-<div class="viewcode-block" id="is_positive"><a class="viewcode-back" href="../../abcetools.html#abce.tools.is_positive">[docs]</a><span class="k">def</span> <span class="nf">is_positive</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; checks whether a number is positive and sufficiently different from</span>
-<span class="sd">    zero. All variables in ABCE are floating point numbers. Do to the workings</span>
->>>>>>> 462d9124f9a039bd51276d519bcced4975f1f6be
 <span class="sd">    of floating point arithmetic. If x is 1.0*e^-100 so really close to 0,</span>
 <span class="sd">    x &gt; 0 will be true, eventhough it is very very small;</span>
 <span class="sd">    is_zero will be true.</span>
@@ -148,32 +120,19 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">False</span>
 
-<<<<<<< HEAD
 
 <span class="k">def</span> <span class="nf">is_negative</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-=======
-</div>
-<div class="viewcode-block" id="is_negative"><a class="viewcode-back" href="../../abcetools.html#abce.tools.is_negative">[docs]</a><span class="k">def</span> <span class="nf">is_negative</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
->>>>>>> 462d9124f9a039bd51276d519bcced4975f1f6be
     <span class="sd">&quot;&quot;&quot; see is positive &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="o">-</span> <span class="n">epsilon</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">True</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">False</span>
 
-<<<<<<< HEAD
 
 <div class="viewcode-block" id="NotEnoughGoods"><a class="viewcode-back" href="../../Agent_class.html#abce.tools.NotEnoughGoods">[docs]</a><span class="k">class</span> <span class="nc">NotEnoughGoods</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Methods raise this exception when the agent has less goods than needed</span>
 
 <span class="sd">    These functions (self.produce, self.offer, self.sell, self.buy)</span>
-=======
-</div>
-<div class="viewcode-block" id="NotEnoughGoods"><a class="viewcode-back" href="../../Agent_class.html#abce.tools.NotEnoughGoods">[docs]</a><span class="k">class</span> <span class="nc">NotEnoughGoods</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Methods raise this exception when the agent has less goods than needed</span>
-
-<span class="sd">    This functions (self.produce, self.offer, self.sell, self.buy)</span>
->>>>>>> 462d9124f9a039bd51276d519bcced4975f1f6be
 <span class="sd">    should be encapsulated by a try except block::</span>
 
 <span class="sd">     try:</span>
