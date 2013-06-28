@@ -13,7 +13,7 @@ Installation of stable version Ubuntu
 
 3. If R has not been installed automatically install it::
 
-    sudo apt-get install r-base
+   Install R from www.CRAN.org, at least version 2.15
 
 4. In terminal::
 
