@@ -13,9 +13,14 @@ else:
         "windows and get this message. Please track the bug on Github.")
 
 config_tcp = {
-    'command_addresse': "tcp://*:5001",
-    'ready': "tcp://*:5002",
-    'frontend': "tcp://*:5003",
-    'backend': "tcp://*:5004",
-    'database': "tcp://*:5005"
+    'command_addresse': "tcp://localhost:5001",
+    'ready': "tcp://localhost:5002",
+    'frontend': "tcp://localhost:5003",
+    'backend': "tcp://localhost:5004",
+    'database': "tcp://localhost:5005",
+    'logger': "tcp://localhost:5006",
+    'group_backend': "tcp://localhost:5007"
 }
+
+#agent_language can be 'python' or 'java' (or equivalently 'jython')
+agent_language = 'java'
