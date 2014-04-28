@@ -1,14 +1,13 @@
 from __future__ import division
-import abce
-from abce.tools import *
+from agent import Agent
 import random
 
 
-class Buy(abce.Agent):
-    def __init__(self, simulation_parameters, own_parameters, _pass_to_engine):
-        abce.Agent.__init__(self, *_pass_to_engine)
+class Buy(Agent):
+    def __init__(self, simulation_parameters, _, _pass_to_engine):
+        Agent.__init__(self, *_pass_to_engine)
         self.last_round = simulation_parameters['num_rounds'] - 1
-        self.cut_of = simulation_parameters['cut_of']
+        #self.cut_of = simulation_parameters['cut_of']
         self.tests = {'accepted': False, 'rejected': False, 'partial': False}
         if self.idn == 1:
             self.tests['not_answered'] = False
@@ -76,6 +75,10 @@ class Buy(abce.Agent):
             else:
                 SystemExit('Error in buy')
 
+    def laut(self):
+        print("laut")
+        self.haut = 'xxxx'
+
     def clean_up(self):
         self.destroy_all('money')
         self.destroy_all('cookies')
@@ -88,4 +91,15 @@ class Buy(abce.Agent):
             print('Test abce.reject\t(abce.buy):\t\tOK')
             print('Test abce.accept_partial\t(abce.buy):\tOK')
             print('Test reject pending automatic \t(abce.buy):\tOK')
+
+b = b.Buy({'num_rounds':10}, 0, [0, "gbuy",
+{
+    'command_addresse': "tcp://localhost:4001",
+    'ready': "tcp://localhost:5002",
+    'frontend': "tcp://localhost:5003",
+    'backend': "tcp://localhost:5004",
+    'database': "tcp://localhost:5005",
+    'logger': "tcp://localhost:5006",
+    'group_backend': "tcp://localhost:5007"
+}, 'off'])
 
