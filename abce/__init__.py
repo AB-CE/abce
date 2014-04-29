@@ -185,9 +185,9 @@ class Simulation:
         self._build_first_run = True
         self._agent_parameters = None
 
-        from config import zmq_transport
+        from config import zmq_transport #pylint: disable=E0611
         if zmq_transport == 'inproc':
-            self._addresses = {
+            self._addresses_bind = self._addresses_connect = {
                 'type': 'inproc',
                 'command_addresse': "inproc://commands",
                 'ready': "inproc://ready",
@@ -197,8 +197,8 @@ class Simulation:
                 'database': "inproc://database",
                 'logger': "inproc://logger"
             }
-        if zmq_transport == 'ipc':
-            self._addresses = {
+        elif zmq_transport == 'ipc':
+            self._addresses_bind = self._addresses_connect = {
                 'command_addresse': "ipc://commands.ipc",
                 'ready': "ipc://ready.ipc",
                 'frontend': "ipc://frontend.ipc",
@@ -207,29 +207,25 @@ class Simulation:
                 'database': "ipc://database.ipc",
                 'logger': "ipc://logger.ipc"
             }
-        if zmq_transport == 'tcp':
-            from config import config_tcp
-            self._addresses = {
-                'command_addresse': config_tcp['command_addresse'],
-                'ready': config_tcp['ready'],
-                'frontend': config_tcp['frontend'],
-                'backend': config_tcp['backend'],
-                'group_backend':  config_tcp['group_backend'],
-                'database': config_tcp['database'],
-                'logger': config_tcp['logger'],
-
-            }
+        elif zmq_transport == 'tcp':
+            from config import config_tcp_bind, config_tcp_connect #pylint: disable=E0611
+            self._addresses_bind = config_tcp_bind
+            self._addresses_connect = config_tcp_connect
+        else:
+            from config import config_custom_bind, config_custom_connect #pylint: disable=E0611
+            self._addresses_bind = config_custom_bind
+            self._addresses_connect = config_custom_connect
         #time.sleep(1)
         self.context = zmq.Context()
         self.commands = self.context.socket(zmq.PUB)
-        self.commands.bind(self._addresses['command_addresse'])
+        self.commands.bind(self._addresses_bind['command_addresse'])
         self.ready = self.context.socket(zmq.PULL)
-        self.ready.bind(self._addresses['ready'])
-        self._communication = _Communication(self._addresses)
+        self.ready.bind(self._addresses_bind['ready'])
+        self._communication = _Communication(self._addresses_bind, self._addresses_connect)
         self._communication.start()
         self.ready.recv()
         self.communication_channel = self.context.socket(zmq.PUSH)
-        self.communication_channel.connect(self._addresses['frontend'])
+        self.communication_channel.connect(self._addresses_connect['frontend'])
         self._register_action_groups()
         self._db = abce.db.Database(simulation_parameters['_path'], 'database', self._addresses)
         self._logger = abce.abcelogger.AbceLogger(simulation_parameters['_path'], 'logger', self._addresses)
@@ -522,10 +518,10 @@ class Simulation:
                 time.sleep(0.1)
         self._end_Communication()
         database = self.context.socket(zmq.PUSH)
-        database.connect(self._addresses['database'])
+        database.connect(self._addresses_connect['database'])
         database.send('close')
         logger = self.context.socket(zmq.PUSH)
-        logger.connect(self._addresses['logger'])
+        logger.connect(self._addresses_connect['logger'])
         logger.send('close')
         while self._db.is_alive():
             time.sleep(0.05)
@@ -627,7 +623,7 @@ class Simulation:
         self.num_agents_in_group['all'] = self.num_agents
         self.agent_list[group_name] = []
         for idn in range(num_agents_this_group):
-            agent = AgentClass(self.simulation_parameters, agents_parameters[idn], [idn, group_name, self._addresses, self.trade_logging_mode])
+            agent = AgentClass(self.simulation_parameters, agents_parameters[idn], [idn, group_name, self._addresses_connect, self.trade_logging_mode])
             agent.name = agent_name(group_name, idn)
             agent.start()
             self.agent_list[group_name].append(agent)
@@ -692,8 +688,8 @@ class Simulation:
         self.build_agents(AgentClass, agents_parameters=agents_parameters)
 
     def debug_subround(self):
-            self.subround = subround.Subround(self._addresses)
-            self.subround.start()
+        self.subround = subround.Subround(self._addresses_connect)
+        self.subround.start()
 
     def _advance_round_agents(self):
         """ advances round by 1 """
@@ -864,23 +860,24 @@ class repeat_while:
 
 
 class _Communication(multiprocessing.Process):
-    def __init__(self, _addresses):
+    def __init__(self, _addresses_bind, _addresses_connect):
         multiprocessing.Process.__init__(self)
-        self._addresses = _addresses
+        self._addresses_bind = _addresses_bind
+        self._addresses_connect = _addresses_connect
 
     def run(self):
         self.context = zmq.Context()
         self.in_soc = self.context.socket(zmq.PULL)
-        self.in_soc.bind(self._addresses['frontend'])
+        self.in_soc.bind(self._addresses_bind['frontend'])
 
         self.out = self.context.socket(zmq.ROUTER)
-        self.out.bind(self._addresses['backend'])
+        self.out.bind(self._addresses_bind['backend'])
 
         self.shout = self.context.socket(zmq.PUB)
-        self.shout.bind(self._addresses['group_backend'])
+        self.shout.bind(self._addresses_bind['group_backend'])
 
         self.ready = self.context.socket(zmq.PUSH)
-        self.ready.connect(self._addresses['ready'])
+        self.ready.connect(self._addresses_connect['ready'])
         agents_finished, total_number = 0, 0
         total_number_known = False
         self.ready.send('working')
