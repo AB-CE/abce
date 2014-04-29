@@ -25,7 +25,10 @@ methods use this variable to produce with the according technology.
 """
 from __future__ import division
 import compiler
-import pyparsing as pp
+try:
+    import pyparsing as pp
+except ImportError:
+    pass
 from collections import defaultdict
 import numpy as np
 from abce.tools import epsilon, NotEnoughGoods
@@ -113,11 +116,15 @@ class FirmMultiTechnologies:
 
         //exponential is ** not ^
         """
-        parse_single_output = pp.Word(pp.alphas + "_", pp.alphanums + "_") + pp.Suppress('=') + pp.Suppress(pp.Word(pp.alphanums + '*/+-().[]{} '))
-        parse_output = pp.delimitedList(parse_single_output, ';')
-        parse_single_input = pp.Suppress(pp.Word(pp.alphas + "_", pp.alphanums + "_")) + pp.Suppress('=') \
-                + pp.OneOrMore(pp.Suppress(pp.Optional(pp.Word(pp.nums + '*/+-().[]{} '))) + pp.Word(pp.alphas + "_", pp.alphanums + "_"))
-        parse_input = pp.delimitedList(parse_single_input, ';')
+        try:
+            parse_single_output = pp.Word(pp.alphas + "_", pp.alphanums + "_") + pp.Suppress('=') + pp.Suppress(pp.Word(pp.alphanums + '*/+-().[]{} '))
+            parse_output = pp.delimitedList(parse_single_output, ';')
+            parse_single_input = pp.Suppress(pp.Word(pp.alphas + "_", pp.alphanums + "_")) + pp.Suppress('=') \
+                    + pp.OneOrMore(pp.Suppress(pp.Optional(pp.Word(pp.nums + '*/+-().[]{} '))) + pp.Word(pp.alphas + "_", pp.alphanums + "_"))
+            parse_input = pp.delimitedList(parse_single_input, ';')
+        except NameError:
+            print('pyparsing could not be loaded without pyparsing, create_production_function does not work use create_production_function instead')
+            raise
 
         production_function = {}
         production_function['type'] = typ
