@@ -564,7 +564,7 @@ class Simulation:
          method: as string
         """
         self._add_agents_to_wait_for(1)
-        self.commands.send_multipart([INDIVIDUAL_AGENT_SUBSCRIBE % (group, idn), command])
+        self.commands.send_multipart(['%s_%i:' % (group, idn), command])
 
     def build_agents(self, AgentClass,  number=None, group_name=None, agents_parameters=None):
         """ This method creates agents, the first parameter is the agent class.
