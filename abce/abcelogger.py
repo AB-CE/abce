@@ -31,7 +31,7 @@ class AbceLogger(multiprocessing.Process):
     def run(self):
         context = zmq.Context()
         in_sok = context.socket(zmq.PULL)
-        in_sok.bind(self._addresses['logger'])
+        in_sok.bind(self._addresses)
         while True:
             typ = in_sok.recv()
             if typ == "close":

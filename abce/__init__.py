@@ -52,11 +52,11 @@ import itertools
 import postprocess
 from glob import glob
 import subround
-
-from firm import *
+from firm import Firm
 from firmmultitechnologies import *
 from household import *
 from agent import *
+import db
 
 BASEPATH = os.path.dirname(os.path.realpath(__file__))
 
@@ -227,8 +227,8 @@ class Simulation:
         self.communication_channel = self.context.socket(zmq.PUSH)
         self.communication_channel.connect(self._addresses_connect['frontend'])
         self._register_action_groups()
-        self._db = abce.db.Database(simulation_parameters['_path'], 'database', self._addresses)
-        self._logger = abce.abcelogger.AbceLogger(simulation_parameters['_path'], 'logger', self._addresses)
+        self._db = abce.db.Database(simulation_parameters['_path'], 'database', self._addresses_bind['database'])
+        self._logger = abce.abcelogger.AbceLogger(simulation_parameters['_path'], 'logger', self._addresses_bind['logger'])
         self._db.start()
         self._logger.start()
 
