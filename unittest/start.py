@@ -3,9 +3,10 @@ from buy import Buy
 #from quote_buy import QuoteBuy
 from sell import Sell
 from give import Give  # tests give and messaging
-from logger import LoggerTest
+from logger_test import LoggerTest
 from endowment import Endowment
 from abce import *
+from abce.subround import Subround
 
 
 for parameters in read_parameters('simulation_parameters.csv'):
@@ -16,13 +17,13 @@ for parameters in read_parameters('simulation_parameters.csv'):
         ('all', 'two'),
         ('all', 'three'),
         ('all', 'clean_up')
-        ], 1000),
+        ], 100),
         ('endowment', 'Iconsume'),
         ('all', 'all_tests_completed')
 
     ]
     s.add_action_list(action_list)
-
+    #s.debug_subround()
     s.build_agents(Buy, 2)
     #s.build_agents(QuoteBuy, 2)
     s.build_agents(Sell, 2)

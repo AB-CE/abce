@@ -6,8 +6,11 @@ import os
 if os.name in ('posix', 'Darwin', 'java'):  # unix compatible
     zmq_transport = 'ipc'
     if os.name == 'java':
-        print("Waring %s chosen on java/jython, it has not been tested on windows. "
-        "On error try to substitute with 'tcp'" % zmq_transport)
+	import java.lang
+	ver = java.lang.System.getProperty("os.name").lower()
+	if not(ver == 'linux'):        
+		print("Waring %s chosen on java/jython, it has not been tested on windows. "
+        	"On error try to substitute with 'tcp'" % zmq_transport)
 elif os.name in ('nt'):
     zmq_transport = 'tcp'
 else:

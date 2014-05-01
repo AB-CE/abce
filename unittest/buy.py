@@ -1,7 +1,7 @@
 from __future__ import division
-from agent import Agent
 import random
-
+from abce.agent import Agent
+from abce.tools import NotEnoughGoods, is_zero
 
 class Buy(Agent):
     def __init__(self, simulation_parameters, _, _pass_to_engine):
@@ -92,14 +92,16 @@ class Buy(Agent):
             print('Test abce.accept_partial\t(abce.buy):\tOK')
             print('Test reject pending automatic \t(abce.buy):\tOK')
 
-b = b.Buy({'num_rounds':10}, 0, [0, "gbuy",
-{
-    'command_addresse': "tcp://localhost:4001",
-    'ready': "tcp://localhost:5002",
-    'frontend': "tcp://localhost:5003",
-    'backend': "tcp://localhost:5004",
-    'database': "tcp://localhost:5005",
-    'logger': "tcp://localhost:5006",
-    'group_backend': "tcp://localhost:5007"
-}, 'off'])
+
+if __name__ == '__main__':
+    b = Buy({'num_rounds':10}, 0, [0, "gbuy",
+    {
+        'command_addresse': "tcp://localhost:4001",
+        'ready': "tcp://localhost:5002",
+        'frontend': "tcp://localhost:5003",
+        'backend': "tcp://localhost:5004",
+        'database': "tcp://localhost:5005",
+        'logger': "tcp://localhost:5006",
+        'group_backend': "tcp://localhost:5007"
+    }, 'off'])
 
