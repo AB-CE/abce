@@ -689,6 +689,7 @@ class Simulation:
 
     def debug_subround(self):
         self.subround = subround.Subround(self._addresses_connect)
+        self.subround.name ="debug_subround"
         self.subround.start()
 
     def _advance_round_agents(self):
@@ -886,7 +887,12 @@ class _Communication(multiprocessing.Process):
             try:
                 msg = self.in_soc.recv_multipart()
             except KeyboardInterrupt:
-                print('KeyboardInterrupt: _Communication: msg = self.in_soc.recv_multipart() ~825')
+                print('KeyboardInterrupt: _Communication: Waiting for messages')
+                if total_number_known:
+                    print("total number known")
+                    print("%i of %i ended communication" % (agents_finished, total_number))
+                else:
+                    print("total number not known")
                 break
             if msg[0] == '!':
                 if msg[1] == '.':
