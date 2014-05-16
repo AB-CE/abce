@@ -16,7 +16,7 @@
 # the License.
 import zmq
 import multiprocessing
-import sqlite3
+import abce.jython_sqlite3 as sqlite3
 import numpy as np
 
 
