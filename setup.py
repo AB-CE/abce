@@ -17,19 +17,10 @@ setup(
       modules=['abce_db', 'abcetools', 'postprocess'],
       long_description=open('README.rst').read(),
       install_requires=['pyparsing==1.5.7', 'numpy','scipy', 'rpy2', 'pyzmq'],
-      data_files=[('abce', ['abce/postprocess.R'])],
       include_package_data = True,
      )
 
 if os.name == 'posix':
-    try:
-        subprocess.call(["sudo apt-get", "install r-base"])
-    except:
-        print('** *************************************************************************')
-        print('**                                                                        **')
-        print('**  please download and install R from http://cran.r-project.org          **')
-        print('**                                                                        **')
-        print('****************************************************************************')
     print('** **************************************************************************')
     print('**                                                                         **')
     print('** - In the abce-0.X subdirectory you will find  examples ond templates    **')
@@ -46,8 +37,6 @@ if os.name == 'posix':
 elif os.name == 'Darwin':
     print('************************************************************************************')
     print('**                                                                                **')
-    print('** - please download and install R from http://cran.r-project.org/bin/macosx/     **')
-    print('**                                                                                **')
     print('** - documentation http://davoudtaghawinejad.github.com/abce/                     **')
     print('**                                                                                **')
     print('** - please unzip abce-0.X.tar.gz, in there you will find examples and templates  **')
@@ -55,8 +44,6 @@ elif os.name == 'Darwin':
     print('************************************************************************************')
 else:
     print('************************************************************************************')
-    print('**                                                                                **')
-    print('** - pls download and install R from http://cran.r-project.org/bin/windows/base/  **')
     print('**                                                                                **')
     print('** - documentation http://davoudtaghawinejad.github.com/abce/                     **')
     print('**                                                                                **')

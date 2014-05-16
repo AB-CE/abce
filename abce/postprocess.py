@@ -1,4 +1,3 @@
-
 """
 functions:
 sam_cell(seller, buyer, cell='quantity'), returns you the evolution over time of a cell
@@ -14,6 +13,10 @@ import csv
 
 
 trade_unified = []  # placeholder value, since trade_unified seems to not have been defined in anywhere else
+
+import abce.jython_sqlite3 as sqlite3
+import csv
+
 
 def to_r_and_csv(directory, db_name, csv=True): #pylint: disable=R0914
     os.chdir(directory)
@@ -51,21 +54,6 @@ def to_r_and_csv(directory, db_name, csv=True): #pylint: disable=R0914
         tables = [dict([(key, cell) for key, cell in zip(column_names, row)]) for row in table_contents]
     c.close()
 
-    if csv:
-        #http://stackoverflow.com/questions/75675/how-do-i-dump-the-data-of-some-sqlite3-tables
-        c.execute(".mode csv")
-        c.execute(".header on")
-        for table in table_names:
-            c.execute(".out %s.csv" %table)
-            c.execute("SELECT * from %s" %table)
-        for table in new_tables:
-            go("%s$round <- factor(%s$round)" % (table, table))
-            go("%s$id <- factor(%s$id)" % (table, table))
-
-        go("save(list = ls(all=TRUE), file = '%s')" % 'database.RData')
-except ImportError:
-    def to_r_and_csv(directory, basepath, csv=True):
-        pass
 
 def table_to_file(table_name, column_names, table_contents):
     with open(os.path.join('.', table_name + '.csv'), 'w') as csv_file:
