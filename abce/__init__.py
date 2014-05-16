@@ -220,6 +220,7 @@ class Simulation:
 
             }
         #time.sleep(1)
+        self.database_name = 'database'
         self.context = zmq.Context()
         self.commands = self.context.socket(zmq.PUB)
         self.commands.bind(self._addresses['command_addresse'])
@@ -231,7 +232,7 @@ class Simulation:
         self.communication_channel = self.context.socket(zmq.PUSH)
         self.communication_channel.connect(self._addresses['frontend'])
         self._register_action_groups()
-        self._db = abce.db.Database(simulation_parameters['_path'], 'database', self._addresses)
+        self._db = abce.db.Database(simulation_parameters['_path'], self.database_name, self._addresses)
         self._logger = abce.abcelogger.AbceLogger(simulation_parameters['_path'], 'logger', self._addresses)
         self._db.start()
         self._logger.start()
@@ -531,7 +532,7 @@ class Simulation:
             time.sleep(0.05)
         while self._communication.is_alive():
             time.sleep(0.025)
-        postprocess.to_r_and_csv(os.path.abspath(self.simulation_parameters['_path']), BASEPATH)
+        postprocess.to_r_and_csv(os.path.abspath(self.simulation_parameters['_path']), self.database_name)
         self.context.destroy()
 
     def _make_ask_each_agent_in(self, action):
