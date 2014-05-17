@@ -1,4 +1,4 @@
-l""" Agents are now build according
+""" Agents are now build according
 to the line in agents_parameter.csv
 """
 from __future__ import division
