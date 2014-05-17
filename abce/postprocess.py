@@ -19,25 +19,27 @@ import csv
 
 
 def to_r_and_csv(directory, db_name, csv=True): #pylint: disable=R0914
+    DEBUG = False
     os.chdir(directory)
     #db_name = db_name + '.db'
     c = sqlite3.CustomConnect('.', db_name)
-    import glob
-    print('--')
-    print(db_name)
-    print glob.glob("*")
-    print glob.glob(db_name)
+    if DEBUG:
+        import glob
+        print('--')
+        print(db_name)
+        print glob.glob("*")
+        print glob.glob(db_name)
     table_names = c.executeQuery("SELECT name FROM sqlite_master WHERE type='table'").fetchall()
     table_names = [i for sublist in table_names for i in sublist] # equivalent to unlist, or numpy's ravel
-
-    print("Import:")
+    if DEBUG: print("Import:")
     for i in table_names:
         c.execute("select * from %s" % i)
         table_contents = c.fetchall()
         column_names = [j[0] for j in c.description]
         column_types = [type(k) for k in table_contents[-1]]  # hack-ish, could have been done better @Rudy, I think this is pythonic
-        print zip(column_names, column_types)
-        print table_contents[1-3]
+        if DEBUG:
+            print zip(column_names, column_types)
+            print table_contents[1-3]
 
     for table in table_names:
         table_to_file(table, column_names, table_contents)
@@ -48,7 +50,8 @@ def to_r_and_csv(directory, db_name, csv=True): #pylint: disable=R0914
     try: #MONKY PATCH why does this not work in python???, I numpy is not available in JYTHON, so NameError-try/catch is necessary
         tables = numpy.recarray(table_contents, dtype=zip(column_names, column_types)) #pylint: disable=E1101
     except (TypeError, ValueError) as e:
-        print("irrelevant - numpy.recarray error: ", e)
+        if DEBUG:
+            print("irrelevant - numpy.recarray error: ", e)
         tables = [dict([(key, cell) for key, cell in zip(column_names, row)]) for row in table_contents]
     except NameError:
         tables = [dict([(key, cell) for key, cell in zip(column_names, row)]) for row in table_contents]
