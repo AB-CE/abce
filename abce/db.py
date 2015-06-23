@@ -21,7 +21,7 @@ import numpy as np
 
 
 class Database(multiprocessing.Process):
-    def __init__(self, directory, db_name, _addresses):
+    def __init__(self, directory, db_name, _addresse):
         multiprocessing.Process.__init__(self)
         self.db = sqlite3.connect(directory + '/' + db_name + '.db')
         self.database = self.db.cursor()
@@ -37,7 +37,7 @@ class Database(multiprocessing.Process):
             sqlite3.register_adapter(t, long)
         for t in (np.float, np.float16, np.float32, np.float64):
             sqlite3.register_adapter(t, float)
-        self._addresses = _addresses
+        self._addresse = _addresse
 
     def add_trade_log(self):
         table_name = 'trade'
@@ -55,7 +55,7 @@ class Database(multiprocessing.Process):
     def run(self):
         context = zmq.Context()
         in_sok = context.socket(zmq.PULL)
-        in_sok.bind(self._addresses['database'])
+        in_sok.bind(self._addresse)
         trade_ex_str = self.add_trade_log()
         while True:
             typ = in_sok.recv()
