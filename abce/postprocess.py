@@ -14,9 +14,6 @@ import csv
 
 trade_unified = []  # placeholder value, since trade_unified seems to not have been defined in anywhere else
 
-import abce.jython_sqlite3 as sqlite3
-import csv
-
 
 def to_r_and_csv(directory, db_name, csv=True): #pylint: disable=R0914
     DEBUG = False
