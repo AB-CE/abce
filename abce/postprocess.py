@@ -16,19 +16,20 @@ trade_unified = []  # placeholder value, since trade_unified seems to not have b
 
 
 def to_r_and_csv(directory, db_name, csv=True): #pylint: disable=R0914
-    DEBUG = False
+    DEBUG = True
     os.chdir(directory)
     #db_name = db_name + '.db'
-    c = sqlite3.CustomConnect('.', db_name)
+    c = sqlite3.connect(directory + '/' + db_name + '.db')
     if DEBUG:
         import glob
         print('--')
         print(db_name)
         print glob.glob("*")
         print glob.glob(db_name)
-    table_names = c.executeQuery("SELECT name FROM sqlite_master WHERE type='table'").fetchall()
+    table_names = c.execute("SELECT name FROM sqlite_master WHERE type='table'").fetchall()
     table_names = [i for sublist in table_names for i in sublist] # equivalent to unlist, or numpy's ravel
-    if DEBUG: print("Import:")
+    if DEBUG: print("*******Import:")
+    print(table_names)
     for i in table_names:
         c.execute("select * from %s" % i)
         table_contents = c.fetchall()
