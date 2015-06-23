@@ -33,7 +33,6 @@ Messaging between agents:
 .. [1] or :class:`abce.agent.FirmMultiTechnologies` for simulations with complex technologies.
 """
 from __future__ import division
-<<<<<<< HEAD
 import zmq
 import multiprocessing
 import compiler
@@ -41,21 +40,6 @@ import pyparsing as pp
 from collections import OrderedDict, defaultdict
 import numpy as np
 from abce.tools import *
-=======
-import jzmq as zmq
-try:
-    from multiprocessing import Process
-except ImportError:
-    from threading import Thread as Process
-    if not hasattr(Process, 'is_alive'):
-        Process.is_alive = Process.isAlive
-from collections import defaultdict
-try:
-    from collections import OrderedDict
-except ImportError:
-    from ordereddict import OrderedDict
-from tools import *
->>>>>>> 7cd3281... small stuff fixed
 from inspect import getmembers, ismethod
 from random import shuffle
 save_err = np.seterr(invalid='ignore')
