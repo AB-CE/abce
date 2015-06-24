@@ -23,20 +23,8 @@ import numpy as np
 class Database(multiprocessing.Process):
     def __init__(self, directory, db_name, _addresse):
         multiprocessing.Process.__init__(self)
-        self.db = sqlite3.connect(directory + '/' + db_name + '.db')
-        self.database = self.db.cursor()
-        self.database.execute('PRAGMA synchronous=OFF')
-        self.database.execute('PRAGMA journal_mode=OFF')
-        self.database.execute('PRAGMA count_changes=OFF')
-        self.database.execute('PRAGMA temp_store=OFF')
-        self.database.execute('PRAGMA default_temp_store=OFF')
-        #self.database.execute('PRAGMA cache_size = -100000')
-
-        for t in (np.int8, np.int16, np.int32, np.int64,
-                                    np.uint8, np.uint16, np.uint32, np.uint64):
-            sqlite3.register_adapter(t, long)
-        for t in (np.float, np.float16, np.float32, np.float64):
-            sqlite3.register_adapter(t, float)
+        self.directory = directory
+        self.db_name = db_name
         self._addresse = _addresse
 
     def add_trade_log(self):
@@ -53,10 +41,23 @@ class Database(multiprocessing.Process):
         self.database.execute("CREATE TABLE " + table_name + "(round INT, id INT, PRIMARY KEY(round, id))")
 
     def run(self):
+        self.db = sqlite3.connect(self.directory + '/' + self.db_name + '.db')
+        self.database = self.db.cursor()
+        self.database.execute('PRAGMA synchronous=OFF')
+        self.database.execute('PRAGMA journal_mode=OFF')
+        self.database.execute('PRAGMA count_changes=OFF')
+        self.database.execute('PRAGMA temp_store=OFF')
+        self.database.execute('PRAGMA default_temp_store=OFF')
+        #self.database.execute('PRAGMA cache_size = -100000')
+        for t in (np.int8, np.int16, np.int32, np.int64,
+                                    np.uint8, np.uint16, np.uint32, np.uint64):
+            sqlite3.register_adapter(t, long)
+        for t in (np.float, np.float16, np.float32, np.float64):
+            sqlite3.register_adapter(t, float)
+        trade_ex_str = self.add_trade_log()
         context = zmq.Context()
         in_sok = context.socket(zmq.PULL)
         in_sok.bind(self._addresse)
-        trade_ex_str = self.add_trade_log()
         while True:
             typ = in_sok.recv()
             if typ == "close":
