@@ -6,7 +6,6 @@ sam(t), returns the social accounting matrix at time t
 sam_ext(t), returns the social accounting matrix at time t for every individual agent
 """
 import os
-import pylab
 import numpy
 import sqlite3
 import csv
