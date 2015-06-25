@@ -22,7 +22,7 @@ def to_csv(directory, db_name): #pylint: disable=R0914
     # dumps csv file
     for table_name in db.tables:
         with open(table_name + '.csv', 'w') as csvfile:
-            for row in db[table]:
-                writer = csv.DictWriter(csvfile, fieldnames=db[table_name].columns)
-                writer.writeheader()
+            writer = csv.DictWriter(csvfile, fieldnames=db[table_name].columns)
+            writer.writeheader()
+            for row in db[table_name]:
                 writer.writerow(row)
