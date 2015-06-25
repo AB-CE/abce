@@ -529,7 +529,7 @@ class Simulation:
             time.sleep(0.05)
         while self._communication.is_alive():
             time.sleep(0.025)
-        postprocess.to_r_and_csv(os.path.abspath(self.simulation_parameters['_path']), self.database_name)
+        postprocess.to_csv(os.path.abspath(self.simulation_parameters['_path']), self.database_name)
         #self.context.destroy()
 
     def _make_ask_each_agent_in(self, action):
