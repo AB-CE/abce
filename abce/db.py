@@ -26,6 +26,7 @@ class Database(multiprocessing.Process):
         self.directory = directory
         self.db_name = db_name
         self._addresse = _addresse
+        self.panels = []
 
     def add_trade_log(self):
         table_name = 'trade'
@@ -37,8 +38,8 @@ class Database(multiprocessing.Process):
         self.database.execute("CREATE TABLE " + table_name + "(round INT, id INT, PRIMARY KEY(round, id))")
 
     def add_panel(self, group, command):
-        table_name = command + '_' + group
-        self.database.execute("CREATE TABLE " + table_name + "(round INT, id INT, PRIMARY KEY(round, id))")
+        self.panels.append(command + '_' + group)
+
 
     def run(self):
         self.db = sqlite3.connect(self.directory + '/' + self.db_name + '.db')
@@ -55,6 +56,8 @@ class Database(multiprocessing.Process):
         for t in (np.float, np.float16, np.float32, np.float64):
             sqlite3.register_adapter(t, float)
         trade_ex_str = self.add_trade_log()
+        for table_name in self.panels:
+            self.database.execute("CREATE TABLE " + table_name + "(round INT, id INT, PRIMARY KEY(round, id))")
         context = zmq.Context()
         in_sok = context.socket(zmq.PULL)
         in_sok.bind(self._addresse)
