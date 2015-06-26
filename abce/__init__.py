@@ -56,7 +56,6 @@ from firm import Firm
 from firmmultitechnologies import *
 from household import *
 from agent import *
-import db
 
 BASEPATH = os.path.dirname(os.path.realpath(__file__))
 
@@ -231,7 +230,6 @@ class Simulation:
         self._register_action_groups()
         self._db = abce.db.Database(simulation_parameters['_path'], self.database_name, self._addresses_bind['database'])
         self._logger = abce.abcelogger.AbceLogger(simulation_parameters['_path'], 'logger', self._addresses_bind['logger'])
-        self._db.start()
         self._logger.start()
 
         self.aesof = False
@@ -471,6 +469,7 @@ class Simulation:
 
     def run(self):
         """ This runs the simulation """
+        self._db.start()
         if not(self.agent_list):
             raise SystemExit('No Agents Created')
         if not(self.action_list) and not(self._action_list):
@@ -707,14 +706,14 @@ class Simulation:
         try:
             self.ready.recv()
         except KeyboardInterrupt:
-            print('KeyboardInterrupt: abce.db: _wait_for_agents_than_signal_end_of_comm(self) ~654')
+            print('KeyboardInterrupt: abce.db: _wait_for_agents_than_signal_end_of_comm(self) ~709')
 
     def _wait_for_agents(self):
         self.communication_channel.send_multipart(['!', ')'])
         try:
             self.ready.recv()
         except KeyboardInterrupt:
-            print('KeyboardInterrupt: abce.db: _wait_for_agents(self) ~662')
+            print('KeyboardInterrupt: abce.db: _wait_for_agents(self) ~716')
 
     def _end_Communication(self):
         self.communication_channel.send_multipart(['!', '!', 'end_simulation'])
