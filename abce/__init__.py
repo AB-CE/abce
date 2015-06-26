@@ -56,7 +56,6 @@ from firm import Firm
 from firmmultitechnologies import *
 from household import *
 from agent import *
-import db
 
 BASEPATH = os.path.dirname(os.path.realpath(__file__))
 
@@ -231,7 +230,6 @@ class Simulation:
         self._register_action_groups()
         self._db = abce.db.Database(simulation_parameters['_path'], self.database_name, self._addresses_bind['database'])
         self._logger = abce.abcelogger.AbceLogger(simulation_parameters['_path'], 'logger', self._addresses_bind['logger'])
-        self._db.start()
         self._logger.start()
 
         self.aesof = False
@@ -471,6 +469,7 @@ class Simulation:
 
     def run(self):
         """ This runs the simulation """
+        self._db.start()
         if not(self.agent_list):
             raise SystemExit('No Agents Created')
         if not(self.action_list) and not(self._action_list):

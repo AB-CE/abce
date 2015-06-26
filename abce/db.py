@@ -112,7 +112,7 @@ class Database(multiprocessing.Process):
             self.database.execute(insert_str % format_strings, rows_to_write)
         except sqlite3.OperationalError, msg:
             if 'no such table' in msg.message:
-                raise TableMissing
+                raise TableMissing(table_name)
             if not('has no column named' in msg.message):
                 raise
             self.new_column(table_name, data_to_write)
@@ -127,7 +127,7 @@ class Database(multiprocessing.Process):
             self.database.execute(ex_str % format_strings, rows_to_write)
         except sqlite3.OperationalError, msg:
             if 'no such table' in msg.message:
-                raise TableMissing
+                raise TableMissing(table_name)
             if not('has no column named' in msg.message):
                 raise
             self.new_column(table_name, data_to_write)
@@ -153,7 +153,8 @@ class Database(multiprocessing.Process):
 
 
 class TableMissing(sqlite3.OperationalError):
-    pass
+    def __init__(self, message):
+        super(TableMissing, self).__init__(message)
 
 
 def is_convertable_to_float(x):
