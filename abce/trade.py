@@ -423,9 +423,12 @@ class Trade:
             price:
                 price per unit
         """
-        offer = Offer(self.group, self.idn, receiver_group, receiver_idn, good, quantity, price, 'qs', idn=self._offer_counter())
-        self._send(receiver_group, receiver_idn, '_q', offer)
-        return offer
+        if quantity > 0:
+            offer = Offer(self.group, self.idn, receiver_group, receiver_idn, good, quantity, price, 'qs', idn=self._offer_counter())
+            self._send(receiver_group, receiver_idn, '_q', offer)
+            return offer
+        else:
+            return None
 
     def quote_buy(self, receiver_group, receiver_idn, good, quantity, price):
         """ quotes a price to buy quantity of 'good' a receiver
@@ -445,9 +448,12 @@ class Trade:
             price:
                 price per unit
         """
-        offer = Offer(self.group, self.idn, receiver_group, receiver_idn, good, quantity, price, 'qb', idn=self._offer_counter())
-        self._send(receiver_group, receiver_idn, '_q', offer)
-        return offer
+        if quantity > 0:
+            offer = Offer(self.group, self.idn, receiver_group, receiver_idn, good, quantity, price, 'qb', idn=self._offer_counter())
+            self._send(receiver_group, receiver_idn, '_q', offer)
+            return offer
+        else:
+            return None
 
     def sell(self, receiver_group, receiver_idn, good, quantity, price):
         """ commits to sell the quantity of good at price
