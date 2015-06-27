@@ -47,7 +47,7 @@ from database import Database
 from logger import Logger
 from trade import Trade, Offer
 from messaging import Messaging, Message
-
+import time
 
 class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
     """ Every agent has to inherit this class. It connects the agent to the simulation
@@ -306,10 +306,10 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
 
         self.out = self.context.socket(zmq.PUSH)
         self.out.connect(self._addresses['frontend'])
-
+        time.sleep(0.1)
         self.database_connection = self.context.socket(zmq.PUSH)
         self.database_connection.connect(self._addresses['database'])
-
+        time.sleep(0.1)
         self.logger_connection = self.context.socket(zmq.PUSH)
         self.logger_connection.connect(self._addresses['logger'])
 
