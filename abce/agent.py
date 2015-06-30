@@ -65,9 +65,14 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
     def __init__(self, idn, group, _addresses, trade_logging):
         multiprocessing.Process.__init__(self)
         self.idn = idn
+        """ self.idn returns the agents idn READ ONLY!"""
         self.name = '%s_%i:' % (group, idn)
+        """ self.name returns the agents name, which is the group name and the
+        id seperated by '_' e.G. "household_12" READ ONLY!
+        """
         self.name_without_colon = '%s_%i' % (group, idn)
         self.group = group
+        """ self.group returns the agents group or type READ ONLY! """
         #TODO should be group_address(group), but it would not work
         # when fired manual + ':' and manual group_address need to be removed
         self._addresses = _addresses
@@ -105,6 +110,7 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
         self._quotes = {}
 
         self.round = 0
+        """ self.round returns the current round in the simulation READ ONLY!"""
 
     def possession(self, good):
         """ returns how much of good an agent possesses.
