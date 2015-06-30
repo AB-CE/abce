@@ -41,6 +41,32 @@ save_err = np.seterr(invalid='ignore')
 
 
 def Offer(sender_group, sender_idn, receiver_group, receiver_idn, good, quantity, price, buysell, idn):
+    """ This is an offer container that is send to the other agent. You can
+    access the offer container both at the receiver as well as at the sender,
+    if you have saved the offer. (e.G. self.offer = self.sell(...))
+
+    Args:
+        sender_group:
+            this is the group name of the sender
+        sender_idn:
+            this is the ID of the sender
+        receiver_group:
+            This is the group name of the receiver
+        receiver_idn:
+            this is the ID of the sender
+        good:
+            the good offered or demanded
+        quantity:
+            the quantity offered or demanded
+        price:
+            the suggested tansaction price
+        buysell:
+            this can have the values 'b' for buy; 's' for sell; 'qb' for a
+            nonbinding buy quote; and 'qs' for a nonbinding sell quote
+
+        idn:
+            a unique identifier
+    """
     offer = {}
     offer['sender_group'] = sender_group
     offer['sender_idn'] = sender_idn
@@ -375,10 +401,11 @@ class Trade:
         """ returns a peak on all offers of the 'good' ordered by price.
         Peaked offers can not be accepted or rejected, but they do not
         expire.
+
         Args:
             good:
                 the good which should be retrieved
-            descending(bool,default=False):
+                descending(bool,default=False):
                 False for descending True for ascending by price
 
         Returns:
