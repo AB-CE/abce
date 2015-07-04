@@ -9,7 +9,7 @@ import os
 import numpy
 import dataset
 import csv
-
+import pandas as pd
 
 trade_unified = []  # placeholder value, since trade_unified seems to not have been defined in anywhere else
 
@@ -26,3 +26,17 @@ def to_csv(directory, db_name): #pylint: disable=R0914
             writer.writeheader()
             for row in db[table_name]:
                 writer.writerow(row)
+
+    for table_name in db.tables:
+        table = pd.read_csv(table_name + '.csv')
+        if u'id' in table.columns:
+            del table['id']
+            grouped = table.groupby('round')
+            aggregated = grouped.sum()
+            aggregated.to_csv(table_name + '_aggregate.csv')
+            meaned = grouped.mean()
+            meaned.to_csv(table_name + '_mean.csv')
+
+
+
+
