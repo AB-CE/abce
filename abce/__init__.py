@@ -205,7 +205,7 @@ class Simulation:
                 'ready': "ipc://ready.ipc",
                 'frontend': "ipc://frontend.ipc",
                 'backend': "ipc://backend.ipc",
-                'group_backend': "ipc://group_backend",
+                'group_backend': "ipc://group_backend.ipc",
                 'database': "ipc://database.ipc",
                 'logger': "ipc://logger.ipc"
             }
