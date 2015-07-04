@@ -8,3 +8,5 @@ Trade
     :members:
     :undoc-members:
     :show-inheritance:
+
+.. autofunction:: abce.Offer
