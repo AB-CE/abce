@@ -507,7 +507,7 @@ class Simulation:
         start_time = time.time()
 
         for year in xrange(self.simulation_parameters['num_rounds']):
-            print("\nRound" + str("%3d" % year))
+            print("\rRound" + str("%3d" % year)),
             for action in self._action_list:
                 self._action_groups[action]()
                 self._wait_for_agents_than_signal_end_of_comm()
@@ -876,8 +876,4 @@ def _number_or_string(word):
         except ValueError:
             return word
 
-try:  # Clears screen right at the start
-    os.system('cls' if os.name == 'nt' else 'clear')
-except:
-    pass
 
