@@ -48,6 +48,8 @@ from logger import Logger
 from trade import Trade, Offer
 from messaging import Messaging, Message
 import time
+from copy import deepcopy
+
 
 class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
     """ Every agent has to inherit this class. It connects the agent to the simulation
@@ -156,7 +158,7 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
 
     def possessions_all(self):
         """ returns all possessions """
-        return self._haves.copy()
+        return deepcopy(self._haves)
 
     def possessions_filter(self, goods=None, but=None, match=None, beginswith=None, endswith=None):
         """ returns a subset of the goods an agent owns, all arguments
