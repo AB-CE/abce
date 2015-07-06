@@ -463,7 +463,7 @@ class Simulation:
 
     def gracefull_exit(self):
         for queue in self.agents_command_socket['all']:
-            queue.put("!", "die")
+            queue.put("_die")
         for agent in list(itertools.chain(*self.agent_list.values())):
             while agent.is_alive():
                 time.sleep(0.1)

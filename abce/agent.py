@@ -50,6 +50,7 @@ from messaging import Messaging, Message
 import time
 from copy import deepcopy
 import random
+import sys
 
 
 class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
@@ -235,6 +236,8 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
             self._methods['_perish'] = self._perish
             self._methods['_produce_resource_rent_and_labor'] = self._produce_resource_rent_and_labor
             self._methods['_aesof'] = self._aesof
+            self._methods['_die'] = self._die
+
             #TODO inherited classes provide methods that should not be callable
             #change _ policy _ callable from outside __ not and exception lists
 
@@ -315,11 +318,6 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
                     command = self.commands.get()
                 except KeyboardInterrupt:
                     break
-                if command == "!":
-                    subcommand = self.commands.get()
-                    if subcommand == 'die':
-                        self.__signal_finished()
-                        break
                 try:
                     self._methods[command]()
                 except KeyError:
@@ -335,6 +333,9 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
             time.sleep(random.random())
             print("")
             raise
+
+    def _die(self):
+        sys.exit(0)
 
     def _produce_resource_rent_and_labor(self):
         resource, units, product = self.commands.get()
