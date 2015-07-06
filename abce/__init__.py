@@ -651,12 +651,6 @@ class Simulation:
 
         self.build_agents(AgentClass, agents_parameters=agents_parameters)
 
-    def debug_subround(self):
-        self.subround = subround.Subround(self._addresses_connect)
-        self.subround.name = "debug_subround"
-        self.subround.start()
-
-
     def _add_agents_to_wait_for(self, number):
         self.communication_frontend.put(['!', '+', str(number)])
 
