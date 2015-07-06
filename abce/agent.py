@@ -311,7 +311,10 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
         self.out.put(['!', '!', 'register_agent', self.name])
         try:
             while True:
-                command = self.commands.get()
+                try:
+                    command = self.commands.get()
+                except KeyboardInterrupt:
+                    break
                 if command == "!":
                     subcommand = self.commands.get()
                     if subcommand == 'die':

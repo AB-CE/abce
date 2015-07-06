@@ -29,7 +29,11 @@ class AbceLogger(multiprocessing.Process):
 
     def run(self):
         while True:
-            typ = self.in_sok.get()
+            try:
+                typ = self.in_sok.get()
+            except KeyboardInterrupt:
+                    self.file.close()
+                    break
             if typ == "close":
                 self.file.close()
                 break

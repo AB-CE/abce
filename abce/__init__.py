@@ -42,6 +42,7 @@ This is a minimal template for a start.py::
 import csv
 import datetime
 import os
+import sys
 import time
 import inspect
 from abce.tools import agent_name, group_address
@@ -474,6 +475,9 @@ class Simulation:
                 self.commands.put(['all', '_clearing__end_of_subround'])
 
         print(str("%6.2f" % (time.time() - start_time)))
+        self.gracefull_exit()
+
+    def gracefull_exit(self):
         for agent in list(itertools.chain(*self.agent_list.values())):
             self.commands.put([agent.name, "!", "die"])
         for agent in list(itertools.chain(*self.agent_list.values())):
@@ -487,8 +491,6 @@ class Simulation:
         while self._communication.is_alive():
             time.sleep(0.025)
         postprocess.to_csv(os.path.abspath(self.simulation_parameters['_path']), self.database_name)
-        #self.context.destroy()
-
     def _make_ask_each_agent_in(self, action):
         group_address_var = group_address(action[0])
         number = self.num_agents_in_group[action[0]]
@@ -675,14 +677,16 @@ class Simulation:
         try:
             self.ready.get()
         except KeyboardInterrupt:
-            print('KeyboardInterrupt: abce.db: _wait_for_agents_than_signal_end_of_comm(self) ~709')
+            self.gracefull_exit()
+            sys.exit(-1)
 
     def _wait_for_agents(self):
         self.communication_frontend.put(['!', ')'])
         try:
             self.ready.get()
         except KeyboardInterrupt:
-            print('KeyboardInterrupt: abce.db: _wait_for_agents(self) ~716')
+            self.gracefull_exit()
+            sys.exit(-1)
 
     def _end_Communication(self):
         self.communication_frontend.put(['!', '!', 'end_simulation'])

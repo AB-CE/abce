@@ -14,7 +14,6 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations under
 # the License.
-import zmq
 import multiprocessing
 import sqlite3
 import numpy as np
@@ -58,9 +57,13 @@ class Database(multiprocessing.Process):
         trade_ex_str = self.add_trade_log()
         for table_name in self.panels:
             self.database.execute("CREATE TABLE " + table_name + "(round INT, id INT, PRIMARY KEY(round, id))")
-        context = zmq.Context()
         while True:
-            typ = self.in_sok.get()
+            try:
+                typ = self.in_sok.get()
+            except KeyboardInterrupt:
+                    self.db.commit()
+                    self.db.close()
+                    break
             if typ == "close":
                 break
             if typ == 'panel':
@@ -97,7 +100,6 @@ class Database(multiprocessing.Process):
                 raise SystemExit('abce_db error %s command unknown ~87' % typ)
         self.db.commit()
         self.db.close()
-        context.destroy()
 
     def write_or_update(self, table_name, data_to_write):
         insert_str = "INSERT OR IGNORE INTO " + table_name + "(" + ','.join(data_to_write.keys()) + ") VALUES (%s);"
