@@ -449,17 +449,20 @@ class Simulation:
             self.round = year
             print("\rRound" + str("%3d" % year)),
             for group, action in self._action_list:
-                for queue in self.agent_queue_list[group]:
+                print(group, action)
+                self._add_agents_to_wait_for(len(self.agents_command_socket[group]))
+                for queue in self.agents_command_socket[group]:
                     queue.put(action)
                 self._wait_for_agents_than_signal_end_of_comm()
-                self.commands.put(['all', '_clearing__end_of_subround'])
+                for queue in self.agents_command_socket['all']:
+                    queue.put('_clearing__end_of_subround')
 
         print(str("%6.2f" % (time.time() - start_time)))
         self.gracefull_exit()
 
     def gracefull_exit(self):
-        for agent in list(itertools.chain(*self.agent_list.values())):
-            self.commands.put([agent.name, "!", "die"])
+        for queue in self.agents_command_socket['all']:
+            queue.put("!", "die")
         for agent in list(itertools.chain(*self.agent_list.values())):
             while agent.is_alive():
                 time.sleep(0.1)
