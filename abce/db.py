@@ -59,32 +59,30 @@ class Database(multiprocessing.Process):
             self.database.execute("CREATE TABLE " + table_name + "(round INT, id INT, PRIMARY KEY(round, id))")
         while True:
             try:
-                typ = self.in_sok.get()
+                msg = self.in_sok.get()
             except KeyboardInterrupt:
-                    self.db.commit()
-                    self.db.close()
                     break
-            if typ == "close":
+            if msg[0] == "close":
                 break
-            if typ == 'panel':
-                command = self.in_sok.get()
-                data_to_write = self.in_sok.get()
-                data_to_write['id'] = int(self.in_sok.get())
-                group = self.in_sok.get()
-                data_to_write['round'] = int(self.in_sok.get())
+            if msg[0] == 'panel':
+                command = msg[1]
+                data_to_write = msg[2]
+                data_to_write['id'] = msg[3]  # int
+                group = msg[4]
+                data_to_write['round'] = msg[5]  # int
                 table_name = command + '_' + group
                 self.write(table_name, data_to_write)
-            elif typ == 'trade_log':
-                individual_log = self.in_sok.get()
-                round = int(self.in_sok.get())
+            elif msg[0] == 'trade_log':
+                individual_log = msg[1]
+                round = msg[2]  # int
                 for key in individual_log:
                     split_key = key[:].split(',')
                     self.database.execute(trade_ex_str % (round,
                                                         split_key[0], split_key[1], split_key[2], split_key[3],
                                                         individual_log[key]))
-            elif typ == 'log':
-                group_name = self.in_sok.get()
-                data_to_write = self.in_sok.get()
+            elif msg[0] == 'log':
+                group_name = msg[1]
+                data_to_write = msg[2]
                 data_to_write = {key: float(data_to_write[key]) for key in data_to_write}
                 data_to_write['round'] = int(self.in_sok.get())
                 table_name = group_name
@@ -95,7 +93,7 @@ class Database(multiprocessing.Process):
                     self.write(table_name, data_to_write)
                 except sqlite3.InterfaceError:
                     print(table_name, data_to_write)
-                    SystemExit('InterfaceError: data can not be written. If nested try: self.log_nested')
+                    raise SystemExit('InterfaceError: data can not be written. If nested try: self.log_nested')
             else:
                 raise SystemExit('abce_db error %s command unknown ~87' % typ)
         self.db.commit()

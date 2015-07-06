@@ -261,7 +261,7 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
                 keep[key] = self.given_offers[key]
         self.given_offers = keep
 
-        self.database_connection.put(["trade_log", self._trade_log, str(self.round)])
+        self.database_connection.put(["trade_log", self._trade_log, self.round])
 
         self._trade_log = defaultdict(int)
 
