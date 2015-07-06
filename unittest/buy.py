@@ -5,7 +5,7 @@ from abce.tools import NotEnoughGoods, is_zero
 
 class Buy(Agent):
     def __init__(self, simulation_parameters, _, _pass_to_engine):
-        Agent.__init__(self, *_pass_to_engine)
+        Agent.__init__(self, **_pass_to_engine)
         self.last_round = simulation_parameters['num_rounds'] - 1
         #self.cut_of = simulation_parameters['cut_of']
         self.tests = {'accepted': False, 'rejected': False, 'partial': False}
