@@ -62,7 +62,7 @@ class Database(multiprocessing.Process):
                 msg = self.in_sok.get()
             except KeyboardInterrupt:
                     break
-            if msg[0] == "close":
+            if msg == "close":
                 break
             if msg[0] == 'panel':
                 command = msg[1]
@@ -95,7 +95,7 @@ class Database(multiprocessing.Process):
                     print(table_name, data_to_write)
                     raise SystemExit('InterfaceError: data can not be written. If nested try: self.log_nested')
             else:
-                raise SystemExit('abce_db error %s command unknown ~87' % typ)
+                raise SystemExit("abce_db error '%s' command unknown ~87" % msg)
         self.db.commit()
         self.db.close()
 
