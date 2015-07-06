@@ -62,7 +62,7 @@ from abce.communication import Communication
 BASEPATH = os.path.dirname(os.path.realpath(__file__))
 
 
-def read_parameters(parameters_file='simulation_parameters.csv', delimiter='\t', quotechar='"'):
+def read_parameters(parameters_file='simulation_parameters.csv'):
     """ reads a parameter file line by line and gives a list. Where each line
     contains all parameters for a particular run of the simulation.
 
@@ -123,14 +123,13 @@ def read_parameters(parameters_file='simulation_parameters.csv', delimiter='\t',
             os.makedirs(parameter['_path'])
         except OSError:
             files = glob(parameter['_path'] + '/*')
-            for f in files:
-                os.remove(f)
+            for file_to_remove in files:
+                os.remove(file_to_remove)
         for key in parameter:
             if key == '' or key[0] == '#' or key[0] == '_':
                 del key
         parameter_array.append(parameter)
     return parameter_array
-    #TODO put the initialisation in the init so that it can eat a dict
 
 
 class Simulation:
@@ -241,13 +240,13 @@ class Simulation:
         except KeyError:
             self.trade_logging_mode = 'individual'
             print("'trade_logging' in simulation_parameters.csv not set"
-                ", default to 'individual', possible values "
-                "('group' (fast) or 'individual' (slow) or 'off')")
+                  ", default to 'individual', possible values "
+                  "('group' (fast) or 'individual' (slow) or 'off')")
         if not(self.trade_logging_mode in ['individual', 'group', 'off']):
             print(type(self.trade_logging_mode), self.trade_logging_mode, 'error')
             SystemExit("'trade_logging' in simulation_parameters.csv can be "
-                        "'group' (fast) or 'individual' (slow) or 'off'"
-                        ">" + self.trade_logging_mode + "< not accepted")
+                       "'group' (fast) or 'individual' (slow) or 'off'"
+                       ">" + self.trade_logging_mode + "< not accepted")
         assert self.trade_logging_mode in ['individual', 'group', 'off']
 
     def add_action_list(self, action_list):
@@ -631,7 +630,7 @@ class Simulation:
             agent.start()
             self.agent_list[group_name].append(agent)
 
-    def build_agents_from_file(self, AgentClass, parameters_file=None, multiply=1, delimiter='\t', quotechar='"'):
+    def build_agents_from_file(self, AgentClass, parameters_file=None, multiply=1):
         """ This command builds agents of the class AgentClass from an csv file.
         This way you can build agents and give every single one different
         parameters.
@@ -849,14 +848,14 @@ class repeat_while:
         self.action_list = action_list
         if repetitions:
             try:
-                    self.repetitions = int(repetitions)
+                self.repetitions = int(repetitions)
             except ValueError:
                 try:
                     self.repetitions = self.simulation_parameters[repetitions]
                 except KeyError:
                     SystemExit('add_action_list/repeat ' + repetitions + ' is not a number or'
-                    'a column name in simulation_parameters.csv or the parameterfile'
-                    'you choose')
+                               'a column name in simulation_parameters.csv or the parameterfile'
+                               'you choose')
         else:
             self.repetitions = None
         raise SystemExit('repeat_while not implemented')
