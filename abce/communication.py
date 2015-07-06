@@ -13,6 +13,10 @@ class Communication(mp.Process):
         """ returns frontend, backend, ready """
         return self.in_soc, self.out, self.ready
 
+    def set_agents(self, agents_backend):
+        self.agents_backend = agents_backend
+
+
     def run(self):
         agents_finished, total_number = 0, 0
         total_number_known = False
@@ -21,7 +25,6 @@ class Communication(mp.Process):
         while True:
             try:
                 msg = self.in_soc.get()
-                print("communication - msg", msg)
             except KeyboardInterrupt:
                 print('KeyboardInterrupt: _Communication: Waiting for messages')
                 if total_number_known:
@@ -57,7 +60,11 @@ class Communication(mp.Process):
                         total_number_known = False
                         self.ready.put('.')
                         if send_end_of_communication_sign:
-                            for agent in all_agents:
-                                self.out.put([agent, '.'])
+                            for agent in self.agents_backend['all']:
+                                agent.put(['.', '.'])   ########## TODO e
             else:
-                self.out.put(msg)
+                if msg[1] == 'all':
+                    for agent in self.agents_backend['all'][msg[0]]:
+                        agent.put(msg[2:])
+                else:
+                    self.agents_backend[msg[0]][msg[1]].put(msg[2])

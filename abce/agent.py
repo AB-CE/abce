@@ -308,7 +308,7 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
         return quantity_destroyed
 
     def run(self):
-        self.out.put(['!', '!', 'register_agent', self.name])
+        self.out.put(['!', '!', 'register_agent', (self.group, self.idn)])
         try:
             while True:
                 try:
@@ -412,10 +412,9 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
         '_g': recive a 'free' good from another party
         """
         while True:
-            typ = self.messages_in.get()
+            typ, msg = self.messages_in.get()
             if typ == '.':
                 break
-            msg = self.messages_in.get()
             if   typ == '_o':
                 msg['status'] = 'received'
                 self._open_offers[msg['idn']] = msg
@@ -438,15 +437,6 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
             else:
                 self._msgs.setdefault(typ, []).append(Message(msg))
 
-        while True:
-            address = self.shout.get()
-            if address == 'all.':
-                break
-            typ = self.shout.get()
-            msg = self.shout.get()
-            self._msgs.setdefault(typ, []).append(Message(msg))
-
-
     def __signal_finished(self):
         """ signals modelswarm via communication that the agent has send all
         messages and finish his action """
@@ -459,9 +449,7 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
         typ =(_o,c,u,r) are
         reserved for internally processed offers.
         """
-        self.out.put(['%s_%i:' % (receiver_group.encode('ascii'), receiver_idn),
-                      typ,
-                      msg])
+        self.out.put([receiver_group, receiver_idn, (typ,msg)])
 
     def _send_to_group(self, receiver_group, typ, msg):
         """ sends a message to 'receiver_group', who can be an agent, a group or
@@ -470,13 +458,8 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
         typ =(_o,c,u,r) are
         reserved for internally processed offers.
         """
-        print('i am sending')
         self.out.put('works here')
-        self.out.put(['!',
-                       's',
-                       '%s:' % receiver_group.encode('ascii'),
-                       typ,
-                       msg])
+        self.out.put([receiver_group, 'all', (typ, msg)])
 
 
 def flatten(d, parent_key=''):

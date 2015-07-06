@@ -173,11 +173,12 @@ class Simulation:
     """
     def __init__(self, simulation_parameters):
         self.simulation_parameters = simulation_parameters
-        self._action_groups = {}
         self.agent_list = {}
         self.agent_list['all'] = []
-        self.agent_queue_list = {}
-        self.agent_queue_list['all'] = []
+        self.agents_backend = {}
+        self.agents_backend['all'] = []
+        self.agents_command_socket = {}
+        self.agents_command_socket['all'] = []
         self._action_list = []
         self._resource_commands = {}
         self._perish_commands = {}
@@ -194,8 +195,6 @@ class Simulation:
         self.commands = mp.Queue()
         self._communication = Communication()
         self.communication_frontend, self.communication_backend, self.ready = self._communication.get_queue()
-        self._communication.start()
-        self.ready.get()
         self.database_queue = mp.Queue()
         self._db = abce.db.Database(simulation_parameters['_path'], self.database_name, self.database_queue)
         self.logger_queue = mp.Queue()
@@ -344,7 +343,7 @@ class Simulation:
         goods = self._perish_commands[command][:]
 
         def send_perish_command():
-            self.commands.send_multipart(['all', '_perish'] + goods)
+            self.commands.put(['all', '_perish'] + goods)
         return send_perish_command
 
     #TODO also for other variables
@@ -417,9 +416,7 @@ class Simulation:
             if type(action) is tuple:
                 if action[0] not in self.num_agents_in_group.keys() + ['all']:
                     SystemExit('%s in (%s, %s) in the action_list is not a known agent' % (action[0], action[0], action[1]))
-                action_name = (action[0], action[1])
-                self._action_groups[action_name] = self._make_ask_each_agent_in(action)
-                processed_list.append(action_name)
+                processed_list.append((action[0], action[1]))
             elif isinstance(action, repeat):
                 nested_action_list = self._process_action_list(action.action_list)
                 for _ in range(action.repetitions):
@@ -430,33 +427,16 @@ class Simulation:
 
     def run(self):
         """ This runs the simulation """
-        self._db.start()
         if not(self.agent_list):
             raise SystemExit('No Agents Created')
         if not(self.action_list) and not(self._action_list):
             raise SystemExit('No action_list declared')
         if not(self._action_list):
             self._action_list = self._process_action_list(self.action_list)
-        for command in self._db_commands:
-            self._action_groups[command] = self._make_db_command(command)
-            if command not in self._action_list:
-                self._action_list.append(command)
-
-        for command in self._resource_commands:
-            self._action_groups[command] = self._make_resource_command(command)
-            if command not in self._action_list:
-                self._action_list.insert(0, command)
-
-        for command in self._perish_commands:
-            self._action_groups[command] = self._make_perish_command(command)
-            if command not in self._action_list:
-                self._action_list.append(command)
-
-        if self.aesof:
-            self._action_groups['aesof'] = self._make_aesof_command()
-            if 'aesof' not in self._action_list:
-                self._action_list.insert(0, 'aesof')
-
+        self._db.start()
+        self._communication.set_agents(self.agents_backend)
+        self._communication.start()
+        self.ready.get()
         self._action_list.append(('all', '_advance_round'))
 
         self._write_description_file()
@@ -583,10 +563,12 @@ class Simulation:
         self.num_agents_in_group[group_name] = num_agents_this_group
         self.num_agents_in_group['all'] = self.num_agents
         self.agent_list[group_name] = []
-        self.agent_queue_list[group_name] = []
-        commands_queue = mp.Queue()
+        self.agents_backend[group_name] = []
+        self.agents_command_socket[group_name] = []
 
         for idn in range(num_agents_this_group):
+            commands_queue = mp.Queue()
+            backend_queue = mp.Queue()
             agent = AgentClass(self.simulation_parameters,
                                agents_parameters[idn],
                                {'idn': idn,
@@ -595,14 +577,16 @@ class Simulation:
                                 'trade_logging': self.trade_logging_mode,
                                 'database': self.database_queue,
                                 'logger': self.logger_queue,
-                                'backend': self.communication_backend,
+                                'backend': backend_queue,
                                 'frontend': self.communication_frontend})
             agent.name = agent_name(group_name, idn)
             agent.start()
             self.agent_list[group_name].append(agent)
             self.agent_list['all'].append(agent)
-            self.agent_queue_list[group_name].append(commands_queue)
-            self.agent_queue_list['all'].append(commands_queue)
+            self.agents_backend[group_name].append(backend_queue)
+            self.agents_backend['all'].append(backend_queue)
+            self.agents_command_socket[group_name].append(commands_queue)
+            self.agents_command_socket['all'].append(commands_queue)
 
     def build_agents_from_file(self, AgentClass, parameters_file=None, multiply=1):
         """ This command builds agents of the class AgentClass from an csv file.
