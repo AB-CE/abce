@@ -437,7 +437,6 @@ class Simulation:
         self._communication.set_agents(self.agents_backend)
         self._communication.start()
         self.ready.get()
-        self._action_list.append(('all', '_advance_round'))
 
         self._write_description_file()
         self._displaydescribtion()
@@ -456,6 +455,8 @@ class Simulation:
                 self._wait_for_agents_than_signal_end_of_comm()
                 for queue in self.agents_command_socket['all']:
                     queue.put('_clearing__end_of_subround')
+            for queue in self.agents_command_socket['all']:
+                queue.put('_advance_round')
 
         print(str("%6.2f" % (time.time() - start_time)))
         self.gracefull_exit()
