@@ -14,6 +14,7 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations under
 # the License.
+#pylint: disable=C0111
 """ The best way to start creating a simulation is by copying the start.py file
 and other files from 'abce/template'.
 
@@ -42,10 +43,9 @@ import csv
 import datetime
 import os
 import time
-import zmq
 import inspect
 from abce.tools import agent_name, group_address
-import multiprocessing
+import multiprocessing as mp
 import abce.db
 import abce.abcelogger
 import itertools
@@ -57,7 +57,7 @@ from firmmultitechnologies import *
 from household import *
 from agent import *
 from abce.communication import Communication
-
+from copy import copy
 
 BASEPATH = os.path.dirname(os.path.realpath(__file__))
 
@@ -174,6 +174,9 @@ class Simulation:
         self.simulation_parameters = simulation_parameters
         self._action_groups = {}
         self.agent_list = {}
+        self.agent_list['all'] = []
+        self.agent_queue_list = {}
+        self.agent_queue_list['all'] = []
         self._action_list = []
         self._resource_commands = {}
         self._perish_commands = {}
@@ -186,51 +189,16 @@ class Simulation:
         self._agent_parameters = None
         self.database_name = 'database'
 
-        from config import zmq_transport #pylint: disable=E0611
-        if zmq_transport == 'inproc':
-            self._addresses_bind = self._addresses_connect = {
-                'type': 'inproc',
-                'command_addresse': "inproc://commands",
-                'ready': "inproc://ready",
-                'frontend': "inproc://frontend",
-                'backend': "inproc://backend",
-                'group_backend': "inproc://group_backend",
-                'database': "inproc://database",
-                'logger': "inproc://logger"
-            }
-        elif zmq_transport == 'ipc':
-            self._addresses_bind = self._addresses_connect = {
-                'command_addresse': "ipc://commands.ipc",
-                'ready': "ipc://ready.ipc",
-                'frontend': "ipc://frontend.ipc",
-                'backend': "ipc://backend.ipc",
-                'group_backend': "ipc://group_backend.ipc",
-                'database': "ipc://database.ipc",
-                'logger': "ipc://logger.ipc"
-            }
-        elif zmq_transport == 'tcp':
-            from config import config_tcp_bind, config_tcp_connect #pylint: disable=E0611
-            self._addresses_bind = config_tcp_bind
-            self._addresses_connect = config_tcp_connect
-        else:
-            from config import config_custom_bind, config_custom_connect #pylint: disable=E0611
-            self._addresses_bind = config_custom_bind
-            self._addresses_connect = config_custom_connect
         #time.sleep(1)
-        self.database_name = 'database'
-        self.context = zmq.Context()
-        self.commands = self.context.socket(zmq.PUB)
-        self.commands.bind(self._addresses_bind['command_addresse'])
-        self.ready = self.context.socket(zmq.PULL)
-        self.ready.bind(self._addresses_bind['ready'])
-        self._communication = Communication(self._addresses_bind, self._addresses_connect)
+        self.commands = mp.Queue()
+        self._communication = Communication()
+        self.communication_frontend, self.communication_backend, self.ready = self._communication.get_queue()
         self._communication.start()
-        self.ready.recv()
-        self.communication_channel = self.context.socket(zmq.PUSH)
-        self.communication_channel.connect(self._addresses_connect['frontend'])
-        self._register_action_groups()
-        self._db = abce.db.Database(simulation_parameters['_path'], self.database_name, self._addresses_bind['database'])
-        self._logger = abce.abcelogger.AbceLogger(simulation_parameters['_path'], 'logger', self._addresses_bind['logger'])
+        self.ready.get()
+        self.database_queue = mp.Queue()
+        self._db = abce.db.Database(simulation_parameters['_path'], self.database_name, self.database_queue)
+        self.logger_queue = mp.Queue()
+        self._logger = abce.abcelogger.AbceLogger(simulation_parameters['_path'], 'logger', self.logger_queue)
         self._logger.start()
 
         self.aesof = False
@@ -308,15 +276,6 @@ class Simulation:
         self.add_action_list(eval(parameter))
         #TODO test
 
-    def _register_action_groups(self):
-        """ makes methods accessable for the action_list """
-        reserved_words = ['build_agents', 'run', 'ask_agent',
-                'ask_each_agent_in', 'register_action_groups']
-        for method in inspect.getmembers(self):
-            if (inspect.ismethod(method[1]) and method[0][0] != '_'
-                    and method[0] not in reserved_words):
-                self._action_groups[method[0]] = method[1]
-        self._action_groups['_advance_round_agents'] = self._advance_round_agents
 
     def declare_round_endowment(self, resource, productivity, product, command='default_resource', group='all'):
         """ Every round the agent gets 'productivity' units of good 'product' for
@@ -348,7 +307,7 @@ class Simulation:
 
         def send_resource_command():
             for productivity in resources_in_this_command:
-                self.commands.send_multipart(group_and_method + productivity)
+                self.commands.put(group_and_method + productivity)
         return send_resource_command
         #TODO could be made much faster by sending all resource simultaneously
         #as in _make_perish_command
@@ -447,7 +406,7 @@ class Simulation:
 
         def send_db_command():
             for db_good in db_in_this_command:
-                self.commands.send_multipart([group_address(db_good[0]), '_db_panel', command])
+                self.commands.put([group_address(db_good[0]), '_db_panel', command])
                 # self._add_agents_to_wait_for(self.num_agents_in_group[db_good[0]])
         return send_db_command
 
@@ -457,7 +416,7 @@ class Simulation:
             if type(action) is tuple:
                 if action[0] not in self.num_agents_in_group.keys() + ['all']:
                     SystemExit('%s in (%s, %s) in the action_list is not a known agent' % (action[0], action[0], action[1]))
-                action_name = '_' + action[0] + '|' + action[1]
+                action_name = (action[0], action[1])
                 self._action_groups[action_name] = self._make_ask_each_agent_in(action)
                 processed_list.append(action_name)
             elif isinstance(action, repeat):
@@ -465,7 +424,7 @@ class Simulation:
                 for _ in range(action.repetitions):
                     processed_list.extend(nested_action_list)
             else:
-                processed_list.append(action)
+                processed_list.append('all', action)
         return processed_list
 
     def run(self):
@@ -497,7 +456,7 @@ class Simulation:
             if 'aesof' not in self._action_list:
                 self._action_list.insert(0, 'aesof')
 
-        self._action_list.append('_advance_round_agents')
+        self._action_list.append(('all', '_advance_round'))
 
         self._write_description_file()
         self._displaydescribtion()
@@ -506,25 +465,23 @@ class Simulation:
         start_time = time.time()
 
         for year in xrange(self.simulation_parameters['num_rounds']):
+            self.round = year
             print("\rRound" + str("%3d" % year)),
-            for action in self._action_list:
-                self._action_groups[action]()
+            for group, action in self._action_list:
+                for queue in self.agent_queue_list[group]:
+                    queue.put(action)
                 self._wait_for_agents_than_signal_end_of_comm()
-                self.commands.send_multipart(['all', '_clearing__end_of_subround'])
+                self.commands.put(['all', '_clearing__end_of_subround'])
 
         print(str("%6.2f" % (time.time() - start_time)))
         for agent in list(itertools.chain(*self.agent_list.values())):
-            self.commands.send_multipart([agent.name, "!", "die"])
+            self.commands.put([agent.name, "!", "die"])
         for agent in list(itertools.chain(*self.agent_list.values())):
             while agent.is_alive():
                 time.sleep(0.1)
         self._end_Communication()
-        database = self.context.socket(zmq.PUSH)
-        database.connect(self._addresses_connect['database'])
-        database.send('close')
-        logger = self.context.socket(zmq.PUSH)
-        logger.connect(self._addresses_connect['logger'])
-        logger.send('close')
+        self.database_queue.put('close')
+        self.logger_queue.put('close')
         while self._db.is_alive():
             time.sleep(0.05)
         while self._communication.is_alive():
@@ -538,7 +495,7 @@ class Simulation:
 
         def ask_each_agent_with_address():
             self._add_agents_to_wait_for(number)
-            self.commands.send_multipart([group_address_var, action[1]])
+            self.commands.put([group_address_var, action[1]])
         return ask_each_agent_with_address
 
     def ask_each_agent_in(self, group_name, command):
@@ -553,7 +510,7 @@ class Simulation:
 
         """
         self._add_agents_to_wait_for(self.num_agents_in_group[group_name])
-        self.commands.send_multipart([group_address(group_name), command])
+        self.commands.put([group_address(group_name), command])
 
     def ask_agent(self, group, idn, command):
         """ This is only relevant when you derive your custom world/swarm not
@@ -566,7 +523,7 @@ class Simulation:
          method: as string
         """
         self._add_agents_to_wait_for(1)
-        self.commands.send_multipart(['%s_%i:' % (group, idn), command])
+        self.commands.put(['%s_%i:' % (group, idn), command])
 
     def build_agents(self, AgentClass,  number=None, group_name=None, agents_parameters=None):
         """ This method creates agents, the first parameter is the agent class.
@@ -624,11 +581,26 @@ class Simulation:
         self.num_agents_in_group[group_name] = num_agents_this_group
         self.num_agents_in_group['all'] = self.num_agents
         self.agent_list[group_name] = []
+        self.agent_queue_list[group_name] = []
+        commands_queue = mp.Queue()
+
         for idn in range(num_agents_this_group):
-            agent = AgentClass(self.simulation_parameters, agents_parameters[idn], [idn, group_name, self._addresses_connect, self.trade_logging_mode])
+            agent = AgentClass(self.simulation_parameters,
+                               agents_parameters[idn],
+                               {'idn': idn,
+                                'commands': commands_queue,
+                                'group': group_name,
+                                'trade_logging': self.trade_logging_mode,
+                                'database': self.database_queue,
+                                'logger': self.logger_queue,
+                                'backend': self.communication_backend,
+                                'frontend': self.communication_frontend})
             agent.name = agent_name(group_name, idn)
             agent.start()
             self.agent_list[group_name].append(agent)
+            self.agent_list['all'].append(agent)
+            self.agent_queue_list[group_name].append(commands_queue)
+            self.agent_queue_list['all'].append(commands_queue)
 
     def build_agents_from_file(self, AgentClass, parameters_file=None, multiply=1):
         """ This command builds agents of the class AgentClass from an csv file.
@@ -691,33 +663,29 @@ class Simulation:
 
     def debug_subround(self):
         self.subround = subround.Subround(self._addresses_connect)
-        self.subround.name ="debug_subround"
+        self.subround.name = "debug_subround"
         self.subround.start()
 
-    def _advance_round_agents(self):
-        """ advances round by 1 """
-        self.round += 1
-        self.commands.send_multipart(['all', '_advance_round'])
 
     def _add_agents_to_wait_for(self, number):
-        self.communication_channel.send_multipart(['!', '+', str(number)])
+        self.communication_frontend.put(['!', '+', str(number)])
 
     def _wait_for_agents_than_signal_end_of_comm(self):
-        self.communication_channel.send_multipart(['!', '}'])
+        self.communication_frontend.put(['!', '}'])
         try:
-            self.ready.recv()
+            self.ready.get()
         except KeyboardInterrupt:
             print('KeyboardInterrupt: abce.db: _wait_for_agents_than_signal_end_of_comm(self) ~709')
 
     def _wait_for_agents(self):
-        self.communication_channel.send_multipart(['!', ')'])
+        self.communication_frontend.put(['!', ')'])
         try:
-            self.ready.recv()
+            self.ready.get()
         except KeyboardInterrupt:
             print('KeyboardInterrupt: abce.db: _wait_for_agents(self) ~716')
 
     def _end_Communication(self):
-        self.communication_channel.send_multipart(['!', '!', 'end_simulation'])
+        self.communication_frontend.put(['!', '!', 'end_simulation'])
 
     def _write_description_file(self):
         description = open(
@@ -790,8 +758,8 @@ class Simulation:
         def send_aesof_command():
             try:
                 for round_line in self.aesof_dict[self.round]:
-                    self.commands.send_multipart(['%s:' % round_line['name'], '_aesof'], zmq.SNDMORE)
-                    self.commands.send_json(round_line)
+                    self.commands.put(['%s:' % round_line['name'], '_aesof'], zmq.SNDMORE)
+                    self.commands.put(round_line)
             except KeyError:
                 if self.round in self.aesof_dict:
                     raise

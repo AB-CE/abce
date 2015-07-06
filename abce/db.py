@@ -21,12 +21,12 @@ import numpy as np
 
 
 class Database(multiprocessing.Process):
-    def __init__(self, directory, db_name, _addresse):
+    def __init__(self, directory, db_name, in_sok):
         multiprocessing.Process.__init__(self)
         self.directory = directory
         self.db_name = db_name
-        self._addresse = _addresse
         self.panels = []
+        self.in_sok = in_sok
 
     def add_trade_log(self):
         table_name = 'trade'
@@ -59,33 +59,31 @@ class Database(multiprocessing.Process):
         for table_name in self.panels:
             self.database.execute("CREATE TABLE " + table_name + "(round INT, id INT, PRIMARY KEY(round, id))")
         context = zmq.Context()
-        in_sok = context.socket(zmq.PULL)
-        in_sok.bind(self._addresse)
         while True:
-            typ = in_sok.recv()
+            typ = self.in_sok.get()
             if typ == "close":
                 break
             if typ == 'panel':
-                command = in_sok.recv()
-                data_to_write = in_sok.recv_pyobj()
-                data_to_write['id'] = int(in_sok.recv())
-                group = in_sok.recv()
-                data_to_write['round'] = int(in_sok.recv())
+                command = self.in_sok.get()
+                data_to_write = self.in_sok.get()
+                data_to_write['id'] = int(self.in_sok.get())
+                group = self.in_sok.get()
+                data_to_write['round'] = int(self.in_sok.get())
                 table_name = command + '_' + group
                 self.write(table_name, data_to_write)
             elif typ == 'trade_log':
-                individual_log = in_sok.recv_pyobj()
-                round = int(in_sok.recv())
+                individual_log = self.in_sok.get()
+                round = int(self.in_sok.get())
                 for key in individual_log:
                     split_key = key[:].split(',')
                     self.database.execute(trade_ex_str % (round,
                                                         split_key[0], split_key[1], split_key[2], split_key[3],
                                                         individual_log[key]))
             elif typ == 'log':
-                group_name = in_sok.recv()
-                data_to_write = in_sok.recv_pyobj()
+                group_name = self.in_sok.get()
+                data_to_write = self.in_sok.get()
                 data_to_write = {key: float(data_to_write[key]) for key in data_to_write}
-                data_to_write['round'] = int(in_sok.recv())
+                data_to_write['round'] = int(self.in_sok.get())
                 table_name = group_name
                 try:
                     self.write_or_update(table_name, data_to_write)

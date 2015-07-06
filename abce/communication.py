@@ -1,33 +1,27 @@
 import zmq
-import multiprocessing
+import multiprocessing as mp
 
 
-class Communication(multiprocessing.Process):
-    def __init__(self, _addresses_bind, _addresses_connect):
-        multiprocessing.Process.__init__(self)
-        self._addresses_bind = _addresses_bind
-        self._addresses_connect = _addresses_connect
+class Communication(mp.Process):
+    def __init__(self):
+        mp.Process.__init__(self)
+        self.in_soc = mp.Queue()
+        self.out = mp.Queue()
+        self.ready = mp.Queue()
+
+    def get_queue(self):
+        """ returns frontend, backend, ready """
+        return self.in_soc, self.out, self.ready
 
     def run(self):
-        self.context = zmq.Context()
-        self.in_soc = self.context.socket(zmq.PULL)
-        self.in_soc.bind(self._addresses_bind['frontend'])
-
-        self.out = self.context.socket(zmq.ROUTER)
-        self.out.bind(self._addresses_bind['backend'])
-
-        self.shout = self.context.socket(zmq.PUB)
-        self.shout.bind(self._addresses_bind['group_backend'])
-
-        self.ready = self.context.socket(zmq.PUSH)
-        self.ready.connect(self._addresses_connect['ready'])
         agents_finished, total_number = 0, 0
         total_number_known = False
-        self.ready.send('working')
+        self.ready.put('working')
         all_agents = []
         while True:
             try:
-                msg = self.in_soc.recv_multipart()
+                msg = self.in_soc.get()
+                print("communication - msg", msg)
             except KeyboardInterrupt:
                 print('KeyboardInterrupt: _Communication: Waiting for messages')
                 if total_number_known:
@@ -40,7 +34,7 @@ class Communication(multiprocessing.Process):
                 if msg[1] == '.':
                     agents_finished += 1
                 if msg[1] == 's':
-                    self.shout.send_multipart(msg[2:])
+                    self.shout.put(msg[2:])
                     continue
                 elif msg[1] == '+':
                     total_number += int(msg[2])
@@ -61,11 +55,9 @@ class Communication(multiprocessing.Process):
                     if agents_finished == total_number:
                         agents_finished, total_number = 0, 0
                         total_number_known = False
-                        self.ready.send('.')
+                        self.ready.put('.')
                         if send_end_of_communication_sign:
                             for agent in all_agents:
-                                self.out.send_multipart([agent, '.'])
-                            self.shout.send('all.')
+                                self.out.put([agent, '.'])
             else:
-                self.out.send_multipart(msg)
-        self.context.destroy()
+                self.out.put(msg)

@@ -49,6 +49,7 @@ from trade import Trade, Offer
 from messaging import Messaging, Message
 import time
 from copy import deepcopy
+import random
 
 
 class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
@@ -64,7 +65,7 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
             def __init__(self, simulation_parameters, agent_parameters, _pass_to_engine):
             abceagent.Agent.__init__(self, *_pass_to_engine)
     """
-    def __init__(self, idn, group, _addresses, trade_logging):
+    def __init__(self, idn, group, trade_logging, commands, backend, database, logger, frontend):
         multiprocessing.Process.__init__(self)
         self.idn = idn
         """ self.idn returns the agents idn READ ONLY!"""
@@ -77,7 +78,12 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
         """ self.group returns the agents group or type READ ONLY! """
         #TODO should be group_address(group), but it would not work
         # when fired manual + ':' and manual group_address need to be removed
-        self._addresses = _addresses
+        self.commands = commands
+        self.out = frontend
+
+        self.database_connection = database
+        self.logger_connection = logger
+        self.messages_in = backend
         self._methods = {}
         self._register_actions()
         if trade_logging == 'individual':
@@ -110,7 +116,6 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
         self._data_to_observe = {}
         self._data_to_log_1 = {}
         self._quotes = {}
-
         self.round = 0
         """ self.round returns the current round in the simulation READ ONLY!"""
 
@@ -256,9 +261,7 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
                 keep[key] = self.given_offers[key]
         self.given_offers = keep
 
-        self.database_connection.send("trade_log", zmq.SNDMORE)
-        self.database_connection.send_pyobj(self._trade_log, zmq.SNDMORE)
-        self.database_connection.send(str(self.round))
+        self.database_connection.put(["trade_log", self._trade_log, str(self.round)])
 
         self._trade_log = defaultdict(int)
 
@@ -305,64 +308,33 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
         return quantity_destroyed
 
     def run(self):
-        self.context = zmq.Context()
-        self.commands = self.context.socket(zmq.SUB)
-        self.commands.connect(self._addresses['command_addresse'])
-        self.commands.setsockopt(zmq.SUBSCRIBE, "all")
-        self.commands.setsockopt(zmq.SUBSCRIBE, self.name)
-        self.commands.setsockopt(zmq.SUBSCRIBE, group_address(self.group))
+        self.out.put(['!', '!', 'register_agent', self.name])
+        try:
+            while True:
+                command = self.commands.get()
+                if command == "!":
+                    subcommand = self.commands.get()
+                    if subcommand == 'die':
+                        self.__signal_finished()
+                        break
+                try:
+                    self._methods[command]()
+                except KeyError:
+                    if command not in self._methods:
+                        raise SystemExit('The method - ' + command + ' - called in the agent_list is not declared (' + self.name)
+                    else:
+                        raise
 
-        self.out = self.context.socket(zmq.PUSH)
-        self.out.connect(self._addresses['frontend'])
-        time.sleep(0.1)
-        self.database_connection = self.context.socket(zmq.PUSH)
-        self.database_connection.connect(self._addresses['database'])
-        time.sleep(0.1)
-        self.logger_connection = self.context.socket(zmq.PUSH)
-        self.logger_connection.connect(self._addresses['logger'])
-
-        self.messages_in = self.context.socket(zmq.DEALER)
-        self.messages_in.setsockopt(zmq.IDENTITY, self.name)
-        self.messages_in.connect(self._addresses['backend'])
-
-        self.shout = self.context.socket(zmq.SUB)
-        self.shout.connect(self._addresses['group_backend'])
-        self.shout.setsockopt(zmq.SUBSCRIBE, "all")
-        self.shout.setsockopt(zmq.SUBSCRIBE, self.name)
-        self.shout.setsockopt(zmq.SUBSCRIBE, group_address(self.group))
-
-        self.out.send_multipart(['!', '!', 'register_agent', self.name])
-
-        while True:
-            try:
-                self.commands.recv()  # catches the group adress.
-            except KeyboardInterrupt:
-                print('KeyboardInterrupt: %s,self.commands.recv() to catch own adress ~1888' % (self.name))
-                break
-            command = self.commands.recv()
-            if command == "!":
-                subcommand = self.commands.recv()
-                if subcommand == 'die':
+                if command[0] != '_':
+                    self.__reject_polled_but_not_accepted_offers()
                     self.__signal_finished()
-                    break
-            try:
-                self._methods[command]()
-            except KeyError:
-                if command not in self._methods:
-                    raise SystemExit('The method - ' + command + ' - called in the agent_list is not declared (' + self.name)
-                else:
-                    raise
-            except KeyboardInterrupt:
-                print('KeyboardInterrupt: %s, Current command: %s ~1984' % (self.name, command))
-                break
-
-            if command[0] != '_':
-                self.__reject_polled_but_not_accepted_offers()
-                self.__signal_finished()
-        #self.context.destroy()
+        except:
+            time.sleep(random.random())
+            print("")
+            raise
 
     def _produce_resource_rent_and_labor(self):
-        resource, units, product = self.commands.recv_multipart()
+        resource, units, product = self.commands.get()
         if resource in self._haves:
             try:
                 self._haves[product] += float(units) * self._haves[resource]
@@ -370,7 +342,7 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
                 self._haves[product] = float(units) * self._haves[resource]
 
     def _perish(self):
-        goods = self.commands.recv_multipart()
+        goods = self.commands.get()
         for good in goods:
             if good in self._haves:
                 self._haves[good] = 0
@@ -385,19 +357,19 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
                     self.given_offers[key]['status_round'] = self.round
 
     def _db_panel(self):
-        command = self.commands.recv()
+        command = self.commands.get()
         try:
             data_to_track = self._methods[command]()
         except KeyError:
             data_to_track = self._haves
         #TODO this leads to ambigues errors when there is a KeyError in the data_to_track
         #method (which is common), but testing takes to much time
-        self.database_connection.send("panel", zmq.SNDMORE)
-        self.database_connection.send(command, zmq.SNDMORE)
-        self.database_connection.send_pyobj(data_to_track, zmq.SNDMORE)
-        self.database_connection.send(str(self.idn), zmq.SNDMORE)
-        self.database_connection.send(self.group, zmq.SNDMORE)
-        self.database_connection.send(str(self.round))
+        self.database_connection.put(["panel",
+                                       command,
+                                       data_to_track,
+                                       str(self.idn),
+                                       self.group,
+                                       str(self.round)])
 
     def __reject_polled_but_not_accepted_offers(self):
         to_reject = []
@@ -422,7 +394,7 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
         return eval(self.aesof[column_name], globals(), locals())
 
     def _aesof(self):
-        self.aesof = self.commands.recv_pyobj()
+        self.aesof = self.commands.get()
 
     #TODO go to trade
     def _clearing__end_of_subround(self):
@@ -437,10 +409,10 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
         '_g': recive a 'free' good from another party
         """
         while True:
-            typ = self.messages_in.recv()
+            typ = self.messages_in.get()
             if typ == '.':
                 break
-            msg = self.messages_in.recv_pyobj()
+            msg = self.messages_in.get()
             if   typ == '_o':
                 msg['status'] = 'received'
                 self._open_offers[msg['idn']] = msg
@@ -464,18 +436,18 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
                 self._msgs.setdefault(typ, []).append(Message(msg))
 
         while True:
-            address = self.shout.recv()
+            address = self.shout.get()
             if address == 'all.':
                 break
-            typ = self.shout.recv()
-            msg = self.shout.recv_pyobj()
+            typ = self.shout.get()
+            msg = self.shout.get()
             self._msgs.setdefault(typ, []).append(Message(msg))
 
 
     def __signal_finished(self):
         """ signals modelswarm via communication that the agent has send all
         messages and finish his action """
-        self.out.send_multipart(['!', '.'])
+        self.out.put(['!', '.'])
 
     def _send(self, receiver_group, receiver_idn, typ, msg):
         """ sends a message to 'receiver_group', who can be an agent, a group or
@@ -484,9 +456,9 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
         typ =(_o,c,u,r) are
         reserved for internally processed offers.
         """
-        self.out.send('%s_%i:' % (receiver_group.encode('ascii'), receiver_idn), zmq.SNDMORE)
-        self.out.send(typ, zmq.SNDMORE)
-        self.out.send_pyobj(msg)
+        self.out.put(['%s_%i:' % (receiver_group.encode('ascii'), receiver_idn),
+                      typ,
+                      msg])
 
     def _send_to_group(self, receiver_group, typ, msg):
         """ sends a message to 'receiver_group', who can be an agent, a group or
@@ -495,11 +467,13 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
         typ =(_o,c,u,r) are
         reserved for internally processed offers.
         """
-        self.out.send('!', zmq.SNDMORE)
-        self.out.send('s', zmq.SNDMORE)
-        self.out.send('%s:' % receiver_group.encode('ascii'), zmq.SNDMORE)
-        self.out.send(typ, zmq.SNDMORE)
-        self.out.send_pyobj(msg)
+        print('i am sending')
+        self.out.put('works here')
+        self.out.put(['!',
+                       's',
+                       '%s:' % receiver_group.encode('ascii'),
+                       typ,
+                       msg])
 
 
 def flatten(d, parent_key=''):
