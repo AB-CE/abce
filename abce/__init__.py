@@ -189,6 +189,7 @@ class Simulation:
         self.database_name = 'database'
         self.resource_endowment = defaultdict(list)
         self.perishable = []
+        self.variables_to_track = defaultdict(list)
 
         #time.sleep(1)
         self.commands = mp.Queue()
@@ -357,68 +358,31 @@ class Simulation:
         self.declare_perishable(service)
 
     #TODO also for other variables
-    def panel_data(self, group, variables='goods', typ='FLOAT', command='round_end'):
-        """ Ponel_data writes variables of a group of agents into the database, by default
-        the db write is at the end of the round. You can also specify a command
-        and insert the command you choose in the action_list.
-        If you choose a custom command, you can declare a method that
-        returns the variable you want to track. This function in the class of the
-        agent must have the same name as the command.
+    def panel(self, group, variables=[]):
+        """ Panel_data writes variables of a group of agents into the database.
+            It always writes all possessions of the agent. With the optional
+            parameter variables you can insert (as strings) additional variables,
+            to be tracked.
+            You must put ('agent_group', 'panel') in the action_list.
 
-        You can use the same command for several groups, that report at the
-        same time.
-
-
-        Args:
-            group:
-                can be either a group or 'all' for all agents
-            variables (optional):
-                default='goods' monitors all the goods the agent owns
-                you can insert any variable your agent possesses. For
-                self.knows_latin you insert 'knows_latin'. If your agent
-                has self.technology you can use 'technology['formula']'
-                In this case you must set the type to CHAR(50) with the
-                typ='CHAR(50)' parameter.
-            typ:
-                the type of the sql variable (FLOAT, INT, CHAR(length))
-                command
+            Args:
+                group:
+                    can be either a group or 'all' for all agents
+                variables (list, optional):
+                    a list of all variables you want to track as 'strings'
 
         Example in start.py::
 
-         w.panel_data(group='Firm', command='after_production')
+         w.panel_data(group='firm', variables=['production_target', 'gross_revenue'])
 
          or
 
          w.panel_data(group=firm)
-
-        Optional in the agent::
-
-            class Firm(AgentEngine):
-
-            ...
-            def after_production(self):
-                track = {}
-                track['t'] = 'yes'
-                for key in self.prices:
-                    track['p_' + key] = self.prices[key]
-                track.update(self.product[key])
-                return track
         """
-        if variables != 'goods':
-            raise SystemExit('Not implemented')
-        if command not in self._db_commands:
-            self._db_commands[command] = []
-        self._db_commands[command].append([group, variables, typ])
-        self._db.add_panel(group, command)
-
-    def _make_db_command(self, command):
-        db_in_this_command = self._db_commands[command][:]
-
-        def send_db_command():
-            for db_good in db_in_this_command:
-                self.commands.put([group_address(db_good[0]), '_db_panel', command])
-                # self._add_agents_to_wait_for(self.num_agents_in_group[db_good[0]])
-        return send_db_command
+        if len(self.agent_list['all']) > 0:
+            print("WARNING: agents build before declare_perishable")
+        self._db.add_panel(group)
+        self.variables_to_track[group].append(variables)
 
     def _process_action_list(self, action_list):
         processed_list = []
@@ -605,6 +569,8 @@ class Simulation:
                 agent._register_perish(good)
             for resource, units, product in self.resource_endowment[group_name] + self.resource_endowment['all']:
                 agent._register_resource(resource, units, product)
+            for variables in self.variables_to_track[group_name] + self.variables_to_track['all']:
+                agent._register_panel(variables)
             agent.start()
             self.agent_list[group_name].append(agent)
             self.agent_list['all'].append(agent)

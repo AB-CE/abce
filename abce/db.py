@@ -36,8 +36,8 @@ class Database(multiprocessing.Process):
     def add_log(self, table_name):
         self.database.execute("CREATE TABLE " + table_name + "(round INT, id INT, PRIMARY KEY(round, id))")
 
-    def add_panel(self, group, command):
-        self.panels.append(command + '_' + group)
+    def add_panel(self, group):
+        self.panels.append('panel_' + group)
 
 
     def run(self):
@@ -65,12 +65,11 @@ class Database(multiprocessing.Process):
             if msg == "close":
                 break
             if msg[0] == 'panel':
-                command = msg[1]
-                data_to_write = msg[2]
-                data_to_write['id'] = msg[3]  # int
-                group = msg[4]
-                data_to_write['round'] = msg[5]  # int
-                table_name = command + '_' + group
+                data_to_write = msg[1]
+                data_to_write['id'] = msg[2]  # int
+                group = msg[3]
+                data_to_write['round'] = msg[4]  # int
+                table_name = 'panel_' + group
                 self.write(table_name, data_to_write)
             elif msg[0] == 'trade_log':
                 individual_log = msg[1]

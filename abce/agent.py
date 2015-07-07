@@ -120,6 +120,7 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
         """ self.round returns the current round in the simulation READ ONLY!"""
         self._perishable = []
         self._resources = []
+        self.variables_to_track = []
 
     def possession(self, good):
         """ returns how much of good an agent possesses.
@@ -233,10 +234,10 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
                 self._methods[method[0]] = method[1]
             self._methods['_advance_round'] = self._advance_round
             self._methods['_clearing__end_of_subround'] = self._clearing__end_of_subround
-            self._methods['_db_panel'] = self._db_panel
             self._methods['_perish'] = self._perish
             self._methods['_produce_resource'] = self._produce_resource
             self._methods['_die'] = self._die
+            self._methods['panel'] = self._panel
 
             #TODO inherited classes provide methods that should not be callable
             #change _ policy _ callable from outside __ not and exception lists
@@ -364,16 +365,16 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
                     self.given_offers[key]['status'] = 'perished'
                     self.given_offers[key]['status_round'] = self.round
 
-    def _db_panel(self):
-        command = self.commands.get()
-        try:
-            data_to_track = self._methods[command]()
-        except KeyError:
-            data_to_track = self._haves
-        #TODO this leads to ambigues errors when there is a KeyError in the data_to_track
-        #method (which is common), but testing takes to much time
+
+    def _register_panel(self, variables):
+        self.variables_to_track = variables
+
+
+    def _panel(self):
+        data_to_track = self._haves
+        for variable in self.variables_to_track:
+            data_to_track[variable] = self.__dict__[variable]
         self.database_connection.put(["panel",
-                                       command,
                                        data_to_track,
                                        str(self.idn),
                                        self.group,
