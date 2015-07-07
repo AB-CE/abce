@@ -180,7 +180,6 @@ class Simulation:
         self.agents_command_socket = {}
         self.agents_command_socket['all'] = []
         self._action_list = []
-        self._aesof_commands = {}
         self._resource_command_group = {}
         self._db_commands = {}
         self.num_agents = 0
@@ -201,7 +200,6 @@ class Simulation:
         self._logger = abce.abcelogger.AbceLogger(simulation_parameters['_path'], 'logger', self.logger_queue)
         self._logger.start()
 
-        self.aesof = False
         self.round = 0
         try:
             self.trade_logging_mode = simulation_parameters['trade_logging'].lower()
@@ -708,70 +706,7 @@ class Simulation:
         description = open(self.simulation_parameters['_path'] + '/description.txt', 'r')
         print(description.read())
 
-    def declare_aesof(self, aesof_file='aesof.csv'):
-        """ AESOF lets you determine agents behaviour from an comma sepertated sheet.
 
-        First row must be column headers. There must be one column header 'round' and
-        a column header name. A name can be a goup are and individal (goup_id
-        e.G. firm_01) it can also be 'all' for all agents.
-        Every round, the agents self.aesof parameters get updated, if a row with
-        the corresponding round and agent name exists.
-
-        Therefore an agent can access the parameters `self.aesof[column_name]` for
-        the current round. (or the precedent one when there was no update)
-        parameter is set. You can use it in your source code. It is persistent
-        until the next round for which a corresponding row exists.
-
-        You can alse put commands or call methods in the excel file. For example:
-         `self.aesof_exec(column_name)`.
-        Alternatively you can declare a variable according to a
-        function: `willingness_to_pay = self.aesof_eval(column_name)`.
-
-        There is a big difference between `self.aesof_exec` and `self.aesof_eval`.
-        exec is only executed in rounds that have corresponding rows in aesof.csv.
-        `self.aesof_eval` is persistent every round the expression of the row
-        corresponding to the current round round or the last declared round is
-        executed.
-
-        Args:
-            aesof_file(optional):
-                name of the csv_file. Default is the group name plus 'aesof.csv'.
-        """
-        csvfile = open(aesof_file)
-        dialect = csv.Sniffer().sniff(csvfile.read(1024))
-        csvfile.seek(0)
-        reader = csv.reader(csvfile, dialect)
-        keys = [key.lower() for key in reader.next()]
-        if not 'name' in keys:
-            SystemExit("no column 'name' in the aesof.csv")
-        if not 'round' in keys:
-            SystemExit("no column 'round' in the aesof.csv")
-        self.aesof_dict = {}
-        for line in reader:
-            line = [_number_or_string(cell) for cell in line]
-            dictionary = dict(zip(keys, line))
-            round = int(dictionary['round'])
-            if round not in self.aesof_dict:
-                self.aesof_dict[round] = []
-            self.aesof_dict[round].append(dictionary)
-        if 0 not in self.aesof_dict:
-            SystemExit('Round 0 must always be declare, with initial values')
-        self.aesof = True
-
-    def _make_aesof_command(self):
-        for round in self.aesof_dict.keys():
-            for round_line in self.aesof_dict[round]:
-                if round_line['name'] not in self.num_agents_in_group.keys() + ['all']:
-                    SystemExit("%s in '%s' under 'name' is an unknown agent" % (round_line['name'], round_line))
-
-        def send_aesof_command():
-            try:
-                for round_line in self.aesof_dict[self.round]:
-                    self.commands.put([['%s:' % round_line['name'], '_aesof'], round_line])
-            except KeyError:
-                if self.round in self.aesof_dict:
-                    raise
-        return send_aesof_command
 
 
 class repeat:

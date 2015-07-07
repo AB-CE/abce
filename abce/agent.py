@@ -236,7 +236,6 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
             self._methods['_db_panel'] = self._db_panel
             self._methods['_perish'] = self._perish
             self._methods['_produce_resource'] = self._produce_resource
-            self._methods['_aesof'] = self._aesof
             self._methods['_die'] = self._die
 
             #TODO inherited classes provide methods that should not be callable
@@ -389,21 +388,6 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
                 good = self._open_offers[offer_id]['good']
         for offer_id in to_reject:
             self.reject(self._open_offers[offer_id])
-
-    def aesof_exec(self, column_name):
-        """ executes a command in your excel file. see instruction of pythons exec commmand """
-        try:
-            exec(self.aesof[column_name], globals(), locals())
-            del self.aesof[column_name]
-        except KeyError:
-            pass
-
-    def aesof_eval(self, column_name):
-        """ evaluates an expression' in your excel file. see instruction of pythons eval commmand """
-        return eval(self.aesof[column_name], globals(), locals())
-
-    def _aesof(self):
-        self.aesof = self.commands.get()
 
     #TODO go to trade
     def _clearing__end_of_subround(self):
