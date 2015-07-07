@@ -14,7 +14,7 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations under
 # the License.
-#pylint: disable=C0111
+#pylint: disable=W0212, C0111
 """ The best way to start creating a simulation is by copying the start.py file
 and other files from 'abce/template'.
 
@@ -432,7 +432,7 @@ class Simulation:
                 for _ in range(action.repetitions):
                     processed_list.extend(nested_action_list)
             else:
-                processed_list.append('all', action)
+                processed_list.append(('all', action))
         return processed_list
 
     def run(self):
