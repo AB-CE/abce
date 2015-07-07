@@ -197,7 +197,7 @@ class Simulation:
         self.database_queue = mp.Queue()
         self._db = abce.db.Database(simulation_parameters['_path'], self.database_name, self.database_queue)
         self.logger_queue = mp.Queue()
-        self._logger = abce.abcelogger.AbceLogger(simulation_parameters['_path'], 'logger', self.logger_queue)
+        self._logger = abce.abcelogger.AbceLogger(simulation_parameters['_path'], self.logger_queue)
         self._logger.start()
 
         self.round = 0

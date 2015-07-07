@@ -20,25 +20,27 @@ import numpy as np
 
 
 class AbceLogger(multiprocessing.Process):
-    def __init__(self, directory, db_name, in_sok):
+    def __init__(self, directory, in_sok):
         multiprocessing.Process.__init__(self)
-        self.file = open(directory + '/network.csv', 'wb')
-        self.network_log = csv.writer(self.file, delimiter=',',
-                            quotechar=",", quoting=csv.QUOTE_MINIMAL)
         self.in_sok = in_sok
+        self.directory = directory
+
 
     def run(self):
+        csvfile = open(self.directory + '/network.csv', 'wb')
+        network_log = csv.writer(csvfile, delimiter=',',
+                            quotechar=",", quoting=csv.QUOTE_MINIMAL)
         while True:
             try:
                 typ = self.in_sok.get()
             except KeyboardInterrupt:
-                    self.file.close()
+                    csvfile.close()
                     break
             if typ == "close":
-                self.file.close()
+                csvfile.close()
                 break
             if typ == 'network':
-                data_to_write = self.in_sok.recv_pyobj()
-                self.network_log.writerow(data_to_write)
+                data_to_write = self.in_sok.get()
+                network_log.writerow(data_to_write)
 
 
