@@ -41,6 +41,8 @@ Installation of development version
 Installation Windows
 --------------------
 
+- windows currently is under development and not fully functional -
+
 1. Install the python-anaconda distribution from https://continuum.io/downloads
    (You can also install python and numpy/scipy by hand)
 
