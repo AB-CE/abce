@@ -9,6 +9,7 @@ class Buy(Agent):
         self.last_round = simulation_parameters['num_rounds'] - 1
         #self.cut_of = simulation_parameters['cut_of']
         self.tests = {'accepted': False, 'rejected': False, 'partial': False}
+        self.price = 0
         if self.idn == 1:
             self.tests['not_answered'] = False
 

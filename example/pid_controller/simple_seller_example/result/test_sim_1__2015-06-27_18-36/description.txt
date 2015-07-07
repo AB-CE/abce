@@ -1,9 +1,0 @@
-
-
-#: 1
-random_seed: none
-name: test_sim_1_
-trade_repetitions: 20
-trade_logging: individual
-num_rounds: 1000
-_path: /Users/taghawi/Dropbox/workspace/pid_economy/result/test_sim_1__2015-06-27_18-36

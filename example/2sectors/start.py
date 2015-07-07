@@ -24,7 +24,7 @@ for simulation_parameters in read_parameters('simulation_parameters.csv'):
     w.build_agents_from_file(Firm, parameters_file='agents_parameters.csv')
     w.build_agents_from_file(Household)
 
-    w.declare_round_endowment('labor_endowment', productivity=1, product='labor')
+    w.declare_round_endowment('labor_endowment', units=1, product='labor')
     w.declare_perishable(good='labor')
 
     w.panel_data('household', command='buy_log')

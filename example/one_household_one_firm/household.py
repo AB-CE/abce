@@ -9,7 +9,7 @@ class Household(abce.Agent, abce.Household):
         in start.py one unit of labor per month
         2. Sets the utility function to utility = consumption of good "GOOD"
         """
-        abce.Agent.__init__(self, *_pass_to_engine)
+        abce.Agent.__init__(self, **_pass_to_engine)
         self.create('adult', 1)
         self.set_cobb_douglas_utility_function({"GOOD": 1})
 

@@ -15,20 +15,24 @@ from abce import Simulation, read_parameters, repeat
 for simulation_parameters in read_parameters('simulation_parameters.csv'):
     s = Simulation(simulation_parameters)
     action_list = [
+
         ('firm', 'production'),
+        ('firm', 'panel'),
         ('firm', 'quote'),
         ('household', 'buying'),
         ('firm', 'selling'),
+        ('household', 'panel'),
         ('household', 'consumption')
     ]
 
     s.add_action_list(action_list)
 
+    s.panel('household')
+    s.panel('firm')
+
     s.build_agents(Firm, 1)
     s.build_agents(Household, 10)
 
-    s.panel_data('household', command='buy_log')
-    s.panel_data('firm', command='buy_log')
 
     s.run()
 

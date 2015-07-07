@@ -10,7 +10,7 @@ class Firm(abce.Agent, abce.Firm):
 
         there is an initial endowment to avoid bootstrapping problems
         """
-        abce.Agent.__init__(self, *_pass_to_engine)
+        abce.Agent.__init__(self, **_pass_to_engine)
         self.price = {}
         self.sector = agent_parameters['sector']
         if self.sector == 'intermediate_good':

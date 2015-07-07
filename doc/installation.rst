@@ -8,7 +8,7 @@ Installation of stable version Ubuntu
 
 1. download the zip file from: https://github.com/DavoudTaghawiNejad/abce
 
-2. unzip the file
+2. unzip the file and change in the directory
 
 3. If pip or numpy or scipy is not installed in terminal::
 
@@ -17,7 +17,7 @@ Installation of stable version Ubuntu
 
 4. In terminal::
 
-    sudo pip install abce-0.3.1.zip
+    sudo python setup.py install
 
 
 Installation Mac
@@ -25,7 +25,7 @@ Installation Mac
 
 1. download the zip file from: https://github.com/DavoudTaghawiNejad/abce
 
-2. extract zip file
+2. extract zip file and change in the directory
 
 3. make sure python's pip is installed
 
@@ -33,10 +33,24 @@ Installation Mac
 
 5. sudo pip install numpy
 
-4 sudo pip install abce-0.3.1.zip
+6. sudo python setup.py install
 
 Installation of development version
 -----------------------------------
+
+Installation Windows
+--------------------
+
+1. Install the python-anaconda distribution from https://continuum.io/downloads
+   (You can also install python and numpy/scipy by hand)
+
+2. download the zip file from: https://github.com/DavoudTaghawiNejad/abce
+
+3. extract zip file and change in the directory
+
+4. python sgs
+etup.py install
+
 
 terminal::
 

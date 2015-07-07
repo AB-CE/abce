@@ -17,6 +17,7 @@ for parameters in read_parameters('simulation_parameters.csv'):
             ('all', 'three'),
             ('all', 'clean_up')
             ], 100),
+        ('buy', 'panel'),
         ('endowment', 'Iconsume'),
         ('all', 'all_tests_completed')
 
@@ -26,6 +27,7 @@ for parameters in read_parameters('simulation_parameters.csv'):
     s.declare_round_endowment(resource='labor_endowment', units=5, product='labor')
     s.declare_round_endowment(resource='cow', units=10, product='milk')
     s.declare_perishable(good='labor')
+    s.panel('buy', variables=['price'])
 
     s.build_agents(Buy, 2)
     #s.build_agents(QuoteBuy, 2)
@@ -35,7 +37,6 @@ for parameters in read_parameters('simulation_parameters.csv'):
     s.build_agents(LoggerTest, 1)
 
 
-    # s.panel_data('Firm', command='buy_log')
 
     s.run()
 
