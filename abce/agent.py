@@ -119,6 +119,8 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
         self._quotes = {}
         self.round = 0
         """ self.round returns the current round in the simulation READ ONLY!"""
+        self._perishable = []
+        self._resources = []
 
     def possession(self, good):
         """ returns how much of good an agent possesses.
@@ -203,7 +205,7 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
             try:
                 goods = set(goods) - set(but)
             except TypeError:
-                raise SystemExit("goods and/or but must be a list e.G. ['element1', 'element2']")
+                raise SystemExit("goods and / or but must be a list e.G. ['element1', 'element2']")
         if beginswith != None:
             new_goods = []
             for good in goods:
@@ -234,7 +236,7 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
             self._methods['_clearing__end_of_subround'] = self._clearing__end_of_subround
             self._methods['_db_panel'] = self._db_panel
             self._methods['_perish'] = self._perish
-            self._methods['_produce_resource_rent_and_labor'] = self._produce_resource_rent_and_labor
+            self._methods['_produce_resource'] = self._produce_resource
             self._methods['_aesof'] = self._aesof
             self._methods['_die'] = self._die
 
@@ -331,23 +333,27 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
                     self.__signal_finished()
         except:
             time.sleep(random.random())
-            print("")
             raise
 
     def _die(self):
         sys.exit(0)
 
-    def _produce_resource_rent_and_labor(self):
-        resource, units, product = self.commands.get()
-        if resource in self._haves:
-            try:
-                self._haves[product] += float(units) * self._haves[resource]
-            except KeyError:
-                self._haves[product] = float(units) * self._haves[resource]
+    def _register_resource(self, resource, units, product):
+        self._resources.append((resource, units, product))
+
+    def _produce_resource(self):
+        for resource, units, product in self._resources:
+            if resource in self._haves:
+                try:
+                    self._haves[product] += float(units) * self._haves[resource]
+                except KeyError:
+                    self._haves[product] = float(units) * self._haves[resource]
+
+    def _register_perish(self, good):
+        self._perishable.append(good)
 
     def _perish(self):
-        goods = self.commands.get()
-        for good in goods:
+        for good in self._perishable:
             if good in self._haves:
                 self._haves[good] = 0
             for key in self._open_offers.keys():

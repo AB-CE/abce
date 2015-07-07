@@ -12,7 +12,7 @@ class Endowment(abce.Agent, abce.Household):
         self.set_cobb_douglas_utility_function({'milk': 2})
 
     def Iconsume(self):
-        assert self.possession('labor') == 5
+        assert self.possession('labor') == 5, self.possession('labor')
         assert self.possession('milk') == 10 + self.round * (10 - 3), self.possession('milk')
         milk = self.possession('milk')
         utility = self.consume({'milk': 3})

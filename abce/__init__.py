@@ -52,13 +52,13 @@ import abce.abcelogger
 import itertools
 import postprocess
 from glob import glob
-import subround
 from firm import Firm
 from firmmultitechnologies import *
 from household import *
 from agent import *
 from abce.communication import Communication
 from copy import copy
+from collections import defaultdict
 
 BASEPATH = os.path.dirname(os.path.realpath(__file__))
 
@@ -180,8 +180,6 @@ class Simulation:
         self.agents_command_socket = {}
         self.agents_command_socket['all'] = []
         self._action_list = []
-        self._resource_commands = {}
-        self._perish_commands = {}
         self._aesof_commands = {}
         self._resource_command_group = {}
         self._db_commands = {}
@@ -190,6 +188,8 @@ class Simulation:
         self._build_first_run = True
         self._agent_parameters = None
         self.database_name = 'database'
+        self.resource_endowment = defaultdict(list)
+        self.perishable = []
 
         #time.sleep(1)
         self.commands = mp.Queue()
@@ -277,42 +277,39 @@ class Simulation:
         #TODO test
 
 
-    def declare_round_endowment(self, resource, productivity, product, command='default_resource', group='all'):
-        """ Every round the agent gets 'productivity' units of good 'product' for
+    def declare_round_endowment(self, resource, units, product, groups=['all']):
+        """ At the beginning of very round the agent gets 'units' units of good 'product' for
         every 'resource' he possesses.
 
-        By default the this happens at the beginning of the round. You can change this.
-        Insert the command string you chose it self.action_list. One command can
-        be associated with several resources.
+        Round endowments can be group specific, that means that when somebody except
+        this group holds them they do not produce. The default is 'all'.
 
-        Round endowments can be goup specific, that means that when somebody except
-        this group holds them they do not produce. The default is 'all'. Restricting
-        this to a group could have small speed gains.
+        Args::
+
+            resource:
+                The good that you have to hold to get the other
+            units:
+                the multiplier to get the produced good
+            product:
+                the good that is produced if you hold the first good
+            groups:
+                a list of agent groups, which gain the second good, if they hold the first one
+
+        Example::
+
+            A farmer gets a ton of harvest for every acre:
+
+            w.declare_round_endowment(resource='land', units=1000, product='wheat')
+
+
         """
-        productivity = str(productivity)
-        if command not in self._resource_commands:
-            self._resource_commands[command] = []
+        if len(self.agent_list['all']) > 0:
+            print("WARNING: agents build before declare_perishable")
+        for group in groups:
+            self.resource_endowment[group].append((resource, units, product))
 
-        if command in self._resource_command_group:
-            if self._resource_command_group[command] != group:
-                raise SystemExit('Different groups assigned to the same command')
-        else:
-            self._resource_command_group[command] = group
-        self._resource_commands[command].append([resource, productivity, product])
 
-    def _make_resource_command(self, command):
-        resources_in_this_command = self._resource_commands[command][:]
-        group = self._resource_command_group[command]
-        group_and_method = [group, '_produce_resource_rent_and_labor']
-
-        def send_resource_command():
-            for productivity in resources_in_this_command:
-                self.commands.put(group_and_method + productivity)
-        return send_resource_command
-        #TODO could be made much faster by sending all resource simultaneously
-        #as in _make_perish_command
-
-    def declare_perishable(self, good, command='perish_at_the_round_end'):
+    def declare_perishable(self, good):
         """ This good only lasts one round and then disappears. For example
         labor, if the labor is not used today today's labor is lost.
         In combination with resource this is useful to model labor or capital.
@@ -323,28 +320,43 @@ class Simulation:
 
         Args::
 
-         good: the good that perishes
-         [command: In order to perish at another point in time you can choose
-         a commmand and insert that command in the action list.
+         good:
+            the good that perishes
 
          Example::
 
-             w.declare_round_endowment(resource='LAB_endowment', productivity=1000, product='LAB')
-             w.declare_round_endowment(resource='CAP_endowment', productivity=1000, product='CAP')
              w.declare_perishable(good='LAB')
              w.declare_perishable(good='CAP')
 
         """
-        if command not in self._perish_commands:
-            self._perish_commands[command] = []
-        self._perish_commands[command].append(good)
+        if len(self.agent_list['all']) > 0:
+            print("WARNING: agents build before declare_perishable")
+        self.perishable.append(good)
 
-    def _make_perish_command(self, command):
-        goods = self._perish_commands[command][:]
 
-        def send_perish_command():
-            self.commands.put(['all', '_perish'] + goods)
-        return send_perish_command
+    def declare_service(self, human_or_other_resource, units, service, groups=['all']):
+        """ When the agent holds the human_or_other_resource, he gets 'units' of service every round
+            the service can be used only with in this round.
+
+        Args::
+
+            human_or_other_resource:
+                the good that needs to be in possessions to create the other good 'self.create('adult', 2)'
+            units:
+                how many units of the service is available
+            service:
+                the service that is created
+            groups:
+                a list of agent groups that can create the service
+
+        Example::
+
+            For example if a household has two adult family members, it gets 16 hours of work
+
+            w.declare_service('adult', 8, 'work')
+        """
+        self.declare_round_endowment(human_or_other_resource, units, service, groups)
+        self.declare_perishable(service)
 
     #TODO also for other variables
     def panel_data(self, group, variables='goods', typ='FLOAT', command='round_end'):
@@ -442,11 +454,16 @@ class Simulation:
         self._displaydescribtion()
         self._add_agents_to_wait_for(self.num_agents)
         self._wait_for_agents()
+
         start_time = time.time()
 
         for year in xrange(self.simulation_parameters['num_rounds']):
             self.round = year
-            print("\rRound" + str("%3d" % year)),
+            print("Round" + str("%3d" % year)),
+
+            for queue in self.agents_command_socket['all']:
+                queue.put('_produce_resource')
+
             for group, action in self._action_list:
                 self._add_agents_to_wait_for(len(self.agents_command_socket[group]))
                 for queue in self.agents_command_socket[group]:
@@ -454,8 +471,11 @@ class Simulation:
                 self._wait_for_agents_than_signal_end_of_comm()
                 for queue in self.agents_command_socket['all']:
                     queue.put('_clearing__end_of_subround')
+
             for queue in self.agents_command_socket['all']:
                 queue.put('_advance_round')
+            for queue in self.agents_command_socket['all']:
+                queue.put('_perish')
 
         print(str("%6.2f" % (time.time() - start_time)))
         self.gracefull_exit()
@@ -583,6 +603,10 @@ class Simulation:
                                 'backend': backend_queue,
                                 'frontend': self.communication_frontend})
             agent.name = agent_name(group_name, idn)
+            for good in self.perishable:
+                agent._register_perish(good)
+            for resource, units, product in self.resource_endowment[group_name] + self.resource_endowment['all']:
+                agent._register_resource(resource, units, product)
             agent.start()
             self.agent_list[group_name].append(agent)
             self.agent_list['all'].append(agent)

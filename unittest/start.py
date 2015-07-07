@@ -22,6 +22,11 @@ for parameters in read_parameters('simulation_parameters.csv'):
 
     ]
     s.add_action_list(action_list)
+
+    s.declare_round_endowment(resource='labor_endowment', units=5, product='labor')
+    s.declare_round_endowment(resource='cow', units=10, product='milk')
+    s.declare_perishable(good='labor')
+
     s.build_agents(Buy, 2)
     #s.build_agents(QuoteBuy, 2)
     s.build_agents(Sell, 2)
@@ -29,9 +34,6 @@ for parameters in read_parameters('simulation_parameters.csv'):
     s.build_agents(Endowment, 2)  # tests declare_round_endowment and declare_perishable
     s.build_agents(LoggerTest, 1)
 
-    s.declare_round_endowment(resource='labor_endowment', productivity=5, product='labor')
-    s.declare_round_endowment(resource='cow', productivity=10, product='milk')
-    s.declare_perishable(good='labor')
 
     # s.panel_data('Firm', command='buy_log')
 
