@@ -1,0 +1,311 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>abce.firm &mdash; ABCE 0.3.1alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.3.1alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="ABCE 0.3.1alpha documentation" href="../../index.html" />
+    <link rel="up" title="abce" href="../abce.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="../abce.html" accesskey="U">abce</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for abce.firm</h1><div class="highlight"><pre>
+<span class="c"># Copyright 2012 Davoud Taghawi-Nejad</span>
+<span class="c">#</span>
+<span class="c"># Module Author: Davoud Taghawi-Nejad</span>
+<span class="c">#</span>
+<span class="c"># ABCE is open-source software. If you are using ABCE for your research you are</span>
+<span class="c"># requested the quote the use of this software.</span>
+<span class="c">#</span>
+<span class="c"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not</span>
+<span class="c"># use this file except in compliance with the License and quotation of the</span>
+<span class="c"># author. You may obtain a copy of the License at</span>
+<span class="c">#       http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT</span>
+<span class="c"># WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the</span>
+<span class="c"># License for the specific language governing permissions and limitations under</span>
+<span class="c"># the License.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">The Firm class gives an Agent the ability to set production functions and</span>
+<span class="sd">produce.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">firmmultitechnologies</span> <span class="kn">import</span> <span class="n">FirmMultiTechnologies</span>
+<span class="n">save_err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="n">invalid</span><span class="o">=</span><span class="s">&#39;ignore&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Firm"><a class="viewcode-back" href="../../Firm.html#abce.Firm">[docs]</a><span class="k">class</span> <span class="nc">Firm</span><span class="p">(</span><span class="n">FirmMultiTechnologies</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; The firm class allows you to declare a production function for a firm.</span>
+<span class="sd">    :meth:`~Firm.set_leontief`, :meth:`~abecagent.Firm.set_production_function`</span>
+<span class="sd">    :meth:`~Firm.set_cobb_douglas`,</span>
+<span class="sd">    :meth:`~Firm.set_production_function_fast`</span>
+<span class="sd">    (FirmMultiTechnologies, allows you to declare several) With :meth:`~Firm.produce`</span>
+<span class="sd">    and :meth:`~Firm.produce_use_everything` you can produce using the</span>
+<span class="sd">    according production function. You have several auxiliary functions</span>
+<span class="sd">    for example to predict the production. When you multiply</span>
+<span class="sd">    :meth:`~Firm.predict_produce` with the price vector you get the</span>
+<span class="sd">    profitability of the production.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#TODO Example</span>
+<div class="viewcode-block" id="Firm.produce_use_everything"><a class="viewcode-back" href="../../Firm.html#abce.Firm.produce_use_everything">[docs]</a>    <span class="k">def</span> <span class="nf">produce_use_everything</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Produces output goods from all input goods.</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            self.produce_use_everything()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">produce</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">possessions_all</span><span class="p">())</span>
+</div>
+<div class="viewcode-block" id="Firm.produce"><a class="viewcode-back" href="../../Firm.html#abce.Firm.produce">[docs]</a>    <span class="k">def</span> <span class="nf">produce</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_goods</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Produces output goods given the specified amount of inputs.</span>
+
+<span class="sd">        Transforms the Agent&#39;s goods specified in input goods</span>
+<span class="sd">        according to a given production_function to output goods.</span>
+<span class="sd">        Automatically changes the agent&#39;s belonging. Raises an</span>
+<span class="sd">        exception, when the agent does not have sufficient resources.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            {&#39;input_good1&#39;: amount1, &#39;input_good2&#39;: amount2 ...}:</span>
+<span class="sd">                dictionary containing the amount of input good used for the production.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            NotEnoughGoods:</span>
+<span class="sd">                This is raised when the goods are insufficient.</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            self.set_cobb_douglas_production_function(&#39;car&#39; ..)</span>
+<span class="sd">            car = {&#39;tire&#39;: 4, &#39;metal&#39;: 2000, &#39;plastic&#39;:  40}</span>
+<span class="sd">            try:</span>
+<span class="sd">                self.produce(car)</span>
+<span class="sd">            except NotEnoughGoods:</span>
+<span class="sd">                print(&#39;today no cars&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">FirmMultiTechnologies</span><span class="o">.</span><span class="n">produce</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_production_function</span><span class="p">,</span> <span class="n">input_goods</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Firm.sufficient_goods"><a class="viewcode-back" href="../../Firm.html#abce.Firm.sufficient_goods">[docs]</a>    <span class="k">def</span> <span class="nf">sufficient_goods</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_goods</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; checks whether the agent has all the goods in the vector input &quot;&quot;&quot;</span>
+        <span class="n">FirmMultiTechnologies</span><span class="o">.</span><span class="n">sufficient_goods</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Firm.set_production_function"><a class="viewcode-back" href="../../Firm.html#abce.Firm.set_production_function">[docs]</a>    <span class="k">def</span> <span class="nf">set_production_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">formula</span><span class="p">,</span> <span class="n">typ</span><span class="o">=</span><span class="s">&#39;from_formula&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;  sets the firm to use a Cobb-Douglas production function from a</span>
+<span class="sd">        formula.</span>
+
+<span class="sd">        A production function is a production process that produces the given</span>
+<span class="sd">        input given input goods according to the formula to the output goods.</span>
+<span class="sd">        Production_functions are than used to produce, predict_vector_produce and</span>
+<span class="sd">        predict_output_produce.</span>
+
+<span class="sd">        create_production_function_fast is faster but more complicated</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            &quot;formula&quot;: equation or set of equations that describe the</span>
+<span class="sd">            production process. (string) Several equation are separated by a ;</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            formula = &#39;golf_ball = (ball) * (paint / 2); waste = 0.1 * paint&#39;</span>
+<span class="sd">            self.set_production_function(formula)</span>
+<span class="sd">            self.produce({&#39;ball&#39; : 1, &#39;paint&#39; : 2}</span>
+
+<span class="sd">        //exponential is ** not ^</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_production_function</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_production_function</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="n">typ</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Firm.set_production_function_fast"><a class="viewcode-back" href="../../Firm.html#abce.Firm.set_production_function_fast">[docs]</a>    <span class="k">def</span> <span class="nf">set_production_function_fast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">formula</span><span class="p">,</span> <span class="n">output_goods</span><span class="p">,</span> <span class="n">input_goods</span><span class="p">,</span> <span class="n">typ</span><span class="o">=</span><span class="s">&#39;from_formula&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;  sets the firm to use a Cobb-Douglas production function from a</span>
+<span class="sd">        formula, with given outputs</span>
+
+<span class="sd">        A production function is a production process that produces the given</span>
+<span class="sd">        input given according to the formula to the output goods.</span>
+<span class="sd">        Production_functions are than used to produce, predict_vector_produce and</span>
+<span class="sd">        predict_output_produce.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            &quot;formula&quot;: equation or set of equations that describe the</span>
+<span class="sd">            production process. (string) Several equation are separated by a ;</span>
+<span class="sd">            [output]: list of all output goods (left hand sides of the equations)</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            formula = &#39;golf_ball = (ball) * (paint / 2); waste = 0.1 * paint&#39;</span>
+<span class="sd">            self.production_function_fast(formula, &#39;golf&#39;, [&#39;waste&#39;])</span>
+<span class="sd">            self.produce(self, {&#39;ball&#39; : 1, &#39;paint&#39; : 2}</span>
+
+<span class="sd">        //exponential is ** not ^</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_production_function</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_production_function_fast</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="n">output_goods</span><span class="p">,</span> <span class="n">input_goods</span><span class="p">,</span> <span class="n">typ</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Firm.set_cobb_douglas"><a class="viewcode-back" href="../../Firm.html#abce.Firm.set_cobb_douglas">[docs]</a>    <span class="k">def</span> <span class="nf">set_cobb_douglas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">multiplier</span><span class="p">,</span> <span class="n">exponents</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;  sets the firm to use a Cobb-Douglas production function.</span>
+
+<span class="sd">        A production function is a production process that produces the</span>
+<span class="sd">        given input goods according to the formula to the output</span>
+<span class="sd">        good.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            &#39;output&#39;: Name of the output good</span>
+<span class="sd">            multiplier: Cobb-Douglas multiplier</span>
+<span class="sd">            {&#39;input1&#39;: exponent1, &#39;input2&#39;: exponent2 ...}: dictionary</span>
+<span class="sd">            containing good names &#39;input&#39; and corresponding exponents</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            self.set_cobb_douglas(&#39;plastic&#39;, 0.000001, {&#39;oil&#39; : 10, &#39;labor&#39; : 1})</span>
+<span class="sd">            self.produce({&#39;oil&#39; : 20, &#39;labor&#39; : 1})</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_production_function</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_cobb_douglas</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">multiplier</span><span class="p">,</span> <span class="n">exponents</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Firm.set_leontief"><a class="viewcode-back" href="../../Firm.html#abce.Firm.set_leontief">[docs]</a>    <span class="k">def</span> <span class="nf">set_leontief</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">utilization_quantities</span><span class="p">,</span> <span class="n">multiplier</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">isinteger</span><span class="o">=</span><span class="s">&#39;int&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; sets the firm to use a Leontief production function.</span>
+
+<span class="sd">        A production function is a production process that produces the</span>
+<span class="sd">        given input given according to the formula to the output</span>
+<span class="sd">        good.</span>
+
+<span class="sd">        Warning, when you produce with a Leontief production_function all goods you</span>
+<span class="sd">        put in the produce(...) function are used up. Regardless whether it is an</span>
+<span class="sd">        efficient or wasteful bundle</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            &#39;output&#39;: Name of the output good</span>
+<span class="sd">            {&#39;input1&#39;: utilization_quantity1, &#39;input2&#39;: utilization_quantity2 ...}: dictionary</span>
+<span class="sd">            containing good names &#39;input&#39; and corresponding exponents</span>
+<span class="sd">            multiplier: multiplier</span>
+<span class="sd">            isinteger=&#39;int&#39; or isinteger=&#39;&#39;: When &#39;int&#39; produces only integer</span>
+<span class="sd">            amounts of the good. When &#39;&#39;, produces floating amounts.</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            self.create_leontief(&#39;car&#39;, {&#39;tire&#39; : 4, &#39;metal&#39; : 1000, &#39;plastic&#39; : 20}, 1)</span>
+<span class="sd">            two_cars = {&#39;tire&#39;: 8, &#39;metal&#39;: 2000, &#39;plastic&#39;:  40}</span>
+<span class="sd">            self.produce(two_cars)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_production_function</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_leontief</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">utilization_quantities</span><span class="p">,</span> <span class="n">isinteger</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Firm.predict_produce_output_simple"><a class="viewcode-back" href="../../Firm.html#abce.Firm.predict_produce_output_simple">[docs]</a>    <span class="k">def</span> <span class="nf">predict_produce_output_simple</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_goods</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Calculates the output of a production (but does not produce)</span>
+
+<span class="sd">            Predicts the production of produce(production_function, input_goods)</span>
+<span class="sd">            see also: Predict_produce(.) as it returns a vector</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            {&#39;input_good1&#39;: amount1, &#39;input_good2&#39;: amount2 ...}:</span>
+<span class="sd">                dictionary containing the amount of input good used for the production.</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            print(A.predict_output_produce(two_cars))</span>
+<span class="sd">            &gt;&gt;&gt; {&#39;car&#39;: 2}</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_produce_output</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_production_function</span><span class="p">,</span> <span class="n">input_goods</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Firm.predict_produce_simple"><a class="viewcode-back" href="../../Firm.html#abce.Firm.predict_produce_simple">[docs]</a>    <span class="k">def</span> <span class="nf">predict_produce_simple</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_goods</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns a vector with input (negative) and output (positive) goods</span>
+
+<span class="sd">            Predicts the production of produce(production_function, input_goods) and</span>
+<span class="sd">            the use of input goods.</span>
+<span class="sd">            net_value(.) uses a price_vector (dictionary) to calculate the</span>
+<span class="sd">            net value of this production.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            {&#39;input_good1&#39;: amount1, &#39;input_good2&#39;: amount2 ...}:</span>
+<span class="sd">                dictionary containing the amount of input good used for the production.</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">         prices = {&#39;car&#39;: 50000, &#39;tire&#39;: 100, &#39;metal&#39;: 10, &#39;plastic&#39;:  0.5}</span>
+<span class="sd">         value_one_car = net_value(predict_produce(one_car), prices)</span>
+<span class="sd">         value_two_cars = net_value(predict_produce(two_cars), prices)</span>
+<span class="sd">         if value_one_car &gt; value_two_cars:</span>
+<span class="sd">             A.produce(one_car)</span>
+<span class="sd">         else:</span>
+<span class="sd">             A.produce(two_cars)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_produce</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_production_function</span><span class="p">,</span> <span class="n">input_goods</span><span class="p">)</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="../abce.html" >abce</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2012, Davoud Taghawi-Nejad.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+  </body>
+</html>

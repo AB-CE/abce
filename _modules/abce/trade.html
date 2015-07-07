@@ -1,0 +1,889 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>abce.trade &mdash; ABCE 0.3.1alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.3.1alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="ABCE 0.3.1alpha documentation" href="../../index.html" />
+    <link rel="up" title="abce" href="../abce.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="../abce.html" accesskey="U">abce</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for abce.trade</h1><div class="highlight"><pre>
+<span class="c"># Copyright 2012 Davoud Taghawi-Nejad</span>
+<span class="c">#</span>
+<span class="c"># Module Author: Davoud Taghawi-Nejad</span>
+<span class="c">#</span>
+<span class="c"># ABCE is open-source software. If you are using ABCE for your research you are</span>
+<span class="c"># requested the quote the use of this software.</span>
+<span class="c">#</span>
+<span class="c"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); you may not</span>
+<span class="c"># use this file except in compliance with the License and quotation of the</span>
+<span class="c"># author. You may obtain a copy of the License at</span>
+<span class="c">#       http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT</span>
+<span class="c"># WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the</span>
+<span class="c"># License for the specific language governing permissions and limitations under</span>
+<span class="c"># the License.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">The :class:`abceagent.Agent` class is the basic class for creating your agent. It automatically handles the</span>
+<span class="sd">possession of goods of an agent. In order to produce/transforme goods you need to also subclass</span>
+<span class="sd">the :class:`abceagent.Firm` [1]_ or to create a consumer the :class:`abceagent.Household`.</span>
+
+<span class="sd">For detailed documentation on:</span>
+
+<span class="sd">Trading:</span>
+<span class="sd">    see :class:`abceagent.Trade`</span>
+<span class="sd">Logging and data creation:</span>
+<span class="sd">    see :class:`abceagent.Database` and :doc:`simulation_results`</span>
+<span class="sd">Messaging between agents:</span>
+<span class="sd">    see :class:`abceagent.Messaging`.</span>
+
+<span class="sd">.. autoexception:: abcetools.NotEnoughGoods</span>
+
+<span class="sd">.. [1] or :class:`abceagent.FirmMultiTechnologies` for simulations with complex technologies.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">shuffle</span>
+<span class="kn">from</span> <span class="nn">abce.tools</span> <span class="kn">import</span> <span class="n">is_zero</span><span class="p">,</span> <span class="n">is_positive</span><span class="p">,</span> <span class="n">is_negative</span><span class="p">,</span> <span class="n">NotEnoughGoods</span><span class="p">,</span> <span class="n">epsilon</span>
+<span class="n">save_err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="n">invalid</span><span class="o">=</span><span class="s">&#39;ignore&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Offer"><a class="viewcode-back" href="../../Trade.html#abce.Offer">[docs]</a><span class="k">def</span> <span class="nf">Offer</span><span class="p">(</span><span class="n">sender_group</span><span class="p">,</span> <span class="n">sender_idn</span><span class="p">,</span> <span class="n">receiver_group</span><span class="p">,</span> <span class="n">receiver_idn</span><span class="p">,</span> <span class="n">good</span><span class="p">,</span> <span class="n">quantity</span><span class="p">,</span> <span class="n">price</span><span class="p">,</span> <span class="n">buysell</span><span class="p">,</span> <span class="n">idn</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; This is an offer container that is send to the other agent. You can</span>
+<span class="sd">    access the offer container both at the receiver as well as at the sender,</span>
+<span class="sd">    if you have saved the offer. (e.G. self.offer = self.sell(...))</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sender_group:</span>
+<span class="sd">            this is the group name of the sender</span>
+<span class="sd">        sender_idn:</span>
+<span class="sd">            this is the ID of the sender</span>
+<span class="sd">        receiver_group:</span>
+<span class="sd">            This is the group name of the receiver</span>
+<span class="sd">        receiver_idn:</span>
+<span class="sd">            this is the ID of the sender</span>
+<span class="sd">        good:</span>
+<span class="sd">            the good offered or demanded</span>
+<span class="sd">        quantity:</span>
+<span class="sd">            the quantity offered or demanded</span>
+<span class="sd">        price:</span>
+<span class="sd">            the suggested tansaction price</span>
+<span class="sd">        buysell:</span>
+<span class="sd">            this can have the values &#39;b&#39; for buy; &#39;s&#39; for sell; &#39;qb&#39; for a</span>
+<span class="sd">            nonbinding buy quote; and &#39;qs&#39; for a nonbinding sell quote</span>
+
+<span class="sd">        idn:</span>
+<span class="sd">            a unique identifier</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">offer</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">offer</span><span class="p">[</span><span class="s">&#39;sender_group&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sender_group</span>
+    <span class="n">offer</span><span class="p">[</span><span class="s">&#39;sender_idn&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sender_idn</span>
+    <span class="n">offer</span><span class="p">[</span><span class="s">&#39;receiver_group&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">receiver_group</span>
+    <span class="n">offer</span><span class="p">[</span><span class="s">&#39;receiver_idn&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">receiver_idn</span>
+    <span class="n">offer</span><span class="p">[</span><span class="s">&#39;good&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">good</span>
+    <span class="n">offer</span><span class="p">[</span><span class="s">&#39;quantity&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">quantity</span>
+    <span class="n">offer</span><span class="p">[</span><span class="s">&#39;price&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">price</span>
+    <span class="n">offer</span><span class="p">[</span><span class="s">&#39;buysell&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">buysell</span>
+    <span class="n">offer</span><span class="p">[</span><span class="s">&#39;idn&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">idn</span>
+    <span class="k">return</span> <span class="n">offer</span>
+
+</div>
+<div class="viewcode-block" id="Trade"><a class="viewcode-back" href="../../Trade.html#abce.Trade">[docs]</a><span class="k">class</span> <span class="nc">Trade</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Agents can trade with each other. The clearing of the trade is taken care</span>
+<span class="sd">    of fully by ABCE.</span>
+<span class="sd">    Selling a good works in the following way:</span>
+
+<span class="sd">    1. An agent sends an offer. :meth:`~abceagent.Trade.sell`</span>
+
+<span class="sd">       *The good offered is blocked and self.possession(...) does not account for it.*</span>
+
+<span class="sd">    2. **Next subround:** An agent receives the offer :meth:`~abceagent.Trade.get_offers`, and can</span>
+<span class="sd">       :meth:`~abceagent.Trade.accept`, :meth:`~abceagent.Trade.reject` or partially accept it. :meth:`~abceagent.Trade.accept_partial`</span>
+
+<span class="sd">       *The good is credited and the price is deducted from the agent&#39;s possesions.*</span>
+
+<span class="sd">    3. **Next subround:**</span>
+
+<span class="sd">       - in case of acceptance *the money is automatically credited.*</span>
+<span class="sd">       - in case of partial acceptance *the money is credited and part of the blocked good is unblocked.*</span>
+<span class="sd">       - in case of rejection *the good is unblocked.*</span>
+
+<span class="sd">    Analogously for buying. (:meth:`~buy`)</span>
+
+<span class="sd">    Example::</span>
+
+<span class="sd">        # Agent 1</span>
+<span class="sd">        def sales(self):</span>
+<span class="sd">            self.remember_trade = self.sell(&#39;Household&#39;, 0, &#39;cookies&#39;, quantity=5, price=self.price)</span>
+
+<span class="sd">        # Agent 2</span>
+<span class="sd">        def receive_sale(self):</span>
+<span class="sd">            oo = self.get_offers(&#39;cookies&#39;)</span>
+<span class="sd">            for offer in oo:</span>
+<span class="sd">                if offer[&#39;price&#39;] &lt; 0.3:</span>
+<span class="sd">                    try:</span>
+<span class="sd">                        self.accept(offer)</span>
+<span class="sd">                    except NotEnoughGoods:</span>
+<span class="sd">                        self.accept_partial(offer, self.possession(&#39;money&#39;) / offer[&#39;price&#39;])</span>
+<span class="sd">                else:</span>
+<span class="sd">                    self.reject(offer)</span>
+
+<span class="sd">        # Agent 1, subround 3</span>
+<span class="sd">        def learning(self):</span>
+<span class="sd">            offer = self.info(self.remember_trade)</span>
+<span class="sd">            if offer[&#39;status&#39;] == &#39;reject&#39;:</span>
+<span class="sd">                self.price *= .9</span>
+<span class="sd">            elif offer[&#39;status&#39;] = &#39;partial&#39;:</span>
+<span class="sd">                self.price *= offer[&#39;final_quantity&#39;] / offer[&#39;quantity&#39;]</span>
+
+<span class="sd">    Quotes on the other hand allow you to ask a trade partner to send you a not committed price quote.</span>
+<span class="sd">    The modeller has to implement a response mechanism. For convenience :meth:`~abceagent.Trade.accept_quote` and</span>
+<span class="sd">    :meth:`~abceagent.Trade.accept_quote_partial`, send a committed offer that it is the uncommitted price quote.</span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="Trade.get_quotes"><a class="viewcode-back" href="../../Trade.html#abce.Trade.get_quotes">[docs]</a>    <span class="k">def</span> <span class="nf">get_quotes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">good</span><span class="p">,</span> <span class="n">descending</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; self.get_quotes() returns all new quotes and removes them. The order</span>
+<span class="sd">        is randomized.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            good:</span>
+<span class="sd">                the good which should be retrieved</span>
+<span class="sd">            descending(bool,default=False):</span>
+<span class="sd">                False for descending True for ascending by price</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">         list of quotes ordered by price</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">         quotes = self.get_quotes()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">offer_idn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_quotes</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_quotes</span><span class="p">[</span><span class="n">offer_idn</span><span class="p">][</span><span class="s">&#39;good&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">good</span><span class="p">:</span>
+                <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_quotes</span><span class="p">[</span><span class="n">offer_idn</span><span class="p">])</span>
+                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_quotes</span><span class="p">[</span><span class="n">offer_idn</span><span class="p">]</span>
+        <span class="n">ret</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">objects</span><span class="p">:</span> <span class="n">objects</span><span class="p">[</span><span class="s">&#39;price&#39;</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="n">descending</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ret</span>
+</div>
+<div class="viewcode-block" id="Trade.get_quotes_all"><a class="viewcode-back" href="../../Trade.html#abce.Trade.get_quotes_all">[docs]</a>    <span class="k">def</span> <span class="nf">get_quotes_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">descending</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; self.get_quotes_all() returns a dictionary with all now new quotes ordered</span>
+<span class="sd">        by the good type and removes them. The order is randomized.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            descending(bool,default=False):</span>
+<span class="sd">                False for descending True for ascending by price</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dictionary of list of quotes ordered by price. The dictionary</span>
+<span class="sd">            itself is ordered by price.</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            quotes = self.get_quotes()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">quote</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_quotes</span><span class="p">:</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_quotes</span><span class="p">[</span><span class="n">quote</span><span class="p">][</span><span class="s">&#39;good&#39;</span><span class="p">]</span>
+            <span class="n">ret</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_quotes</span><span class="p">[</span><span class="n">quote</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">ret</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">shuffle</span><span class="p">(</span><span class="n">ret</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+            <span class="n">ret</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">objects</span><span class="p">:</span> <span class="n">objects</span><span class="p">[</span><span class="s">&#39;price&#39;</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="n">descending</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_quotes</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">return</span> <span class="n">ret</span>
+</div>
+<div class="viewcode-block" id="Trade.info"><a class="viewcode-back" href="../../Trade.html#abce.Trade.info">[docs]</a>    <span class="k">def</span> <span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offer_idn</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; lets you access all fields of a **given** offer.</span>
+<span class="sd">        This allows you to check whether an offer was accepted, partially accepted</span>
+<span class="sd">        or rejected and retrieve the quantity actually traded.</span>
+
+<span class="sd">        If in your first round the value you are testing is not set, set the variable</span>
+<span class="sd">        to `None`. None in the first round returns an empty trade with quantity = 0 and price = 1.</span>
+<span class="sd">        The status in accepted.</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            class Example:</span>
+<span class="sd">                def __init__(self):</span>
+<span class="sd">                    self.last_offer = None</span>
+<span class="sd">                    self.price = 5</span>
+
+<span class="sd">                def selling(self):</span>
+<span class="sd">                    if self.info(self.last_offer)[&#39;status&#39;] == &#39;accept&#39;:</span>
+<span class="sd">                        self.price += 1</span>
+<span class="sd">                    self.last_offer = self.sell(&#39;Household&#39;, 1, &#39;cookies&#39;, 5, self.price)</span>
+
+<span class="sd">        Returns a dictionary; Fields:</span>
+<span class="sd">            [&#39;status&#39;]:</span>
+<span class="sd">                &#39;accepted&#39;:</span>
+<span class="sd">                    trade fully accepted</span>
+<span class="sd">                &#39;partial&#39;:</span>
+<span class="sd">                    [&#39;final_quantity&#39;] and self.offer_partial_status_percentage(...)</span>
+<span class="sd">                    for the quantities actually accepted</span>
+<span class="sd">                &#39;rejected&#39;:</span>
+<span class="sd">                    trade rejected</span>
+<span class="sd">                &#39;pending&#39;:</span>
+<span class="sd">                    offer has not yet answered, and is not older than one round.</span>
+<span class="sd">                &#39;perished&#39;:</span>
+<span class="sd">                    the **perishable** good was not accepted by the end of the round</span>
+<span class="sd">                    and therefore perished.</span>
+<span class="sd">            [&#39;quantity&#39;]:</span>
+<span class="sd">                the quantity of the original quote.</span>
+<span class="sd">            [&#39;final_quantity&#39;]:</span>
+<span class="sd">                This returns the actual quantity bought or sold. (Equal to quantity</span>
+<span class="sd">                    if the offer was accepted fully)</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            KeyError:</span>
+<span class="sd">                If the offer was answered more than one round ago.</span>
+
+<span class="sd">        Example Pending::</span>
+
+<span class="sd">            status = self.info(self.offer_idn)[&#39;status&#39;]</span>
+<span class="sd">            if status == &#39;pending&#39;:</span>
+<span class="sd">                print(&#39;offer has not yet been answered&#39;)</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            from pybrain.rl.learners.valuebased import ActionValueTable</span>
+<span class="sd">            from pybrain.rl.agents import LearningAgent</span>
+<span class="sd">            from pybrain.rl.learners import Q</span>
+
+<span class="sd">            def __init__(self):</span>
+<span class="sd">                controller = ActionValueTable(dimState=1, numActions=1)</span>
+<span class="sd">                learner = Q()</span>
+<span class="sd">                rl_price = LearningAgent(controller, learner)</span>
+<span class="sd">                self.car_cost = 500</span>
+
+<span class="sd">            def sales(self):</span>
+<span class="sd">                price = reinforcement_learner.getAction():</span>
+<span class="sd">                self.offer = self.sell(&#39;Household&#39;, 1, &#39;car&#39;, 1, price)</span>
+
+<span class="sd">            def learn(self):</span>
+<span class="sd">                reinforcement_learner.integrateObservation([self.info(self.offer)])</span>
+<span class="sd">                reinforcement_learner.giveReward([self.info(self.offer) * price - self.car_cost])</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">offer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">given_offers</span><span class="p">[</span><span class="n">offer_idn</span><span class="p">]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;status&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;accepted&#39;</span><span class="p">:</span>
+                <span class="n">offer</span><span class="p">[</span><span class="s">&#39;final_quantity&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;quantity&#39;</span><span class="p">]</span>
+            <span class="k">elif</span>  <span class="n">offer</span><span class="p">[</span><span class="s">&#39;status&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;rejected&#39;</span><span class="p">:</span>
+                <span class="n">offer</span><span class="p">[</span><span class="s">&#39;final_quantity&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">offer</span><span class="p">[</span><span class="s">&#39;status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;pending&#39;</span>
+        <span class="k">return</span> <span class="n">offer</span>
+</div>
+<div class="viewcode-block" id="Trade.partial_status_percentage"><a class="viewcode-back" href="../../Trade.html#abce.Trade.partial_status_percentage">[docs]</a>    <span class="k">def</span> <span class="nf">partial_status_percentage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offer_idn</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns the percentage of a partial accept</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            offer_idn:</span>
+<span class="sd">                on offer as returned by self.sell(...) ord self.buy(...)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A value between [0, 1]</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            KeyError, when no answer has been given or received more than one round before</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">given_offers</span><span class="p">[</span><span class="n">offer_idn</span><span class="p">][</span><span class="s">&#39;final_quantity&#39;</span><span class="p">]</span> <span class="o">/</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">given_offers</span><span class="p">[</span><span class="n">offer_idn</span><span class="p">][</span><span class="s">&#39;quantity&#39;</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">given_offers</span><span class="p">[</span><span class="n">offer_idn</span><span class="p">][</span><span class="s">&#39;status&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;accepted&#39;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">given_offers</span><span class="p">[</span><span class="n">offer_idn</span><span class="p">][</span><span class="s">&#39;status&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;rejected&#39;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="mi">0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span>
+
+</div>
+<div class="viewcode-block" id="Trade.accept_quote"><a class="viewcode-back" href="../../Trade.html#abce.Trade.accept_quote">[docs]</a>    <span class="k">def</span> <span class="nf">accept_quote</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">quote</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; makes a commited buy or sell out of the counterparties quote</span>
+
+<span class="sd">        Args::</span>
+<span class="sd">         quote: buy or sell quote that is accepted</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">quote</span><span class="p">[</span><span class="s">&#39;buysell&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;qs&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">buy</span><span class="p">(</span><span class="n">quote</span><span class="p">[</span><span class="s">&#39;sender_group&#39;</span><span class="p">],</span> <span class="n">quote</span><span class="p">[</span><span class="s">&#39;sender_idn&#39;</span><span class="p">],</span> <span class="n">quote</span><span class="p">[</span><span class="s">&#39;good&#39;</span><span class="p">],</span> <span class="n">quote</span><span class="p">[</span><span class="s">&#39;quantity&#39;</span><span class="p">],</span> <span class="n">quote</span><span class="p">[</span><span class="s">&#39;price&#39;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sell</span><span class="p">(</span><span class="n">quote</span><span class="p">[</span><span class="s">&#39;sender_group&#39;</span><span class="p">],</span> <span class="n">quote</span><span class="p">[</span><span class="s">&#39;sender_idn&#39;</span><span class="p">],</span> <span class="n">quote</span><span class="p">[</span><span class="s">&#39;good&#39;</span><span class="p">],</span> <span class="n">quote</span><span class="p">[</span><span class="s">&#39;quantity&#39;</span><span class="p">],</span> <span class="n">quote</span><span class="p">[</span><span class="s">&#39;price&#39;</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="Trade.accept_quote_partial"><a class="viewcode-back" href="../../Trade.html#abce.Trade.accept_quote_partial">[docs]</a>    <span class="k">def</span> <span class="nf">accept_quote_partial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">quote</span><span class="p">,</span> <span class="n">quantity</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; makes a commited buy or sell out of the counterparties quote</span>
+
+<span class="sd">        Args::</span>
+<span class="sd">         quote: buy or sell quote that is accepted</span>
+<span class="sd">         quantity: the quantity that is offered/requested</span>
+<span class="sd">         it should be less than propsed in the quote, but this is not enforced.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">quote</span><span class="p">[</span><span class="s">&#39;buysell&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;qs&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">buy</span><span class="p">(</span><span class="n">quote</span><span class="p">[</span><span class="s">&#39;sender_group&#39;</span><span class="p">],</span> <span class="n">quote</span><span class="p">[</span><span class="s">&#39;sender_idn&#39;</span><span class="p">],</span> <span class="n">quote</span><span class="p">[</span><span class="s">&#39;good&#39;</span><span class="p">],</span> <span class="n">quantity</span><span class="p">,</span> <span class="n">quote</span><span class="p">[</span><span class="s">&#39;price&#39;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sell</span><span class="p">(</span><span class="n">quote</span><span class="p">[</span><span class="s">&#39;sender_group&#39;</span><span class="p">],</span> <span class="n">quote</span><span class="p">[</span><span class="s">&#39;sender_idn&#39;</span><span class="p">],</span> <span class="n">quote</span><span class="p">[</span><span class="s">&#39;good&#39;</span><span class="p">],</span> <span class="n">quantity</span><span class="p">,</span> <span class="n">quote</span><span class="p">[</span><span class="s">&#39;price&#39;</span><span class="p">])</span>
+
+    <span class="c">#TODO create assert unanswered offers</span>
+</div>
+<div class="viewcode-block" id="Trade.get_offers_all"><a class="viewcode-back" href="../../Trade.html#abce.Trade.get_offers_all">[docs]</a>    <span class="k">def</span> <span class="nf">get_offers_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">descending</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns all offers in a dictionary, with goods as key. The in each</span>
+<span class="sd">        goods-category the goods are ordered by price. The order can be reversed</span>
+<span class="sd">        by setting descending=True</span>
+
+<span class="sd">        *Offers that are not accepted in the same subround (def block) are</span>
+<span class="sd">        automatically rejected.* However you can also manualy reject.</span>
+
+<span class="sd">        Args::</span>
+
+<span class="sd">         descending(optional): is a bool. False for descending True for</span>
+<span class="sd">                               ascending by price</span>
+
+<span class="sd">        Example2::</span>
+
+<span class="sd">         oo = get_offers_all(descending=False)</span>
+<span class="sd">         for good_category in oo:</span>
+<span class="sd">            print(&#39;The cheapest good of category&#39; + good_category</span>
+<span class="sd">            + &#39; is &#39; + good_category[0])</span>
+<span class="sd">         #sorted list of beer prices and seller</span>
+<span class="sd">         for offer in oo[&#39;beer&#39;]:</span>
+<span class="sd">            print(offer[&#39;price&#39;], offer[&#39;sender&#39;])</span>
+
+<span class="sd">        Lists can only efficiently pop the last item. Therefore it is more</span>
+<span class="sd">        efficient to order backwards and buy the last good first::</span>
+
+<span class="sd">         def buy_input_good(self):</span>
+<span class="sd">            offers = self.get_offers_all(descending=True)</span>
+<span class="sd">            while offers:</span>
+<span class="sd">                if offers[good][-1][&#39;quantity&#39;] == self.prices_for_which_buy[good]:</span>
+<span class="sd">                    self.accept(offers[good].pop())</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">offers_by_good</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">offer_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open_offers</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_open_offers</span><span class="p">[</span><span class="n">offer_id</span><span class="p">][</span><span class="s">&#39;status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;polled&#39;</span>
+            <span class="n">offer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open_offers</span><span class="p">[</span><span class="n">offer_id</span><span class="p">]</span>
+            <span class="n">offers_by_good</span><span class="p">[</span><span class="n">offer</span><span class="p">[</span><span class="s">&#39;good&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">offer</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">offers_by_good</span><span class="p">:</span>
+            <span class="n">shuffle</span><span class="p">(</span><span class="n">offers_by_good</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+            <span class="n">offers_by_good</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">objects</span><span class="p">:</span> <span class="n">objects</span><span class="p">[</span><span class="s">&#39;price&#39;</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="n">descending</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">offers_by_good</span>
+</div>
+<div class="viewcode-block" id="Trade.get_offers"><a class="viewcode-back" href="../../Trade.html#abce.Trade.get_offers">[docs]</a>    <span class="k">def</span> <span class="nf">get_offers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">good</span><span class="p">,</span> <span class="n">descending</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns all offers of the &#39;good&#39; ordered by price.</span>
+
+<span class="sd">        *Offers that are not accepted in the same subround (def block) are</span>
+<span class="sd">        automatically rejected.* However you can also manualy reject.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            good:</span>
+<span class="sd">                the good which should be retrieved</span>
+<span class="sd">            descending(bool,default=False):</span>
+<span class="sd">                False for descending True for ascending by price</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A list of offers ordered by price</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            offers = get_offers(&#39;books&#39;)</span>
+<span class="sd">            for offer in offers:</span>
+<span class="sd">                if offer[&#39;price&#39;] &lt; 50:</span>
+<span class="sd">                    self.accept(offer)</span>
+<span class="sd">                elif offer[&#39;price&#39;] &lt; 100:</span>
+<span class="sd">                    self.accept_partial(offer, 1)</span>
+<span class="sd">                else:</span>
+<span class="sd">                    self.reject(offer)  # optional</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">offer_idn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open_offers</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open_offers</span><span class="p">[</span><span class="n">offer_idn</span><span class="p">][</span><span class="s">&#39;good&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">good</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_open_offers</span><span class="p">[</span><span class="n">offer_idn</span><span class="p">][</span><span class="s">&#39;status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;polled&#39;</span>
+                <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_open_offers</span><span class="p">[</span><span class="n">offer_idn</span><span class="p">])</span>
+        <span class="n">shuffle</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+        <span class="n">ret</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">objects</span><span class="p">:</span> <span class="n">objects</span><span class="p">[</span><span class="s">&#39;price&#39;</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="n">descending</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ret</span>
+</div>
+<div class="viewcode-block" id="Trade.peak_offers"><a class="viewcode-back" href="../../Trade.html#abce.Trade.peak_offers">[docs]</a>    <span class="k">def</span> <span class="nf">peak_offers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">good</span><span class="p">,</span> <span class="n">descending</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; returns a peak on all offers of the &#39;good&#39; ordered by price.</span>
+<span class="sd">        Peaked offers can not be accepted or rejected, but they do not</span>
+<span class="sd">        expire.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            good:</span>
+<span class="sd">                the good which should be retrieved</span>
+<span class="sd">                descending(bool,default=False):</span>
+<span class="sd">                False for descending True for ascending by price</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A list of offers ordered by price</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            offers = get_offers(&#39;books&#39;)</span>
+<span class="sd">            for offer in offers:</span>
+<span class="sd">                if offer[&#39;price&#39;] &lt; 50:</span>
+<span class="sd">                    self.accept(offer)</span>
+<span class="sd">                elif offer[&#39;price&#39;] &lt; 100:</span>
+<span class="sd">                    self.accept_partial(offer, 1)</span>
+<span class="sd">                else:</span>
+<span class="sd">                    self.reject(offer)  # optional</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">offer_idn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open_offers</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open_offers</span><span class="p">[</span><span class="n">offer_idn</span><span class="p">][</span><span class="s">&#39;good&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">good</span><span class="p">:</span>
+                <span class="n">offer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open_offers</span><span class="p">[</span><span class="n">offer_idn</span><span class="p">]</span>
+                <span class="n">offer</span><span class="p">[</span><span class="s">&#39;status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;peak_only&#39;</span>
+                <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">offer</span><span class="p">)</span>
+        <span class="n">shuffle</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+        <span class="n">ret</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">objects</span><span class="p">:</span> <span class="n">objects</span><span class="p">[</span><span class="s">&#39;price&#39;</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="n">descending</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ret</span>
+</div>
+<div class="viewcode-block" id="Trade.quote_sell"><a class="viewcode-back" href="../../Trade.html#abce.Trade.quote_sell">[docs]</a>    <span class="k">def</span> <span class="nf">quote_sell</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">receiver_group</span><span class="p">,</span> <span class="n">receiver_idn</span><span class="p">,</span> <span class="n">good</span><span class="p">,</span> <span class="n">quantity</span><span class="p">,</span> <span class="n">price</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; quotes a price to sell quantity of &#39;good&#39; to a receiver</span>
+
+<span class="sd">        price (money) per unit</span>
+<span class="sd">        offers a deal without checking or committing resources</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            receiver_group:</span>
+<span class="sd">                agent group name of the agent</span>
+<span class="sd">            receiver_idn:</span>
+<span class="sd">                the agent&#39;s id number</span>
+<span class="sd">            &#39;good&#39;:</span>
+<span class="sd">                name of the good</span>
+<span class="sd">            quantity:</span>
+<span class="sd">                maximum units disposed to sell at this price</span>
+<span class="sd">            price:</span>
+<span class="sd">                price per unit</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">offer</span> <span class="o">=</span> <span class="n">Offer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">idn</span><span class="p">,</span> <span class="n">receiver_group</span><span class="p">,</span> <span class="n">receiver_idn</span><span class="p">,</span> <span class="n">good</span><span class="p">,</span> <span class="n">quantity</span><span class="p">,</span> <span class="n">price</span><span class="p">,</span> <span class="s">&#39;qs&#39;</span><span class="p">,</span> <span class="n">idn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_offer_counter</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="n">receiver_group</span><span class="p">,</span> <span class="n">receiver_idn</span><span class="p">,</span> <span class="s">&#39;_q&#39;</span><span class="p">,</span> <span class="n">offer</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">offer</span>
+</div>
+<div class="viewcode-block" id="Trade.quote_buy"><a class="viewcode-back" href="../../Trade.html#abce.Trade.quote_buy">[docs]</a>    <span class="k">def</span> <span class="nf">quote_buy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">receiver_group</span><span class="p">,</span> <span class="n">receiver_idn</span><span class="p">,</span> <span class="n">good</span><span class="p">,</span> <span class="n">quantity</span><span class="p">,</span> <span class="n">price</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; quotes a price to buy quantity of &#39;good&#39; a receiver</span>
+
+<span class="sd">        price (money) per unit</span>
+<span class="sd">        offers a deal without checking or committing resources</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            receiver_group:</span>
+<span class="sd">                agent group name of the agent</span>
+<span class="sd">            receiver_idn:</span>
+<span class="sd">                the agent&#39;s id number</span>
+<span class="sd">            &#39;good&#39;:</span>
+<span class="sd">                name of the good</span>
+<span class="sd">            quantity:</span>
+<span class="sd">                maximum units disposed to buy at this price</span>
+<span class="sd">            price:</span>
+<span class="sd">                price per unit</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">offer</span> <span class="o">=</span> <span class="n">Offer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">idn</span><span class="p">,</span> <span class="n">receiver_group</span><span class="p">,</span> <span class="n">receiver_idn</span><span class="p">,</span> <span class="n">good</span><span class="p">,</span> <span class="n">quantity</span><span class="p">,</span> <span class="n">price</span><span class="p">,</span> <span class="s">&#39;qb&#39;</span><span class="p">,</span> <span class="n">idn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_offer_counter</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="n">receiver_group</span><span class="p">,</span> <span class="n">receiver_idn</span><span class="p">,</span> <span class="s">&#39;_q&#39;</span><span class="p">,</span> <span class="n">offer</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">offer</span>
+</div>
+<div class="viewcode-block" id="Trade.sell"><a class="viewcode-back" href="../../Trade.html#abce.Trade.sell">[docs]</a>    <span class="k">def</span> <span class="nf">sell</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">receiver_group</span><span class="p">,</span> <span class="n">receiver_idn</span><span class="p">,</span> <span class="n">good</span><span class="p">,</span> <span class="n">quantity</span><span class="p">,</span> <span class="n">price</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; commits to sell the quantity of good at price</span>
+
+<span class="sd">        The goods are not in haves or self.count(). When the offer is</span>
+<span class="sd">        rejected it is automatically re-credited. When the offer is</span>
+<span class="sd">        accepted the money amount is credited. (partial acceptance</span>
+<span class="sd">        accordingly)</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            receiver_group: an agent name  NEVER a group or &#39;all&#39;!!!</span>
+<span class="sd">            (its an error but with a confusing warning)</span>
+<span class="sd">            &#39;good&#39;: name of the good</span>
+<span class="sd">            quantity: maximum units disposed to buy at this price</span>
+<span class="sd">            price: price per unit</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A reference to the offer. The offer and the offer status can</span>
+<span class="sd">            be accessed with `self.info(offer_reference)`.</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            def subround_1(self):</span>
+<span class="sd">                self.offer = self.sell(&#39;household&#39;, 1, &#39;cookies&#39;, quantity=5, price=0.1)</span>
+
+<span class="sd">            def subround_2(self):</span>
+<span class="sd">                offer = self.info(self.offer)</span>
+<span class="sd">                if offer[&#39;status&#39;] == &#39;partial&#39;:</span>
+<span class="sd">                    print(offer[&#39;final_quantity&#39;] , &#39;cookies have be bougth&#39;)</span>
+<span class="sd">                elif:</span>
+<span class="sd">                    offer[&#39;status&#39;] == &#39;accepted&#39;:</span>
+<span class="sd">                    print(&#39;Cookie monster bougth them all&#39;)</span>
+<span class="sd">                elif:</span>
+<span class="sd">                    offer[&#39;status&#39;] == &#39;rejected&#39;:</span>
+<span class="sd">                    print(&#39;On diet&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">price</span> <span class="o">&gt;=</span> <span class="o">-</span> <span class="n">epsilon</span><span class="p">,</span> <span class="n">price</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_haves</span><span class="p">[</span><span class="n">good</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">quantity</span> <span class="o">-</span> <span class="n">epsilon</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">NotEnoughGoods</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">good</span><span class="p">,</span> <span class="n">quantity</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_haves</span><span class="p">[</span><span class="n">good</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_haves</span><span class="p">[</span><span class="n">good</span><span class="p">]</span> <span class="o">-=</span> <span class="n">quantity</span>
+        <span class="n">offer</span> <span class="o">=</span> <span class="n">Offer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">idn</span><span class="p">,</span> <span class="n">receiver_group</span><span class="p">,</span> <span class="n">receiver_idn</span><span class="p">,</span> <span class="n">good</span><span class="p">,</span> <span class="n">quantity</span><span class="p">,</span> <span class="n">price</span><span class="p">,</span> <span class="n">buysell</span><span class="o">=</span><span class="s">&#39;s&#39;</span><span class="p">,</span> <span class="n">idn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_offer_counter</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">quantity</span> <span class="o">&gt;=</span> <span class="o">-</span> <span class="n">epsilon</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="n">receiver_group</span><span class="p">,</span> <span class="n">receiver_idn</span><span class="p">,</span> <span class="s">&#39;_o&#39;</span><span class="p">,</span> <span class="n">offer</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">given_offers</span><span class="p">[</span><span class="n">offer</span><span class="p">[</span><span class="s">&#39;idn&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">offer</span>
+        <span class="k">return</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;idn&#39;</span><span class="p">]</span>
+</div>
+<div class="viewcode-block" id="Trade.sell_max_possible"><a class="viewcode-back" href="../../Trade.html#abce.Trade.sell_max_possible">[docs]</a>    <span class="k">def</span> <span class="nf">sell_max_possible</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">receiver_group</span><span class="p">,</span> <span class="n">receiver_idn</span><span class="p">,</span> <span class="n">good</span><span class="p">,</span> <span class="n">quantity</span><span class="p">,</span> <span class="n">price</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Same as sell but if the possession of good is smaller than the number,</span>
+<span class="sd">        it executes the deal with a lower amount of goods using everything</span>
+<span class="sd">        available of this good.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sell</span><span class="p">(</span><span class="n">receiver_group</span><span class="p">,</span> <span class="n">receiver_idn</span><span class="p">,</span> <span class="n">good</span><span class="p">,</span> <span class="n">quantity</span><span class="p">,</span> <span class="n">price</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">NotEnoughGoods</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sell</span><span class="p">(</span><span class="n">receiver_group</span><span class="p">,</span> <span class="n">receiver_idn</span><span class="p">,</span> <span class="n">good</span><span class="p">,</span> <span class="n">quantity</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">possession</span><span class="p">(</span><span class="n">good</span><span class="p">),</span> <span class="n">price</span><span class="o">=</span><span class="n">price</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Trade.buy"><a class="viewcode-back" href="../../Trade.html#abce.Trade.buy">[docs]</a>    <span class="k">def</span> <span class="nf">buy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">receiver_group</span><span class="p">,</span> <span class="n">receiver_idn</span><span class="p">,</span> <span class="n">good</span><span class="p">,</span> <span class="n">quantity</span><span class="p">,</span> <span class="n">price</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; commits to sell the quantity of good at price</span>
+
+<span class="sd">        The goods are not in haves or self.count(). When the offer is</span>
+<span class="sd">        rejected it is automatically re-credited. When the offer is</span>
+<span class="sd">        accepted the money amount is credited. (partial acceptance</span>
+<span class="sd">        accordingly)</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            receiver_group: an agent name  NEVER a group or &#39;all&#39;!</span>
+<span class="sd">            (it is an error but with a confusing warning)</span>
+<span class="sd">            &#39;good&#39;: name of the good</span>
+<span class="sd">            quantity: maximum units disposed to buy at this price</span>
+<span class="sd">            price: price per unit</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">money_amount</span> <span class="o">=</span> <span class="n">quantity</span> <span class="o">*</span> <span class="n">price</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_haves</span><span class="p">[</span><span class="s">&#39;money&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">money_amount</span> <span class="o">-</span> <span class="n">epsilon</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">NotEnoughGoods</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s">&#39;money&#39;</span><span class="p">,</span> <span class="n">money_amount</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_haves</span><span class="p">[</span><span class="s">&#39;money&#39;</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_haves</span><span class="p">[</span><span class="s">&#39;money&#39;</span><span class="p">]</span> <span class="o">-=</span> <span class="n">money_amount</span>
+        <span class="n">offer</span> <span class="o">=</span> <span class="n">Offer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">idn</span><span class="p">,</span> <span class="n">receiver_group</span><span class="p">,</span> <span class="n">receiver_idn</span><span class="p">,</span> <span class="n">good</span><span class="p">,</span> <span class="n">quantity</span><span class="p">,</span> <span class="n">price</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_offer_counter</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">quantity</span> <span class="o">&gt;=</span> <span class="o">-</span> <span class="n">epsilon</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="n">receiver_group</span><span class="p">,</span> <span class="n">receiver_idn</span><span class="p">,</span> <span class="s">&#39;_o&#39;</span><span class="p">,</span> <span class="n">offer</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">given_offers</span><span class="p">[</span><span class="n">offer</span><span class="p">[</span><span class="s">&#39;idn&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">offer</span>
+        <span class="k">return</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;idn&#39;</span><span class="p">]</span>
+</div>
+<div class="viewcode-block" id="Trade.buy_max_possible"><a class="viewcode-back" href="../../Trade.html#abce.Trade.buy_max_possible">[docs]</a>    <span class="k">def</span> <span class="nf">buy_max_possible</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">receiver_group</span><span class="p">,</span> <span class="n">receiver_idn</span><span class="p">,</span> <span class="n">good</span><span class="p">,</span> <span class="n">quantity</span><span class="p">,</span> <span class="n">price</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Same as buy but if money is insufficient, it executes the deal with</span>
+<span class="sd">        a lower amount of goods using all available money.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">buy</span><span class="p">(</span><span class="n">receiver_group</span><span class="p">,</span> <span class="n">receiver_idn</span><span class="p">,</span> <span class="n">good</span><span class="p">,</span> <span class="n">quantity</span><span class="p">,</span> <span class="n">price</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">NotEnoughGoods</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">buy</span><span class="p">(</span><span class="n">receiver_group</span><span class="p">,</span> <span class="n">receiver_idn</span><span class="p">,</span> <span class="n">good</span><span class="p">,</span> <span class="n">quantity</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">possession</span><span class="p">(</span><span class="s">&#39;money&#39;</span><span class="p">)</span> <span class="o">/</span> <span class="n">price</span><span class="p">,</span> <span class="n">price</span><span class="o">=</span><span class="n">price</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="Trade.retract"><a class="viewcode-back" href="../../Trade.html#abce.Trade.retract">[docs]</a>    <span class="k">def</span> <span class="nf">retract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offer_idn</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The agent who made a buy or sell offer can retract it</span>
+
+<span class="sd">        The offer an agent made is deleted at the end of the sub-round and the</span>
+<span class="sd">        committed good reappears in the haves. However if another agent</span>
+<span class="sd">        accepts in the same round the trade will be cleared and not retracted.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            offer: the offer he made with buy or sell</span>
+<span class="sd">            (offer not quote!)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">given_offers</span><span class="p">[</span><span class="n">offer_idn</span><span class="p">][</span><span class="s">&#39;receiver_group&#39;</span><span class="p">],</span> <span class="s">&#39;_d&#39;</span><span class="p">,</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;idn&#39;</span><span class="p">])</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">given_offers</span><span class="p">[</span><span class="n">offer_idn</span><span class="p">]</span>
+</div>
+<div class="viewcode-block" id="Trade.accept"><a class="viewcode-back" href="../../Trade.html#abce.Trade.accept">[docs]</a>    <span class="k">def</span> <span class="nf">accept</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offer</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The offer is accepted and cleared</span>
+
+<span class="sd">        Args::</span>
+
+<span class="sd">            offer: the offer the other party made</span>
+<span class="sd">            (offer not quote!)</span>
+
+<span class="sd">        Return:</span>
+<span class="sd">            Returns a dictionary with the good&#39;s quantity and the amount paid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">money_amount</span> <span class="o">=</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;quantity&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;price&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;buysell&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;s&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_haves</span><span class="p">[</span><span class="s">&#39;money&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">money_amount</span> <span class="o">-</span> <span class="n">epsilon</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">NotEnoughGoods</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s">&#39;money&#39;</span><span class="p">,</span> <span class="n">money_amount</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_haves</span><span class="p">[</span><span class="s">&#39;money&#39;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_haves</span><span class="p">[</span><span class="n">offer</span><span class="p">[</span><span class="s">&#39;good&#39;</span><span class="p">]]</span> <span class="o">+=</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;quantity&#39;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_haves</span><span class="p">[</span><span class="s">&#39;money&#39;</span><span class="p">]</span> <span class="o">-=</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;quantity&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;price&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_haves</span><span class="p">[</span><span class="n">offer</span><span class="p">[</span><span class="s">&#39;good&#39;</span><span class="p">]]</span> <span class="o">&lt;</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;quantity&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">epsilon</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">NotEnoughGoods</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;good&#39;</span><span class="p">],</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;quantity&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_haves</span><span class="p">[</span><span class="n">offer</span><span class="p">[</span><span class="s">&#39;good&#39;</span><span class="p">]])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_haves</span><span class="p">[</span><span class="n">offer</span><span class="p">[</span><span class="s">&#39;good&#39;</span><span class="p">]]</span> <span class="o">-=</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;quantity&#39;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_haves</span><span class="p">[</span><span class="s">&#39;money&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;quantity&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;price&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="n">offer</span><span class="p">[</span><span class="s">&#39;sender_group&#39;</span><span class="p">],</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;sender_idn&#39;</span><span class="p">],</span> <span class="s">&#39;_a&#39;</span><span class="p">,</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;idn&#39;</span><span class="p">])</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open_offers</span><span class="p">[</span><span class="n">offer</span><span class="p">[</span><span class="s">&#39;idn&#39;</span><span class="p">]]</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">offer</span><span class="p">[</span><span class="s">&#39;good&#39;</span><span class="p">]:</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;quantity&#39;</span><span class="p">],</span> <span class="s">&#39;money&#39;</span><span class="p">:</span> <span class="n">money_amount</span><span class="p">}</span>
+</div>
+<div class="viewcode-block" id="Trade.accept_partial"><a class="viewcode-back" href="../../Trade.html#abce.Trade.accept_partial">[docs]</a>    <span class="k">def</span> <span class="nf">accept_partial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offer</span><span class="p">,</span> <span class="n">quantity</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; TODO The offer is partly accepted and cleared</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            offer: the offer the other party made</span>
+<span class="sd">            (offer not quote!)</span>
+
+<span class="sd">        Return:</span>
+<span class="sd">            Returns a dictionary with the good&#39;s quantity and the amount paid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="ow">not</span><span class="p">(</span><span class="n">is_negative</span><span class="p">(</span><span class="n">quantity</span><span class="p">)),</span> <span class="n">quantity</span>
+        <span class="k">assert</span> <span class="ow">not</span><span class="p">(</span><span class="n">is_positive</span><span class="p">(</span><span class="n">quantity</span> <span class="o">-</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;quantity&#39;</span><span class="p">])),</span> <span class="s">&#39;accepted more than offered </span><span class="si">%s</span><span class="s">: </span><span class="si">%f</span><span class="s"> &gt; </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">offer</span><span class="p">[</span><span class="s">&#39;good&#39;</span><span class="p">],</span> <span class="n">quantity</span><span class="p">,</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;quantity&#39;</span><span class="p">])</span>
+        <span class="n">money_amount</span> <span class="o">=</span> <span class="n">quantity</span> <span class="o">*</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;price&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;buysell&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;s&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_haves</span><span class="p">[</span><span class="s">&#39;money&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">money_amount</span> <span class="o">-</span> <span class="n">epsilon</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">NotEnoughGoods</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s">&#39;money&#39;</span><span class="p">,</span> <span class="n">money_amount</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_haves</span><span class="p">[</span><span class="s">&#39;money&#39;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_haves</span><span class="p">[</span><span class="n">offer</span><span class="p">[</span><span class="s">&#39;good&#39;</span><span class="p">]]</span> <span class="o">+=</span> <span class="n">quantity</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_haves</span><span class="p">[</span><span class="s">&#39;money&#39;</span><span class="p">]</span> <span class="o">-=</span> <span class="n">quantity</span> <span class="o">*</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;price&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_haves</span><span class="p">[</span><span class="n">offer</span><span class="p">[</span><span class="s">&#39;good&#39;</span><span class="p">]]</span> <span class="o">&lt;</span> <span class="n">quantity</span> <span class="o">-</span> <span class="n">epsilon</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">NotEnoughGoods</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;good&#39;</span><span class="p">],</span> <span class="n">quantity</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_haves</span><span class="p">[</span><span class="n">offer</span><span class="p">[</span><span class="s">&#39;good&#39;</span><span class="p">]])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_haves</span><span class="p">[</span><span class="n">offer</span><span class="p">[</span><span class="s">&#39;good&#39;</span><span class="p">]]</span> <span class="o">-=</span> <span class="n">quantity</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_haves</span><span class="p">[</span><span class="s">&#39;money&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">quantity</span> <span class="o">*</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;price&#39;</span><span class="p">]</span>
+        <span class="n">offer</span><span class="p">[</span><span class="s">&#39;final_quantity&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">quantity</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="n">offer</span><span class="p">[</span><span class="s">&#39;sender_group&#39;</span><span class="p">],</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;sender_idn&#39;</span><span class="p">],</span> <span class="s">&#39;_p&#39;</span><span class="p">,</span> <span class="n">offer</span><span class="p">)</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open_offers</span><span class="p">[</span><span class="n">offer</span><span class="p">[</span><span class="s">&#39;idn&#39;</span><span class="p">]]</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">offer</span><span class="p">[</span><span class="s">&#39;good&#39;</span><span class="p">]:</span> <span class="n">quantity</span><span class="p">,</span> <span class="s">&#39;money&#39;</span><span class="p">:</span> <span class="n">money_amount</span><span class="p">}</span>
+</div>
+<div class="viewcode-block" id="Trade.accept_max_possible"><a class="viewcode-back" href="../../Trade.html#abce.Trade.accept_max_possible">[docs]</a>    <span class="k">def</span> <span class="nf">accept_max_possible</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offer</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; TODO The offer is partly accepted and cleared</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            offer: the offer the other party made</span>
+<span class="sd">            (offer not quote!)</span>
+
+<span class="sd">        Return:</span>
+<span class="sd">            Returns a dictionary with the good&#39;s quantity and the amount paid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">accept</span><span class="p">(</span><span class="n">offer</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">NotEnoughGoods</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;buysell&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;s&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">accept_partial</span><span class="p">(</span><span class="n">offer</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">possession</span><span class="p">(</span><span class="s">&#39;money&#39;</span><span class="p">)</span> <span class="o">/</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;price&#39;</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">accept_partial</span><span class="p">(</span><span class="n">offer</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">possession</span><span class="p">(</span><span class="n">offer</span><span class="p">[</span><span class="s">&#39;good&#39;</span><span class="p">]))</span>
+</div>
+<div class="viewcode-block" id="Trade.accept_partial_max_possible"><a class="viewcode-back" href="../../Trade.html#abce.Trade.accept_partial_max_possible">[docs]</a>    <span class="k">def</span> <span class="nf">accept_partial_max_possible</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offer</span><span class="p">,</span> <span class="n">quantity</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; TODO The offer is partly accepted and cleared</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            offer: the offer the other party made</span>
+<span class="sd">            (offer not quote!)</span>
+
+<span class="sd">        Return:</span>
+<span class="sd">            Returns a dictionary with the good&#39;s quantity and the amount paid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">accept_partial</span><span class="p">(</span><span class="n">offer</span><span class="p">,</span> <span class="n">quantity</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">NotEnoughGoods</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;buysell&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;s&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">accept_partial</span><span class="p">(</span><span class="n">offer</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">possession</span><span class="p">(</span><span class="s">&#39;money&#39;</span><span class="p">)</span> <span class="o">/</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;price&#39;</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">accept_partial</span><span class="p">(</span><span class="n">offer</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">possession</span><span class="p">(</span><span class="n">offer</span><span class="p">[</span><span class="s">&#39;good&#39;</span><span class="p">]))</span>
+
+</div>
+<div class="viewcode-block" id="Trade.reject"><a class="viewcode-back" href="../../Trade.html#abce.Trade.reject">[docs]</a>    <span class="k">def</span> <span class="nf">reject</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offer</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The offer is rejected</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            offer: the offer the other party made</span>
+<span class="sd">            (offer not quote!)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="n">offer</span><span class="p">[</span><span class="s">&#39;sender_group&#39;</span><span class="p">],</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;sender_idn&#39;</span><span class="p">],</span> <span class="s">&#39;_r&#39;</span><span class="p">,</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;idn&#39;</span><span class="p">])</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open_offers</span><span class="p">[</span><span class="n">offer</span><span class="p">[</span><span class="s">&#39;idn&#39;</span><span class="p">]]</span>
+</div>
+    <span class="k">def</span> <span class="nf">_receive_accept</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offer_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; When the other party accepted the  money or good is received</span>
+<span class="sd">        and the offer deleted</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">offer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">given_offers</span><span class="p">[</span><span class="n">offer_id</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;buysell&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;s&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_haves</span><span class="p">[</span><span class="s">&#39;money&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;quantity&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;price&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_haves</span><span class="p">[</span><span class="n">offer</span><span class="p">[</span><span class="s">&#39;good&#39;</span><span class="p">]]</span> <span class="o">+=</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;quantity&#39;</span><span class="p">]</span>
+        <span class="n">offer</span><span class="p">[</span><span class="s">&#39;status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;accepted&quot;</span>
+        <span class="n">offer</span><span class="p">[</span><span class="s">&#39;status_round&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">round</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">given_offers</span><span class="p">[</span><span class="n">offer_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">offer</span>
+        <span class="k">return</span> <span class="n">offer</span>
+
+    <span class="k">def</span> <span class="nf">_log_receive_accept_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offer</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;buysell&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;s&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_trade_log</span><span class="p">[</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">,</span><span class="si">%s</span><span class="s">,</span><span class="si">%s</span><span class="s">,</span><span class="si">%f</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">offer</span><span class="p">[</span><span class="s">&#39;good&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">,</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;receiver_group&#39;</span><span class="p">],</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;price&#39;</span><span class="p">])]</span> <span class="o">+=</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;quantity&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_trade_log</span><span class="p">[</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">,</span><span class="si">%s</span><span class="s">,</span><span class="si">%s</span><span class="s">,</span><span class="si">%f</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">offer</span><span class="p">[</span><span class="s">&#39;good&#39;</span><span class="p">],</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;receiver_group&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">,</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;price&#39;</span><span class="p">])]</span> <span class="o">+=</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;quantity&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_log_receive_accept_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offer</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;buysell&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;s&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_trade_log</span><span class="p">[</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">,</span><span class="si">%s</span><span class="s">,</span><span class="si">%s</span><span class="s">,</span><span class="si">%f</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">offer</span><span class="p">[</span><span class="s">&#39;good&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">name_without_colon</span><span class="p">,</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">_</span><span class="si">%i</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">offer</span><span class="p">[</span><span class="s">&#39;receiver_group&#39;</span><span class="p">],</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;receiver_idn&#39;</span><span class="p">]),</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;price&#39;</span><span class="p">])]</span> <span class="o">+=</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;quantity&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_trade_log</span><span class="p">[</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">,</span><span class="si">%s</span><span class="s">,</span><span class="si">%s</span><span class="s">,</span><span class="si">%f</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">offer</span><span class="p">[</span><span class="s">&#39;good&#39;</span><span class="p">],</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">_</span><span class="si">%i</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">offer</span><span class="p">[</span><span class="s">&#39;receiver_group&#39;</span><span class="p">],</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;receiver_idn&#39;</span><span class="p">]),</span> <span class="bp">self</span><span class="o">.</span><span class="n">name_without_colon</span><span class="p">,</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;price&#39;</span><span class="p">])]</span> <span class="o">+=</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;quantity&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_receive_partial_accept</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offer</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; When the other party partially accepted the  money or good is</span>
+<span class="sd">        received, remaining good or money is added back to haves and the offer</span>
+<span class="sd">        is deleted</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;buysell&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;s&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_haves</span><span class="p">[</span><span class="s">&#39;money&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;final_quantity&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;price&#39;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_haves</span><span class="p">[</span><span class="n">offer</span><span class="p">[</span><span class="s">&#39;good&#39;</span><span class="p">]]</span> <span class="o">+=</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;quantity&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;final_quantity&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_haves</span><span class="p">[</span><span class="n">offer</span><span class="p">[</span><span class="s">&#39;good&#39;</span><span class="p">]]</span> <span class="o">+=</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;final_quantity&#39;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_haves</span><span class="p">[</span><span class="s">&#39;money&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="p">(</span><span class="n">offer</span><span class="p">[</span><span class="s">&#39;quantity&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;final_quantity&#39;</span><span class="p">])</span> <span class="o">*</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;price&#39;</span><span class="p">]</span>
+        <span class="n">offer</span><span class="p">[</span><span class="s">&#39;status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;partial&quot;</span>
+        <span class="n">offer</span><span class="p">[</span><span class="s">&#39;status_round&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">round</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">given_offers</span><span class="p">[</span><span class="n">offer</span><span class="p">[</span><span class="s">&#39;idn&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">offer</span>
+        <span class="k">return</span> <span class="n">offer</span>
+
+    <span class="k">def</span> <span class="nf">_log_receive_partial_accept_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offer</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;buysell&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;s&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_trade_log</span><span class="p">[</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">,</span><span class="si">%s</span><span class="s">,</span><span class="si">%s</span><span class="s">,</span><span class="si">%f</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">offer</span><span class="p">[</span><span class="s">&#39;good&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">,</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;receiver_group&#39;</span><span class="p">],</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;price&#39;</span><span class="p">])]</span> <span class="o">+=</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;final_quantity&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_trade_log</span><span class="p">[</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">,</span><span class="si">%s</span><span class="s">,</span><span class="si">%s</span><span class="s">,</span><span class="si">%f</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">offer</span><span class="p">[</span><span class="s">&#39;good&#39;</span><span class="p">],</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;receiver_group&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">,</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;price&#39;</span><span class="p">])]</span> <span class="o">+=</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;final_quantity&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_log_receive_partial_accept_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offer</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;buysell&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;s&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_trade_log</span><span class="p">[</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">,</span><span class="si">%s</span><span class="s">,</span><span class="si">%s</span><span class="s">,</span><span class="si">%f</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">offer</span><span class="p">[</span><span class="s">&#39;good&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">name_without_colon</span><span class="p">,</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">_</span><span class="si">%i</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">offer</span><span class="p">[</span><span class="s">&#39;receiver_group&#39;</span><span class="p">],</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;receiver_idn&#39;</span><span class="p">]),</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;price&#39;</span><span class="p">])]</span> <span class="o">+=</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;final_quantity&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_trade_log</span><span class="p">[</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">,</span><span class="si">%s</span><span class="s">,</span><span class="si">%s</span><span class="s">,</span><span class="si">%f</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">offer</span><span class="p">[</span><span class="s">&#39;good&#39;</span><span class="p">],</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">_</span><span class="si">%i</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">offer</span><span class="p">[</span><span class="s">&#39;receiver_group&#39;</span><span class="p">],</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;receiver_idn&#39;</span><span class="p">]),</span> <span class="bp">self</span><span class="o">.</span><span class="n">name_without_colon</span><span class="p">,</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;price&#39;</span><span class="p">])]</span> <span class="o">+=</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;final_quantity&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_receive_reject</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offer_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; delets a given offer</span>
+
+<span class="sd">        is used by _msg_clearing__end_of_subround, when the other party rejects</span>
+<span class="sd">        or at the end of the subround when agent retracted the offer</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">offer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">given_offers</span><span class="p">[</span><span class="n">offer_id</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;buysell&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;s&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_haves</span><span class="p">[</span><span class="n">offer</span><span class="p">[</span><span class="s">&#39;good&#39;</span><span class="p">]]</span> <span class="o">+=</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;quantity&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_haves</span><span class="p">[</span><span class="s">&#39;money&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;quantity&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;price&#39;</span><span class="p">]</span>
+        <span class="n">offer</span><span class="p">[</span><span class="s">&#39;status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;rejected&quot;</span>
+        <span class="n">offer</span><span class="p">[</span><span class="s">&#39;status_round&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">round</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">given_offers</span><span class="p">[</span><span class="n">offer_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">offer</span>
+
+    <span class="k">def</span> <span class="nf">_delete_given_offer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offer_id</span><span class="p">):</span>
+        <span class="n">offer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">given_offers</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">offer_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;buysell&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;s&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_haves</span><span class="p">[</span><span class="n">offer</span><span class="p">[</span><span class="s">&#39;good&#39;</span><span class="p">]]</span> <span class="o">+=</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;quantity&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_haves</span><span class="p">[</span><span class="s">&#39;money&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;quantity&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">offer</span><span class="p">[</span><span class="s">&#39;price&#39;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="Trade.give"><a class="viewcode-back" href="../../Trade.html#abce.Trade.give">[docs]</a>    <span class="k">def</span> <span class="nf">give</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">receiver_group</span><span class="p">,</span> <span class="n">receiver_idn</span><span class="p">,</span> <span class="n">good</span><span class="p">,</span> <span class="n">quantity</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; gives a good to another agent</span>
+
+<span class="sd">        Args:</span>
+
+<span class="sd">            receiver_group:</span>
+<span class="sd">                Group name of the receiver</span>
+<span class="sd">            receiver_idn:</span>
+<span class="sd">                id number of the receiver</span>
+<span class="sd">            good:</span>
+<span class="sd">                the good to be transfered</span>
+<span class="sd">            quantity:</span>
+<span class="sd">                amount to be transfered</span>
+
+<span class="sd">        Raises:</span>
+
+<span class="sd">            AssertionError, when good smaller than 0.</span>
+
+<span class="sd">        Return:</span>
+<span class="sd">            Dictionary, with the transfer, which can be used by self.log(...).</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            self.log(&#39;taxes&#39;, self.give(&#39;money&#39;: 0.05 * self.possession(&#39;money&#39;))</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">quantity</span> <span class="o">&gt;=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_haves</span><span class="p">[</span><span class="n">good</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">quantity</span> <span class="o">-</span> <span class="n">epsilon</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">NotEnoughGoods</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">good</span><span class="p">,</span> <span class="n">quantity</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_haves</span><span class="p">[</span><span class="n">good</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_haves</span><span class="p">[</span><span class="n">good</span><span class="p">]</span> <span class="o">-=</span> <span class="n">quantity</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="n">receiver_group</span><span class="p">,</span> <span class="n">receiver_idn</span><span class="p">,</span> <span class="s">&#39;_g&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">good</span><span class="p">,</span> <span class="n">quantity</span><span class="p">])</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">good</span><span class="p">:</span> <span class="n">quantity</span><span class="p">}</span>
+
+    <span class="c">#TODO take</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="../abce.html" >abce</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2012, Davoud Taghawi-Nejad.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+  </body>
+</html>

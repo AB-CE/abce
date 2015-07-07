@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -10,12 +8,12 @@
     
     <title>Retrieval of the simulation results &mdash; ABCE 0.3.1alpha documentation</title>
     
-    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '',
+        URL_ROOT:    './',
         VERSION:     '0.3.1alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
@@ -29,8 +27,8 @@
     <link rel="next" title="Tools and floating point issues: abcetools Module" href="abcetools.html" />
     <link rel="prev" title="simulation_parameters and agent_parameters" href="parameters.html" /> 
   </head>
-  <body>
-    <div class="related">
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -45,39 +43,23 @@
         <li class="right" >
           <a href="parameters.html" title="simulation_parameters and agent_parameters"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="retrieval-of-the-simulation-results">
 <span id="rsr"></span><h1>Retrieval of the simulation results<a class="headerlink" href="#retrieval-of-the-simulation-results" title="Permalink to this headline">¶</a></h1>
 <p>Agents can log their internal states and the simulation can create
-panel data. <tt class="xref py py-mod docutils literal"><span class="pre">abce.database</span></tt>.</p>
+panel data. <code class="xref py py-mod docutils literal"><span class="pre">abce.database</span></code>.</p>
 <p>the results are stored in a subfolder of the ./results/ folder.</p>
 <p>The tables are stored as &#8216;.csv&#8217; files which can be opened with excel and
-libreoffice.
-Further you can import the files with R, which also gives you a social
-accounting matrix:</p>
-<blockquote>
-<div><ol class="arabic">
-<li><dl class="first docutils">
-<dt>start a in the subfolder of ./results/ that contains your simulation</dt>
-<dd><p class="first last">results</p>
-</dd>
-</dl>
-</li>
-<li><p class="first">start R</p>
-</li>
-<li><p class="first"><cite>load(&#8216;database.R&#8217;)</cite></p>
-</li>
-</ol>
-</div></blockquote>
-<p>The same data is also as a sqlite database &#8216;database.db&#8217; available.
+libreoffice.</p>
+<p>The same data is also as a sqlite3 database &#8216;database.db&#8217; available.
 It can be opened by &#8216;sqlitebrowser&#8217; in ubuntu.</p>
 </div>
 
@@ -85,7 +67,7 @@ It can be opened by &#8216;sqlitebrowser&#8217; in ubuntu.</p>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
   <p class="topless"><a href="parameters.html"
@@ -93,12 +75,14 @@ It can be opened by &#8216;sqlitebrowser&#8217; in ubuntu.</p>
   <h4>Next topic</h4>
   <p class="topless"><a href="abcetools.html"
                         title="next chapter">Tools and floating point issues: abcetools Module</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/simulation_results.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/simulation_results.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />
@@ -115,7 +99,7 @@ It can be opened by &#8216;sqlitebrowser&#8217; in ubuntu.</p>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -130,12 +114,12 @@ It can be opened by &#8216;sqlitebrowser&#8217; in ubuntu.</p>
         <li class="right" >
           <a href="parameters.html" title="simulation_parameters and agent_parameters"
              >previous</a> |</li>
-        <li><a href="index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2012, Davoud Taghawi-Nejad.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

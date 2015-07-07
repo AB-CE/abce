@@ -1,9 +1,0 @@
-
-
-: 1
-random_seed: none
-name: test_sim_1_
-trade_repetitions: 10
-trade_logging: individual
-num_rounds: 10
-_path: /home/taghawi/Dropbox/workspace/abce/template/result/test_sim_1__2013-02-24_03-52

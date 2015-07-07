@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -10,12 +8,12 @@
     
     <title>Agents &mdash; ABCE 0.3.1alpha documentation</title>
     
-    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '',
+        URL_ROOT:    './',
         VERSION:     '0.3.1alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
@@ -29,8 +27,8 @@
     <link rel="next" title="Trade" href="Trade.html" />
     <link rel="prev" title="unit testing" href="unit_testing.html" /> 
   </head>
-  <body>
-    <div class="related">
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -45,32 +43,32 @@
         <li class="right" >
           <a href="unit_testing.html" title="unit testing"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="module-agent">
 <span id="agents"></span><h1>Agents<a class="headerlink" href="#module-agent" title="Permalink to this headline">¶</a></h1>
-<p>The <tt class="xref py py-class docutils literal"><span class="pre">abce.agent.Agent</span></tt> class is the basic class for creating your agents. It automatically handles the
+<p>The <code class="xref py py-class docutils literal"><span class="pre">abce.agent.Agent</span></code> class is the basic class for creating your agents. It automatically handles the
 possession of goods of an agent. In order to produce/transforme goods you also need to subclass
-the <tt class="xref py py-class docutils literal"><span class="pre">abceagent.Firm</span></tt> <a class="footnote-reference" href="#id2" id="id1">[1]</a> or to create a consumer the <tt class="xref py py-class docutils literal"><span class="pre">abce.agent.Household</span></tt>.</p>
+the <code class="xref py py-class docutils literal"><span class="pre">abceagent.Firm</span></code> <a class="footnote-reference" href="#id2" id="id1">[1]</a> or to create a consumer the <code class="xref py py-class docutils literal"><span class="pre">abce.agent.Household</span></code>.</p>
 <p>For detailed documentation on:</p>
 <dl class="docutils">
 <dt>Trading:</dt>
-<dd>see <tt class="xref py py-class docutils literal"><span class="pre">abce.agent.Trade</span></tt></dd>
+<dd>see <code class="xref py py-class docutils literal"><span class="pre">abce.agent.Trade</span></code></dd>
 <dt>Logging and data creation:</dt>
-<dd>see <tt class="xref py py-class docutils literal"><span class="pre">abce.agent.Database</span></tt> and <a class="reference internal" href="simulation_results.html"><em>Retrieval of the simulation results</em></a></dd>
+<dd>see <code class="xref py py-class docutils literal"><span class="pre">abce.agent.Database</span></code> and <a class="reference internal" href="simulation_results.html"><em>Retrieval of the simulation results</em></a></dd>
 <dt>Messaging between agents:</dt>
-<dd>see <tt class="xref py py-class docutils literal"><span class="pre">abce.agent.Messaging</span></tt>.</dd>
+<dd>see <code class="xref py py-class docutils literal"><span class="pre">abce.agent.Messaging</span></code>.</dd>
 </dl>
 <dl class="exception">
 <dt id="abce.tools.NotEnoughGoods">
-<em class="property">exception </em><tt class="descclassname">abce.tools.</tt><tt class="descname">NotEnoughGoods</tt><big>(</big><em>_agent_name</em>, <em>good</em>, <em>amount_missing</em><big>)</big><a class="reference internal" href="_modules/abce/tools.html#NotEnoughGoods"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.tools.NotEnoughGoods" title="Permalink to this definition">¶</a></dt>
+<em class="property">exception </em><code class="descclassname">abce.tools.</code><code class="descname">NotEnoughGoods</code><span class="sig-paren">(</span><em>_agent_name</em>, <em>good</em>, <em>amount_missing</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/abce/tools.html#NotEnoughGoods"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.tools.NotEnoughGoods" title="Permalink to this definition">¶</a></dt>
 <dd><p>Methods raise this exception when the agent has less goods than needed</p>
 <p>These functions (self.produce, self.offer, self.sell, self.buy)
 should be encapsulated by a try except block:</p>
@@ -85,38 +83,27 @@ should be encapsulated by a try except block:</p>
 <table class="docutils footnote" frame="void" id="id2" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>or <tt class="xref py py-class docutils literal"><span class="pre">abce.agent.FirmMultiTechnologies</span></tt> for simulations with complex technologies.</td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>or <code class="xref py py-class docutils literal"><span class="pre">abce.agent.FirmMultiTechnologies</span></code> for simulations with complex technologies.</td></tr>
 </tbody>
 </table>
 <dl class="class">
 <dt id="abce.Agent">
-<em class="property">class </em><tt class="descclassname">abce.</tt><tt class="descname">Agent</tt><big>(</big><em>idn</em>, <em>group</em>, <em>_addresses</em>, <em>trade_logging</em><big>)</big><a class="headerlink" href="#abce.Agent" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">abce.database.Database</span></tt>, <tt class="xref py py-class docutils literal"><span class="pre">abce.logger.Logger</span></tt>, <tt class="xref py py-class docutils literal"><span class="pre">abce.trade.Trade</span></tt>, <tt class="xref py py-class docutils literal"><span class="pre">abce.messaging.Messaging</span></tt>, <tt class="xref py py-class docutils literal"><span class="pre">multiprocessing.process.Process</span></tt></p>
+<em class="property">class </em><code class="descclassname">abce.</code><code class="descname">Agent</code><span class="sig-paren">(</span><em>idn</em>, <em>group</em>, <em>trade_logging</em>, <em>commands</em>, <em>backend</em>, <em>database</em>, <em>logger</em>, <em>frontend</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/abce/agent.html#Agent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Agent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">abce.database.Database</span></code>, <code class="xref py py-class docutils literal"><span class="pre">abce.logger.Logger</span></code>, <code class="xref py py-class docutils literal"><span class="pre">abce.trade.Trade</span></code>, <code class="xref py py-class docutils literal"><span class="pre">abce.messaging.Messaging</span></code>, <code class="xref py py-class docutils literal"><span class="pre">multiprocessing.process.Process</span></code></p>
 <p>Every agent has to inherit this class. It connects the agent to the simulation
-and to other agent. The <tt class="xref py py-class docutils literal"><span class="pre">abceagent.Trade</span></tt>, <tt class="xref py py-class docutils literal"><span class="pre">abceagent.Database</span></tt> and
-<tt class="xref py py-class docutils literal"><span class="pre">abceagent.Messaging</span></tt> classes are included. You can enhance an agent, by also
-inheriting from <tt class="xref py py-class docutils literal"><span class="pre">abceagent.Firm</span></tt>.:class:<cite>abceagent.FirmMultiTechnologies</cite>
-or <tt class="xref py py-class docutils literal"><span class="pre">abceagent.Household</span></tt>.</p>
+and to other agent. The <code class="xref py py-class docutils literal"><span class="pre">abceagent.Trade</span></code>, <code class="xref py py-class docutils literal"><span class="pre">abceagent.Database</span></code> and
+<code class="xref py py-class docutils literal"><span class="pre">abceagent.Messaging</span></code> classes are included. You can enhance an agent, by also
+inheriting from <code class="xref py py-class docutils literal"><span class="pre">abceagent.Firm</span></code>.:class:<cite>abceagent.FirmMultiTechnologies</cite>
+or <code class="xref py py-class docutils literal"><span class="pre">abceagent.Household</span></code>.</p>
 <p>For example:</p>
-<div class="highlight-python"><pre>class Household(abceagent.Agent, abceagent.Household):
+<div class="highlight-python"><div class="highlight"><pre>class Household(abceagent.Agent, abceagent.Household):
     def __init__(self, simulation_parameters, agent_parameters, _pass_to_engine):
-    abceagent.Agent.__init__(self, *_pass_to_engine)</pre>
+    abceagent.Agent.__init__(self, *_pass_to_engine)
+</pre></div>
 </div>
 <dl class="method">
-<dt id="abce.Agent.aesof_eval">
-<tt class="descname">aesof_eval</tt><big>(</big><em>column_name</em><big>)</big><a class="headerlink" href="#abce.Agent.aesof_eval" title="Permalink to this definition">¶</a></dt>
-<dd><p>evaluates an expression&#8217; in your excel file. see instruction of pythons eval commmand</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="abce.Agent.aesof_exec">
-<tt class="descname">aesof_exec</tt><big>(</big><em>column_name</em><big>)</big><a class="headerlink" href="#abce.Agent.aesof_exec" title="Permalink to this definition">¶</a></dt>
-<dd><p>executes a command in your excel file. see instruction of pythons exec commmand</p>
-</dd></dl>
-
-<dl class="method">
 <dt id="abce.Agent.create">
-<tt class="descname">create</tt><big>(</big><em>good</em>, <em>quantity</em><big>)</big><a class="headerlink" href="#abce.Agent.create" title="Permalink to this definition">¶</a></dt>
+<code class="descname">create</code><span class="sig-paren">(</span><em>good</em>, <em>quantity</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/abce/agent.html#Agent.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Agent.create" title="Permalink to this definition">¶</a></dt>
 <dd><p>creates quantity of the good out of nothing</p>
 <p>Use create with care, as long as you use it only for labor and
 natural resources your model is macroeconomally complete.</p>
@@ -129,29 +116,51 @@ quantity: number</dd>
 
 <dl class="method">
 <dt id="abce.Agent.destroy">
-<tt class="descname">destroy</tt><big>(</big><em>good</em>, <em>quantity</em><big>)</big><a class="headerlink" href="#abce.Agent.destroy" title="Permalink to this definition">¶</a></dt>
+<code class="descname">destroy</code><span class="sig-paren">(</span><em>good</em>, <em>quantity</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/abce/agent.html#Agent.destroy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Agent.destroy" title="Permalink to this definition">¶</a></dt>
 <dd><p>destroys quantity of the good,</p>
 <p>Args:</p>
-<div class="highlight-python"><pre>'good': is the name of the good
-quantity: number</pre>
+<div class="highlight-python"><div class="highlight"><pre>&#39;good&#39;: is the name of the good
+quantity: number
+</pre></div>
 </div>
 <p>Raises:</p>
-<div class="highlight-python"><pre>NotEnoughGoods: when goods are insufficient</pre>
+<div class="highlight-python"><div class="highlight"><pre>NotEnoughGoods: when goods are insufficient
+</pre></div>
 </div>
 </dd></dl>
 
 <dl class="method">
 <dt id="abce.Agent.destroy_all">
-<tt class="descname">destroy_all</tt><big>(</big><em>good</em><big>)</big><a class="headerlink" href="#abce.Agent.destroy_all" title="Permalink to this definition">¶</a></dt>
+<code class="descname">destroy_all</code><span class="sig-paren">(</span><em>good</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/abce/agent.html#Agent.destroy_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Agent.destroy_all" title="Permalink to this definition">¶</a></dt>
 <dd><p>destroys all of the good, returns how much</p>
 <p>Args:</p>
-<div class="highlight-python"><pre>'good': is the name of the good</pre>
+<div class="highlight-python"><div class="highlight"><pre>&#39;good&#39;: is the name of the good
+</pre></div>
 </div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="abce.Agent.group">
+<code class="descname">group</code><em class="property"> = None</em><a class="headerlink" href="#abce.Agent.group" title="Permalink to this definition">¶</a></dt>
+<dd><p>self.group returns the agents group or type READ ONLY!</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="abce.Agent.idn">
+<code class="descname">idn</code><em class="property"> = None</em><a class="headerlink" href="#abce.Agent.idn" title="Permalink to this definition">¶</a></dt>
+<dd><p>self.idn returns the agents idn READ ONLY!</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="abce.Agent.name">
+<code class="descname">name</code><em class="property"> = None</em><a class="headerlink" href="#abce.Agent.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>self.name returns the agents name, which is the group name and the
+id seperated by &#8216;_&#8217; e.G. &#8220;household_12&#8221; READ ONLY!</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="abce.Agent.possession">
-<tt class="descname">possession</tt><big>(</big><em>good</em><big>)</big><a class="headerlink" href="#abce.Agent.possession" title="Permalink to this definition">¶</a></dt>
+<code class="descname">possession</code><span class="sig-paren">(</span><em>good</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/abce/agent.html#Agent.possession"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Agent.possession" title="Permalink to this definition">¶</a></dt>
 <dd><p>returns how much of good an agent possesses.</p>
 <dl class="docutils">
 <dt>Returns:</dt>
@@ -172,7 +181,7 @@ quantity: number</pre>
 
 <dl class="method">
 <dt id="abce.Agent.possessions">
-<tt class="descname">possessions</tt><big>(</big><em>list_of_goods</em><big>)</big><a class="headerlink" href="#abce.Agent.possessions" title="Permalink to this definition">¶</a></dt>
+<code class="descname">possessions</code><span class="sig-paren">(</span><em>list_of_goods</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/abce/agent.html#Agent.possessions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Agent.possessions" title="Permalink to this definition">¶</a></dt>
 <dd><p>returns a dictionary of goods and the corresponding amount an agent owns</p>
 <dl class="docutils">
 <dt>Argument:</dt>
@@ -181,26 +190,27 @@ quantity: number</pre>
 <dd>A dictionary, that can be used with self.log(..)</dd>
 </dl>
 <p>Examples:</p>
-<div class="highlight-python"><pre>self.log('buget', self.possesions(['money']))
+<div class="highlight-python"><div class="highlight"><pre>self.log(&#39;buget&#39;, self.possesions([&#39;money&#39;]))
 
-self.log('goods', self.possesions(['gold', 'wood', 'grass']))
+self.log(&#39;goods&#39;, self.possesions([&#39;gold&#39;, &#39;wood&#39;, &#39;grass&#39;]))
 
-have = self.possessions(['gold', 'wood', 'grass']))
+have = self.possessions([&#39;gold&#39;, &#39;wood&#39;, &#39;grass&#39;]))
 for good in have:
     if have[good] &gt; 5:
-        rich = True</pre>
+        rich = True
+</pre></div>
 </div>
 </dd></dl>
 
 <dl class="method">
 <dt id="abce.Agent.possessions_all">
-<tt class="descname">possessions_all</tt><big>(</big><big>)</big><a class="headerlink" href="#abce.Agent.possessions_all" title="Permalink to this definition">¶</a></dt>
+<code class="descname">possessions_all</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/abce/agent.html#Agent.possessions_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Agent.possessions_all" title="Permalink to this definition">¶</a></dt>
 <dd><p>returns all possessions</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="abce.Agent.possessions_filter">
-<tt class="descname">possessions_filter</tt><big>(</big><em>goods=None</em>, <em>but=None</em>, <em>match=None</em>, <em>beginswith=None</em>, <em>endswith=None</em><big>)</big><a class="headerlink" href="#abce.Agent.possessions_filter" title="Permalink to this definition">¶</a></dt>
+<code class="descname">possessions_filter</code><span class="sig-paren">(</span><em>goods=None</em>, <em>but=None</em>, <em>match=None</em>, <em>beginswith=None</em>, <em>endswith=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/abce/agent.html#Agent.possessions_filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Agent.possessions_filter" title="Permalink to this definition">¶</a></dt>
 <dd><p>returns a subset of the goods an agent owns, all arguments
 can be combined.</p>
 <dl class="docutils">
@@ -238,9 +248,15 @@ can be combined.</p>
 </div>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="abce.Agent.round">
+<code class="descname">round</code><em class="property"> = None</em><a class="headerlink" href="#abce.Agent.round" title="Permalink to this definition">¶</a></dt>
+<dd><p>self.round returns the current round in the simulation READ ONLY!</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="abce.Agent.run">
-<tt class="descname">run</tt><big>(</big><big>)</big><a class="headerlink" href="#abce.Agent.run" title="Permalink to this definition">¶</a></dt>
+<code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/abce/agent.html#Agent.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Agent.run" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -251,7 +267,7 @@ can be combined.</p>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
   <p class="topless"><a href="unit_testing.html"
@@ -259,12 +275,14 @@ can be combined.</p>
   <h4>Next topic</h4>
   <p class="topless"><a href="Trade.html"
                         title="next chapter">Trade</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/Agent_class.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/Agent_class.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />
@@ -281,7 +299,7 @@ can be combined.</p>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -296,12 +314,12 @@ can be combined.</p>
         <li class="right" >
           <a href="unit_testing.html" title="unit testing"
              >previous</a> |</li>
-        <li><a href="index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2012, Davoud Taghawi-Nejad.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

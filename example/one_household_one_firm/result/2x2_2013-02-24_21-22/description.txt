@@ -1,8 +1,0 @@
-
-
-: 1
-random_seed: none
-name: 2x2
-trade_logging: individual
-num_rounds: 10
-_path: /home/taghawi/Dropbox/workspace/abce/example/one_household_one_firm/result/2x2_2013-02-24_21-22

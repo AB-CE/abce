@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -10,12 +8,12 @@
     
     <title>Tools and floating point issues: abcetools Module &mdash; ABCE 0.3.1alpha documentation</title>
     
-    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '',
+        URL_ROOT:    './',
         VERSION:     '0.3.1alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
@@ -29,8 +27,8 @@
     <link rel="next" title="Files in this package" href="files.html" />
     <link rel="prev" title="Retrieval of the simulation results" href="simulation_results.html" /> 
   </head>
-  <body>
-    <div class="related">
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -45,14 +43,14 @@
         <li class="right" >
           <a href="simulation_results.html" title="Retrieval of the simulation results"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="module-tools">
 <span id="tools-and-floating-point-issues-abcetools-module"></span><h1>Tools and floating point issues: abcetools Module<a class="headerlink" href="#module-tools" title="Permalink to this headline">¶</a></h1>
@@ -61,13 +59,13 @@ variables in this simulation as in every computer programm are floating
 point variables. Floating point variables are not exact. Therefore var_a == var_b
 has no meaning. Further a variable that is var_c = 9.999999999999966e-30 is for our
 purpose equal to zero, but var_c == 0 would lead to False.
-<a class="reference internal" href="#tools.is_zero" title="tools.is_zero"><tt class="xref py py-meth docutils literal"><span class="pre">is_zero()</span></tt></a>, <a class="reference internal" href="#tools.is_positive" title="tools.is_positive"><tt class="xref py py-meth docutils literal"><span class="pre">is_positive()</span></tt></a> and <a class="reference internal" href="#tools.is_negative" title="tools.is_negative"><tt class="xref py py-meth docutils literal"><span class="pre">is_negative()</span></tt></a> work
+<a class="reference internal" href="#tools.is_zero" title="tools.is_zero"><code class="xref py py-meth docutils literal"><span class="pre">is_zero()</span></code></a>, <a class="reference internal" href="#tools.is_positive" title="tools.is_positive"><code class="xref py py-meth docutils literal"><span class="pre">is_positive()</span></code></a> and <a class="reference internal" href="#tools.is_negative" title="tools.is_negative"><code class="xref py py-meth docutils literal"><span class="pre">is_negative()</span></code></a> work
 around this problem by defining float epsilon and determine whether the variable is
 sufficiently close to zero or not.</p>
-<p>This file also defines the <a class="reference internal" href="#tools.NotEnoughGoods" title="tools.NotEnoughGoods"><tt class="xref py py-exc docutils literal"><span class="pre">tools.NotEnoughGoods</span></tt></a></p>
+<p>This file also defines the <a class="reference internal" href="#tools.NotEnoughGoods" title="tools.NotEnoughGoods"><code class="xref py py-exc docutils literal"><span class="pre">tools.NotEnoughGoods</span></code></a></p>
 <dl class="exception">
 <dt id="tools.NotEnoughGoods">
-<em class="property">exception </em><tt class="descclassname">tools.</tt><tt class="descname">NotEnoughGoods</tt><big>(</big><em>_agent_name</em>, <em>good</em>, <em>amount_missing</em><big>)</big><a class="reference internal" href="_modules/tools.html#NotEnoughGoods"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.NotEnoughGoods" title="Permalink to this definition">¶</a></dt>
+<em class="property">exception </em><code class="descclassname">tools.</code><code class="descname">NotEnoughGoods</code><span class="sig-paren">(</span><em>_agent_name</em>, <em>good</em>, <em>amount_missing</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#NotEnoughGoods"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.NotEnoughGoods" title="Permalink to this definition">¶</a></dt>
 <dd><p>Methods raise this exception when the agent has less goods than needed</p>
 <p>These functions (self.produce, self.offer, self.sell, self.buy)
 should be encapsulated by a try except block:</p>
@@ -81,7 +79,7 @@ should be encapsulated by a try except block:</p>
 
 <dl class="function">
 <dt id="tools.agent_name">
-<tt class="descclassname">tools.</tt><tt class="descname">agent_name</tt><big>(</big><em>group_name</em>, <em>idn</em><big>)</big><a class="reference internal" href="_modules/tools.html#agent_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.agent_name" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">tools.</code><code class="descname">agent_name</code><span class="sig-paren">(</span><em>group_name</em>, <em>idn</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#agent_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.agent_name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given a group name and a id-number it returns the
 agent_name of the individual agent with the number idn. A message sent to
 the agent_name, will be received by this individual agent</p>
@@ -89,13 +87,13 @@ the agent_name, will be received by this individual agent</p>
 
 <dl class="function">
 <dt id="tools.is_negative">
-<tt class="descclassname">tools.</tt><tt class="descname">is_negative</tt><big>(</big><em>x</em><big>)</big><a class="reference internal" href="_modules/tools.html#is_negative"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.is_negative" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">tools.</code><code class="descname">is_negative</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#is_negative"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.is_negative" title="Permalink to this definition">¶</a></dt>
 <dd><p>see is positive</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="tools.is_positive">
-<tt class="descclassname">tools.</tt><tt class="descname">is_positive</tt><big>(</big><em>x</em><big>)</big><a class="reference internal" href="_modules/tools.html#is_positive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.is_positive" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">tools.</code><code class="descname">is_positive</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#is_positive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.is_positive" title="Permalink to this definition">¶</a></dt>
 <dd><p>checks whether a number is positive and sufficiently different from
 zero. All variables in ABCE are floating point numbers. Due to the workings
 of floating point arithmetic. If x is 1.0*e^-100 so really close to 0,
@@ -105,7 +103,7 @@ is_zero will be true.</p>
 
 <dl class="function">
 <dt id="tools.is_zero">
-<tt class="descclassname">tools.</tt><tt class="descname">is_zero</tt><big>(</big><em>x</em><big>)</big><a class="reference internal" href="_modules/tools.html#is_zero"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.is_zero" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">tools.</code><code class="descname">is_zero</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tools.html#is_zero"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.is_zero" title="Permalink to this definition">¶</a></dt>
 <dd><p>checks whether a number is sufficiently close to zero. All variables
 in ABCE are floating point numbers. Due to the workings of floating point
 arithmetic. If x is 1.0*e^-100 so really close to 0, x == 0 will be false;
@@ -118,7 +116,7 @@ is_zero will be true.</p>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
   <p class="topless"><a href="simulation_results.html"
@@ -126,12 +124,14 @@ is_zero will be true.</p>
   <h4>Next topic</h4>
   <p class="topless"><a href="files.html"
                         title="next chapter">Files in this package</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/abcetools.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/abcetools.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />
@@ -148,7 +148,7 @@ is_zero will be true.</p>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -163,12 +163,12 @@ is_zero will be true.</p>
         <li class="right" >
           <a href="simulation_results.html" title="Retrieval of the simulation results"
              >previous</a> |</li>
-        <li><a href="index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2012, Davoud Taghawi-Nejad.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

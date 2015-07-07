@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -10,12 +8,12 @@
     
     <title>Trade &mdash; ABCE 0.3.1alpha documentation</title>
     
-    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '',
+        URL_ROOT:    './',
         VERSION:     '0.3.1alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
@@ -29,8 +27,8 @@
     <link rel="next" title="Firm and production" href="Firm.html" />
     <link rel="prev" title="Agents" href="Agent_class.html" /> 
   </head>
-  <body>
-    <div class="related">
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -45,29 +43,29 @@
         <li class="right" >
           <a href="Agent_class.html" title="Agents"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="trade">
 <h1>Trade<a class="headerlink" href="#trade" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="abce.Trade">
-<em class="property">class </em><tt class="descclassname">abce.</tt><tt class="descname">Trade</tt><a class="headerlink" href="#abce.Trade" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">abce.</code><code class="descname">Trade</code><a class="reference internal" href="_modules/abce/trade.html#Trade"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Trade" title="Permalink to this definition">¶</a></dt>
 <dd><p>Agents can trade with each other. The clearing of the trade is taken care
 of fully by ABCE.
 Selling a good works in the following way:</p>
 <ol class="arabic">
-<li><p class="first">An agent sends an offer. <tt class="xref py py-meth docutils literal"><span class="pre">sell()</span></tt></p>
+<li><p class="first">An agent sends an offer. <code class="xref py py-meth docutils literal"><span class="pre">sell()</span></code></p>
 <p><em>The good offered is blocked and self.possession(...) does not account for it.</em></p>
 </li>
-<li><p class="first"><strong>Next subround:</strong> An agent receives the offer <tt class="xref py py-meth docutils literal"><span class="pre">get_offers()</span></tt>, and can
-<tt class="xref py py-meth docutils literal"><span class="pre">accept()</span></tt>, <tt class="xref py py-meth docutils literal"><span class="pre">reject()</span></tt> or partially accept it. <tt class="xref py py-meth docutils literal"><span class="pre">accept_partial()</span></tt></p>
+<li><p class="first"><strong>Next subround:</strong> An agent receives the offer <code class="xref py py-meth docutils literal"><span class="pre">get_offers()</span></code>, and can
+<code class="xref py py-meth docutils literal"><span class="pre">accept()</span></code>, <code class="xref py py-meth docutils literal"><span class="pre">reject()</span></code> or partially accept it. <code class="xref py py-meth docutils literal"><span class="pre">accept_partial()</span></code></p>
 <p><em>The good is credited and the price is deducted from the agent&#8217;s possesions.</em></p>
 </li>
 <li><p class="first"><strong>Next subround:</strong></p>
@@ -78,42 +76,44 @@ Selling a good works in the following way:</p>
 </ul>
 </li>
 </ol>
-<p>Analogously for buying. (<tt class="xref py py-meth docutils literal"><span class="pre">buy()</span></tt>)</p>
+<p>Analogously for buying. (<code class="xref py py-meth docutils literal"><span class="pre">buy()</span></code>)</p>
 <p>Example:</p>
-<div class="highlight-python"><pre># Agent 1
+<div class="highlight-python"><div class="highlight"><pre># Agent 1
 def sales(self):
-    self.remember_trade = self.sell('Household', 0, 'cookies', quantity=5, price=self.price)
+    self.remember_trade = self.sell(&#39;Household&#39;, 0, &#39;cookies&#39;, quantity=5, price=self.price)
 
 # Agent 2
 def receive_sale(self):
-    oo = self.get_offers('cookies')
+    oo = self.get_offers(&#39;cookies&#39;)
     for offer in oo:
-        if offer['price'] &lt; 0.3:
+        if offer[&#39;price&#39;] &lt; 0.3:
             try:
                 self.accept(offer)
             except NotEnoughGoods:
-                self.accept_partial(offer, self.possession('money') / offer['price'])
+                self.accept_partial(offer, self.possession(&#39;money&#39;) / offer[&#39;price&#39;])
         else:
             self.reject(offer)
 
 # Agent 1, subround 3
 def learning(self):
     offer = self.info(self.remember_trade)
-    if offer['status'] == 'reject':
+    if offer[&#39;status&#39;] == &#39;reject&#39;:
         self.price *= .9
-    elif offer['status'] = 'partial':
-        self.price *= offer['final_quantity'] / offer['quantity']</pre>
+    elif offer[&#39;status&#39;] = &#39;partial&#39;:
+        self.price *= offer[&#39;final_quantity&#39;] / offer[&#39;quantity&#39;]
+</pre></div>
 </div>
 <p>Quotes on the other hand allow you to ask a trade partner to send you a not committed price quote.
-The modeller has to implement a response mechanism. For convenience <tt class="xref py py-meth docutils literal"><span class="pre">accept_quote()</span></tt> and
-<tt class="xref py py-meth docutils literal"><span class="pre">accept_quote_partial()</span></tt>, send a committed offer that it is the uncommitted price quote.</p>
+The modeller has to implement a response mechanism. For convenience <code class="xref py py-meth docutils literal"><span class="pre">accept_quote()</span></code> and
+<code class="xref py py-meth docutils literal"><span class="pre">accept_quote_partial()</span></code>, send a committed offer that it is the uncommitted price quote.</p>
 <dl class="method">
 <dt id="abce.Trade.accept">
-<tt class="descname">accept</tt><big>(</big><em>offer</em><big>)</big><a class="headerlink" href="#abce.Trade.accept" title="Permalink to this definition">¶</a></dt>
+<code class="descname">accept</code><span class="sig-paren">(</span><em>offer</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/abce/trade.html#Trade.accept"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Trade.accept" title="Permalink to this definition">¶</a></dt>
 <dd><p>The offer is accepted and cleared</p>
 <p>Args:</p>
-<div class="highlight-python"><pre>offer: the offer the other party made
-(offer not quote!)</pre>
+<div class="highlight-python"><div class="highlight"><pre>offer: the offer the other party made
+(offer not quote!)
+</pre></div>
 </div>
 <dl class="docutils">
 <dt>Return:</dt>
@@ -123,7 +123,7 @@ The modeller has to implement a response mechanism. For convenience <tt class="x
 
 <dl class="method">
 <dt id="abce.Trade.accept_max_possible">
-<tt class="descname">accept_max_possible</tt><big>(</big><em>offer</em><big>)</big><a class="headerlink" href="#abce.Trade.accept_max_possible" title="Permalink to this definition">¶</a></dt>
+<code class="descname">accept_max_possible</code><span class="sig-paren">(</span><em>offer</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/abce/trade.html#Trade.accept_max_possible"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Trade.accept_max_possible" title="Permalink to this definition">¶</a></dt>
 <dd><p>TODO The offer is partly accepted and cleared</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -136,7 +136,7 @@ The modeller has to implement a response mechanism. For convenience <tt class="x
 
 <dl class="method">
 <dt id="abce.Trade.accept_partial">
-<tt class="descname">accept_partial</tt><big>(</big><em>offer</em>, <em>quantity</em><big>)</big><a class="headerlink" href="#abce.Trade.accept_partial" title="Permalink to this definition">¶</a></dt>
+<code class="descname">accept_partial</code><span class="sig-paren">(</span><em>offer</em>, <em>quantity</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/abce/trade.html#Trade.accept_partial"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Trade.accept_partial" title="Permalink to this definition">¶</a></dt>
 <dd><p>TODO The offer is partly accepted and cleared</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -149,7 +149,7 @@ The modeller has to implement a response mechanism. For convenience <tt class="x
 
 <dl class="method">
 <dt id="abce.Trade.accept_partial_max_possible">
-<tt class="descname">accept_partial_max_possible</tt><big>(</big><em>offer</em>, <em>quantity</em><big>)</big><a class="headerlink" href="#abce.Trade.accept_partial_max_possible" title="Permalink to this definition">¶</a></dt>
+<code class="descname">accept_partial_max_possible</code><span class="sig-paren">(</span><em>offer</em>, <em>quantity</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/abce/trade.html#Trade.accept_partial_max_possible"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Trade.accept_partial_max_possible" title="Permalink to this definition">¶</a></dt>
 <dd><p>TODO The offer is partly accepted and cleared</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -162,7 +162,7 @@ The modeller has to implement a response mechanism. For convenience <tt class="x
 
 <dl class="method">
 <dt id="abce.Trade.accept_quote">
-<tt class="descname">accept_quote</tt><big>(</big><em>quote</em><big>)</big><a class="headerlink" href="#abce.Trade.accept_quote" title="Permalink to this definition">¶</a></dt>
+<code class="descname">accept_quote</code><span class="sig-paren">(</span><em>quote</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/abce/trade.html#Trade.accept_quote"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Trade.accept_quote" title="Permalink to this definition">¶</a></dt>
 <dd><p>makes a commited buy or sell out of the counterparties quote</p>
 <dl class="docutils">
 <dt>Args::</dt>
@@ -172,7 +172,7 @@ The modeller has to implement a response mechanism. For convenience <tt class="x
 
 <dl class="method">
 <dt id="abce.Trade.accept_quote_partial">
-<tt class="descname">accept_quote_partial</tt><big>(</big><em>quote</em>, <em>quantity</em><big>)</big><a class="headerlink" href="#abce.Trade.accept_quote_partial" title="Permalink to this definition">¶</a></dt>
+<code class="descname">accept_quote_partial</code><span class="sig-paren">(</span><em>quote</em>, <em>quantity</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/abce/trade.html#Trade.accept_quote_partial"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Trade.accept_quote_partial" title="Permalink to this definition">¶</a></dt>
 <dd><p>makes a commited buy or sell out of the counterparties quote</p>
 <dl class="docutils">
 <dt>Args::</dt>
@@ -184,7 +184,7 @@ it should be less than propsed in the quote, but this is not enforced.</dd>
 
 <dl class="method">
 <dt id="abce.Trade.buy">
-<tt class="descname">buy</tt><big>(</big><em>receiver_group</em>, <em>receiver_idn</em>, <em>good</em>, <em>quantity</em>, <em>price</em><big>)</big><a class="headerlink" href="#abce.Trade.buy" title="Permalink to this definition">¶</a></dt>
+<code class="descname">buy</code><span class="sig-paren">(</span><em>receiver_group</em>, <em>receiver_idn</em>, <em>good</em>, <em>quantity</em>, <em>price</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/abce/trade.html#Trade.buy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Trade.buy" title="Permalink to this definition">¶</a></dt>
 <dd><p>commits to sell the quantity of good at price</p>
 <p>The goods are not in haves or self.count(). When the offer is
 rejected it is automatically re-credited. When the offer is
@@ -202,14 +202,14 @@ price: price per unit</dd>
 
 <dl class="method">
 <dt id="abce.Trade.buy_max_possible">
-<tt class="descname">buy_max_possible</tt><big>(</big><em>receiver_group</em>, <em>receiver_idn</em>, <em>good</em>, <em>quantity</em>, <em>price</em><big>)</big><a class="headerlink" href="#abce.Trade.buy_max_possible" title="Permalink to this definition">¶</a></dt>
+<code class="descname">buy_max_possible</code><span class="sig-paren">(</span><em>receiver_group</em>, <em>receiver_idn</em>, <em>good</em>, <em>quantity</em>, <em>price</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/abce/trade.html#Trade.buy_max_possible"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Trade.buy_max_possible" title="Permalink to this definition">¶</a></dt>
 <dd><p>Same as buy but if money is insufficient, it executes the deal with
 a lower amount of goods using all available money.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="abce.Trade.get_offers">
-<tt class="descname">get_offers</tt><big>(</big><em>good</em>, <em>descending=False</em><big>)</big><a class="headerlink" href="#abce.Trade.get_offers" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_offers</code><span class="sig-paren">(</span><em>good</em>, <em>descending=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/abce/trade.html#Trade.get_offers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Trade.get_offers" title="Permalink to this definition">¶</a></dt>
 <dd><p>returns all offers of the &#8216;good&#8217; ordered by price.</p>
 <p><em>Offers that are not accepted in the same subround (def block) are
 automatically rejected.</em> However you can also manualy reject.</p>
@@ -240,15 +240,16 @@ automatically rejected.</em> However you can also manualy reject.</p>
 
 <dl class="method">
 <dt id="abce.Trade.get_offers_all">
-<tt class="descname">get_offers_all</tt><big>(</big><em>descending=False</em><big>)</big><a class="headerlink" href="#abce.Trade.get_offers_all" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_offers_all</code><span class="sig-paren">(</span><em>descending=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/abce/trade.html#Trade.get_offers_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Trade.get_offers_all" title="Permalink to this definition">¶</a></dt>
 <dd><p>returns all offers in a dictionary, with goods as key. The in each
 goods-category the goods are ordered by price. The order can be reversed
 by setting descending=True</p>
 <p><em>Offers that are not accepted in the same subround (def block) are
 automatically rejected.</em> However you can also manualy reject.</p>
 <p>Args:</p>
-<div class="highlight-python"><pre>descending(optional): is a bool. False for descending True for
-                      ascending by price</pre>
+<div class="highlight-python"><div class="highlight"><pre>descending(optional): is a bool. False for descending True for
+                      ascending by price
+</pre></div>
 </div>
 <p>Example2:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">oo</span> <span class="o">=</span> <span class="n">get_offers_all</span><span class="p">(</span><span class="n">descending</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
@@ -273,7 +274,7 @@ efficient to order backwards and buy the last good first:</p>
 
 <dl class="method">
 <dt id="abce.Trade.get_quotes">
-<tt class="descname">get_quotes</tt><big>(</big><em>good</em>, <em>descending=False</em><big>)</big><a class="headerlink" href="#abce.Trade.get_quotes" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_quotes</code><span class="sig-paren">(</span><em>good</em>, <em>descending=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/abce/trade.html#Trade.get_quotes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Trade.get_quotes" title="Permalink to this definition">¶</a></dt>
 <dd><p>self.get_quotes() returns all new quotes and removes them. The order
 is randomized.</p>
 <dl class="docutils">
@@ -296,7 +297,7 @@ is randomized.</p>
 
 <dl class="method">
 <dt id="abce.Trade.get_quotes_all">
-<tt class="descname">get_quotes_all</tt><big>(</big><em>descending=False</em><big>)</big><a class="headerlink" href="#abce.Trade.get_quotes_all" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_quotes_all</code><span class="sig-paren">(</span><em>descending=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/abce/trade.html#Trade.get_quotes_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Trade.get_quotes_all" title="Permalink to this definition">¶</a></dt>
 <dd><p>self.get_quotes_all() returns a dictionary with all now new quotes ordered
 by the good type and removes them. The order is randomized.</p>
 <dl class="docutils">
@@ -318,7 +319,7 @@ itself is ordered by price.</dd>
 
 <dl class="method">
 <dt id="abce.Trade.give">
-<tt class="descname">give</tt><big>(</big><em>receiver_group</em>, <em>receiver_idn</em>, <em>good</em>, <em>quantity</em><big>)</big><a class="headerlink" href="#abce.Trade.give" title="Permalink to this definition">¶</a></dt>
+<code class="descname">give</code><span class="sig-paren">(</span><em>receiver_group</em>, <em>receiver_idn</em>, <em>good</em>, <em>quantity</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/abce/trade.html#Trade.give"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Trade.give" title="Permalink to this definition">¶</a></dt>
 <dd><p>gives a good to another agent</p>
 <p>Args:</p>
 <blockquote>
@@ -341,13 +342,14 @@ itself is ordered by price.</dd>
 <dd>Dictionary, with the transfer, which can be used by self.log(...).</dd>
 </dl>
 <p>Example:</p>
-<div class="highlight-python"><pre>self.log('taxes', self.give('money': 0.05 * self.possession('money'))</pre>
+<div class="highlight-python"><div class="highlight"><pre>self.log(&#39;taxes&#39;, self.give(&#39;money&#39;: 0.05 * self.possession(&#39;money&#39;))
+</pre></div>
 </div>
 </dd></dl>
 
 <dl class="method">
 <dt id="abce.Trade.info">
-<tt class="descname">info</tt><big>(</big><em>offer_idn</em><big>)</big><a class="headerlink" href="#abce.Trade.info" title="Permalink to this definition">¶</a></dt>
+<code class="descname">info</code><span class="sig-paren">(</span><em>offer_idn</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/abce/trade.html#Trade.info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Trade.info" title="Permalink to this definition">¶</a></dt>
 <dd><p>lets you access all fields of a <strong>given</strong> offer.
 This allows you to check whether an offer was accepted, partially accepted
 or rejected and retrieve the quantity actually traded.</p>
@@ -409,7 +411,7 @@ and therefore perished.</dd>
 </pre></div>
 </div>
 <p>Example:</p>
-<div class="highlight-python"><pre>from pybrain.rl.learners.valuebased import ActionValueTable
+<div class="highlight-python"><div class="highlight"><pre>from pybrain.rl.learners.valuebased import ActionValueTable
 from pybrain.rl.agents import LearningAgent
 from pybrain.rl.learners import Q
 
@@ -421,17 +423,18 @@ def __init__(self):
 
 def sales(self):
     price = reinforcement_learner.getAction():
-    self.offer = self.sell('Household', 1, 'car', 1, price)
+    self.offer = self.sell(&#39;Household&#39;, 1, &#39;car&#39;, 1, price)
 
 def learn(self):
     reinforcement_learner.integrateObservation([self.info(self.offer)])
-    reinforcement_learner.giveReward([self.info(self.offer) * price - self.car_cost])</pre>
+    reinforcement_learner.giveReward([self.info(self.offer) * price - self.car_cost])
+</pre></div>
 </div>
 </dd></dl>
 
 <dl class="method">
 <dt id="abce.Trade.partial_status_percentage">
-<tt class="descname">partial_status_percentage</tt><big>(</big><em>offer_idn</em><big>)</big><a class="headerlink" href="#abce.Trade.partial_status_percentage" title="Permalink to this definition">¶</a></dt>
+<code class="descname">partial_status_percentage</code><span class="sig-paren">(</span><em>offer_idn</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/abce/trade.html#Trade.partial_status_percentage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Trade.partial_status_percentage" title="Permalink to this definition">¶</a></dt>
 <dd><p>returns the percentage of a partial accept</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -449,20 +452,19 @@ def learn(self):
 
 <dl class="method">
 <dt id="abce.Trade.peak_offers">
-<tt class="descname">peak_offers</tt><big>(</big><em>good</em>, <em>descending=False</em><big>)</big><a class="headerlink" href="#abce.Trade.peak_offers" title="Permalink to this definition">¶</a></dt>
+<code class="descname">peak_offers</code><span class="sig-paren">(</span><em>good</em>, <em>descending=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/abce/trade.html#Trade.peak_offers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Trade.peak_offers" title="Permalink to this definition">¶</a></dt>
 <dd><p>returns a peak on all offers of the &#8216;good&#8217; ordered by price.
 Peaked offers can not be accepted or rejected, but they do not
-expire.
-Args:</p>
-<blockquote>
-<div><dl class="docutils">
-<dt>good:</dt>
-<dd>the good which should be retrieved</dd>
-<dt>descending(bool,default=False):</dt>
-<dd>False for descending True for ascending by price</dd>
-</dl>
-</div></blockquote>
+expire.</p>
 <dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>good:</dt>
+<dd>the good which should be retrieved
+descending(bool,default=False):
+False for descending True for ascending by price</dd>
+</dl>
+</dd>
 <dt>Returns:</dt>
 <dd>A list of offers ordered by price</dd>
 </dl>
@@ -481,7 +483,7 @@ Args:</p>
 
 <dl class="method">
 <dt id="abce.Trade.quote_buy">
-<tt class="descname">quote_buy</tt><big>(</big><em>receiver_group</em>, <em>receiver_idn</em>, <em>good</em>, <em>quantity</em>, <em>price</em><big>)</big><a class="headerlink" href="#abce.Trade.quote_buy" title="Permalink to this definition">¶</a></dt>
+<code class="descname">quote_buy</code><span class="sig-paren">(</span><em>receiver_group</em>, <em>receiver_idn</em>, <em>good</em>, <em>quantity</em>, <em>price</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/abce/trade.html#Trade.quote_buy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Trade.quote_buy" title="Permalink to this definition">¶</a></dt>
 <dd><p>quotes a price to buy quantity of &#8216;good&#8217; a receiver</p>
 <p>price (money) per unit
 offers a deal without checking or committing resources</p>
@@ -505,7 +507,7 @@ offers a deal without checking or committing resources</p>
 
 <dl class="method">
 <dt id="abce.Trade.quote_sell">
-<tt class="descname">quote_sell</tt><big>(</big><em>receiver_group</em>, <em>receiver_idn</em>, <em>good</em>, <em>quantity</em>, <em>price</em><big>)</big><a class="headerlink" href="#abce.Trade.quote_sell" title="Permalink to this definition">¶</a></dt>
+<code class="descname">quote_sell</code><span class="sig-paren">(</span><em>receiver_group</em>, <em>receiver_idn</em>, <em>good</em>, <em>quantity</em>, <em>price</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/abce/trade.html#Trade.quote_sell"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Trade.quote_sell" title="Permalink to this definition">¶</a></dt>
 <dd><p>quotes a price to sell quantity of &#8216;good&#8217; to a receiver</p>
 <p>price (money) per unit
 offers a deal without checking or committing resources</p>
@@ -529,7 +531,7 @@ offers a deal without checking or committing resources</p>
 
 <dl class="method">
 <dt id="abce.Trade.reject">
-<tt class="descname">reject</tt><big>(</big><em>offer</em><big>)</big><a class="headerlink" href="#abce.Trade.reject" title="Permalink to this definition">¶</a></dt>
+<code class="descname">reject</code><span class="sig-paren">(</span><em>offer</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/abce/trade.html#Trade.reject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Trade.reject" title="Permalink to this definition">¶</a></dt>
 <dd><p>The offer is rejected</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -540,7 +542,7 @@ offers a deal without checking or committing resources</p>
 
 <dl class="method">
 <dt id="abce.Trade.retract">
-<tt class="descname">retract</tt><big>(</big><em>offer_idn</em><big>)</big><a class="headerlink" href="#abce.Trade.retract" title="Permalink to this definition">¶</a></dt>
+<code class="descname">retract</code><span class="sig-paren">(</span><em>offer_idn</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/abce/trade.html#Trade.retract"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Trade.retract" title="Permalink to this definition">¶</a></dt>
 <dd><p>The agent who made a buy or sell offer can retract it</p>
 <p>The offer an agent made is deleted at the end of the sub-round and the
 committed good reappears in the haves. However if another agent
@@ -554,7 +556,7 @@ accepts in the same round the trade will be cleared and not retracted.</p>
 
 <dl class="method">
 <dt id="abce.Trade.sell">
-<tt class="descname">sell</tt><big>(</big><em>receiver_group</em>, <em>receiver_idn</em>, <em>good</em>, <em>quantity</em>, <em>price</em><big>)</big><a class="headerlink" href="#abce.Trade.sell" title="Permalink to this definition">¶</a></dt>
+<code class="descname">sell</code><span class="sig-paren">(</span><em>receiver_group</em>, <em>receiver_idn</em>, <em>good</em>, <em>quantity</em>, <em>price</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/abce/trade.html#Trade.sell"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Trade.sell" title="Permalink to this definition">¶</a></dt>
 <dd><p>commits to sell the quantity of good at price</p>
 <p>The goods are not in haves or self.count(). When the offer is
 rejected it is automatically re-credited. When the offer is
@@ -572,30 +574,64 @@ price: price per unit</dd>
 be accessed with <cite>self.info(offer_reference)</cite>.</dd>
 </dl>
 <p>Example:</p>
-<div class="highlight-python"><pre>def subround_1(self):
-    self.offer = self.sell('household', 1, 'cookies', quantity=5, price=0.1)
+<div class="highlight-python"><div class="highlight"><pre>def subround_1(self):
+    self.offer = self.sell(&#39;household&#39;, 1, &#39;cookies&#39;, quantity=5, price=0.1)
 
 def subround_2(self):
     offer = self.info(self.offer)
-    if offer['status'] == 'partial':
-        print(offer['final_quantity'] , 'cookies have be bougth')
+    if offer[&#39;status&#39;] == &#39;partial&#39;:
+        print(offer[&#39;final_quantity&#39;] , &#39;cookies have be bougth&#39;)
     elif:
-        offer['status'] == 'accepted':
-        print('Cookie monster bougth them all')
+        offer[&#39;status&#39;] == &#39;accepted&#39;:
+        print(&#39;Cookie monster bougth them all&#39;)
     elif:
-        offer['status'] == 'rejected':
-        print('On diet')</pre>
+        offer[&#39;status&#39;] == &#39;rejected&#39;:
+        print(&#39;On diet&#39;)
+</pre></div>
 </div>
 </dd></dl>
 
 <dl class="method">
 <dt id="abce.Trade.sell_max_possible">
-<tt class="descname">sell_max_possible</tt><big>(</big><em>receiver_group</em>, <em>receiver_idn</em>, <em>good</em>, <em>quantity</em>, <em>price</em><big>)</big><a class="headerlink" href="#abce.Trade.sell_max_possible" title="Permalink to this definition">¶</a></dt>
+<code class="descname">sell_max_possible</code><span class="sig-paren">(</span><em>receiver_group</em>, <em>receiver_idn</em>, <em>good</em>, <em>quantity</em>, <em>price</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/abce/trade.html#Trade.sell_max_possible"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Trade.sell_max_possible" title="Permalink to this definition">¶</a></dt>
 <dd><p>Same as sell but if the possession of good is smaller than the number,
 it executes the deal with a lower amount of goods using everything
 available of this good.</p>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="function">
+<dt id="abce.Offer">
+<code class="descclassname">abce.</code><code class="descname">Offer</code><span class="sig-paren">(</span><em>sender_group</em>, <em>sender_idn</em>, <em>receiver_group</em>, <em>receiver_idn</em>, <em>good</em>, <em>quantity</em>, <em>price</em>, <em>buysell</em>, <em>idn</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/abce/trade.html#Offer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Offer" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is an offer container that is send to the other agent. You can
+access the offer container both at the receiver as well as at the sender,
+if you have saved the offer. (e.G. self.offer = self.sell(...))</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>sender_group:</dt>
+<dd>this is the group name of the sender</dd>
+<dt>sender_idn:</dt>
+<dd>this is the ID of the sender</dd>
+<dt>receiver_group:</dt>
+<dd>This is the group name of the receiver</dd>
+<dt>receiver_idn:</dt>
+<dd>this is the ID of the sender</dd>
+<dt>good:</dt>
+<dd>the good offered or demanded</dd>
+<dt>quantity:</dt>
+<dd>the quantity offered or demanded</dd>
+<dt>price:</dt>
+<dd>the suggested tansaction price</dd>
+<dt>buysell:</dt>
+<dd>this can have the values &#8216;b&#8217; for buy; &#8216;s&#8217; for sell; &#8216;qb&#8217; for a
+nonbinding buy quote; and &#8216;qs&#8217; for a nonbinding sell quote</dd>
+<dt>idn:</dt>
+<dd>a unique identifier</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -604,7 +640,7 @@ available of this good.</p>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
   <p class="topless"><a href="Agent_class.html"
@@ -612,12 +648,14 @@ available of this good.</p>
   <h4>Next topic</h4>
   <p class="topless"><a href="Firm.html"
                         title="next chapter">Firm and production</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/Trade.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/Trade.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />
@@ -634,7 +672,7 @@ available of this good.</p>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -649,12 +687,12 @@ available of this good.</p>
         <li class="right" >
           <a href="Agent_class.html" title="Agents"
              >previous</a> |</li>
-        <li><a href="index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2012, Davoud Taghawi-Nejad.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

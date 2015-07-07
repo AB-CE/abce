@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -10,7 +8,7 @@
     
     <title>database &mdash; ABCE 0.3.1alpha documentation</title>
     
-    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -28,8 +26,8 @@
     <link rel="top" title="ABCE 0.3.1alpha documentation" href="../index.html" />
     <link rel="up" title="Module code" href="index.html" /> 
   </head>
-  <body>
-    <div class="related">
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -38,15 +36,15 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li>
-          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <h1>Source code for database</h1><div class="highlight"><pre>
 <span class="c"># Copyright 2012 Davoud Taghawi-Nejad</span>
@@ -84,7 +82,6 @@
 <span class="sd">.. [1] or :class:`abceagent.FirmMultiTechnologies` for simulations with complex technologies.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
-<span class="kn">import</span> <span class="nn">zmq</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="n">save_err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="n">invalid</span><span class="o">=</span><span class="s">&#39;ignore&#39;</span><span class="p">)</span>
 
@@ -124,10 +121,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">data_to_write</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">_</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">action_name</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span> <span class="n">data_to_log</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data_to_log</span><span class="p">}</span>
         <span class="n">data_to_write</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">idn</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s">&quot;log&quot;</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">send_pyobj</span><span class="p">(</span><span class="n">data_to_write</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">round</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">put</span><span class="p">([</span><span class="s">&quot;log&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">,</span> <span class="n">data_to_write</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">round</span><span class="p">)])</span>
 </div>
 <div class="viewcode-block" id="Database.log_value"><a class="viewcode-back" href="../Database.html#database.Database.log_value">[docs]</a>    <span class="k">def</span> <span class="nf">log_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; logs a value, with a name</span>
@@ -138,10 +132,7 @@
 <span class="sd">            value(int/float):</span>
 <span class="sd">                the variable = value to log</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s">&quot;log&quot;</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">send_pyobj</span><span class="p">({</span><span class="s">&#39;id&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">idn</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="n">value</span><span class="p">},</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">round</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">put</span><span class="p">([</span><span class="s">&quot;log&quot;</span><span class="p">,</span>  <span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;id&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">idn</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="n">value</span><span class="p">},</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">round</span><span class="p">)])</span>
 </div>
 <div class="viewcode-block" id="Database.log_dict"><a class="viewcode-back" href="../Database.html#database.Database.log_dict">[docs]</a>    <span class="k">def</span> <span class="nf">log_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action_name</span><span class="p">,</span> <span class="n">data_to_log</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; same as the log function, only that it supports nested dictionaries</span>
@@ -149,10 +140,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">data_to_write</span> <span class="o">=</span> <span class="n">flatten</span><span class="p">(</span><span class="n">data_to_log</span><span class="p">,</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">_&#39;</span> <span class="o">%</span> <span class="n">action_name</span><span class="p">)</span>
         <span class="n">data_to_write</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">idn</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s">&quot;log&quot;</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">send_pyobj</span><span class="p">(</span><span class="n">data_to_write</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">round</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">put</span><span class="p">([</span><span class="s">&quot;log&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">,</span> <span class="n">data_to_write</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">round</span><span class="p">)])</span>
 </div>
 <div class="viewcode-block" id="Database.log_change"><a class="viewcode-back" href="../Database.html#database.Database.log_change">[docs]</a>    <span class="k">def</span> <span class="nf">log_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action_name</span><span class="p">,</span> <span class="n">data_to_log</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; This command logs the change in the variable from the round before.</span>
@@ -177,10 +165,7 @@
             <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data_to_log</span><span class="p">:</span>
                 <span class="n">data_to_write</span><span class="p">[</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">_change_</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">action_name</span><span class="p">,</span> <span class="n">key</span><span class="p">)]</span> <span class="o">=</span> <span class="n">data_to_log</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
         <span class="n">data_to_write</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">idn</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s">&quot;log&quot;</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">send_pyobj</span><span class="p">(</span><span class="n">data_to_write</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">round</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">put</span><span class="p">([</span><span class="s">&quot;log&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">,</span> <span class="n">data_to_write</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">round</span><span class="p">)])</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_data_to_log_1</span><span class="p">[</span><span class="n">action_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_to_log</span>
 </div>
@@ -235,18 +220,15 @@
             <span class="n">data_to_write</span><span class="p">[</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">_delta_</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">action_name</span><span class="p">,</span> <span class="n">key</span><span class="p">)]</span> <span class="o">=</span> \
                                             <span class="n">data_to_observe</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">-</span> <span class="n">before</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
         <span class="n">data_to_write</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">idn</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s">&quot;log&quot;</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">send_pyobj</span><span class="p">(</span><span class="n">data_to_write</span><span class="p">,</span> <span class="n">zmq</span><span class="o">.</span><span class="n">SNDMORE</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">round</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database_connection</span><span class="o">.</span><span class="n">put</span><span class="p">([</span><span class="s">&quot;log&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">,</span> <span class="n">data_to_write</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">round</span><span class="p">)])</span>
 </pre></div></div></div>
 
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<div id="searchbox" style="display: none">
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
       <input type="text" name="q" />
@@ -263,7 +245,7 @@
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -272,13 +254,13 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li>
-          <li><a href="index.html" >Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2012, Davoud Taghawi-Nejad.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

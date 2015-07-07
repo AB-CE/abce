@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -10,12 +8,12 @@
     
     <title>Firm and production &mdash; ABCE 0.3.1alpha documentation</title>
     
-    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '',
+        URL_ROOT:    './',
         VERSION:     '0.3.1alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
@@ -29,8 +27,8 @@
     <link rel="next" title="Household and consumption" href="Household.html" />
     <link rel="prev" title="Trade" href="Trade.html" /> 
   </head>
-  <body>
-    <div class="related">
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -45,14 +43,14 @@
         <li class="right" >
           <a href="Trade.html" title="Trade"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="module-firm">
 <span id="firm-and-production"></span><h1>Firm and production<a class="headerlink" href="#module-firm" title="Permalink to this headline">¶</a></h1>
@@ -60,21 +58,21 @@
 produce.</p>
 <dl class="class">
 <dt id="abce.Firm">
-<em class="property">class </em><tt class="descclassname">abce.</tt><tt class="descname">Firm</tt><a class="headerlink" href="#abce.Firm" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">abce.firmmultitechnologies.FirmMultiTechnologies</span></tt></p>
+<em class="property">class </em><code class="descclassname">abce.</code><code class="descname">Firm</code><a class="reference internal" href="_modules/abce/firm.html#Firm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Firm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">abce.firmmultitechnologies.FirmMultiTechnologies</span></code></p>
 <p>The firm class allows you to declare a production function for a firm.
-<tt class="xref py py-meth docutils literal"><span class="pre">set_leontief()</span></tt>, <tt class="xref py py-meth docutils literal"><span class="pre">set_production_function()</span></tt>
-<tt class="xref py py-meth docutils literal"><span class="pre">set_cobb_douglas()</span></tt>,
-<tt class="xref py py-meth docutils literal"><span class="pre">set_production_function_fast()</span></tt>
-(FirmMultiTechnologies, allows you to declare several) With <tt class="xref py py-meth docutils literal"><span class="pre">produce()</span></tt>
-and <tt class="xref py py-meth docutils literal"><span class="pre">produce_use_everything()</span></tt> you can produce using the
+<code class="xref py py-meth docutils literal"><span class="pre">set_leontief()</span></code>, <code class="xref py py-meth docutils literal"><span class="pre">set_production_function()</span></code>
+<code class="xref py py-meth docutils literal"><span class="pre">set_cobb_douglas()</span></code>,
+<code class="xref py py-meth docutils literal"><span class="pre">set_production_function_fast()</span></code>
+(FirmMultiTechnologies, allows you to declare several) With <code class="xref py py-meth docutils literal"><span class="pre">produce()</span></code>
+and <code class="xref py py-meth docutils literal"><span class="pre">produce_use_everything()</span></code> you can produce using the
 according production function. You have several auxiliary functions
 for example to predict the production. When you multiply
-<tt class="xref py py-meth docutils literal"><span class="pre">predict_produce()</span></tt> with the price vector you get the
+<code class="xref py py-meth docutils literal"><span class="pre">predict_produce()</span></code> with the price vector you get the
 profitability of the production.</p>
 <dl class="method">
 <dt id="abce.Firm.predict_produce_output_simple">
-<tt class="descname">predict_produce_output_simple</tt><big>(</big><em>input_goods</em><big>)</big><a class="headerlink" href="#abce.Firm.predict_produce_output_simple" title="Permalink to this definition">¶</a></dt>
+<code class="descname">predict_produce_output_simple</code><span class="sig-paren">(</span><em>input_goods</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/abce/firm.html#Firm.predict_produce_output_simple"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Firm.predict_produce_output_simple" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates the output of a production (but does not produce)</p>
 <blockquote>
 <div>Predicts the production of produce(production_function, input_goods)
@@ -88,14 +86,15 @@ see also: Predict_produce(.) as it returns a vector</div></blockquote>
 </dd>
 </dl>
 <p>Example:</p>
-<div class="highlight-python"><pre>print(A.predict_output_produce(two_cars))
-&gt;&gt;&gt; {'car': 2}</pre>
+<div class="highlight-python"><div class="highlight"><pre>print(A.predict_output_produce(two_cars))
+&gt;&gt;&gt; {&#39;car&#39;: 2}
+</pre></div>
 </div>
 </dd></dl>
 
 <dl class="method">
 <dt id="abce.Firm.predict_produce_simple">
-<tt class="descname">predict_produce_simple</tt><big>(</big><em>input_goods</em><big>)</big><a class="headerlink" href="#abce.Firm.predict_produce_simple" title="Permalink to this definition">¶</a></dt>
+<code class="descname">predict_produce_simple</code><span class="sig-paren">(</span><em>input_goods</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/abce/firm.html#Firm.predict_produce_simple"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Firm.predict_produce_simple" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a vector with input (negative) and output (positive) goods</p>
 <blockquote>
 <div>Predicts the production of produce(production_function, input_goods) and
@@ -124,7 +123,7 @@ net value of this production.</div></blockquote>
 
 <dl class="method">
 <dt id="abce.Firm.produce">
-<tt class="descname">produce</tt><big>(</big><em>input_goods</em><big>)</big><a class="headerlink" href="#abce.Firm.produce" title="Permalink to this definition">¶</a></dt>
+<code class="descname">produce</code><span class="sig-paren">(</span><em>input_goods</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/abce/firm.html#Firm.produce"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Firm.produce" title="Permalink to this definition">¶</a></dt>
 <dd><p>Produces output goods given the specified amount of inputs.</p>
 <p>Transforms the Agent&#8217;s goods specified in input goods
 according to a given production_function to output goods.
@@ -145,18 +144,19 @@ exception, when the agent does not have sufficient resources.</p>
 </dd>
 </dl>
 <p>Example:</p>
-<div class="highlight-python"><pre>self.set_cobb_douglas_production_function('car' ..)
-car = {'tire': 4, 'metal': 2000, 'plastic':  40}
+<div class="highlight-python"><div class="highlight"><pre>self.set_cobb_douglas_production_function(&#39;car&#39; ..)
+car = {&#39;tire&#39;: 4, &#39;metal&#39;: 2000, &#39;plastic&#39;:  40}
 try:
     self.produce(car)
 except NotEnoughGoods:
-    print('today no cars')</pre>
+    print(&#39;today no cars&#39;)
+</pre></div>
 </div>
 </dd></dl>
 
 <dl class="method">
 <dt id="abce.Firm.produce_use_everything">
-<tt class="descname">produce_use_everything</tt><big>(</big><big>)</big><a class="headerlink" href="#abce.Firm.produce_use_everything" title="Permalink to this definition">¶</a></dt>
+<code class="descname">produce_use_everything</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/abce/firm.html#Firm.produce_use_everything"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Firm.produce_use_everything" title="Permalink to this definition">¶</a></dt>
 <dd><p>Produces output goods from all input goods.</p>
 <p>Example:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="bp">self</span><span class="o">.</span><span class="n">produce_use_everything</span><span class="p">()</span>
@@ -166,7 +166,7 @@ except NotEnoughGoods:
 
 <dl class="method">
 <dt id="abce.Firm.set_cobb_douglas">
-<tt class="descname">set_cobb_douglas</tt><big>(</big><em>output</em>, <em>multiplier</em>, <em>exponents</em><big>)</big><a class="headerlink" href="#abce.Firm.set_cobb_douglas" title="Permalink to this definition">¶</a></dt>
+<code class="descname">set_cobb_douglas</code><span class="sig-paren">(</span><em>output</em>, <em>multiplier</em>, <em>exponents</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/abce/firm.html#Firm.set_cobb_douglas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Firm.set_cobb_douglas" title="Permalink to this definition">¶</a></dt>
 <dd><p>sets the firm to use a Cobb-Douglas production function.</p>
 <p>A production function is a production process that produces the
 given input goods according to the formula to the output
@@ -187,7 +187,7 @@ containing good names &#8216;input&#8217; and corresponding exponents</dd>
 
 <dl class="method">
 <dt id="abce.Firm.set_leontief">
-<tt class="descname">set_leontief</tt><big>(</big><em>output</em>, <em>utilization_quantities</em>, <em>multiplier=1</em>, <em>isinteger='int'</em><big>)</big><a class="headerlink" href="#abce.Firm.set_leontief" title="Permalink to this definition">¶</a></dt>
+<code class="descname">set_leontief</code><span class="sig-paren">(</span><em>output</em>, <em>utilization_quantities</em>, <em>multiplier=1</em>, <em>isinteger='int'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/abce/firm.html#Firm.set_leontief"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Firm.set_leontief" title="Permalink to this definition">¶</a></dt>
 <dd><p>sets the firm to use a Leontief production function.</p>
 <p>A production function is a production process that produces the
 given input given according to the formula to the output
@@ -214,7 +214,7 @@ amounts of the good. When &#8216;&#8217;, produces floating amounts.</dd>
 
 <dl class="method">
 <dt id="abce.Firm.set_production_function">
-<tt class="descname">set_production_function</tt><big>(</big><em>formula</em>, <em>typ='from_formula'</em><big>)</big><a class="headerlink" href="#abce.Firm.set_production_function" title="Permalink to this definition">¶</a></dt>
+<code class="descname">set_production_function</code><span class="sig-paren">(</span><em>formula</em>, <em>typ='from_formula'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/abce/firm.html#Firm.set_production_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Firm.set_production_function" title="Permalink to this definition">¶</a></dt>
 <dd><p>sets the firm to use a Cobb-Douglas production function from a
 formula.</p>
 <p>A production function is a production process that produces the given
@@ -228,16 +228,17 @@ predict_output_produce.</p>
 production process. (string) Several equation are separated by a ;</dd>
 </dl>
 <p>Example:</p>
-<div class="highlight-python"><pre>formula = 'golf_ball = (ball) * (paint / 2); waste = 0.1 * paint'
+<div class="highlight-python"><div class="highlight"><pre>formula = &#39;golf_ball = (ball) * (paint / 2); waste = 0.1 * paint&#39;
 self.set_production_function(formula)
-self.produce({'ball' : 1, 'paint' : 2}</pre>
+self.produce({&#39;ball&#39; : 1, &#39;paint&#39; : 2}
+</pre></div>
 </div>
 <p>//exponential is ** not ^</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="abce.Firm.set_production_function_fast">
-<tt class="descname">set_production_function_fast</tt><big>(</big><em>formula</em>, <em>output_goods</em>, <em>input_goods</em>, <em>typ='from_formula'</em><big>)</big><a class="headerlink" href="#abce.Firm.set_production_function_fast" title="Permalink to this definition">¶</a></dt>
+<code class="descname">set_production_function_fast</code><span class="sig-paren">(</span><em>formula</em>, <em>output_goods</em>, <em>input_goods</em>, <em>typ='from_formula'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/abce/firm.html#Firm.set_production_function_fast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Firm.set_production_function_fast" title="Permalink to this definition">¶</a></dt>
 <dd><p>sets the firm to use a Cobb-Douglas production function from a
 formula, with given outputs</p>
 <p>A production function is a production process that produces the given
@@ -251,16 +252,17 @@ production process. (string) Several equation are separated by a ;
 [output]: list of all output goods (left hand sides of the equations)</dd>
 </dl>
 <p>Example:</p>
-<div class="highlight-python"><pre>formula = 'golf_ball = (ball) * (paint / 2); waste = 0.1 * paint'
-self.production_function_fast(formula, 'golf', ['waste'])
-self.produce(self, {'ball' : 1, 'paint' : 2}</pre>
+<div class="highlight-python"><div class="highlight"><pre>formula = &#39;golf_ball = (ball) * (paint / 2); waste = 0.1 * paint&#39;
+self.production_function_fast(formula, &#39;golf&#39;, [&#39;waste&#39;])
+self.produce(self, {&#39;ball&#39; : 1, &#39;paint&#39; : 2}
+</pre></div>
 </div>
 <p>//exponential is ** not ^</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="abce.Firm.sufficient_goods">
-<tt class="descname">sufficient_goods</tt><big>(</big><em>input_goods</em><big>)</big><a class="headerlink" href="#abce.Firm.sufficient_goods" title="Permalink to this definition">¶</a></dt>
+<code class="descname">sufficient_goods</code><span class="sig-paren">(</span><em>input_goods</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/abce/firm.html#Firm.sufficient_goods"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#abce.Firm.sufficient_goods" title="Permalink to this definition">¶</a></dt>
 <dd><p>checks whether the agent has all the goods in the vector input</p>
 </dd></dl>
 
@@ -272,7 +274,7 @@ self.produce(self, {'ball' : 1, 'paint' : 2}</pre>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
   <p class="topless"><a href="Trade.html"
@@ -280,12 +282,14 @@ self.produce(self, {'ball' : 1, 'paint' : 2}</pre>
   <h4>Next topic</h4>
   <p class="topless"><a href="Household.html"
                         title="next chapter">Household and consumption</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/Firm.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/Firm.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />
@@ -302,7 +306,7 @@ self.produce(self, {'ball' : 1, 'paint' : 2}</pre>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -317,12 +321,12 @@ self.produce(self, {'ball' : 1, 'paint' : 2}</pre>
         <li class="right" >
           <a href="Trade.html" title="Trade"
              >previous</a> |</li>
-        <li><a href="index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">ABCE 0.3.1alpha documentation</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2012, Davoud Taghawi-Nejad.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>
