@@ -84,7 +84,7 @@ class Database(multiprocessing.Process):
                 group_name = msg[1]
                 data_to_write = msg[2]
                 data_to_write = {key: float(data_to_write[key]) for key in data_to_write}
-                data_to_write['round'] = int(self.in_sok.get())
+                data_to_write['round'] = msg[3]
                 table_name = group_name
                 try:
                     self.write_or_update(table_name, data_to_write)

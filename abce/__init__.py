@@ -448,7 +448,6 @@ class Simulation:
             self.round = year
             print("\rRound" + str("%3d" % year)),
             for group, action in self._action_list:
-                print(group, action)
                 self._add_agents_to_wait_for(len(self.agents_command_socket[group]))
                 for queue in self.agents_command_socket[group]:
                     queue.put(action)

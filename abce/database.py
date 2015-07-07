@@ -33,7 +33,6 @@ Messaging between agents:
 .. [1] or :class:`abceagent.FirmMultiTechnologies` for simulations with complex technologies.
 """
 from __future__ import division
-import zmq
 import numpy as np
 save_err = np.seterr(invalid='ignore')
 
@@ -73,10 +72,7 @@ class Database:
         """
         data_to_write = {'%s_%s' % (action_name, key): data_to_log[key] for key in data_to_log}
         data_to_write['id'] = self.idn
-        self.database_connection.send("log", zmq.SNDMORE)
-        self.database_connection.send(self.group, zmq.SNDMORE)
-        self.database_connection.send_pyobj(data_to_write, zmq.SNDMORE)
-        self.database_connection.send(str(self.round))
+        self.database_connection.put(["log", self.group, data_to_write, str(self.round)])
 
     def log_value(self, name, value):
         """ logs a value, with a name
@@ -87,10 +83,7 @@ class Database:
             value(int/float):
                 the variable = value to log
         """
-        self.database_connection.send("log", zmq.SNDMORE)
-        self.database_connection.send(self.group, zmq.SNDMORE)
-        self.database_connection.send_pyobj({'id': self.idn, name: value}, zmq.SNDMORE)
-        self.database_connection.send(str(self.round))
+        self.database_connection.put(["log",  self.group, {'id': self.idn, name: value}, str(self.round)])
 
     def log_dict(self, action_name, data_to_log):
         """ same as the log function, only that it supports nested dictionaries
@@ -98,10 +91,7 @@ class Database:
         """
         data_to_write = flatten(data_to_log, '%s_' % action_name)
         data_to_write['id'] = self.idn
-        self.database_connection.send("log", zmq.SNDMORE)
-        self.database_connection.send(self.group, zmq.SNDMORE)
-        self.database_connection.send_pyobj(data_to_write, zmq.SNDMORE)
-        self.database_connection.send(str(self.round))
+        self.database_connection.put(["log", self.group, data_to_write, str(self.round)])
 
     def log_change(self, action_name, data_to_log):
         """ This command logs the change in the variable from the round before.
@@ -126,10 +116,7 @@ class Database:
             for key in data_to_log:
                 data_to_write['%s_change_%s' % (action_name, key)] = data_to_log[key]
         data_to_write['id'] = self.idn
-        self.database_connection.send("log", zmq.SNDMORE)
-        self.database_connection.send(self.group, zmq.SNDMORE)
-        self.database_connection.send_pyobj(data_to_write, zmq.SNDMORE)
-        self.database_connection.send(str(self.round))
+        self.database_connection.put(["log", self.group, data_to_write, str(self.round)])
 
         self._data_to_log_1[action_name] = data_to_log
 
@@ -184,8 +171,5 @@ class Database:
             data_to_write['%s_delta_%s' % (action_name, key)] = \
                                             data_to_observe[key] - before[key]
         data_to_write['id'] = self.idn
-        self.database_connection.send("log", zmq.SNDMORE)
-        self.database_connection.send(self.group, zmq.SNDMORE)
-        self.database_connection.send_pyobj(data_to_write, zmq.SNDMORE)
-        self.database_connection.send(str(self.round))
+        self.database_connection.put(["log", self.group, data_to_write, str(self.round)])
 
