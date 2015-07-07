@@ -33,7 +33,6 @@ Messaging between agents:
 .. [1] or :class:`abceagent.FirmMultiTechnologies` for simulations with complex technologies.
 """
 from __future__ import division
-import zmq
 import multiprocessing
 
 
@@ -53,8 +52,7 @@ class Logger:
                 form of the bubble
         """
         data_to_write = [self.round, self.idn, 0, False, False] + list_of_nodes
-        self.logger_connection.send("network", zmq.SNDMORE)
-        self.logger_connection.send_pyobj(data_to_write)
+        self.logger_connection.send(["network", data_to_write])
 
 
 

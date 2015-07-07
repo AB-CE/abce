@@ -33,7 +33,6 @@ Messaging between agents:
 .. [1] or :class:`abce.agent.FirmMultiTechnologies` for simulations with complex technologies.
 """
 from __future__ import division
-import zmq
 import multiprocessing
 import compiler
 import pyparsing as pp

@@ -767,8 +767,7 @@ class Simulation:
         def send_aesof_command():
             try:
                 for round_line in self.aesof_dict[self.round]:
-                    self.commands.put(['%s:' % round_line['name'], '_aesof'], zmq.SNDMORE)
-                    self.commands.put(round_line)
+                    self.commands.put([['%s:' % round_line['name'], '_aesof'], round_line])
             except KeyError:
                 if self.round in self.aesof_dict:
                     raise
