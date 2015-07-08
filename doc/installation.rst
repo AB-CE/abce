@@ -29,19 +29,19 @@ Installation Mac
 
 3. make sure python's pip is installed
 
-4. sudo pip install scipy
+4.  In terminal::
 
-5. sudo pip install numpy
+    sudo pip install scipy
 
-6. sudo python setup.py install
+    sudo pip install numpy
 
-Installation of development version
------------------------------------
+    sudo python setup.py install
+
 
 Installation Windows
 --------------------
 
-- windows currently is under development and not fully functional -
+- windows currently is under development and not fully functional
 
 1. Install the python-anaconda distribution from https://continuum.io/downloads
    (You can also install python and numpy/scipy by hand)
@@ -50,20 +50,17 @@ Installation Windows
 
 3. extract zip file and change in the directory
 
-4. python sgs
-etup.py install
+4. In the terminal::
+
+    python setup.py install
+
+Installation of development version
+-----------------------------------
 
 
 terminal::
 
-  [register with git and automatize a secure connection with your computer]
-  sudo apt-get install git
-  mkdir abce
-  cd abce
-  git init
   git pull git@github.com:DavoudTaghawiNejad/abce.git
-
-  proceed is before
 
 Optional for development you can install sphinx and sphinx-apidoc,
 the system that created this documentation.  sphinx-apidoc
