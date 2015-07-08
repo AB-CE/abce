@@ -33,7 +33,7 @@ class Endowment(abce.Agent, abce.Household):
 
     def all_tests_completed(self):
         if self.round == self.last_round and self.idn == 0:
-            print('Test declare_round_endowment:\t\t\t\tOK')
-            print('Test s.declare_perishable:\t\t\t\tOK')
+            print('Test declare_round_endowment:\t\t\tOK')
+            print('Test s.declare_perishable:\t\t\tOK')
             # utility testnot exaustive!
 

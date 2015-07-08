@@ -54,7 +54,7 @@ class Give(abce.Agent):
         assert all(self.tests.values()), 'not all tests have been run; ABCE workes correctly, restart the unittesting to do all tests %s' % self.tests
         if self.round == self.last_round and self.idn == 0:
             print('Test abce.give:\t\t\t\t\tOK')
-            print('Test abce.message:\t\t\t\t\tOK')
+            print('Test abce.message:\t\t\t\tOK')
             print('Test abce.get_messages:\t\t\t\tOK')
             print('Test abce.get_messages_all:\t\t\tOK')
             print('Test abce.get_messages_biased:\t\t\tOK')

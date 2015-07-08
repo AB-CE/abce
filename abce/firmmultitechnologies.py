@@ -14,6 +14,7 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations under
 # the License.
+#pylint: disable=W0201
 """ The FirmMultiTechnologies class allows you to set up firm agents with
 complex or several production functions. While the simple Firm automatically
 handles one technology, FirmMultiTechnologies allows you to manage several
@@ -24,11 +25,6 @@ a variable. :meth:`abce.FirmMultiTechnologies.produce` and similar
 methods use this variable to produce with the according technology.
 """
 from __future__ import division
-import compiler
-try:
-    import pyparsing as pp
-except ImportError:
-    pass
 from collections import defaultdict
 import numpy as np
 from abce.tools import epsilon, NotEnoughGoods
@@ -68,7 +64,8 @@ class FirmMultiTechnologies:
                 dictionary containing the amount of input good used for the production.
 
         Raises:
-            NotEnoughGoods: This is raised when the goods are insufficient.
+            NotEnoughGoods:
+                This is raised when the goods are insufficient.
 
         Example::
 
@@ -79,108 +76,141 @@ class FirmMultiTechnologies:
             except NotEnoughGoods:
                 A.produce(bike_production_function, bike)
         """
-        for good in production_function['input']:
+        for good in production_function.use.keys():
             if self._haves[good] < input_goods[good] - epsilon:
                 raise NotEnoughGoods(self.name, good, (input_goods[good] - self._haves[good]))
-        for good in production_function['input']:
-            self._haves[good] -= input_goods[good]
-        goods_vector = {good: 0 for good in production_function['output']}
-        goods_vector.update(input_goods)
-        exec(production_function['code'], {}, goods_vector)
-        for good in production_function['output']:
-            self._haves[good] += goods_vector[good]
-        return dict([(good, goods_vector[good]) for good in production_function['output']])
 
-    def create_production_function(self, formula, typ='from_formula'):
-        """ creates a production function from formula
+        for good, use in production_function.use.iteritems():
+            self._haves[good] -= input_goods[good] * use
+
+        production = {}
+        output_dict =  production_function.production(input_goods)
+        for good in output_dict.keys():
+            self._haves[good] += output_dict[good]
+
+
+    def create_production_function_one_good(self, formula, output, use):
+        """ creates a production function, that produces one good
 
         A production function is a production process that produces the
         given input  goods according to the formula to the output
-        goods.
+        goods and uses up some or all of the input goods.
         Production_functions are than used as an argument in produce,
         predict_vector_produce and predict_output_produce.
 
         create_production_function_fast is faster but more complicated
 
         Args:
-            "formula": equation or set of equations that describe the
-            production process. (string) Several equation are separated by a ;
+
+            formula:
+                this is a method, that takes the possession dictionary
+                as an input and returns a float.
+
+            output:
+                the name of the good 'string'
+
+            use:
+                a dictionary of how much percent of each good is used up in the
+                process
+
 
         Returns:
+
             A production_function that can be used in produce etc.
 
-        Example:
-            formula = 'golf_ball = (ball) * (paint / 2); waste = 0.1 * paint'
-            self.production_function = self.create_production_function(formula)
-            self.produce(self.production_function, {'ball' : 1, 'paint' : 2}
+        Example::
 
-        //exponential is ** not ^
+            def __init__(self):
+                ...
+                def production_function(goods)
+                    return goods['a'] ** 0.25 * goods['b'] ** 0.5 * goods['c'] ** 0.25
+
+                use = {'a': 1, 'b': 0.1, 'c': 0}
+
+                self.production_function = self.create_production_function(production_function, use)
+
+            def production(self):
+                self.produce(self.production_function, {'a' : 1, 'b' : 2}
         """
-        try:
-            parse_single_output = pp.Word(pp.alphas + "_", pp.alphanums + "_") + pp.Suppress('=') + pp.Suppress(pp.Word(pp.alphanums + '*/+-().[]{} '))
-            parse_output = pp.delimitedList(parse_single_output, ';')
-            parse_single_input = pp.Suppress(pp.Word(pp.alphas + "_", pp.alphanums + "_")) + pp.Suppress('=') \
-                    + pp.OneOrMore(pp.Suppress(pp.Optional(pp.Word(pp.nums + '*/+-().[]{} '))) + pp.Word(pp.alphas + "_", pp.alphanums + "_"))
-            parse_input = pp.delimitedList(parse_single_input, ';')
-        except NameError:
-            print('pyparsing could not be loaded without pyparsing, create_production_function does not work use create_production_function instead')
-            raise
-
-        production_function = {}
-        production_function['type'] = typ
-        production_function['formula'] = formula
-        production_function['code'] = compiler.compile(formula, '<string>', 'exec')
-        production_function['output'] = list(parse_output.parseString(formula))
-        production_function['input'] = list(parse_input.parseString(formula))
+        dict_formula = lambda goods: {output: formula(goods)}
+        production_function = ProductionFunction()
+        production_function.production = dict_formula
+        production_function.use = use
         return production_function
 
-    def create_production_function_fast(self, formula, output_goods, input_goods, typ='from_formula'):
-        """ creates a production function from formula, with given outputs
+    def create_production_function_many_goods(self, formula):
+        """ creates a production function that produces many goods
 
         A production function is a production process that produces the
-        given input goods according to the formula to the output
-        goods.
-        Production_functions are then used as an argument in produce,
+        given input  goods according to the formula to the output
+        goods and uses up some or all of the input goods.
+        Production_functions are than used as an argument in produce,
         predict_vector_produce and predict_output_produce.
 
+        create_production_function_fast is faster but more complicated
+
         Args:
-            "formula": equation or set of equations that describe the
-            production process. (string) Several equation are separated by a ;
-            [output]: list of all output goods (left hand sides of the equations)
+
+            formula:
+                this is a method, that takes a goods dictionary
+                as an input and returns a dictionary with the newly created
+                goods.
+
+            use:
+                a dictionary of how much percent of each good is used up in the
+                process
+
 
         Returns:
+
             A production_function that can be used in produce etc.
 
-        Example:
-            formula = 'golf_ball = (ball) * (paint / 2); waste = 0.1 * paint'
-            self.production_function = self.create_production_function(formula, 'golf', ['waste', 'paint'])
-            self.produce(self.production_function, {'ball' : 1, 'paint' : 2}
+        Example::
+
+            def __init__(self):
+                ...
+                def production_function(goods)
+                    output = {'soft_rubber':goods['a'] ** 0.25 * goods['b'] ** 0.5 * goods['c'] ** 0.25,
+                              'hard_rubber':goods['a'] ** 0.1 * goods['b'] ** 0.2 * goods['c'] ** 0.01,
+                              'waste' goods['b'] / 2}
+                    return output
+
+                use = {'a': 1, 'b': 0.1, 'c': 0}
+
+                self.production_function = self.create_production_function(production_function, use)
+
+            def production(self):
+                self.produce(self.production_function, {'a' : 1, 'b' : 2}
 
         //exponential is ** not ^
         """
-        production_function = {}
-        production_function['type'] = typ
-        production_function['formula'] = formula
-        production_function['code'] = compiler.compile(formula, '<string>', 'exec')
-        production_function['output'] = output_goods
-        production_function['input'] = input_goods
+        production_function = ProductionFunction()
+        production_function.production = formula
+        production_function.use = use
         return production_function
 
     def create_cobb_douglas(self, output, multiplier, exponents):
         """ creates a Cobb-Douglas production function
 
         A production function is a production process that produces the
-        given input  goods according to the formula to the output
+        given input  goods according to the Cobb-Douglas formula to the output
         good.
         Production_functions are than used as an argument in produce,
         predict_vector_produce and predict_output_produce.
 
         Args:
-            'output': Name of the output good
-            multiplier: Cobb-Douglas multiplier
-            {'input1': exponent1, 'input2': exponent2 ...}: dictionary
-            containing good names 'input' and corresponding exponents
+
+            'output':
+                Name of the output good
+
+            multiplier:
+                Cobb-Douglas multiplier
+
+            {'input1': exponent1, 'input2': exponent2 ...}:
+                dictionary containing good names 'input' and corresponding exponents
+
         Returns:
+
             A production_function that can be used in produce etc.
 
         Example:
@@ -188,67 +218,50 @@ class FirmMultiTechnologies:
         self.produce(self.plastic_production_function, {'oil' : 20, 'labor' : 1})
 
         """
-        ordered_input = [input_good for input_good in exponents]
-        formula = output + '=' + str(multiplier) + '*' + '*'.join('(%s)**%f' % (input_good, exponent) for input_good, exponent in exponents.iteritems())
-        optimization = '*'.join(['(%s)**%f' % ('%s', exponents[good]) for good in ordered_input])
-        production_function = {}
-        production_function['type'] = 'cobb-douglas'
-        production_function['parameters'] = exponents
-        production_function['formula'] = formula
-        production_function['multiplier'] = multiplier
-        production_function['code'] = compiler.compile(formula, '<string>', 'exec')
-        production_function['output'] = [output]
-        production_function['input'] = ordered_input
-        production_function['optimization'] = optimization
+        def production_function(goods):
+            return multiplier * np.prod([goods[name] ** exponent for name, exponent in exponents.iteritems()])
+
+        dict_formula = lambda goods: {output: production_function(goods)}
+        production_function.production = dict_formula
+        production_function.use = {name: 1 for name in exponents.keys()}
         return production_function
 
 
-    def create_leontief(self, output, utilization_quantities, isinteger=''):
+    def create_leontief(self, output, utilization_quantities):
         """ creates a Leontief production function
 
-
         A production function is a production process that produces the
-        given input  goods according to the formula to the output
+        given input  goods according to the Leontief formula to the output
         good.
         Production_functions are than used as an argument in produce,
         predict_vector_produce and predict_output_produce.
 
-        Warning, when you produce with a Leontief production_function all goods you
-        put in the produce(...) function are used up. Regardless whether it is an
-        efficient or wasteful bundle
-
         Args:
+
             'output':
                 Name of the output good
-            utilization_quantities:
-                a dictionary containing good names and corresponding exponents
-            isinteger='int' or isinteger='':
-                When 'int' produce only integer amounts of the good.
-                When '', produces floating amounts. (default)
+
+            multiplier:
+                dictionary of multipliers it min(good1 * a, good2 * b, good3 * c...)
+
+            {'input1': exponent1, 'input2': exponent2 ...}:
+                dictionary containing good names 'input' and corresponding exponents
 
         Returns:
+
             A production_function that can be used in produce etc.
 
         Example:
-        self.car_technology = self.create_leontief('car', {'tire' : 4, 'metal' : 1000, 'plastic' : 20}, 1)
-        two_cars = {'tire': 8, 'metal': 2000, 'plastic':  40}
-        self.produce(self.car_technology, two_cars)
+        self.car_production_function = self.create_leontief('car', {'wheel' : 4, 'chassi' : 1})
+        self.produce(self.car_production_function, {'wheel' : 20, 'chassi' : 5})
+
         """
-        uqi = utilization_quantities.iteritems()
-        ordered_input = [input_good for input_good in utilization_quantities]
-        coefficients = ','.join('%s/%f' % (input_good, input_quantity) for input_good, input_quantity in uqi)
-        formula = output + ' = ' + isinteger + '(min([' + coefficients + ']))'
-        opt_coefficients = ','.join('%s/%f' % ('%s', utilization_quantities[good]) for good in ordered_input)
-        optimization = isinteger + '(min([' + opt_coefficients + ']))'
-        production_function = {}
-        production_function['type'] = 'leontief'
-        production_function['parameters'] = utilization_quantities
-        production_function['formula'] = formula
-        production_function['isinteger'] = isinteger
-        production_function['code'] = compiler.compile(formula, '<string>', 'exec')
-        production_function['output'] = [output]
-        production_function['input'] = ordered_input
-        production_function['optimization'] = optimization
+        def production_function(goods):
+            return min([goods[name] * factor for name, factor in utilization_quantities.iteritems()])
+
+        dict_formula = lambda goods: {output: production_function(goods)}
+        production_function.production = dict_formula
+        production_function.use = {name: 1 for name in utilization_quantities.keys()}
         return production_function
 
     def predict_produce_output(self, production_function, input_goods):
@@ -276,14 +289,7 @@ class FirmMultiTechnologies:
             >>> {'car': 2}
 
         """
-        goods_vector = input_goods.copy()
-        for good in production_function['output']:
-            goods_vector[good] = None
-        exec(production_function['code'], {}, goods_vector)
-        output = {}
-        for good in production_function['output']:
-            output[good] = goods_vector[good]
-        return output
+        pass
 
 
     def predict_produce(self, production_function, input_goods):
@@ -310,17 +316,7 @@ class FirmMultiTechnologies:
          else:
             A.produce(car_production_function, two_cars)
         """
-        goods_vector = input_goods.copy()
-        result = defaultdict(int)
-        for good in production_function['output']:
-            goods_vector[good] = None
-        exec(production_function['code'], {}, goods_vector)
-        for goods in production_function['output']:
-            result[good] = goods_vector[good]
-        for goods in production_function['input']:
-            result[good] = -goods_vector[good]
-        return result
-
+        pass
 
     def net_value(self, goods_vector, price_vector):
         """ Calculates the net_value of a goods_vector given a price_vector
@@ -357,3 +353,6 @@ class FirmMultiTechnologies:
         for good in input_goods:
             if self._haves[good] < input_goods[good] - epsilon:
                 raise NotEnoughGoods(self.name, good, input_goods[good] - self._haves[good])
+
+class ProductionFunction:
+    pass
