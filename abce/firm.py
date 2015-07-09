@@ -26,15 +26,18 @@ save_err = np.seterr(invalid='ignore')
 
 class Firm(FirmMultiTechnologies):
     """ The firm class allows you to declare a production function for a firm.
-    :meth:`~Firm.set_leontief`, :meth:`~abecagent.Firm.set_production_function`
-    :meth:`~Firm.set_cobb_douglas`,
-    :meth:`~Firm.set_production_function_fast`
-    (FirmMultiTechnologies, allows you to declare several) With :meth:`~Firm.produce`
-    and :meth:`~Firm.produce_use_everything` you can produce using the
+    :meth:`abce.Firm.set_leontief`, :meth:`abce.Firm.set_production_function`
+    :meth:`abce.Firm.set_cobb_douglas`,
+    :meth:`abce.Firm.set_production_function_fast`
+    (FirmMultiTechnologies, allows you to declare several) With :meth:`abce.Firm.produce`
+    and :meth:`abce.Firm.produce_use_everything` you can produce using the
     according production function. You have several auxiliary functions
     for example to predict the production. When you multiply
-    :meth:`~Firm.predict_produce` with the price vector you get the
+    :meth:`abce.Firm.predict_produce` with the price vector you get the
     profitability of the production.
+
+    If you want to create a firm with more than one production technology, you,
+    should use the :class:`abce.FirmMultiTechnologies` class.
     """
     #TODO Example
     def produce_use_everything(self):
@@ -77,54 +80,93 @@ class Firm(FirmMultiTechnologies):
         """ checks whether the agent has all the goods in the vector input """
         FirmMultiTechnologies.sufficient_goods(self)
 
-    def set_production_function(self, formula, typ='from_formula'):
-        """  sets the firm to use a Cobb-Douglas production function from a
-        formula.
+    def set_production_function(self, formula, output, use):
+        """  Creates the firm's production functions from a formula.
 
-        A production function is a production process that produces the given
-        input given input goods according to the formula to the output goods.
-        Production_functions are than used to produce, predict_vector_produce and
-        predict_output_produce.
+        A production function is a production process that produces a
+        given output good from several input goods. Once you have set
+        a production function you can use :meth:`abce.Firm.produce` to
+        produce.
+
+        If you want to produce more than one output good try
+        :meth:`abce.Firm.set_production_function_many_goods`
+
+        Args:
+
+            formula:
+                this is a method, that takes the possession dictionary
+                as an input and returns a float.
+
+            output:
+                the name of the good 'string'
+
+            use:
+                a dictionary of how much percent of each good is used up in the
+                process
+
+        Example::
+
+            def __init__(self):
+                ...
+                def production_function(goods)
+                    return goods['a'] ** 0.25 * goods['b'] ** 0.5 * goods['c'] ** 0.25
+
+                use = {'a': 1, 'b': 0.1, 'c': 0}
+
+                self.set_production_function(production_function, use)
+
+            def production(self):
+                self.produce({'a' : 1, 'b' : 2}
+        """
+        self._production_function = self.create_production_function_one_good(formula, output, use)
+
+    def set_production_function_many_goods(self, formula, use):
+        """ creates a production function that produces many goods
+
+        A production function is a production process that produces the
+        several output  goods according to the formula to the output
+        goods and uses up some or all of the input goods.
+        Production_functions are than used as an argument in produce,
+        predict_vector_produce and predict_output_produce.
 
         create_production_function_fast is faster but more complicated
 
         Args:
-            "formula": equation or set of equations that describe the
-            production process. (string) Several equation are separated by a ;
+
+            formula:
+                this is a method, that takes a goods dictionary
+                as an input and returns a dictionary with the newly created
+                goods.
+
+            use:
+                a dictionary of how much percent of each good is used up in the
+                process
+
+
+        Returns:
+
+            A production_function that can be used in produce etc.
 
         Example::
 
-            formula = 'golf_ball = (ball) * (paint / 2); waste = 0.1 * paint'
-            self.set_production_function(formula)
-            self.produce({'ball' : 1, 'paint' : 2}
+            def __init__(self):
+                ...
+                def production_function(goods)
+                    output = {'soft_rubber': goods['a'] ** 0.25 * goods['b'] ** 0.5 * goods['c'] ** 0.25,
+                              'hard_rubber': goods['a'] ** 0.1 * goods['b'] ** 0.2 * goods['c'] ** 0.01,
+                              'waste': goods['b'] / 2}
+                    return output
 
-        //exponential is ** not ^
+                use = {'a': 1, 'b': 0.1, 'c': 0}
+
+                self.set_production_function(production_function, use)
+
+            def production(self):
+                self.produce({'a' : 1, 'b' : 2, 'c': 5})
         """
-        self._production_function = self.create_production_function(formula, typ)
+        self._production_function = self.create_production_function_many_goods(formula, use)
 
-    def set_production_function_fast(self, formula, output_goods, input_goods, typ='from_formula'):
-        """  sets the firm to use a Cobb-Douglas production function from a
-        formula, with given outputs
 
-        A production function is a production process that produces the given
-        input given according to the formula to the output goods.
-        Production_functions are than used to produce, predict_vector_produce and
-        predict_output_produce.
-
-        Args:
-            "formula": equation or set of equations that describe the
-            production process. (string) Several equation are separated by a ;
-            [output]: list of all output goods (left hand sides of the equations)
-
-        Example::
-
-            formula = 'golf_ball = (ball) * (paint / 2); waste = 0.1 * paint'
-            self.production_function_fast(formula, 'golf', ['waste'])
-            self.produce(self, {'ball' : 1, 'paint' : 2}
-
-        //exponential is ** not ^
-        """
-        self._production_function = self.create_production_function_fast(formula, output_goods, input_goods, typ)
 
     def set_cobb_douglas(self, output, multiplier, exponents):
         """  sets the firm to use a Cobb-Douglas production function.
@@ -147,7 +189,7 @@ class Firm(FirmMultiTechnologies):
         """
         self._production_function = self.create_cobb_douglas(output, multiplier, exponents)
 
-    def set_leontief(self, output, utilization_quantities, multiplier=1, isinteger='int'):
+    def set_leontief(self, output, utilization_quantities, multiplier=1):
         """ sets the firm to use a Leontief production function.
 
         A production function is a production process that produces the
@@ -172,46 +214,125 @@ class Firm(FirmMultiTechnologies):
             two_cars = {'tire': 8, 'metal': 2000, 'plastic':  40}
             self.produce(two_cars)
         """
-        self._production_function = self.create_leontief(output, utilization_quantities, isinteger)
+        self._production_function = self.create_leontief(output, utilization_quantities)
 
-    def predict_produce_output_simple(self, input_goods):
-        """ Calculates the output of a production (but does not produce)
+    def predict_produce_output(self, input_goods):
+        """ Predicts the output of a certain input vector and for a given
+            production function
 
             Predicts the production of produce(production_function, input_goods)
-            see also: Predict_produce(.) as it returns a vector
+
+        Args::
+
+            production_function:
+                A production_function produced with
+                create_production_function, create_cobb_douglas or create_leontief
+            input_goods {'input_good1': amount1, 'input_good2': amount2 ...}:
+                dictionary containing the amount of input good used for the production.
+
+        Returns::
+
+            A dictionary of the predicted output
+
+
+        Example::
+
+            print(A.predict_produce_output(car_production_function, two_cars))
+            >>> {'car': 2}
+
+        """
+        return self._predict_produce_output(self._production_function, input_goods)
+
+
+    def predict_produce_input(self, input_goods):
+        """ Returns a vector with input of goods
+
+            Predicts the use of input goods, for a production.
+
 
         Args:
-            {'input_good1': amount1, 'input_good2': amount2 ...}:
+            production_function:
+                A production_function produced with
+                create_production_function, create_cobb_douglas or create_leontief
+            input_goods: {'input_good1': amount1, 'input_good2': amount2 ...}:
                 dictionary containing the amount of input good used for the production.
 
         Example::
 
-            print(A.predict_output_produce(two_cars))
-            >>> {'car': 2}
+            print(A.predict_produce_input(car_production_function, two_cars))
+
+            >>> {'wheels': 4, 'chassi': 1}
 
         """
-        return self.predict_produce_output(self._production_function, input_goods)
+        return self._predict_produce_input(self._production_function, input_goods)
 
-    def predict_produce_simple(self, input_goods):
-        """ Returns a vector with input (negative) and output (positive) goods
+    def net_value(self, produced_goods, used_goods, price_vector):
+        """ Calculates the net_value of a goods_vector given a price_vector
 
-            Predicts the production of produce(production_function, input_goods) and
-            the use of input goods.
-            net_value(.) uses a price_vector (dictionary) to calculate the
-            net value of this production.
+            goods_vectors are vector, where the input goods are negative and
+            the output goods are positive. When we multiply every good with its
+            according price we can calculate the net_value of the corresponding
+            production.
+            goods_vectors are produced by predict_produce(.)
+
 
         Args:
-            {'input_good1': amount1, 'input_good2': amount2 ...}:
-                dictionary containing the amount of input good used for the production.
+            produced_goods:
+                a dictionary with goods and quantities
+
+            used_goods:
+            e.G. {'car': 1, 'metal': -1200, 'tire': -4, 'plastic': -21}
+            price_vector: a dictionary with goods and prices (see example)
 
         Example::
 
          prices = {'car': 50000, 'tire': 100, 'metal': 10, 'plastic':  0.5}
-         value_one_car = net_value(predict_produce(one_car), prices)
-         value_two_cars = net_value(predict_produce(two_cars), prices)
+         value_one_car = net_value(predict_produce(car_production_function, one_car), prices)
+         value_two_cars = net_value(predict_produce(car_production_function, two_cars), prices)
          if value_one_car > value_two_cars:
-             A.produce(one_car)
+            produce(car_production_function, one_car)
          else:
-             A.produce(two_cars)
+            produce(car_production_function, two_cars)
         """
-        return self.predict_produce(self._production_function, input_goods)
+        return self._net_value(produced_goods, used_goods, price_vector)
+
+
+    def predict_net_value(self, input_goods, price_vector):
+        """ Predicts the net value of a production, given a price vector
+
+
+
+
+        Args:
+            production_function:
+                a production function
+
+            input_goods:
+                the goods to be used in the simulated production
+
+            price_vector:
+                vector of prices for input and output goods
+
+        Example::
+
+            input_goods = {'wheels': 4, 'chassi': 1}
+            price_vector = {'wheels': 10, 'chassi': 100, 'car':1000}
+            self.predict_net_value(self.consumption_good_production_function, input_goods, price_vector)
+
+            >>> 860
+
+
+        """
+        return self._predict_net_value(self._production_function, input_goods, price_vector)
+
+
+
+
+    def sufficient_goods(self, input_goods):
+        """ checks whether the agent has all the goods in the vector input """
+        self.sufficient_goods(sufficient_goods)
+
+
+class ProductionFunction:
+    pass
+

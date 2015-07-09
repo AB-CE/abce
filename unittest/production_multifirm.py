@@ -1,6 +1,7 @@
 from __future__ import division
 import abce
 from abce.tools import *
+from collections import defaultdict
 
 
 class ProductionMultifirm(abce.Agent, abce.FirmMultiTechnologies):
@@ -47,10 +48,17 @@ class ProductionMultifirm(abce.Agent, abce.FirmMultiTechnologies):
         assert self.possession('a') == 1, self.possession('a')
         assert self.possession('b') == 1.8, self.possession('b')
         assert self.possession('consumption_good') == 1 ** 0.5 * 2, self.possession('consumption_good')
-        self.destroy('a', 1)
-        self.destroy('b', 1.8)
-        self.destroy('consumption_good', 1 ** 0.5 * 2)
+        self._haves = defaultdict(float)  # resets all possessions to zero
 
+        output = self.predict_produce_output(self.pf, {'a': 10, 'b': 10})
+        assert output['consumption_good'] == max(10 ** 2, 10 ** 0.5 * 10)
+
+        input = self.predict_produce_input(self.pf, {'a': 10, 'b': 10})
+        assert input['a'] == 10, input['a']
+        assert input['b'] == 1, input['b']
+
+        nv = self.net_value(output, input, {'consumption_good': 10, 'a': 1, 'b': 2})
+        assert nv == 100 * 10 - (10 * 1 + 1 * 2), nv
 
         self.create('a', 2)
         self.create('b', 2)
@@ -58,9 +66,8 @@ class ProductionMultifirm(abce.Agent, abce.FirmMultiTechnologies):
 
         assert self.possession('a') == 1, self.possession('a')
         assert self.possession('b') == 0, self.possession('b')
-        assert self.possession('consumption_good') == 5 * 1 ** 2 * 2 * 1, self.possession('consumption_good')
-        self.destroy('a', 1)
-        self.destroy('consumption_good', 5 * 1 ** 2 * 2 * 1)
+        assert self.possession('consumption_good') == 5 * 1 ** 2 * 2 ** 1, self.possession('consumption_good')
+        self._haves = defaultdict(float)
 
         self.create('a', 2)
         self.create('b', 2)
@@ -69,8 +76,7 @@ class ProductionMultifirm(abce.Agent, abce.FirmMultiTechnologies):
         assert self.possession('a') == 1, self.possession('a')
         assert self.possession('b') == 0, self.possession('b')
         assert self.possession('consumption_good') == min(1 * 3, 2 * 1), self.possession('consumption_good')
-        self.destroy('a', 1)
-        self.destroy('consumption_good', min(1 * 3, 2 * 1))
+        self._haves = defaultdict(float)
 
         self.create('a', 10)
         self.create('b', 10)
@@ -83,22 +89,8 @@ class ProductionMultifirm(abce.Agent, abce.FirmMultiTechnologies):
         assert self.possession('soft_rubber') == 1 ** 0.25 * 2 ** 0.5 * 5 **0.25, self.possession('soft_rubber')
         assert self.possession('hard_rubber') == 1 ** 0.1 * 2 ** 0.2 * 5 ** 0.01, self.possession('hard_rubber')
         assert self.possession('waste') == 2 / 2, self.possession('waste')
-        self.destroy('a', self.possession('a'))
-        self.destroy('b', self.possession('b'))
-        self.destroy('c', self.possession('c'))
-        self.destroy('soft_rubber', self.possession('soft_rubber'))
-        self.destroy('hard_rubber', self.possession('hard_rubber'))
-        self.destroy('waste', self.possession('waste'))
+        self._haves = defaultdict(float)
 
-        output = self.predict_produce_output(self.pf, {'a': 10, 'b': 10})
-        assert output['consumption_good'] == max(10 ** 2, 10 ** 0.5 * 10)
-
-        input = self.predict_produce_input(self.pf, {'a': 10, 'b': 10})
-        assert input['a'] == 10, input['a']
-        assert input['b'] == 1, input['b']
-
-        nv = self.net_value(output, input, {'consumption_good': 10, 'a': 1, 'b': 2})
-        assert nv == 100 * 10 - (10 * 1 + 1 * 2), nv
 
 
         input_goods = {'wheels': 4, 'chassi': 1}

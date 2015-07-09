@@ -1,7 +1,6 @@
 # Copyright 2012 Davoud Taghawi-Nejad
 #
 # Module Author: Davoud Taghawi-Nejad
-#
 # ABCE is open-source software. If you are using ABCE for your research you are
 # requested the quote the use of this software.
 #
@@ -140,11 +139,14 @@ class FirmMultiTechnologies:
     def create_production_function_many_goods(self, formula, use):
         """ creates a production function that produces many goods
 
-        A production function is a production process that produces the
-        given input  goods according to the formula to the output
-        goods and uses up some or all of the input goods.
-        Production_functions are than used as an argument in produce,
-        predict_vector_produce and predict_output_produce.
+        A production function is a production process that produces
+        several output goods from several input goods. It does so
+        according to the formula given.
+        Input goods are usually partially or completely used up.
+        Production_functions can then ben used as an argument in
+        :meth:`abce.FirmMultiTechnologies.produce`,
+        :meth:`abce.FirmMultiTechnologies._predict_produce_output`
+        :meth:`abce.FirmMultiTechnologies._predict_produce_input`
 
         create_production_function_fast is faster but more complicated
 
@@ -261,6 +263,9 @@ class FirmMultiTechnologies:
         production_function.use = {name: 1 for name in utilization_quantities.keys()}
         return production_function
 
+    def _predict_produce_output(self, production_function, input_goods):
+        return production_function.production(input_goods)
+
     def predict_produce_output(self, production_function, input_goods):
         """ Predicts the output of a certain input vector and for a given
             production function
@@ -282,12 +287,17 @@ class FirmMultiTechnologies:
 
         Example::
 
-            print(A.predict_produce_output(car_production_function, two_cars))
+            print(A._predict_produce_output(car_production_function, two_cars))
             >>> {'car': 2}
 
         """
-        return production_function.production(input_goods)
+        return self._predict_produce_output(production_function, input_goods)
 
+    def _predict_produce_input(self, production_function, input_goods):
+        used_goods = {}
+        for good, use in production_function.use.iteritems():
+            used_goods[good] = input_goods[good] * use
+        return used_goods
 
     def predict_produce_input(self, production_function, input_goods):
         """ Returns a vector with input of goods
@@ -304,15 +314,17 @@ class FirmMultiTechnologies:
 
         Example::
 
-            print(A.predict_produce_input(car_production_function, two_cars))
+            print(A._predict_produce_input(car_production_function, two_cars))
 
             >>> {'wheels': 4, 'chassi': 1}
 
         """
-        used_goods = {}
-        for good, use in production_function.use.iteritems():
-            used_goods[good] = input_goods[good] * use
-        return used_goods
+        return self._predict_produce_input(production_function, input_goods)
+
+    def _net_value(self, produced_goods, used_goods, price_vector):
+        revenue = sum([price_vector[good] * quantity for good, quantity in produced_goods.items()])
+        cost = sum([price_vector[good] * quantity for good, quantity in used_goods.items()])
+        return revenue - cost
 
     def net_value(self, produced_goods, used_goods, price_vector):
         """ Calculates the net_value of a goods_vector given a price_vector
@@ -342,9 +354,12 @@ class FirmMultiTechnologies:
          else:
             produce(car_production_function, two_cars)
         """
-        revenue = sum([price_vector[good] * quantity for good, quantity in produced_goods.items()])
-        cost = sum([price_vector[good] * quantity for good, quantity in used_goods.items()])
-        return revenue - cost
+        return self._net_value(produced_goods, used_goods, price_vector)
+
+    def _predict_net_value(self, production_function, input_goods, price_vector):
+        output = self._predict_produce_output(production_function, input_goods)
+        input = self._predict_produce_input(production_function, input_goods)
+        return self.net_value(output, input, price_vector)
 
     def predict_net_value(self, production_function, input_goods, price_vector):
         """ Predicts the net value of a production, given a price vector
@@ -372,10 +387,7 @@ class FirmMultiTechnologies:
 
 
         """
-        output = self.predict_produce_output(production_function, input_goods)
-        input = self.predict_produce_input(production_function, input_goods)
-        return self.net_value(output, input, price_vector)
-
+        return self._predict_net_value(production_function, input_goods, price_vector)
 
 
     def sufficient_goods(self, input_goods):

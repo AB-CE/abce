@@ -6,6 +6,7 @@ from give import Give  # tests give and messaging
 from logger_test import LoggerTest
 from endowment import Endowment
 from production_multifirm import ProductionMultifirm
+from production_firm import ProductionFirm
 from abce import *
 
 
@@ -21,6 +22,7 @@ for parameters in read_parameters('simulation_parameters.csv'):
         ('buy', 'panel'),
         ('endowment', 'Iconsume'),
         ('productionmultifirm', 'production'),
+        ('productionfirm', 'production'),
         ('all', 'all_tests_completed')]
     s.add_action_list(action_list)
 
@@ -36,6 +38,7 @@ for parameters in read_parameters('simulation_parameters.csv'):
     s.build_agents(Endowment, 2)  # tests declare_round_endowment and declare_perishable
     s.build_agents(LoggerTest, 1)
     s.build_agents(ProductionMultifirm, 1)
+    s.build_agents(ProductionFirm, 5)
 
 
 
