@@ -20,41 +20,27 @@ class Communication(mp.Process):
         agents_finished, total_number = 0, 0
         total_number_known = False
         self.ready.put('working')
-        while True:
-            try:
+        try:
+            while True:
                 msg = self.in_soc.get()
-            except KeyboardInterrupt:
-                print('KeyboardInterrupt: _Communication: Waiting for messages')
-                if total_number_known:
-                    print("total number known")
-                    print("%i of %i ended communication" % (agents_finished, total_number))
-                else:
-                    print("total number not known")
-                break
-            if msg[0] == '!':
-                if msg[1] == '.':
-                    agents_finished += 1
-                if msg[1] == 's':
-                    self.shout.put(msg[2:])
-                    continue
-                elif msg[1] == '+':
-                    total_number += int(msg[2])
-                    continue
-                elif msg[1] == ')':
-                    total_number_known = True  ###### DONT COMMIT ) and }
-                elif msg[1] == '}':
-                    total_number_known = True
-                elif msg[1] == '!':
-                    if msg[2] == 'end_simulation':
-                        break
-                if total_number_known:
+                if msg[0] == '!':
+                    if msg[1] == '.':
+                        agents_finished += 1
+                    elif msg[1] == '+':
+                        total_number += int(msg[2])
+                        continue
+                    elif msg[1] == '!':
+                        if msg[2] == 'end_simulation':
+                            break
                     if agents_finished == total_number:
                         agents_finished, total_number = 0, 0
                         total_number_known = False
                         self.ready.put('.')
-            else:
-                if msg[1] == 'all':
-                    for agent in self.agents_backend['all'][msg[0]]:
-                        agent.put(msg[2:])
                 else:
-                    self.agents_backend[msg[0]][msg[1]].put(msg[2])
+                    if msg[1] == 'all':
+                        for agent in self.agents_backend['all'][msg[0]]:
+                            agent.put(msg[2:])
+                    else:
+                        self.agents_backend[msg[0]][msg[1]].put(msg[2])
+        except KeyboardInterrupt:
+                print('KeyboardInterrupt: _Communication: Waiting for messages')

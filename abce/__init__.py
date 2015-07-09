@@ -428,7 +428,7 @@ class Simulation:
                 self._add_agents_to_wait_for(len(self.agents_command_socket[group]))
                 for queue in self.agents_command_socket[group]:
                     queue.put(action)
-                self._wait_for_agents_than_signal_end_of_comm()
+                self._wait_for_agents()
 
             for queue in self.agents_command_socket['all']:
                 queue.put('_advance_round')
@@ -637,16 +637,7 @@ class Simulation:
     def _add_agents_to_wait_for(self, number):
         self.communication_frontend.put(['!', '+', str(number)])
 
-    def _wait_for_agents_than_signal_end_of_comm(self):
-        self.communication_frontend.put(['!', '}'])
-        try:
-            self.ready.get()
-        except KeyboardInterrupt:
-            self.gracefull_exit()
-            sys.exit(-1)
-
     def _wait_for_agents(self):
-        self.communication_frontend.put(['!', ')'])
         try:
             self.ready.get()
         except KeyboardInterrupt:
