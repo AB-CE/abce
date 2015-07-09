@@ -315,21 +315,20 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
         self.out.put(['!', '!', 'register_agent', (self.group, self.idn)])
         try:
             while True:
-                try:
-                    command = self.commands.get()
-                except KeyboardInterrupt:
-                    break
-                try:
-                    self._methods[command]()
-                except KeyError:
-                    if command not in self._methods:
-                        raise SystemExit('The method - ' + command + ' - called in the agent_list is not declared (' + self.name)
-                    else:
-                        raise
-
+                command = self.commands.get()
+                self._clearing__end_of_subround()
+                self._methods[command]()
                 if command[0] != '_':
                     self.__reject_polled_but_not_accepted_offers()
                     self.__signal_finished()
+        except KeyboardInterrupt:
+            pass
+        except KeyError:
+            time.sleep(random.random())
+            if command not in self._methods:
+                raise SystemExit('The method - ' + command + ' - called in the agent_list is not declared (' + self.name)
+            else:
+                raise
         except:
             time.sleep(random.random())
             raise
@@ -402,6 +401,7 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
         '_r': deletes an offer that the other agent rejected
         '_g': recive a 'free' good from another party
         """
+        self.messages_in.put(['.', '.'])
         while True:
             typ, msg = self.messages_in.get()
             if typ == '.':

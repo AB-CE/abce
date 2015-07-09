@@ -431,8 +431,6 @@ class Simulation:
                 for queue in self.agents_command_socket[group]:
                     queue.put(action)
                 self._wait_for_agents_than_signal_end_of_comm()
-                for queue in self.agents_command_socket['all']:
-                    queue.put('_clearing__end_of_subround')
 
             for queue in self.agents_command_socket['all']:
                 queue.put('_advance_round')

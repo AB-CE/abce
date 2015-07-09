@@ -42,11 +42,9 @@ class Communication(mp.Process):
                     total_number += int(msg[2])
                     continue
                 elif msg[1] == ')':
-                    total_number_known = True
-                    send_end_of_communication_sign = False
+                    total_number_known = True  ###### DONT COMMIT ) and }
                 elif msg[1] == '}':
                     total_number_known = True
-                    send_end_of_communication_sign = True
                 elif msg[1] == '!':
                     if msg[2] == 'register_agent':
                         all_agents.append(msg[3])
@@ -58,9 +56,6 @@ class Communication(mp.Process):
                         agents_finished, total_number = 0, 0
                         total_number_known = False
                         self.ready.put('.')
-                        if send_end_of_communication_sign:
-                            for agent in self.agents_backend['all']:
-                                agent.put(['.', '.'])   ########## TODO e
             else:
                 if msg[1] == 'all':
                     for agent in self.agents_backend['all'][msg[0]]:
