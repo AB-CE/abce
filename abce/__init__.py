@@ -414,8 +414,6 @@ class Simulation:
 
         self._write_description_file()
         self._displaydescribtion()
-        self._add_agents_to_wait_for(self.num_agents)
-        self._wait_for_agents()
 
         start_time = time.time()
 

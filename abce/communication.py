@@ -20,7 +20,6 @@ class Communication(mp.Process):
         agents_finished, total_number = 0, 0
         total_number_known = False
         self.ready.put('working')
-        all_agents = []
         while True:
             try:
                 msg = self.in_soc.get()
@@ -46,10 +45,7 @@ class Communication(mp.Process):
                 elif msg[1] == '}':
                     total_number_known = True
                 elif msg[1] == '!':
-                    if msg[2] == 'register_agent':
-                        all_agents.append(msg[3])
-                        agents_finished += 1
-                    elif msg[2] == 'end_simulation':
+                    if msg[2] == 'end_simulation':
                         break
                 if total_number_known:
                     if agents_finished == total_number:

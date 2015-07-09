@@ -312,7 +312,6 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
         return quantity_destroyed
 
     def run(self):
-        self.out.put(['!', '!', 'register_agent', (self.group, self.idn)])
         try:
             while True:
                 command = self.commands.get()
