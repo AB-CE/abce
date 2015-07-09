@@ -635,7 +635,7 @@ class Simulation:
         self.build_agents(AgentClass, agents_parameters=agents_parameters)
 
     def _add_agents_to_wait_for(self, number):
-        self.communication_frontend.put(['!', '+', str(number)])
+        self.communication_frontend.put(['+', str(number)])
 
     def _wait_for_agents(self):
         try:
@@ -645,7 +645,7 @@ class Simulation:
             sys.exit(-1)
 
     def _end_Communication(self):
-        self.communication_frontend.put(['!', '!', 'end_simulation'])
+        self.communication_frontend.put(['+', 'end_Communication'])
 
     def _write_description_file(self):
         description = open(

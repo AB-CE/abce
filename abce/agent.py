@@ -319,7 +319,7 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
                 self._methods[command]()
                 if command[0] != '_':
                     self.__reject_polled_but_not_accepted_offers()
-                    self.__signal_finished()
+                    self._signal_finished()
         except KeyboardInterrupt:
             pass
         except KeyError:
@@ -427,10 +427,10 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
             else:
                 self._msgs.setdefault(typ, []).append(Message(msg))
 
-    def __signal_finished(self):
+    def _signal_finished(self):
         """ signals modelswarm via communication that the agent has send all
         messages and finish his action """
-        self.out.put(['!', '.'])
+        self.out.put('.')
 
     def _send(self, receiver_group, receiver_idn, typ, msg):
         """ sends a message to 'receiver_group', who can be an agent, a group or
