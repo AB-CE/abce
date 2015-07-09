@@ -65,7 +65,7 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
             def __init__(self, simulation_parameters, agent_parameters, _pass_to_engine):
             abceagent.Agent.__init__(self, *_pass_to_engine)
     """
-    def __init__(self, idn, group, trade_logging, commands, backend, database, logger, frontend):
+    def __init__(self, idn, group, trade_logging, commands, backend_send, backend_recv, database, logger, frontend):
         multiprocessing.Process.__init__(self)
         self.idn = idn
         """ self.idn returns the agents idn READ ONLY!"""
@@ -83,7 +83,8 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
 
         self.database_connection = database
         self.logger_connection = logger
-        self.messages_in = backend
+        self.messages_in = backend_recv
+        self.messages_in_send = backend_send
         self._methods = {}
         self._register_actions()
         if trade_logging == 'individual':
@@ -314,7 +315,7 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
     def run(self):
         try:
             while True:
-                command = self.commands.get()
+                command = self.commands.recv()
                 self._clearing__end_of_subround()
                 self._methods[command]()
                 if command[0] != '_':
@@ -400,9 +401,9 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
         '_r': deletes an offer that the other agent rejected
         '_g': recive a 'free' good from another party
         """
-        self.messages_in.put(['.', '.'])
+        self.messages_in_send.send(['.', '.'])
         while True:
-            typ, msg = self.messages_in.get()
+            typ, msg = self.messages_in.recv()
             if typ == '.':
                 break
             if   typ == '_o':

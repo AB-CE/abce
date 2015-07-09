@@ -408,7 +408,7 @@ class Simulation:
         self._db.start()
         self._communication.set_agents(self.agents_backend)
         self._communication.start()
-        self.ready.get()
+        self.ready.recv()
 
         self._write_description_file()
         self._displaydescribtion()
@@ -420,25 +420,25 @@ class Simulation:
             print("Round" + str("%3d" % year)),
 
             for queue in self.agents_command_socket['all']:
-                queue.put('_produce_resource')
+                queue.send('_produce_resource')
 
             for group, action in self._action_list:
                 self._add_agents_to_wait_for(len(self.agents_command_socket[group]))
                 for queue in self.agents_command_socket[group]:
-                    queue.put(action)
+                    queue.send(action)
                 self._wait_for_agents()
 
             for queue in self.agents_command_socket['all']:
-                queue.put('_advance_round')
+                queue.send('_advance_round')
             for queue in self.agents_command_socket['all']:
-                queue.put('_perish')
+                queue.send('_perish')
 
         print(str("%6.2f" % (time.time() - start_time)))
         self.gracefull_exit()
 
     def gracefull_exit(self):
         for queue in self.agents_command_socket['all']:
-            queue.put("_die")
+            queue.send("_die")
         for agent in list(itertools.chain(*self.agent_list.values())):
             while agent.is_alive():
                 time.sleep(0.1)
@@ -511,17 +511,18 @@ class Simulation:
         self.agents_command_socket[group_name] = []
 
         for idn in range(num_agents_this_group):
-            commands_queue = mp.Queue()
-            backend_queue = mp.Queue()
+            commands_recv, commands_send = mp.Pipe(duplex=False)
+            backend_recv, backend_send = mp.Pipe(duplex=False)
             agent = AgentClass(self.simulation_parameters,
                                agents_parameters[idn],
                                {'idn': idn,
-                                'commands': commands_queue,
+                                'commands': commands_recv,
                                 'group': group_name,
                                 'trade_logging': self.trade_logging_mode,
                                 'database': self.database_queue,
                                 'logger': self.logger_queue,
-                                'backend': backend_queue,
+                                'backend_recv': backend_recv,
+                                'backend_send': backend_send,
                                 'frontend': self.communication_frontend})
             agent.name = agent_name(group_name, idn)
             for good in self.perishable:
@@ -533,10 +534,10 @@ class Simulation:
             agent.start()
             self.agent_list[group_name].append(agent)
             self.agent_list['all'].append(agent)
-            self.agents_backend[group_name].append(backend_queue)
-            self.agents_backend['all'].append(backend_queue)
-            self.agents_command_socket[group_name].append(commands_queue)
-            self.agents_command_socket['all'].append(commands_queue)
+            self.agents_backend[group_name].append(backend_send)
+            self.agents_backend['all'].append(backend_send)
+            self.agents_command_socket[group_name].append(commands_send)
+            self.agents_command_socket['all'].append(commands_send)
 
     def build_agents_from_file(self, AgentClass, parameters_file=None, multiply=1):
         """ This command builds agents of the class AgentClass from an csv file.
@@ -602,7 +603,7 @@ class Simulation:
 
     def _wait_for_agents(self):
         try:
-            self.ready.get()
+            self.ready.recv()
         except KeyboardInterrupt:
             self.gracefull_exit()
             sys.exit(-1)
