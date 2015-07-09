@@ -218,7 +218,8 @@ class FirmMultiTechnologies:
 
         """
         def production_function(goods):
-            return multiplier * np.prod([goods[name] ** exponent for name, exponent in exponents.iteritems()])
+            return multiplier * np.prod([goods[name] ** exponent
+                                for name, exponent in exponents.iteritems()])
 
         dict_formula = lambda goods: {output: production_function(goods)}
         production_function.production = dict_formula

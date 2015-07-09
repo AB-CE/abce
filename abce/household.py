@@ -29,7 +29,7 @@ save_err = np.seterr(invalid='ignore')
 
 
 class Household:
-    def utility_function(self):
+    def get_utility_function(self):
         """ the utility function should be created with:
         set_cobb_douglas_utility_function,
         set_utility_function or
@@ -71,7 +71,7 @@ class Household:
             NotEnoughGoods: This is raised when the goods are insufficient.
 
         Returns:
-            A the utility a number. To log it see example.
+            The utility as a number. To log it see example.
 
         Example::
 
@@ -84,81 +84,47 @@ class Household:
             self.log('utility': {'u': utility})
 
         """
-        for good in self._utility_function['input']:
+        for good in self._utility_function.use.keys():
             if self._haves[good] < input_goods[good] - epsilon:
-                raise NotEnoughGoods(self.name, good, self._utility_function['input'][good] - self._haves[good])
-        for good in self._utility_function['input']:
-            self._haves[good] -= input_goods[good]
-        goods_vector = input_goods.copy()
-        goods_vector['utility'] = None
-        exec(self._utility_function['code'], {}, goods_vector)
-        return goods_vector['utility']
+                raise NotEnoughGoods(self.name, good, (input_goods[good] - self._haves[good]))
 
-    def set_utility_function(self, formula, typ='from_formula'):
-        """ creates a utility function from formula
+        for good, use in self._utility_function.use.iteritems():
+            self._haves[good] -= input_goods[good] * use
 
-        Utility_functions are then used as an argument in consume_with_utility,
-        predict_utility and predict_utility_and_consumption.
+        return  self._utility_function.formula(input_goods)
 
-        create_utility_function_fast is faster but more complicated utility_function
+    def set_utility_function(self, formula, use):
+        """ creates a utility function from a formula
 
-        Args:
-            "formula": equation or set of equations that describe the
-            utility function. (string) needs to start with 'utility = ...'
-
-        Returns:
-            A utility_function
-
-        Example:
-            formula = 'utility = ball + paint'
-            self._utility_function = self.create_utility_function(formula)
-            self.consume_with_utility(self._utility_function, {'ball' : 1, 'paint' : 2})
-
-        //exponential is ** not ^
-        """
-        try:
-            parse_single_input = pp.Suppress(pp.Word(pp.alphas + "_", pp.alphanums + "_")) + pp.Suppress('=') \
-                    + pp.OneOrMore(pp.Suppress(pp.Optional(pp.Word(pp.nums + '*/+-().[]{} ')))
-                    + pp.Word(pp.alphas + "_", pp.alphanums + "_"))
-            parse_input = pp.delimitedList(parse_single_input, ';')
-        except NameError:
-            print('pyparsing could not be loaded without pyparsing, set_utility_function does not work use set_utility_function_fast instead')
-            raise
-        self._utility_function = {}
-        self._utility_function['type'] = typ
-        self._utility_function['formula'] = formula
-        self._utility_function['code'] = compiler.compile(formula, '<string>', 'exec')
-        self._utility_function['input'] = list(parse_input.parseString(formula))
-
-    def set_utility_function_fast(self, formula, input_goods, typ='from_formula'):
-        """ creates a utility function from formula
-
-        Utility_functions are then used as an argument in consume_with_utility,
-        predict_utility and predict_utility_and_consumption.
-
-        create_utility_function_fast is faster but more complicated
+        The formula is a function that takes a dictionary of goods
+        as an argument and returns a floating point number, the utility.
+        use is a dictionary containing the percentage use of the goods used in
+        the consumption. Goods can be fully used (=1) for example food,
+        partially used e.G. a car. And not used at all (=0) for example a
+        house.
 
         Args:
-            "formula": equation or set of equations that describe the
-            production process. (string) Several equation are separated by a ;
-            [output]: list of all output goods (left hand sides of the equations)
+            formula:
+                a function that takes a dictionary of goods and
+                computes the utility as a floating number.
 
-        Returns:
-            A utility_function that can be used in produce etc.
+            use:
+                a dictionary that specifies for every good, how much
+                it depreciates in percent.
 
         Example:
-            formula = 'utility = ball + paint'
+            self __init__(self):
+                ...
+                def utility_function(goods):
+                    return goods['house'] ** 0.2 * good['food'] ** 0.6 + good['car'] ** 0.2
 
-            self._utility_function = self.create_utility_function(formula, ['ball', 'paint'])
-            self.consume_with_utility(self._utility_function, {'ball' : 1, 'paint' : 2}
+                {'house': 0, 'food': 1, 'car': 0.05}
 
-        //exponential is ** not ^
+                self.set_utility_function(utility_function, use)
         """
-        self._utility_function = {}
-        self._utility_function['type'] = typ
-        self._utility_function['formula'] = formula
-        self._utility_function['code'] = compiler.compile(formula, '<string>', 'exec')
-        self._utility_function['input'] = input_goods
+        self._utility_function = Utility_Function()
+        self._utility_function.formula = formula
+        self._utility_function.use = use
 
     def set_cobb_douglas_utility_function(self, exponents):
         """ creates a Cobb-Douglas utility function
@@ -176,13 +142,13 @@ class Household:
         self._utility_function = self.create_cobb_douglas({'bread' : 10, 'milk' : 1})
         self.produce(self.plastic_utility_function, {'bread' : 20, 'milk' : 1})
         """
-        formula = 'utility=' + ('*'.join(['**'.join([input_good, str(input_quantity)]) for input_good, input_quantity in exponents.iteritems()]))
-        self._utility_function = {}
-        self._utility_function['type'] = 'cobb-douglas'
-        self._utility_function['parameters'] = exponents
-        self._utility_function['formula'] = formula
-        self._utility_function['code'] = compiler.compile(formula, '<string>', 'exec')
-        self._utility_function['input'] = exponents.keys()
+        def utility_function(goods):
+            return  np.prod([goods[name] ** exponent
+                             for name, exponent in exponents.iteritems()])
+
+        self._utility_function = Utility_Function()
+        self._utility_function.formula = utility_function
+        self._utility_function.use = {name: 1 for name in exponents.keys()}
 
     def predict_utility(self, input_goods):
         """ Predicts the utility of a vecor of input goods
@@ -204,10 +170,7 @@ class Household:
 
 
         """
-        goods_vector = input_goods.copy()
-        goods_vector['utility'] = None
-        exec(self._utility_function['code'], {}, goods_vector)
-        return goods_vector['utility']
+        return self._utility_function.formula(input_goods)
 
 
 def sort(objects, key='price', reverse=False):
@@ -222,3 +185,6 @@ def sort(objects, key='price', reverse=False):
         quotes_by_price = sort(quotes, 'price')
         """
     return sorted(objects, key=lambda objects: objects[key], reverse=reverse)
+
+class Utility_Function:
+    pass

@@ -7,6 +7,7 @@ from logger_test import LoggerTest
 from endowment import Endowment
 from production_multifirm import ProductionMultifirm
 from production_firm import ProductionFirm
+from utility_household import UtilityHousehold
 from abce import *
 
 
@@ -23,6 +24,7 @@ for parameters in read_parameters('simulation_parameters.csv'):
         ('endowment', 'Iconsume'),
         ('productionmultifirm', 'production'),
         ('productionfirm', 'production'),
+        ('utilityhousehold', 'consumption'),
         ('all', 'all_tests_completed')]
     s.add_action_list(action_list)
 
@@ -39,6 +41,7 @@ for parameters in read_parameters('simulation_parameters.csv'):
     s.build_agents(LoggerTest, 1)
     s.build_agents(ProductionMultifirm, 1)
     s.build_agents(ProductionFirm, 5)
+    s.build_agents(UtilityHousehold, 5)
 
 
 
