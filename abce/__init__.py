@@ -191,8 +191,6 @@ class Simulation:
         self.perishable = []
         self.variables_to_track = defaultdict(list)
 
-        #time.sleep(1)
-        self.commands = mp.Queue()
         self._communication = Communication()
         self.communication_frontend, self.communication_backend, self.ready = self._communication.get_queue()
         self.database_queue = mp.Queue()
@@ -452,41 +450,6 @@ class Simulation:
         while self._communication.is_alive():
             time.sleep(0.025)
         postprocess.to_csv(os.path.abspath(self.simulation_parameters['_path']), self.database_name)
-    def _make_ask_each_agent_in(self, action):
-        group_address_var = group_address(action[0])
-        number = self.num_agents_in_group[action[0]]
-
-        def ask_each_agent_with_address():
-            self._add_agents_to_wait_for(number)
-            self.commands.put([group_address_var, action[1]])
-        return ask_each_agent_with_address
-
-    def ask_each_agent_in(self, group_name, command):
-        """ This is only relevant when you derive your custom world/swarm not
-        in start.py
-        applying a method to a group of agents group_name, method.
-
-        Args::
-
-         agent_group: using group_address('group_name', number)
-         method: as string
-
-        """
-        self._add_agents_to_wait_for(self.num_agents_in_group[group_name])
-        self.commands.put([group_address(group_name), command])
-
-    def ask_agent(self, group, idn, command):
-        """ This is only relevant when you derive your custom world/swarm not
-        in start.py
-        applying a method to a single agent
-
-        Args::
-
-         agent_name as string or using agent_name('group_name', number)
-         method: as string
-        """
-        self._add_agents_to_wait_for(1)
-        self.commands.put(['%s_%i:' % (group, idn), command])
 
     def build_agents(self, AgentClass,  number=None, group_name=None, agents_parameters=None):
         """ This method creates agents, the first parameter is the agent class.
