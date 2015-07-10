@@ -5,24 +5,26 @@ import os
 
 # MUST ASSERT THAT python-dev is installed
 
-setup(
-      name='abce',
+setup(name='abce',
       version='0.4',
       author='Davoud Taghawi-Nejad',
       author_email='Davoud@Taghawi-Nejad.de',
       description='Agent-Based Complete Economy modelling platform',
       url='https://github.com/DavoudTaghawiNejad/abce/downloads',
-      package_dir = {'abce': 'abce'},
+      package_dir={'abce': 'abce'},
       packages=['abce'],
       modules=['abce_db', 'abcetools', 'postprocess'],
       long_description=open('README.rst').read(),
-      install_requires=['numpy','scipy', 'dataset', 'pandas'],
-      include_package_data = True,
-     )
+      install_requires=['numpy', 'scipy', 'dataset', 'pandas'],
+      include_package_data=True)
 
 print('** **************************************************************************')
 print('**                                                                         **')
-print('** - In the abce-0.X subdirectory you will find  examples ond templates    **')
+print('** - To use ABCE download templates and examples from                      **')
+print('**                                                                         **')
+print('**    github.com/DavoudTaghawiNejad/abce                                   **')
+print('**    or                                                                    **')
+print('**    https://github.com/DavoudTaghawiNejad/abce/archive/master.zip        **')
 print('**                                                                         **')
 print('** - documentation http://davoudtaghawinejad.github.com/abce/              **')
 print('**                                                                         **')
