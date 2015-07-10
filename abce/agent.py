@@ -81,6 +81,16 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
         self.commands = commands
         self.out = frontend
         self.simulation_parameters = simulation_parameters
+        """ The simulation parameters and the number of agents in other groups
+
+         Useful entries:
+
+            'num_rounds':
+                 the total number of rounds in the simulation.
+            'num_goup_name':
+                the number of agents for each group in the simulation. e.G.
+                'num_myagents'
+        """
         self.agent_parameters = agent_parameters
 
         self.database_connection = database

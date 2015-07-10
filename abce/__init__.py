@@ -173,6 +173,9 @@ class Simulation:
     """
     def __init__(self, simulation_parameters):
         self.simulation_parameters = simulation_parameters
+        """ Simulation parameters are the parameter you specify for the current
+        simulation. Either in simulation_parameters.csv or as a dictionary
+        """
         self.agent_list = {}
         self.agent_list['all'] = []
         self.agents_backend = {}
@@ -461,14 +464,19 @@ class Simulation:
 
         Args::
 
-         AgentClass: is the name of the AgentClass that you imported
-         number (optional): number of agents to be created. or the colum name
-         of the row in simulation_parameters.csv that contains this number. If not
-         specified the column name is assumed to be 'num_' + agent_name
-         (all lowercase). For example num_firm, if the class is called
-         Firm or name = Firm.
-         [group_name (optional): to give the group a different name than the
-         class_name. (do not use this if you have not a specific reason]
+         AgentClass:
+            is the name of the AgentClass that you imported
+        number (optional):
+            number of agents to be created. or the colum name
+            of the row in simulation_parameters.csv that contains this number. If not
+            specified the column name is assumed to be 'num_' + agent_name
+            (all lowercase). For example num_firm, if the class is called
+            Firm or name = Firm.
+         group_name (optional):
+            to give the group a different name than the
+            class_name.
+        agent_parameters:
+            a dictionary of agent parameters to be given to the agent
 
         Example::
 
@@ -498,13 +506,14 @@ class Simulation:
                 raise SystemExit('num_' + group_name.lower() + ' is not in simulation_parameters.csv')
         elif not(number) and agent_parameters:
             num_agents_this_group = len(agent_parameters)
-            self.simulation_parameters['num_' + group_name.lower()] = num_agents_this_group
         else:
             raise SystemExit('build_agents ' + group_name + ': Either '
                 'number_or_parameter_column or agent_parameters must be'
                 'specied, NOT both.')
         if not(agent_parameters):
             agent_parameters = [None for _ in range(num_agents_this_group)]
+
+        self.simulation_parameters['num_' + group_name.lower()] = num_agents_this_group
 
         self.num_agents += num_agents_this_group
         self.num_agents_in_group[group_name] = num_agents_this_group
