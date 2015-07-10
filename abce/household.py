@@ -18,7 +18,6 @@
 The Household class extends the agent by giving him utility functions and the ability to consume goods.
 """
 from __future__ import division
-import compiler
 import numpy as np
 try:
     import pyparsing as pp
