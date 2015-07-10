@@ -304,7 +304,7 @@ class Simulation:
 
         """
         if len(self.agent_list['all']) > 0:
-            print("WARNING: agents build before declare_perishable")
+            raise SystemExit("WARNING: agents build before declare_round_endowment")
         for group in groups:
             self.resource_endowment[group].append((resource, units, product))
 
@@ -330,7 +330,7 @@ class Simulation:
 
         """
         if len(self.agent_list['all']) > 0:
-            print("WARNING: agents build before declare_perishable")
+            raise SystemExit("WARNING: agents build before declare_perishable")
         self.perishable.append(good)
 
 
@@ -381,7 +381,7 @@ class Simulation:
          w.panel_data(group=firm)
         """
         if len(self.agent_list['all']) > 0:
-            print("WARNING: agents build before declare_perishable")
+            raise SystemExit("WARNING: agents build before panel")
         self._db.add_panel(group)
         self.variables_to_track[group].append(variables)
 
