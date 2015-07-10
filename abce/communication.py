@@ -34,6 +34,9 @@ class Communication(mp.Process):
                         total_number += int(msg[1])  # for speed, if a string
                     except ValueError:               # is send Communication
                         return                       # is ended
+                    if agents_finished == total_number:
+                        agents_finished, total_number = 0, 0
+                        self.ready.send('.')
                 elif msg[1] == 'all':
                         for agent in self.agents_backend['all'][msg[0]]:
                             agent.send(msg[2:])
