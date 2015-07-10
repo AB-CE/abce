@@ -7,7 +7,7 @@ import os
 
 setup(
       name='abce',
-      version='0.3',
+      version='0.4',
       author='Davoud Taghawi-Nejad',
       author_email='Davoud@Taghawi-Nejad.de',
       description='Agent-Based Complete Economy modelling platform',
@@ -16,7 +16,7 @@ setup(
       packages=['abce'],
       modules=['abce_db', 'abcetools', 'postprocess'],
       long_description=open('README.rst').read(),
-      install_requires=['pyparsing==1.5.7', 'numpy','scipy', 'dataset', 'pandas'],
+      install_requires=['numpy','scipy', 'dataset', 'pandas'],
       include_package_data = True,
      )
 
