@@ -405,7 +405,6 @@ class Simulation:
             raise SystemExit('No action_list declared')
         if not(self._action_list):
             self._action_list = self._process_action_list(self.action_list)
-        print(1)
 
         for agent in self.agent_list['all']:
             agent.start()
@@ -421,7 +420,7 @@ class Simulation:
 
         for year in xrange(self.simulation_parameters['num_rounds']):
             self.round = year
-            print("Round" + str("%3d" % year)),
+            print("\rRound" + str("%3d" % year)),
 
             for queue in self.agents_command_socket['all']:
                 queue.send('_produce_resource')
