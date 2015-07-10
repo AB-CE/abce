@@ -19,10 +19,6 @@ The Household class extends the agent by giving him utility functions and the ab
 """
 from __future__ import division
 import numpy as np
-try:
-    import pyparsing as pp
-except ImportError:
-    pass
 from tools import epsilon
 save_err = np.seterr(invalid='ignore')
 
