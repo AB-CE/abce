@@ -65,7 +65,7 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
             def __init__(self, simulation_parameters, agent_parameters, _pass_to_engine):
             abceagent.Agent.__init__(self, *_pass_to_engine)
     """
-    def __init__(self, idn, group, trade_logging, commands, backend_send, backend_recv, database, logger, frontend):
+    def __init__(self, simulation_parameters, agent_parameters, idn, group, trade_logging, commands, backend_send, backend_recv, database, logger, frontend):
         multiprocessing.Process.__init__(self)
         self.idn = idn
         """ self.idn returns the agents idn READ ONLY!"""
@@ -80,6 +80,8 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
         # when fired manual + ':' and manual group_address need to be removed
         self.commands = commands
         self.out = frontend
+        self.simulation_parameters = simulation_parameters
+        self.agent_parameters = agent_parameters
 
         self.database_connection = database
         self.logger_connection = logger
@@ -313,6 +315,7 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
         return quantity_destroyed
 
     def run(self):
+        self.init(self.simulation_parameters, self.agent_parameters)
         try:
             while True:
                 command = self.commands.recv()

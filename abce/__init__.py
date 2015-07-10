@@ -405,6 +405,10 @@ class Simulation:
             raise SystemExit('No action_list declared')
         if not(self._action_list):
             self._action_list = self._process_action_list(self.action_list)
+        print(1)
+
+        for agent in self.agent_list['all']:
+            agent.start()
         self._db.start()
         self._communication.set_agents(self.agents_backend)
         self._communication.start()
@@ -451,7 +455,7 @@ class Simulation:
             time.sleep(0.025)
         postprocess.to_csv(os.path.abspath(self.simulation_parameters['_path']), self.database_name)
 
-    def build_agents(self, AgentClass,  number=None, group_name=None, agents_parameters=None):
+    def build_agents(self, AgentClass,  number=None, group_name=None, agent_parameters=None):
         """ This method creates agents, the first parameter is the agent class.
         "num_agent_class" (e.G. "num_firm") should be difined in
         simulation_parameters.csv. Alternatively you can also specify number = 1.s
@@ -478,7 +482,7 @@ class Simulation:
         #TODO when there is a group with a single agent the ask_agent has a confusingname
         if not(group_name):
             group_name = AgentClass.__name__.lower()
-        if number and not(agents_parameters):
+        if number and not(agent_parameters):
             try:
                 num_agents_this_group = int(number)
             except ValueError:
@@ -488,20 +492,20 @@ class Simulation:
                     SystemExit('build_agents ' + group_name + ': ' + number +
                     ' is not a number or a column name in simulation_parameters.csv'
                     'or the parameterfile you choose')
-        elif not(number) and not(agents_parameters):
+        elif not(number) and not(agent_parameters):
             try:
                 num_agents_this_group = self.simulation_parameters['num_' + group_name.lower()]
             except KeyError:
                 raise SystemExit('num_' + group_name.lower() + ' is not in simulation_parameters.csv')
-        elif not(number) and agents_parameters:
-            num_agents_this_group = len(agents_parameters)
+        elif not(number) and agent_parameters:
+            num_agents_this_group = len(agent_parameters)
             self.simulation_parameters['num_' + group_name.lower()] = num_agents_this_group
         else:
             raise SystemExit('build_agents ' + group_name + ': Either '
-                'number_or_parameter_column or agents_parameters must be'
+                'number_or_parameter_column or agent_parameters must be'
                 'specied, NOT both.')
-        if not(agents_parameters):
-            agents_parameters = [None for _ in range(num_agents_this_group)]
+        if not(agent_parameters):
+            agent_parameters = [None for _ in range(num_agents_this_group)]
 
         self.num_agents += num_agents_this_group
         self.num_agents_in_group[group_name] = num_agents_this_group
@@ -513,17 +517,17 @@ class Simulation:
         for idn in range(num_agents_this_group):
             commands_recv, commands_send = mp.Pipe(duplex=False)
             backend_recv, backend_send = mp.Pipe(duplex=False)
-            agent = AgentClass(self.simulation_parameters,
-                               agents_parameters[idn],
-                               {'idn': idn,
-                                'commands': commands_recv,
-                                'group': group_name,
-                                'trade_logging': self.trade_logging_mode,
-                                'database': self.database_queue,
-                                'logger': self.logger_queue,
-                                'backend_recv': backend_recv,
-                                'backend_send': backend_send,
-                                'frontend': self.communication_frontend})
+            agent = AgentClass(simulation_parameters=self.simulation_parameters,
+                               agent_parameters=agent_parameters[idn],
+                               idn=idn,
+                               commands=commands_recv,
+                               group=group_name,
+                               trade_logging=self.trade_logging_mode,
+                               database=self.database_queue,
+                               logger=self.logger_queue,
+                               backend_recv=backend_recv,
+                               backend_send=backend_send,
+                               frontend=self.communication_frontend)
             agent.name = agent_name(group_name, idn)
             for good in self.perishable:
                 agent._register_perish(good)
@@ -531,7 +535,6 @@ class Simulation:
                 agent._register_resource(resource, units, product)
             for variables in self.variables_to_track[group_name] + self.variables_to_track['all']:
                 agent._register_panel(variables)
-            agent.start()
             self.agent_list[group_name].append(agent)
             self.agent_list['all'].append(agent)
             self.agents_backend[group_name].append(backend_send)
@@ -562,14 +565,14 @@ class Simulation:
             try:
                 parameters_file = self.simulation_parameters['agent_parameters_file']
             except KeyError:
-                parameters_file = 'agents_parameters.csv'
+                parameters_file = 'agent_parameters.csv'
         elif self._agent_parameters == None:
             if parameters_file != self._agent_parameters:
                 SystemExit('All agents must be declared in the same agent_parameters.csv file')
         self._agent_parameters = parameters_file
 
         agent_class = AgentClass.__name__.lower()
-        agents_parameters = []
+        agent_parameters = []
         csvfile = open(parameters_file)
         dialect = csv.Sniffer().sniff(csvfile.read(1024))
         csvfile.seek(0)
@@ -594,9 +597,9 @@ class Simulation:
 
         for line in agents_list:
             if line['agent_class'] == agent_class:
-                agents_parameters.extend([line for _ in range(line['number'] * multiply)])
+                agent_parameters.extend([line for _ in range(line['number'] * multiply)])
 
-        self.build_agents(AgentClass, agents_parameters=agents_parameters)
+        self.build_agents(AgentClass, agent_parameters=agent_parameters)
 
     def _add_agents_to_wait_for(self, number):
         self.communication_frontend.put(['+', str(number)])

@@ -5,8 +5,7 @@ import random
 
 
 class QuoteBuy(abce.Agent):
-    def __init__(self, simulation_parameters, own_parameters, _pass_to_engine):
-        abce.Agent.__init__(self, **_pass_to_engine)
+    def init(self, simulation_parameters, own_parameters):
         self.last_round = simulation_parameters['num_rounds'] - 1
         self.cut_of = simulation_parameters['cut_of']
         if self.idn == 1:
