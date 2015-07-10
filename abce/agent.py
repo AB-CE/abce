@@ -65,7 +65,7 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
             def __init__(self, simulation_parameters, agent_parameters, _pass_to_engine):
             abceagent.Agent.__init__(self, *_pass_to_engine)
     """
-    def __init__(self, idn, group, trade_logging, commands, backend, database, logger, frontend):
+    def __init__(self, idn, group, trade_logging, commands, backend_send, backend_recv, database, logger, frontend):
         multiprocessing.Process.__init__(self)
         self.idn = idn
         """ self.idn returns the agents idn READ ONLY!"""
@@ -83,7 +83,8 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
 
         self.database_connection = database
         self.logger_connection = logger
-        self.messages_in = backend
+        self.messages_in = backend_recv
+        self.messages_in_send = backend_send
         self._methods = {}
         self._register_actions()
         if trade_logging == 'individual':
@@ -312,24 +313,22 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
         return quantity_destroyed
 
     def run(self):
-        self.out.put(['!', '!', 'register_agent', (self.group, self.idn)])
         try:
             while True:
-                try:
-                    command = self.commands.get()
-                except KeyboardInterrupt:
-                    break
-                try:
-                    self._methods[command]()
-                except KeyError:
-                    if command not in self._methods:
-                        raise SystemExit('The method - ' + command + ' - called in the agent_list is not declared (' + self.name)
-                    else:
-                        raise
-
+                command = self.commands.recv()
+                self._clearing__end_of_subround()
+                self._methods[command]()
                 if command[0] != '_':
                     self.__reject_polled_but_not_accepted_offers()
-                    self.__signal_finished()
+                    self._signal_finished()
+        except KeyboardInterrupt:
+            pass
+        except KeyError:
+            time.sleep(random.random())
+            if command not in self._methods:
+                raise SystemExit('The method - ' + command + ' - called in the agent_list is not declared (' + self.name)
+            else:
+                raise
         except:
             time.sleep(random.random())
             raise
@@ -402,8 +401,9 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
         '_r': deletes an offer that the other agent rejected
         '_g': recive a 'free' good from another party
         """
+        self.messages_in_send.send(['.', '.'])
         while True:
-            typ, msg = self.messages_in.get()
+            typ, msg = self.messages_in.recv()
             if typ == '.':
                 break
             if   typ == '_o':
@@ -428,10 +428,10 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
             else:
                 self._msgs.setdefault(typ, []).append(Message(msg))
 
-    def __signal_finished(self):
+    def _signal_finished(self):
         """ signals modelswarm via communication that the agent has send all
         messages and finish his action """
-        self.out.put(['!', '.'])
+        self.out.put('.')
 
     def _send(self, receiver_group, receiver_idn, typ, msg):
         """ sends a message to 'receiver_group', who can be an agent, a group or

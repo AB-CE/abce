@@ -86,6 +86,8 @@ class FirmMultiTechnologies:
         for good in output_dict.keys():
             self._haves[good] += output_dict[good]
 
+        return output_dict
+
 
     def create_production_function_one_good(self, formula, output, use):
         """ creates a production function, that produces one good
