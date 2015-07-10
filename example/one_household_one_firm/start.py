@@ -7,33 +7,38 @@
 """
 
 from __future__ import division
+import multiprocessing as mp
 from abce import *
 from firm import Firm
 from household import Household
 
+def main():
+    for parameters in read_parameters():
+        w = Simulation(parameters)
+        action_list = [
+            ('household', 'sell_labor'),
+            ('firm', 'buy_labor'),
+            ('firm', 'production'),
+            ('firm', 'panel'),
+            ('firm', 'sell_goods'),
+            ('household', 'buy_goods'),
+            ('household', 'panel'),
+            ('household', 'consumption')
+        ]
+        w.add_action_list(action_list)
 
-for parameters in read_parameters():
-    w = Simulation(parameters)
-    action_list = [
-        ('household', 'sell_labor'),
-        ('firm', 'buy_labor'),
-        ('firm', 'production'),
-        'production_log',
-        ('firm', 'sell_goods'),
-        ('household', 'buy_goods'),
-        'buy_log',
-        ('household', 'consumption')
-    ]
-    w.add_action_list(action_list)
+        w.declare_round_endowment(resource='adult', units=1, product='labor')
+        w.declare_perishable(good='labor')
 
-    w.build_agents(Firm, 1)
-    w.build_agents(Household, 1)
+        w.panel('household')
+        w.panel('firm')
 
-    w.declare_round_endowment(resource='adult', productivity=1, product='labor')
-    w.declare_perishable(good='labor')
+        w.build_agents(Firm, 1)
+        w.build_agents(Household, 1)
 
-    w.panel_data('household', command='buy_log')
-    w.panel_data('firm', command='production_log')
 
-    w.run()
+        w.run()
 
+if __name__ == '__main__':
+    mp.freeze_support()
+    main()

@@ -7,32 +7,35 @@ household id * 10 (10, 20, 30 ... 90).
 The firms sets the prices using a PID controller.
 """
 from __future__ import division
+import multiprocessing as mp
 from firm import Firm
 from household import Household
 from abce import Simulation, read_parameters, repeat
 
+def main():
+    for simulation_parameters in read_parameters('simulation_parameters.csv'):
+        s = Simulation(simulation_parameters)
+        action_list = [
 
-for simulation_parameters in read_parameters('simulation_parameters.csv'):
-    s = Simulation(simulation_parameters)
-    action_list = [
+            ('firm', 'production'),
+            ('firm', 'panel'),
+            ('firm', 'quote'),
+            ('household', 'buying'),
+            ('firm', 'selling'),
+            ('household', 'panel'),
+            ('household', 'consumption')
+        ]
 
-        ('firm', 'production'),
-        ('firm', 'panel'),
-        ('firm', 'quote'),
-        ('household', 'buying'),
-        ('firm', 'selling'),
-        ('household', 'panel'),
-        ('household', 'consumption')
-    ]
+        s.add_action_list(action_list)
 
-    s.add_action_list(action_list)
+        s.panel('household')
+        s.panel('firm')
 
-    s.panel('household')
-    s.panel('firm')
+        s.build_agents(Firm, 1)
+        s.build_agents(Household, 10)
 
-    s.build_agents(Firm, 1)
-    s.build_agents(Household, 10)
+        s.run()
 
-
-    s.run()
-
+if __name__ == '__main__':
+    mp.freeze_support()
+    main()

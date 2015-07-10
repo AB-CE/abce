@@ -4,12 +4,11 @@ from abce.tools import is_zero, is_positive, is_negative, NotEnoughGoods
 
 
 class Household(abce.Agent, abce.Household):
-    def __init__(self, simulation_parameters, agent_parameters, _pass_to_engine):
+    def init(self, simulation_parameters, agent_parameters):
         """ 1. labor_endowment, which produces, because of w.declare_resource(...)
         in start.py one unit of labor per month
         2. Sets the utility function to utility = consumption of good "GOOD"
         """
-        abce.Agent.__init__(self, **_pass_to_engine)
         self.create('adult', 1)
         self.set_cobb_douglas_utility_function({"GOOD": 1})
 

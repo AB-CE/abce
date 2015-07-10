@@ -3,14 +3,13 @@ import abce
 
 
 class Firm(abce.Agent, abce.Firm):
-    def __init__(self, simulation_parameters, agent_parameters, _pass_to_engine):
+    def init(self, simulation_parameters, agent_parameters):
         """ there are now 2 sectors:
         - upstream produces an intermediary good
         - downstream uses labor and the intermediary good to produce the final good
 
         there is an initial endowment to avoid bootstrapping problems
         """
-        abce.Agent.__init__(self, **_pass_to_engine)
         self.price = {}
         self.sector = agent_parameters['sector']
         if self.sector == 'intermediate_good':

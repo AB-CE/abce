@@ -3,11 +3,10 @@ import abce
 
 
 class Household(abce.Agent, abce.Household):
-    def __init__(self, simulation_parameters, agent_parameters, _pass_to_engine):
+    def init(self, simulation_parameters, agent_parameters):
         """ self.employer is the _number_ of the agent that recieves his
         labor offer.
         """
-        abce.Agent.__init__(self, **_pass_to_engine)
         self.create('labor_endowment', 1)
         self.set_cobb_douglas_utility_function({"consumption_good": 1})
         self.accumulated_utility = 0

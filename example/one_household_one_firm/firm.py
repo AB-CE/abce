@@ -4,11 +4,10 @@ from abce.tools import is_zero, is_positive, is_negative, NotEnoughGoods
 
 
 class Firm(abce.Agent, abce.Firm):
-    def __init__(self, simulation_parameters, agent_parameters, _pass_to_engine):
+    def init(self, simulation_parameters, agent_parameters):
         """ 1. Gets an initial amount of money
         2. create a cobb_douglas function: GOOD = 1 * labor ** 1.
         """
-        abce.Agent.__init__(self, **_pass_to_engine)
         self.create('money', 1)
         self.set_cobb_douglas("GOOD", 1, {"labor": 1})
 
