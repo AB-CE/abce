@@ -52,7 +52,7 @@ class Household:
             utility = self.consume_everything()
             self.log('utility': {'u': utility})
         """
-        return self.consume({inp: self._haves[inp] for inp in self._utility_function['input']})
+        return self.consume({inp: self._haves[inp] for inp in self._utility_function.use.keys()})
 
     def consume(self, input_goods):
         """ consumes input_goods returns utility according to the agent's
