@@ -6,14 +6,13 @@ import os
 # MUST ASSERT THAT python-dev is installed
 
 setup(name='abce',
-      version='0.4',
+      version='0.4b',
       author='Davoud Taghawi-Nejad',
       author_email='Davoud@Taghawi-Nejad.de',
       description='Agent-Based Complete Economy modelling platform',
-      url='https://github.com/DavoudTaghawiNejad/abce/downloads',
+      url='https://github.com/DavoudTaghawiNejad/abce.git',
       package_dir={'abce': 'abce'},
       packages=['abce'],
-      modules=['abce_db', 'abcetools', 'postprocess'],
       long_description=open('README.rst').read(),
       install_requires=['numpy', 'scipy', 'dataset', 'pandas'],
       include_package_data=True)
