@@ -1,6 +1,5 @@
-#pylint: disable=C0103, W0142, W0613, R0904, R0902, R0901, W0201
-""" This firm uses a PID controller to set the highest possible price at which
-all it's goods can be sold.
+#pylint: disable=C0103, W0142, W0613, R0904, R0902, R0901, W0201, W0232, E1101
+""" This firm uses a pi controller to set t
 """
 from __future__ import division
 import abce
@@ -15,26 +14,31 @@ from math import isnan, isinf
 class Firm(abce.Agent, abce.Firm):
     def init(self, simulation_parameters, agent_parameters):
         self.price = self.price_1 = 100
-        self.cookies_before = self.L = self.L_1 = 100
+        self.cookies_before = self.production_target = self.production_target_1 = 100
         self.wage = self.wage_1 = 1
         self.price_controller = PiController(0.01, 0.015, output0=self.price, positive=True)
-        self.production_controller = PiController(0.01, 0.015, output0=self.L, positive=True)
+        self.production_controller = PiController(0.01, 0.015, output0=self.production_target, positive=True)
         self.wage_controller = PiController(0.01, 0.015, output0=self.wage, positive=True)
         self.up_regression = UPRegression(memory=500)
         self.uw_regression = UPRegression(memory=500)
         self.set_leontief('cookies', {'labor': 1})
 
     def quote_hire(self):
-        self.create('money', self.wage * self.L)
+        """ sends a note to the labor market, that  it is willing to pay wage """
+        self.create('money', self.wage * self.production_target)
         self.quote_buy('labormarket', 0, 'labor', self.possession('money') / self.wage, self.wage)
 
 
     def hire(self):
+        """ hires enough people to meet production_target*. Lets the pi-
+        controller adjust the wage according to the shortag / excess of labor.
+
+        *but not more than is offered and he can afford """
         offer = self.get_offers('labor')[0]
-        self.accept_partial(offer, min(offer['quantity'], self.possession('money') / self.wage, self.L))
+        self.accept_partial(offer, min(offer['quantity'], self.possession('money') / self.wage, self.production_target))
 
         self.wage_1 = self.wage
-        error = self.L - offer['quantity']
+        error = self.production_target - offer['quantity']
         self.wage = self.wage_controller.update(error)
 
         self.log('wage', {'wage': self.wage,
@@ -43,18 +47,22 @@ class Firm(abce.Agent, abce.Firm):
 
 
     def my_production(self):
-        """ produce missing cookies """
-        self.log('prodiction', self.produce_use_everything())
+        """ produce using all workers cookies """
+        self.log('production', self.produce_use_everything())
         self.log('cookies', {'inventory': self.possession('cookies')})
 
     def selling(self):
+        """ offers to sell all cookies """
         self.offer = self.sell('market', 0, 'cookies', self.possession('cookies'), self.price)
 
     def adjust_price(self):
+        """ The prices are adjusted according to the change in inventory.
+        up and uw estimates are updated
+        """
         self.total_orders = self.get_messages('demand')[0]['content']
         self.log('total', {'orders': self.total_orders})
-        self.up_regression.fit(self.price, self.price_1, self.L, self.L_1)
-        self.uw_regression.fit(self.wage, self.wage_1, self.L, self.L_1)
+        self.up_regression.fit(self.price, self.price_1, self.production_target, self.production_target_1)
+        self.uw_regression.fit(self.wage, self.wage_1, self.production_target, self.production_target_1)
 
         self.price_1 = self.price
         error = -(self.possession('cookies') - self.cookies_before)
@@ -72,12 +80,12 @@ class Firm(abce.Agent, abce.Firm):
             uw = self.uw_regression.predict()
 
 
-            self.L_1 = self.L
+            self.production_target_1 = self.production_target
             error =  p + up - (w + uw)
-            #error =  p + up * self.L - (w + uw * self.L)
-            self.L = self.production_controller.update(error)
+            #error =  p + up * self.production_target - (w + uw * self.production_target)
+            self.production_target = self.production_controller.update(error)
 
-            self.log('production', {'production': self.L,
+            self.log('production', {'production': self.production_target,
                                     'error_cum': self.production_controller.error_cum,
                                     'error': error})
 
