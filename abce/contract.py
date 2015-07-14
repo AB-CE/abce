@@ -14,6 +14,23 @@ class Contract:
                  'quantity': quantity,
                  'price': price,
                  'end_date': duration + self.round,
+                 'makerequest': 'm',
+                 'idn': self._offer_counter()}
+        self._send(receiver_group, receiver_idn, '!o', offer)
+        return offer['idn']
+
+    def request_contract(self, receiver_group, receiver_idn, good, quantity, price, duration):
+        offer = {'sender_group': self.group,
+                 'sender_idn': self.idn,
+                 'deliver_group': self.group,
+                 'deliver_idn': self.idn,
+                 'pay_group': receiver_group,
+                 'pay_idn': receiver_idn,
+                 'good': good,
+                 'quantity': quantity,
+                 'price': price,
+                 'end_date': duration + self.round,
+                 'makerequest': 'r',
                  'idn': self._offer_counter()}
         self._send(receiver_group, receiver_idn, '!o', offer)
         return offer['idn']
@@ -37,16 +54,47 @@ class Contract:
         """
         ret = []
         for offer_id in self._contract_offers.keys():
-            if self._contract_offers[offer_id]['good'] == good:
+            if (self._contract_offers[offer_id]['good'] == good
+            and self._contract_offers[offer_id]['makerequest'] == 'm'):
                 ret.append(self._contract_offers[offer_id])
                 del self._contract_offers[offer_id]
         ret.sort(key=lambda objects: objects['price'], reverse=descending)
         return ret
 
-    def accept_contract(self, offer):
-        self._contracts_pay[offer['good']].append(offer)
-        self._send(offer['sender_group'], offer['sender_idn'], '+d', offer)
-        return offer['idn']
+    def get_contract_requests(self, good, descending=False):
+        """ self.get_quotes() returns all new quotes and removes them. The order
+        is randomized.
+
+        Args:
+            good:
+                the good which should be retrieved
+            descending(bool,default=False):
+                False for descending True for ascending by price
+
+        Returns:
+         list of quotes ordered by price
+
+        Example::
+
+         quotes = self.get_quotes()
+        """
+        ret = []
+        for offer_id in self._contract_offers.keys():
+            if (self._contract_offers[offer_id]['good'] == good
+            and self._contract_offers[offer_id]['makerequest'] == 'r'):
+                ret.append(self._contract_offers[offer_id])
+                del self._contract_offers[offer_id]
+        ret.sort(key=lambda objects: objects['price'], reverse=descending)
+        return ret
+
+    def accept_contract(self, contract):
+        if contract['makerequest'] == 'm':
+            self._contracts_pay[contract['good']].append(contract)
+            self._send(contract['sender_group'], contract['sender_idn'], '+d', contract)
+        else:
+            self._contracts_deliver[contract['good']].append(contract)
+            self._send(contract['sender_group'], contract['sender_idn'], '+p', contract)
+        return contract['idn']
 
     def deliver(self, good):
         for contract in self._contracts_deliver[good]:
