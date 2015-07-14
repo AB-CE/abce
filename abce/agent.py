@@ -125,6 +125,12 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
         self._answered_offers = OrderedDict()
         self._offer_count = 0
         self._reject_offers_retrieved_end_subround = []
+        self._contract_offers = defaultdict(list)
+        self._contracts_pay = defaultdict(list)
+        self._contracts_deliver = defaultdict(list)
+        self._contracts_payed = []
+        self._contracts_delivered = []
+
         self._trade_log = defaultdict(int)
         self._data_to_observe = {}
         self._data_to_log_1 = {}
@@ -277,6 +283,17 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
             elif self.given_offers[key]['status_round'] == self.round:
                 keep[key] = self.given_offers[key]
         self.given_offers = keep
+
+        #contracts
+        self._contract_offers     = defaultdict(list)
+        self._contracts_payed = []
+        self._contracts_delivered = []
+
+        for good in self._contracts_deliver:
+            self._contracts_deliver[good] = [contract for contract in self._contracts_deliver[good] if contract['end_date'] - 1 > self.round]
+
+        for good in self._contracts_pay:
+            self._contracts_pay[good] = [contract for contract in self._contracts_pay[good] if contract['end_date'] - 1 > self.round]
 
         self.database_connection.put(["trade_log", self._trade_log, self.round])
 
@@ -438,6 +455,19 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
                 self._haves[msg[0]] += msg[1]
             elif typ == '_q':
                 self._quotes[msg['idn']] = msg
+            elif typ == '!o':
+                self._contract_offers[msg['good']] = msg
+            elif typ == '+d':
+                self._contracts_deliver[msg['good']].append(msg)
+            elif typ == '+p':
+                self._contracts_pay[msg['good']].append(msg)
+            elif typ == '!d':
+                self._haves[msg['good']] += msg['quantity']
+                self._contracts_delivered.append(msg['idn'])
+            elif typ == '!p':
+                self._haves['money'] += msg['quantity'] * msg['price']
+                self._contracts_payed.append(msg['idn'])
+
             else:
                 self._msgs.setdefault(typ, []).append(Message(msg))
 

@@ -9,6 +9,7 @@ from endowment import Endowment
 from production_multifirm import ProductionMultifirm
 from production_firm import ProductionFirm
 from utility_household import UtilityHousehold
+from contractseller import ContractSeller
 from abce import *
 
 
@@ -21,12 +22,18 @@ def main():
                 ('all', 'two'),
                 ('all', 'three'),
                 ('all', 'clean_up')
-                ], 100),
+                ], 30),
             ('buy', 'panel'),
             ('endowment', 'Iconsume'),
             ('productionmultifirm', 'production'),
             ('productionfirm', 'production'),
             ('utilityhousehold', 'consumption'),
+
+            ('contractseller', 'make_offer'),
+            ('contractseller', 'accept_offer'),
+            ('contractseller', 'deliver_or_pay'),
+            ('contractseller', 'control'),
+
             ('all', 'all_tests_completed')]
         s.add_action_list(action_list)
 
@@ -44,6 +51,7 @@ def main():
         s.build_agents(ProductionMultifirm, 1)
         s.build_agents(ProductionFirm, 5)
         s.build_agents(UtilityHousehold, 5)
+        s.build_agents(ContractSeller, 2)
 
 
 

@@ -59,7 +59,7 @@ from agent import *
 from abce.communication import Communication
 from copy import copy
 from collections import defaultdict
-
+from contract import Contract
 BASEPATH = os.path.dirname(os.path.realpath(__file__))
 
 
