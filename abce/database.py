@@ -48,19 +48,16 @@ class Database:
             'name'(string):
                 the name of the current action/method the agent executes
             data_to_log:
-                a dictianary with data for the database
+                a variable or a dictionary with data to log in the the database
 
         Example::
 
-            self.log('profit', {'': profit})
-
-            ... different method ...
+            self.log('profit', profit)
 
             self.log('employment_and_rent', {'employment': self.possession('LAB'),
                                              'rent': self.possession('CAP'), 'composite': self.composite})
 
-            for i in range(self.num_households):
-                self.log('give%i' % i, self.give('Household', i, 'money', payout / self.num_households))
+            self.log(self.produce_use_everything())
 
         See also:
             :meth:`~abecagent.Database.log_nested`:
@@ -70,7 +67,10 @@ class Database:
             :meth:`~abecagent.Database.observe_begin`:
 
         """
-        data_to_write = {'%s_%s' % (action_name, key): data_to_log[key] for key in data_to_log}
+        try:
+            data_to_write = {'%s_%s' % (action_name, key): data_to_log[key] for key in data_to_log}
+        except TypeError:
+            data_to_write = {action_name: data_to_log}
         data_to_write['id'] = self.idn
         self.database_connection.put(["log", self.group, data_to_write, str(self.round)])
 
