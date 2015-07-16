@@ -22,7 +22,7 @@ class ContractSeller(abce.Agent, abce.Contract):
     def make_offer(self):
         if self.idn == 0:
             if self.round % 10 == 0:
-                self.given_contract = self.make_contract_offer('contractseller', 1, 'labor', 5, 10, 10)
+                self.given_contract = self.make_contract_offer('contractseller', 1, 'labor', 5, 10, duration=10 - 1)
 
     def accept_offer(self):
         if self.idn == 1:

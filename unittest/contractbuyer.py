@@ -22,7 +22,7 @@ class ContractBuyer(abce.Agent, abce.Contract):
     def request_offer(self):
         if self.idn == 1:
             if self.round % 10 == 0:
-                self.given_contract = self.request_contract('contractbuyer', 0, 'labor', 5, 10, 10)
+                self.given_contract = self.request_contract('contractbuyer', 0, 'labor', 5, 10 , duration=10 - 1)
 
     def accept_offer(self):
         if self.idn == 0:
