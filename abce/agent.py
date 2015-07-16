@@ -290,10 +290,10 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
         self._contracts_delivered = []
 
         for good in self._contracts_deliver:
-            self._contracts_deliver[good] = [contract for contract in self._contracts_deliver[good] if contract['end_date'] - 1 > self.round]
+            self._contracts_deliver[good] = [contract for contract in self._contracts_deliver[good] if contract['end_date'] > self.round]
 
         for good in self._contracts_pay:
-            self._contracts_pay[good] = [contract for contract in self._contracts_pay[good] if contract['end_date'] - 1 > self.round]
+            self._contracts_pay[good] = [contract for contract in self._contracts_pay[good] if contract['end_date'] > self.round]
 
         self.database_connection.put(["trade_log", self._trade_log, self.round])
 
