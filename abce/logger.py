@@ -38,7 +38,7 @@ import multiprocessing
 
 class Logger:
     def log_network(self, list_of_nodes, color=0, style=False, shape=False):
-        """ loggs a network. List of not is a list with the numbers of all agents,
+        """ loggs a network. List of nodes is a list with the numbers of all agents,
         this agent is connected to.
 
         Args:
