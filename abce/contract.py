@@ -65,6 +65,7 @@ class Contract:
 
             self.given_contract = self.make_contract_offer('firm', 1, 'labor', quantity=8, price=10, duration=10 - 1)
         """
+        assert quantity >= 0, (quantity, self.round)
         offer = {'sender_group': self.group,
                  'sender_idn': self.idn,
                  'deliver_group': receiver_group,
@@ -100,6 +101,7 @@ class Contract:
             duration:
                 the lenght of the contract
         """
+        assert quantity >= 0, (quantity, self.round)
         offer = {'sender_group': self.group,
                  'sender_idn': self.idn,
                  'deliver_group': self.group,
