@@ -34,6 +34,7 @@ ABCE does not run on Windows.
    Household
    Messaging
    Database
+   Contract
    FirmMultiTechnologies
    simulation
    parameters

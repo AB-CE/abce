@@ -108,7 +108,7 @@ class Household:
                 it depreciates in percent.
 
         Example:
-            self __init__(self):
+            self init(self):
                 ...
                 def utility_function(goods):
                     return goods['house'] ** 0.2 * good['food'] ** 0.6 + good['car'] ** 0.2

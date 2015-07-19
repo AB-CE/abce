@@ -120,7 +120,7 @@ class FirmMultiTechnologies:
 
         Example::
 
-            def __init__(self):
+            def init(self):
                 ...
                 def production_function(goods)
                     return goods['a'] ** 0.25 * goods['b'] ** 0.5 * goods['c'] ** 0.25
@@ -170,7 +170,7 @@ class FirmMultiTechnologies:
 
         Example::
 
-            def __init__(self):
+            def init(self):
                 ...
                 def production_function(goods)
                     output = {'soft_rubber': goods['a'] ** 0.25 * goods['b'] ** 0.5 * goods['c'] ** 0.25,

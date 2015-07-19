@@ -106,14 +106,14 @@ class Firm(FirmMultiTechnologies):
 
         Example::
 
-            def __init__(self):
+            def init(self):
                 ...
-                def production_function(goods)
+                def production_function(goods):
                     return goods['a'] ** 0.25 * goods['b'] ** 0.5 * goods['c'] ** 0.25
 
                 use = {'a': 1, 'b': 0.1, 'c': 0}
 
-                self.set_production_function(production_function, use)
+                self.set_production_function(production_function, output='cookies' use=use)
 
             def production(self):
                 self.produce({'a' : 1, 'b' : 2}
@@ -149,7 +149,7 @@ class Firm(FirmMultiTechnologies):
 
         Example::
 
-            def __init__(self):
+            def init(self):
                 ...
                 def production_function(goods)
                     output = {'soft_rubber': goods['a'] ** 0.25 * goods['b'] ** 0.5 * goods['c'] ** 0.25,
