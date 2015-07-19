@@ -112,7 +112,7 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
         else:
             SystemExit('trade_logging wrongly defined in agent.__init__' + trade_logging)
 
-        self._haves = defaultdict(int)
+        self._haves = defaultdict(float)
 
         #TODO make defaultdict; delete all key errors regarding self._haves as defaultdict, does not have missing keys
         self._haves['money'] = 0
