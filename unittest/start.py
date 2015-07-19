@@ -11,6 +11,9 @@ from production_firm import ProductionFirm
 from utility_household import UtilityHousehold
 from contractseller import ContractSeller
 from contractbuyer import ContractBuyer
+from expiringcapital import ExpiringCapital
+from giveexpiringcapital import GiveExpiringCapital
+from buyexpiringcapital import BuyExpiringCapital
 from abce import *
 
 
@@ -24,7 +27,7 @@ def main():
                 ('all', 'three'),
                 ('all', 'clean_up')
                 ], 60),
-            ('buy', 'panel'),
+            #('buy', 'panel'),
             ('endowment', 'Iconsume'),
             ('productionmultifirm', 'production'),
             ('productionfirm', 'production'),
@@ -39,6 +42,7 @@ def main():
             ('contractbuyer', 'accept_offer'),
             ('contractbuyer', 'deliver_or_pay'),
             ('contractbuyer', 'control'),
+            ('expiringcapital', 'go'),
 
             ('all', 'all_tests_completed')]
         s.add_action_list(action_list)
@@ -46,7 +50,8 @@ def main():
         s.declare_round_endowment(resource='labor_endowment', units=5, product='labor')
         s.declare_round_endowment(resource='cow', units=10, product='milk')
         s.declare_perishable(good='labor')
-        s.panel('buy', variables=['price'])
+        #s.panel('buy', variables=['price'])
+        s.declare_expiring('xcapital', 5)
 
         s.build_agents(Buy, 2)
         #s.build_agents(QuoteBuy, 2)
@@ -59,6 +64,9 @@ def main():
         s.build_agents(UtilityHousehold, 5)
         s.build_agents(ContractSeller, 2)
         s.build_agents(ContractBuyer, 2)
+        s.build_agents(ExpiringCapital, 1)
+        s.build_agents(GiveExpiringCapital, 2)
+        s.build_agents(BuyExpiringCapital, 2)
 
 
 

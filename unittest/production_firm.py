@@ -59,7 +59,9 @@ class ProductionFirm(abce.Agent, abce.Firm):
             assert self.possession('a') == 1, self.possession('a')
             assert self.possession('b') == 1.8, self.possession('b')
             assert self.possession('consumption_good') == 1 ** 0.5 * 2, self.possession('consumption_good')
-            self._haves = defaultdict(float)  # resets all possessions to zero
+            self.destroy('a', 1)
+            self.destroy('b', 1.8)
+            self.destroy('consumption_good', 1 ** 0.5 * 2)
 
             output = self.predict_produce_output({'a': 10, 'b': 10})
             assert output['consumption_good'] == max(10 ** 2, 10 ** 0.5 * 10)
@@ -79,7 +81,8 @@ class ProductionFirm(abce.Agent, abce.Firm):
             assert self.possession('a') == 1, self.possession('a')
             assert self.possession('b') == 0, self.possession('b')
             assert self.possession('consumption_good') == 5 * 1 ** 2 * 2 ** 1, self.possession('consumption_good')
-            self._haves = defaultdict(float)
+            self.destroy('a', 1)
+            self.destroy('consumption_good', 5 * 1 ** 2 * 2 ** 1)
 
         elif self.idn == 2:
             self.create('a', 2)
@@ -89,7 +92,8 @@ class ProductionFirm(abce.Agent, abce.Firm):
             assert self.possession('a') == 1, self.possession('a')
             assert self.possession('b') == 0, self.possession('b')
             assert self.possession('consumption_good') == min(1 * 3, 2 * 1), self.possession('consumption_good')
-            self._haves = defaultdict(float)
+            self.destroy('a', 1)
+            self.destroy('consumption_good',  min(1 * 3, 2 * 1))
 
         elif self.idn == 3:
             self.create('a', 10)
@@ -103,7 +107,12 @@ class ProductionFirm(abce.Agent, abce.Firm):
             assert self.possession('soft_rubber') == 1 ** 0.25 * 2 ** 0.5 * 5 **0.25
             assert self.possession('hard_rubber') == 1 ** 0.1 * 2 ** 0.2 * 5 ** 0.01
             assert self.possession('waste') == 2 / 2, self.possession('waste')
-            self._haves = defaultdict(float)
+            self.destroy_all('a')
+            self.destroy_all('b')
+            self.destroy_all('c')
+            self.destroy_all('soft_rubber')
+            self.destroy_all('hard_rubber')
+            self.destroy_all('waste')
 
 
         elif self.idn == 4:
