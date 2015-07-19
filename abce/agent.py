@@ -50,6 +50,7 @@ import time
 from copy import deepcopy
 import random
 import sys
+from abce.expiringgood import ExpiringGood
 
 
 class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
@@ -130,6 +131,8 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
         self._contracts_deliver = defaultdict(list)
         self._contracts_payed = []
         self._contracts_delivered = []
+
+        self._expiring_goods = []
 
         self._trade_log = defaultdict(int)
         self._data_to_observe = {}
@@ -284,8 +287,8 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
                 keep[key] = self.given_offers[key]
         self.given_offers = keep
 
-        #contracts
-        self._contract_offers     = defaultdict(list)
+        # contracts
+        self._contract_offers = defaultdict(list)
         self._contracts_payed = []
         self._contracts_delivered = []
 
@@ -294,6 +297,10 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
 
         for good in self._contracts_pay:
             self._contracts_pay[good] = [contract for contract in self._contracts_pay[good] if contract['end_date'] > self.round]
+
+        # expiring goods
+        for good in self._expiring_goods:
+            self._haves[good]._advance_round()
 
         self.database_connection.put(["trade_log", self._trade_log, self.round])
 
@@ -305,13 +312,19 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
         """ creates quantity of the good out of nothing
 
         Use create with care, as long as you use it only for labor and
-        natural resources your model is macroeconomally complete.
+        natural resources your model is macro-economically complete.
 
         Args:
             'good': is the name of the good
             quantity: number
         """
         self._haves[good] += quantity
+
+    def _declare_expiring(self, good, duration):
+        """ creates a good that has a limited duration
+        """
+        self._haves[good] = ExpiringGood(duration)
+        self._expiring_goods.append(good)
 
     def destroy(self, good, quantity):
         """ destroys quantity of the good,

@@ -1,3 +1,4 @@
+
 # Copyright 2012 Davoud Taghawi-Nejad
 #
 # Module Author: Davoud Taghawi-Nejad
@@ -192,6 +193,7 @@ class Simulation:
         self.database_name = 'database'
         self.resource_endowment = defaultdict(list)
         self.perishable = []
+        self.expiring = []
         self.variables_to_track = defaultdict(list)
 
         self._communication = Communication()
@@ -333,6 +335,23 @@ class Simulation:
             raise SystemExit("WARNING: agents build before declare_perishable")
         self.perishable.append(good)
 
+    def declare_expiring(self, good, duration):
+        """ This type of good lasts for several rounds, but eventually
+        expires. For example computers would last for several years and than
+        become obsolete.
+        The duration can be accessed in self.simulation_parameters[good].
+
+        Args:
+
+            good:
+                the good, which expires
+            duration:
+                the duration before the good expires
+        """
+        if len(self.agent_list['all']) > 0:
+            raise SystemExit("WARNING: agents build before declare_expiring")
+        self.expiring.append((good, duration))
+        self.simulation_parameters[good] = duration
 
     def declare_service(self, human_or_other_resource, units, service, groups=['all']):
         """ When the agent holds the human_or_other_resource, he gets 'units' of service every round
@@ -543,6 +562,9 @@ class Simulation:
                 agent._register_resource(resource, units, product)
             for variables in self.variables_to_track[group_name] + self.variables_to_track['all']:
                 agent._register_panel(variables)
+            for good, duration in self.expiring:
+                agent._declare_expiring(good, duration)
+
             self.agent_list[group_name].append(agent)
             self.agent_list['all'].append(agent)
             self.agents_backend[group_name].append(backend_send)
