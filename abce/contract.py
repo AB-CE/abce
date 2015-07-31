@@ -1,8 +1,7 @@
-
-
 #pylint: disable=W0232, C1001, C0111, R0913, E1101, W0212
 from abce.tools import is_zero, is_positive, is_negative, NotEnoughGoods, epsilon
 from random import shuffle
+from collections import defaultdict
 
 class Contract:
     """ This is a class, that allows you to create contracts. For example a
@@ -130,12 +129,8 @@ class Contract:
         Returns:
          list of quotes ordered by price
         """
-        ret = []
-        for offer_id in self._contract_offers.keys():
-            if (self._contract_offers[offer_id]['good'] == good
-            and self._contract_offers[offer_id]['makerequest'] == 'm'):
-                ret.append(self._contract_offers[offer_id])
-                del self._contract_offers[offer_id]
+        ret = self._contract_offers[good]
+        del self._contract_offers[good]
         shuffle(ret)
         ret.sort(key=lambda objects: objects['price'], reverse=descending)
         return ret
@@ -153,18 +148,24 @@ class Contract:
         Returns:
          list of quotes ordered by price
         """
-        ret = []
-        for offer_id in self._contract_offers.keys():
-            if (self._contract_offers[offer_id]['good'] == good
-            and self._contract_offers[offer_id]['makerequest'] == 'r'):
-                ret.append(self._contract_offers[offer_id])
-                del self._contract_offers[offer_id]
+        ret = self._contract_requests[good]
+        del self._contract_requests[good]
         shuffle(ret)
         ret.sort(key=lambda objects: objects['price'], reverse=descending)
         return ret
 
     def accept_contract(self, contract, quantity=None):
-        """
+        """ Accepts the contract. The contract is completely aceppted, when
+        the quantity is not given. Or partially when quantity is set.
+
+        Args:
+
+            contract:
+                the contract in question, received with get_contract_requests or
+                get_contract_offers
+
+            quantity (optional):
+                the quantity that is accepted. Defaults to all.
         """
         if quantity is not None:
             contract['quantity'] = min(contract['quantity'], quantity)
@@ -177,26 +178,55 @@ class Contract:
         return contract['idn']
 
     def deliver(self, good):
+        """ delivers all contracts of the type good. Does not take care of the payment
+        The delivery is logged
+        """
+        total_delivered = 0
+        quantities = defaultdict(float)
         for contract in self._contracts_deliver[good]:
             if self._haves[good] < contract['quantity'] - epsilon:
                 raise NotEnoughGoods(self.name, good, contract['quantity'] - self._haves[good])
             self._haves[good] -= contract['quantity']
-            self._send(contract['deliver_group'], contract['deliver_idn'], '!d', contract)
+            quantities[(contract['deliver_group'], contract['deliver_idn'])] += contract['quantity']
 
+            total_delivered += contract['quantity']
+
+        for deliver_group, deliver_idn in quantities:
+            self._send(deliver_group, deliver_idn, '!d', {'receiver_group': self.group,
+                                                          'receiver_idn': self.idn,
+                                                          'good': good,
+                                                          'quantity': quantities[(deliver_group, deliver_idn)],
+                                                          'price': 0,
+                                                          'buysell': 'b'})
+
+        return {good: total_delivered}
 
     def pay_contract(self, good):
+        total_payment = 0
+        quantities = defaultdict(float)
         for contract in self._contracts_pay[good]:
             if self._haves['money'] < contract['quantity'] * contract['price'] - epsilon:
                 raise NotEnoughGoods(self.name, 'money', contract['quantity'] * contract['price'] - self._haves['money'])
             self._haves['money'] -= contract['quantity'] * contract['price']
-            self._send(contract['pay_group'], contract['pay_idn'], '!p', contract)
+            quantities[(contract['pay_group'], contract['pay_idn'])] += contract['quantity'] * contract['price']
+            total_payment += contract['quantity'] * contract['price']
+
+        for pay_group, pay_idn in quantities:
+            self._send(pay_group, pay_idn, '!p', {'receiver_group': self.group,
+                                                  'receiver_idn': self.idn,
+                                                  'good': good,
+                                                  'quantity': 0,
+                                                  'price': quantities[(pay_group, pay_idn)],
+                                                  'buysell': 'b'})
+
+        return {good: total_payment}
 
 
-    def is_delivered(self, contract_idn):
-        return contract_idn in self._contracts_delivered
+    def has_delivered(self, group, idn):
+        return (group, idn) in self._contracts_delivered
 
-    def is_payed(self, contract_idn):
-        return contract_idn in self._contracts_payed
+    def has_payed(self, group, idn):
+        return (group, idn) in self._contracts_payed
 
     def contract_delivery_commitments(self, good):
         return sum([contract['quantity'] for contract in self._contracts_deliver[good]])

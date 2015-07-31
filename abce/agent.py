@@ -34,8 +34,6 @@ Messaging between agents:
 """
 from __future__ import division
 import multiprocessing
-import compiler
-import pyparsing as pp
 from collections import OrderedDict, defaultdict
 import numpy as np
 from abce.tools import *
@@ -126,6 +124,7 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
         self._answered_offers = OrderedDict()
         self._offer_count = 0
         self._reject_offers_retrieved_end_subround = []
+        self._contract_requests = defaultdict(list)
         self._contract_offers = defaultdict(list)
         self._contracts_pay = defaultdict(list)
         self._contracts_deliver = defaultdict(list)
@@ -288,6 +287,7 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
         self.given_offers = keep
 
         # contracts
+        self._contract_requests = defaultdict(list)
         self._contract_offers = defaultdict(list)
         self._contracts_payed = []
         self._contracts_delivered = []
@@ -319,6 +319,39 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
             quantity: number
         """
         self._haves[good] += quantity
+
+    def create_timestructured(self, good, quantity):
+        """ creates quantity of the time structured good out of nothing.
+        For example::
+
+            self.creat_timestructured('capital', [10,20,30])
+
+        Creates capital. 10 units are 2 years old 20 units are 1 year old
+        and 30 units are new.
+
+        It can alse be used with a quantity instead of an array. In this
+        case the amount is equally split on the years.::
+
+            self.creat_timestructured('capital', 60)
+
+        In this case 20 units are 2 years old 20 units are 1 year old
+        and 20 units are new.
+
+        Args:
+            'good':
+                is the name of the good
+
+            quantity:
+                an arry or number
+        """
+        length = len(self._haves[good].time_structure)
+        try:
+            for i in range(length):
+                self._haves[good].time_structure[i] += quantity[i]
+        except TypeError:
+            for i in range(length):
+                self._haves[good].time_structure[i] +=  quantity / length
+
 
     def _declare_expiring(self, good, duration):
         """ creates a good that has a limited duration
@@ -469,18 +502,22 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
             elif typ == '_q':
                 self._quotes[msg['idn']] = msg
             elif typ == '!o':
-                self._contract_offers[msg['good']] = msg
+                if msg['makerequest'] == 'r':
+                    self._contract_requests[msg['good']].append(msg)
+                else:
+                    self._contract_offers[msg['good']].append(msg)
             elif typ == '+d':
                 self._contracts_deliver[msg['good']].append(msg)
             elif typ == '+p':
                 self._contracts_pay[msg['good']].append(msg)
             elif typ == '!d':
                 self._haves[msg['good']] += msg['quantity']
-                self._contracts_delivered.append(msg['idn'])
+                self._contracts_delivered.append((msg['receiver_group'], msg['receiver_idn']))
+                self._log_receive_accept(msg)
             elif typ == '!p':
-                self._haves['money'] += msg['quantity'] * msg['price']
-                self._contracts_payed.append(msg['idn'])
-
+                self._haves['money'] += msg['price']
+                self._contracts_payed.append((msg['receiver_group'], msg['receiver_idn']))
+                self._log_receive_accept(msg)
             else:
                 self._msgs.setdefault(typ, []).append(Message(msg))
 
@@ -496,7 +533,7 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
         typ =(_o,c,u,r) are
         reserved for internally processed offers.
         """
-        self.out.put([receiver_group, receiver_idn, (typ,msg)])
+        self.out.put([receiver_group, receiver_idn, (typ, msg)])
 
     def _send_to_group(self, receiver_group, typ, msg):
         """ sends a message to 'receiver_group', who can be an agent, a group or
