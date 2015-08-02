@@ -161,7 +161,7 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
                 self.bancrupcy = True
 
         """
-        return self._haves[good]
+        return float(self._haves[good])
 
     def possessions(self, list_of_goods):
         """ returns a dictionary of goods and the corresponding amount an agent owns
@@ -183,7 +183,7 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
                 if have[good] > 5:
                     rich = True
         """
-        return {good: self._haves[good] for good in list_of_goods}
+        return {good: float(self._haves[good]) for good in list_of_goods}
 
     def possessions_all(self):
         """ returns all possessions """
