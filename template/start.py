@@ -4,7 +4,7 @@ from firm import Firm
 from household import Household
 from abce import Simulation, read_parameters, repeat
 
-def main()
+def main():
     for simulation_parameters in read_parameters('simulation_parameters.csv'):
         s = Simulation(simulation_parameters)
         action_list = [
