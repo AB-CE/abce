@@ -42,14 +42,14 @@ class ContractSeller(abce.Agent, abce.Contract):
 
     def control(self):
         if self.idn == 0:
-            assert self.is_payed(self.given_contract)
             assert self.possession('labor') == 0, self.possession('labor')
             assert self.possession('money') == 50, self.possession('money')
+            assert self.has_payed('contractseller', 1), self._contracts_payed
             self.destroy('money', 50)
         else:
-            assert self.is_delivered(self.accepted_contract)
             assert self.possession('labor') == 5, self.possession('labor')
             assert self.possession('money') == 0, self.possession('money')
+            assert self.has_delivered('contractseller', 0), self._contracts_delivered
 
     def clean_up(self):
         pass
