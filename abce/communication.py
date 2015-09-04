@@ -38,7 +38,7 @@ class Communication(mp.Process):
                         agents_finished, total_number = 0, 0
                         self.ready.send('.')
                 elif msg[1] == 'all':
-                        for agent in self.agents_backend['all'][msg[0]]:
+                        for agent in self.agents_backend[msg[0]]:
                             agent.send(msg[2:])
                 else:
                     self.agents_backend[msg[0]][msg[1]].send(msg[2])
