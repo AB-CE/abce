@@ -33,7 +33,6 @@ Messaging between agents:
 .. [1] or :class:`abce.agent.FirmMultiTechnologies` for simulations with complex technologies.
 """
 from __future__ import division
-import multiprocessing
 from collections import OrderedDict, defaultdict
 import numpy as np
 from abce.tools import *
@@ -51,7 +50,7 @@ import sys
 from abce.expiringgood import ExpiringGood
 
 
-class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
+class Agent(Database, Logger, Trade, Messaging):
     """ Every agent has to inherit this class. It connects the agent to the simulation
     and to other agent. The :class:`abceagent.Trade`, :class:`abceagent.Database` and
     :class:`abceagent.Messaging` classes are included. You can enhance an agent, by also
@@ -64,8 +63,7 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
             def __init__(self, simulation_parameters, agent_parameters, _pass_to_engine):
             abceagent.Agent.__init__(self, *_pass_to_engine)
     """
-    def __init__(self, simulation_parameters, agent_parameters, idn, group, trade_logging, commands, backend_send, backend_recv, database, logger, frontend):
-        multiprocessing.Process.__init__(self)
+    def __init__(self, simulation_parameters, agent_parameters, idn, group, trade_logging, database, logger):
         self.idn = idn
         """ self.idn returns the agents idn READ ONLY!"""
         self.name = '%s_%i:' % (group, idn)
@@ -77,8 +75,7 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
         """ self.group returns the agents group or type READ ONLY! """
         #TODO should be group_address(group), but it would not work
         # when fired manual + ':' and manual group_address need to be removed
-        self.commands = commands
-        self.out = frontend
+        self.out = []
         self.simulation_parameters = simulation_parameters
         """ The simulation parameters and the number of agents in other groups
 
@@ -94,21 +91,18 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
 
         self.database_connection = database
         self.logger_connection = logger
-        self.messages_in = backend_recv
-        self.messages_in_send = backend_send
-        self._methods = {}
-        self._register_actions()
-        if trade_logging == 'individual':
-            self._log_receive_accept = self._log_receive_accept_agent
-            self._log_receive_partial_accept = self._log_receive_partial_accept_agent
-        elif trade_logging == 'group':
-            self._log_receive_accept = self._log_receive_accept_group
-            self._log_receive_partial_accept = self._log_receive_partial_accept_group
-        elif trade_logging == 'off':
-            self._log_receive_accept = lambda: None
-            self._log_receive_partial_accept = lambda: None
-        else:
-            SystemExit('trade_logging wrongly defined in agent.__init__' + trade_logging)
+
+        # if trade_logging == 'individual':
+        #     self._log_receive_accept = self._log_receive_accept_agent
+        #     self._log_receive_partial_accept = self._log_receive_partial_accept_agent
+        # elif trade_logging == 'group':
+        #     self._log_receive_accept = self._log_receive_accept_group
+        #     self._log_receive_partial_accept = self._log_receive_partial_accept_group
+        # elif trade_logging == 'off':
+        #     self._log_receive_accept = self._log_receive_accept_agent
+        #     self._log_receive_partial_accept = self._log_receive_accept_agent # should not log anything
+        # else:
+        #     SystemExit('trade_logging wrongly defined in agent.__init__' + trade_logging)
 
         self._haves = defaultdict(float)
 
@@ -247,22 +241,6 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
         self._offer_count += 1
         return '%s:%i' % (self.name, self._offer_count)
 
-    def _register_actions(self):
-        """ registers all actions of the Agent, which do not start with '_' """
-        for method in getmembers(self):
-            if (ismethod(method[1]) and
-                    not(method[0] in vars(Agent) or method[0].startswith('_') or method[0] in vars(multiprocessing.Process))):
-                self._methods[method[0]] = method[1]
-            self._methods['_advance_round'] = self._advance_round
-            self._methods['_clearing__end_of_subround'] = self._clearing__end_of_subround
-            self._methods['_perish'] = self._perish
-            self._methods['_produce_resource'] = self._produce_resource
-            self._methods['_die'] = self._die
-            self._methods['panel'] = self._panel
-
-            #TODO inherited classes provide methods that should not be callable
-            #change _ policy _ callable from outside __ not and exception lists
-
     def _advance_round(self):
         offer_iterator = self._answered_offers.iteritems()
         recent_answerd_offers = OrderedDict()
@@ -350,7 +328,7 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
                 self._haves[good].time_structure[i] += quantity[i]
         except TypeError:
             for i in range(length):
-                self._haves[good].time_structure[i] +=  quantity / length
+                self._haves[good].time_structure[i] += quantity / length
 
 
     def _declare_expiring(self, good, duration):
@@ -387,18 +365,15 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
         self._haves[good] = 0
         return quantity_destroyed
 
-    def run(self):
+    def run(self, command, incomming_messages):
+        self.out = []
         self.init(self.simulation_parameters, self.agent_parameters)
         try:
-            while True:
-                command = self.commands.recv()
-                self._clearing__end_of_subround()
-                self._methods[command]()
-                if command[0] != '_':
-                    self.__reject_polled_but_not_accepted_offers()
-                    self._signal_finished()
+            self._clearing__end_of_subround(incomming_messages)
+            getattr(self, command)()
+            self.__reject_polled_but_not_accepted_offers()
         except KeyboardInterrupt:
-            pass
+            return None
         except KeyError:
             time.sleep(random.random())
             if command not in self._methods:
@@ -408,9 +383,10 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
         except:
             time.sleep(random.random())
             raise
+        return self.out
 
-    def _die(self):
-        sys.exit(0)
+    def run_internal(self, command):
+        getattr(self, command)()
 
     def _register_resource(self, resource, units, product):
         self._resources.append((resource, units, product))
@@ -427,7 +403,8 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
         self._perishable.append(good)
 
     def _perish(self):
-        for good in self._perishable:
+        goods = self.commands.recv_multipart()
+        for good in goods:
             if good in self._haves:
                 self._haves[good] = 0
             for key in self._open_offers.keys():
@@ -465,8 +442,7 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
         for offer_id in to_reject:
             self.reject(self._open_offers[offer_id])
 
-    #TODO go to trade
-    def _clearing__end_of_subround(self):
+    def _clearing__end_of_subround(self, incomming_messages):
         """ agent receives all messages and objects that have been send in this
         subround and deletes the offers that where retracted, but not executed.
 
@@ -477,11 +453,7 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
         '_r': deletes an offer that the other agent rejected
         '_g': recive a 'free' good from another party
         """
-        self.messages_in_send.send(['.', '.'])
-        while True:
-            typ, msg = self.messages_in.recv()
-            if typ == '.':
-                break
+        for typ, msg in incomming_messages:
             if   typ == '_o':
                 msg['status'] = 'received'
                 self._open_offers[msg['idn']] = msg
@@ -521,11 +493,6 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
             else:
                 self._msgs.setdefault(typ, []).append(Message(msg))
 
-    def _signal_finished(self):
-        """ signals modelswarm via communication that the agent has send all
-        messages and finish his action """
-        self.out.put('.')
-
     def _send(self, receiver_group, receiver_idn, typ, msg):
         """ sends a message to 'receiver_group', who can be an agent, a group or
         'all'. The agents receives it at the begin of each round in
@@ -533,7 +500,7 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
         typ =(_o,c,u,r) are
         reserved for internally processed offers.
         """
-        self.out.put([receiver_group, receiver_idn, (typ, msg)])
+        self.out.append([receiver_group, receiver_idn, (typ, msg)])
 
     def _send_to_group(self, receiver_group, typ, msg):
         """ sends a message to 'receiver_group', who can be an agent, a group or
@@ -542,8 +509,7 @@ class Agent(Database, Logger, Trade, Messaging, multiprocessing.Process):
         typ =(_o,c,u,r) are
         reserved for internally processed offers.
         """
-        self.out.put('works here')
-        self.out.put([receiver_group, 'all', (typ, msg)])
+        self.out.append([receiver_group, 'all', (typ, msg)])
 
 
 def flatten(d, parent_key=''):
@@ -554,3 +520,4 @@ def flatten(d, parent_key=''):
         except AttributeError:
             items.append(('%s%s' % (parent_key, k), v))
     return dict(items)
+

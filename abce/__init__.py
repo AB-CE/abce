@@ -57,12 +57,17 @@ from firm import Firm
 from firmmultitechnologies import *
 from household import *
 from agent import *
-from abce.communication import Communication
 from copy import copy
 from collections import defaultdict
 from contract import Contract
 BASEPATH = os.path.dirname(os.path.realpath(__file__))
 
+
+def execute_wrapper(inp):
+    return inp[0].run(inp[1], inp[2])
+
+def execute_internal_wrapper(inp):
+    inp[0].execute_internal(inp[1])
 
 def read_parameters(parameters_file='simulation_parameters.csv'):
     """ reads a parameter file line by line and gives a list. Where each line
@@ -177,8 +182,8 @@ class Simulation:
         """ Simulation parameters are the parameter you specify for the current
         simulation. Either in simulation_parameters.csv or as a dictionary
         """
-        self.agent_list = {}
-        self.agent_list['all'] = []
+        self.agents_list = {}
+        self.agents_list['all'] = []
         self.agents_backend = {}
         self.agents_backend['all'] = []
         self.agents_command_socket = {}
@@ -196,8 +201,6 @@ class Simulation:
         self.expiring = []
         self.variables_to_track = defaultdict(list)
 
-        self._communication = Communication()
-        self.communication_frontend, self.communication_backend, self.ready = self._communication.get_queue()
         self.database_queue = mp.Queue()
         self._db = abce.db.Database(simulation_parameters['_path'], self.database_name, self.database_queue)
         self.logger_queue = mp.Queue()
@@ -305,7 +308,7 @@ class Simulation:
 
 
         """
-        if len(self.agent_list['all']) > 0:
+        if len(self.agents_list['all']) > 0:
             raise SystemExit("WARNING: agents build before declare_round_endowment")
         for group in groups:
             self.resource_endowment[group].append((resource, units, product))
@@ -331,7 +334,7 @@ class Simulation:
              w.declare_perishable(good='CAP')
 
         """
-        if len(self.agent_list['all']) > 0:
+        if len(self.agents_list['all']) > 0:
             raise SystemExit("WARNING: agents build before declare_perishable")
         self.perishable.append(good)
 
@@ -348,7 +351,7 @@ class Simulation:
             duration:
                 the duration before the good expires
         """
-        if len(self.agent_list['all']) > 0:
+        if len(self.agents_list['all']) > 0:
             raise SystemExit("WARNING: agents build before declare_expiring")
         self.expiring.append((good, duration))
         self.simulation_parameters[good] = duration
@@ -399,7 +402,7 @@ class Simulation:
 
          w.panel_data(group=firm)
         """
-        if len(self.agent_list['all']) > 0:
+        if len(self.agents_list['all']) > 0:
             raise SystemExit("WARNING: agents build before panel")
         self._db.add_panel(group)
         self.variables_to_track[group].append(variables)
@@ -419,44 +422,65 @@ class Simulation:
                 processed_list.append(('all', action))
         return processed_list
 
-    def run(self):
+    def execute_parallel(self, group, command, messagess):
+        parameters = ((agent, command, messagess[group][i]) for i, agent in enumerate(self.agents_list[group]))
+        pool = mp.Pool()
+        out = pool.map(execute_wrapper, parameters)
+        pool.close()
+        pool.join()
+        return out
+
+    def execute_internal_parallel(self, group, command):
+        pool = mp.Pool()
+        pool.map(execute_internal_wrapper, zip(self.agents_list[group], [command] * len(self.agents_list[group])))
+        time.sleep(1)
+
+        pool.close()
+        pool.join()
+
+    def execute_serial(self, group, command, messagess):
+        return [agent.run(command, messagess[group][i]) for i, agent in enumerate(self.agents_list[group])]
+
+    def execute_internal_serial(self, group, command):
+        for agent in self.agents_list[group]:
+            agent.execute_internal(command)
+
+    def run(self, parallel=True):
         """ This runs the simulation """
-        if not(self.agent_list):
+
+        if parallel:
+            self.execute = self.execute_parallel
+            self.execute_internal = self.execute_internal_parallel
+        else:
+            self.execute = self.execute_serial
+            self.execute_internal = self.execute_internal_serial
+
+        self._db.start()
+        if not(self.agents_list):
             raise SystemExit('No Agents Created')
         if not(self.action_list) and not(self._action_list):
             raise SystemExit('No action_list declared')
         if not(self._action_list):
             self._action_list = self._process_action_list(self.action_list)
 
-        for agent in self.agent_list['all']:
-            agent.start()
-        self._db.start()
-        self._communication.set_agents(self.agents_backend)
-        self._communication.start()
-        self.ready.recv()
-
         self._write_description_file()
         self._displaydescribtion()
 
         start_time = time.time()
 
+        messagess = defaultdict(lambda: defaultdict(list))
+
         for year in xrange(self.simulation_parameters['num_rounds']):
             self.round = year
-            print("\rRound" + str("%3d" % year)),
-
-            for queue in self.agents_command_socket['all']:
-                queue.send('_produce_resource')
+            print("Round" + str("%3d" % year)),
+            self.execute_internal('all', '_produce_resource')
 
             for group, action in self._action_list:
-                self._add_agents_to_wait_for(len(self.agents_command_socket[group]))
-                for queue in self.agents_command_socket[group]:
-                    queue.send(action)
-                self._wait_for_agents()
+                messages = self.execute(group, action, messagess)
+                messages = sortmessages(messages)
 
-            for queue in self.agents_command_socket['all']:
-                queue.send('_advance_round')
-            for queue in self.agents_command_socket['all']:
-                queue.send('_perish')
+            self.execute_internal('all', '_advance_round')
+            self.execute_internal('all', '_perish')
 
         print(str("%6.2f" % (time.time() - start_time)))
         self.gracefull_exit()
@@ -516,8 +540,8 @@ class Simulation:
                     num_agents_this_group = self.simulation_parameters[number]
                 except KeyError:
                     SystemExit('build_agents ' + group_name + ': ' + number +
-                    ' is not a number or a column name in simulation_parameters.csv'
-                    'or the parameterfile you choose')
+                               ' is not a number or a column name in simulation_parameters.csv'
+                               'or the parameterfile you choose')
         elif not(number) and not(agent_parameters):
             try:
                 num_agents_this_group = self.simulation_parameters['num_' + group_name.lower()]
@@ -527,8 +551,8 @@ class Simulation:
             num_agents_this_group = len(agent_parameters)
         else:
             raise SystemExit('build_agents ' + group_name + ': Either '
-                'number_or_parameter_column or agent_parameters must be'
-                'specied, NOT both.')
+                             'number_or_parameter_column or agent_parameters must be'
+                             'specied, NOT both.')
         if not(agent_parameters):
             agent_parameters = [None for _ in range(num_agents_this_group)]
 
@@ -537,9 +561,7 @@ class Simulation:
         self.num_agents += num_agents_this_group
         self.num_agents_in_group[group_name] = num_agents_this_group
         self.num_agents_in_group['all'] = self.num_agents
-        self.agent_list[group_name] = []
-        self.agents_backend[group_name] = []
-        self.agents_command_socket[group_name] = []
+        self.agents_list[group_name] = []
 
         for idn in range(num_agents_this_group):
             commands_recv, commands_send = mp.Pipe(duplex=False)
@@ -547,14 +569,10 @@ class Simulation:
             agent = AgentClass(simulation_parameters=self.simulation_parameters,
                                agent_parameters=agent_parameters[idn],
                                idn=idn,
-                               commands=commands_recv,
                                group=group_name,
                                trade_logging=self.trade_logging_mode,
                                database=self.database_queue,
-                               logger=self.logger_queue,
-                               backend_recv=backend_recv,
-                               backend_send=backend_send,
-                               frontend=self.communication_frontend)
+                               logger=self.logger_queue)
             agent.name = agent_name(group_name, idn)
             for good in self.perishable:
                 agent._register_perish(good)
@@ -565,12 +583,8 @@ class Simulation:
             for good, duration in self.expiring:
                 agent._declare_expiring(good, duration)
 
-            self.agent_list[group_name].append(agent)
-            self.agent_list['all'].append(agent)
-            self.agents_backend[group_name].append(backend_send)
-            self.agents_backend['all'].append(backend_send)
-            self.agents_command_socket[group_name].append(commands_send)
-            self.agents_command_socket['all'].append(commands_send)
+            self.agents_list[group_name].append(agent)
+            self.agents_list['all'].append(agent)
 
     def build_agents_from_file(self, AgentClass, parameters_file=None, multiply=1):
         """ This command builds agents of the class AgentClass from an csv file.
@@ -610,7 +624,7 @@ class Simulation:
         keys = [key for key in agent_file.next()]
         if not(set(('agent_class', 'number')).issubset(keys)):
             SystemExit(parameters_file + " does not have a column 'agent_class'"
-                "and/or 'number'")
+                       "and/or 'number'")
 
         agents_list = []
         for line in agent_file:
@@ -631,22 +645,8 @@ class Simulation:
 
         self.build_agents(AgentClass, agent_parameters=agent_parameters)
 
-    def _add_agents_to_wait_for(self, number):
-        self.communication_frontend.put(['+', str(number)])
-
-    def _wait_for_agents(self):
-        try:
-            self.ready.recv()
-        except KeyboardInterrupt:
-            self.gracefull_exit()
-            sys.exit(-1)
-
-    def _end_Communication(self):
-        self.communication_frontend.put(['+', 'end_Communication'])
-
     def _write_description_file(self):
-        description = open(
-                os.path.abspath(self.simulation_parameters['_path'] + '/description.txt'), 'w')
+        description = open(os.path.abspath(self.simulation_parameters['_path'] + '/description.txt'), 'w')
         description.write('\n')
         description.write('\n')
         for key in self.simulation_parameters:
@@ -692,36 +692,12 @@ class repeat:
         self.repetitions = repetitions
 
 
-class repeat_while:
-    """ NOT IMPLEMENTED Repeats the contained list of actions until all agents_risponed
-    done. Optional a maximum can be set.
-
-    Args::
-
-     action_list: action_list that is repeated
-     repetitions: the number of times that an actionlist is repeated or the name of
-     the corresponding parameter in simulation_parameters.csv
-
-    """
-    #TODO implement into _process_action_list
-    def __init__(self, action_list, repetitions=None):
-        SystemExit('repeat_while not implement yet')
-        self.action_list = action_list
-        if repetitions:
-            try:
-                self.repetitions = int(repetitions)
-            except ValueError:
-                try:
-                    self.repetitions = self.simulation_parameters[repetitions]
-                except KeyError:
-                    SystemExit('add_action_list/repeat ' + repetitions + ' is not a number or'
-                               'a column name in simulation_parameters.csv or the parameterfile'
-                               'you choose')
-        else:
-            self.repetitions = None
-        raise SystemExit('repeat_while not implemented')
-        #TODO implement repeat_while
-
+def sortmessages(messagess):
+    out = defaultdict(lambda: defaultdict(list))
+    for messages in messagess:
+        for group, agent_number, message in messages:
+            out[group][agent_number].append(message)
+    return out
 
 
 
