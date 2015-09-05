@@ -385,7 +385,7 @@ class Agent(Database, Logger, Trade, Messaging):
             raise
         return self.out
 
-    def run_internal(self, command):
+    def execute_internal(self, command):
         getattr(self, command)()
 
     def _register_resource(self, resource, units, product):
@@ -403,8 +403,7 @@ class Agent(Database, Logger, Trade, Messaging):
         self._perishable.append(good)
 
     def _perish(self):
-        goods = self.commands.recv_multipart()
-        for good in goods:
+        for good in self._perishable:
             if good in self._haves:
                 self._haves[good] = 0
             for key in self._open_offers.keys():

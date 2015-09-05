@@ -486,18 +486,10 @@ class Simulation:
         self.gracefull_exit()
 
     def gracefull_exit(self):
-        for queue in self.agents_command_socket['all']:
-            queue.send("_die")
-        for agent in list(itertools.chain(*self.agent_list.values())):
-            while agent.is_alive():
-                time.sleep(0.1)
-        self._end_Communication()
         self.database_queue.put('close')
         self.logger_queue.put('close')
         while self._db.is_alive():
             time.sleep(0.05)
-        while self._communication.is_alive():
-            time.sleep(0.025)
         postprocess.to_csv(os.path.abspath(self.simulation_parameters['_path']), self.database_name)
 
     def build_agents(self, AgentClass,  number=None, group_name=None, agent_parameters=None):
