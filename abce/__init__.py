@@ -434,8 +434,6 @@ class Simulation:
     def execute_internal_parallel(self, group, command):
         pool = mp.Pool()
         pool.map(execute_internal_wrapper, zip(self.agents_list[group], [command] * len(self.agents_list[group])))
-        time.sleep(1)
-
         pool.close()
         pool.join()
 
