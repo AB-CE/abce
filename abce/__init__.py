@@ -424,18 +424,13 @@ class Simulation:
         return processed_list
 
     def execute_parallel(self, group, command, messagess):
-        parameters = ((agent, command, messagess[group][i]) for i, agent in enumerate(self.agents_list[group]))
-        pool = mp.Pool()
-        out = pool.map(execute_wrapper, parameters)
-        pool.close()
-        pool.join()
+        parameters = [(agent, command, messagess[group][i]) for i, agent in enumerate(self.agents_list[group])]
+        out = self.pool.map(execute_wrapper, parameters)
         return out
 
     def execute_internal_parallel(self, group, command):
-        pool = mp.Pool()
-        pool.map(execute_internal_wrapper, zip(self.agents_list[group], [command] * len(self.agents_list[group])))
-        pool.close()
-        pool.join()
+        self.pool.map(execute_internal_wrapper, [(agent, command) for agent in self.agents_list[group]])
+
 
     def execute_serial(self, group, command, messagess):
         return [agent.run(command, messagess[group][i]) for i, agent in enumerate(self.agents_list[group])]
@@ -448,6 +443,7 @@ class Simulation:
         """ This runs the simulation """
 
         if parallel:
+            self.pool = mp.Pool()
             self.execute = self.execute_parallel
             self.execute_internal = self.execute_internal_parallel
         else:
@@ -489,6 +485,8 @@ class Simulation:
         self.logger_queue.put('close')
         while self._db.is_alive():
             time.sleep(0.05)
+        self.pool.close()
+        self.pool.join()
         postprocess.to_csv(os.path.abspath(self.simulation_parameters['_path']), self.database_name)
 
     def build_agents(self, AgentClass,  number=None, group_name=None, agent_parameters=None):
