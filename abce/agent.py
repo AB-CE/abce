@@ -421,7 +421,7 @@ class Agent(Database, Logger, Trade, Messaging):
         self.variables_to_track = variables
 
 
-    def _panel(self):
+    def panel(self):
         data_to_track = self._haves
         for variable in self.variables_to_track:
             data_to_track[variable] = self.__dict__[variable]
