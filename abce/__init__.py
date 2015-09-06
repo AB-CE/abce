@@ -201,9 +201,10 @@ class Simulation:
         self.expiring = []
         self.variables_to_track = defaultdict(list)
 
-        self.database_queue = mp.Queue()
+        manager = mp.Manager()
+        self.database_queue = manager.Queue()
         self._db = abce.db.Database(simulation_parameters['_path'], self.database_name, self.database_queue)
-        self.logger_queue = mp.Queue()
+        self.logger_queue = manager.Queue()
         self._logger = abce.abcelogger.AbceLogger(simulation_parameters['_path'], self.logger_queue)
         self._logger.start()
 
