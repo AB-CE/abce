@@ -414,13 +414,22 @@ class Simulation:
             if type(action) is tuple:
                 if action[0] not in self.num_agents_in_group.keys() + ['all']:
                     SystemExit('%s in (%s, %s) in the action_list is not a known agent' % (action[0], action[0], action[1]))
-                processed_list.append((action[0], action[1]))
+                if len(action) == 2:
+                    processed_list.append((self.execute_serial, action[0], action[1]))
+                elif len(action) == 3:
+                    if action[2] == 'serial':
+                        processed_list.append((self.execute_serial, action[0], action[1]))
+                    elif action[2] == 'parallel':
+                        processed_list.append((self.execute_parallel, action[0], action[1]))
+                    else:
+                        raise SystemExit("%s in %s in action_list not recognized, must be 'serial' or 'parallel' " % (action[2],action))
+
             elif isinstance(action, repeat):
                 nested_action_list = self._process_action_list(action.action_list)
                 for _ in range(action.repetitions):
                     processed_list.extend(nested_action_list)
             else:
-                processed_list.append(('all', action))
+                raise SystemExit("%s in action_list not recognized" % action)
         return processed_list
 
     def execute_parallel(self, group, command, messagess):
@@ -439,30 +448,20 @@ class Simulation:
         for agent in self.agents_list[group]:
             agent.execute_internal(command)
 
-    def run(self, parallel='mixed'):
+    def run(self, parallel=False):
         """ This runs the simulation
 
             Args:
-                parallel ('mixed' (default), 'all', 'serial'):
-                    Whether the f agents functions are executed in parallel.
-                    Default is 'mixed'. 'all', does also run utility functions
-                    in parallel, which is slower and might cause bugs.
-                    False runs the simulation in serial in is good for trouble
-                    shouting and profiling.
+                parallel (False (default), True):
+                    Whether the agents' utility functions are executed in parallel.
+                    For simulation that don't have hundreds of separate perishable
+                    goods or resource False is faster.
         """
-        if parallel == 'mixed':
-            self.pool = mp.Pool()
-            self.execute = self.execute_parallel
-            self.execute_internal = self.execute_internal_serial
-        elif parallel == 'all':
-            self.pool = mp.Pool()
-            self.execute = self.execute_parallel
+        self.pool = mp.Pool()
+        if parallel:
             self.execute_internal = self.execute_internal_parallel
-        elif parallel == 'parallel':
-            self.execute = self.execute_serial
-            self.execute_internal = self.execute_internal_serial
         else:
-            raise SystemExit("parallel, set to something wrong must be 'mixed', 'all' or 'serial'")
+            self.execute_internal = self.execute_internal_serial
 
         self._db.start()
         if not(self.agents_list):
@@ -484,8 +483,8 @@ class Simulation:
             print("Round" + str("%3d" % year)),
             self.execute_internal_serial('all', '_produce_resource')
 
-            for group, action in self._action_list:
-                messages = self.execute(group, action, messagess)
+            for processor, group, action in self._action_list:
+                messages = processor(group, action, messagess)
                 messages = sortmessages(messages)
 
             self.execute_internal('all', '_advance_round')
