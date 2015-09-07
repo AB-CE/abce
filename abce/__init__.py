@@ -435,6 +435,7 @@ class Simulation:
     def execute_parallel(self, group, command, messagess):
         parameters = [(agent, command, messagess[group][i]) for i, agent in enumerate(self.agents_list[group])]
         out = self.pool.map(execute_wrapper, parameters)
+        del messagess[group]
         return out
 
     def execute_internal_parallel(self, group, command):
@@ -462,7 +463,6 @@ class Simulation:
             self.execute_internal = self.execute_internal_parallel
         else:
             self.execute_internal = self.execute_internal_serial
-
         self._db.start()
         if not(self.agents_list):
             raise SystemExit('No Agents Created')
@@ -484,8 +484,8 @@ class Simulation:
             self.execute_internal_serial('all', '_produce_resource')
 
             for processor, group, action in self._action_list:
-                messages = processor(group, action, messagess)
-                messages = sortmessages(messages)
+                new_messages = processor(group, action, messagess)
+                messagess = sortmessages(messagess, new_messages)
 
             self.execute_internal('all', '_advance_round')
             self.execute_internal('all', '_perish')
@@ -699,12 +699,11 @@ class repeat:
         self.repetitions = repetitions
 
 
-def sortmessages(messagess):
-    out = defaultdict(lambda: defaultdict(list))
-    for messages in messagess:
+def sortmessages(messagess, new_messages):
+    for messages in new_messages:
         for group, agent_number, message in messages:
-            out[group][agent_number].append(message)
-    return out
+            messagess[group][agent_number].append(message)
+    return messagess
 
 
 
