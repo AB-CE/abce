@@ -94,17 +94,14 @@ class Agent(Database, Logger, Trade, Messaging):
         self.database_connection = database
         self.logger_connection = logger
 
-        # if trade_logging == 'individual':
-        #     self._log_receive_accept = self._log_receive_accept_agent
-        #     self._log_receive_partial_accept = self._log_receive_partial_accept_agent
-        # elif trade_logging == 'group':
-        #     self._log_receive_accept = self._log_receive_accept_group
-        #     self._log_receive_partial_accept = self._log_receive_partial_accept_group
-        # elif trade_logging == 'off':
-        #     self._log_receive_accept = self._log_receive_accept_agent
-        #     self._log_receive_partial_accept = self._log_receive_accept_agent # should not log anything
-        # else:
-        #     SystemExit('trade_logging wrongly defined in agent.__init__' + trade_logging)
+        if trade_logging == 'individual':
+            self.trade_logging = 1
+        elif trade_logging == 'group':
+            self.trade_logging = 2
+        elif trade_logging == 'off':
+            self.trade_logging = 0
+        else:
+            SystemExit('trade_logging wrongly defined in agent.__init__' + trade_logging)
 
         self._haves = defaultdict(float)
 
@@ -463,10 +460,16 @@ class Agent(Database, Logger, Trade, Messaging):
                 del self._open_offers[msg]
             elif typ == '_a':
                 offer = self._receive_accept(msg)
-                self._log_receive_accept(offer)
+                if self.trade_logging == 2:
+                    self._log_receive_accept_group(offer)
+                elif self.trade_logging == 1:
+                    self._log_receive_accept_agent(offer)
             elif typ == '_p':
                 offer = self._receive_partial_accept(msg)
-                self._log_receive_partial_accept(offer)
+                if self.trade_logging == 2:
+                    self._log_receive_partial_accept_group(offer)
+                elif self.trade_logging == 1:
+                    self._log_receive_partial_accept_agent(offer)
             elif typ == '_r':
                 self._receive_reject(msg)
             elif typ == '_g':
