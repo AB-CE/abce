@@ -439,16 +439,30 @@ class Simulation:
         for agent in self.agents_list[group]:
             agent.execute_internal(command)
 
-    def run(self, parallel=True):
-        """ This runs the simulation """
+    def run(self, parallel='mixed'):
+        """ This runs the simulation
 
-        if parallel:
+            Args:
+                parallel ('mixed' (default), 'all', 'serial'):
+                    Whether the f agents functions are executed in parallel.
+                    Default is 'mixed'. 'all', does also run utility functions
+                    in parallel, which is slower and might cause bugs.
+                    False runs the simulation in serial in is good for trouble
+                    shouting and profiling.
+        """
+        if parallel == 'mixed':
+            self.pool = mp.Pool()
+            self.execute = self.execute_parallel
+            self.execute_internal = self.execute_internal_serial
+        elif parallel == 'all':
             self.pool = mp.Pool()
             self.execute = self.execute_parallel
             self.execute_internal = self.execute_internal_parallel
-        else:
+        elif parallel == 'parallel':
             self.execute = self.execute_serial
             self.execute_internal = self.execute_internal_serial
+        else:
+            raise SystemExit("parallel, set to something wrong must be 'mixed', 'all' or 'serial'")
 
         self._db.start()
         if not(self.agents_list):
@@ -468,7 +482,7 @@ class Simulation:
         for year in xrange(self.simulation_parameters['num_rounds']):
             self.round = year
             print("Round" + str("%3d" % year)),
-            self.execute_internal('all', '_produce_resource')
+            self.execute_internal_serial('all', '_produce_resource')
 
             for group, action in self._action_list:
                 messages = self.execute(group, action, messagess)
@@ -485,8 +499,11 @@ class Simulation:
         self.logger_queue.put('close')
         while self._db.is_alive():
             time.sleep(0.05)
-        self.pool.close()
-        self.pool.join()
+        try:
+            self.pool.close()
+            self.pool.join()
+        except AttributeError:
+            pass
         postprocess.to_csv(os.path.abspath(self.simulation_parameters['_path']), self.database_name)
 
     def build_agents(self, AgentClass,  number=None, group_name=None, agent_parameters=None):
@@ -557,12 +574,14 @@ class Simulation:
             backend_recv, backend_send = mp.Pipe(duplex=False)
             agent = AgentClass(simulation_parameters=self.simulation_parameters,
                                agent_parameters=agent_parameters[idn],
+                               name=agent_name(group_name, idn),
                                idn=idn,
                                group=group_name,
                                trade_logging=self.trade_logging_mode,
                                database=self.database_queue,
                                logger=self.logger_queue)
-            agent.name = agent_name(group_name, idn)
+            agent.init(self.simulation_parameters, agent_parameters)
+
             for good in self.perishable:
                 agent._register_perish(good)
             for resource, units, product in self.resource_endowment[group_name] + self.resource_endowment['all']:
