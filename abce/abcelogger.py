@@ -36,6 +36,8 @@ class AbceLogger(multiprocessing.Process):
             except KeyboardInterrupt:
                     csvfile.close()
                     break
+            except EOFError:
+                break
             if typ == "close":
                 csvfile.close()
                 break

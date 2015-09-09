@@ -62,6 +62,8 @@ class Database(multiprocessing.Process):
                 msg = self.in_sok.get()
             except KeyboardInterrupt:
                     break
+            except EOFError:
+                break
             if msg == "close":
                 break
             if msg[0] == 'panel':
