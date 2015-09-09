@@ -77,7 +77,7 @@ class Agent(Database, Logger, Trade, Messaging):
         """ self.group returns the agents group or type READ ONLY! """
         #TODO should be group_address(group), but it would not work
         # when fired manual + ':' and manual group_address need to be removed
-        self.out = []
+        self._out = []
         self.simulation_parameters = simulation_parameters
         """ The simulation parameters and the number of agents in other groups
 
@@ -364,8 +364,8 @@ class Agent(Database, Logger, Trade, Messaging):
         self._haves[good] = 0
         return quantity_destroyed
 
-    def run(self, command, incomming_messages):
-        self.out = []
+    def execute(self, command, incomming_messages):
+        self._out = []
         try:
             self._clearing__end_of_subround(incomming_messages)
             getattr(self, command)()
@@ -375,10 +375,24 @@ class Agent(Database, Logger, Trade, Messaging):
         except:
             time.sleep(random.random())
             raise
-        return self.out
+        return self._out
+
+    def execute_parallel(self, command, incomming_messages):
+        self._out = []
+        try:
+            self._clearing__end_of_subround(incomming_messages)
+            getattr(self, command)()
+            self.__reject_polled_but_not_accepted_offers()
+        except KeyboardInterrupt:
+            return None
+        except:
+            time.sleep(random.random())
+            raise
+        return self
 
     def execute_internal(self, command):
         getattr(self, command)()
+
 
     def _register_resource(self, resource, units, product):
         self._resources.append((resource, units, product))
@@ -497,7 +511,7 @@ class Agent(Database, Logger, Trade, Messaging):
         typ =(_o,c,u,r) are
         reserved for internally processed offers.
         """
-        self.out.append([receiver_group, receiver_idn, (typ, msg)])
+        self._out.append([receiver_group, receiver_idn, (typ, msg)])
 
     def _send_to_group(self, receiver_group, typ, msg):
         """ sends a message to 'receiver_group', who can be an agent, a group or
@@ -506,7 +520,7 @@ class Agent(Database, Logger, Trade, Messaging):
         typ =(_o,c,u,r) are
         reserved for internally processed offers.
         """
-        self.out.append([receiver_group, 'all', (typ, msg)])
+        self._out.append([receiver_group, 'all', (typ, msg)])
 
 
 def flatten(d, parent_key=''):

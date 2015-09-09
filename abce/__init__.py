@@ -60,14 +60,17 @@ from agent import *
 from copy import copy
 from collections import defaultdict
 from contract import Contract
+import itertools
+
+
 BASEPATH = os.path.dirname(os.path.realpath(__file__))
 
 
 def execute_wrapper(inp):
-    return inp[0].run(inp[1], inp[2])
+    return inp[0].execute_parallel(inp[1], inp[2])
 
 def execute_internal_wrapper(inp):
-    inp[0].execute_internal(inp[1])
+    return inp[0].execute_internal(inp[1])
 
 def read_parameters(parameters_file='simulation_parameters.csv'):
     """ reads a parameter file line by line and gives a list. Where each line
@@ -430,16 +433,18 @@ class Simulation:
 
     def execute_parallel(self, group, command, messagess):
         parameters = [(agent, command, messagess[group][i]) for i, agent in enumerate(self.agents_list[group])]
-        out = self.pool.map(execute_wrapper, parameters)
+        self.agents_list[group] = self.pool.map(execute_wrapper, parameters)
+        del self.agents_list['all']
+        self.agents_list['all'] = [agent for agent in  itertools.chain(*self.agents_list.values())]
         del messagess[group]
-        return out
+        return [agent._out for agent in self.agents_list[group]]
 
     def execute_internal_parallel(self, group, command):
         self.pool.map(execute_internal_wrapper, [(agent, command) for agent in self.agents_list[group]])
 
 
     def execute_serial(self, group, command, messagess):
-        return [agent.run(command, messagess[group][i]) for i, agent in enumerate(self.agents_list[group])]
+        return [agent.execute(command, messagess[group][i]) for i, agent in enumerate(self.agents_list[group])]
 
     def execute_internal_serial(self, group, command):
         for agent in self.agents_list[group]:
