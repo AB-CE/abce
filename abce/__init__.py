@@ -184,10 +184,6 @@ class Simulation:
         """
         self.agents_list = {}
         self.agents_list['all'] = []
-        self.agents_backend = {}
-        self.agents_backend['all'] = []
-        self.agents_command_socket = {}
-        self.agents_command_socket['all'] = []
         self._action_list = []
         self._resource_command_group = {}
         self._db_commands = {}
