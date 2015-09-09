@@ -372,12 +372,6 @@ class Agent(Database, Logger, Trade, Messaging):
             self.__reject_polled_but_not_accepted_offers()
         except KeyboardInterrupt:
             return None
-        except KeyError:
-            time.sleep(random.random())
-            if command not in self._methods:
-                raise SystemExit('The method - ' + command + ' - called in the agent_list is not declared (' + self.name)
-            else:
-                raise
         except:
             time.sleep(random.random())
             raise
