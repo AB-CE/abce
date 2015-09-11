@@ -4,7 +4,7 @@ import pygal as pg
 
 def generate():
 
-    columns = ['total_orders', 'cookies_created', 'cookies_inventory', 'price_price', 'production_production']
+    columns = ['cookies_created', 'total_orders', 'cookies_inventory', 'price_price', 'production_production']
 
     firm = pd.read_csv('firm.csv')
 

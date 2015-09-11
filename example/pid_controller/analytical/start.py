@@ -11,7 +11,7 @@ from multiprocessing import freeze_support
 from firm import Firm
 from market import Market
 from abce import Simulation, read_parameters, repeat
-
+import graphs
 
 def main():
     for simulation_parameters in read_parameters('simulation_parameters.csv'):
@@ -20,8 +20,8 @@ def main():
             ('firm', 'my_production'),
             ('firm', 'selling'),
             ('market', 'buying'),
-            ('firm', 'adjust_price'),
-            ('firm', 'adjust_quantity'),
+            ('firm', 'adjust_price', 'serial'),
+            ('firm', 'adjust_quantity', 'serial'),
             ('market', 'consumption')
         ]
 
@@ -35,3 +35,4 @@ def main():
 if __name__ == '__main__':
     freeze_support()
     main()
+    graphs.generate()

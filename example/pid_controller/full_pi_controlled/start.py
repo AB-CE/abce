@@ -12,7 +12,7 @@ from firm import Firm
 from market import Market
 from labormarket import LaborMarket
 from abce import Simulation, read_parameters, repeat
-
+import graphs
 
 def main():
     for simulation_parameters in read_parameters('simulation_parameters.csv'):
@@ -41,3 +41,4 @@ def main():
 if __name__ == '__main__':
     freeze_support()
     main()
+    graphs.generate()

@@ -14,10 +14,7 @@ class PiController:
         self.a = error_parameter
         self.b = cumulative_error_parameter
         self.error_cum = 0
-        if positive:
-            self.update = self.update_positive
-        else:
-            self.update = self._update
+
 
     def _update(self, error):
         """ Add a new error to the learning and return the updated control
@@ -27,7 +24,7 @@ class PiController:
         control = self.a * error + self.b * self.error_cum
         return control
 
-    def update_positive(self, error):
+    def update(self, error):
         return max(0, self._update(error))
 
 
