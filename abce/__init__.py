@@ -444,7 +444,9 @@ class Simulation:
 
 
     def execute_serial(self, group, command, messagess):
-        return [agent.execute(command, messagess[group][i]) for i, agent in enumerate(self.agents_list[group])]
+        out = [agent.execute(command, messagess[group][i]) for i, agent in enumerate(self.agents_list[group])]
+        del messagess[group]
+        return out
 
     def execute_internal_serial(self, group, command):
         for agent in self.agents_list[group]:
