@@ -12,7 +12,6 @@ def main():
             ('firm', 'one'),
             ('household', 'two'),
             ], simulation_parameters['trade_repetitions']),
-            'buy_log',
             ('all', 'three')
         ]
         s.add_action_list(action_list)
@@ -27,8 +26,8 @@ def main():
         )
         s.declare_perishable(good='labor')
 
-        s.panel_data('household', command='buy_log')
-        s.panel_data('firm', command='buy_log')
+        s.panel_data('household')
+        s.panel_data('firm')
 
         s.run()
 
