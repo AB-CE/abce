@@ -241,6 +241,7 @@ class Agent(Database, Logger, Trade, Messaging):
         return '%s:%i' % (self.name, self._offer_count)
 
     def _advance_round(self):
+        #TODO replace OrderedDict with {}
         offer_iterator = self._answered_offers.iteritems()
         recent_answerd_offers = OrderedDict()
         try:
@@ -255,7 +256,7 @@ class Agent(Database, Logger, Trade, Messaging):
         except StopIteration:
             self._answered_offers = recent_answerd_offers
 
-        keep = OrderedDict()
+        keep = {}
         for key in self.given_offers:
             if not('status' in self.given_offers[key]):
                 keep[key] = self.given_offers[key]
