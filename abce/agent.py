@@ -44,7 +44,7 @@ from logger import Logger
 from trade import Trade, Offer
 from messaging import Messaging, Message
 import time
-from copy import deepcopy
+from copy import copy
 import random
 import sys
 from abce.expiringgood import ExpiringGood
@@ -180,7 +180,7 @@ class Agent(Database, Logger, Trade, Messaging):
 
     def possessions_all(self):
         """ returns all possessions """
-        return deepcopy(self._haves)
+        return copy(self._haves)
 
     def possessions_filter(self, goods=None, but=None, match=None, beginswith=None, endswith=None):
         """ returns a subset of the goods an agent owns, all arguments
@@ -505,6 +505,10 @@ class Agent(Database, Logger, Trade, Messaging):
             else:
                 self._msgs.setdefault(typ, []).append(Message(msg))
 
+    # This is necessary for speed. dictionarys are the core engine of everything
+    # in the simulations and are much faster copied by msg.copy(), but general messages
+    # can only be copied by copy(msg)
+
     def _send(self, receiver_group, receiver_idn, typ, msg):
         """ sends a message to 'receiver_group', who can be an agent, a group or
         'all'. The agents receives it at the begin of each round in
@@ -512,7 +516,7 @@ class Agent(Database, Logger, Trade, Messaging):
         typ =(_o,c,u,r) are
         reserved for internally processed offers.
         """
-        self._out.append([receiver_group, receiver_idn, (typ, msg)])
+        self._out.append([receiver_group, receiver_idn, (typ, copy(msg))])
 
     def _send_to_group(self, receiver_group, typ, msg):
         """ sends a message to 'receiver_group', who can be an agent, a group or
@@ -521,8 +525,7 @@ class Agent(Database, Logger, Trade, Messaging):
         typ =(_o,c,u,r) are
         reserved for internally processed offers.
         """
-        self._out.append([receiver_group, 'all', (typ, msg)])
-
+        self._out.append([receiver_group, 'all', (typ, copy(msg))])
 
 def flatten(d, parent_key=''):
     items = []
