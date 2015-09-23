@@ -369,6 +369,7 @@ class Agent(Database, Logger, Trade, Messaging):
         self._out = []
         try:
             self._clearing__end_of_subround(incomming_messages)
+            del incomming_messages[:]
             getattr(self, command)()
             self.__reject_polled_but_not_accepted_offers()
         except KeyboardInterrupt:

@@ -187,6 +187,7 @@ class Simulation:
         """
         self.agents_list = {}
         self.agents_list['all'] = []
+        self._messages = {}
         self._action_list = []
         self._resource_command_group = {}
         self._db_commands = {}
@@ -444,9 +445,8 @@ class Simulation:
 
 
     def execute_serial(self, group, command, messagess):
-        out = [agent.execute(command, messagess[group][i]) for i, agent in enumerate(self.agents_list[group])]
-        del messagess[group]
-        return out
+        return [agent.execute(command, messagess[agent.group][agent.idn]) for agent in self.agents_list[group]]
+        # message inbox deleted by the agent itself
 
     def execute_internal_serial(self, group, command):
         for agent in self.agents_list[group]:
@@ -479,7 +479,7 @@ class Simulation:
 
         start_time = time.time()
 
-        messagess = defaultdict(lambda: defaultdict(list))
+        messagess = self._messages
 
         for year in xrange(self.simulation_parameters['num_rounds']):
             self.round = year
@@ -595,6 +595,7 @@ class Simulation:
 
             self.agents_list[group_name].append(agent)
             self.agents_list['all'].append(agent)
+        self._messages[group_name] = tuple([] for _ in range(num_agents_this_group))
 
     def build_agents_from_file(self, AgentClass, parameters_file=None, multiply=1):
         """ This command builds agents of the class AgentClass from an csv file.
@@ -704,10 +705,9 @@ class repeat:
 
 def sortmessages(messagess, new_messages):
     for messages in new_messages:
-        for group, agent_number, message in messages:
-            messagess[group][agent_number].append(message)
+        for group, idn, message in messages:
+            messagess[group][idn].append(message)
     return messagess
-
 
 
 def _number_or_string(word):
