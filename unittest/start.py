@@ -18,14 +18,23 @@ from abce import *
 
 
 def main():
+    all = ['buy',
+           'sell',
+           'give',
+           'endowment',
+           'loggertest',
+           'productionmultifirm',
+           'productionfirm',
+           'utilityhousehold']
+
     for parameters in read_parameters('simulation_parameters.csv'):
         s = Simulation(parameters)
         action_list = [
             repeat([
-                ('all', 'one'),
-                ('all', 'two'),
-                ('all', 'three'),
-                ('all', 'clean_up')
+                (all, 'one'),
+                (all, 'two'),
+                (all, 'three'),
+                (all, 'clean_up')
                 ], 60),
             #('buy', 'panel'),
             ('endowment', 'Iconsume'),
@@ -33,16 +42,16 @@ def main():
             ('productionfirm', 'production'),
             ('utilityhousehold', 'consumption'),
 
-            ('contractseller', 'make_offer'),
-            ('contractseller', 'accept_offer'),
-            ('contractseller', 'deliver_or_pay'),
-            ('contractseller', 'control'),
+            #('contractseller', 'make_offer'),
+            #('contractseller', 'accept_offer'),
+            #('contractseller', 'deliver_or_pay'),
+            #('contractseller', 'control'),
 
-            ('contractbuyer', 'request_offer'),
-            ('contractbuyer', 'accept_offer'),
-            ('contractbuyer', 'deliver_or_pay'),
-            ('contractbuyer', 'control'),
-            ('expiringcapital', 'go'),
+            #('contractbuyer', 'request_offer'),
+            #('contractbuyer', 'accept_offer'),
+            #('contractbuyer', 'deliver_or_pay'),
+            #('contractbuyer', 'control'),
+            #('expiringcapital', 'go'),
 
             ('all', 'all_tests_completed')]
         s.add_action_list(action_list)
@@ -51,7 +60,7 @@ def main():
         s.declare_round_endowment(resource='cow', units=10, product='milk')
         s.declare_perishable(good='labor')
         #s.panel('buy', variables=['price'])
-        s.declare_expiring('xcapital', 5)
+        #s.declare_expiring('xcapital', 5)
 
         s.build_agents(Buy, 2)
         #s.build_agents(QuoteBuy, 2)
@@ -62,10 +71,10 @@ def main():
         s.build_agents(ProductionMultifirm, 1)
         s.build_agents(ProductionFirm, 5)
         s.build_agents(UtilityHousehold, 5)
-        s.build_agents(ContractSeller, 2)
-        s.build_agents(ContractBuyer, 2)
-        s.build_agents(ExpiringCapital, 1)
-        s.build_agents(GiveExpiringCapital, 2)
+        #s.build_agents(ContractSeller, 2)
+        #s.build_agents(ContractBuyer, 2)
+        #s.build_agents(ExpiringCapital, 1)
+        #s.build_agents(GiveExpiringCapital, 2)
         s.build_agents(BuyExpiringCapital, 2)
 
 

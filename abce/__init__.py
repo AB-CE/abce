@@ -411,9 +411,19 @@ class Simulation:
     def _process_action_list(self, action_list):
         processed_list = []
         for action in action_list:
-            if type(action) is tuple:
-                if action[0] not in self.num_agents_in_group.keys() + ['all']:
-                    SystemExit('%s in (%s, %s) in the action_list is not a known agent' % (action[0], action[0], action[1]))
+            if isinstance(action, repeat):
+                nested_action_list = self._process_action_list(action.action_list)
+                for _ in range(action.repetitions):
+                    processed_list.extend(nested_action_list)
+            else:
+                if not isinstance(action[0], tuple) and not isinstance(action[0], list):
+                    try:
+                        action = ((action[0],), action[1], action[2])
+                    except IndexError:
+                        action = ((action[0],), action[1])
+                for group in action[0]:
+                    assert group in self.num_agents_in_group.keys(), \
+                        '%s in (%s, %s) in the action_list is not a known agent' % (action[0], action[0], action[1])
                 if len(action) == 2:
                     processed_list.append((self.execute_serial, action[0], action[1]))
                 elif len(action) == 3:
@@ -424,28 +434,27 @@ class Simulation:
                     else:
                         raise SystemExit("%s in %s in action_list not recognized, must be 'serial' or 'parallel' " % (action[2],action))
 
-            elif isinstance(action, repeat):
-                nested_action_list = self._process_action_list(action.action_list)
-                for _ in range(action.repetitions):
-                    processed_list.extend(nested_action_list)
-            else:
-                raise SystemExit("%s in action_list not recognized" % action)
+                else:
+                    raise SystemExit("%s in action_list not recognized" % action)
         return processed_list
 
-    def execute_parallel(self, group, command, messagess):
-        parameters = [(agent, command, messagess[group][i]) for i, agent in enumerate(self.agents_list[group])]
-        self.agents_list[group] = self.pool.map(execute_wrapper, parameters)
-        del self.agents_list['all']
-        self.agents_list['all'] = [agent for agent in  itertools.chain(*self.agents_list.values())]
-        del messagess[group]
-        return [agent._out for agent in self.agents_list[group]]
+    def execute_parallel(self, groups, command, messagess):
+        ret = []
+        for group in groups:
+            parameters = [(agent, command, messagess[agent.group][agent.idn]) for agent in self.agents_list[group]]
+            self.agents_list[group] = self.pool.map(execute_wrapper, parameters)
+            del self.agents_list['all']
+            self.agents_list['all'] = [agent for agent in  itertools.chain(*self.agents_list.values())]
+            for agent in  self.agents_list[group]:
+                del messagess[agent.group][agent.idn][:]
+            ret.extend([agent._out for agent in self.agents_list[group]])
+        return ret
 
-    def execute_internal_parallel(self, group, command):
-        self.pool.map(execute_internal_wrapper, [(agent, command) for agent in self.agents_list[group]])
-
-
-    def execute_serial(self, group, command, messagess):
-        return [agent.execute(command, messagess[agent.group][agent.idn]) for agent in self.agents_list[group]]
+    def execute_serial(self, groups, command, messagess):
+        ret = []
+        for group in groups:
+            ret.extend([agent.execute(command, messagess[agent.group][agent.idn]) for agent in self.agents_list[group]])
+        return ret
         # message inbox deleted by the agent itself
 
     def execute_internal_serial(self, group, command):
