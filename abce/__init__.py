@@ -581,8 +581,6 @@ class Simulation:
         self.agents_list[group_name] = []
 
         for idn in range(num_agents_this_group):
-            commands_recv, commands_send = mp.Pipe(duplex=False)
-            backend_recv, backend_send = mp.Pipe(duplex=False)
             agent = AgentClass(simulation_parameters=self.simulation_parameters,
                                agent_parameters=agent_parameters[idn],
                                name=agent_name(group_name, idn),
