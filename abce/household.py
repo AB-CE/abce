@@ -73,9 +73,9 @@ class Household:
             self.consumption_set = {'car': 1, 'ball': 2000, 'bike':  2}
             self.consumption_set = {'car': 0, 'ball': 2500, 'bike':  20}
             try:
-                utility = self.consume(utility_function, self.consumption_set)
+                utility = self.consume(self.consumption_set)
             except NotEnoughGoods:
-                utility = self.consume(utility_function, self.smaller_consumption_set)
+                utility = self.consume(self.smaller_consumption_set)
             self.log('utility': {'u': utility})
 
         """
@@ -86,7 +86,7 @@ class Household:
         for good, use in self._utility_function.use.iteritems():
             self._haves[good] -= input_goods[good] * use
 
-        return  self._utility_function.formula(input_goods)
+        return self._utility_function.formula(input_goods)
 
     def set_utility_function(self, formula, use):
         """ creates a utility function from a formula
