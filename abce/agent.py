@@ -280,7 +280,8 @@ class Agent(Database, Logger, Trade, Messaging):
         for good in self._expiring_goods:
             self._haves[good]._advance_round()
 
-        self.database_connection.put(["trade_log", self._trade_log, self.round])
+        if self.trade_logging > 0:
+            self.database_connection.put(["trade_log", self._trade_log, self.round])
 
         self._trade_log = defaultdict(int)
 
