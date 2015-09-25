@@ -48,7 +48,7 @@ from copy import copy
 import random
 import sys
 from abce.expiringgood import ExpiringGood
-
+from pprint import pprint
 
 class Agent(Database, Logger, Trade, Messaging):
     """ Every agent has to inherit this class. It connects the agent to the simulation
@@ -283,6 +283,11 @@ class Agent(Database, Logger, Trade, Messaging):
         self.database_connection.put(["trade_log", self._trade_log, self.round])
 
         self._trade_log = defaultdict(int)
+
+        if len(self._open_offers):
+                pprint(self._open_offers)
+                raise SystemExit('There are messages an agent send that have not'
+                                 'been retrieved in this round get_offer(.)')
 
         self.round += 1
 
