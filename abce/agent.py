@@ -372,16 +372,10 @@ class Agent(Database, Logger, Trade, Messaging):
 
     def execute(self, command, incomming_messages):
         self._out = []
-        try:
-            self._clearing__end_of_subround(incomming_messages)
-            del incomming_messages[:]
-            getattr(self, command)()
-            self.__reject_polled_but_not_accepted_offers()
-        except KeyboardInterrupt:
-            return None
-        except:
-            time.sleep(random.random())
-            raise
+        self._clearing__end_of_subround(incomming_messages)
+        del incomming_messages[:]
+        getattr(self, command)()
+        self.__reject_polled_but_not_accepted_offers()
         return self._out
 
     def execute_parallel(self, command, incomming_messages):
