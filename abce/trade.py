@@ -450,7 +450,15 @@ class Trade:
             price:
                 price per unit
         """
-        offer = Offer(self.group, self.idn, receiver_group, receiver_idn, good, quantity, price, 'qs', idn=self._offer_counter())
+        offer = {'sender_group': self.group,
+                 'sender_idn': self.idn,
+                 'receiver_group': receiver_group,
+                 'receiver_idn': receiver_idn,
+                 'good': good,
+                 'quantity': quantity,
+                 'price': price,
+                 'buysell': 'qs',
+                 'idn': self._offer_counter()}
         self._send(receiver_group, receiver_idn, '_q', offer)
         return offer
 
@@ -472,7 +480,15 @@ class Trade:
             price:
                 price per unit
         """
-        offer = Offer(self.group, self.idn, receiver_group, receiver_idn, good, quantity, price, 'qb', idn=self._offer_counter())
+        offer = {'sender_group': self.group,
+                 'sender_idn': self.idn,
+                 'receiver_group': receiver_group,
+                 'receiver_idn': receiver_idn,
+                 'good': good,
+                 'quantity': quantity,
+                 'price': price,
+                 'buysell': 'qb',
+                 'idn': self._offer_counter()}
         self._send(receiver_group, receiver_idn, '_q', offer)
         return offer
 
@@ -515,7 +531,15 @@ class Trade:
         if self._haves[good] < quantity - epsilon:
             raise NotEnoughGoods(self.name, good, quantity - self._haves[good])
         self._haves[good] -= quantity
-        offer = Offer(self.group, self.idn, receiver_group, receiver_idn, good, quantity, price, buysell='s', idn=self._offer_counter())
+        offer = {'sender_group': self.group,
+                 'sender_idn': self.idn,
+                 'receiver_group': receiver_group,
+                 'receiver_idn': receiver_idn,
+                 'good': good,
+                 'quantity': quantity,
+                 'price': price,
+                 'buysell': 's',
+                 'idn': self._offer_counter()}
         assert quantity >= - epsilon, quantity
         self._send(receiver_group, receiver_idn, '_o', offer)
         self.given_offers[offer['idn']] = offer
@@ -551,7 +575,15 @@ class Trade:
             raise NotEnoughGoods(self.name, 'money', money_amount - self._haves['money'])
 
         self._haves['money'] -= money_amount
-        offer = Offer(self.group, self.idn, receiver_group, receiver_idn, good, quantity, price, 'b', self._offer_counter())
+        offer = {'sender_group': self.group,
+                 'sender_idn': self.idn,
+                 'receiver_group': receiver_group,
+                 'receiver_idn': receiver_idn,
+                 'good': good,
+                 'quantity': quantity,
+                 'price': price,
+                 'buysell': 'b',
+                 'idn': self._offer_counter()}
         assert quantity >= - epsilon, quantity
         self._send(receiver_group, receiver_idn, '_o', offer)
         self.given_offers[offer['idn']] = offer
