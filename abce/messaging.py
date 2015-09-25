@@ -73,7 +73,12 @@ class Messaging:
          self.message('firm', 01, 'm', "hello my message")
 
         """
-        msg = message(self.group, self.idn, receiver_group, receiver_idn, topic, content)
+        msg = {'sender_group': self.group,
+               'sender_idn': self.idn,
+               'receiver_group': receiver_group,
+               'receiver_idn': receiver_idn,
+               'topic': topic,
+               'content': content}
         self._send(receiver_group, receiver_idn, topic, msg)
 
     def message_to_group(self, receiver_group, topic, content):
@@ -176,14 +181,3 @@ class Messaging:
             return self._msgs.pop(topic)
         except KeyError:
             return []
-
-
-def message(sender_group, sender_idn, receiver_group, receiver_idn, topic, content):
-    msg = {}
-    msg['sender_group'] = sender_group
-    msg['sender_idn'] = sender_idn
-    msg['receiver_group'] = receiver_group
-    msg['receiver_idn'] = receiver_idn
-    msg['topic'] = topic
-    msg['content'] = content
-    return msg
