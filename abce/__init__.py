@@ -500,6 +500,8 @@ class Simulation:
 
         print(str("%6.2f" % (time.time() - start_time)))
         self.gracefull_exit()
+        postprocess.to_csv(os.path.abspath(self.simulation_parameters['_path']), self.database_name)
+
 
     def gracefull_exit(self):
         self.database_queue.put('close')
@@ -511,7 +513,6 @@ class Simulation:
             self.pool.join()
         except AttributeError:
             pass
-        postprocess.to_csv(os.path.abspath(self.simulation_parameters['_path']), self.database_name)
 
     def build_agents(self, AgentClass,  number=None, group_name=None, agent_parameters=None):
         """ This method creates agents, the first parameter is the agent class.
