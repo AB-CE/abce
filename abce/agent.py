@@ -443,8 +443,6 @@ class Agent(Database, Logger, Trade, Messaging):
         for offer_id in self._open_offers:
             if self._open_offers[offer_id]['status'] == 'polled':
                 to_reject.append(offer_id)
-            elif self._open_offers[offer_id]['status'] == 'received':
-                good = self._open_offers[offer_id]['good']
         for offer_id in to_reject:
             self.reject(self._open_offers[offer_id])
 
@@ -460,7 +458,7 @@ class Agent(Database, Logger, Trade, Messaging):
         '_g': recive a 'free' good from another party
         """
         for typ, msg in incomming_messages:
-            if   typ == '_o':
+            if typ == '_o':
                 msg['status'] = 'received'
                 self._open_offers[msg['idn']] = msg
                 #TODO make self._open_offers a pointer to _msgs['_o']
