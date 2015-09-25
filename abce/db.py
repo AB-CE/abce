@@ -20,10 +20,9 @@ import numpy as np
 
 
 class Database(multiprocessing.Process):
-    def __init__(self, directory, db_name, in_sok):
+    def __init__(self, directory, in_sok):
         multiprocessing.Process.__init__(self)
         self.directory = directory
-        self.db_name = db_name
         self.panels = []
         self.in_sok = in_sok
 
@@ -41,7 +40,7 @@ class Database(multiprocessing.Process):
 
 
     def run(self):
-        self.db = sqlite3.connect(self.directory + '/' + self.db_name + '.db')
+        self.db = sqlite3.connect(self.directory + '/database.db')
         self.database = self.db.cursor()
         self.database.execute('PRAGMA synchronous=OFF')
         self.database.execute('PRAGMA journal_mode=OFF')

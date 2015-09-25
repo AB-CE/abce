@@ -195,7 +195,6 @@ class Simulation:
         self.num_agents_in_group = {}
         self._build_first_run = True
         self._agent_parameters = None
-        self.database_name = 'database'
         self.resource_endowment = defaultdict(list)
         self.perishable = []
         self.expiring = []
@@ -203,7 +202,7 @@ class Simulation:
 
         manager = mp.Manager()
         self.database_queue = manager.Queue()
-        self._db = abce.db.Database(simulation_parameters['_path'], self.database_name, self.database_queue)
+        self._db = abce.db.Database(simulation_parameters['_path'], self.database_queue)
         self.logger_queue = manager.Queue()
         self._logger = abce.abcelogger.AbceLogger(simulation_parameters['_path'], self.logger_queue)
         self._logger.start()
@@ -500,7 +499,7 @@ class Simulation:
 
         print(str("%6.2f" % (time.time() - start_time)))
         self.gracefull_exit()
-        postprocess.to_csv(os.path.abspath(self.simulation_parameters['_path']), self.database_name)
+        postprocess.to_csv(os.path.abspath(self.simulation_parameters['_path']))
 
 
     def gracefull_exit(self):

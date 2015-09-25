@@ -6,29 +6,20 @@ sam(t), returns the social accounting matrix at time t
 sam_ext(t), returns the social accounting matrix at time t for every individual agent
 """
 import os
-import numpy
-import dataset
-import csv
+import sqlite3
 import pandas as pd
 
 
-
-@profile
-def to_csv(directory, db_name): #pylint: disable=R0914
+def to_csv(directory):
     os.chdir(directory)
-    #db_name = db_name + '.db'
-    db = dataset.connect('sqlite:///database.db')
-
-    # dumps csv file
-    for table_name in db.tables:
-        with open(table_name + '.csv', 'w') as csvfile:
-            writer = csv.writer(csvfile)
-            writer.writerow(db[table_name].columns)
-            for row in db[table_name]:
-                writer.writerow(row.values())
-
-    for table_name in db.tables:
-        table = pd.read_csv(table_name + '.csv')
+    db = sqlite3.connect('database.db')
+    cursor = db.cursor()
+    cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+    tables = cursor.fetchall()
+    for table_name in tables:
+        table_name = table_name[0]
+        table = pd.read_sql_query("SELECT * from %s" % table_name, db)
+        table.to_csv(table_name + '.csv')
         if u'id' in table.columns:
             del table['id']
             grouped = table.groupby('round')
