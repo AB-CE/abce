@@ -11,9 +11,9 @@ import dataset
 import csv
 import pandas as pd
 
-trade_unified = []  # placeholder value, since trade_unified seems to not have been defined in anywhere else
 
 
+@profile
 def to_csv(directory, db_name): #pylint: disable=R0914
     os.chdir(directory)
     #db_name = db_name + '.db'
@@ -22,10 +22,10 @@ def to_csv(directory, db_name): #pylint: disable=R0914
     # dumps csv file
     for table_name in db.tables:
         with open(table_name + '.csv', 'w') as csvfile:
-            writer = csv.DictWriter(csvfile, fieldnames=db[table_name].columns)
-            writer.writeheader()
+            writer = csv.writer(csvfile)
+            writer.writerow(db[table_name].columns)
             for row in db[table_name]:
-                writer.writerow(row)
+                writer.writerow(row.values())
 
     for table_name in db.tables:
         table = pd.read_csv(table_name + '.csv')
