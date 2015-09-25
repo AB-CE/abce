@@ -119,7 +119,10 @@ class Database(multiprocessing.Process):
         self.database.execute(update_str, rows_to_write)
 
     def write(self, table_name, data_to_write, ex_str=''):
-        ex_str = "INSERT INTO " + table_name + "(" + ','.join(data_to_write.keys()) + ") VALUES (%s)"
+        try:
+            ex_str = "INSERT INTO " + table_name + "(" + ','.join(data_to_write.keys()) + ") VALUES (%s)"
+        except TypeError:
+            raise TypeError("good names must be strings", data_to_write.keys())
         rows_to_write = data_to_write.values()
         format_strings = ','.join(['?'] * len(rows_to_write))
         try:
