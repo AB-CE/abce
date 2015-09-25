@@ -354,7 +354,7 @@ class Trade:
         """
         offers_by_good = defaultdict(list)
         for offer_id in self._open_offers:
-            self._open_offers[offer_id]['status'] = 'polled'
+            self._open_offers[offer_id]['open_offer_status'] = 'polled'
             offer = self._open_offers[offer_id]
             offers_by_good[offer['good']].append(offer)
         for key in offers_by_good:
@@ -391,7 +391,7 @@ class Trade:
         ret = []
         for offer_idn in self._open_offers:
             if self._open_offers[offer_idn]['good'] == good:
-                self._open_offers[offer_idn]['status'] = 'polled'
+                self._open_offers[offer_idn]['open_offer_status'] = 'polled'
                 ret.append(self._open_offers[offer_idn])
         shuffle(ret)
         ret.sort(key=lambda objects: objects['price'], reverse=descending)
@@ -426,7 +426,7 @@ class Trade:
         for offer_idn in self._open_offers:
             if self._open_offers[offer_idn]['good'] == good:
                 offer = self._open_offers[offer_idn]
-                offer['status'] = 'peak_only'
+                offer['open_offer_status'] = 'peak_only'
                 ret.append(offer)
         shuffle(ret)
         ret.sort(key=lambda objects: objects['price'], reverse=descending)
