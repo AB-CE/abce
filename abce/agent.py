@@ -238,7 +238,7 @@ class Agent(Database, Logger, Trade, Messaging):
         """ returns a unique number for an offer (containing the agent's name)
         """
         self._offer_count += 1
-        return '%s:%i' % (self.name, self._offer_count)
+        return (self.name, self._offer_count)
 
     def _advance_round(self):
         #TODO replace OrderedDict with {}
