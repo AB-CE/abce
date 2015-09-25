@@ -67,7 +67,17 @@ def Offer(sender_group, sender_idn, receiver_group, receiver_idn, good, quantity
         idn:
             a unique identifier
     """
-    pass
+    offer = {}
+    offer['sender_group'] = sender_group
+    offer['sender_idn'] = sender_idn
+    offer['receiver_group'] = receiver_group
+    offer['receiver_idn'] = receiver_idn
+    offer['good'] = good
+    offer['quantity'] = quantity
+    offer['price'] = price
+    offer['buysell'] = buysell
+    offer['idn'] = idn
+    return offer
 
 
 class Trade:
