@@ -34,8 +34,11 @@ def to_csv(directory, db_name): #pylint: disable=R0914
             grouped = table.groupby('round')
             aggregated = grouped.sum()
             aggregated.to_csv(table_name + '_aggregate.csv')
-            meaned = grouped.mean()
-            meaned.to_csv(table_name + '_mean.csv')
+            try:
+                meaned = grouped.mean()
+                meaned.to_csv(table_name + '_mean.csv')
+            except pd.core.groupby.DataError:
+                pass
 
 
 
