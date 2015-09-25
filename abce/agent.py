@@ -107,7 +107,7 @@ class Agent(Database, Logger, Trade, Messaging):
 
         #TODO make defaultdict; delete all key errors regarding self._haves as defaultdict, does not have missing keys
         self._haves['money'] = 0
-        self._msgs = defaultdict(list)
+        self._msgs = {}
 
         self.given_offers = OrderedDict()
         self.given_offers[None] = Offer(self.group, self.idn, '', '', '', 0, 1, buysell='', idn=None)
