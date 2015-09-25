@@ -457,7 +457,7 @@ class Simulation:
         return ret
         # message inbox deleted by the agent itself
 
-    def execute_internal_serial(self, group, command):
+    def execute_internal(self, group, command):
         for agent in self.agents_list[group]:
             agent.execute_internal(command)
 
@@ -471,10 +471,6 @@ class Simulation:
                     goods or resource False is faster.
         """
         self.pool = mp.Pool()
-        if parallel:
-            self.execute_internal = self.execute_internal_parallel
-        else:
-            self.execute_internal = self.execute_internal_serial
         self._db.start()
         if not(self.agents_list):
             raise SystemExit('No Agents Created')
@@ -493,7 +489,7 @@ class Simulation:
         for year in xrange(self.simulation_parameters['num_rounds']):
             self.round = year
             print("Round" + str("%3d" % year)),
-            self.execute_internal_serial('all', '_produce_resource')
+            self.execute_internal('all', '_produce_resource')
 
             for processor, group, action in self._action_list:
                 new_messages = processor(group, action, messagess)
