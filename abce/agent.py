@@ -428,9 +428,8 @@ class Agent(Database, Logger, Trade, Messaging):
     def _register_panel(self, variables):
         self.variables_to_track = variables
 
-
     def panel(self):
-        data_to_track = self._haves
+        data_to_track = copy(self._haves)
         for variable in self.variables_to_track:
             data_to_track[variable] = self.__dict__[variable]
         self.database_connection.put(["panel",
