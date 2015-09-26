@@ -425,14 +425,19 @@ class Agent(Database, Logger, Trade, Messaging):
                     self.given_offers[key]['status'] = 'perished'
                     self.given_offers[key]['status_round'] = self.round
 
-    def _register_panel(self, variables):
+    def _register_panel(self, possessions, variables):
+        self.possessions_to_track_panel = possessions
         self.variables_to_track_panel = variables
 
-    def _register_aggregate(self, variables):
+    def _register_aggregate(self, possessions, variables):
+        self.possessions_to_track_aggregate = possessions
         self.variables_to_track_aggregate = variables
 
     def panel(self):
-        data_to_track = copy(self._haves)
+        data_to_track = {}
+        for possession in self.possessions_to_track_panel:
+            data_to_track[possession] = self._haves[possession]
+
         for variable in self.variables_to_track_panel:
             data_to_track[variable] = self.__dict__[variable]
         self.database_connection.put(["panel",
@@ -441,7 +446,10 @@ class Agent(Database, Logger, Trade, Messaging):
                                        self.group,
                                        str(self.round)])
     def aggregate(self):
-        data_to_track = copy(self._haves)
+        data_to_track = {}
+        for possession in self.possessions_to_track_aggregate:
+            data_to_track[possession] = self._haves[possession]
+
         for variable in self.variables_to_track_aggregate:
             data_to_track[variable] = self.__dict__[variable]
         self.database_connection.put(["aggregate",
