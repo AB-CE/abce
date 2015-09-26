@@ -2,8 +2,7 @@ from __future__ import division
 import multiprocessing as mp
 from firm import Firm
 from household import Household
-from abce import Simulation, read_parameters
-
+from abce import Simulation, read_parameters, repeat
 
 
 def main():

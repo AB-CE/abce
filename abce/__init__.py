@@ -55,7 +55,6 @@ from firmmultitechnologies import *
 from household import *
 from agent import *
 from collections import defaultdict
-import itertools
 
 
 BASEPATH = os.path.dirname(os.path.realpath(__file__))
@@ -438,8 +437,8 @@ class Simulation:
             parameters = [(agent, command, messagess[agent.group][agent.idn]) for agent in self.agents_list[group]]
             self.agents_list[group] = self.pool.map(execute_wrapper, parameters)
             del self.agents_list['all']
-            self.agents_list['all'] = [agent for agent in  itertools.chain(*self.agents_list.values())]
-            for agent in  self.agents_list[group]:
+            self.agents_list['all'] = [agent for agent in itertools.chain(*self.agents_list.values())]
+            for agent in self.agents_list[group]:
                 del messagess[agent.group][agent.idn][:]
             ret.extend([agent._out for agent in self.agents_list[group]])
         return ret
