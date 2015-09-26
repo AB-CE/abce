@@ -326,7 +326,7 @@ class Trade:
         by setting descending=True
 
         *Offers that are not accepted in the same subround (def block) are
-        automatically rejected.* However you can also manualy reject.
+        automatically rejected.* However you can also manually reject.
 
         Args::
 
@@ -352,14 +352,7 @@ class Trade:
                 if offers[good][-1]['quantity'] == self.prices_for_which_buy[good]:
                     self.accept(offers[good].pop())
         """
-        offers_by_good = defaultdict(list)
-        for offer in self._open_offers.values():
-            offer['open_offer_status'] = 'polled'
-            offers_by_good[offer['good']].append(offer)
-        for key in offers_by_good:
-            shuffle(offers_by_good[key])
-            offers_by_good[key].sort(key=lambda objects: objects['price'], reverse=descending)
-        return offers_by_good
+        return [self.get_offers(good, descending) for good in self._open_offers]
 
     def get_offers(self, good, descending=False):
         """ returns all offers of the 'good' ordered by price.
@@ -388,10 +381,9 @@ class Trade:
                     self.reject(offer)  # optional
         """
         ret = []
-        for offer in self._open_offers.values():
-            if offer['good'] == good:
-                offer['open_offer_status'] = 'polled'
-                ret.append(offer)
+        for offer in self._open_offers[good].values():
+            offer['open_offer_status'] = 'polled'
+            ret.append(offer)
         shuffle(ret)
         ret.sort(key=lambda objects: objects['price'], reverse=descending)
         return ret
@@ -422,11 +414,9 @@ class Trade:
                     self.reject(offer)  # optional
         """
         ret = []
-        for offer_idn in self._open_offers:
-            if self._open_offers[offer_idn]['good'] == good:
-                offer = self._open_offers[offer_idn]
-                offer['open_offer_status'] = 'peak_only'
-                ret.append(offer)
+        for offer in self._open_offers[good].values():
+            offer['open_offer_status'] = 'peak_only'
+            ret.append(offer)
         shuffle(ret)
         ret.sort(key=lambda objects: objects['price'], reverse=descending)
         return ret
@@ -609,7 +599,7 @@ class Trade:
             offer: the offer he made with buy or sell
             (offer not quote!)
         """
-        self._send(self.given_offers[offer_idn]['receiver_group'], '_d', offer['idn'])
+        self._send(self.given_offers[offer_idn]['receiver_group'], '_d', offer)
         del self.given_offers[offer_idn]
 
     def accept(self, offer):
@@ -635,7 +625,7 @@ class Trade:
             self._haves[offer['good']] -= offer['quantity']
             self._haves['money'] += offer['quantity'] * offer['price']
         self._send(offer['sender_group'], offer['sender_idn'], '_a', offer['idn'])
-        del self._open_offers[offer['idn']]
+        del self._open_offers[offer['good']][offer['idn']]
         return {offer['good']: offer['quantity'], 'money': money_amount}
 
     def accept_partial(self, offer, quantity):
@@ -663,7 +653,7 @@ class Trade:
             self._haves['money'] += quantity * offer['price']
         offer['final_quantity'] = quantity
         self._send(offer['sender_group'], offer['sender_idn'], '_p', offer)
-        del self._open_offers[offer['idn']]
+        del self._open_offers[offer['good']][offer['idn']]
         return {offer['good']: quantity, 'money': money_amount}
 
     def accept_max_possible(self, offer):
@@ -711,7 +701,7 @@ class Trade:
             (offer not quote!)
         """
         self._send(offer['sender_group'], offer['sender_idn'], '_r', offer['idn'])
-        del self._open_offers[offer['idn']]
+        del self._open_offers[offer['good']][offer['idn']]
 
     def _receive_accept(self, offer_id):
         """ When the other party accepted the  money or good is received

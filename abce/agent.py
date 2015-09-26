@@ -113,7 +113,7 @@ class Agent(Database, Logger, Trade, Messaging):
         self.given_offers[None] = Offer(self.group, self.idn, '', '', '', 0, 1, buysell='', idn=None)
         self.given_offers[None]['status'] = 'accepted'
         self.given_offers[None]['status_round'] = 0
-        self._open_offers = {}
+        self._open_offers = defaultdict(dict)
         self._answered_offers = OrderedDict()
         self._offer_count = 0
         self._reject_offers_retrieved_end_subround = []
@@ -286,7 +286,7 @@ class Agent(Database, Logger, Trade, Messaging):
 
         self._trade_log = defaultdict(int)
 
-        if len(self._open_offers):
+        if sum([len(offers) for offers in self._open_offers.values()]):
                 pprint(self._open_offers)
                 raise SystemExit('There are messages an agent send that have not'
                                  'been retrieved in this round get_offer(.)')
@@ -451,11 +451,12 @@ class Agent(Database, Logger, Trade, Messaging):
 
     def __reject_polled_but_not_accepted_offers(self):
         to_reject = []
-        for offer_id in self._open_offers:
-            if self._open_offers[offer_id]['open_offer_status'] == 'polled':
-                to_reject.append(offer_id)
-        for offer_id in to_reject:
-            self.reject(self._open_offers[offer_id])
+        for offers in self._open_offers.values():
+            for offer in offers.values():
+                if offer['open_offer_status'] == 'polled':
+                    to_reject.append(offer)
+        for offer in to_reject:
+            self.reject(offer)
 
     def _clearing__end_of_subround(self, incomming_messages):
         """ agent receives all messages and objects that have been send in this
@@ -471,11 +472,9 @@ class Agent(Database, Logger, Trade, Messaging):
         for typ, msg in incomming_messages:
             if typ == '_o':
                 msg['open_offer_status'] = 'received'
-                self._open_offers[msg['idn']] = msg
-                #TODO make self._open_offers a pointer to _msgs['_o']
-                #TODO make different lists for sell and buy offers
+                self._open_offers[msg['good']][msg['idn']] = msg
             elif typ == '_d':
-                del self._open_offers[msg]
+                del self._open_offers[msg['good']][msg['idn']]
             elif typ == '_a':
                 offer = self._receive_accept(msg)
                 if self.trade_logging == 2:
