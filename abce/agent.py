@@ -415,15 +415,6 @@ class Agent(Database, Logger, Trade, Messaging):
         for good in self._perishable:
             if good in self._haves:
                 self._haves[good] = 0
-            for key in self._open_offers.keys():
-                if self._open_offers[key]['good'] == good:
-                    del self._open_offers[key]
-
-            for key in self.given_offers.keys():
-                if (self.given_offers[key]['good'] == good
-                   and not(self.given_offers[key]['status'] == 'perished')):
-                    self.given_offers[key]['status'] = 'perished'
-                    self.given_offers[key]['status_round'] = self.round
 
     def _register_panel(self, possessions, variables):
         self.possessions_to_track_panel = possessions
@@ -445,6 +436,7 @@ class Agent(Database, Logger, Trade, Messaging):
                                        str(self.idn),
                                        self.group,
                                        str(self.round)])
+
     def aggregate(self):
         data_to_track = {}
         for possession in self.possessions_to_track_aggregate:
