@@ -353,9 +353,8 @@ class Trade:
                     self.accept(offers[good].pop())
         """
         offers_by_good = defaultdict(list)
-        for offer_id in self._open_offers:
-            self._open_offers[offer_id]['open_offer_status'] = 'polled'
-            offer = self._open_offers[offer_id]
+        for offer in self._open_offers.values():
+            offer['open_offer_status'] = 'polled'
             offers_by_good[offer['good']].append(offer)
         for key in offers_by_good:
             shuffle(offers_by_good[key])
@@ -389,10 +388,10 @@ class Trade:
                     self.reject(offer)  # optional
         """
         ret = []
-        for offer_idn in self._open_offers:
-            if self._open_offers[offer_idn]['good'] == good:
-                self._open_offers[offer_idn]['open_offer_status'] = 'polled'
-                ret.append(self._open_offers[offer_idn])
+        for offer in self._open_offers.values():
+            if offer['good'] == good:
+                offer['open_offer_status'] = 'polled'
+                ret.append(offer)
         shuffle(ret)
         ret.sort(key=lambda objects: objects['price'], reverse=descending)
         return ret
