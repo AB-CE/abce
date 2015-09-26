@@ -134,7 +134,8 @@ class Agent(Database, Logger, Trade, Messaging):
         """ self.round returns the current round in the simulation READ ONLY!"""
         self._perishable = []
         self._resources = []
-        self.variables_to_track = []
+        self.variables_to_track_panel = []
+        self.variables_to_track_aggregate = []
 
     def possession(self, good):
         """ returns how much of good an agent possesses.
@@ -424,19 +425,29 @@ class Agent(Database, Logger, Trade, Messaging):
                     self.given_offers[key]['status'] = 'perished'
                     self.given_offers[key]['status_round'] = self.round
 
-
     def _register_panel(self, variables):
-        self.variables_to_track = variables
+        self.variables_to_track_panel = variables
+
+    def _register_aggregate(self, variables):
+        self.variables_to_track_aggregate = variables
 
     def panel(self):
         data_to_track = copy(self._haves)
-        for variable in self.variables_to_track:
+        for variable in self.variables_to_track_panel:
             data_to_track[variable] = self.__dict__[variable]
         self.database_connection.put(["panel",
                                        data_to_track,
                                        str(self.idn),
                                        self.group,
                                        str(self.round)])
+    def aggregate(self):
+        data_to_track = copy(self._haves)
+        for variable in self.variables_to_track_aggregate:
+            data_to_track[variable] = self.__dict__[variable]
+        self.database_connection.put(["aggregate",
+                                       data_to_track,
+                                       self.group,
+                                       self.round])
 
     def __reject_polled_but_not_accepted_offers(self):
         to_reject = []

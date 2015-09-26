@@ -14,17 +14,20 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations under
 # the License.
+from __future__ import division
 import multiprocessing
 import sqlite3
 import numpy as np
-
+from collections import defaultdict
 
 class Database(multiprocessing.Process):
     def __init__(self, directory, in_sok):
         multiprocessing.Process.__init__(self)
         self.directory = directory
         self.panels = []
+        self.aggregates = []
         self.in_sok = in_sok
+        self.data = {}
 
     def add_trade_log(self):
         table_name = 'trade'
@@ -38,6 +41,10 @@ class Database(multiprocessing.Process):
     def add_panel(self, group):
         self.panels.append('panel_' + group)
 
+    def add_aggregate(self, group):
+        table_name = 'aggregate_' + group
+        self.aggregates.append(table_name)
+        self.data[table_name] = defaultdict(list)
 
     def run(self):
         self.db = sqlite3.connect(self.directory + '/database.db')
@@ -56,6 +63,10 @@ class Database(multiprocessing.Process):
         trade_ex_str = self.add_trade_log()
         for table_name in self.panels:
             self.database.execute("CREATE TABLE " + table_name + "(round INT, id INT, PRIMARY KEY(round, id))")
+        for table_name in self.aggregates:
+            self.database.execute("CREATE TABLE " + table_name + "(round INT, PRIMARY KEY(round))")
+
+        current_round = 0
         while True:
             try:
                 msg = self.in_sok.get()
@@ -65,6 +76,7 @@ class Database(multiprocessing.Process):
                 break
             if msg == "close":
                 break
+
             if msg[0] == 'panel':
                 data_to_write = msg[1]
                 data_to_write['id'] = msg[2]  # int
@@ -72,6 +84,17 @@ class Database(multiprocessing.Process):
                 data_to_write['round'] = msg[4]  # int
                 table_name = 'panel_' + group
                 self.write(table_name, data_to_write)
+
+            elif msg[0] == 'aggregate':
+                data_to_write = msg[1]
+                table_name = 'aggregate_' + msg[2]
+                round = msg[3]
+                if current_round == round:
+                    self.aggregate(table_name, data_to_write)
+                else:
+                    self.write_aggregate(table_name, current_round)
+                current_round = round
+
             elif msg[0] == 'trade_log':
                 individual_log = msg[1]
                 round = msg[2]  # int
@@ -117,7 +140,7 @@ class Database(multiprocessing.Process):
             self.write_or_update(table_name, data_to_write)
         self.database.execute(update_str, rows_to_write)
 
-    def write(self, table_name, data_to_write, ex_str=''):
+    def write(self, table_name, data_to_write):
         try:
             ex_str = "INSERT INTO " + table_name + "(" + ','.join(data_to_write.keys()) + ") VALUES (%s)"
         except TypeError:
@@ -152,6 +175,18 @@ class Database(multiprocessing.Process):
                 rows_to_write.remove(data_to_write[column])
                 del data_to_write[column]
 
+    def aggregate(self, table_name, data):
+        for key in data:
+            self.data[table_name][key].append(data[key])
+
+    def write_aggregate(self, table_name, round):
+        data_to_write = {'round': round}
+        for key in self.data[table_name]:
+            data_to_write[key + '_std'] = np.std(self.data[table_name][key])
+            summe = sum(self.data[table_name][key])
+            data_to_write[key + '_sum'] = summe
+            data_to_write[key + '_mean'] = summe / len(self.data[table_name][key])
+        self.write(table_name, data_to_write)
 
 class TableMissing(sqlite3.OperationalError):
     def __init__(self, message):

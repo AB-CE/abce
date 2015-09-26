@@ -198,7 +198,8 @@ class Simulation:
         self.resource_endowment = defaultdict(list)
         self.perishable = []
         self.expiring = []
-        self.variables_to_track = defaultdict(list)
+        self.variables_to_track_panel = defaultdict(list)
+        self.variables_to_track_aggregate = defaultdict(list)
 
         manager = mp.Manager()
         self.database_queue = manager.Queue()
@@ -380,9 +381,8 @@ class Simulation:
         self.declare_round_endowment(human_or_other_resource, units, service, groups)
         self.declare_perishable(service)
 
-    #TODO also for other variables
     def panel(self, group, variables=[]):
-        """ Panel_data writes variables of a group of agents into the database.
+        """ panel(.) writes variables of a group of agents into the database.
             It always writes all possessions of the agent. With the optional
             parameter variables you can insert (as strings) additional variables,
             to be tracked.
@@ -396,16 +396,42 @@ class Simulation:
 
         Example in start.py::
 
-         w.panel_data(group='firm', variables=['production_target', 'gross_revenue'])
+         w.panel(group='firm', variables=['production_target', 'gross_revenue'])
 
          or
 
-         w.panel_data(group=firm)
+         w.panel(group=firm)
         """
         if len(self.agents_list['all']) > 0:
             raise SystemExit("WARNING: agents build before panel")
         self._db.add_panel(group)
-        self.variables_to_track[group].append(variables)
+        self.variables_to_track_panel[group].append(variables)
+
+    def aggregate(self, group, variables=[]):
+        """ aggregate(.) writes summary variables of a group of agents into the database.
+            It always writes all possessions of the agent. With the optional
+            parameter variables you can insert (as strings) additional variables,
+            to be tracked.
+            You must put ('agent_group', 'aggregate') in the action_list.
+
+            Args:
+                group:
+                    can be either a group or 'all' for all agents
+                variables (list, optional):
+                    a list of all variables you want to track as 'strings'
+
+        Example in start.py::
+
+         w.aggregate(group='firm', variables=['production_target', 'gross_revenue'])
+
+         or
+
+         w.aggregate(group=firm)
+        """
+        if len(self.agents_list['all']) > 0:
+            raise SystemExit("WARNING: agents build before aggregate")
+        self._db.add_aggregate(group)
+        self.variables_to_track_aggregate[group].append(variables)
 
     def _process_action_list(self, action_list):
         processed_list = []
@@ -591,8 +617,10 @@ class Simulation:
                 agent._register_perish(good)
             for resource, units, product in self.resource_endowment[group_name] + self.resource_endowment['all']:
                 agent._register_resource(resource, units, product)
-            for variables in self.variables_to_track[group_name] + self.variables_to_track['all']:
+            for variables in self.variables_to_track_panel[group_name] + self.variables_to_track_panel['all']:
                 agent._register_panel(variables)
+            for variables in self.variables_to_track_aggregate[group_name] + self.variables_to_track_aggregate['all']:
+                agent._register_aggregate(variables)
             for good, duration in self.expiring:
                 agent._declare_expiring(good, duration)
 
