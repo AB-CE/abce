@@ -1,10 +1,10 @@
 from __future__ import division
 import abce
 from abce.tools import *
-import random
+from abce.contract import Contract
 
 
-class ContractBuyer(abce.Agent, abce.Contract):
+class ContractBuyer(abce.Agent, Contract):
     def init(self, simulation_parameters, agent_parameters):
         self.last_round = simulation_parameters['num_rounds'] - 1
         if self.idn == 0:
@@ -22,7 +22,7 @@ class ContractBuyer(abce.Agent, abce.Contract):
     def request_offer(self):
         if self.idn == 1:
             if self.round % 10 == 0:
-                self.request_contract('contractbuyer', 0, 'labor', 5, 10 , duration=10 - 1)
+                self.request_contract('contractbuyer', 0, 'labor', 5, 10, duration=10 - 1)
 
     def accept_offer(self):
         if self.idn == 0:
@@ -38,7 +38,6 @@ class ContractBuyer(abce.Agent, abce.Contract):
             self.create('money', 50)
             self.pay_contract('labor')
             assert self.possession('money') == 0
-
 
     def control(self):
         if self.idn == 1:
@@ -62,4 +61,3 @@ class ContractBuyer(abce.Agent, abce.Contract):
             print('Test pay_contract       \t\t\tOK')
             print('Test is_payed    \t\t\t\tOK')
             print('Test is_delivered\t\t\t\tOK')
-

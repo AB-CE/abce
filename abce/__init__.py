@@ -43,23 +43,18 @@ This is a minimal template for a start.py::
 import csv
 import datetime
 import os
-import sys
 import time
-import inspect
-from abce.tools import agent_name, group_address
+from abce.tools import agent_name
 import multiprocessing as mp
 import abce.db
 import abce.abcelogger
 import itertools
 import postprocess
 from glob import glob
-from firm import Firm
 from firmmultitechnologies import *
 from household import *
 from agent import *
-from copy import copy
 from collections import defaultdict
-from contract import Contract
 import itertools
 
 

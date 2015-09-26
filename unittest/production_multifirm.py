@@ -1,7 +1,6 @@
 from __future__ import division
 import abce
 from abce.tools import *
-from collections import defaultdict
 
 
 class ProductionMultifirm(abce.Agent, abce.FirmMultiTechnologies):

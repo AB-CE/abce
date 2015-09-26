@@ -33,7 +33,6 @@ Messaging between agents:
 .. [1] or :class:`abceagent.FirmMultiTechnologies` for simulations with complex technologies.
 """
 from __future__ import division
-import multiprocessing
 
 
 class Logger:
