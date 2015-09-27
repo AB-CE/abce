@@ -8,9 +8,10 @@
 
 from __future__ import division
 import multiprocessing as mp
-from abce import *
+from abce import Simulation, read_parameters
 from firm import Firm
 from household import Household
+
 
 def main():
     for parameters in read_parameters():
@@ -35,7 +36,6 @@ def main():
 
         w.build_agents(Firm, 1)
         w.build_agents(Household, 1)
-
 
         w.run()
 

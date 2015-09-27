@@ -50,10 +50,7 @@ def is_zero(x):
     arithmetic. If x is 1.0*e^-100 so really close to 0, x == 0 will be false;
     is_zero will be true.
     """
-    if - epsilon < x < epsilon:
-        return True
-    else:
-        return False
+    return -epsilon < x < epsilon
 
 
 def is_positive(x):
@@ -63,18 +60,12 @@ def is_positive(x):
     x > 0 will be true, eventhough it is very very small;
     is_zero will be true.
     """
-    if epsilon <= x:
-        return True
-    else:
-        return False
+    return epsilon <= x
 
 
 def is_negative(x):
     """ see is positive """
-    if x <= - epsilon:
-        return True
-    else:
-        return False
+    return x <= - epsilon
 
 
 class NotEnoughGoods(Exception):

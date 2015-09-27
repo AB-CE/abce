@@ -14,7 +14,7 @@ from contractbuyer import ContractBuyer
 from expiringcapital import ExpiringCapital
 from giveexpiringcapital import GiveExpiringCapital
 from buyexpiringcapital import BuyExpiringCapital
-from abce import *
+from abce import Simulation, read_parameters, repeat
 
 
 def main():
@@ -77,11 +77,8 @@ def main():
         #s.build_agents(GiveExpiringCapital, 2)
         s.build_agents(BuyExpiringCapital, 2)
 
-
-
         s.run()
 
 if __name__ == '__main__':
     mp.freeze_support()
     main()
-

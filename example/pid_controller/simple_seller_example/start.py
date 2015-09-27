@@ -10,7 +10,8 @@ from __future__ import division
 import multiprocessing as mp
 from firm import Firm
 from household import Household
-from abce import Simulation, read_parameters, repeat
+from abce import Simulation, read_parameters
+
 
 def main():
     for simulation_parameters in read_parameters('simulation_parameters.csv'):

@@ -168,18 +168,5 @@ class Household:
         return self._utility_function.formula(input_goods)
 
 
-def sort(objects, key='price', reverse=False):
-    """ Sorts the object by the key
-
-    Args::
-
-     reverse=True for descending
-
-    Example::
-
-        quotes_by_price = sort(quotes, 'price')
-        """
-    return sorted(objects, key=lambda objects: objects[key], reverse=reverse)
-
 class Utility_Function:
     pass

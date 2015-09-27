@@ -1,6 +1,5 @@
 from __future__ import division  # makes division work correctly
 import abce
-from abce.tools import is_zero, is_positive, is_negative, NotEnoughGoods
 
 
 class Household(abce.Agent, abce.Household):

@@ -1,10 +1,10 @@
 from __future__ import division
 import abce
 from abce.tools import *
-from collections import defaultdict
+from abce.firm import Firm
 
 
-class ProductionFirm(abce.Agent, abce.Firm):
+class ProductionFirm(abce.Agent, Firm):
     def init(self, simulation_parameters, agent_parameters):
         self.last_round = simulation_parameters['num_rounds'] - 1
 
@@ -25,8 +25,8 @@ class ProductionFirm(abce.Agent, abce.Firm):
 
             def many_goods_pf(goods):
                 output = {'soft_rubber': goods['a'] ** 0.25 * goods['b'] ** 0.5 * goods['c'] ** 0.25,
-                                  'hard_rubber': goods['a'] ** 0.1 * goods['b'] ** 0.2 * goods['c'] ** 0.01,
-                                  'waste': goods['b'] / 2}
+                          'hard_rubber': goods['a'] ** 0.1 * goods['b'] ** 0.2 * goods['c'] ** 0.01,
+                          'waste': goods['b'] / 2}
                 return output
 
             use = {'a': 1, 'b': 0.1, 'c': 0}
@@ -35,8 +35,6 @@ class ProductionFirm(abce.Agent, abce.Firm):
 
         elif self.idn == 4:
             self.set_leontief('car', {'wheels': 4, 'chassi': 1})
-
-
 
     def one(self):
         pass
@@ -93,18 +91,18 @@ class ProductionFirm(abce.Agent, abce.Firm):
             assert self.possession('b') == 0, self.possession('b')
             assert self.possession('consumption_good') == min(1 * 3, 2 * 1), self.possession('consumption_good')
             self.destroy('a', 1)
-            self.destroy('consumption_good',  min(1 * 3, 2 * 1))
+            self.destroy('consumption_good', min(1 * 3, 2 * 1))
 
         elif self.idn == 3:
             self.create('a', 10)
             self.create('b', 10)
-            self.create('c',10)
-            self.produce({'a' : 1, 'b' : 2, 'c': 5})
+            self.create('c', 10)
+            self.produce({'a': 1, 'b': 2, 'c': 5})
 
             assert self.possession('a') == 9, self.possession('a')
             assert self.possession('b') == 9.8, self.possession('b')
             assert self.possession('c') == 10, self.possession('c')
-            assert self.possession('soft_rubber') == 1 ** 0.25 * 2 ** 0.5 * 5 **0.25
+            assert self.possession('soft_rubber') == 1 ** 0.25 * 2 ** 0.5 * 5 ** 0.25
             assert self.possession('hard_rubber') == 1 ** 0.1 * 2 ** 0.2 * 5 ** 0.01
             assert self.possession('waste') == 2 / 2, self.possession('waste')
             self.destroy_all('a')
@@ -114,12 +112,11 @@ class ProductionFirm(abce.Agent, abce.Firm):
             self.destroy_all('hard_rubber')
             self.destroy_all('waste')
 
-
         elif self.idn == 4:
             input_goods = {'wheels': 4, 'chassi': 1}
-            price_vector = {'wheels': 10, 'chassi': 100, 'car':1000}
+            price_vector = {'wheels': 10, 'chassi': 100, 'car': 1000}
             nv = self.predict_net_value(input_goods, price_vector)
-            assert  nv == 860
+            assert nv == 860
 
     def all_tests_completed(self):
         if self.round == self.last_round and self.idn == 0:
@@ -132,6 +129,3 @@ class ProductionFirm(abce.Agent, abce.Firm):
             print('Test predict_produce_input                \tOK')
             print('Test net_value                            \tOK')
             print('Test predict_net_value                    \tOK')
-
-
-

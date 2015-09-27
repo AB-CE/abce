@@ -16,7 +16,6 @@
 # the License.
 import multiprocessing
 import csv
-import numpy as np
 
 
 class AbceLogger(multiprocessing.Process):

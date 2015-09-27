@@ -1,7 +1,6 @@
 from __future__ import division
 import abce
 from abce.tools import *
-from collections import defaultdict
 
 
 class UtilityHousehold(abce.Agent, abce.Household):
@@ -12,13 +11,12 @@ class UtilityHousehold(abce.Agent, abce.Household):
             def utility(goods):
                 return max(goods['a'] ** 0.2, goods['b'] ** 0.5 * goods['c'] ** 0.3)
 
-            use = {'a': 1, 'b': 0.1, 'c':0}
+            use = {'a': 1, 'b': 0.1, 'c': 0}
 
             self.set_utility_function(utility, use)
 
         elif self.idn == 1 or self.idn == 3:
             self.set_cobb_douglas_utility_function({'a': 0.2, 'b': 0.5, 'c': 0.3})
-
 
     def one(self):
         pass
@@ -51,7 +49,7 @@ class UtilityHousehold(abce.Agent, abce.Household):
             self.create('b', 10)
             self.create('c', 10)
             utility = self.consume({'a': 5, 'b': 3, 'c': 1})
-            assert utility == 5 ** 0.2 * 3 ** 0.5 * 1 **0.3, utility
+            assert utility == 5 ** 0.2 * 3 ** 0.5 * 1 ** 0.3, utility
             assert self.possession('a') == 5
             assert self.possession('b') == 7
             assert self.possession('c') == 9
@@ -76,7 +74,6 @@ class UtilityHousehold(abce.Agent, abce.Household):
             self.destroy_all('b')
             self.destroy_all('c')
 
-
         elif self.idn == 3:
             self.create('a', 10)
             self.create('b', 10)
@@ -95,6 +92,3 @@ class UtilityHousehold(abce.Agent, abce.Household):
             print('Test consume:                             \tOK')
             print('Test set_utility_function:                \tOK')
             print('Test set_cobb_douglas_utility_function    \tOK')
-
-
-

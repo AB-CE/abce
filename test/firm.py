@@ -1,9 +1,9 @@
 from __future__ import division
 import abce
-from abce.tools import is_zero, is_positive, is_negative, NotEnoughGoods
+from abce.firm import Firm
 
 
-class Firm(abce.Agent, abce.Firm):
+class Firm(abce.Agent, Firm):
     def init(self, simulation_parameters, agent_parameters):
         # your agent initialization goes here, not in __init__
         self.create('field', 1)

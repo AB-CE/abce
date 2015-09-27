@@ -1,7 +1,8 @@
 #pylint: disable=W0232, C1001, C0111, R0913, E1101, W0212
-from abce.tools import is_zero, is_positive, is_negative, NotEnoughGoods, epsilon
+from abce.tools import NotEnoughGoods, epsilon
 from random import shuffle
 from collections import defaultdict
+
 
 class Contract:
     """ This is a class, that allows you to create contracts. For example a
