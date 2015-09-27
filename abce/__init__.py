@@ -511,7 +511,8 @@ class Simulation:
 
         for year in xrange(self.simulation_parameters['num_rounds']):
             self.round = year
-            print("\rRound" + str("%3d" % year)),
+            if year % 25 == 0:
+                print("\rRound" + str("%3d" % year))
             self.execute_internal('all', '_produce_resource')
 
             for processor, group, action in self._action_list:
