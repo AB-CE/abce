@@ -4,7 +4,6 @@ all it's goods can be sold.
 """
 from __future__ import division
 import abce
-from abce.tools import is_zero, is_positive, is_negative, NotEnoughGoods #pylint: disable=W0611
 import numpy as np
 from picontroller import PiController
 
@@ -63,15 +62,9 @@ class Firm(abce.Agent, abce.Firm):
             w = 14 + self.L
             p = self.price
 
-            error =  p + up - w - uw
+            error = p + up - w - uw
             self.L = self.production_controller.update(error)
 
             self.log('production', {'production': self.production,
                                     'error_cum': self.production_controller.error_cum,
                                     'error': error})
-
-
-
-
-
-

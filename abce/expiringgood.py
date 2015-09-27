@@ -1,6 +1,6 @@
 from __future__ import division
 from collections import deque
-from abce.tools import is_zero, is_positive, is_negative, NotEnoughGoods, epsilon
+from abce.tools import NotEnoughGoods, epsilon
 
 
 class ExpiringGood:

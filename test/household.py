@@ -1,6 +1,6 @@
 from __future__ import division
 import abce
-from abce.tools import is_zero, is_positive, is_negative, NotEnoughGoods
+from abce.tools import NotEnoughGoods
 
 
 class Household(abce.Agent, abce.Household):
@@ -22,5 +22,3 @@ class Household(abce.Agent, abce.Household):
 
     def checking(self):
         print '------------------ money %i, corn %i' % (self.possession('money'), self.possession('corn'))
-
-

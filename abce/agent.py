@@ -36,8 +36,6 @@ from __future__ import division
 from collections import OrderedDict, defaultdict
 import numpy as np
 from abce.tools import *
-from inspect import getmembers, ismethod
-from random import shuffle
 save_err = np.seterr(invalid='ignore')
 from database import Database
 from logger import Logger
@@ -46,7 +44,6 @@ from messaging import Messaging, Message
 import time
 from copy import copy
 import random
-import sys
 from abce.expiringgood import ExpiringGood
 from pprint import pprint
 

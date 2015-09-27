@@ -43,24 +43,18 @@ This is a minimal template for a start.py::
 import csv
 import datetime
 import os
-import sys
 import time
-import inspect
-from abce.tools import agent_name, group_address
+from abce.tools import agent_name
 import multiprocessing as mp
 import abce.db
 import abce.abcelogger
 import itertools
 import postprocess
 from glob import glob
-from firm import Firm
 from firmmultitechnologies import *
 from household import *
 from agent import *
-from copy import copy
 from collections import defaultdict
-from contract import Contract
-import itertools
 
 
 BASEPATH = os.path.dirname(os.path.realpath(__file__))
@@ -69,8 +63,10 @@ BASEPATH = os.path.dirname(os.path.realpath(__file__))
 def execute_wrapper(inp):
     return inp[0].execute_parallel(inp[1], inp[2])
 
+
 def execute_internal_wrapper(inp):
     return inp[0].execute_internal(inp[1])
+
 
 def read_parameters(parameters_file='simulation_parameters.csv'):
     """ reads a parameter file line by line and gives a list. Where each line
@@ -279,8 +275,7 @@ class Simulation:
 
         """
         self.add_action_list(eval(parameter))
-        #TODO test
-
+        # TODO test
 
     def declare_round_endowment(self, resource, units, product, groups=['all']):
         """ At the beginning of very round the agent gets 'units' units of good 'product' for
@@ -312,7 +307,6 @@ class Simulation:
             raise SystemExit("WARNING: agents build before declare_round_endowment")
         for group in groups:
             self.resource_endowment[group].append((resource, units, product))
-
 
     def declare_perishable(self, good):
         """ This good only lasts one round and then disappears. For example
@@ -380,7 +374,7 @@ class Simulation:
         self.declare_round_endowment(human_or_other_resource, units, service, groups)
         self.declare_perishable(service)
 
-    #TODO also for other variables
+    # TODO also for other variables
     def panel(self, group, variables=[]):
         """ Panel_data writes variables of a group of agents into the database.
             It always writes all possessions of the agent. With the optional
@@ -431,7 +425,7 @@ class Simulation:
                     elif action[2] == 'parallel':
                         processed_list.append((self.execute_parallel, action[0], action[1]))
                     else:
-                        raise SystemExit("%s in %s in action_list not recognized, must be 'serial' or 'parallel' " % (action[2],action))
+                        raise SystemExit("%s in %s in action_list not recognized, must be 'serial' or 'parallel' " % (action[2], action))
 
                 else:
                     raise SystemExit("%s in action_list not recognized" % action)
@@ -443,8 +437,8 @@ class Simulation:
             parameters = [(agent, command, messagess[agent.group][agent.idn]) for agent in self.agents_list[group]]
             self.agents_list[group] = self.pool.map(execute_wrapper, parameters)
             del self.agents_list['all']
-            self.agents_list['all'] = [agent for agent in  itertools.chain(*self.agents_list.values())]
-            for agent in  self.agents_list[group]:
+            self.agents_list['all'] = [agent for agent in itertools.chain(*self.agents_list.values())]
+            for agent in self.agents_list[group]:
                 del messagess[agent.group][agent.idn][:]
             ret.extend([agent._out for agent in self.agents_list[group]])
         return ret
@@ -513,7 +507,7 @@ class Simulation:
         except AttributeError:
             pass
 
-    def build_agents(self, AgentClass,  number=None, group_name=None, agent_parameters=None):
+    def build_agents(self, AgentClass, number=None, group_name=None, agent_parameters=None):
         """ This method creates agents, the first parameter is the agent class.
         "num_agent_class" (e.G. "num_firm") should be difined in
         simulation_parameters.csv. Alternatively you can also specify number = 1.s
@@ -541,8 +535,8 @@ class Simulation:
          w.build_agents(Bank, 1)
          w.build_agents(CentralBank, number=1)
         """
-        #TODO single agent groups get extra name without number
-        #TODO when there is a group with a single agent the ask_agent has a confusingname
+        # TODO single agent groups get extra name without number
+        # TODO when there is a group with a single agent the ask_agent has a confusingname
         if not(group_name):
             group_name = AgentClass.__name__.lower()
         if number and not(agent_parameters):
@@ -567,7 +561,7 @@ class Simulation:
                              'number_or_parameter_column or agent_parameters must be'
                              'specied, NOT both.')
         if not(agent_parameters):
-            agent_parameters = [None for _ in range(num_agents_this_group)]
+            agent_parameters = [None] * num_agents_this_group
 
         self.simulation_parameters['num_' + group_name.lower()] = num_agents_this_group
 
@@ -618,13 +612,10 @@ class Simulation:
                 AgentEngine.__init__(self, *_pass_to_engine)
                 self.size = own_parameters['firm_size']
         """
-        #TODO declare all self.simulation_parameters['num_XXXXX'], when this is called the first time
-        if parameters_file == None:
-            try:
-                parameters_file = self.simulation_parameters['agent_parameters_file']
-            except KeyError:
-                parameters_file = 'agent_parameters.csv'
-        elif self._agent_parameters == None:
+        # TODO declare all self.simulation_parameters['num_XXXXX'], when this is called the first time
+        if parameters_file is None:
+            parameters_file = self.simulation_parameters.get('agent_parameters_file', 'agent_parameters.csv')
+        elif self._agent_parameters is None:
             if parameters_file != self._agent_parameters:
                 SystemExit('All agents must be declared in the same agent_parameters.csv file')
         self._agent_parameters = parameters_file
@@ -655,22 +646,19 @@ class Simulation:
 
         for line in agents_list:
             if line['agent_class'] == agent_class:
-                agent_parameters.extend([line for _ in range(line['number'] * multiply)])
+                agent_parameters.extend([line] * line['number'] * multiply)
 
         self.build_agents(AgentClass, agent_parameters=agent_parameters)
 
     def _write_description_file(self):
         description = open(os.path.abspath(self.simulation_parameters['_path'] + '/description.txt'), 'w')
-        description.write('\n')
-        description.write('\n')
+        description.write('\n\n')
         for key in self.simulation_parameters:
             description.write(key + ": " + str(self.simulation_parameters[key]) + '\n')
 
     def _displaydescribtion(self):
         description = open(self.simulation_parameters['_path'] + '/description.txt', 'r')
         print(description.read())
-
-
 
 
 class repeat:
@@ -723,5 +711,3 @@ def _number_or_string(word):
             return float(word)
         except ValueError:
             return word
-
-

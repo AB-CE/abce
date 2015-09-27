@@ -4,7 +4,6 @@ sloping demand curve
 """
 from __future__ import division
 import abce
-from abce.tools import is_zero, is_positive, is_negative, NotEnoughGoods
 
 
 class Household(abce.Agent, abce.Household):
@@ -19,10 +18,9 @@ class Household(abce.Agent, abce.Household):
         quotes = self.get_quotes('cookies')
         for quote in quotes:
             if quote['price'] <= self.idn * 10 and self.possession('cookies') == 0:
-               self.create('money', quote['price'])
-               self.accept_quote_partial(quote, min(1, quote['quantity']))
+                self.create('money', quote['price'])
+                self.accept_quote_partial(quote, min(1, quote['quantity']))
 
     def consumption(self):
         """ consume the cookie """
         self.consume_everything()
-

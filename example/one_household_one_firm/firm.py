@@ -1,6 +1,5 @@
 from __future__ import division  # makes division work correctly
 import abce
-from abce.tools import is_zero, is_positive, is_negative, NotEnoughGoods
 
 
 class Firm(abce.Agent, abce.Firm):
@@ -25,4 +24,3 @@ class Firm(abce.Agent, abce.Firm):
     def sell_goods(self):
         """ offers one unit of labor to firm 0, for the price of 1 "money" """
         self.sell('household', 0, "GOOD", self.possession("GOOD"), 1)
-
