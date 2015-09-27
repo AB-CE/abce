@@ -261,7 +261,7 @@ class Trade:
         try:
             if offer['status'] == 'accepted':
                 offer['final_quantity'] = offer['quantity']
-            elif  offer['status'] == 'rejected':
+            elif offer['status'] == 'rejected':
                 offer['final_quantity'] = 0
         except KeyError:
             offer['status'] = 'pending'
@@ -291,7 +291,6 @@ class Trade:
             else:
                 raise KeyError
 
-
     def accept_quote(self, quote):
         """ makes a commited buy or sell out of the counterparties quote
 
@@ -299,10 +298,7 @@ class Trade:
          quote: buy or sell quote that is accepted
 
         """
-        if quote['buysell'] == 'qs':
-            self.buy(quote['sender_group'], quote['sender_idn'], quote['good'], quote['quantity'], quote['price'])
-        else:
-            self.sell(quote['sender_group'], quote['sender_idn'], quote['good'], quote['quantity'], quote['price'])
+        self.accept_quote_partial(quote, quote['quantity'])
 
     def accept_quote_partial(self, quote, quantity):
         """ makes a commited buy or sell out of the counterparties quote
@@ -528,7 +524,7 @@ class Trade:
                     print('On diet')
         """
         assert price >= - epsilon, price
-        if self._haves[good] < quantity - epsilon:
+        if is_positive(quantity - self._haves[good]):
             raise NotEnoughGoods(self.name, good, quantity - self._haves[good])
         self._haves[good] -= quantity
         offer = {'sender_group': self.group,
@@ -571,8 +567,7 @@ class Trade:
             price: price per unit
         """
         money_amount = quantity * price
-        if self._haves['money'] < money_amount - epsilon:
-            raise NotEnoughGoods(self.name, 'money', money_amount - self._haves['money'])
+        self._check_enough_goods_helper_func(money_amount, 'money')
 
         self._haves['money'] -= money_amount
         offer = {'sender_group': self.group,
@@ -598,7 +593,6 @@ class Trade:
         except NotEnoughGoods:
             self.buy(receiver_group, receiver_idn, good, quantity=self.possession('money') / price, price=price)
 
-
     def retract(self, offer_idn):
         """ The agent who made a buy or sell offer can retract it
 
@@ -610,7 +604,7 @@ class Trade:
             offer: the offer he made with buy or sell
             (offer not quote!)
         """
-        self._send(self.given_offers[offer_idn]['receiver_group'], '_d', offer['idn'])
+        self._send(self.given_offers[offer_idn]['receiver_group'], '_d', offer_idn)
         del self.given_offers[offer_idn]
 
     def accept(self, offer):
@@ -624,20 +618,19 @@ class Trade:
         Return:
             Returns a dictionary with the good's quantity and the amount paid.
         """
-        money_amount = offer['quantity'] * offer['price']
+        quantity = offer['quantity']
+        money_amount = quantity * offer['price']
         if offer['buysell'] == 's':
-            if self._haves['money'] < money_amount - epsilon:
-                raise NotEnoughGoods(self.name, 'money', money_amount - self._haves['money'])
-            self._haves[offer['good']] += offer['quantity']
-            self._haves['money'] -= offer['quantity'] * offer['price']
+            self._check_enough_goods_helper_func(money_amount, 'money')
+            self._haves[offer['good']] += quantity
+            self._haves['money'] -= quantity * offer['price']
         else:
-            if self._haves[offer['good']] < offer['quantity'] - epsilon:
-                raise NotEnoughGoods(self.name, offer['good'], offer['quantity'] - self._haves[offer['good']])
-            self._haves[offer['good']] -= offer['quantity']
-            self._haves['money'] += offer['quantity'] * offer['price']
+            self._check_enough_goods_helper_func(quantity, offer['good'])
+            self._haves[offer['good']] -= quantity
+            self._haves['money'] += quantity * offer['price']
         self._send(offer['sender_group'], offer['sender_idn'], '_a', offer['idn'])
         del self._open_offers[offer['idn']]
-        return {offer['good']: offer['quantity'], 'money': money_amount}
+        return {offer['good']: quantity, 'money': money_amount}
 
     def accept_partial(self, offer, quantity):
         """ TODO The offer is partly accepted and cleared
@@ -649,17 +642,15 @@ class Trade:
         Return:
             Returns a dictionary with the good's quantity and the amount paid.
         """
-        assert not(is_negative(quantity)), quantity
+        assert is_positive(quantity), quantity
         assert not(is_positive(quantity - offer['quantity'])), 'accepted more than offered %s: %f > %s' % (offer['good'], quantity, offer['quantity'])
         money_amount = quantity * offer['price']
         if offer['buysell'] == 's':
-            if self._haves['money'] < money_amount - epsilon:
-                raise NotEnoughGoods(self.name, 'money', money_amount - self._haves['money'])
+            self._check_enough_goods_helper_func(money_amount, 'money')
             self._haves[offer['good']] += quantity
             self._haves['money'] -= quantity * offer['price']
         else:
-            if self._haves[offer['good']] < quantity - epsilon:
-                raise NotEnoughGoods(self.name, offer['good'], quantity - self._haves[offer['good']])
+            self._check_enough_goods_helper_func(quantity, offer['good'])
             self._haves[offer['good']] -= quantity
             self._haves['money'] += quantity * offer['price']
         offer['final_quantity'] = quantity
@@ -703,7 +694,6 @@ class Trade:
             else:
                 self.accept_partial(offer, self.possession(offer['good']))
 
-
     def reject(self, offer):
         """ The offer is rejected
 
@@ -719,26 +709,23 @@ class Trade:
         and the offer deleted
         """
         offer = self.given_offers[offer_id]
-        if offer['buysell'] == 's':
-            self._haves['money'] += offer['quantity'] * offer['price']
-        else:
-            self._haves[offer['good']] += offer['quantity']
+        self._process_offer_helper_func(offer, 'b')
         offer['status'] = "accepted"
         offer['status_round'] = self.round
         self.given_offers[offer_id] = offer
         return offer
 
+    def _log_receive_helper_func(self, offer, a, b):
+        # helper function to define the rest of the log functions
+        if offer['buysell'] != 's':
+            a, b = b, a
+        self._trade_log['%s,%s,%s,%f' % (offer['good'], a, b, offer['price'])] += offer['quantity']
+
     def _log_receive_accept_group(self, offer):
-        if offer['buysell'] == 's':
-            self._trade_log['%s,%s,%s,%f' % (offer['good'], self.group, offer['receiver_group'], offer['price'])] += offer['quantity']
-        else:
-            self._trade_log['%s,%s,%s,%f' % (offer['good'], offer['receiver_group'], self.group, offer['price'])] += offer['quantity']
+        self._log_receive_helper_func(offer, self.group, offer['receiver_group'])
 
     def _log_receive_accept_agent(self, offer):
-        if offer['buysell'] == 's':
-            self._trade_log['%s,%s,%s,%f' % (offer['good'], self.name_without_colon, '%s_%i' % (offer['receiver_group'], offer['receiver_idn']), offer['price'])] += offer['quantity']
-        else:
-            self._trade_log['%s,%s,%s,%f' % (offer['good'], '%s_%i' % (offer['receiver_group'], offer['receiver_idn']), self.name_without_colon, offer['price'])] += offer['quantity']
+        self._log_receive_helper_func(offer, self.name_without_colon, '%s_%i' % (offer['receiver_group'], offer['receiver_idn']))
 
     def _receive_partial_accept(self, offer):
         """ When the other party partially accepted the  money or good is
@@ -757,36 +744,30 @@ class Trade:
         return offer
 
     def _log_receive_partial_accept_group(self, offer):
-        if offer['buysell'] == 's':
-            self._trade_log['%s,%s,%s,%f' % (offer['good'], self.group, offer['receiver_group'], offer['price'])] += offer['final_quantity']
-        else:
-            self._trade_log['%s,%s,%s,%f' % (offer['good'], offer['receiver_group'], self.group, offer['price'])] += offer['final_quantity']
+        self._log_receive_accept_group(offer)
 
     def _log_receive_partial_accept_agent(self, offer):
-        if offer['buysell'] == 's':
-            self._trade_log['%s,%s,%s,%f' % (offer['good'], self.name_without_colon, '%s_%i' % (offer['receiver_group'], offer['receiver_idn']), offer['price'])] += offer['final_quantity']
-        else:
-            self._trade_log['%s,%s,%s,%f' % (offer['good'], '%s_%i' % (offer['receiver_group'], offer['receiver_idn']), self.name_without_colon, offer['price'])] += offer['final_quantity']
+        self._log_receive_accept_agent(offer)
 
     def _receive_reject(self, offer_id):
-        """ delets a given offer
+        """ delete a given offer
 
         is used by _msg_clearing__end_of_subround, when the other party rejects
         or at the end of the subround when agent retracted the offer
 
         """
         offer = self.given_offers[offer_id]
-        if offer['buysell'] == 's':
-            self._haves[offer['good']] += offer['quantity']
-        else:
-            self._haves['money'] += offer['quantity'] * offer['price']
+        self._process_offer_helper_func(offer)
         offer['status'] = "rejected"
         offer['status_round'] = self.round
         self.given_offers[offer_id] = offer
 
     def _delete_given_offer(self, offer_id):
         offer = self.given_offers.pop(offer_id)
-        if offer['buysell'] == 's':
+        self._process_offer_helper_func(offer)
+
+    def _process_offer_helper_func(self, offer, is_sell='s'):
+        if offer['buysell'] == is_sell:
             self._haves[offer['good']] += offer['quantity']
         else:
             self._haves['money'] += offer['quantity'] * offer['price']
@@ -818,10 +799,13 @@ class Trade:
 
         """
         assert quantity >= 0
-        if self._haves[good] < quantity - epsilon:
-            raise NotEnoughGoods(self.name, good, quantity - self._haves[good])
+        self._check_enough_goods_helper_func(quantity, good)
         self._haves[good] -= quantity
         self._send(receiver_group, receiver_idn, '_g', [good, quantity])
         return {good: quantity}
 
-    #TODO take
+    def _check_enough_goods_helper_func(self, quantity, good):
+        # if is_positive(quantity - self._haves[good]):
+        if self._haves[good] < quantity - epsilon:
+            raise NotEnoughGoods(self.name, good, quantity - self._haves[good])
+    # TODO take
