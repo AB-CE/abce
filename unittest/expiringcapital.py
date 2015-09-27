@@ -1,10 +1,9 @@
 from __future__ import division
-import random
-from abce.tools import NotEnoughGoods, is_zero
 import abce
+from abce.firm import Firm
 
 
-class ExpiringCapital(abce.Agent, abce.Firm):
+class ExpiringCapital(abce.Agent, Firm):
     def init(self, simulation_parameters, _,):
         self.last_round = simulation_parameters['num_rounds'] - 1
         self.create('xcapital', 1)

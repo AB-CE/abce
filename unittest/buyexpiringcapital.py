@@ -1,13 +1,11 @@
 from __future__ import division
-import random
-from abce.tools import NotEnoughGoods, is_zero
 import abce
+from abce.firm import Firm
 
 
-class BuyExpiringCapital(abce.Agent, abce.Firm):
+class BuyExpiringCapital(abce.Agent, Firm):
     def init(self, simulation_parameters, _,):
         self.last_round = simulation_parameters['num_rounds'] - 1
-
 
     def one(self):
         if self.idn == 0:
@@ -27,7 +25,6 @@ class BuyExpiringCapital(abce.Agent, abce.Firm):
             assert self.possession('xcapital') == 0
             assert self.possession('money') == 10
 
-
     def three(self):
         if self.idn == 0:
             assert self.possession('xcapital') == 10
@@ -35,9 +32,6 @@ class BuyExpiringCapital(abce.Agent, abce.Firm):
         elif self.idn == 1:
             assert self.possession('money') == 10
             self.destroy('money', 10)
-
-
-
 
     def clean_up(self):
         pass

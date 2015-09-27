@@ -3,12 +3,10 @@
 """
 from __future__ import division
 import abce
-from abce.tools import is_zero, is_positive, is_negative, NotEnoughGoods #pylint: disable=W0611
 import numpy as np
 np.set_printoptions(suppress=True)
 from picontroller import PiController
 from upregression import UPRegression
-from math import isnan, isinf
 
 
 class Firm(abce.Agent, abce.Firm):

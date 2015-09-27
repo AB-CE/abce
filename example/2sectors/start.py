@@ -3,9 +3,10 @@ to the line in agents_parameter.csv
 """
 from __future__ import division
 import multiprocessing as mp
-from abce import *
+from abce import Simulation, read_parameters
 from firm import Firm
 from household import Household
+
 
 def main():
     for simulation_parameters in read_parameters('simulation_parameters.csv'):

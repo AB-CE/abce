@@ -10,7 +10,7 @@ from __future__ import division
 from multiprocessing import freeze_support
 from firm import Firm
 from market import Market
-from abce import Simulation, read_parameters, repeat
+from abce import Simulation, read_parameters
 import graphs
 
 def main():

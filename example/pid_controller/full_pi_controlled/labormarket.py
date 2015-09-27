@@ -3,7 +3,6 @@ has the demand function q = 102 - p
 """
 from __future__ import division
 import abce
-from abce.tools import is_zero, is_positive, is_negative, NotEnoughGoods
 
 
 class LaborMarket(abce.Agent, abce.Household):

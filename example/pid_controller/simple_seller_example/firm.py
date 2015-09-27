@@ -3,7 +3,7 @@ all it's goods can be sold.
 """
 from __future__ import division
 import abce
-from abce.tools import is_zero, is_positive, is_negative, NotEnoughGoods
+from abce.tools import NotEnoughGoods
 
 
 class Firm(abce.Agent, abce.Firm):

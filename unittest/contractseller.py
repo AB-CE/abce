@@ -1,10 +1,10 @@
 from __future__ import division
 import abce
 from abce.tools import *
-import random
+from abce.contract import Contract
 
 
-class ContractSeller(abce.Agent, abce.Contract):
+class ContractSeller(abce.Agent, Contract):
     def init(self, simulation_parameters, agent_parameters):
         self.last_round = simulation_parameters['num_rounds'] - 1
         if self.idn == 0:

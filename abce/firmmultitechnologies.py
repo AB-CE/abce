@@ -24,7 +24,6 @@ a variable. :meth:`abce.FirmMultiTechnologies.produce` and similar
 methods use this variable to produce with the according technology.
 """
 from __future__ import division
-from collections import defaultdict
 import numpy as np
 from abce.tools import epsilon, NotEnoughGoods
 save_err = np.seterr(invalid='ignore')

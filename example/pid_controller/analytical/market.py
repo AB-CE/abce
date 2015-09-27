@@ -3,7 +3,6 @@ has the demand function q = 102 - p
 """
 from __future__ import division
 import abce
-from abce.tools import is_zero, is_positive, is_negative, NotEnoughGoods
 
 
 class Market(abce.Agent, abce.Household):
@@ -25,8 +24,6 @@ class Market(abce.Agent, abce.Household):
         self.create('money', quantity * offer['price'] - self.possession('money'))
         self.accept_partial(offer, quantity)
 
-
     def consumption(self):
         """ consume the cookie """
         self.consume_everything()
-
