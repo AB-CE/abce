@@ -13,8 +13,7 @@ how to set up an agent and how to trade with other agents. The households and fi
 classes allow you to produce with different production functions and consume with according
 production functions.
 
-ABCE runs an Mac, Windows and Linux. Because of a limitation in the zeromq messaging protocol,
-ABCE does not run on Windows.
+ABCE runs an Mac, Windows and Linux.
 
 
 
