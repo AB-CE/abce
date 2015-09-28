@@ -387,66 +387,6 @@ scope and Python, has only 6 classes visible to the
 modeler in a single package.
 
 
-Parallel execution of Agents and messaging with ZeroMQ
-------------------------------------------------------
-
-Concurrency
-===========
-
-Agents run in parallel, time consistency is achieved by
-stepping through the simulation sub-round by sub-round.
-Consistency in communication is achieved by allowing the
-communication only between the sub-round. During a sub-round
-messages (or transfer of goods) are collected
-and between the sub-round they are transferred to the recipient.
-The message order is randomized.
-
-Internal Control of the schedule and communication
-==================================================
-
-There are two command processes. One organize the scheduling of the action
-and the other one the time consistency of the communication between agents.
-
-.. figure:: messagemodel
-   :scale: 75%
-
-A simulation contains a number of rounds comprised of sub-rounds.
-Every sub-round the following sequence of events occurs:
-
-The simulation process manages the schedule, it sends the sub-round corresponding
-to be executed to the agents and simultaneously sends the number of
-agents that have received the order to execute this sub-round to the
-communication agent. The agents then execute the sub-round, send
-messages for other agents to the communication process; when
-they are finished they signal this to the communication process. Once
-all agents have signaled that they are finished the
-communication process then distributes the messages to the
-recipients. When the agents communicate that they have received
-the messages, the communication process signals the completion
-of a sub-round to simulation. The sub-round is concluded.
-
-Agents also send messages to the logging process, messages to
-the logging are not synchronized, but time stamped.
-
-Message passing and synchronization are managed by a third
-party library ZeroMQ :raw-tex:`\cite{hintjens2013zeromq}`.
-Every agent has four communication
-sockets: one to receive commands, one to receive messages,
-one to send data to the database and the last one to send
-messages and signal the completion of the sub-round and reception
-of messages. It is therefore imperative to have sockets that are
-very small. What is more potentially millions of messages are
-exchanged both in the execution of the program and as messages
-representing the interaction between agents. Messaging speed
-is therefore extremely important. ZeroMQ is a very small and
-efficient transport protocol. :raw-tex:`\cite{Piel}`. Further
-it might become part of the Linux core.
-
-
-
-
-
-
 
 
 .. [#compiled]  Python contrary to the common believe is compiled to bytecode similar to Java's compilation to bytecode.
