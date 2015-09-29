@@ -60,12 +60,12 @@ def is_positive(x):
     x > 0 will be true, eventhough it is very very small;
     is_zero will be true.
     """
-    return epsilon <= x
+    return - epsilon <= x
 
 
 def is_negative(x):
     """ see is positive """
-    return x <= - epsilon
+    return x <= epsilon
 
 
 class NotEnoughGoods(Exception):
