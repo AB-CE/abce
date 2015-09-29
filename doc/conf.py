@@ -20,7 +20,7 @@ try:
         def __getattr__(cls, name):
                 return Mock()
 
-    MOCK_MODULES = ['pygtk', 'gtk', 'gobject', 'argparse', 'numpy', 'pandas']
+    MOCK_MODULES = ['scipy', 'numpy', 'pandas']
     sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 except ImportError:
     pass
