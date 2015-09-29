@@ -28,6 +28,7 @@ class Database(multiprocessing.Process):
         self.aggregates = []
         self.in_sok = in_sok
         self.data = {}
+        self.aggregate_round = {}
 
     def add_trade_log(self):
         table_name = 'trade'
@@ -45,6 +46,7 @@ class Database(multiprocessing.Process):
         table_name = 'aggregate_' + group
         self.aggregates.append(table_name)
         self.data[table_name] = defaultdict(list)
+        self.aggregate_round[table_name] = 0
 
     def run(self):
         self.db = sqlite3.connect(self.directory + '/database.db')
@@ -66,7 +68,6 @@ class Database(multiprocessing.Process):
         for table_name in self.aggregates:
             self.database.execute("CREATE TABLE " + table_name + "(round INT, PRIMARY KEY(round))")
 
-        current_round = 0
         while True:
             try:
                 msg = self.in_sok.get()
@@ -89,11 +90,12 @@ class Database(multiprocessing.Process):
                 data_to_write = msg[1]
                 table_name = 'aggregate_' + msg[2]
                 round = msg[3]
-                if current_round == round:
+                if self.aggregate_round[table_name] == round:
                     self.aggregate(table_name, data_to_write)
                 else:
-                    self.write_aggregate(table_name, current_round)
-                current_round = round
+                    self.write_aggregate(table_name, self.aggregate_round[table_name])
+                    self.aggregate_round[table_name] = round
+                    self.aggregate(table_name, data_to_write)
 
             elif msg[0] == 'trade_log':
                 individual_log = msg[1]
@@ -182,10 +184,9 @@ class Database(multiprocessing.Process):
     def write_aggregate(self, table_name, round):
         data_to_write = {'round': round}
         for key in self.data[table_name]:
+            data_to_write[key] = sum(self.data[table_name][key])
             data_to_write[key + '_std'] = np.std(self.data[table_name][key])
-            summe = sum(self.data[table_name][key])
-            data_to_write[key + '_sum'] = summe
-            data_to_write[key + '_mean'] = summe / len(self.data[table_name][key])
+            self.data[table_name][key] = []
         self.write(table_name, data_to_write)
 
 class TableMissing(sqlite3.OperationalError):

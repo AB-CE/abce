@@ -1,10 +1,3 @@
-"""
-functions:
-sam_cell(seller, buyer, cell='quantity'), returns you the evolution over time of a cell
-trade_over_time(seller, buyer, good, cell='quantity'), returns you the evolution over time of a cell
-sam(t), returns the social accounting matrix at time t
-sam_ext(t), returns the social accounting matrix at time t for every individual agent
-"""
 import os
 import sqlite3
 import pandas as pd
