@@ -11,7 +11,19 @@ def to_csv(directory):
     tables = cursor.fetchall()
     for table_name in tables:
         table_name = table_name[0]
-        table = pd.read_sql_query("SELECT * from %s" % table_name, db)
+        try:
+            table = pd.read_sql_query("SELECT * from %s" % table_name, db)
+        except:
+            print("most likely your pip installation is not up to date.")
+            print("If you are on ubuntu/linux type:")
+            print()
+            print("sudo apt-get purge python-pandas")
+            print("sudo pip uninstall pandas")
+            print("sudo apt-get install python-setuptools python-dev build-essential")
+            print("sudo pip install pandas")
+            print()
+            print("If you keep having problems email davoudtaghawinejad@gmail.com")
+            raise
         table.to_csv(table_name + '.csv')
         if u'id' in table.columns:
             del table['id']

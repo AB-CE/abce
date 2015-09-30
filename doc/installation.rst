@@ -14,6 +14,9 @@ Installation of stable version Ubuntu
 
     sudo apt-get install python-pip, python-scipy, python-numpy
 
+    sudo apt-get install python-setuptools python-dev build-essential
+
+    sudo python install python-pygraphviz
 
 4. In terminal::
 
