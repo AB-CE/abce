@@ -19,17 +19,21 @@ import networkx as nx
 import matplotlib.pyplot as plt
 
 
-def write_graph(nodes, edges, directory, current_round):
+def write_graph(nodes, edges, colors, directory, current_round):
     network = nx.Graph(strict=True, directed=True)
     for node, attributes in nodes:
         network.add_node(node, **attributes)
 
     for edge in edges:
         network.add_edge(edge[0], edge[1])
-    #network.draw(directory +'/network%i.png' % current_round)
-    #nx.write_gexf(nx.relabel_gexf_graph(network), directory +'/network%i.gexf' % current_round)
     nx.write_gexf(network, directory +'/network%i.gexf' % current_round)
+    pos=nx.spring_layout(network) # positions for all nodes
 
+    plt.figure(1,figsize=(8,8))
+    nx.draw_networkx(network,pos,
+                       node_color=[colors[node] for node in network.nodes()],
+                       alpha=0.8)
+    plt.savefig(directory +'/network%i.png' % current_round, dpi=250)
 
 class AbceLogger(multiprocessing.Process):
     def __init__(self, directory, in_sok):
@@ -41,6 +45,7 @@ class AbceLogger(multiprocessing.Process):
         current_round = 0
         nodes = []
         edges = []
+        colors = {}
 
         while True:
             try:
@@ -50,13 +55,10 @@ class AbceLogger(multiprocessing.Process):
             except EOFError:
                 break
             if rnd != current_round:
-                print 'in'
-                #p.apply_async(write_graph,(nodes, edges, self.directory, current_round))
-                write_graph(nodes, edges, self.directory, current_round)
+                write_graph(nodes, edges, colors, self.directory, current_round)
                 del nodes[:]
                 del edges[:]
                 current_round = rnd
-                print 'out'
             if command == 'edges':
                 self_name, list_of_edges = msg
                 name = '%s_%i' %  self_name
@@ -65,13 +67,13 @@ class AbceLogger(multiprocessing.Process):
 
             elif command == 'node':
                 self_name, color, style, shape = msg
-                nodes.append(['%s_%i' %  self_name, {'color': color, 'style': style, 'shape': shape}])
+                name = '%s_%i' %  self_name
+                nodes.append([name, {'label': name, 'color': color, 'style': style, 'shape': shape}])
+                colors[name] = color
 
             elif command == 'close':
-                print '-close'
                 break
 
             else:
                 SystemExit("command not recognized", command, rnd, msg)
-        print 'out'
 
