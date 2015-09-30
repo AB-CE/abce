@@ -27,13 +27,14 @@ def write_graph(nodes, edges, colors, directory, current_round):
     for edge in edges:
         network.add_edge(edge[0], edge[1])
     nx.write_gexf(network, directory +'/network%i.gexf' % current_round)
-    pos=nx.spring_layout(network) # positions for all nodes
+    pos = nx.spring_layout(network) # positions for all nodes
 
-    plt.figure(1,figsize=(8,8))
+    plt.figure(1, figsize=(24,20))
     nx.draw_networkx(network,pos,
                        node_color=[colors[node] for node in network.nodes()],
                        alpha=0.8)
     plt.savefig(directory +'/network%i.png' % current_round, dpi=250)
+    plt.close()
 
 class AbceLogger(multiprocessing.Process):
     def __init__(self, directory, in_sok):
@@ -59,6 +60,7 @@ class AbceLogger(multiprocessing.Process):
                 del nodes[:]
                 del edges[:]
                 current_round = rnd
+
             if command == 'edges':
                 self_name, list_of_edges = msg
                 name = '%s_%i' %  self_name
