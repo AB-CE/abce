@@ -63,13 +63,13 @@ class AbceLogger(multiprocessing.Process):
 
             if command == 'edges':
                 self_name, list_of_edges = msg
-                name = '%s_%i' %  self_name
+                name = '%s %i' %  self_name
                 for edge in list_of_edges:
-                    edges.append((name, '%s_%i' % edge))
+                    edges.append((name, '%s %i' % edge))
 
             elif command == 'node':
                 self_name, color, style, shape = msg
-                name = '%s_%i' %  self_name
+                name = '%s %i' %  self_name
                 nodes.append([name, {'label': name, 'color': color, 'style': style, 'shape': shape}])
                 colors[name] = color
 
