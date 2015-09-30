@@ -517,9 +517,11 @@ class Simulation:
             self.execute_internal('all', '_advance_round')
             self.execute_internal('all', '_perish')
 
-        print(str("%6.2f" % (time.time() - start_time)))
+        print(str("time only simulation %6.2f" % (time.time() - start_time)))
         self.gracefull_exit()
+        print(str("time with data and network %6.2f" % (time.time() - start_time)))
         postprocess.to_csv(os.path.abspath(self.simulation_parameters['_path']))
+        print(str("time with postprocessing %6.2f" % (time.time() - start_time)))
 
 
     def gracefull_exit(self):
