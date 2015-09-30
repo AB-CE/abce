@@ -524,8 +524,8 @@ class Simulation:
 
     def gracefull_exit(self):
         self.database_queue.put('close')
-        self.logger_queue.put('close')
-        while self._db.is_alive():
+        self.logger_queue.put(['close', 'close', 'close'])
+        while self._db.is_alive() or self._logger.is_alive():
             time.sleep(0.05)
         try:
             self.pool.close()

@@ -35,14 +35,21 @@ Messaging between agents:
 from __future__ import division
 
 
-class Logger:
-    def log_network(self, list_of_nodes, color=0, style=False, shape=False):
+class NetworkLogger:
+
+    def log_agent(self, color='blue', style='filled', shape='circle'):
+        self.logger_connection.put(('node', self.round, ((self.group, self.idn), color, style, shape)))
+
+
+    def log_network(self, list_of_nodes):
         """ loggs a network. List of nodes is a list with the numbers of all agents,
         this agent is connected to.
 
         Args:
             list_of_nodes:
-                list of nodes that the agent is linked to.
+                list of nodes that the agent is linked to. A list of noteds must have
+                the following format: [('agent_group', agent_idn), ('agent_group', agent_idn), ...]
+                If your
             color:
                 integer for the color
             style(True/False):
@@ -50,11 +57,4 @@ class Logger:
             shape(True/False):
                 form of the bubble
         """
-        data_to_write = [self.round, self.idn, 0, False, False] + list_of_nodes
-        self.logger_connection.send(["network", data_to_write])
-
-
-
-
-
-
+        self.logger_connection.put(('edges', self.round, ((self.group, self.idn), list_of_nodes)))

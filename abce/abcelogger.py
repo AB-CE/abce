@@ -15,7 +15,19 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 import multiprocessing
-import csv
+import pygraphviz as gv
+
+@profile
+def write_graph(nodes, edges, directory, current_round):
+    network = gv.AGraph(strict=True, directed=True)
+    for node, attributes in nodes:
+        network.add_node(node, **attributes)
+
+    for edge in edges:
+        network.add_edge(edge)
+    network.layout(prog='neato')
+    #network.draw(directory +'/network%i.png' % current_round)
+    network.write(directory +'/network%i.dot' % current_round)
 
 
 class AbceLogger(multiprocessing.Process):
@@ -24,24 +36,42 @@ class AbceLogger(multiprocessing.Process):
         self.in_sok = in_sok
         self.directory = directory
 
-
+    @profile
     def run(self):
-        csvfile = open(self.directory + '/network.csv', 'wb')
-        network_log = csv.writer(csvfile, delimiter=',',
-                            quotechar=",", quoting=csv.QUOTE_MINIMAL)
+        current_round = 0
+        nodes = []
+        edges = []
+
         while True:
             try:
-                typ = self.in_sok.get()
+                command, rnd, msg = self.in_sok.get()
             except KeyboardInterrupt:
-                    csvfile.close()
-                    break
+                break
             except EOFError:
                 break
-            if typ == "close":
-                csvfile.close()
-                break
-            if typ == 'network':
-                data_to_write = self.in_sok.get()
-                network_log.writerow(data_to_write)
+            if rnd != current_round:
+                print 'in'
+                #p.apply_async(write_graph,(nodes, edges, self.directory, current_round))
+                write_graph(nodes, edges, self.directory, current_round)
+                del nodes[:]
+                del edges[:]
+                current_round = rnd
+                print 'out'
+            if command == 'edges':
+                self_name, list_of_edges = msg
+                name = '%s_%i' %  self_name
+                for edge in list_of_edges:
+                    edges.append((name, '%s_%i' % edge))
 
+            elif command == 'node':
+                self_name, color, style, shape = msg
+                nodes.append(['%s_%i' %  self_name, {'color': color, 'style': style, 'shape': shape}])
+
+            elif command == 'close':
+                print '-close'
+                break
+
+            else:
+                SystemExit("command not recognized", command, rnd, msg)
+        print 'out'
 

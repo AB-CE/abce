@@ -38,7 +38,7 @@ import numpy as np
 from abce.tools import *
 save_err = np.seterr(invalid='ignore')
 from database import Database
-from logger import Logger
+from networklogger import NetworkLogger
 from trade import Trade, Offer
 from messaging import Messaging, Message
 import time
@@ -47,7 +47,7 @@ import random
 from abce.expiringgood import ExpiringGood
 from pprint import pprint
 
-class Agent(Database, Logger, Trade, Messaging):
+class Agent(Database, NetworkLogger, Trade, Messaging):
     """ Every agent has to inherit this class. It connects the agent to the simulation
     and to other agent. The :class:`abceagent.Trade`, :class:`abceagent.Database` and
     :class:`abceagent.Messaging` classes are included. You can enhance an agent, by also
