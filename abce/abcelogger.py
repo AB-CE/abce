@@ -15,19 +15,20 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 import multiprocessing
-import pygraphviz as gv
+import networkx as nx
+import matplotlib.pyplot as plt
 
-@profile
+
 def write_graph(nodes, edges, directory, current_round):
-    network = gv.AGraph(strict=True, directed=True)
+    network = nx.Graph(strict=True, directed=True)
     for node, attributes in nodes:
         network.add_node(node, **attributes)
 
     for edge in edges:
-        network.add_edge(edge)
-    network.layout(prog='neato')
+        network.add_edge(edge[0], edge[1])
     #network.draw(directory +'/network%i.png' % current_round)
-    network.write(directory +'/network%i.dot' % current_round)
+    #nx.write_gexf(nx.relabel_gexf_graph(network), directory +'/network%i.gexf' % current_round)
+    nx.write_gexf(network, directory +'/network%i.gexf' % current_round)
 
 
 class AbceLogger(multiprocessing.Process):
@@ -36,7 +37,6 @@ class AbceLogger(multiprocessing.Process):
         self.in_sok = in_sok
         self.directory = directory
 
-    @profile
     def run(self):
         current_round = 0
         nodes = []
