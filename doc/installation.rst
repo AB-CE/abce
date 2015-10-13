@@ -16,8 +16,6 @@ Installation of stable version Ubuntu
 
     sudo apt-get install python-setuptools python-dev build-essential
 
-    sudo python install python-pygraphviz
-
 4. In terminal::
 
     sudo python setup.py install
@@ -44,7 +42,7 @@ Installation Mac
 Installation Windows
 --------------------
 
-- windows currently is under development and not fully functional
+- windows currently is under development and not fully tested
 
 1. Install the python-anaconda distribution from https://continuum.io/downloads
    (You can also install python and numpy/scipy by hand)

@@ -204,8 +204,7 @@ class Simulation:
         self.database_queue = manager.Queue()
         self._db = abce.db.Database(simulation_parameters['_path'], self.database_queue)
         self.logger_queue = manager.Queue()
-        self._logger = abce.abcelogger.AbceLogger(simulation_parameters['_path'], self.logger_queue)
-        self._logger.start()
+
 
         self.round = 0
         try:
@@ -426,6 +425,11 @@ class Simulation:
         self.variables_to_track_aggregate[group] = variables
         self.possessions_to_track_aggregate[group] = possessions
 
+    def network_logger(self, frequency=1, savefig=False):
+        self._network_drawing_frequency = frequency
+        self._logger = abce.abcelogger.AbceLogger(self.simulation_parameters['_path'], self.logger_queue, savefig)
+        self._logger.start()
+
     def _process_action_list(self, action_list):
         processed_list = []
         for action in action_list:
@@ -527,8 +531,16 @@ class Simulation:
     def gracefull_exit(self):
         self.database_queue.put('close')
         self.logger_queue.put(['close', 'close', 'close'])
-        while self._db.is_alive() or self._logger.is_alive():
+
+        try:
+            while self._logger.is_alive():
+                time.sleep(0.05)
+        except AttributeError:
+            pass
+
+        while self._db.is_alive():
             time.sleep(0.05)
+
         try:
             self.pool.close()
             self.pool.join()
@@ -619,6 +631,11 @@ class Simulation:
 
             agent._register_aggregate(self.possessions_to_track_aggregate[group_name],
                                       self.variables_to_track_aggregate[group_name])
+
+            try:
+                agent._network_drawing_frequency = self._network_drawing_frequency
+            except AttributeError:
+                pass
 
             for good, duration in self.expiring:
                 agent._declare_expiring(good, duration)

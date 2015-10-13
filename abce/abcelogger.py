@@ -19,7 +19,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 
 
-def write_graph(nodes, edges, colors, directory, current_round):
+def write_graph(nodes, edges, colors, directory, savefig, current_round):
     network = nx.Graph(strict=True, directed=True)
     for node, attributes in nodes:
         network.add_node(node, **attributes)
@@ -29,18 +29,20 @@ def write_graph(nodes, edges, colors, directory, current_round):
     nx.write_gml(network, directory +'/network%i.gml' % current_round)
     pos = nx.spring_layout(network) # positions for all nodes
 
-    plt.figure(1, figsize=(24,20))
-    nx.draw_networkx(network,pos,
-                       node_color=[colors[node] for node in network.nodes()],
-                       alpha=0.8)
-    plt.savefig(directory +'/network%i.png' % current_round, dpi=100)
-    plt.close()
+    if savefig:
+        plt.figure(1, figsize=(24,20))
+        nx.draw_networkx(network,pos,
+                           node_color=[colors[node] for node in network.nodes()],
+                           alpha=0.8)
+        plt.savefig(directory +'/network%i.png' % current_round, dpi=100)
+        plt.close()
 
 class AbceLogger(multiprocessing.Process):
-    def __init__(self, directory, in_sok):
+    def __init__(self, directory, in_sok, savefig):
         multiprocessing.Process.__init__(self)
         self.in_sok = in_sok
         self.directory = directory
+        self.savefig = savefig
 
     def run(self):
         current_round = 0
@@ -56,7 +58,7 @@ class AbceLogger(multiprocessing.Process):
             except EOFError:
                 break
             if rnd != current_round:
-                write_graph(nodes, edges, colors, self.directory, current_round)
+                write_graph(nodes, edges, colors, self.directory, self.savefig, current_round)
                 del nodes[:]
                 del edges[:]
                 current_round = rnd
