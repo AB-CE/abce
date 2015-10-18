@@ -43,6 +43,10 @@ class Message():
     def __int__(self):
         return int(self.__dict__)
 
+    def __repr__(self):
+        return str(self.__dict__)
+
+
 class Messaging:
     def message(self, receiver_group, receiver_idn, topic, content):
         """ sends a message to agent. Agents receive it
@@ -168,16 +172,10 @@ class Messaging:
         If you are sending a float or an integer you need to access the message
         content with `message.content` instead of only `message`.
         """
-        ret = self._msgs
-        self._msgs = {}
+        ret = {}
+        for key, messages in self._msgs.iteritems():
+            shuffle(messages)
+            ret[key] = messages
+        self._msgs.clear()
         return ret
 
-    def get_messages_biased(self, topic='m'):
-        """ like self.messages(topic), but the order is not properly randomized, but
-        it is faster. use whenever you are sure that the way you process messages
-        is not affected by the order
-        """
-        try:
-            return self._msgs.pop(topic)
-        except KeyError:
-            return []
