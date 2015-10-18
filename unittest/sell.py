@@ -2,12 +2,12 @@ from __future__ import division
 import abce
 from abce.tools import *
 import random
-
+import numpy as np
 
 class Sell(abce.Agent):
     def init(self, simulation_parameters, agent_parameters):
         self.last_round = simulation_parameters['num_rounds'] - 1
-        self.tests = {'accepted': False, 'rejected': False, 'partial': False}
+        self.tests = {'accepted': False, 'rejected': False, 'partial': False, 'full_partial': False}
         if self.idn == 1:
             self.tests['not_answered'] = False
 
@@ -37,10 +37,17 @@ class Sell(abce.Agent):
                     self.tests['rejected'] = True
                     break  # tests the automatic clean-up of polled offers
                 try:
-                    self.accept(offer)
-                    assert self.possession('cookies') == offer['quantity']
-                    assert self.possession('money') == money - offer['quantity'] * offer['price']
-                    self.tests['accepted'] = True
+                    if random.randrange(2) == 0:
+                        self.accept(offer)
+                        assert self.possession('cookies') == offer['quantity']
+                        assert self.possession('money') == money - offer['quantity'] * offer['price']
+                        self.tests['accepted'] = True
+                    else:
+                        self.accept_partial(offer, np.nextafter(offer['quantity'], 0))
+                        assert self.possession('cookies') == offer['quantity']
+                        assert self.possession('money') == money - offer['quantity'] * offer['price']
+                        self.tests['full_partial'] = True
+
                 except NotEnoughGoods:
                     self.accept_partial(offer, self.possession('money') / offer['price'])
                     assert self.possession('money') < 0.00000001, self.possession('money')
