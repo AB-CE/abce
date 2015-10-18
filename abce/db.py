@@ -184,8 +184,10 @@ class Database(multiprocessing.Process):
     def write_aggregate(self, table_name, round):
         data_to_write = {'round': round}
         for key in self.data[table_name]:
-            data_to_write[key] = sum(self.data[table_name][key])
+            summe = sum(self.data[table_name][key])
+            data_to_write[key] = summe
             data_to_write[key + '_std'] = np.std(self.data[table_name][key])
+            data_to_write[key + '_mean'] = summe / len(self.data[table_name][key])
             self.data[table_name][key] = []
         self.write(table_name, data_to_write)
 
