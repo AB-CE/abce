@@ -514,25 +514,26 @@ class Simulation:
         start_time = time.time()
 
         messagess = self._messages
-
-        for year in xrange(self.simulation_parameters['num_rounds']):
-            self.round = year
-            if year % 25 == 0:
+        try:
+            for year in xrange(self.simulation_parameters['num_rounds']):
+                self.round = year
                 print("\rRound" + str("%3d" % year))
-            self.execute_internal('all', '_produce_resource')
+                self.execute_internal('all', '_produce_resource')
 
-            for processor, group, action in self._action_list:
-                new_messages = processor(group, action, messagess)
-                messagess = sortmessages(messagess, new_messages)
+                for processor, group, action in self._action_list:
+                    new_messages = processor(group, action, messagess)
+                    messagess = sortmessages(messagess, new_messages)
 
-            self.execute_internal('all', '_advance_round')
-            self.execute_internal('all', '_perish')
-
-        print(str("time only simulation %6.2f" % (time.time() - start_time)))
-        self.gracefull_exit()
-        print(str("time with data and network %6.2f" % (time.time() - start_time)))
-        postprocess.to_csv(os.path.abspath(self.simulation_parameters['_path']))
-        print(str("time with postprocessing %6.2f" % (time.time() - start_time)))
+                self.execute_internal('all', '_advance_round')
+                self.execute_internal('all', '_perish')
+        except:
+            raise
+        finally:
+            print(str("time only simulation %6.2f" % (time.time() - start_time)))
+            self.gracefull_exit()
+            print(str("time with data and network %6.2f" % (time.time() - start_time)))
+            postprocess.to_csv(os.path.abspath(self.simulation_parameters['_path']))
+            print(str("time with postprocessing %6.2f" % (time.time() - start_time)))
 
 
     def gracefull_exit(self):
