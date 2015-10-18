@@ -352,7 +352,7 @@ class Trade:
                 if offers[good][-1]['quantity'] == self.prices_for_which_buy[good]:
                     self.accept(offers[good].pop())
         """
-        return [self.get_offers(good, descending) for good in self._open_offers]
+        return {good: self.get_offers(good, descending) for good in self._open_offers}
 
     def get_offers(self, good, descending=False):
         """ returns all offers of the 'good' ordered by price.
