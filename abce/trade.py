@@ -36,7 +36,7 @@ from __future__ import division
 from collections import defaultdict
 import numpy as np
 from random import shuffle
-from abce.tools import is_zero, is_positive, is_negative, NotEnoughGoods, epsilon
+from abce.tools import is_zero, NotEnoughGoods, is_negative, is_positive, epsilon
 save_err = np.seterr(invalid='ignore')
 
 
@@ -559,6 +559,7 @@ class Trade:
             quantity: maximum units disposed to buy at this price
             price: price per unit
         """
+        assert np.isfinite(price), price
         money_amount = quantity * price
         if self._haves['money'] < money_amount - epsilon:
             raise NotEnoughGoods(self.name, 'money', money_amount - self._haves['money'])
