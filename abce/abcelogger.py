@@ -19,30 +19,16 @@ import networkx as nx
 import matplotlib.pyplot as plt
 
 
-def write_graph(nodes, edges, colors, directory, savefig, current_round):
-    network = nx.Graph(strict=True, directed=True)
-    for node, attributes in nodes:
-        network.add_node(node, **attributes)
-
-    for edge in edges:
-        network.add_edge(edge[0], edge[1])
-    nx.write_gml(network, directory +'/network%i.gml' % current_round)
-    pos = nx.spring_layout(network) # positions for all nodes
-
-    if savefig:
-        plt.figure(1, figsize=(24,20))
-        nx.draw_networkx(network,pos,
-                           node_color=[colors[node] for node in network.nodes()],
-                           alpha=0.8)
-        plt.savefig(directory +'/network%i.png' % current_round, dpi=100)
-        plt.close()
 
 class AbceLogger(multiprocessing.Process):
-    def __init__(self, directory, in_sok, savefig):
+    def __init__(self, directory, in_sok, savefig, savegml, figsize, dpi):
         multiprocessing.Process.__init__(self)
         self.in_sok = in_sok
         self.directory = directory
         self.savefig = savefig
+        self.savegml = savegml
+        self.figsize = figsize
+        self.dpi = dpi
 
     def run(self):
         current_round = 0
@@ -58,9 +44,10 @@ class AbceLogger(multiprocessing.Process):
             except EOFError:
                 break
             if rnd != current_round:
-                write_graph(nodes, edges, colors, self.directory, self.savefig, current_round)
+                self._write_graph(nodes, edges, colors, current_round)
                 del nodes[:]
                 del edges[:]
+                colors.clear()
                 current_round = rnd
 
             if command == 'edges':
@@ -81,3 +68,23 @@ class AbceLogger(multiprocessing.Process):
             else:
                 SystemExit("command not recognized", command, rnd, msg)
 
+    def _write_graph(self, nodes, edges, colors, current_round):
+        network = nx.Graph(strict=True, directed=True)
+        for node, attributes in nodes:
+            network.add_node(node, **attributes)
+
+        for edge in edges:
+            network.add_edge(edge[0], edge[1])
+
+        if self.savegml:
+            nx.write_gml(network, self.directory +'/network"%02d".gml' % current_round)
+
+        if self.savefig:
+            pos = nx.spring_layout(network) # positions for all nodes
+            plt.figure(1, figsize=self.figsize)
+            nx.draw_networkx(network,
+                             pos,
+                             node_color=[colors[node] for node in network.nodes()],
+                             alpha=0.8)
+            plt.savefig(self.directory +'/network"%02d".png' % current_round, dpi=self.dpi)
+            plt.close()

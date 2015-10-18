@@ -38,7 +38,11 @@ from __future__ import division
 class NetworkLogger:
 
     def log_agent(self, color='blue', style='filled', shape='circle'):
-        self.logger_connection.put(('node', self.round, ((self.group, self.idn), color, style, shape)))
+        try:
+            if self.round % self._network_drawing_frequency == 0:
+                self.logger_connection.put(('node', self.round, ((self.group, self.idn), color, style, shape)))
+        except TypeError:
+            raise SystemExit("ABCE Error: simulation.network(.) needs to be called in start.py")
 
 
     def log_network(self, list_of_nodes):
@@ -57,4 +61,8 @@ class NetworkLogger:
             shape(True/False):
                 form of the bubble
         """
-        self.logger_connection.put(('edges', self.round, ((self.group, self.idn), list_of_nodes)))
+        try:
+            if self.round % self._network_drawing_frequency == 0:
+                self.logger_connection.put(('edges', self.round, ((self.group, self.idn), list_of_nodes)))
+        except TypeError:
+            raise SystemExit("ABCE Error: simulation.network(.) needs to be called in start.py")

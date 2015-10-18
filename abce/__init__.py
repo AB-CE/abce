@@ -425,9 +425,16 @@ class Simulation:
         self.variables_to_track_aggregate[group] = variables
         self.possessions_to_track_aggregate[group] = possessions
 
-    def network_logger(self, frequency=1, savefig=False):
+    def network_logger(self, frequency=1, savefig=False, savegml=True, figsize=(24,20), dpi=100):
+        """
+        """
         self._network_drawing_frequency = frequency
-        self._logger = abce.abcelogger.AbceLogger(self.simulation_parameters['_path'], self.logger_queue, savefig)
+        self._logger = abce.abcelogger.AbceLogger(self.simulation_parameters['_path'],
+                                                  self.logger_queue,
+                                                  savefig=savefig,
+                                                  savegml=savegml,
+                                                  figsize=figsize,
+                                                  dpi=dpi)
         self._logger.start()
 
     def _process_action_list(self, action_list):
@@ -635,7 +642,7 @@ class Simulation:
             try:
                 agent._network_drawing_frequency = self._network_drawing_frequency
             except AttributeError:
-                pass
+                agent._network_drawing_frequency = None
 
             for good, duration in self.expiring:
                 agent._declare_expiring(good, duration)
