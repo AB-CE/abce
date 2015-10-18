@@ -814,4 +814,5 @@ class Trade:
         self._send(receiver_group, receiver_idn, '_g', [good, quantity])
         return {good: quantity}
 
-    #TODO take
+    def take(self, receiver_group, receiver_idn, good, quantity):
+        self.buy(receiver_group, receiver_idn, good=good, quantity=quantity, price=0)
