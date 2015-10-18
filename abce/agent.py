@@ -284,9 +284,14 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         self._trade_log = defaultdict(int)
 
         if sum([len(offers) for offers in self._open_offers.values()]):
-                pprint(self._open_offers)
-                raise SystemExit('There are messages an agent send that have not'
-                                 'been retrieved in this round get_offer(.)')
+                pprint(dict(self._open_offers))
+                raise SystemExit('%s_%i: There are offers an agent send that have not'
+                                 'been retrieved in this round get_offer(.)' % (self.group, self.idn))
+
+        if sum([len(offers) for offers in self._msgs.values()]):
+                pprint(dict(self._msgs))
+                raise SystemExit('%s_%i: There are messages an agent send that have not'
+                                 'been retrieved in this round get_messages(.)' % (self.group, self.idn))
 
         self.round += 1
 
