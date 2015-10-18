@@ -8,7 +8,7 @@ class Give(abce.Agent):
     def init(self, simulation_parameters, agent_parameters):
         self.last_round = simulation_parameters['num_rounds'] - 1
         if self.idn == 1:
-            self.tests = {'all': False, 'topic': False, 'biased': False}
+            self.tests = {'all': False, 'topic': False}
         else:
             self.tests = {}
 
@@ -23,18 +23,16 @@ class Give(abce.Agent):
 
     def two(self):
         if self.idn == 1:
-            rnd = random.randint(0, 2)
+            rnd = random.randint(0, 1)
             if rnd == 0:
                 msg = self.get_messages_all()
                 msg = msg['tpc']
                 self.tests['all'] = True
+                assert len(msg) == 1, len(msg)
             elif rnd == 1:
-                msg = self.get_messages_biased('tpc')
-                self.tests['biased'] = True
-            elif rnd == 2:
                 msg = self.get_messages('tpc')
                 self.tests['topic'] = True
-            assert len(msg) == 1
+                assert len(msg) == 1, len(msg)
             msg = msg[0]
             assert msg.content == self.possession('cookies')
             assert msg.sender_group == 'give'
@@ -56,6 +54,5 @@ class Give(abce.Agent):
             print('Test abce.message:\t\t\t\tOK')
             print('Test abce.get_messages:\t\t\t\tOK')
             print('Test abce.get_messages_all:\t\t\tOK')
-            print('Test abce.get_messages_biased:\t\t\tOK')
 
 
