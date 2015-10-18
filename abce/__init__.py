@@ -96,7 +96,7 @@ def read_parameters(parameters_file='simulation_parameters.csv'):
     start_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
     parameter_array = []
 
-    csvfile = open(parameters_file)
+    csvfile = open(parameters_file, 'rU')
     dialect = csv.Sniffer().sniff(csvfile.read(1024))
     csvfile.seek(0)
     reader = csv.reader(csvfile, dialect)
@@ -672,7 +672,7 @@ class Simulation:
 
         agent_class = AgentClass.__name__.lower()
         agent_parameters = []
-        csvfile = open(parameters_file)
+        csvfile = open(parameters_file, 'rU')
         dialect = csv.Sniffer().sniff(csvfile.read(1024))
         csvfile.seek(0)
         agent_file = csv.reader(csvfile, dialect)
