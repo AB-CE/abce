@@ -186,7 +186,7 @@ class Trade:
         self._quotes = {}
         return ret
 
-    def info(self, offer_idn):
+    def info(self, offer):
         """ lets you access all fields of a **given** offer.
         This allows you to check whether an offer was accepted, partially accepted
         or rejected and retrieve the quantity actually traded.
@@ -257,14 +257,6 @@ class Trade:
                 reinforcement_learner.integrateObservation([self.info(self.offer)])
                 reinforcement_learner.giveReward([self.info(self.offer) * price - self.car_cost])
         """
-        offer = self.given_offers[offer_idn]
-        try:
-            if offer['status'] == 'accepted':
-                offer['final_quantity'] = offer['quantity']
-            elif  offer['status'] == 'rejected':
-                offer['final_quantity'] = 0
-        except KeyError:
-            offer['status'] = 'pending'
         return offer
 
     def partial_status_percentage(self, offer_idn):
@@ -532,7 +524,7 @@ class Trade:
         assert quantity >= - epsilon, quantity
         self._send(receiver_group, receiver_idn, '_o', offer)
         self.given_offers[offer['idn']] = offer
-        return offer['idn']
+        return offer
 
     def sell_max_possible(self, receiver_group, receiver_idn, good, quantity, price):
         """ Same as sell but if the possession of good is smaller than the number,
@@ -577,7 +569,7 @@ class Trade:
         assert quantity >= - epsilon, quantity
         self._send(receiver_group, receiver_idn, '_o', offer)
         self.given_offers[offer['idn']] = offer
-        return offer['idn']
+        return offer
 
     def buy_max_possible(self, receiver_group, receiver_idn, good, quantity, price):
         """ Same as buy but if money is insufficient, it executes the deal with
