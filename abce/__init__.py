@@ -56,9 +56,10 @@ from household import Household
 from agent import *
 from collections import defaultdict
 from firm import Firm
+import json
 
 
-BASEPATH = os.path.dirname(os.path.realpath(__file__))
+BASEPATH = None
 
 
 def execute_wrapper(inp):
@@ -93,7 +94,6 @@ def read_parameters(parameters_file='simulation_parameters.csv'):
         w.build_agents(Agent, 'agent', 'num_agents')
         w.run()
     """
-    start_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
     parameter_array = []
 
     csvfile = open(parameters_file, 'rU')
@@ -121,22 +121,47 @@ def read_parameters(parameters_file='simulation_parameters.csv'):
                 parameter['random_seed'] = None
         except KeyError:
             parameter['random_seed'] = None
-        parameter['_path'] = os.path.abspath('./result/' + parameter['name'] + '_' + start_time)
-        try:
-            os.makedirs('./result/')
-        except OSError:
-            pass
-        try:
-            os.makedirs(parameter['_path'])
-        except OSError:
-            files = glob(parameter['_path'] + '/*')
-            for file_to_remove in files:
-                os.remove(file_to_remove)
         for key in parameter:
             if key == '' or key[0] == '#' or key[0] == '_':
                 del key
         parameter_array.append(parameter)
     return parameter_array
+
+def read_json_parameters(parameters_file='simulation_parameters.json'):
+    """ reads a parameter that is in json (python dict) format. Where each line
+    contains all parameters for a particular run of the simulation.
+
+    Args:
+
+        parameters_file (optional):
+            filename of the json file. (default:`simulation_parameters.json`)
+
+
+    This code reads the file and runs a simulation for every line::
+
+     for parameter in read_json_parameters('simulation_parameters.json'):
+        w = Simulation(parameter)
+        w.build_agents(Agent, 'agent', 'num_agents')
+        w.run()
+    """
+    with open(parameters_file, 'rU') as jsonfile:
+        parameter = json.load(jsonfile)
+        keys = parameter.keys()
+        if 'num_rounds' not in keys:
+            raise SystemExit('No "num_rounds" column in ' + parameters_file)
+        if 'name' not in parameter:
+            try:
+                parameter['name'] = parameter['Name']
+            except KeyError:
+                print("no 'name' (lowercase) column in " + parameters_file)
+                parameter['name'] = 'abce'
+        parameter['name'] = str(parameter['name']).strip("""\"""").strip("""\'""")
+        try:
+            if parameter['random_seed'] == 0:
+                parameter['random_seed'] = None
+        except KeyError:
+            parameter['random_seed'] = None
+    return [parameter]
 
 
 class Simulation:
@@ -199,6 +224,23 @@ class Simulation:
         self.variables_to_track_aggregate = defaultdict(list)
         self.possessins_to_track_panel = defaultdict(list)
         self.possessions_to_track_aggregate = defaultdict(list)
+
+        start_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
+        if BASEPATH is None:
+            global BASEPATH
+            BASEPATH = os.path.abspath('.')
+            print BASEPATH
+            try:
+                os.makedirs(BASEPATH + '/result/')
+            except OSError:
+                pass
+        simulation_parameters['_path'] = BASEPATH + '/result/' + simulation_parameters['name'] + '_' + start_time
+        try:
+            os.makedirs(simulation_parameters['_path'])
+        except OSError:
+            files = glob(simulation_parameters['_path'] + '/*')
+            for file_to_remove in files:
+                os.remove(file_to_remove)
 
         manager = mp.Manager()
         self.database_queue = manager.Queue()
