@@ -43,7 +43,7 @@ class Sell(abce.Agent):
                         assert self.possession('money') == money - offer['quantity'] * offer['price']
                         self.tests['accepted'] = True
                     else:
-                        self.accept_partial(offer, np.nextafter(offer['quantity'], 0))
+                        self.accept_partial(offer, offer['quantity'])
                         assert self.possession('cookies') == offer['quantity']
                         assert self.possession('money') == money - offer['quantity'] * offer['price']
                         self.tests['full_partial'] = True
@@ -71,6 +71,7 @@ class Sell(abce.Agent):
                 test = self.possession('money') - offer['final_quantity'] * offer['price']
                 assert is_zero(test), test
                 self.tests['partial'] = True
+                self.tests['full_partial'] = True
             else:
                 SystemExit('Error in sell')
 

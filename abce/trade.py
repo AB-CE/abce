@@ -640,7 +640,8 @@ class Trade:
             Returns a dictionary with the good's quantity and the amount paid.
         """
         assert is_positive(quantity), quantity
-        assert not(is_positive(quantity - offer['quantity'])), 'accepted more than offered %s: %f > %s' % (offer['good'], quantity, offer['quantity'])
+        assert quantity <= offer['quantity'], \
+            'accepted more than offered %s: %f > %s' % (offer['good'], quantity, offer['quantity'])
         money_amount = quantity * offer['price']
         if offer['buysell'] == 's':
             if self._haves['money'] < money_amount - epsilon:
