@@ -14,7 +14,7 @@ setup(name='abce',
       package_dir={'abce': 'abce'},
       packages=['abce'],
       long_description=open('README.rst').read(),
-      install_requires=['numpy', 'scipy', 'dataset', 'pandas'],
+      install_requires=['numpy', 'scipy', 'dataset', 'pandas', 'networkx'],
       include_package_data=True)
 
 print('** **************************************************************************')
