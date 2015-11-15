@@ -23,8 +23,10 @@ For detailed documentation on:
 
 Trading:
     see :class:`abceagent.Trade`
+
 Logging and data creation:
     see :class:`abceagent.Database` and :doc:`simulation_results`
+
 Messaging between agents:
     see :class:`abceagent.Messaging`.
 
@@ -47,6 +49,7 @@ class Database:
         Args:
             'name'(string):
                 the name of the current action/method the agent executes
+
             data_to_log:
                 a variable or a dictionary with data to log in the the database
 
@@ -62,8 +65,10 @@ class Database:
         See also:
             :meth:`~abecagent.Database.log_nested`:
                 handles nested dictianaries
+
             :meth:`~abecagent.Database.log_change`:
                 loges the change from last round
+
             :meth:`~abecagent.Database.observe_begin`:
 
         """

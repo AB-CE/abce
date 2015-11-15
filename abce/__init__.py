@@ -467,8 +467,24 @@ class Simulation:
         self.variables_to_track_aggregate[group] = variables
         self.possessions_to_track_aggregate[group] = possessions
 
-    def network_logger(self, frequency=1, savefig=False, savegml=True, figsize=(24,20), dpi=100):
-        """
+    def network(self, frequency=1, savefig=False, savegml=True, figsize=(24,20), dpi=100):
+        """ network(.) prepares abce to write network data.
+
+        Args:
+            frequency:
+                the frequency with which the network is written, default=1
+            savefig:
+                wether to save a png file, default=False
+            savegml:
+                wether to save a gml file, default=True
+            figsize:
+               size of the graph in inch. (see matplotlib)
+            dpi:
+                resulution of the picture
+
+        Example::
+
+            simulation.network(savefig=True)
         """
         self._network_drawing_frequency = frequency
         self._logger = abce.abcelogger.AbceLogger(self.simulation_parameters['_path'],
@@ -599,29 +615,31 @@ class Simulation:
 
     def build_agents(self, AgentClass, number=None, group_name=None, agent_parameters=None):
         """ This method creates agents, the first parameter is the agent class.
-        "num_agent_class" (e.G. "num_firm") should be difined in
-        simulation_parameters.csv. Alternatively you can also specify number = 1.s
+        "num_agent_class" (e.G. "num_firm") should be defined in
+        simulation_parameters.csv. Alternatively you can also specify number = 1
 
         Args::
 
          AgentClass:
             is the name of the AgentClass that you imported
+
         number (optional):
-            number of agents to be created. or the colum name
+            number of agents to be created.
             of the row in simulation_parameters.csv that contains this number. If not
-            specified the column name is assumed to be 'num_' + agent_name
+            specified the column name is assumed to be "num_" + agent_name
             (all lowercase). For example num_firm, if the class is called
             Firm or name = Firm.
+
          group_name (optional):
             to give the group a different name than the
             class_name.
+
         agent_parameters:
             a dictionary of agent parameters to be given to the agent
 
         Example::
 
-         w.build_agents(Firm, number='num_firms')
-         # 'num_firms' is a column in simulation_parameters.csv
+         w.build_agents(Firm, number=simulation_parameters['num_firms'])
          w.build_agents(Bank, 1)
          w.build_agents(CentralBank, number=1)
         """

@@ -2,9 +2,7 @@ Contract
 ===========
 
 
-.. default-domain::abce.Contract
-
-.. autoclass:: abce.Contract
+.. autoclass:: abce.contract.Contract
     :members:
     :undoc-members:
     :show-inheritance:

@@ -14,30 +14,27 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations under
 # the License.
-"""
-The :class:`abceagent.Agent` class is the basic class for creating your agent. It automatically handles the
-possession of goods of an agent. In order to produce/transforme goods you need to also subclass
-the :class:`abceagent.Firm` [1]_ or to create a consumer the :class:`abceagent.Household`.
-
-For detailed documentation on:
-
-Trading:
-    see :class:`abceagent.Trade`
-Logging and data creation:
-    see :class:`abceagent.Database` and :doc:`simulation_results`
-Messaging between agents:
-    see :class:`abceagent.Messaging`.
-
-.. autoexception:: abcetools.NotEnoughGoods
-
-.. [1] or :class:`abceagent.FirmMultiTechnologies` for simulations with complex technologies.
-"""
 from __future__ import division
 
 
 class NetworkLogger:
+    """ NetworkLogger logs a network. It has to be initialized in start.py.
+        In the agents log_network has to be called. Optionally log_agent, can
+        be called in order to save agent attributes.
 
+        .. automethod:: abce.Simulation.network
+    """
     def log_agent(self, color='blue', style='filled', shape='circle'):
+        """ log_agent is optional. It can log agent attributes.
+
+        Args:
+            color:
+                matplotlib color, default='blue'
+            style:
+                networkx style, default='filled'
+            shape:
+                networkx shape, default='circle'
+        """
         try:
             if self.round % self._network_drawing_frequency == 0:
                 self.logger_connection.put(('node', self.round, ((self.group, self.idn), color, style, shape)))

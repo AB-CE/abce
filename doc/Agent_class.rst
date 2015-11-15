@@ -1,7 +1,7 @@
 Agents
 ======
 
-.. automodule:: agent
+.. automodule:: abce.agent
 
 .. autoclass:: abce.Agent
     :members:

@@ -99,6 +99,7 @@ class Household:
         house.
 
         Args:
+
             formula:
                 a function that takes a dictionary of goods and
                 computes the utility as a floating number.
@@ -108,6 +109,7 @@ class Household:
                 it depreciates in percent.
 
         Example:
+
             self init(self):
                 ...
                 def utility_function(goods):

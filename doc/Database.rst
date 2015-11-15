@@ -52,6 +52,16 @@ Further you can write the change of a varibale between a start and an end point 
 Panel Data
 ~~~~~~~~~~
 
-.. automethod:: abce.Simulation.panel_data
+.. automethod:: abce.Simulation.panel
 
+Aggregate Data
+~~~~~~~~~~~~~~
 
+.. automethod:: abce.Simulation.aggregate
+
+Network logging
+~~~~~~~~~~~~~~~
+
+.. autoclass:: abce.networklogger.NetworkLogger
+    :members:
+    :show-inheritance:
