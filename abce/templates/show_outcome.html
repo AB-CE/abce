@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+{% block body %}
+  <div id="begin">
+  </div>
+  {% for entry in entries %}
+  <div class="mdl-cell mdl-cell--3-col" id="{{ entry['idname']|safe }}">
+    <div class="mdl-card mdl-card--expand mdl-shadow--4dp">
+      <div class="mdl-card__actions mdl-card--border">
+        <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect"
+           onclick="minimize({{ entry['idname']|safe }})">
+          Min
+        </a>
+        <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect"
+           onclick="raise_window({{ entry['idname']|safe }})">
+          Zoom
+        </a>
+      </div>
+      <div class="mdl-card__title">
+          {{ entry['title']|safe }}
+      </div>
+      <div class="mdl-card__supporting-text">
+          {{ entry['graph']|safe }}
+      </div>
+    </div>
+  </div>
+  {% else %}
+    <em>Unbelievable.  No entries here so far</em>
+  {% endfor %}
+  <div id="end">
+  </div>
+<script type="text/javascript">
+function raise_window(idname) {
+       var xDiv = document.getElementById(idname);
+
+       if (xDiv.style.width == '')
+           xDiv.style.width = '800px'
+       else
+           xDiv.style.width = '';
+       window.location.hash = idname;
+}
+function minimize(idname) {
+       var id = Number(idname);
+       var xDiv = document.getElementById(id);
+       var end = document.getElementById("end");
+
+       if (xDiv.style.width == '') {
+           xDiv.style.width = '100px';
+           end.parentNode.insertBefore(xDiv, end);
+           document.cookie = idname + "=minimize";}
+       else {
+           xDiv.style.width = '';
+           document.cookie = idname + "=full";}
+}
+window.onload = function getCookie() {
+    var keyValuePairs = document.cookie.split(';');
+    for(var i = 0; i < keyValuePairs.length; i++) {
+        var name = keyValuePairs[i].substring(0, keyValuePairs[i].indexOf('='));
+        var value = keyValuePairs[i].substring(keyValuePairs[i].indexOf('=')+1);
+        if (value == "minimize") {
+              minimize(name);}}}
+</script>
+{% endblock %}

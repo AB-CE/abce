@@ -3,16 +3,18 @@ to the line in agents_parameter.csv
 """
 from __future__ import division
 import multiprocessing as mp
-from abce import Simulation, read_parameters
+from abce import Simulation, read_parameters, gui
 from firm import Firm
 from household import Household
 
 
-def main():
-    simulation_parameters = {'name': 'name',
-    'trade_logging': 'off',
-    'random_seed': None,
-    'num_rounds': 40}
+simulation_parameters = {'name': 'name',
+                         'trade_logging': 'off',
+                         'random_seed': None,
+                         'num_rounds': 40}
+
+@gui(simulation_parameters)
+def main(simulation_parameters):
     w = Simulation(simulation_parameters)
     action_list = [
     ('household', 'sell_labor'),
@@ -36,6 +38,7 @@ def main():
     w.build_agents(Household, 2)
 
     w.run()
+    #w.graphs()
 
 if __name__ == '__main__':
-    main()
+    main(simulation_parameters)

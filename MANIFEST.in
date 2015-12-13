@@ -1,5 +1,6 @@
 include README.rst
-include ABCE.pdf
-recursive-include template/ *
-recursive-include unittest/ *
-recursive-include example/ *
+include template/*
+include unittest/*
+recursive-include example *
+recursive-include abce/templates *
+recursive-include abce/static *

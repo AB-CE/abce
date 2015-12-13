@@ -57,10 +57,65 @@ from agent import *
 from collections import defaultdict
 from firm import Firm
 import json
+import abcegui
 
 
 BASEPATH = None
 
+def gui(parameters, names=None, title=None, text=None):
+    """ gui is a decorator that can be used to add a graphical user interface
+    to your simulation.
+
+    Args:
+
+        parameters:
+            a dictionary with the parameter name as key and an example value as
+            value. Instead of the example value you can also put a tuple:
+            (min, default, max)
+
+        names (optional):
+            a dictionary with the parameter name as key and an alternative
+            text to be displayed instead.
+
+        title:
+            a string with the name of the simulation.
+
+        text:
+            a description text of the simulation. Can be html.
+
+
+    Example::
+
+        simulation_parameters = {'name': 'name',
+                             'trade_logging': 'off',
+                             'random_seed': None,
+                             'num_rounds': 40,
+                             'num_firms': (0, 100, 100000),
+                             'num_household': (0, 100, 100000),
+                             'exponent': (0.0, 0.5, 1.1)}
+
+        names = {'num_firms': 'Number of Firms'}
+
+        @gui(parameters, simulation_parameters, names=names)
+        def main(simulation_parameters):
+            w = Simulation(simulation_parameters)
+            action_list = [
+            ('household', 'sell_labor'),
+            ('firm', 'buy_inputs'),
+            ('firm', 'production')]
+            w.add_action_list(action_list)
+
+            w.build_agents(Firm, simulation_parameters['num_firms'])
+            w.build_agents(Household, simulation_parameters['num_households'])
+            w.run()
+
+        if __name__ == '__main__':
+            main(simulation_parameters)
+    """
+    def inner(func):
+        abcegui.generate(new_inputs=parameters, new_simulation=func, names=None, title=None, text=None)
+        return abcegui.run
+    return inner  # return a function object
 
 def execute_wrapper(inp):
     return inp[0].execute_parallel(inp[1], inp[2])
@@ -234,17 +289,20 @@ class Simulation:
                 os.makedirs(BASEPATH + '/result/')
             except OSError:
                 pass
-        self._path = BASEPATH + '/result/' + simulation_parameters['name'] + '_' + start_time
+        self.path = BASEPATH + '/result/' + simulation_parameters['name'] + '_' + start_time
+        """ the path variable contains the path to the simulation outcomes it can be used
+        to generate your own graphs as all resulting csv files are there.
+        """
         try:
-            os.makedirs(self._path)
+            os.makedirs(self.path)
         except OSError:
-            files = glob(self._path + '/*')
+            files = glob(self.path + '/*')
             for file_to_remove in files:
                 os.remove(file_to_remove)
 
         manager = mp.Manager()
         self.database_queue = manager.Queue()
-        self._db = abce.db.Database(self._path, self.database_queue)
+        self._db = abce.db.Database(self.path, self.database_queue)
         self.logger_queue = manager.Queue()
 
 
@@ -487,7 +545,7 @@ class Simulation:
             simulation.network(savefig=True)
         """
         self._network_drawing_frequency = frequency
-        self._logger = abce.abcelogger.AbceLogger(self._path,
+        self._logger = abce.abcelogger.AbceLogger(self.path,
                                                   self.logger_queue,
                                                   savefig=savefig,
                                                   savegml=savegml,
@@ -590,7 +648,7 @@ class Simulation:
             print(str("time only simulation %6.2f" % (time.time() - start_time)))
             self.gracefull_exit()
             print(str("time with data and network %6.2f" % (time.time() - start_time)))
-            postprocess.to_csv(os.path.abspath(self._path))
+            postprocess.to_csv(os.path.abspath(self.path))
             print(str("time with postprocessing %6.2f" % (time.time() - start_time)))
 
 
@@ -769,14 +827,40 @@ class Simulation:
         self.build_agents(AgentClass, agent_parameters=agent_parameters)
 
     def _write_description_file(self):
-        description = open(os.path.abspath(self._path + '/description.txt'), 'w')
+        description = open(os.path.abspath(self.path + '/description.txt'), 'w')
         description.write('\n\n')
         for key in self.simulation_parameters:
             description.write(key + ": " + str(self.simulation_parameters[key]) + '\n')
 
     def _displaydescribtion(self):
-        description = open(self._path + '/description.txt', 'r')
+        description = open(self.path + '/description.txt', 'r')
         print(description.read())
+
+    def graphs(self):
+        """ after the simulatio is run, graphs() shows graphs of all data
+        collected in the simulation. Shows the same output as the @gui
+        decorator shows.
+
+        Args:
+
+            open (True/False):
+                whether to open a new window
+
+            new:
+                If new is 0, the url is opened in the same browser window if
+                possible. If new is 1, a new browser window is opened if
+                possible. If new is 2, a new browser page (tab) is opened
+                if possible.
+
+        Example::
+
+            w = Simulation(simulation_parameters)
+            ...
+            w.run()
+            w.graphs()
+        """
+        abcegui.run()
+
 
 
 class repeat:

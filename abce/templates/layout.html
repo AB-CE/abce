@@ -1,0 +1,39 @@
+<!doctype html>
+<title>Flaskr</title>
+<link rel="stylesheet" href="./static/material.min.css">
+<script src="./static/material.min.js"></script>
+<!-- <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"> -->
+<style>
+.mdl-card--expand {
+    width: 100%;}
+</style>
+
+<div class=page>
+  <div class="mdl-layout mdl-js-layout">
+    <header class="mdl-layout__header">
+        <div class="mdl-layout--fixed-header
+                mdl-layout--fixed-tabs">
+
+          <div class="mdl-layout__header-row">
+            <!-- Title -->
+            <span class="mdl-layout-title">ABCE Agent-Based Comuptational Economics Platform</span>
+          </div>
+          <!-- Tabs -->
+          <div class="mdl-layout__tab-bar mdl-js-ripple-effect">
+            <a href="/" class="mdl-layout__tab is-active">New Simulation</a>
+            <a href="show_simulation" class="mdl-layout__tab">Results</a>
+            <a href="older_results" class="mdl-layout__tab">Older Results</a>
+          </div>
+
+          <div class="mdl-layout__drawer">
+            <span class="mdl-layout-title">Flasker</span>
+          </div>
+        </div>
+    </header>
+    <main>
+      <div class="mdl-grid">
+        {% block body %}{% endblock %}
+      </div>
+    </main>
+  </div>
+</div>

@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+{% block body %}
+  <div class="mdl-cell mdl-cell--6-col">
+    <div class="mdl-card mdl-shadow--4dp mdl-card--expand">
+      <form  method="post"  action="{{ url_for('submitted_simulation') }}">
+        {% for entry in entries %}
+          <div class="mdl-card__actions mdl-card--border">
+              {{ entry['content']|safe }}
+          </div>
+        {% else %}
+          <em>Unbelievable.  No entries here so far</em>
+        {% endfor %}
+        <input class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" type="submit" >
+        </input>
+      </form>
+    </div>
+  </div>
+  <div class="mdl-cell mdl-cell--6-col">
+    <div class="mdl-card mdl-shadow--4dp mdl-card--expand">
+        <div class="mdl-card__title">
+          <h1 class="mdl-card__title-text">{{ title | safe}}</h1>
+        </div>
+        <div class="mdl-card__supporting-text" style="white-space: pre-wrap">
+          {{ text | safe }}
+        </div>
+    </div>
+  </div>
+  <script>
+    function change_text_field(x, text_field_name) {
+        document.getElementById(text_field_name).value = x;}
+
+    function change_slider_field(x, slider_field_name) {
+        document.getElementById(slider_field_name).MaterialSlider.change(x);}
+  </script>
+{% endblock %}

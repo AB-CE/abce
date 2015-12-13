@@ -35,3 +35,4 @@ def to_csv(directory):
                 meaned.to_csv(table_name + '_mean.csv', index_label='index')
             except pd.core.groupby.DataError:
                 pass
+    os.chdir('../..')
