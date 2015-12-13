@@ -1,3 +1,4 @@
+
 # Copyright 2012 Davoud Taghawi-Nejad
 #
 # Module Author: Davoud Taghawi-Nejad
@@ -36,7 +37,8 @@ from __future__ import division
 from collections import defaultdict
 import numpy as np
 from random import shuffle
-from abce.tools import is_zero, NotEnoughGoods, is_negative, is_positive, epsilon
+from abce.tools import is_zero, NotEnoughGoods, is_negative, is_positive, epsilon, bound_zero, a_smaller_b
+from sys import float_info
 save_err = np.seterr(invalid='ignore')
 
 
@@ -310,7 +312,6 @@ class Trade:
         else:
             self.sell(quote['sender_group'], quote['sender_idn'], quote['good'], quantity, quote['price'])
 
-    #TODO create assert unanswered offers
 
     def get_offers_all(self, descending=False):
         """ returns all offers in a dictionary, with goods as key. The in each
@@ -508,9 +509,8 @@ class Trade:
                     offer['status'] == 'rejected':
                     print('On diet')
         """
-        assert price >= - epsilon, price
-        if self._haves[good] < quantity - epsilon:
-            raise NotEnoughGoods(self.name, good, quantity - self._haves[good])
+        price = bound_zero(price)
+        quantity = self.quantity_smaller_goods(quantity, good)
         self._haves[good] -= quantity
         offer = {'sender_group': self.group,
                  'sender_idn': self.idn,
@@ -521,7 +521,6 @@ class Trade:
                  'price': price,
                  'buysell': 's',
                  'idn': self._offer_counter()}
-        assert quantity >= - epsilon, quantity
         self._send(receiver_group, receiver_idn, '_o', offer)
         self.given_offers[offer['idn']] = offer
         return offer
@@ -551,11 +550,9 @@ class Trade:
             quantity: maximum units disposed to buy at this price
             price: price per unit
         """
-        assert np.isfinite(price), price
+        price = bound_zero(price)
         money_amount = quantity * price
-        if self._haves['money'] < money_amount - epsilon:
-            raise NotEnoughGoods(self.name, 'money', money_amount - self._haves['money'])
-
+        money_amount = self.quantity_smaller_goods(money_amount, 'money')
         self._haves['money'] -= money_amount
         offer = {'sender_group': self.group,
                  'sender_idn': self.idn,
@@ -566,7 +563,6 @@ class Trade:
                  'price': price,
                  'buysell': 'b',
                  'idn': self._offer_counter()}
-        assert quantity >= - epsilon, quantity
         self._send(receiver_group, receiver_idn, '_o', offer)
         self.given_offers[offer['idn']] = offer
         return offer
@@ -608,13 +604,11 @@ class Trade:
         """
         money_amount = offer['quantity'] * offer['price']
         if offer['buysell'] == 's':
-            if self._haves['money'] < money_amount - epsilon:
-                raise NotEnoughGoods(self.name, 'money', money_amount - self._haves['money'])
+            money_amount = self.quantity_smaller_goods(money_amount, 'money')
             self._haves[offer['good']] += offer['quantity']
             self._haves['money'] -= offer['quantity'] * offer['price']
         else:
-            if self._haves[offer['good']] < offer['quantity'] - epsilon:
-                raise NotEnoughGoods(self.name, offer['good'], offer['quantity'] - self._haves[offer['good']])
+            offer['quantity'] = self.quantity_smaller_goods(offer['quantity'], offer['good'])
             self._haves[offer['good']] -= offer['quantity']
             self._haves['money'] += offer['quantity'] * offer['price']
         self._send(offer['sender_group'], offer['sender_idn'], '_a', offer['idn'])
@@ -631,18 +625,19 @@ class Trade:
         Return:
             Returns a dictionary with the good's quantity and the amount paid.
         """
-        assert is_positive(quantity), 'quantity %s below zero' % quantity
-        assert quantity <= offer['quantity'], \
-            'accepted more than offered %s: %f > %s' % (offer['good'], quantity, offer['quantity'])
+        quantity = bound_zero(quantity)
+        try:
+            quantity = a_smaller_b(quantity, offer['quantity'])
+        except AssertionError:
+            raise AssertionError('accepted more than offered %s: %.100f >= %.100f'
+                                 % (offer['good'], quantity, offer['quantity']))
         money_amount = quantity * offer['price']
         if offer['buysell'] == 's':
-            if self._haves['money'] < money_amount - epsilon:
-                raise NotEnoughGoods(self.name, 'money', money_amount - self._haves['money'])
+            money_amount = self.quantity_smaller_goods(money_amount, 'money')
             self._haves[offer['good']] += quantity
             self._haves['money'] -= quantity * offer['price']
         else:
-            if self._haves[offer['good']] < quantity - epsilon:
-                raise NotEnoughGoods(self.name, offer['good'], quantity - self._haves[offer['good']])
+            quantity = self.quantity_smaller_goods(quantity, offer['good'])
             self._haves[offer['good']] -= quantity
             self._haves['money'] += quantity * offer['price']
         offer['final_quantity'] = quantity
@@ -667,25 +662,6 @@ class Trade:
                 self.accept_partial(offer, self.possession('money') / offer['price'])
             else:
                 self.accept_partial(offer, self.possession(offer['good']))
-
-    def accept_partial_max_possible(self, offer, quantity):
-        """ TODO The offer is partly accepted and cleared
-
-        Args:
-            offer: the offer the other party made
-            (offer not quote!)
-
-        Return:
-            Returns a dictionary with the good's quantity and the amount paid.
-        """
-        try:
-            self.accept_partial(offer, quantity)
-        except NotEnoughGoods:
-            if offer['buysell'] == 's':
-                self.accept_partial(offer, self.possession('money') / offer['price'])
-            else:
-                self.accept_partial(offer, self.possession(offer['good']))
-
 
     def reject(self, offer):
         """ The offer is rejected
@@ -800,12 +776,24 @@ class Trade:
             self.log('taxes', self.give('money': 0.05 * self.possession('money'))
 
         """
-        assert quantity >= 0
-        if self._haves[good] < quantity - epsilon:
-            raise NotEnoughGoods(self.name, good, quantity - self._haves[good])
+        quantity = bound_zero(quantity)
+        quantity = self.quantity_smaller_goods(quantity, good)
         self._haves[good] -= quantity
         self._send(receiver_group, receiver_idn, '_g', [good, quantity])
         return {good: quantity}
 
     def take(self, receiver_group, receiver_idn, good, quantity):
         self.buy(receiver_group, receiver_idn, good=good, quantity=quantity, price=0)
+
+    def quantity_smaller_goods(self, quantity, good):
+        """ asserts that quantity is smaller then goods, taking floating point imprecission into account and
+        then sets a so that it is exacly smaller or equal the available """
+        available = self._haves[good]
+        if quantity > available + float_info.epsilon + float_info.epsilon * max(abs(quantity), abs(available)):
+            raise NotEnoughGoods(self.name, good, quantity - available)
+        quantity = bound_zero(quantity)
+        if quantity <= available:
+            return quantity
+        else:
+            return available
+

@@ -82,7 +82,7 @@ def bound_zero(x):
 def a_smaller_b(a, b):
     """ asserts that variable a is smaller then b, where foating point imprecission is accounted for,
     and than makes sure a is smaller b, without floating point imprecission """
-    assert a < b + float_info.epsilon * max(abs(a), abs(b))
+    assert a <= b + float_info.epsilon * max(abs(a), abs(b))
     if a <= b:
         return a
     else:

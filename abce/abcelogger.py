@@ -16,7 +16,6 @@
 # the License.
 import multiprocessing
 import networkx as nx
-import matplotlib.pyplot as plt
 
 
 
