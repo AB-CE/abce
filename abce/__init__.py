@@ -234,17 +234,17 @@ class Simulation:
                 os.makedirs(BASEPATH + '/result/')
             except OSError:
                 pass
-        simulation_parameters['_path'] = BASEPATH + '/result/' + simulation_parameters['name'] + '_' + start_time
+        self._path = BASEPATH + '/result/' + simulation_parameters['name'] + '_' + start_time
         try:
-            os.makedirs(simulation_parameters['_path'])
+            os.makedirs(self._path)
         except OSError:
-            files = glob(simulation_parameters['_path'] + '/*')
+            files = glob(self._path + '/*')
             for file_to_remove in files:
                 os.remove(file_to_remove)
 
         manager = mp.Manager()
         self.database_queue = manager.Queue()
-        self._db = abce.db.Database(simulation_parameters['_path'], self.database_queue)
+        self._db = abce.db.Database(self._path, self.database_queue)
         self.logger_queue = manager.Queue()
 
 
@@ -487,7 +487,7 @@ class Simulation:
             simulation.network(savefig=True)
         """
         self._network_drawing_frequency = frequency
-        self._logger = abce.abcelogger.AbceLogger(self.simulation_parameters['_path'],
+        self._logger = abce.abcelogger.AbceLogger(self._path,
                                                   self.logger_queue,
                                                   savefig=savefig,
                                                   savegml=savegml,
@@ -590,7 +590,7 @@ class Simulation:
             print(str("time only simulation %6.2f" % (time.time() - start_time)))
             self.gracefull_exit()
             print(str("time with data and network %6.2f" % (time.time() - start_time)))
-            postprocess.to_csv(os.path.abspath(self.simulation_parameters['_path']))
+            postprocess.to_csv(os.path.abspath(self._path))
             print(str("time with postprocessing %6.2f" % (time.time() - start_time)))
 
 
@@ -769,13 +769,13 @@ class Simulation:
         self.build_agents(AgentClass, agent_parameters=agent_parameters)
 
     def _write_description_file(self):
-        description = open(os.path.abspath(self.simulation_parameters['_path'] + '/description.txt'), 'w')
+        description = open(os.path.abspath(self._path + '/description.txt'), 'w')
         description.write('\n\n')
         for key in self.simulation_parameters:
             description.write(key + ": " + str(self.simulation_parameters[key]) + '\n')
 
     def _displaydescribtion(self):
-        description = open(self.simulation_parameters['_path'] + '/description.txt', 'r')
+        description = open(self._path + '/description.txt', 'r')
         print(description.read())
 
 
