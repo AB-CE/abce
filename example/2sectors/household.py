@@ -4,7 +4,7 @@ import abce
 
 class Household(abce.Agent, abce.Household):
     def init(self, simulation_parameters, agent_parameters):
-        """ self.employer is the _number_ of the agent that recieves his
+        """ self.employer is the _number_ of the agent that receives his
         labor offer.
         """
         self.create('labor_endowment', 1)

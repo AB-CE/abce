@@ -9,31 +9,33 @@ from household import Household
 
 
 def main():
-    for simulation_parameters in read_parameters('simulation_parameters.csv'):
-        w = Simulation(simulation_parameters)
-        action_list = [
-        ('household', 'sell_labor'),
-        ('firm', 'buy_inputs'),
-        ('firm', 'production'),
-        ('firm', 'panel'),
-        ('firm', 'sell_intermediary_goods'),
-        ('household', 'buy_intermediary_goods'),
-        ('household', 'panel'),
-        ('household', 'consumption')
-        ]
-        w.add_action_list(action_list)
+    simulation_parameters = {'name': 'name',
+    'trade_logging': 'off',
 
-        w.declare_round_endowment(resource='labor_endowment', units=5, product='labor')
-        w.declare_perishable(good='labor')
+    }
+    w = Simulation(simulation_parameters)
+    action_list = [
+    ('household', 'sell_labor'),
+    ('firm', 'buy_inputs'),
+    ('firm', 'production'),
+    ('firm', 'panel'),
+    ('firm', 'sell_intermediary_goods'),
+    ('household', 'buy_intermediary_goods'),
+    ('household', 'panel'),
+    ('household', 'consumption')
+    ]
+    w.add_action_list(action_list)
 
-        w.panel('household')
-        w.panel('firm')
+    w.declare_round_endowment(resource='labor_endowment', units=5, product='labor')
+    w.declare_perishable(good='labor')
 
-        w.build_agents_from_file(Firm, parameters_file='agent_parameters.csv')
-        w.build_agents_from_file(Household)
+    w.panel('household')
+    w.panel('firm')
 
-        w.run()
+    w.build_agents_from_file(Firm, parameters_file='agent_parameters.csv')
+    w.build_agents_from_file(Household, parameters_file='agent_parameters.csv')
+
+    w.run()
 
 if __name__ == '__main__':
-    mp.freeze_support()
     main()

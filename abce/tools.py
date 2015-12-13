@@ -1,3 +1,4 @@
+
 # Copyright 2012 Davoud Taghawi-Nejad
 #
 # Module Author: Davoud Taghawi-Nejad
@@ -27,6 +28,7 @@ This file also defines the :exc:`tools.NotEnoughGoods`
 """
 from sys import float_info
 epsilon = 10000 * float_info.epsilon
+import numpy as np
 
 
 def agent_name(group_name, idn):
@@ -67,6 +69,25 @@ def is_negative(x):
     """ see is positive """
     return x <= epsilon
 
+def bound_zero(x):
+    """ asserts that variable is above zero, where foating point imprecission is accounted for,
+    and than makes sure it is above 0, without floating point imprecission """
+    assert x > - float_info.epsilon, '%.30f is smaller than 0 - epsilon (%.30f)' % (x, - epsilon)
+    assert np.isfinite(x), x
+    if x < 0:
+        return 0
+    else:
+        return x
+
+def a_smaller_b(a, b):
+    """ asserts that variable a is smaller then b, where foating point imprecission is accounted for,
+    and than makes sure a is smaller b, without floating point imprecission """
+    assert a < b + float_info.epsilon * max(abs(a), abs(b))
+    if a <= b:
+        return a
+    else:
+        return b
+
 
 class NotEnoughGoods(Exception):
     """ Methods raise this exception when the agent has less goods than needed
@@ -88,3 +109,5 @@ class NotEnoughGoods(Exception):
 
     def __str__(self):
         return repr(self.name + " '" + str(self.amount_missing) + " of good '" + self.good + "' missing")
+
+

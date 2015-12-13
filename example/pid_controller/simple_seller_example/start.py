@@ -11,6 +11,7 @@ import multiprocessing as mp
 from firm import Firm
 from household import Household
 from abce import Simulation, read_parameters
+import graphs
 
 
 def main():
@@ -29,13 +30,14 @@ def main():
 
         s.add_action_list(action_list)
 
-        s.panel('household')
+        s.panel('household', possessions=['cookies'])
         s.panel('firm')
 
         s.build_agents(Firm, 1)
         s.build_agents(Household, 10)
 
         s.run()
+        graphs.generate()
 
 if __name__ == '__main__':
     mp.freeze_support()
