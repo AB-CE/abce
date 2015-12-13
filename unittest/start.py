@@ -1,5 +1,4 @@
 from __future__ import division
-import multiprocessing as mp
 from buy import Buy
 #from quote_buy import QuoteBuy
 from sell import Sell
@@ -80,5 +79,4 @@ def main():
         s.run()
 
 if __name__ == '__main__':
-    mp.freeze_support()
     main()
