@@ -10,16 +10,16 @@ class Firm(abce.Agent, abce.Firm):
 
         there is an initial endowment to avoid bootstrapping problems
         """
+        print agent_parameters
         self.price = {}
-        self.sector = agent_parameters['sector']
-        if self.sector == 'intermediate_good':
+        if self.idn % 2 == 0:
             assert self.idn == 0
             self.create('money', 2)
             self.inputs = {"labor": 1}
             self.output = "intermediate_good"
             self.outquatity = 1
             self.price['intermediate_good'] = 1
-        elif self.sector == 'consumption_good':
+        elif self.idn % 2 == 1:
             assert self.idn == 1
             self.create('money', 1)
             self.create('intermediate_good', 1)
@@ -41,8 +41,8 @@ class Firm(abce.Agent, abce.Firm):
         self.produce(self.inputs)
 
     def sell_intermediary_goods(self):
-        if self.sector == 'intermediate_good':
+        if self.output == 'intermediate_good':
             self.sell('firm', 1, "intermediate_good", 1, 1)
-        elif self.sector == 'consumption_good':
+        elif self.output == 'consumption_good':
             for i in range(2):
                 self.sell('household', i, 'consumption_good', 1, 1)

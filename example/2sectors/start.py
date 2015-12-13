@@ -11,8 +11,8 @@ from household import Household
 def main():
     simulation_parameters = {'name': 'name',
     'trade_logging': 'off',
-
-    }
+    'random_seed': None,
+    'num_rounds': 40}
     w = Simulation(simulation_parameters)
     action_list = [
     ('household', 'sell_labor'),
@@ -32,8 +32,8 @@ def main():
     w.panel('household')
     w.panel('firm')
 
-    w.build_agents_from_file(Firm, parameters_file='agent_parameters.csv')
-    w.build_agents_from_file(Household, parameters_file='agent_parameters.csv')
+    w.build_agents(Firm, 2)
+    w.build_agents(Household, 2)
 
     w.run()
 

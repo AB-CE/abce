@@ -10,7 +10,7 @@ class Household(abce.Agent, abce.Household):
         self.create('labor_endowment', 1)
         self.set_cobb_douglas_utility_function({"consumption_good": 1})
         self.accumulated_utility = 0
-        self.employer = agent_parameters['sector']
+        self.employer = self.idn
 
     def sell_labor(self):
         """ offers one unit of labor to firm self.employer, for the price of 1 "money" """
