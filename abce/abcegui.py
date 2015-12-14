@@ -95,6 +95,7 @@ def generate(new_inputs, new_simulation, names=None, title=None, text=None):
 
     ordered_inputs = OrderedDict()
     ordered_inputs['name'] = new_inputs.pop('name', 'name')
+    ordered_inputs['num_rounds'] = new_inputs.pop('num_rounds', '500')
     ordered_inputs.update(new_inputs)
     try:
         del ordered_inputs['trade_logging']
