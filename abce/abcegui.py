@@ -58,6 +58,7 @@ def show_simulation():
     for filename in os.listdir(path):
         if filename[-4:] == '.csv':
             df = pd.read_csv(path + filename)
+            df = df.where((pd.notnull(df)), None)
             if (filename.startswith('aggregate_')
                     or filename.endswith('_aggregate.csv')
                     or filename.endswith('_mean.csv')):
