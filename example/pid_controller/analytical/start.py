@@ -10,29 +10,32 @@ from __future__ import division
 from multiprocessing import freeze_support
 from firm import Firm
 from market import Market
-from abce import Simulation, read_parameters
+from abce import Simulation, gui
 import graphs
 
-def main():
-    for simulation_parameters in read_parameters('simulation_parameters.csv'):
-        s = Simulation(simulation_parameters)
-        action_list = [
-            ('firm', 'my_production'),
-            ('firm', 'selling'),
-            ('market', 'buying'),
-            ('firm', 'adjust_price', 'serial'),
-            ('firm', 'adjust_quantity', 'serial'),
-            ('market', 'consumption')
-        ]
 
-        s.add_action_list(action_list)
+simulation_parameters = {'random_seed': None,
+              'num_rounds': 3000,
+              'trade_repetitions': 20}
 
-        s.build_agents(Firm, 1)
-        s.build_agents(Market, 1)
+@gui(simulation_parameters)
+def main(simulation_parameters):
+    s = Simulation(simulation_parameters)
+    action_list = [
+        ('firm', 'my_production'),
+        ('firm', 'selling'),
+        ('market', 'buying'),
+        ('firm', 'adjust_price', 'serial'),
+        ('firm', 'adjust_quantity', 'serial'),
+        ('market', 'consumption')
+    ]
 
-        s.run()
+    s.add_action_list(action_list)
+
+    s.build_agents(Firm, 1)
+    s.build_agents(Market, 1)
+
+    s.run()
 
 if __name__ == '__main__':
-    freeze_support()
-    main()
-    graphs.generate()
+    main(simulation_parameters)

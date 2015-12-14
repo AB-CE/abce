@@ -7,38 +7,38 @@ household id * 10 (10, 20, 30 ... 90).
 The firms sets the prices using a PID controller.
 """
 from __future__ import division
-import multiprocessing as mp
 from firm import Firm
 from household import Household
-from abce import Simulation, read_parameters
-import graphs
+from abce import Simulation, gui
 
 
-def main():
-    for simulation_parameters in read_parameters('simulation_parameters.csv'):
-        s = Simulation(simulation_parameters)
-        action_list = [
+simulation_parameters = {'random_seed': None,
+              'num_rounds': 3000,
+              'trade_repetitions': 20}
 
-            ('firm', 'production'),
-            ('firm', 'panel'),
-            ('firm', 'quote'),
-            ('household', 'buying'),
-            ('firm', 'selling'),
-            ('household', 'panel'),
-            ('household', 'consumption')
-        ]
+@gui(simulation_parameters)
+def main(simulation_parameters):
+    s = Simulation(simulation_parameters)
+    action_list = [
 
-        s.add_action_list(action_list)
+        ('firm', 'production'),
+        ('firm', 'panel'),
+        ('firm', 'quote'),
+        ('household', 'buying'),
+        ('firm', 'selling'),
+        ('household', 'panel'),
+        ('household', 'consumption')
+    ]
 
-        s.panel('household', possessions=['cookies'])
-        s.panel('firm')
+    s.add_action_list(action_list)
 
-        s.build_agents(Firm, 1)
-        s.build_agents(Household, 10)
+    s.panel('household', possessions=['cookies'])
+    s.panel('firm')
 
-        s.run()
-        graphs.generate()
+    s.build_agents(Firm, 1)
+    s.build_agents(Household, 10)
+
+    s.run()
 
 if __name__ == '__main__':
-    mp.freeze_support()
-    main()
+    main(simulation_parameters)
