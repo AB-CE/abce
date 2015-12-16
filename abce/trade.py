@@ -322,6 +322,8 @@ class Trade:
                  'quantity': quantity,
                  'price': price,
                  'buysell': 'b',
+                 'status': 'new',
+                 'made': self.round,
                  'idn': self._offer_counter()}
         self._send(receiver_group, receiver_idn, '_o', offer)
         self.given_offers[offer['idn']] = offer
