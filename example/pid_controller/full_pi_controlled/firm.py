@@ -9,7 +9,7 @@ from picontroller import PiController
 from upregression import UPRegression
 
 
-class Firm(abce.Agent, abce.Firm):
+class Firm(abce.Agent, abce.Firm, abce.Quote):
     def init(self, simulation_parameters, agent_parameters):
         self.price = self.price_1 = 100
         self.cookies_before = self.production_target = self.production_target_1 = 100
@@ -33,7 +33,7 @@ class Firm(abce.Agent, abce.Firm):
 
         *but not more than is offered and he can afford """
         offer = self.get_offers('labor')[0]
-        self.accept_partial(offer, min(offer['quantity'], self.possession('money') / self.wage, self.production_target))
+        self.accept(offer, min(offer['quantity'], self.possession('money') / self.wage, self.production_target))
 
         self.wage_1 = self.wage
         error = self.production_target - offer['quantity']

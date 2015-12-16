@@ -47,7 +47,7 @@ class Buy(Agent):
                     assert self.possession('cookies') == cookies - offer['quantity']
                     self.tests['accepted'] = True
                 except NotEnoughGoods:
-                    self.accept_partial(offer, self.possession('cookies'))
+                    self.accept(offer, self.possession('cookies'))
                     assert is_zero(self.possession('cookies'))
                     assert self.possession('money') == cookies * offer['price']
                     self.tests['partial'] = True
@@ -62,15 +62,17 @@ class Buy(Agent):
                 assert is_zero(test), test
                 self.tests['rejected'] = True
             elif offer['status'] == 'accepted':
-                assert self.money - offer['quantity'] * offer['price'] == self.possession('money')
-                assert self.possession('cookies') == offer['quantity']
-                self.tests['accepted'] = True
-            elif offer['status'] == 'partial':
-                test = (self.money - offer['final_quantity'] * offer['price']) - self.possession('money')
-                assert is_zero(test), test
-                test = self.possession('cookies') - offer['final_quantity']
-                assert is_zero(test), test
-                self.tests['partial'] = True
+                if offer['final_quantity'] == offer['quantity']:
+                    assert self.money - offer['quantity'] * offer['price'] == self.possession('money')
+
+                    assert self.possession('cookies') == offer['quantity']
+                    self.tests['accepted'] = True
+                else:
+                    test = (self.money - offer['final_quantity'] * offer['price']) - self.possession('money')
+                    assert is_zero(test), test
+                    test = self.possession('cookies') - offer['final_quantity']
+                    assert is_zero(test), test
+                    self.tests['partial'] = True
             else:
                 SystemExit('Error in buy')
 
@@ -88,7 +90,7 @@ class Buy(Agent):
             print('Test abce.buy:\t\t\t\t\tOK')
             print('Test abce.accept\t(abce.buy):\t\tOK')
             print('Test abce.reject\t(abce.buy):\t\tOK')
-            print('Test abce.accept_partial\t(abce.buy):\tOK')
+            print('Test abce.accept, partial\t(abce.buy):\tOK')
             print('Test reject pending automatic \t(abce.buy):\tOK')
 
 

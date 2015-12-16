@@ -22,7 +22,7 @@ class Market(abce.Agent, abce.Household):
         if quantity > offer['quantity']:
             quantity = offer['quantity']
         self.create('money', quantity * offer['price'] - self.possession('money'))
-        self.accept_partial(offer, quantity)
+        self.accept(offer, quantity)
 
     def consumption(self):
         """ consume the cookie """

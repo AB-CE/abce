@@ -6,7 +6,7 @@ from __future__ import division
 import abce
 
 
-class Household(abce.Agent, abce.Household):
+class Household(abce.Agent, abce.Household, abce.Quote):
     def init(self, simulation_parameters, agent_parameters):
         self.set_cobb_douglas_utility_function({'cookies': 1})
 

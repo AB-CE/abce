@@ -447,8 +447,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
 
         '_o': registers a new offer
         '_d': delete received that the issuing agent retract
-        '_a': clears a made offer that was accepted by the other agent
-        '_p': counterparty partially accepted a given offer
+        '_p': clears a made offer that was accepted by the other agent
         '_r': deletes an offer that the other agent rejected
         '_g': recive a 'free' good from another party
         """
@@ -458,18 +457,12 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
                 self._open_offers[msg['good']][msg['idn']] = msg
             elif typ == '_d':
                 del self._open_offers[msg['good']][msg['idn']]
-            elif typ == '_a':
+            elif typ == '_p':
                 offer = self._receive_accept(msg)
                 if self.trade_logging == 2:
                     self._log_receive_accept_group(offer)
                 elif self.trade_logging == 1:
                     self._log_receive_accept_agent(offer)
-            elif typ == '_p':
-                offer = self._receive_partial_accept(msg)
-                if self.trade_logging == 2:
-                    self._log_receive_partial_accept_group(offer)
-                elif self.trade_logging == 1:
-                    self._log_receive_partial_accept_agent(offer)
             elif typ == '_r':
                 self._receive_reject(msg)
             elif typ == '_g':

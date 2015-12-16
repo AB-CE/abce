@@ -43,13 +43,13 @@ class Sell(abce.Agent):
                         assert self.possession('money') == money - offer['quantity'] * offer['price']
                         self.tests['accepted'] = True
                     else:
-                        self.accept_partial(offer, offer['quantity'])
+                        self.accept(offer, offer['quantity'])
                         assert self.possession('cookies') == offer['quantity']
                         assert self.possession('money') == money - offer['quantity'] * offer['price']
                         self.tests['full_partial'] = True
 
                 except NotEnoughGoods:
-                    self.accept_partial(offer, self.possession('money') / offer['price'])
+                    self.accept(offer, self.possession('money') / offer['price'])
                     assert self.possession('money') < 0.00000001, self.possession('money')
                     test = (self.possession('money') - money) - self.possession('cookies') / offer['price']
                     assert test < 0.00000001, test
@@ -57,21 +57,22 @@ class Sell(abce.Agent):
 
     def three(self):
         if self.idn == 0:
-            offer = self.info(self.offer)
+            offer = self.offer
             if offer['status'] == 'rejected':
                 assert is_zero(self.cookies - self.possession('cookies'))
                 self.tests['rejected'] = True
             elif offer['status'] == 'accepted':
-                assert self.cookies - offer['quantity'] == self.possession('cookies')
-                assert self.possession('money') == offer['quantity'] * offer['price']
-                self.tests['accepted'] = True
-            elif offer['status'] == 'partial':
-                test = (self.cookies - offer['final_quantity']) - self.possession('cookies')
-                assert is_zero(test), test
-                test = self.possession('money') - offer['final_quantity'] * offer['price']
-                assert is_zero(test), test
-                self.tests['partial'] = True
-                self.tests['full_partial'] = True
+                if offer['final_quantity'] == offer['quantity']:
+                    assert self.cookies - offer['quantity'] == self.possession('cookies')
+                    assert self.possession('money') == offer['quantity'] * offer['price']
+                    self.tests['accepted'] = True
+                else:
+                    test = (self.cookies - offer['final_quantity']) - self.possession('cookies')
+                    assert is_zero(test), test
+                    test = self.possession('money') - offer['final_quantity'] * offer['price']
+                    assert is_zero(test), test
+                    self.tests['partial'] = True
+                    self.tests['full_partial'] = True
             else:
                 SystemExit('Error in sell')
 
@@ -85,6 +86,6 @@ class Sell(abce.Agent):
             print('Test abce.buy:\t\t\t\t\tOK')
             print('Test abce.accept\t(abce.buy):\t\tOK')
             print('Test abce.reject\t(abce.buy):\t\tOK')
-            print('Test abce.accept_partial\t(abce.buy):\tOK')
+            print('Test abce.accept\t(abce.buy):\tOK')
             print('Test reject pending automatic \t(abce.buy):\tOK')
 

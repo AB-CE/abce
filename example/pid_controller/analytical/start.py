@@ -14,9 +14,10 @@ from abce import Simulation, gui
 import graphs
 
 
-simulation_parameters = {'random_seed': None,
-              'num_rounds': 3000,
-              'trade_repetitions': 20}
+simulation_parameters = {'name': "analitical",
+                         'random_seed': None,
+                         'num_rounds': 3000,
+                         'trade_repetitions': 20}
 
 @gui(simulation_parameters)
 def main(simulation_parameters):

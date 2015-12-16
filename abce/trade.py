@@ -70,9 +70,6 @@ def Offer(sender_group, sender_idn, receiver_group, receiver_idn, good, quantity
                 has been created, but not answered
             'accepted':
                 trade fully accepted
-            'partial':
-                ['final_quantity'] and self.offer_partial_status_percentage(...)
-                for the quantities actually accepted
             'rejected':
                 trade rejected
             'pending':
@@ -110,7 +107,7 @@ class Trade:
        *The good offered is blocked and self.possession(...) does not account for it.*
 
     2. **Next subround:** An agent receives the offer :meth:`~abceagent.Trade.get_offers`, and can
-       :meth:`~abceagent.Trade.accept`, :meth:`~abceagent.Trade.reject` or partially accept it. :meth:`~abceagent.Trade.accept_partial`
+       :meth:`~abceagent.Trade.accept`, :meth:`~abceagent.Trade.reject` or partially accept it. :meth:`~abceagent.Trade.accept`
 
        *The good is credited and the price is deducted from the agent's possesions.*
 
@@ -136,7 +133,7 @@ class Trade:
                     try:
                         self.accept(offer)
                     except NotEnoughGoods:
-                        self.accept_partial(offer, self.possession('money') / offer['price'])
+                        self.accept(offer, self.possession('money') / offer['price'])
                 else:
                     self.reject(offer)
 
@@ -145,7 +142,7 @@ class Trade:
             offer = self.info(self.remember_trade)
             if offer['status'] == 'reject':
                 self.price *= .9
-            elif offer['status'] = 'partial':
+            elif offer['status'] = 'accepted':
                 self.price *= offer['final_quantity'] / offer['quantity']
     """
     def get_offers_all(self, descending=False):
@@ -207,7 +204,7 @@ class Trade:
                 if offer['price'] < 50:
                     self.accept(offer)
                 elif offer['price'] < 100:
-                    self.accept_partial(offer, 1)
+                    self.accept(offer, 1)
                 else:
                     self.reject(offer)  # optional
         """
@@ -240,7 +237,7 @@ class Trade:
                 if offer['price'] < 50:
                     self.accept(offer)
                 elif offer['price'] < 100:
-                    self.accept_partial(offer, 1)
+                    self.accept(offer, 1)
                 else:
                     self.reject(offer)  # optional
         """
@@ -255,7 +252,7 @@ class Trade:
     def sell(self, receiver_group, receiver_idn, good, quantity, price):
         """ commits to sell the quantity of good at price
 
-        The goods are not in haves or self.count(). When the offer is
+        The good is not available for the agent. When the offer is
         rejected it is automatically re-credited. When the offer is
         accepted the money amount is credited. (partial acceptance
         accordingly)
@@ -278,12 +275,9 @@ class Trade:
 
             def subround_2(self):
                 offer = self.info(self.offer)
-                if offer['status'] == 'partial':
+                if offer['status'] == 'accepted':
                     print(offer['final_quantity'] , 'cookies have be bougth')
-                elif:
-                    offer['status'] == 'accepted':
-                    print('Cookie monster bougth them all')
-                elif:
+                else:
                     offer['status'] == 'rejected':
                     print('On diet')
         """
@@ -353,40 +347,24 @@ class Trade:
         self._send(offer['receiver_group'], '_d', offer)
         del self.given_offers[offer['idn']]
 
-    def accept(self, offer):
-        """ The offer is accepted and cleared
 
-        Args::
-
-            offer: the offer the other party made
-            (offer not quote!)
-
-        Return:
-            Returns a dictionary with the good's quantity and the amount paid.
-        """
-        money_amount = offer['quantity'] * offer['price']
-        if offer['buysell'] == 's':
-            money_amount = self._quantity_smaller_goods(money_amount, 'money')
-            self._haves[offer['good']] += offer['quantity']
-            self._haves['money'] -= offer['quantity'] * offer['price']
-        else:
-            offer['quantity'] = self._quantity_smaller_goods(offer['quantity'], offer['good'])
-            self._haves[offer['good']] -= offer['quantity']
-            self._haves['money'] += offer['quantity'] * offer['price']
-        self._send(offer['sender_group'], offer['sender_idn'], '_a', offer['idn'])
-        del self._open_offers[offer['good']][offer['idn']]
-        return {offer['good']: offer['quantity'], 'money': money_amount}
-
-    def accept_partial(self, offer, quantity):
-        """ TODO The offer is partly accepted and cleared
+    def accept(self, offer, quantity=None):
+        """ The buy or sell offer is accepted and cleared. If no quantity is
+        given the offer is fully accepted; If a quantity is given the offer is
+        partial accepted
 
         Args:
-            offer: the offer the other party made
-            (offer not quote!)
+
+            offer:
+                the offer the other party made
+            quantity:
+                quantity to accept. If not given all is accepted
 
         Return:
             Returns a dictionary with the good's quantity and the amount paid.
         """
+        if quantity is None:
+            quantity = offer['quantity']
         quantity = bound_zero(quantity)
         try:
             quantity = a_smaller_b(quantity, offer['quantity'])
@@ -417,20 +395,6 @@ class Trade:
         self._send(offer['sender_group'], offer['sender_idn'], '_r', offer['idn'])
         del self._open_offers[offer['good']][offer['idn']]
 
-    def _receive_accept(self, offer_id):
-        """ When the other party accepted the  money or good is received
-        and the offer deleted
-        """
-        offer = self.given_offers[offer_id]
-        if offer['buysell'] == 's':
-            self._haves['money'] += offer['quantity'] * offer['price']
-        else:
-            self._haves[offer['good']] += offer['quantity']
-        offer['status'] = "accepted"
-        offer['status_round'] = self.round
-        del self.given_offers[offer_id]
-        return offer
-
     def _log_receive_accept_group(self, offer):
         if offer['buysell'] == 's':
             self._trade_log['%s,%s,%s,%f' % (offer['good'], self.group, offer['receiver_group'], offer['price'])] += offer['quantity']
@@ -443,7 +407,7 @@ class Trade:
         else:
             self._trade_log['%s,%s,%s,%f' % (offer['good'], '%s_%i' % (offer['receiver_group'], offer['receiver_idn']), self.name_without_colon, offer['price'])] += offer['quantity']
 
-    def _receive_partial_accept(self, offer):
+    def _receive_accept(self, offer):
         """ When the other party partially accepted the  money or good is
         received, remaining good or money is added back to haves and the offer
         is deleted
@@ -454,18 +418,18 @@ class Trade:
         else:
             self._haves[offer['good']] += offer['final_quantity']
             self._haves['money'] += (offer['quantity'] - offer['final_quantity']) * offer['price']
-        offer['status'] = "partial"
+        offer['status'] = "accepted"
         offer['status_round'] = self.round
         del self.given_offers[offer['idn']]
         return offer
 
-    def _log_receive_partial_accept_group(self, offer):
+    def _log_receive_accept_group(self, offer):
         if offer['buysell'] == 's':
             self._trade_log['%s,%s,%s,%f' % (offer['good'], self.group, offer['receiver_group'], offer['price'])] += offer['final_quantity']
         else:
             self._trade_log['%s,%s,%s,%f' % (offer['good'], offer['receiver_group'], self.group, offer['price'])] += offer['final_quantity']
 
-    def _log_receive_partial_accept_agent(self, offer):
+    def _log_receive_accept_agent(self, offer):
         if offer['buysell'] == 's':
             self._trade_log['%s,%s,%s,%f' % (offer['good'], self.name_without_colon, '%s_%i' % (offer['receiver_group'], offer['receiver_idn']), offer['price'])] += offer['final_quantity']
         else:
