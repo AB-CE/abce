@@ -111,7 +111,6 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         self.given_offers[None]['status'] = 'accepted'
         self.given_offers[None]['status_round'] = 0
         self._open_offers = defaultdict(dict)
-        self._answered_offers = OrderedDict()
         self._offer_count = 0
         self._reject_offers_retrieved_end_subround = []
         self._contract_requests = defaultdict(list)
@@ -239,21 +238,6 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         return (self.name, self._offer_count)
 
     def _advance_round(self):
-        #TODO replace OrderedDict with {}
-        offer_iterator = self._answered_offers.iteritems()
-        recent_answerd_offers = OrderedDict()
-        try:
-            while True:
-                offer_id, offer = offer_iterator.next()
-                if offer['round'] == self.round:  # message from prelast round
-                    recent_answerd_offers[offer_id] = offer
-                    break
-            while True:
-                offer_id, offer = next(offer_iterator)
-                recent_answerd_offers[offer_id] = offer
-        except StopIteration:
-            self._answered_offers = recent_answerd_offers
-
         keep = {}
         for key in self.given_offers:
             if not('status' in self.given_offers[key]):
