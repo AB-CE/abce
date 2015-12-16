@@ -285,16 +285,6 @@ class Trade:
         self.given_offers[offer['idn']] = offer
         return offer
 
-    def sell_max_possible(self, receiver_group, receiver_idn, good, quantity, price):
-        """ Same as sell but if the possession of good is smaller than the number,
-        it executes the deal with a lower amount of goods using everything
-        available of this good.
-        """
-        try:
-            self.sell(receiver_group, receiver_idn, good, quantity, price)
-        except NotEnoughGoods:
-            self.sell(receiver_group, receiver_idn, good, quantity=self.possession(good), price=price)
-
     def buy(self, receiver_group, receiver_idn, good, quantity, price):
         """ commits to sell the quantity of good at price
 
@@ -328,16 +318,6 @@ class Trade:
         self._send(receiver_group, receiver_idn, '_o', offer)
         self.given_offers[offer['idn']] = offer
         return offer
-
-    def buy_max_possible(self, receiver_group, receiver_idn, good, quantity, price):
-        """ Same as buy but if money is insufficient, it executes the deal with
-        a lower amount of goods using all available money.
-        """
-        try:
-            self.buy(receiver_group, receiver_idn, good, quantity, price)
-        except NotEnoughGoods:
-            self.buy(receiver_group, receiver_idn, good, quantity=self.possession('money') / price, price=price)
-
 
     def retract(self, offer_idn):
         """ The agent who made a buy or sell offer can retract it
@@ -406,24 +386,6 @@ class Trade:
         self._send(offer['sender_group'], offer['sender_idn'], '_p', offer)
         del self._open_offers[offer['good']][offer['idn']]
         return {offer['good']: quantity, 'money': money_amount}
-
-    def accept_max_possible(self, offer):
-        """ TODO The offer is partly accepted and cleared
-
-        Args:
-            offer: the offer the other party made
-            (offer not quote!)
-
-        Return:
-            Returns a dictionary with the good's quantity and the amount paid.
-        """
-        try:
-            self.accept(offer)
-        except NotEnoughGoods:
-            if offer['buysell'] == 's':
-                self.accept_partial(offer, self.possession('money') / offer['price'])
-            else:
-                self.accept_partial(offer, self.possession(offer['good']))
 
     def reject(self, offer):
         """ The offer is rejected
