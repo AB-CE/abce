@@ -77,25 +77,13 @@ def Offer(sender_group, sender_idn, receiver_group, receiver_idn, good, quantity
             'perished':
                 the **perishable** good was not accepted by the end of the round
                 and therefore perished.
-        'final_quantity':
+        final_quantity:
             If the offer has been answerd this returns the actual quantity
             bought or sold. (Equal to quantity if the offer was accepted fully)
         idn:
             a unique identifier
     """
-    offer = {}
-    offer['sender_group'] = sender_group
-    offer['sender_idn'] = sender_idn
-    offer['receiver_group'] = receiver_group
-    offer['receiver_idn'] = receiver_idn
-    offer['good'] = good
-    offer['quantity'] = quantity
-    offer['price'] = price
-    offer['buysell'] = buysell
-    offer['idn'] = idn
-    offer['status'] = 'new'
-    return offer
-
+    pass
 
 class Trade:
     """ Agents can trade with each other. The clearing of the trade is taken care
