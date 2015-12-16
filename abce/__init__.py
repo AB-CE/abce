@@ -56,6 +56,7 @@ from household import Household
 from agent import *
 from collections import defaultdict
 from firm import Firm
+from quote import Quote
 import json
 import abcegui
 
