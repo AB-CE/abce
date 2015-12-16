@@ -27,6 +27,7 @@ ABCE runs an Mac, Windows and Linux.
    unit_testing
    Agent_class
    Trade
+   Quote
    Firm
    Household
    Messaging
