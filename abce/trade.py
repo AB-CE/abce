@@ -288,7 +288,7 @@ class Trade:
                     print('On diet')
         """
         price = bound_zero(price)
-        quantity = self.quantity_smaller_goods(quantity, good)
+        quantity = self._quantity_smaller_goods(quantity, good)
         self._haves[good] -= quantity
         offer = {'sender_group': self.group,
                  'sender_idn': self.idn,
@@ -322,7 +322,7 @@ class Trade:
         """
         price = bound_zero(price)
         money_amount = quantity * price
-        money_amount = self.quantity_smaller_goods(money_amount, 'money')
+        money_amount = self._quantity_smaller_goods(money_amount, 'money')
         self._haves['money'] -= money_amount
         offer = {'sender_group': self.group,
                  'sender_idn': self.idn,
@@ -366,11 +366,11 @@ class Trade:
         """
         money_amount = offer['quantity'] * offer['price']
         if offer['buysell'] == 's':
-            money_amount = self.quantity_smaller_goods(money_amount, 'money')
+            money_amount = self._quantity_smaller_goods(money_amount, 'money')
             self._haves[offer['good']] += offer['quantity']
             self._haves['money'] -= offer['quantity'] * offer['price']
         else:
-            offer['quantity'] = self.quantity_smaller_goods(offer['quantity'], offer['good'])
+            offer['quantity'] = self._quantity_smaller_goods(offer['quantity'], offer['good'])
             self._haves[offer['good']] -= offer['quantity']
             self._haves['money'] += offer['quantity'] * offer['price']
         self._send(offer['sender_group'], offer['sender_idn'], '_a', offer['idn'])
@@ -395,11 +395,11 @@ class Trade:
                                  % (offer['good'], quantity, offer['quantity']))
         money_amount = quantity * offer['price']
         if offer['buysell'] == 's':
-            money_amount = self.quantity_smaller_goods(money_amount, 'money')
+            money_amount = self._quantity_smaller_goods(money_amount, 'money')
             self._haves[offer['good']] += quantity
             self._haves['money'] -= quantity * offer['price']
         else:
-            quantity = self.quantity_smaller_goods(quantity, offer['good'])
+            quantity = self._quantity_smaller_goods(quantity, offer['good'])
             self._haves[offer['good']] -= quantity
             self._haves['money'] += quantity * offer['price']
         offer['final_quantity'] = quantity
@@ -521,7 +521,7 @@ class Trade:
 
         """
         quantity = bound_zero(quantity)
-        quantity = self.quantity_smaller_goods(quantity, good)
+        quantity = self._quantity_smaller_goods(quantity, good)
         self._haves[good] -= quantity
         self._send(receiver_group, receiver_idn, '_g', [good, quantity])
         return {good: quantity}
@@ -534,7 +534,7 @@ class Trade:
         """
         self.buy(receiver_group, receiver_idn, good=good, quantity=quantity, price=0)
 
-    def quantity_smaller_goods(self, quantity, good):
+    def _quantity_smaller_goods(self, quantity, good):
         """ asserts that quantity is smaller then goods, taking floating point imprecission into account and
         then sets a so that it is exacly smaller or equal the available """
         available = self._haves[good]
