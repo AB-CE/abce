@@ -73,6 +73,21 @@ def gui(parameters, names=None, title=None, text=None):
             value. Instead of the example value you can also put a tuple:
             (min, default, max)
 
+            parameters can be:
+            - float:
+                {'exponent': (0.0, 0.5, 1.1)}
+            - int:
+                {'num_firms': (0, 100, 100000)}
+            - dict or list, which should be strings of a dict or a list (see
+              example):
+                {'list_to_edit': "['brd', 'mlk', 'add']"}
+            - everything else that can be evaluated as a string, see
+              (eval)[https://docs.python.org/2/library/functions.html#eval]
+            - a list of options:
+                {'several_options': ['opt_1', 'opt_2', 'opt_3']}
+            - a sting:
+                {'name': '2x2'}
+
         names (optional):
             a dictionary with the parameter name as key and an alternative
             text to be displayed instead.
@@ -92,7 +107,10 @@ def gui(parameters, names=None, title=None, text=None):
                              'num_rounds': 40,
                              'num_firms': (0, 100, 100000),
                              'num_household': (0, 100, 100000),
-                             'exponent': (0.0, 0.5, 1.1)}
+                             'exponent': (0.0, 0.5, 1.1),
+                             'several_options': ['opt_1', 'opt_2', 'opt_3']
+                             'list_to_edit': "['brd', 'mlk', 'add']",
+                             'dictionary_to_edit': "{'v1': 1, 'v2': 2}"}
 
         names = {'num_firms': 'Number of Firms'}
 
