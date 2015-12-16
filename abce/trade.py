@@ -339,7 +339,7 @@ class Trade:
         self.given_offers[offer['idn']] = offer
         return offer
 
-    def retract(self, offer_idn):
+    def retract(self, offer):
         """ The agent who made a buy or sell offer can retract it
 
         The offer an agent made is deleted at the end of the sub-round and the
