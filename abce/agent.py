@@ -107,9 +107,6 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         self._msgs = {}
 
         self.given_offers = OrderedDict()
-        self.given_offers[None] = Offer(self.group, self.idn, '', '', '', 0, 1, buysell='', idn=None)
-        self.given_offers[None]['status'] = 'accepted'
-        self.given_offers[None]['status_round'] = 0
         self._open_offers = defaultdict(dict)
         self._offer_count = 0
         self._reject_offers_retrieved_end_subround = []
@@ -238,13 +235,12 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         return (self.name, self._offer_count)
 
     def _advance_round(self):
-        keep = {}
-        for key in self.given_offers:
-            if not('status' in self.given_offers[key]):
-                keep[key] = self.given_offers[key]
-            elif self.given_offers[key]['status_round'] == self.round:
-                keep[key] = self.given_offers[key]
-        self.given_offers = keep
+        for offer in self.given_offers.values():
+            if offer['made'] < self.round:
+                pprint(self.given_offers)
+                raise SystemExit('%s_%i: There are offers have been made before'
+                                 'last round and not been retrieved in this'
+                                 'round get_offer(.)' % (self.group, self.idn))
 
         # contracts
         self._contract_requests = defaultdict(list)
@@ -357,6 +353,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         quantity_destroyed = self._haves[good]
         self._haves[good] = 0
         return quantity_destroyed
+
 
     def execute(self, command, incomming_messages):
         self._out = []

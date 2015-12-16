@@ -79,6 +79,7 @@ def Offer(sender_group, sender_idn, receiver_group, receiver_idn, good, quantity
     offer['price'] = price
     offer['buysell'] = buysell
     offer['idn'] = idn
+    offer['status'] = 'new'
     return offer
 
 
@@ -520,6 +521,8 @@ class Trade:
                  'quantity': quantity,
                  'price': price,
                  'buysell': 's',
+                 'status': 'new',
+                 'made': self.round,
                  'idn': self._offer_counter()}
         self._send(receiver_group, receiver_idn, '_o', offer)
         self.given_offers[offer['idn']] = offer
@@ -588,8 +591,8 @@ class Trade:
             offer: the offer he made with buy or sell
             (offer not quote!)
         """
-        self._send(self.given_offers[offer_idn]['receiver_group'], '_d', offer)
-        del self.given_offers[offer_idn]
+        self._send(offer['receiver_group'], '_d', offer)
+        del self.given_offers[offer['idn']]
 
     def accept(self, offer):
         """ The offer is accepted and cleared
@@ -684,7 +687,7 @@ class Trade:
             self._haves[offer['good']] += offer['quantity']
         offer['status'] = "accepted"
         offer['status_round'] = self.round
-        self.given_offers[offer_id] = offer
+        del self.given_offers[offer_id]
         return offer
 
     def _log_receive_accept_group(self, offer):
@@ -712,7 +715,7 @@ class Trade:
             self._haves['money'] += (offer['quantity'] - offer['final_quantity']) * offer['price']
         offer['status'] = "partial"
         offer['status_round'] = self.round
-        self.given_offers[offer['idn']] = offer
+        del self.given_offers[offer['idn']]
         return offer
 
     def _log_receive_partial_accept_group(self, offer):
@@ -741,7 +744,7 @@ class Trade:
             self._haves['money'] += offer['quantity'] * offer['price']
         offer['status'] = "rejected"
         offer['status_round'] = self.round
-        self.given_offers[offer_id] = offer
+        del self.given_offers[offer_id]
 
     def _delete_given_offer(self, offer_id):
         offer = self.given_offers.pop(offer_id)
