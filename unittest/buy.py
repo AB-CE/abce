@@ -56,7 +56,7 @@ class Buy(Agent):
         """
         """
         if self.idn == 0:
-            offer = self.info(self.offer)
+            offer = self.offer
             if offer['status'] == 'rejected':
                 test = self.money - self.possession('money')
                 assert is_zero(test), test
