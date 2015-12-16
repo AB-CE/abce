@@ -65,7 +65,24 @@ def Offer(sender_group, sender_idn, receiver_group, receiver_idn, good, quantity
         buysell:
             this can have the values 'b' for buy; 's' for sell; 'qb' for a
             nonbinding buy quote; and 'qs' for a nonbinding sell quote
-
+        status:
+            'new':
+                has been created, but not answered
+            'accepted':
+                trade fully accepted
+            'partial':
+                ['final_quantity'] and self.offer_partial_status_percentage(...)
+                for the quantities actually accepted
+            'rejected':
+                trade rejected
+            'pending':
+                offer has not yet answered, and is not older than one round.
+            'perished':
+                the **perishable** good was not accepted by the end of the round
+                and therefore perished.
+        'final_quantity':
+            If the offer has been answerd this returns the actual quantity
+            bought or sold. (Equal to quantity if the offer was accepted fully)
         idn:
             a unique identifier
     """
@@ -170,6 +187,9 @@ class Trade:
 
         *Offers that are not accepted in the same subround (def block) are
         automatically rejected.* However you can also manualy reject.
+
+        peek_offers can be used to look at the offers without them being
+        rejected automatically
 
         Args:
             good:
@@ -507,6 +527,11 @@ class Trade:
         return {good: quantity}
 
     def take(self, receiver_group, receiver_idn, good, quantity):
+        """ take a good from another agent. The other agent has to accept.
+        Args:
+
+            receiver_group, receiver_idn, good, quantity
+        """
         self.buy(receiver_group, receiver_idn, good=good, quantity=quantity, price=0)
 
     def quantity_smaller_goods(self, quantity, good):
