@@ -435,13 +435,13 @@ class Trade:
         del self.given_offers[offer.idn]
         return offer
 
-    def _log_receive_accept_group(self, offer):
+    def _log_receive_accept_group(self, Offer offer):
         if offer.buysell == 115:
             self._trade_log['%s,%s,%s,%f' % (offer.good, self.group, offer.receiver_group, offer.price)] += offer.final_quantity
         else:
             self._trade_log['%s,%s,%s,%f' % (offer.good, offer.receiver_group, self.group, offer.price)] += offer.final_quantity
 
-    def _log_receive_accept_agent(self, offer):
+    def _log_receive_accept_agent(self, Offer offer):
         if offer.buysell == 115:
             self._trade_log['%s,%s,%s,%f' % (offer.good, self.name_without_colon, '%s_%i' % (offer.receiver_group, offer.receiver_idn), offer.price)] += offer.final_quantity
         else:
