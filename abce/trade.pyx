@@ -40,9 +40,10 @@ from random import shuffle
 from abce.tools import is_zero, NotEnoughGoods, is_negative, is_positive, epsilon, bound_zero, a_smaller_b
 from sys import float_info
 save_err = np.seterr(invalid='ignore')
+from messaging import Message
 
 
-def Offer(sender_group, sender_idn, receiver_group, receiver_idn, good, quantity, price, buysell, idn):
+cdef class Offer:
     """ This is an offer container that is send to the other agent. You can
     access the offer container both at the receiver as well as at the sender,
     if you have saved the offer. (e.G. self.offer = self.sell(...))
@@ -83,7 +84,28 @@ def Offer(sender_group, sender_idn, receiver_group, receiver_idn, good, quantity
         idn:
             a unique identifier
     """
-    pass
+    cdef readonly char* sender_group
+    cdef readonly int sender_idn
+    cdef readonly char* receiver_group
+    cdef readonly int receiver_idn
+    cdef readonly char* good
+    cdef readonly double quantity
+    cdef readonly double price
+    cdef readonly char buysell
+    cdef public char* status
+    cdef public double final_quantity
+    cdef readonly long idn
+    cdef readonly int made
+    cdef public char* open_offer_status
+    cdef public int status_round
+
+    def __getitem__(self, key):
+        return self.__getattribute__(key)
+
+    def __setitem__(self, key, value):
+        self.__setattr__(key, value)
+
+
 
 class Trade:
     """ Agents can trade with each other. The clearing of the trade is taken care
@@ -272,19 +294,20 @@ class Trade:
         price = bound_zero(price)
         quantity = self._quantity_smaller_goods(quantity, good)
         self._haves[good] -= quantity
-        offer = {'sender_group': self.group,
-                 'sender_idn': self.idn,
-                 'receiver_group': receiver_group,
-                 'receiver_idn': receiver_idn,
-                 'good': good,
-                 'quantity': quantity,
-                 'price': price,
-                 'buysell': 's',
-                 'status': 'new',
-                 'made': self.round,
-                 'idn': self._offer_counter()}
+        cdef Offer offer = Offer()
+        offer.sender_group = self.group
+        offer.sender_idn = self.idn
+        offer.receiver_group = receiver_group
+        offer.receiver_idn = receiver_idn
+        offer.good = good
+        offer.quantity = quantity
+        offer.price = price
+        offer.buysell = 115
+        offer.status = 'new'
+        offer.made = self.round
+        offer.idn = self._offer_counter()
         self._send(receiver_group, receiver_idn, '_o', offer)
-        self.given_offers[offer['idn']] = offer
+        self.given_offers[offer.idn] = offer
         return offer
 
     def buy(self, receiver_group, receiver_idn, good, quantity, price):
@@ -306,19 +329,20 @@ class Trade:
         money_amount = quantity * price
         money_amount = self._quantity_smaller_goods(money_amount, 'money')
         self._haves['money'] -= money_amount
-        offer = {'sender_group': self.group,
-                 'sender_idn': self.idn,
-                 'receiver_group': receiver_group,
-                 'receiver_idn': receiver_idn,
-                 'good': good,
-                 'quantity': quantity,
-                 'price': price,
-                 'buysell': 'b',
-                 'status': 'new',
-                 'made': self.round,
-                 'idn': self._offer_counter()}
+        cdef Offer offer = Offer()
+        offer.sender_group = self.group
+        offer.sender_idn = self.idn
+        offer.receiver_group = receiver_group
+        offer.receiver_idn = receiver_idn
+        offer.good = good
+        offer.quantity = quantity
+        offer.price = price
+        offer.buysell = 'b'
+        offer.status = 'new'
+        offer.made = self.round
+        offer.idn = self._offer_counter()
         self._send(receiver_group, receiver_idn, '_o', offer)
-        self.given_offers[offer['idn']] = offer
+        self.given_offers[offer.idn] = offer
         return offer
 
     def retract(self, offer):
@@ -360,7 +384,7 @@ class Trade:
             raise AssertionError('accepted more than offered %s: %.100f >= %.100f'
                                  % (offer['good'], quantity, offer['quantity']))
         money_amount = quantity * offer['price']
-        if offer['buysell'] == 's':
+        if offer['buysell'] == 115:  # ord('s')
             money_amount = self._quantity_smaller_goods(money_amount, 'money')
             self._haves[offer['good']] += quantity
             self._haves['money'] -= quantity * offer['price']
@@ -384,13 +408,13 @@ class Trade:
         del self._open_offers[offer['good']][offer['idn']]
 
     def _log_receive_accept_group(self, offer):
-        if offer['buysell'] == 's':
+        if offer['buysell'] == 115:
             self._trade_log['%s,%s,%s,%f' % (offer['good'], self.group, offer['receiver_group'], offer['price'])] += offer['quantity']
         else:
             self._trade_log['%s,%s,%s,%f' % (offer['good'], offer['receiver_group'], self.group, offer['price'])] += offer['quantity']
 
     def _log_receive_accept_agent(self, offer):
-        if offer['buysell'] == 's':
+        if offer['buysell'] == 115:
             self._trade_log['%s,%s,%s,%f' % (offer['good'], self.name_without_colon, '%s_%i' % (offer['receiver_group'], offer['receiver_idn']), offer['price'])] += offer['quantity']
         else:
             self._trade_log['%s,%s,%s,%f' % (offer['good'], '%s_%i' % (offer['receiver_group'], offer['receiver_idn']), self.name_without_colon, offer['price'])] += offer['quantity']
@@ -400,7 +424,7 @@ class Trade:
         received, remaining good or money is added back to haves and the offer
         is deleted
         """
-        if offer['buysell'] == 's':
+        if offer['buysell'] == 115:
             self._haves['money'] += offer['final_quantity'] * offer['price']
             self._haves[offer['good']] += offer['quantity'] - offer['final_quantity']
         else:
@@ -412,13 +436,13 @@ class Trade:
         return offer
 
     def _log_receive_accept_group(self, offer):
-        if offer['buysell'] == 's':
+        if offer['buysell'] == 115:
             self._trade_log['%s,%s,%s,%f' % (offer['good'], self.group, offer['receiver_group'], offer['price'])] += offer['final_quantity']
         else:
             self._trade_log['%s,%s,%s,%f' % (offer['good'], offer['receiver_group'], self.group, offer['price'])] += offer['final_quantity']
 
     def _log_receive_accept_agent(self, offer):
-        if offer['buysell'] == 's':
+        if offer['buysell'] == 115:
             self._trade_log['%s,%s,%s,%f' % (offer['good'], self.name_without_colon, '%s_%i' % (offer['receiver_group'], offer['receiver_idn']), offer['price'])] += offer['final_quantity']
         else:
             self._trade_log['%s,%s,%s,%f' % (offer['good'], '%s_%i' % (offer['receiver_group'], offer['receiver_idn']), self.name_without_colon, offer['price'])] += offer['final_quantity']
@@ -431,7 +455,7 @@ class Trade:
 
         """
         offer = self.given_offers[offer_id]
-        if offer['buysell'] == 's':
+        if offer['buysell'] == 115:
             self._haves[offer['good']] += offer['quantity']
         else:
             self._haves['money'] += offer['quantity'] * offer['price']
@@ -441,7 +465,7 @@ class Trade:
 
     def _delete_given_offer(self, offer_id):
         offer = self.given_offers.pop(offer_id)
-        if offer['buysell'] == 's':
+        if offer['buysell'] == 115:
             self._haves[offer['good']] += offer['quantity']
         else:
             self._haves['money'] += offer['quantity'] * offer['price']
@@ -497,4 +521,53 @@ class Trade:
             return quantity
         else:
             return available
+
+
+    def _clearing__end_of_subround(self, incomming_messages):
+        """ agent receives all messages and objects that have been send in this
+        subround and deletes the offers that where retracted, but not executed.
+
+        '_o': registers a new offer
+        '_d': delete received that the issuing agent retract
+        '_p': clears a made offer that was accepted by the other agent
+        '_r': deletes an offer that the other agent rejected
+        '_g': recive a 'free' good from another party
+        """
+        for typ, msg in incomming_messages:
+            if typ == '_o':
+                msg.open_offer_status ='received'
+                self._open_offers[msg['good']][msg['idn']] = msg
+            elif typ == '_d':
+                del self._open_offers[msg['good']][msg['idn']]
+            elif typ == '_p':
+                offer = self._receive_accept(msg)
+                if self.trade_logging == 2:
+                    self._log_receive_accept_group(offer)
+                elif self.trade_logging == 1:
+                    self._log_receive_accept_agent(offer)
+            elif typ == '_r':
+                self._receive_reject(msg)
+            elif typ == '_g':
+                self._haves[msg[0]] += msg[1]
+            elif typ == '_q':
+                self._quotes[msg['idn']] = msg
+            elif typ == '!o':
+                if msg['makerequest'] == 'r':
+                    self._contract_requests[msg['good']].append(msg)
+                else:
+                    self._contract_offers[msg['good']].append(msg)
+            elif typ == '+d':
+                self._contracts_deliver[msg['good']].append(msg)
+            elif typ == '+p':
+                self._contracts_pay[msg['good']].append(msg)
+            elif typ == '!d':
+                self._haves[msg['good']] += msg['quantity']
+                self._contracts_delivered.append((msg['receiver_group'], msg['receiver_idn']))
+                self._log_receive_accept(msg)
+            elif typ == '!p':
+                self._haves['money'] += msg['price']
+                self._contracts_payed.append((msg['receiver_group'], msg['receiver_idn']))
+                self._log_receive_accept(msg)
+            else:
+                self._msgs.setdefault(typ, []).append(Message(msg))
 

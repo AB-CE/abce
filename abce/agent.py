@@ -232,7 +232,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         """ returns a unique number for an offer (containing the agent's name)
         """
         self._offer_count += 1
-        return (self.name, self._offer_count)
+        return hash((self.name, self._offer_count))
 
     def _advance_round(self):
         for offer in self.given_offers.values():
@@ -441,53 +441,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         for offer in to_reject:
             self.reject(offer)
 
-    def _clearing__end_of_subround(self, incomming_messages):
-        """ agent receives all messages and objects that have been send in this
-        subround and deletes the offers that where retracted, but not executed.
 
-        '_o': registers a new offer
-        '_d': delete received that the issuing agent retract
-        '_p': clears a made offer that was accepted by the other agent
-        '_r': deletes an offer that the other agent rejected
-        '_g': recive a 'free' good from another party
-        """
-        for typ, msg in incomming_messages:
-            if typ == '_o':
-                msg['open_offer_status'] = 'received'
-                self._open_offers[msg['good']][msg['idn']] = msg
-            elif typ == '_d':
-                del self._open_offers[msg['good']][msg['idn']]
-            elif typ == '_p':
-                offer = self._receive_accept(msg)
-                if self.trade_logging == 2:
-                    self._log_receive_accept_group(offer)
-                elif self.trade_logging == 1:
-                    self._log_receive_accept_agent(offer)
-            elif typ == '_r':
-                self._receive_reject(msg)
-            elif typ == '_g':
-                self._haves[msg[0]] += msg[1]
-            elif typ == '_q':
-                self._quotes[msg['idn']] = msg
-            elif typ == '!o':
-                if msg['makerequest'] == 'r':
-                    self._contract_requests[msg['good']].append(msg)
-                else:
-                    self._contract_offers[msg['good']].append(msg)
-            elif typ == '+d':
-                self._contracts_deliver[msg['good']].append(msg)
-            elif typ == '+p':
-                self._contracts_pay[msg['good']].append(msg)
-            elif typ == '!d':
-                self._haves[msg['good']] += msg['quantity']
-                self._contracts_delivered.append((msg['receiver_group'], msg['receiver_idn']))
-                self._log_receive_accept(msg)
-            elif typ == '!p':
-                self._haves['money'] += msg['price']
-                self._contracts_payed.append((msg['receiver_group'], msg['receiver_idn']))
-                self._log_receive_accept(msg)
-            else:
-                self._msgs.setdefault(typ, []).append(Message(msg))
 
 
     def _send(self, receiver_group, receiver_idn, typ, msg):
