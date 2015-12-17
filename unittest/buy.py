@@ -43,13 +43,13 @@ class Buy(Agent):
                     break  # tests the automatic clean-up of polled offers
                 try:
                     self.accept(offer)
-                    assert self.possession('money') == offer['price'] * offer['quantity']
-                    assert self.possession('cookies') == cookies - offer['quantity']
+                    assert self.possession('money') == offer.price * offer.quantity
+                    assert self.possession('cookies') == cookies - offer.quantity
                     self.tests['accepted'] = True
                 except NotEnoughGoods:
                     self.accept(offer, self.possession('cookies'))
                     assert is_zero(self.possession('cookies'))
-                    assert self.possession('money') == cookies * offer['price']
+                    assert self.possession('money') == cookies * offer.price
                     self.tests['partial'] = True
 
     def three(self):
@@ -57,20 +57,20 @@ class Buy(Agent):
         """
         if self.idn == 0:
             offer = self.offer
-            if offer['status'] == 'rejected':
+            if offer.status == 'rejected':
                 test = self.money - self.possession('money')
                 assert is_zero(test), test
                 self.tests['rejected'] = True
-            elif offer['status'] == 'accepted':
-                if offer['final_quantity'] == offer['quantity']:
-                    assert self.money - offer['quantity'] * offer['price'] == self.possession('money')
+            elif offer.status == 'accepted':
+                if offer.final_quantity == offer.quantity:
+                    assert self.money - offer.quantity * offer.price == self.possession('money')
 
-                    assert self.possession('cookies') == offer['quantity']
+                    assert self.possession('cookies') == offer.quantity
                     self.tests['accepted'] = True
                 else:
-                    test = (self.money - offer['final_quantity'] * offer['price']) - self.possession('money')
+                    test = (self.money - offer.final_quantity * offer.price) - self.possession('money')
                     assert is_zero(test), test
-                    test = self.possession('cookies') - offer['final_quantity']
+                    test = self.possession('cookies') - offer.final_quantity
                     assert is_zero(test), test
                     self.tests['partial'] = True
             else:
