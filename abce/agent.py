@@ -234,46 +234,6 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         self._offer_count += 1
         return hash((self.name, self._offer_count))
 
-    def _advance_round(self):
-        for offer in self.given_offers.values():
-            if offer['made'] < self.round:
-                pprint(self.given_offers)
-                raise SystemExit('%s_%i: There are offers have been made before'
-                                 'last round and not been retrieved in this'
-                                 'round get_offer(.)' % (self.group, self.idn))
-
-        # contracts
-        self._contract_requests = defaultdict(list)
-        self._contract_offers = defaultdict(list)
-        self._contracts_payed = []
-        self._contracts_delivered = []
-
-        for good in self._contracts_deliver:
-            self._contracts_deliver[good] = [contract for contract in self._contracts_deliver[good] if contract['end_date'] > self.round]
-
-        for good in self._contracts_pay:
-            self._contracts_pay[good] = [contract for contract in self._contracts_pay[good] if contract['end_date'] > self.round]
-
-        # expiring goods
-        for good in self._expiring_goods:
-            self._haves[good]._advance_round()
-
-        if self.trade_logging > 0:
-            self.database_connection.put(["trade_log", self._trade_log, self.round])
-
-        self._trade_log = defaultdict(int)
-
-        if sum([len(offers) for offers in self._open_offers.values()]):
-                pprint(dict(self._open_offers))
-                raise SystemExit('%s_%i: There are offers an agent send that have not'
-                                 'been retrieved in this round get_offer(.)' % (self.group, self.idn))
-
-        if sum([len(offers) for offers in self._msgs.values()]):
-                pprint(dict(self._msgs))
-                raise SystemExit('%s_%i: There are messages an agent send that have not'
-                                 'been retrieved in this round get_messages(.)' % (self.group, self.idn))
-
-        self.round += 1
 
     def create(self, good, quantity):
         """ creates quantity of the good out of nothing
