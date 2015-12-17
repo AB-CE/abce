@@ -26,8 +26,9 @@ sufficiently close to zero or not.
 
 This file also defines the :exc:`tools.NotEnoughGoods`
 """
+from __future__ import division
 from sys import float_info
-epsilon = 10000 * float_info.epsilon
+epsilon = 1 / 1000000
 import numpy as np
 
 
@@ -69,24 +70,7 @@ def is_negative(x):
     """ see is positive """
     return x <= epsilon
 
-def bound_zero(x):
-    """ asserts that variable is above zero, where foating point imprecission is accounted for,
-    and than makes sure it is above 0, without floating point imprecission """
-    assert x > - float_info.epsilon, '%.30f is smaller than 0 - epsilon (%.30f)' % (x, - epsilon)
-    assert np.isfinite(x), x
-    if x < 0:
-        return 0
-    else:
-        return x
 
-def a_smaller_b(a, b):
-    """ asserts that variable a is smaller then b, where foating point imprecission is accounted for,
-    and than makes sure a is smaller b, without floating point imprecission """
-    assert a <= b + float_info.epsilon * max(abs(a), abs(b))
-    if a <= b:
-        return a
-    else:
-        return b
 
 
 class NotEnoughGoods(Exception):

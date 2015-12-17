@@ -37,11 +37,17 @@ from __future__ import division
 from collections import defaultdict
 import numpy as np
 from random import shuffle
-from abce.tools import is_zero, NotEnoughGoods, is_negative, is_positive, epsilon, bound_zero, a_smaller_b
+from abce.tools import is_zero, NotEnoughGoods, is_negative, is_positive, epsilon
 from sys import float_info
 save_err = np.seterr(invalid='ignore')
 from messaging import Message
 import pprint
+import sys
+from libc.math cimport isnan
+cdef double NAN
+NAN = float("NaN")
+
+
 
 cdef class Offer:
     """ This is an offer container that is send to the other agent. You can
@@ -292,6 +298,8 @@ cdef class Trade:
                     print('On diet')
         """
         price = bound_zero(price)
+        if price < 0:
+            AssertionError('price smaller zero or infinity in sell')
         quantity = self._quantity_smaller_goods(quantity, good)
         self._haves[good] -= quantity
         cdef Offer offer = Offer()
@@ -326,6 +334,8 @@ cdef class Trade:
             price: price per unit
         """
         price = bound_zero(price)
+        if price < 0:
+            AssertionError('price smaller zero or infinity in buy')
         money_amount = quantity * price
         money_amount = self._quantity_smaller_goods(money_amount, 'money')
         self._haves['money'] -= money_amount
@@ -360,7 +370,7 @@ cdef class Trade:
         del self.given_offers[offer.idn]
 
 
-    def accept(self, Offer offer, quantity=None):
+    def accept(self, Offer offer, double quantity=NAN):
         """ The buy or sell offer is accepted and cleared. If no quantity is
         given the offer is fully accepted; If a quantity is given the offer is
         partial accepted
@@ -375,14 +385,16 @@ cdef class Trade:
         Return:
             Returns a dictionary with the good's quantity and the amount paid.
         """
-        if quantity is None:
+        if isnan(quantity):
             quantity = offer.quantity
         quantity = bound_zero(quantity)
-        try:
-            quantity = a_smaller_b(quantity, offer.quantity)
-        except AssertionError:
+        if quantity < 0:
+            AssertionError('quantity smaller zero or infinity in accept')
+        quantity = a_smaller_b(quantity, offer.quantity)
+        if quantity < 0:
             raise AssertionError('accepted more than offered %s: %.100f >= %.100f'
                                  % (offer.good, quantity, offer.quantity))
+        cdef double money_amount
         money_amount = quantity * offer.price
         if offer.buysell == 115:  # ord('s')
             money_amount = self._quantity_smaller_goods(money_amount, 'money')
@@ -496,6 +508,8 @@ cdef class Trade:
 
         """
         quantity = bound_zero(quantity)
+        if quantity < 0:
+            AssertionError('quantity smaller zero or infinity in give')
         quantity = self._quantity_smaller_goods(quantity, good)
         self._haves[good] -= quantity
         self._send(receiver_group, receiver_idn, '_g', [good, quantity])
@@ -509,13 +523,16 @@ cdef class Trade:
         """
         self.buy(receiver_group, receiver_idn, good=good, quantity=quantity, price=0)
 
-    def _quantity_smaller_goods(self, quantity, good):
-        """ asserts that quantity is smaller then goods, taking floating point imprecission into account and
-        then sets a so that it is exacly smaller or equal the available """
+    def _quantity_smaller_goods(self, double quantity, good):
+        """ asserts that quantity is smaller then goods, taking floating point
+        imprecission into account and then sets a so that it is exacly smaller
+        or equal the available """
         available = self._haves[good]
         if quantity > available + float_info.epsilon + float_info.epsilon * max(abs(quantity), abs(available)):
             raise NotEnoughGoods(self.name, good, quantity - available)
         quantity = bound_zero(quantity)
+        if quantity < 0:
+            raise AssertionError('quantity smaller zero %f' % quantity)
         if quantity <= available:
             return quantity
         else:
@@ -623,3 +640,27 @@ cdef class Trade:
 
 def offers_price(Offer offer):
     return offer.price
+
+cdef double bound_zero(double x):
+    """ asserts that variable is above zero, where foating point imprecission is accounted for,
+    and than makes sure it is above 0, without floating point imprecission """
+    if x <= - float_info.epsilon:
+        print('(%.30f) is smaller than 0 - epsilon (%.30f)' % (x, - epsilon))
+        return - 1
+    if not np.isfinite(x):
+        print('x infinite')
+        return - 1
+    if x < 0:
+        return 0
+    else:
+        return x
+
+cdef a_smaller_b(double a, double b):
+    """ asserts that variable a is smaller then b, where foating point imprecission is accounted for,
+    and than makes sure a is smaller b, without floating point imprecission """
+    if a <= b:
+        return a
+    if a <= b + float_info.epsilon * max(abs(a), abs(b)):
+        return b
+    print('%f not smaller %f' % (a, b))
+    return - 1
