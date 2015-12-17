@@ -107,7 +107,7 @@ cdef class Offer:
 
 
 
-class Trade:
+cdef class Trade:
     """ Agents can trade with each other. The clearing of the trade is taken care
     of fully by ABCE.
     Selling a good works in the following way:
@@ -256,7 +256,7 @@ class Trade:
             offer.open_offer_status = 'peak_only'
             ret.append(offer)
         shuffle(ret)
-        ret.sort(key=lambda objects: objects['price'], reverse=descending)
+        ret.sort(key=offers_price, reverse=descending)
         return ret
 
     def sell(self, receiver_group, receiver_idn, good, quantity, price):
