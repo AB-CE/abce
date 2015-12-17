@@ -26,8 +26,9 @@ sufficiently close to zero or not.
 
 This file also defines the :exc:`tools.NotEnoughGoods`
 """
+from __future__ import division
 from sys import float_info
-epsilon = 10000 * float_info.epsilon
+epsilon = 1 / 1000000
 import numpy as np
 
 
