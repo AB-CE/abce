@@ -34,7 +34,7 @@ def main():
                 (all, 'two'),
                 (all, 'three'),
                 (all, 'clean_up')
-                ], 60),
+                ], 600),
             #('buy', 'panel'),
             ('endowment', 'Iconsume'),
             ('productionmultifirm', 'production'),
