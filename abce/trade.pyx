@@ -97,7 +97,7 @@ cdef class Offer:
     cdef readonly long idn
     cdef readonly int made
     cdef public char* open_offer_status
-    cdef public int status_round
+    cdef int status_round
 
     def __getitem__(self, key):
         return self.__getattribute__(key)
@@ -107,7 +107,7 @@ cdef class Offer:
 
 
 
-class Trade:
+cdef class Trade:
     """ Agents can trade with each other. The clearing of the trade is taken care
     of fully by ABCE.
     Selling a good works in the following way:
@@ -404,7 +404,7 @@ class Trade:
             offer: the offer the other party made
             (offer not quote!)
         """
-        self._send(offer['sender_group'], offer['sender_idn'], '_r', offer['idn'])
+        self._send(offer['sender_group'], offer['sender_idn'], '_r', offer)
         del self._open_offers[offer['good']][offer['idn']]
 
     def _log_receive_accept_group(self, offer):
@@ -419,7 +419,7 @@ class Trade:
         else:
             self._trade_log['%s,%s,%s,%f' % (offer['good'], '%s_%i' % (offer['receiver_group'], offer['receiver_idn']), self.name_without_colon, offer['price'])] += offer['quantity']
 
-    def _receive_accept(self, offer):
+    cdef _receive_accept(self, Offer offer):
         """ When the other party partially accepted the  money or good is
         received, remaining good or money is added back to haves and the offer
         is deleted
@@ -431,7 +431,7 @@ class Trade:
             self._haves[offer['good']] += offer['final_quantity']
             self._haves['money'] += (offer['quantity'] - offer['final_quantity']) * offer['price']
         offer['status'] = "accepted"
-        offer['status_round'] = self.round
+        offer.status_round = self.round
         del self.given_offers[offer['idn']]
         return offer
 
@@ -447,21 +447,20 @@ class Trade:
         else:
             self._trade_log['%s,%s,%s,%f' % (offer['good'], '%s_%i' % (offer['receiver_group'], offer['receiver_idn']), self.name_without_colon, offer['price'])] += offer['final_quantity']
 
-    def _receive_reject(self, offer_id):
+    def _receive_reject(self, Offer offer):
         """ delets a given offer
 
         is used by _msg_clearing__end_of_subround, when the other party rejects
         or at the end of the subround when agent retracted the offer
 
         """
-        offer = self.given_offers[offer_id]
         if offer['buysell'] == 115:
             self._haves[offer['good']] += offer['quantity']
         else:
             self._haves['money'] += offer['quantity'] * offer['price']
         offer['status'] = "rejected"
-        offer['status_round'] = self.round
-        del self.given_offers[offer_id]
+        offer.status_round = self.round
+        del self.given_offers[offer['idn']]
 
     def _delete_given_offer(self, offer_id):
         offer = self.given_offers.pop(offer_id)
