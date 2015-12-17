@@ -320,7 +320,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         self._clearing__end_of_subround(incomming_messages)
         del incomming_messages[:]
         getattr(self, command)()
-        self.__reject_polled_but_not_accepted_offers()
+        self._reject_polled_but_not_accepted_offers()
         return self._out
 
     def execute_parallel(self, command, incomming_messages):
@@ -328,7 +328,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         try:
             self._clearing__end_of_subround(incomming_messages)
             getattr(self, command)()
-            self.__reject_polled_but_not_accepted_offers()
+            self._reject_polled_but_not_accepted_offers()
         except KeyboardInterrupt:
             return None
         except:
@@ -391,18 +391,6 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
                                        data_to_track,
                                        self.group,
                                        self.round])
-
-    def __reject_polled_but_not_accepted_offers(self):
-        to_reject = []
-        for offers in self._open_offers.values():
-            for offer in offers.values():
-                if offer['open_offer_status'] == 'polled':
-                    to_reject.append(offer)
-        for offer in to_reject:
-            self.reject(offer)
-
-
-
 
     def _send(self, receiver_group, receiver_idn, typ, msg):
         """ sends a message to 'receiver_group', who can be an agent, a group or
