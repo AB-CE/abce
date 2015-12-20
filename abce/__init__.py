@@ -803,9 +803,7 @@ class Simulation:
 
     def _write_description_file(self):
         description = open(os.path.abspath(self.path + '/description.txt'), 'w')
-        description.write('\n\n')
-        for key in self.simulation_parameters:
-            description.write(key + ": " + str(self.simulation_parameters[key]) + '\n')
+        description.write(json.dumps(self.simulation_parameters, indent=4))
 
     def _displaydescribtion(self):
         description = open(self.path + '/description.txt', 'r')
