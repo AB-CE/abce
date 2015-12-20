@@ -54,11 +54,15 @@ from glob import glob
 from firmmultitechnologies import *
 from household import Household
 from agent import *
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 from firm import Firm
 from quote import Quote
 import json
 import abcegui
+try:
+    import numpy as np
+except ImportError:
+    pass
 
 
 
@@ -257,7 +261,7 @@ class Simulation:
         self.variables_to_track_aggregate = defaultdict(list)
         self.possessins_to_track_panel = defaultdict(list)
         self.possessions_to_track_aggregate = defaultdict(list)
-        self.start_year = 0
+        self._start_year = 0
 
         start_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
         try:
@@ -606,7 +610,7 @@ class Simulation:
 
         messagess = self._messages
         try:
-            for year in xrange(self.simulation_parameters['num_rounds']):
+            for year in xrange(self._start_year, self.simulation_parameters['num_rounds']):
                 self.round = year
                 print("\rRound" + str("%3d" % year))
                 self.execute_internal('all', '_produce_resource')
@@ -625,6 +629,7 @@ class Simulation:
             print(str("time with data and network %6.2f" % (time.time() - start_time)))
             postprocess.to_csv(os.path.abspath(self.path))
             print(str("time with postprocessing %6.2f" % (time.time() - start_time)))
+            self.messagess = messagess
 
 
     def gracefull_exit(self):
@@ -833,6 +838,49 @@ class Simulation:
             w.graphs()
         """
         abcegui.run()
+
+    def pickle(self, name):
+        with open('%s_%i.agents' % (name, self.simulation_parameters['num_rounds']), 'wb') as jar:
+            json.dump([agent.__dict__ for agent in self.agents_list['all']], jar, default=handle_non_pickleable)
+        with open('%s_%i.messagess' % (name, self.simulation_parameters['num_rounds']), 'wb') as jar:
+            json.dump(self.messagess, jar)
+            print self.messagess
+
+    def unpickle(self, name, start_year):
+        self._start_year = start_year
+        with open('%s_%i.agents' % (name, start_year), 'rb') as jar:
+            all_agents_values = json.load(jar)
+        for agent, agent_values in zip(self.agents_list['all'], all_agents_values):
+            for key, value in agent_values.iteritems():
+                if value != "NotPickleable":
+                    if key not in agent.__dict__:
+                        agent.__dict__[key] =  value
+                    elif isinstance(agent.__dict__[key], defaultdict):
+                        try:
+                            agent.__dict__[key] = defaultdict(type(value.values()[0]), value)
+                        except IndexError:
+                            agent.__dict__[key] = defaultdict(float)
+                    elif isinstance(agent.__dict__[key], OrderedDict):
+                        agent.__dict__[key] = OrderedDict(value)
+                    elif isinstance(agent.__dict__[key], np.ndarray):
+                        agent.__dict__[key] = np.array(value)
+                    else:
+                        agent.__dict__[key] =  value
+
+        for agent in self.agents_list['all']:
+            self.agents_list[agent.group][agent.idn] = agent
+
+        with open('%s_%i.messagess' % (name, start_year), 'rb') as jar:
+            self._messages = json.load(jar)
+            print self._messages
+
+def handle_non_pickleable(x):
+    if isinstance(x, np.ndarray):
+        return list(x)
+    else:
+        return "NotPickleable"
+
+
 
 
 
