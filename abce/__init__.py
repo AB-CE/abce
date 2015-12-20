@@ -840,16 +840,19 @@ class Simulation:
         abcegui.run()
 
     def pickle(self, name):
-        with open('%s_%i.agents' % (name, self.simulation_parameters['num_rounds']), 'wb') as jar:
-            json.dump([agent.__dict__ for agent in self.agents_list['all']], jar, default=handle_non_pickleable)
-        with open('%s_%i.messagess' % (name, self.simulation_parameters['num_rounds']), 'wb') as jar:
-            json.dump(self.messagess, jar)
-            print self.messagess
+        with open('%s.simulation' % name, 'wb') as jar:
+            json.dump({'year': self.simulation_parameters['num_rounds'],
+                       'agents': [agent.__dict__ for agent in self.agents_list['all']],
+                       'messages': self.messagess},
+                      jar, default=handle_non_pickleable)
 
-    def unpickle(self, name, start_year):
-        self._start_year = start_year
-        with open('%s_%i.agents' % (name, start_year), 'rb') as jar:
-            all_agents_values = json.load(jar)
+    def unpickle(self, name):
+        with open('%s.simulation' % name, 'rb') as jar:
+            simulation = json.load(jar)
+
+        self._start_year = simulation['year']
+
+        all_agents_values = simulation['agents']
         for agent, agent_values in zip(self.agents_list['all'], all_agents_values):
             for key, value in agent_values.iteritems():
                 if value != "NotPickleable":
@@ -870,9 +873,7 @@ class Simulation:
         for agent in self.agents_list['all']:
             self.agents_list[agent.group][agent.idn] = agent
 
-        with open('%s_%i.messagess' % (name, start_year), 'rb') as jar:
-            self._messages = json.load(jar)
-            print self._messages
+        self._messages = simulation['messages']
 
 def handle_non_pickleable(x):
     if isinstance(x, np.ndarray):
