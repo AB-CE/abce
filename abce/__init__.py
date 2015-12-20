@@ -61,7 +61,6 @@ import json
 import abcegui
 
 
-BASEPATH = None
 
 def gui(parameters, names=None, title=None, text=None):
     """ gui is a decorator that can be used to add a graphical user interface
@@ -170,73 +169,33 @@ def read_parameters(parameters_file='simulation_parameters.csv'):
     """
     parameter_array = []
 
-    csvfile = open(parameters_file, 'rU')
-    dialect = csv.Sniffer().sniff(csvfile.read(1024))
-    csvfile.seek(0)
-    reader = csv.reader(csvfile, dialect)
-
-    keys = [key.lower() for key in reader.next()]
-    for line in reader:
-        if line == []:
-            continue
-        cells = [_number_or_string(cell.lower()) for cell in line]
-        parameter = dict(zip(keys, cells))
-        if 'num_rounds' not in keys:
-            raise SystemExit('No "num_rounds" column in ' + parameters_file)
-        if 'name' not in parameter:
-            try:
-                parameter['name'] = parameter['Name']
-            except KeyError:
-                print("no 'name' (lowercase) column in " + parameters_file)
+    with open('simulation_parameters.csv', 'Ur') as csvfile:
+        reader = csv.DictReader(csvfile)
+        for parameter in reader:
+            if 'num_rounds' not in parameter.keys():
+                raise SystemExit('No "num_rounds" column in ' + parameters_file)
+            if 'name' not in parameter:
                 parameter['name'] = 'abce'
-        parameter['name'] = str(parameter['name']).strip("""\"""").strip("""\'""")
-        try:
-            if parameter['random_seed'] == 0:
+                print("WARNING no 'name' in parameters")
+            parameter['name'] = str(parameter['name']).strip("""\"""").strip("""\'""")
+            if 'random_seed' not in parameter.keys():
                 parameter['random_seed'] = None
-        except KeyError:
-            parameter['random_seed'] = None
-        for key in parameter:
-            if key == '' or key[0] == '#' or key[0] == '_':
-                del key
-        parameter_array.append(parameter)
+            elif parameter['random_seed'] == 0 or parameter['random_seed'] in ['None', 'none']:
+                parameter['random_seed'] = None
+                print("WARNING: no 'random_seed' in parameters, default to None, which initializes with system time")
+            if 'trade_logging' not in parameter.keys():
+                parameter['trade_logging'] = 'off'
+                print("WARNING: 'trade_logging not set, it can be 'off', 'individual or 'group', defaults to 'off'")
+            for key in parameter.keys():
+                try:
+                    parameter[key] = _number_or_string(parameter[key])
+                except TypeError:
+                    parameter[key] = parameter[key]
+
+            parameter_array.append(parameter)
+        if 'name' not in parameter:
+            print("no 'name' (lowercase) column in " + parameters_file)
     return parameter_array
-
-def read_json_parameters(parameters_file='simulation_parameters.json'):
-    """ reads a parameter that is in json (python dict) format. Where each line
-    contains all parameters for a particular run of the simulation.
-
-    Args:
-
-        parameters_file (optional):
-            filename of the json file. (default:`simulation_parameters.json`)
-
-
-    This code reads the file and runs a simulation for every line::
-
-     for parameter in read_json_parameters('simulation_parameters.json'):
-        w = Simulation(parameter)
-        w.build_agents(Agent, 'agent', 'num_agents')
-        w.run()
-    """
-    with open(parameters_file, 'rU') as jsonfile:
-        parameter = json.load(jsonfile)
-        keys = parameter.keys()
-        if 'num_rounds' not in keys:
-            raise SystemExit('No "num_rounds" column in ' + parameters_file)
-        if 'name' not in parameter:
-            try:
-                parameter['name'] = parameter['Name']
-            except KeyError:
-                print("no 'name' (lowercase) column in " + parameters_file)
-                parameter['name'] = 'abce'
-        parameter['name'] = str(parameter['name']).strip("""\"""").strip("""\'""")
-        try:
-            if parameter['random_seed'] == 0:
-                parameter['random_seed'] = None
-        except KeyError:
-            parameter['random_seed'] = None
-    return [parameter]
-
 
 class Simulation:
     """ This class in which the simulation is run. It takes
@@ -298,26 +257,23 @@ class Simulation:
         self.variables_to_track_aggregate = defaultdict(list)
         self.possessins_to_track_panel = defaultdict(list)
         self.possessions_to_track_aggregate = defaultdict(list)
+        self.start_year = 0
 
         start_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
-        if BASEPATH is None:
-            global BASEPATH
-            BASEPATH = os.path.abspath('.')
-            print BASEPATH
-            try:
-                os.makedirs(BASEPATH + '/result/')
-            except OSError:
-                pass
-        self.path = BASEPATH + '/result/' + simulation_parameters['name'] + '_' + start_time
+        try:
+            os.makedirs(os.path.abspath('.') + '/result/')
+        except OSError:
+            pass
+        self.path = os.path.abspath('.') + '/result/' + simulation_parameters['name'] + '_' + start_time
         """ the path variable contains the path to the simulation outcomes it can be used
         to generate your own graphs as all resulting csv files are there.
         """
-        try:
-            os.makedirs(self.path)
-        except OSError:
-            files = glob(self.path + '/*')
-            for file_to_remove in files:
-                os.remove(file_to_remove)
+        while True:
+            try:
+                os.makedirs(self.path)
+                break
+            except OSError:
+                self.path += 'I'
 
         manager = mp.Manager()
         self.database_queue = manager.Queue()
