@@ -561,7 +561,7 @@ class Simulation:
     def execute_parallel(self, groups, command, messagess):
         ret = []
         for group in groups:
-            parameters = [(agent, command, messagess[agent.group][agent.idn]) for agent in self.agents_list[group]]
+            parameters = ((agent, command, messagess[agent.group][agent.idn]) for agent in self.agents_list[group])
             self.agents_list[group] = self.pool.map(execute_wrapper, parameters)
             del self.agents_list['all']
             self.agents_list['all'] = [agent for agent in itertools.chain(*self.agents_list.values())]
