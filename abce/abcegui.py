@@ -64,8 +64,9 @@ def show_simulation():
 
             if max(df.get('id', [0])) == 0:
                 max_rounds = max(df['index'])
-                if discard_initial_rounds < max_rounds:
-                    df = df.ix[discard_initial_rounds:]
+                if discard_initial_rounds >= max_rounds:
+                    discard_initial_rounds = 0
+                df = df.ix[discard_initial_rounds:]
                 for c in df.columns:
                     if c not in ['index', 'round', 'id']:
                         graph = pg.XY(show_legend=False)
@@ -79,6 +80,9 @@ def show_simulation():
                                        'graph': graph.render(is_unicode=True)})
             else:
                 max_rounds = max(df['round'])
+                if discard_initial_rounds >= max_rounds:
+                    discard_initial_rounds = 0
+                df = df.ix[discard_initial_rounds:]
                 maxid = max(df['id']) + 1
                 for c in df.columns:
                     if c not in ['index', 'round', 'id']:
