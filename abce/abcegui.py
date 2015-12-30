@@ -61,6 +61,9 @@ def show_simulation():
     path = request.args.get('subdir')
     if path is None:
         path = newest_subdirectory('./result')
+    with open(path + 'description.txt') as desc_file:
+        desc = desc_file.read()
+
     for filename in os.listdir(path):
         if filename[-4:] == '.csv':
             df = pd.read_csv(path + filename)
@@ -106,10 +109,8 @@ def show_simulation():
                                        'title': filename[:-4] + ' ' + c,
                                        'graph': graph.render(is_unicode=True)})
 
-    output.insert(0, {'idname': 'setup',
-                      'title': '',
-                      'graph': setup_dialog(max_rounds)})
-    return render_template('show_outcome.html', entries=output)
+    setup = setup_dialog(max_rounds)
+    return render_template('show_outcome.html', entries=output, desc=desc, setup=setup)
 
 @app.route('/older_results')
 def older_results():
