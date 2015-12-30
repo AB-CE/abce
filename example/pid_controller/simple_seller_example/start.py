@@ -12,7 +12,8 @@ from household import Household
 from abce import Simulation, gui
 
 
-simulation_parameters = {'random_seed': None,
+simulation_parameters = {'name':'name',
+                         'random_seed': None,
                          'num_rounds': 3000,
                          'trade_repetitions': 20}
 
@@ -33,7 +34,7 @@ def main(simulation_parameters):
     s.add_action_list(action_list)
 
     s.panel('household', possessions=['cookies'])
-    s.panel('firm')
+    s.panel('firm', possessions=['cookies'])
 
     s.build_agents(Firm, 1)
     s.build_agents(Household, 10)
