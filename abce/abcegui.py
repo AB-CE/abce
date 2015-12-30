@@ -58,8 +58,14 @@ def show_simulation():
     path = newest_subdirectory('./result')
     for filename in os.listdir(path):
         if filename[-4:] == '.csv':
-            df = pd.read_csv(path + filename).ix[discard_initial_rounds:]
+            df = pd.read_csv(path + filename)
             df = df.where((pd.notnull(df)), None)
+            try:
+                max_value = max(df['round'])
+            except KeyError:
+                max_value = max(df['index'])
+            if discard_initial_rounds < max_value:
+                df = df.ix[discard_initial_rounds:]
             if (filename.startswith('aggregate_')
                     or filename.endswith('_aggregate.csv')
                     or filename.endswith('_mean.csv')):
@@ -83,10 +89,6 @@ def show_simulation():
                                        'title': filename[:-4] + ' ' + c,
                                        'graph': graph.render(is_unicode=True)
                                        })
-    try:
-        max_value = max(df['round'])
-    except KeyError:
-        max_value = max(df['index'])
 
     output.insert(0, {'idname': 'setup',
                       'title': '',
