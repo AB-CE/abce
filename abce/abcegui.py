@@ -8,6 +8,7 @@ import pygal as pg
 from collections import OrderedDict
 from abce.webtext import abcedescription
 
+
 DEBUG = True
 SECRET_KEY = 'development key'
 USERNAME = 'admin'
@@ -60,39 +61,39 @@ def show_simulation():
         if filename[-4:] == '.csv':
             df = pd.read_csv(path + filename)
             df = df.where((pd.notnull(df)), None)
-            try:
-                max_value = max(df['round'])
-            except KeyError:
-                max_value = max(df['index'])
-            if discard_initial_rounds < max_value:
-                df = df.ix[discard_initial_rounds:]
-            if (filename.startswith('aggregate_')
-                    or filename.endswith('_aggregate.csv')
-                    or filename.endswith('_mean.csv')):
+
+            if max(df.get('id', [0])) == 0:
+                max_rounds = max(df['index'])
+                if discard_initial_rounds < max_rounds:
+                    df = df.ix[discard_initial_rounds:]
                 for c in df.columns:
-                    if c not in ['index', 'round']:
-                        graph = pg.Line()
-                        graph.add(c, df[c])
+                    if c not in ['index', 'round', 'id']:
+                        graph = pg.XY(show_legend=False)
+                        graph.add(c, zip(range(discard_initial_rounds, discard_initial_rounds + len(df[c])), df[c]))
+                        graph.add('',
+                                  ([discard_initial_rounds, max(df[c]) - 0.0000001],
+                                   [discard_initial_rounds, max(df[c]) + 0.0000001]),
+                                   show_dots=False, stroke=False)  # workouround bug that shows no straight horizontal line serieses
                         output.append({'idname': str(hash(filename + c))[0:12],
                                        'title': filename[:-4] + ' ' + c,
-                                       'graph': graph.render(is_unicode=True)
-                                       })
-
-            elif filename.startswith('panel_'):
+                                       'graph': graph.render(is_unicode=True)})
+            else:
+                max_rounds = max(df['round'])
                 maxid = max(df['id']) + 1
                 for c in df.columns:
                     if c not in ['index', 'round', 'id']:
-                        graph = pg.Line()
+                        graph = pg.XY()
                         for id in range(maxid):
-                            graph.add(str(id), df[c][df['id'] == id])
+                            series = df[c][df['id'] == id]
+                            series = series[discard_initial_rounds:]
+                            graph.add(str(id), zip(range(discard_initial_rounds, discard_initial_rounds + len(series)), series))
                         output.append({'idname': str(hash(filename + c))[0:12],
                                        'title': filename[:-4] + ' ' + c,
-                                       'graph': graph.render(is_unicode=True)
-                                       })
+                                       'graph': graph.render(is_unicode=True)})
 
     output.insert(0, {'idname': 'setup',
                       'title': '',
-                      'graph': setup_dialog(max_value)})
+                      'graph': setup_dialog(max_rounds)})
     return render_template('show_outcome.html', entries=output)
 
 
@@ -194,11 +195,11 @@ def discard_initial_rounds():
     session['discard_initial_rounds'] = form['discard_initial_rounds']
     return redirect(url_for('show_simulation'))
 
-def setup_dialog(max_value):
+def setup_dialog(max_rounds):
     element = {}
     element['step'] = 1
     element['min'] = 0
-    element['max'] = max_value
+    element['max'] = max_rounds
     element['default'] = int(session.get('discard_initial_rounds', 0))
     element['url'] = url_for('discard_initial_rounds')
     content = """ Discard initial rounds
