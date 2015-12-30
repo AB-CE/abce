@@ -184,7 +184,7 @@ def read_parameters(parameters_file='simulation_parameters.csv'):
             parameter['name'] = str(parameter['name']).strip("""\"""").strip("""\'""")
             if 'random_seed' not in parameter.keys():
                 parameter['random_seed'] = None
-            elif parameter['random_seed'] == 0 or parameter['random_seed'] in ['None', 'none']:
+            elif parameter['random_seed'] == 0 or parameter['random_seed'] in ['None', 'none', 'null']:
                 parameter['random_seed'] = None
                 print("WARNING: no 'random_seed' in parameters, default to None, which initializes with system time")
             if 'trade_logging' not in parameter.keys():
