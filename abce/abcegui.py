@@ -65,7 +65,10 @@ def show_simulation():
             df = df.where((pd.notnull(df)), None)
 
             if max(df.get('id', [0])) == 0:
-                max_rounds = max(df['index'])
+                try:
+                    max_rounds = max(df['index'])
+                except ValueError:
+                    continue
                 if discard_initial_rounds >= max_rounds:
                     discard_initial_rounds = 0
                 df = df.ix[discard_initial_rounds:]
@@ -81,7 +84,10 @@ def show_simulation():
                                        'title': filename[:-4] + ' ' + c,
                                        'graph': graph.render(is_unicode=True)})
             else:
-                max_rounds = max(df['round'])
+                try:
+                    max_rounds = max(df['round'])
+                except ValueError:
+                    continue
                 if discard_initial_rounds >= max_rounds:
                     discard_initial_rounds = 0
                 df = df.ix[discard_initial_rounds:]
@@ -251,12 +257,12 @@ def run(open=True, new=1):
                 webbrowser.open("http://127.0.0.1:5000/", new=new, autoraise=True)
             else:
                 webbrowser.open("http://127.0.0.1:5000/show_simulation", new=new, autoraise=True)
-            global opened
         else:
             if inputs:
                 print "go to http://127.0.0.1:5000/"
             else:
                 print "go to http://127.0.0.1:5000/show_simulation"
+        global opened
         opened = True
         app.run(use_reloader=False)
 
