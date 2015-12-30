@@ -53,11 +53,12 @@ def submitted_simulation():
 
 @app.route('/show_simulation')
 def show_simulation():
+    discard_initial_rounds = int(session.get('discard_initial_rounds', 0))
     output = []
     path = newest_subdirectory('./result')
     for filename in os.listdir(path):
         if filename[-4:] == '.csv':
-            df = pd.read_csv(path + filename)
+            df = pd.read_csv(path + filename).ix[discard_initial_rounds:]
             df = df.where((pd.notnull(df)), None)
             if (filename.startswith('aggregate_')
                     or filename.endswith('_aggregate.csv')
@@ -82,6 +83,14 @@ def show_simulation():
                                        'title': filename[:-4] + ' ' + c,
                                        'graph': graph.render(is_unicode=True)
                                        })
+    try:
+        max_value = max(df['round'])
+    except KeyError:
+        max_value = max(df['index'])
+
+    output.insert(0, {'idname': 'setup',
+                      'title': '',
+                      'graph': setup_dialog(max_value)})
     return render_template('show_outcome.html', entries=output)
 
 
@@ -176,6 +185,43 @@ def generate(new_inputs, new_simulation, names=None, title=None, text=None):
         element['content'] = content
         if value is not None:
             inputs.append(element)
+
+@app.route('/discard_initial_rounds', methods=['POST'])
+def discard_initial_rounds():
+    form = request.form.to_dict()
+    session['discard_initial_rounds'] = form['discard_initial_rounds']
+    return redirect(url_for('show_simulation'))
+
+def setup_dialog(max_value):
+    element = {}
+    element['step'] = 1
+    element['min'] = 0
+    element['max'] = max_value
+    element['default'] = int(session.get('discard_initial_rounds', 0))
+    element['url'] = url_for('discard_initial_rounds')
+    content = """ Discard initial rounds
+                  <form  method="post"  action="{url}">
+                    <div class="mdl-grid">
+                        <div class="mdl-cell mdl-cell--8-col">
+                            <input class="mdl-slider mdl-js-slider" type="range"
+                                min="{min}" max="{max}" value="{default}" id="sldiscard_initial_rounds"
+                                step="{step}" oninput="change_text_field(this.value, 'discard_initial_rounds')"
+                                onchange="change_text_field(this.value, 'discard_initial_rounds')">
+                            </input>
+                        </div>
+                        <div class="mdl-cell mdl-cell--3-col">
+                            <div class="mdl-textfield mdl-js-textfield">
+                                <input class="mdl-textfield__input" type="text" id="discard_initial_rounds" name="discard_initial_rounds"
+                                    onchange="change_slider_field(this.value, 'sldiscard_initial_rounds')"
+                                    value="{default}">
+                                </input>
+                            </div>
+                        </div>
+                    </div>
+                    <input class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" type="submit" >
+                    </input>
+                  </form>""".format(**element)
+    return content
 
 
 def run(open=True, new=1):

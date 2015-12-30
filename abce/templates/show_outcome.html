@@ -58,5 +58,10 @@ window.onload = function getCookie() {
         var value = keyValuePairs[i].substring(keyValuePairs[i].indexOf('=')+1);
         if (value == "minimize") {
               minimize(name);}}}
+function change_text_field(x, text_field_name) {
+    document.getElementById(text_field_name).value = x;}
+
+function change_slider_field(x, slider_field_name) {
+    document.getElementById(slider_field_name).MaterialSlider.change(x);}
 </script>
 {% endblock %}
