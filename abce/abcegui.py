@@ -56,7 +56,9 @@ def submitted_simulation():
 def show_simulation():
     discard_initial_rounds = int(session.get('discard_initial_rounds', 0))
     output = []
-    path = newest_subdirectory('./result')
+    path = request.args.get('subdir')
+    if path is None:
+        path = newest_subdirectory('./result')
     for filename in os.listdir(path):
         if filename[-4:] == '.csv':
             df = pd.read_csv(path + filename)
@@ -101,7 +103,14 @@ def show_simulation():
                       'graph': setup_dialog(max_rounds)})
     return render_template('show_outcome.html', entries=output)
 
+@app.route('/older_results')
+def older_results():
+    directory = os.path.abspath('./result')
+    all_subdirs = [os.path.join(directory, name)
+                   for name in os.listdir(directory)
+                   if os.path.isdir(os.path.join(directory, name))]
 
+    return render_template('older_results.html', all_subdirs=all_subdirs)
 
 def generate(new_inputs, new_simulation, names=None, title=None, text=None):
     global inputs
