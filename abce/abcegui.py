@@ -74,7 +74,7 @@ def show_simulation():
                                   ([discard_initial_rounds, max(df[c]) - 0.0000001],
                                    [discard_initial_rounds, max(df[c]) + 0.0000001]),
                                    show_dots=False, stroke=False)  # workouround bug that shows no straight horizontal line serieses
-                        output.append({'idname': str(hash(filename + c))[0:12],
+                        output.append({'idname': str(filename + c).replace(' ', '').replace('.', ''),
                                        'title': filename[:-4] + ' ' + c,
                                        'graph': graph.render(is_unicode=True)})
             else:
@@ -87,7 +87,8 @@ def show_simulation():
                             series = df[c][df['id'] == id]
                             series = series[discard_initial_rounds:]
                             graph.add(str(id), zip(range(discard_initial_rounds, discard_initial_rounds + len(series)), series))
-                        output.append({'idname': str(hash(filename + c))[0:12],
+                        print str(filename + c).replace(' ', '').replace('.', '')
+                        output.append({'idname': str(filename + c).replace(' ', '').replace('.', ''),
                                        'title': filename[:-4] + ' ' + c,
                                        'graph': graph.render(is_unicode=True)})
 

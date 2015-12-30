@@ -7,11 +7,11 @@
     <div class="mdl-card mdl-card--expand mdl-shadow--4dp">
       <div class="mdl-card__actions mdl-card--border">
         <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect"
-           onclick="minimize({{ entry['idname']|safe }})">
+           onclick="minimize('{{ entry['idname']|safe }}')">
           Min
         </a>
         <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect"
-           onclick="raise_window({{ entry['idname']|safe }})">
+           onclick="raise_window('{{ entry['idname']|safe }}')">
           Zoom
         </a>
       </div>
@@ -39,8 +39,7 @@ function raise_window(idname) {
        window.location.hash = idname;
 }
 function minimize(idname) {
-       var id = Number(idname);
-       var xDiv = document.getElementById(id);
+       var xDiv = document.getElementById(idname);
        var end = document.getElementById("end");
 
        if (xDiv.style.width == '') {
