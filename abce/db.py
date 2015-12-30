@@ -21,7 +21,7 @@ import numpy as np
 from collections import defaultdict
 
 class Database(multiprocessing.Process):
-    def __init__(self, directory, in_sok):
+    def __init__(self, directory, in_sok, trade_log):
         multiprocessing.Process.__init__(self)
         self.directory = directory
         self.panels = []
@@ -29,6 +29,7 @@ class Database(multiprocessing.Process):
         self.in_sok = in_sok
         self.data = {}
         self.aggregate_round = {}
+        self.trade_log = trade_log
 
     def add_trade_log(self):
         table_name = 'trade'
@@ -62,7 +63,8 @@ class Database(multiprocessing.Process):
             sqlite3.register_adapter(t, long)
         for t in (np.float, np.float16, np.float32, np.float64):
             sqlite3.register_adapter(t, float)
-        trade_ex_str = self.add_trade_log()
+        if self.trade_log:
+            trade_ex_str = self.add_trade_log()
         for table_name in self.panels:
             self.database.execute("CREATE TABLE " + table_name + "(round INT, id INT, PRIMARY KEY(round, id))")
         for table_name in self.aggregates:

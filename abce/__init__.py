@@ -279,19 +279,13 @@ class Simulation:
             except OSError:
                 self.path += 'I'
 
-        manager = mp.Manager()
-        self.database_queue = manager.Queue()
-        self._db = abce.db.Database(self.path, self.database_queue)
-        self.logger_queue = manager.Queue()
-
-
         self.round = 0
         try:
             self.trade_logging_mode = simulation_parameters['trade_logging'].lower()
         except KeyError:
-            self.trade_logging_mode = 'individual'
+            self.trade_logging_mode = 'off'
             print("'trade_logging' in simulation_parameters.csv not set"
-                  ", default to 'individual', possible values "
+                  ", default to 'off', possible values "
                   "('group' (fast) or 'individual' (slow) or 'off')")
         if not(self.trade_logging_mode in ['individual', 'group', 'off']):
             print(type(self.trade_logging_mode), self.trade_logging_mode, 'error')
@@ -299,6 +293,17 @@ class Simulation:
                        "'group' (fast) or 'individual' (slow) or 'off'"
                        ">" + self.trade_logging_mode + "< not accepted")
         assert self.trade_logging_mode in ['individual', 'group', 'off']
+
+        if self.trade_logging_mode == 'off':
+            trade_log=False
+        else:
+            trade_log=True
+
+        manager = mp.Manager()
+        self.database_queue = manager.Queue()
+        self._db = abce.db.Database(self.path, self.database_queue, trade_log=trade_log)
+        self.logger_queue = manager.Queue()
+
 
     def add_action_list(self, action_list):
         """ add an `action_list`, which is a list of either:
