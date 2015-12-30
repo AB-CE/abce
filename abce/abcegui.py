@@ -7,6 +7,8 @@ import pandas as pd
 import pygal as pg
 from collections import OrderedDict
 from abce.webtext import abcedescription
+import shutil
+
 
 
 DEBUG = True
@@ -115,8 +117,16 @@ def older_results():
     all_subdirs = [os.path.join(directory, name)
                    for name in os.listdir(directory)
                    if os.path.isdir(os.path.join(directory, name))]
-
     return render_template('older_results.html', all_subdirs=all_subdirs)
+
+@app.route('/del_simulation')
+def del_simulation():
+    path = request.args.get('subdir')
+    try:
+        shutil.rmtree(path)
+    except OSError:
+        print "could not remove", path
+    return redirect(url_for('older_results'))
 
 def generate(new_inputs, new_simulation, names=None, title=None, text=None):
     global inputs
