@@ -198,7 +198,7 @@ def discard_initial_rounds():
 
 def setup_dialog(max_rounds):
     element = {}
-    element['step'] = 1
+    element['step'] = 25
     element['min'] = 0
     element['max'] = max_rounds
     element['default'] = int(session.get('discard_initial_rounds', 0))
@@ -222,7 +222,7 @@ def setup_dialog(max_rounds):
                             </div>
                         </div>
                     </div>
-                    <input class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" type="submit" >
+                    <input class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" type="submit" value="Update">
                     </input>
                   </form>""".format(**element)
     return content
