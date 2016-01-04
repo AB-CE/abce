@@ -8,7 +8,7 @@ import pygal as pg
 from collections import OrderedDict
 from abce.webtext import abcedescription
 import shutil
-
+import traceback
 
 
 DEBUG = True
@@ -65,49 +65,47 @@ def show_simulation():
         desc = desc_file.read()
 
     for filename in os.listdir(path):
-        if filename[-4:] == '.csv':
-            df = pd.read_csv(path + filename)
-            df = df.where((pd.notnull(df)), None)
+        if filename[-4:] == '.csv' and not filename == 'trade.csv':
+            try:
+                df = pd.read_csv(path + filename)
+                df = df.where((pd.notnull(df)), None)
 
-            if max(df.get('id', [0])) == 0:
-                try:
+                if max(df.get('id', [0])) == 0:
                     max_rounds = max(df['index'])
-                except ValueError:
-                    continue
-                if discard_initial_rounds >= max_rounds:
-                    discard_initial_rounds = 0
-                df = df.ix[discard_initial_rounds:]
-                for c in sorted(df.columns):
-                    if c not in ['index', 'round', 'id']:
-                        graph = pg.XY(show_legend=False)
-                        graph.add(c, zip(range(discard_initial_rounds, discard_initial_rounds + len(df[c])), df[c]))
-                        graph.add('',
-                                  ([discard_initial_rounds, max(df[c]) - 0.0000001],
-                                   [discard_initial_rounds, max(df[c]) + 0.0000001]),
-                                   show_dots=False, stroke=False)  # workouround bug that shows no straight horizontal line serieses
-                        output.append({'idname': str(filename + c).replace(' ', '').replace('.', ''),
-                                       'title': filename[:-4] + ' ' + c,
-                                       'graph': graph.render(is_unicode=True)})
-            else:
-                try:
+                    if discard_initial_rounds >= max_rounds:
+                        discard_initial_rounds = 0
+                    df = df.ix[discard_initial_rounds:]
+                    for c in sorted(df.columns):
+                        if c not in ['index', 'round', 'id']:
+                            graph = pg.XY(show_legend=False)
+                            graph.add(c, zip(range(discard_initial_rounds, discard_initial_rounds + len(df[c])), df[c]))
+                            graph.add('',
+                                      ([discard_initial_rounds, max(df[c]) - 0.0000001],
+                                       [discard_initial_rounds, max(df[c]) + 0.0000001]),
+                                       show_dots=False, stroke=False)  # workouround bug that shows no straight horizontal line serieses
+                            output.append({'idname': str(filename + c).replace(' ', '').replace('.', ''),
+                                           'title': filename[:-4] + ' ' + c,
+                                           'graph': graph.render(is_unicode=True)})
+                else:
                     max_rounds = max(df['round'])
-                except ValueError:
-                    continue
-                if discard_initial_rounds >= max_rounds:
-                    discard_initial_rounds = 0
-                df = df.ix[discard_initial_rounds:]
-                maxid = max(df['id']) + 1
-                for c in sorted(df.columns):
-                    if c not in ['index', 'round', 'id']:
-                        graph = pg.XY()
-                        for id in range(maxid):
-                            series = df[c][df['id'] == id]
-                            series = series[discard_initial_rounds:]
-                            graph.add(str(id), zip(range(discard_initial_rounds, discard_initial_rounds + len(series)), series))
-                        print str(filename + c).replace(' ', '').replace('.', '')
-                        output.append({'idname': str(filename + c).replace(' ', '').replace('.', ''),
-                                       'title': filename[:-4] + ' ' + c,
-                                       'graph': graph.render(is_unicode=True)})
+                    if discard_initial_rounds >= max_rounds:
+                        discard_initial_rounds = 0
+                    df = df.ix[discard_initial_rounds:]
+                    maxid = max(df['id']) + 1
+                    for c in sorted(df.columns):
+                        if c not in ['index', 'round', 'id']:
+                            graph = pg.XY()
+                            for id in range(maxid):
+                                series = df[c][df['id'] == id]
+                                series = series[discard_initial_rounds:]
+                                graph.add(str(id), zip(range(discard_initial_rounds, discard_initial_rounds + len(series)), series))
+                            print str(filename + c).replace(' ', '').replace('.', '')
+                            output.append({'idname': str(filename + c).replace(' ', '').replace('.', ''),
+                                           'title': filename[:-4] + ' ' + c,
+                                           'graph': graph.render(is_unicode=True)})
+            except Exception as e:
+                traceback.print_exc()
+                print('could not print %s' % filename)
 
     setup = setup_dialog(max_rounds)
     return render_template('show_outcome.html', entries=output, desc=desc, setup=setup)
