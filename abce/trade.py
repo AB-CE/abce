@@ -45,7 +45,8 @@ save_err = np.seterr(invalid='ignore')
 def Offer(sender_group, sender_idn, receiver_group, receiver_idn, good, quantity, price, buysell, idn):
     """ This is an offer container that is send to the other agent. You can
     access the offer container both at the receiver as well as at the sender,
-    if you have saved the offer. (e.G. self.offer = self.sell(...))
+    if you have saved the offer. (e.G. self.offer = self.sell(...)). You should
+    NEVER CHANGE the offer container.
 
     Args:
         sender_group:
@@ -127,11 +128,10 @@ class Trade:
 
         # Agent 1, subround 3
         def learning(self):
-            offer = self.info(self.remember_trade)
-            if offer['status'] == 'reject':
+            if self.offer['status'] == 'reject':
                 self.price *= .9
-            elif offer['status'] = 'accepted':
-                self.price *= offer['final_quantity'] / offer['quantity']
+            elif self.offer['status'] = 'accepted':
+                self.price *= self.offer['final_quantity'] / self.offer['quantity']
     """
     def get_offers_all(self, descending=False):
         """ returns all offers in a dictionary, with goods as key. The in each
@@ -246,28 +246,44 @@ class Trade:
         accordingly)
 
         Args:
-            receiver_group: an agent name  NEVER a group or 'all'!!!
+            receiver_group:
+                an agent name  NEVER a group or 'all'!!!
             (its an error but with a confusing warning)
-            'good': name of the good
-            quantity: maximum units disposed to buy at this price
-            price: price per unit
+            'good':
+                name of the good
+            quantity:
+                maximum units disposed to buy at this price
+            price:
+                price per unit
 
         Returns:
-            A reference to the offer. The offer and the offer status can
-            be accessed with `self.info(offer_reference)`.
+            An Offer object. The offer object is a dictionary, that gives
+            information about a trade. An offer object should not be
+            manipulated.
 
         Example::
 
-            def subround_1(self):
-                self.offer = self.sell('household', 1, 'cookies', quantity=5, price=0.1)
+            Agent_1:
+                def subround_1(self):
+                    self.offer = self.sell('household', 1, 'cookies', quantity=5, price=0.1)
 
-            def subround_2(self):
-                offer = self.info(self.offer)
-                if offer['status'] == 'accepted':
-                    print(offer['final_quantity'] , 'cookies have be bougth')
-                else:
-                    offer['status'] == 'rejected':
-                    print('On diet')
+                def subround_3(self):
+                    if self.offer['status'] == 'accepted':
+                        print(self.offer['final_quantity'] , 'cookies have be bought')
+                    else:
+                        self.offer['status'] == 'rejected':
+                        print('On diet')
+
+            Agent_2:
+                def subround_2(self):
+                    offers = self.get_offers('cookies')
+                    for offer in offers:
+                        if offer['price'] < 1:
+                            self.accept(offer)
+                        if offer['price'] < 2:
+                            self.accept(offer, offer['quantity'] / 2)
+                        else:
+                            self.reject(offer)
         """
         price = bound_zero(price)
         quantity = self._quantity_smaller_goods(quantity, good)
@@ -296,11 +312,45 @@ class Trade:
         accordingly)
 
         Args:
-            receiver_group: an agent name  NEVER a group or 'all'!
+            receiver_group:
+                an agent name  NEVER a group or 'all'!
             (it is an error but with a confusing warning)
-            'good': name of the good
-            quantity: maximum units disposed to buy at this price
-            price: price per unit
+            'good':
+                name of the good
+            quantity:
+                maximum units disposed to buy at this price
+            price:
+                price per unit
+
+        Returns:
+            An offer object. The offer object is a dictionary, that gives
+            information about a trade. An offer object should not be
+            manipulated.
+
+
+        Example::
+
+            Agent_1:
+                def subround_1(self):
+                    self.offer = self.buy('firm', 1, 'cookies', quantity=5, price=0.1)
+
+                def subround_3(self):
+                    if self.offer['status'] == 'accepted':
+                        print(self.offer['final_quantity'] , 'cookies have been sold to me')
+                    else:
+                        self.offer['status'] == 'rejected':
+                        print('Want cookies')
+
+            Agent_2:
+                def subround_2(self):
+                    offers = self.get_offers('cookies')
+                    for offer in offers:
+                        if offer['price'] > 2:
+                            self.accept(offer)
+                        if offer['price'] > 1:
+                            self.accept(offer, offer['quantity'] / 2)
+                        else:
+                            self.reject(offer)
         """
         price = bound_zero(price)
         money_amount = quantity * price
