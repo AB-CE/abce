@@ -926,7 +926,11 @@ class repeat:
 def sortmessages(messagess, new_messages):
     for messages in new_messages:
         for group, idn, message in messages:
-            messagess[group][idn].append(message)
+            try:
+                messagess[group][idn].append(message)
+            except KeyError:
+                print(message)
+                raise
     return messagess
 
 
