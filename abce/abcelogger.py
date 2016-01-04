@@ -16,11 +16,11 @@
 # the License.
 import multiprocessing
 import networkx as nx
-
+import matplotlib.pyplot as plt
 
 
 class AbceLogger(multiprocessing.Process):
-    def __init__(self, directory, in_sok, savefig, savegml, figsize, dpi):
+    def __init__(self, directory, in_sok, savefig, savegml, figsize, dpi, pos_fixed):
         multiprocessing.Process.__init__(self)
         self.in_sok = in_sok
         self.directory = directory
@@ -28,12 +28,14 @@ class AbceLogger(multiprocessing.Process):
         self.savegml = savegml
         self.figsize = figsize
         self.dpi = dpi
+        self.pos_fixed = pos_fixed
 
     def run(self):
         current_round = 0
         nodes = []
         edges = []
         colors = {}
+        self.pos = None
 
         while True:
             try:
@@ -76,14 +78,15 @@ class AbceLogger(multiprocessing.Process):
             network.add_edge(edge[0], edge[1])
 
         if self.savegml:
-            nx.write_gml(network, self.directory +'/network"%02d".gml' % current_round)
+            nx.write_gml(network, self.directory +'/network%05d.gml' % current_round)
 
         if self.savefig:
-            pos = nx.spring_layout(network) # positions for all nodes
+            if self.pos is None or self.pos_fixed == False:
+                self.pos = nx.spring_layout(network, pos=self.pos) # positions for all nodes
             plt.figure(1, figsize=self.figsize)
             nx.draw_networkx(network,
-                             pos,
+                             self.pos,
                              node_color=[colors[node] for node in network.nodes()],
                              alpha=0.8)
-            plt.savefig(self.directory +'/network"%02d".png' % current_round, dpi=self.dpi)
+            plt.savefig(self.directory +'/network%05d.png' % current_round, dpi=self.dpi)
             plt.close()

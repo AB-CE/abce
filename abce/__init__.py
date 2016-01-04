@@ -509,7 +509,7 @@ class Simulation:
         self.variables_to_track_aggregate[group] = variables
         self.possessions_to_track_aggregate[group] = possessions
 
-    def network(self, frequency=1, savefig=False, savegml=True, figsize=(24,20), dpi=100):
+    def network(self, frequency=1, savefig=False, savegml=True, figsize=(24,20), dpi=100, pos_fixed=False):
         """ network(.) prepares abce to write network data.
 
         Args:
@@ -523,6 +523,8 @@ class Simulation:
                size of the graph in inch. (see matplotlib)
             dpi:
                 resulution of the picture
+            pos_fixed:
+                positions are fixed after the first round
 
         Example::
 
@@ -534,7 +536,8 @@ class Simulation:
                                                   savefig=savefig,
                                                   savegml=savegml,
                                                   figsize=figsize,
-                                                  dpi=dpi)
+                                                  dpi=dpi,
+                                                  pos_fixed=pos_fixed)
         self._logger.start()
 
     def _process_action_list(self, action_list):
