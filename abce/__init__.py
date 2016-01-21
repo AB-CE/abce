@@ -173,7 +173,7 @@ def read_parameters(parameters_file='simulation_parameters.csv'):
     """
     parameter_array = []
 
-    with open('simulation_parameters.csv', 'Ur') as csvfile:
+    with open(parameters_file, 'Ur') as csvfile:
         reader = csv.DictReader(csvfile)
         for parameter in reader:
             if 'num_rounds' not in parameter.keys():
