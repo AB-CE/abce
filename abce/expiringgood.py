@@ -74,6 +74,9 @@ class ExpiringGood:
     def __get__(self, instance, owner=None):
         return sum(self.time_structure)
 
+    def __abs__(self):
+        return abs(self.__float__())
+
 
 
 

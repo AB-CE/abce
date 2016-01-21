@@ -735,6 +735,10 @@ class Simulation:
                                trade_logging=self.trade_logging_mode,
                                database=self.database_queue,
                                logger=self.logger_queue)
+
+            for good, duration in self.expiring:
+                agent._declare_expiring(good, duration)
+
             agent.init(self.simulation_parameters, agent_parameters)
 
             for good in self.perishable:
@@ -752,9 +756,6 @@ class Simulation:
                 agent._network_drawing_frequency = self._network_drawing_frequency
             except AttributeError:
                 agent._network_drawing_frequency = None
-
-            for good, duration in self.expiring:
-                agent._declare_expiring(good, duration)
 
             self.agents_list[group_name].append(agent)
             self.agents_list['all'].append(agent)

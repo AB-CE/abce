@@ -481,11 +481,17 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
             elif typ == '!d':
                 self._haves[msg['good']] += msg['quantity']
                 self._contracts_delivered.append((msg['receiver_group'], msg['receiver_idn']))
-                self._log_receive_accept(msg)
+                if self.trade_logging == 2:
+                    self._log_receive_accept_group(msg)
+                elif self.trade_logging == 1:
+                    self._log_receive_accept_agent(msg)
             elif typ == '!p':
                 self._haves['money'] += msg['price']
                 self._contracts_payed.append((msg['receiver_group'], msg['receiver_idn']))
-                self._log_receive_accept(msg)
+                if self.trade_logging == 2:
+                    self._log_receive_accept_group(msg)
+                elif self.trade_logging == 1:
+                    self._log_receive_accept_agent(msg)
             else:
                 self._msgs.setdefault(typ, []).append(Message(msg))
 
