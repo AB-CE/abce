@@ -509,7 +509,8 @@ class Simulation:
         self.variables_to_track_aggregate[group] = variables
         self.possessions_to_track_aggregate[group] = possessions
 
-    def network(self, frequency=1, savefig=False, savegml=True, figsize=(24,20), dpi=100, pos_fixed=False):
+    def network(self, frequency=1, savefig=False, savegml=True,
+                figsize=(24,20), dpi=100, pos_fixed=False, alpha=0.8):
         """ network(.) prepares abce to write network data.
 
         Args:
@@ -537,7 +538,8 @@ class Simulation:
                                                   savegml=savegml,
                                                   figsize=figsize,
                                                   dpi=dpi,
-                                                  pos_fixed=pos_fixed)
+                                                  pos_fixed=pos_fixed,
+                                                  alpha=alpha)
         self._logger.start()
 
     def _process_action_list(self, action_list):

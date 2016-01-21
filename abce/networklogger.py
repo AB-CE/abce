@@ -30,13 +30,12 @@ class NetworkLogger:
         Args:
             color:
                 matplotlib color, default='blue'
-            style:
-                networkx style, default='filled'
             shape:
-                networkx shape, default='circle'
+                shape can be one of the folling signs: ".,ov^<>12348sp*hH+xDd|_"
+                others can be found at http://matplotlib.org/api/markers_api.html
         """
         try:
-            if self.round % self._network_drawing_frequency == 0:
+            if self.round % self._network_drawing_frequency == 0 and self:
                 self.logger_connection.put(('node', self.round, ((self.group, self.idn), color, style, shape)))
         except TypeError:
             raise SystemExit("ABCE Error: simulation.network(.) needs to be called in start.py")

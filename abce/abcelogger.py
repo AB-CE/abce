@@ -20,7 +20,7 @@ import matplotlib.pyplot as plt
 
 
 class AbceLogger(multiprocessing.Process):
-    def __init__(self, directory, in_sok, savefig, savegml, figsize, dpi, pos_fixed):
+    def __init__(self, directory, in_sok, savefig, savegml, figsize, dpi, pos_fixed, alpha):
         multiprocessing.Process.__init__(self)
         self.in_sok = in_sok
         self.directory = directory
@@ -29,6 +29,7 @@ class AbceLogger(multiprocessing.Process):
         self.figsize = figsize
         self.dpi = dpi
         self.pos_fixed = pos_fixed
+        self.alpha = alpha
 
     def run(self):
         current_round = 0
@@ -60,7 +61,7 @@ class AbceLogger(multiprocessing.Process):
             elif command == 'node':
                 self_name, color, style, shape = msg
                 name = '%s %i' %  self_name
-                nodes.append([name, {'label': name, 'color': color, 'style': style, 'shape': shape}])
+                nodes.append([name, {'label': name, 'color': color, 'shape': shape}])
                 colors[name] = color
 
             elif command == 'close':
@@ -72,7 +73,7 @@ class AbceLogger(multiprocessing.Process):
     def _write_graph(self, nodes, edges, colors, current_round):
         network = nx.Graph(strict=True, directed=True)
         for node, attributes in nodes:
-            network.add_node(node, **attributes)
+            network.add_node(node, shape=attributes['shape'])
 
         for edge in edges:
             network.add_edge(edge[0], edge[1])
@@ -84,9 +85,16 @@ class AbceLogger(multiprocessing.Process):
             if self.pos is None or self.pos_fixed == False:
                 self.pos = nx.spring_layout(network, pos=self.pos) # positions for all nodes
             plt.figure(1, figsize=self.figsize)
-            nx.draw_networkx(network,
-                             self.pos,
-                             node_color=[colors[node] for node in network.nodes()],
-                             alpha=0.8)
+            nodeShapes = set((aShape[1]["shape"] for aShape in network.nodes(data = True)))
+            for aShape in nodeShapes:
+                nodelist = [sNode[0]
+                            for sNode in filter(lambda x: x[1]["shape"] == aShape, network.nodes(data = True))]
+                nx.draw_networkx_nodes(network,
+                                       self.pos,
+                                       node_shape=aShape,
+                                       nodelist=nodelist,
+                                       node_color=[colors[node] for node in nodelist],
+                                       alpha=self.alpha)
+            nx.draw_networkx_edges(network, self.pos)
             plt.savefig(self.directory +'/network%05d.png' % current_round, dpi=self.dpi)
             plt.close()
