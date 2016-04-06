@@ -234,7 +234,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         self._offer_count += 1
         return (self.name, self._offer_count)
 
-    def _advance_round(self):
+    def advance_round(self):
         for offer in self.given_offers.values():
             if offer['made'] < self.round:
                 pprint(self.given_offers)
@@ -320,7 +320,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
                 self._haves[good].time_structure[i] += quantity / length
 
 
-    def _declare_expiring(self, good, duration):
+    def declare_expiring(self, good, duration):
         """ creates a good that has a limited duration
         """
         self._haves[good] = ExpiringGood(duration)
@@ -354,16 +354,16 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         self._haves[good] = 0
         return quantity_destroyed
 
+    def get_group(self):
+        return self.group
+
+    def get_id(self):
+        return self.idn
+
+    def set_network_drawing_frequency(self, frequency):
+        self._network_drawing_frequency = frequency
 
     def execute(self, command, incomming_messages):
-        self._out = []
-        self._clearing__end_of_subround(incomming_messages)
-        del incomming_messages[:]
-        getattr(self, command)()
-        self.__reject_polled_but_not_accepted_offers()
-        return self._out
-
-    def execute_parallel(self, command, incomming_messages):
         self._out = []
         try:
             self._clearing__end_of_subround(incomming_messages)
@@ -374,16 +374,16 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         except:
             time.sleep(random.random())
             raise
-        return self
+        return self._out
 
     def execute_internal(self, command):
         getattr(self, command)()
 
 
-    def _register_resource(self, resource, units, product):
+    def register_resource(self, resource, units, product):
         self._resources.append((resource, units, product))
 
-    def _produce_resource(self):
+    def produce_resource(self):
         for resource, units, product in self._resources:
             if resource in self._haves:
                 try:
@@ -391,19 +391,19 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
                 except KeyError:
                     self._haves[product] = float(units) * self._haves[resource]
 
-    def _register_perish(self, good):
+    def register_perish(self, good):
         self._perishable.append(good)
 
-    def _perish(self):
+    def perish(self):
         for good in self._perishable:
             if good in self._haves:
                 self._haves[good] = 0
 
-    def _register_panel(self, possessions, variables):
+    def register_panel(self, possessions, variables):
         self.possessions_to_track_panel = possessions
         self.variables_to_track_panel = variables
 
-    def _register_aggregate(self, possessions, variables):
+    def register_aggregate(self, possessions, variables):
         self.possessions_to_track_aggregate = possessions
         self.variables_to_track_aggregate = variables
 

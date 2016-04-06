@@ -46,6 +46,7 @@ import os
 import time
 from abce.tools import agent_name
 import multiprocessing as mp
+from multiprocessing.managers import BaseManager
 import abce.db
 import abce.abcelogger
 import itertools
@@ -140,7 +141,7 @@ def gui(parameters, names=None, title=None, text=None):
     return inner  # return a function object
 
 def execute_wrapper(inp):
-    return inp[0].execute_parallel(inp[1], inp[2])
+    return inp[0].execute(inp[1], inp[2])
 
 
 def execute_internal_wrapper(inp):
@@ -201,6 +202,9 @@ def read_parameters(parameters_file='simulation_parameters.csv'):
             print("no 'name' (lowercase) column in " + parameters_file)
     return parameter_array
 
+class MyManager(BaseManager):
+    pass
+
 class Simulation:
     """ This class in which the simulation is run. It takes
     the simulation_parameters to set up the simulation. Actions and agents have to be
@@ -245,6 +249,7 @@ class Simulation:
         simulation. Either in simulation_parameters.csv or as a dictionary
         """
         self.agents_list = {}
+        self.manager_list = {}
         self.agents_list['all'] = []
         self._messages = {}
         self._action_list = []
@@ -558,38 +563,18 @@ class Simulation:
                 for group in action[0]:
                     assert group in self.num_agents_in_group.keys(), \
                         '%s in (%s, %s) in the action_list is not a known agent' % (action[0], action[0], action[1])
-                if len(action) == 2:
-                    processed_list.append((self.execute_serial, action[0], action[1]))
-                elif len(action) == 3:
-                    if action[2] == 'serial':
-                        processed_list.append((self.execute_serial, action[0], action[1]))
-                    elif action[2] == 'parallel':
-                        processed_list.append((self.execute_parallel, action[0], action[1]))
-                    else:
-                        raise SystemExit("%s in %s in action_list not recognized, must be 'serial' or 'parallel' " % (action[2], action))
-
-                else:
-                    raise SystemExit("%s in action_list not recognized" % action)
+                processed_list.append((self.execute, action[0], action[1]))
         return processed_list
 
-    def execute_parallel(self, groups, command, messagess):
+    def execute(self, groups, command, messagess):
         ret = []
         for group in groups:
-            parameters = ((agent, command, messagess[agent.group][agent.idn]) for agent in self.agents_list[group])
-            self.agents_list[group] = self.pool.map(execute_wrapper, parameters)
-            del self.agents_list['all']
-            self.agents_list['all'] = [agent for agent in itertools.chain(*self.agents_list.values())]
+            parameters = ((agent, command, messagess[agent.get_group()][agent.get_id()]) for agent in self.agents_list[group])
+            messages = self.pool.map(execute_wrapper, parameters)
             for agent in self.agents_list[group]:
-                del messagess[agent.group][agent.idn][:]
-            ret.extend([agent._out for agent in self.agents_list[group]])
+                del messagess[agent.get_group()][agent.get_id()][:]
+            ret.extend(messages)
         return ret
-
-    def execute_serial(self, groups, command, messagess):
-        ret = []
-        for group in groups:
-            ret.extend([agent.execute(command, messagess[agent.group][agent.idn]) for agent in self.agents_list[group]])
-        return ret
-        # message inbox deleted by the agent itself
 
     def execute_internal(self, group, command):
         for agent in self.agents_list[group]:
@@ -623,14 +608,14 @@ class Simulation:
             for year in xrange(self._start_year, self.simulation_parameters['num_rounds']):
                 self.round = year
                 print("\rRound" + str("%3d" % year))
-                self.execute_internal('all', '_produce_resource')
+                self.execute_internal('all', 'produce_resource')
 
                 for processor, group, action in self._action_list:
                     new_messages = processor(group, action, messagess)
                     messagess = sortmessages(messagess, new_messages)
 
-                self.execute_internal('all', '_advance_round')
-                self.execute_internal('all', '_perish')
+                self.execute_internal('all', 'advance_round')
+                self.execute_internal('all', 'perish')
         except:
             raise
         finally:
@@ -692,7 +677,7 @@ class Simulation:
          w.build_agents(CentralBank, number=1)
         """
         # TODO single agent groups get extra name without number
-        # TODO when there is a group with a single agent the ask_agent has a confusingname
+        # TODO when there is a group with a single agent the ask_agent has a confusing name
         if not(group_name):
             group_name = AgentClass.__name__.lower()
         if number and not(agent_parameters):
@@ -725,40 +710,46 @@ class Simulation:
         self.num_agents_in_group[group_name] = num_agents_this_group
         self.num_agents_in_group['all'] = self.num_agents
         self.agents_list[group_name] = []
+        self.manager_list[group_name] = []
+
+        MyManager.register('Agent', AgentClass)
 
         for idn in range(num_agents_this_group):
-            agent = AgentClass(simulation_parameters=self.simulation_parameters,
-                               agent_parameters=agent_parameters[idn],
-                               name=agent_name(group_name, idn),
-                               idn=idn,
-                               group=group_name,
-                               trade_logging=self.trade_logging_mode,
-                               database=self.database_queue,
-                               logger=self.logger_queue)
+            manager = MyManager()
+            manager.start()
+            agent = manager.Agent(simulation_parameters=self.simulation_parameters,
+                                  agent_parameters=agent_parameters[idn],
+                                  name=agent_name(group_name, idn),
+                                  idn=idn,
+                                  group=group_name,
+                                  trade_logging=self.trade_logging_mode,
+                                  database=self.database_queue,
+                                  logger=self.logger_queue)
 
             for good, duration in self.expiring:
-                agent._declare_expiring(good, duration)
+                agent.declare_expiring(good, duration)
 
             agent.init(self.simulation_parameters, agent_parameters)
 
             for good in self.perishable:
-                agent._register_perish(good)
+                agent.register_perish(good)
             for resource, units, product in self.resource_endowment[group_name] + self.resource_endowment['all']:
-                agent._register_resource(resource, units, product)
+                agent.register_resource(resource, units, product)
 
-            agent._register_panel(self.possessins_to_track_panel[group_name],
+            agent.register_panel(self.possessins_to_track_panel[group_name],
                                   self.variables_to_track_panel[group_name])
 
-            agent._register_aggregate(self.possessions_to_track_aggregate[group_name],
+            agent.register_aggregate(self.possessions_to_track_aggregate[group_name],
                                       self.variables_to_track_aggregate[group_name])
 
             try:
-                agent._network_drawing_frequency = self._network_drawing_frequency
+                agent.set_network_drawing_frequency(self._network_drawing_frequency)
             except AttributeError:
-                agent._network_drawing_frequency = None
+                agent.set_network_drawing_frequency(None)
 
             self.agents_list[group_name].append(agent)
             self.agents_list['all'].append(agent)
+            self.manager_list[group_name].append(manager)
         self._messages[group_name] = tuple([] for _ in range(num_agents_this_group))
 
     def build_agents_from_file(self, AgentClass, parameters_file=None, multiply=1):
