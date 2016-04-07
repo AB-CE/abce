@@ -714,9 +714,9 @@ class Simulation:
 
         MyManager.register('Agent', AgentClass)
 
+        manager = MyManager()
+        manager.start()
         for idn in range(num_agents_this_group):
-            manager = MyManager()
-            manager.start()
             agent = manager.Agent(simulation_parameters=self.simulation_parameters,
                                   agent_parameters=agent_parameters[idn],
                                   name=agent_name(group_name, idn),
