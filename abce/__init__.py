@@ -714,7 +714,7 @@ class Simulation:
 
         MyManager.register('Agent', AgentClass)
         manager_list = []
-        for i in range(mp.cpu_count() * 2):
+        for i in range(min(mp.cpu_count() * 2, num_agents_this_group)):
             manager = MyManager()
             manager.start()
             manager_list.append(manager)
