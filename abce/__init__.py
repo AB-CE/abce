@@ -570,7 +570,7 @@ class Simulation:
         ret = []
         for group in groups:
             parameters = ((agent, command, messagess[agent.get_group()][agent.get_id()]) for agent in self.agents_list[group])
-            messages = self.pool.map(execute_wrapper, parameters)
+            messages = self.pool.imap(execute_wrapper, parameters, chunksize=1)
             for agent in self.agents_list[group]:
                 del messagess[agent.get_group()][agent.get_id()][:]
             ret.extend(messages)
@@ -713,18 +713,22 @@ class Simulation:
         self.manager_list[group_name] = []
 
         MyManager.register('Agent', AgentClass)
+        manager_list = []
+        for i in range(mp.cpu_count() * 2):
+            manager = MyManager()
+            manager.start()
+            manager_list.append(manager)
 
-        manager = MyManager()
-        manager.start()
         for idn in range(num_agents_this_group):
-            agent = manager.Agent(simulation_parameters=self.simulation_parameters,
-                                  agent_parameters=agent_parameters[idn],
-                                  name=agent_name(group_name, idn),
-                                  idn=idn,
-                                  group=group_name,
-                                  trade_logging=self.trade_logging_mode,
-                                  database=self.database_queue,
-                                  logger=self.logger_queue)
+            agent = manager_list[idn % len(manager_list)].Agent(
+                  simulation_parameters=self.simulation_parameters,
+                  agent_parameters=agent_parameters[idn],
+                  name=agent_name(group_name, idn),
+                  idn=idn,
+                  group=group_name,
+                  trade_logging=self.trade_logging_mode,
+                  database=self.database_queue,
+                  logger=self.logger_queue)
 
             for good, duration in self.expiring:
                 agent.declare_expiring(good, duration)
