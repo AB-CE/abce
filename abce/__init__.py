@@ -569,10 +569,10 @@ class Simulation:
     def execute(self, groups, command, messagess):
         ret = []
         for group in groups:
-            parameters = ((agent, command, messagess[agent.get_group()][agent.get_id()]) for agent in self.agents_list[group])
-            messages = self.pool.imap(execute_wrapper, parameters, chunksize=1)
-            for agent in self.agents_list[group]:
-                del messagess[agent.get_group()][agent.get_id()][:]
+            parameters = ((agent, command, messagess[group][i]) for i, agent in enumerate(self.agents_list[group]))
+            messages = self.pool.map(execute_wrapper, parameters, chunksize=1)
+            for i in range(len(self.agents_list[group])):
+                del messagess[group][i][:]
             ret.extend(messages)
         return ret
 
