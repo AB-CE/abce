@@ -562,12 +562,22 @@ class Simulation:
                 processed_list.append((self.execute, action[0], action[1]))
         return processed_list
 
-    def execute(self, groups, command, messagess):
+    def execute_parallel(self, groups, command, messagess):
         ret = []
         for group in groups:
             parameters = ((family, command, messagess) for family in self.family_list[group])
             messages = self.pool.map(execute_wrapper, parameters)
-            for i in range(len(self.family_list[group])):
+            for i in range(len(messagess[group])):
+                del messagess[group][i][:]
+            for msg_family in messages:
+                ret.extend(msg_family)
+        return ret
+
+    def execute_serial(self, groups, command, messagess):
+        ret = []
+        for group in groups:
+            messages = [execute_wrapper((family, command, messagess)) for family in self.family_list[group]]
+            for i in range(len(messagess[group])):
                 del messagess[group][i][:]
             for msg_family in messages:
                 ret.extend(msg_family)
@@ -578,17 +588,21 @@ class Simulation:
             for family in self.family_list[group]:
                 family.execute_internal(command)
 
-    def run(self, parallel=False):
+    def run(self, parallel=True):
         """ This runs the simulation
 
             Args:
-                parallel (False (default), True):
+                parallel (False, True(default)):
                     Whether the agents' utility functions are executed in parallel.
                     For simulation that don't have hundreds of separate perishable
                     goods or resource False is faster.
         """
-        self.pool = mp.Pool()
-        self._db.start()
+        if parallel:
+            self.pool = mp.Pool()
+            self._db.start()
+            self.execute = self.execute_parallel
+        else:
+            self.execute = self.execute_serial
         if not(self.family_list):
             raise SystemExit('No Agents Created')
         if not(self.action_list) and not(self._action_list):
@@ -621,7 +635,7 @@ class Simulation:
             self.gracefull_exit()
             print(str("time with data and network %6.2f" % (time.time() - start_time)))
             postprocess.to_csv(os.path.abspath(self.path))
-            print(str("time with postprocessing %6.2f" % (time.time() - start_time)))
+            print(str("time with post processing %6.2f" % (time.time() - start_time)))
             self.messagess = messagess
 
 

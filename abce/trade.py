@@ -419,7 +419,7 @@ class Trade:
             self._haves[offer['good']] -= quantity
             self._haves['money'] += quantity * offer['price']
         offer['final_quantity'] = quantity
-        self._send(offer['sender_group'], offer['sender_idn'], '_p', offer)
+        self._send(offer['sender_group'], offer['sender_idn'], '_p', (offer['idn'], quantity))
         del self._open_offers[offer['good']][offer['idn']]
         return {offer['good']: quantity, 'money': money_amount}
 
@@ -445,11 +445,13 @@ class Trade:
         else:
             self._trade_log['%s,%s,%s,%f' % (offer['good'], '%s_%i' % (offer['receiver_group'], offer['receiver_idn']), self.name_without_colon, offer['price'])] += offer['quantity']
 
-    def _receive_accept(self, offer):
-        """ When the other party partially accepted the  money or good is
+    def _receive_accept(self, idn_quantity):
+        """ When the other party partially accepted the money or good is
         received, remaining good or money is added back to haves and the offer
         is deleted
         """
+        offer = self.given_offers[idn_quantity[0]]
+        offer['final_quantity'] = idn_quantity[1]
         if offer['buysell'] == 's':
             self._haves['money'] += offer['final_quantity'] * offer['price']
             self._haves[offer['good']] += offer['quantity'] - offer['final_quantity']
