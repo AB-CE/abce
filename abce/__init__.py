@@ -391,8 +391,8 @@ class Simulation:
 
 
         """
-        if len(self.agents_list['all']) > 0:
-            raise SystemExit("WARNING: agents build before declare_round_endowment")
+        if len(self.family_list) > 0:
+            raise SystemExit("WARNING: agents can not be build before declare_round_endowment")
         for group in groups:
             self.resource_endowment[group].append((resource, units, product))
 
@@ -416,8 +416,8 @@ class Simulation:
              w.declare_perishable(good='CAP')
 
         """
-        if len(self.agents_list['all']) > 0:
-            raise SystemExit("WARNING: agents build before declare_perishable")
+        if len(self.family_list) > 0:
+            raise SystemExit("WARNING: agents can not be build before declare_perishable")
         self.perishable.append(good)
 
     def declare_expiring(self, good, duration):

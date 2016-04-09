@@ -46,6 +46,8 @@ from copy import copy
 import random
 from abce.expiringgood import ExpiringGood
 from pprint import pprint
+import traceback
+
 
 class Agent(Database, NetworkLogger, Trade, Messaging):
     """ Every agent has to inherit this class. It connects the agent to the simulation
@@ -371,7 +373,9 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
             return None
         except:
             time.sleep(random.random())
+            traceback.print_exc()
             raise
+
         return self._out
 
     def execute_internal(self, command):
