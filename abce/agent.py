@@ -60,11 +60,9 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
             def __init__(self, simulation_parameters, agent_parameters, _pass_to_engine):
             abceagent.Agent.__init__(self, *_pass_to_engine)
     """
-    def __init__(self, simulation_parameters, agent_parameters, name, idn, group, trade_logging, database, logger):
+    def __init__(self, simulation_parameters, agent_parameters, idn, group, trade_logging, database, logger):
         self.idn = idn
         """ self.idn returns the agents idn READ ONLY"""
-        self.name = name
-        """ name of the agent, combination of group name and id READ ONLY"""
         self.name = '%s_%i:' % (group, idn)
         """ self.name returns the agents name, which is the group name and the
         id seperated by '_' e.G. "household_12" READ ONLY!
@@ -86,7 +84,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
                 the number of agents for each group in the simulation. e.G.
                 'num_myagents'
         """
-        self.agent_parameters = agent_parameters
+        self.agent_parameters = agent_parameters[self.idn]
 
         self.database_connection = database
         self.logger_connection = logger

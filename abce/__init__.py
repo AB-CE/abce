@@ -60,6 +60,7 @@ from firm import Firm
 from quote import Quote
 import json
 import abcegui
+from family import Family
 try:
     import numpy as np
 except ImportError:
@@ -142,10 +143,6 @@ def gui(parameters, names=None, title=None, text=None):
 
 def execute_wrapper(inp):
     return inp[0].execute(inp[1], inp[2])
-
-
-def execute_internal_wrapper(inp):
-    return inp[0].execute_internal(inp[1])
 
 
 def read_parameters(parameters_file='simulation_parameters.csv'):
@@ -248,9 +245,8 @@ class Simulation:
         """ Simulation parameters are the parameter you specify for the current
         simulation. Either in simulation_parameters.csv or as a dictionary
         """
-        self.agents_list = {}
+        self.family_list = {}
         self.manager_list = {}
-        self.agents_list['all'] = []
         self._messages = {}
         self._action_list = []
         self._resource_command_group = {}
@@ -569,16 +565,18 @@ class Simulation:
     def execute(self, groups, command, messagess):
         ret = []
         for group in groups:
-            parameters = ((agent, command, messagess[group][i]) for i, agent in enumerate(self.agents_list[group]))
-            messages = self.pool.map(execute_wrapper, parameters, chunksize=1)
-            for i in range(len(self.agents_list[group])):
+            parameters = ((family, command, messagess) for family in self.family_list[group])
+            messages = self.pool.map(execute_wrapper, parameters)
+            for i in range(len(self.family_list[group])):
                 del messagess[group][i][:]
-            ret.extend(messages)
+            for msg_family in messages:
+                ret.extend(msg_family)
         return ret
 
-    def execute_internal(self, group, command):
-        for agent in self.agents_list[group]:
-            agent.execute_internal(command)
+    def execute_internal(self, command):
+        for group in self.family_list:
+            for family in self.family_list[group]:
+                family.execute_internal(command)
 
     def run(self, parallel=False):
         """ This runs the simulation
@@ -591,7 +589,7 @@ class Simulation:
         """
         self.pool = mp.Pool()
         self._db.start()
-        if not(self.agents_list):
+        if not(self.family_list):
             raise SystemExit('No Agents Created')
         if not(self.action_list) and not(self._action_list):
             raise SystemExit('No action_list declared')
@@ -608,14 +606,14 @@ class Simulation:
             for year in xrange(self._start_year, self.simulation_parameters['num_rounds']):
                 self.round = year
                 print("\rRound" + str("%3d" % year))
-                self.execute_internal('all', 'produce_resource')
+                self.execute_internal('produce_resource')
 
                 for processor, group, action in self._action_list:
                     new_messages = processor(group, action, messagess)
                     messagess = sortmessages(messagess, new_messages)
 
-                self.execute_internal('all', 'advance_round')
-                self.execute_internal('all', 'perish')
+                self.execute_internal('advance_round')
+                self.execute_internal('perish')
         except:
             raise
         finally:
@@ -709,50 +707,52 @@ class Simulation:
         self.num_agents += num_agents_this_group
         self.num_agents_in_group[group_name] = num_agents_this_group
         self.num_agents_in_group['all'] = self.num_agents
-        self.agents_list[group_name] = []
+        self.family_list[group_name] = []
         self.manager_list[group_name] = []
 
-        MyManager.register('Agent', AgentClass)
+        MyManager.register('Family', Family)
+
         manager_list = []
-        for i in range(min(mp.cpu_count() * 2, num_agents_this_group)):
+        number_of_managers = min(mp.cpu_count(), num_agents_this_group)
+
+        for i in range(number_of_managers):
             manager = MyManager()
             manager.start()
             manager_list.append(manager)
 
-        for idn in range(num_agents_this_group):
-            agent = manager_list[idn % len(manager_list)].Agent(
-                  simulation_parameters=self.simulation_parameters,
-                  agent_parameters=agent_parameters[idn],
-                  name=agent_name(group_name, idn),
-                  idn=idn,
-                  group=group_name,
-                  trade_logging=self.trade_logging_mode,
-                  database=self.database_queue,
-                  logger=self.logger_queue)
+            family = manager.Family(AgentClass, number=num_agents_this_group / number_of_managers, batch=i,
+                                    agent_args={'simulation_parameters': self.simulation_parameters,
+                                                'agent_parameters': agent_parameters,
+                                                'group': group_name,
+                                                'trade_logging': self.trade_logging_mode,
+                                                'database': self.database_queue,
+                                                'logger':self.logger_queue})
 
             for good, duration in self.expiring:
-                agent.declare_expiring(good, duration)
+                family.declare_expiring(good, duration)
 
-            agent.init(self.simulation_parameters, agent_parameters)
+            try:
+                family.init(self.simulation_parameters, agent_parameters)
+            except AttributeError:
+                print("Warning: agent has no init function")
 
             for good in self.perishable:
-                agent.register_perish(good)
+                family.register_perish(good)
             for resource, units, product in self.resource_endowment[group_name] + self.resource_endowment['all']:
-                agent.register_resource(resource, units, product)
+                family.register_resource(resource, units, product)
 
-            agent.register_panel(self.possessins_to_track_panel[group_name],
+            family.register_panel(self.possessins_to_track_panel[group_name],
                                   self.variables_to_track_panel[group_name])
 
-            agent.register_aggregate(self.possessions_to_track_aggregate[group_name],
+            family.register_aggregate(self.possessions_to_track_aggregate[group_name],
                                       self.variables_to_track_aggregate[group_name])
 
             try:
-                agent.set_network_drawing_frequency(self._network_drawing_frequency)
+                family.set_network_drawing_frequency(self._network_drawing_frequency)
             except AttributeError:
-                agent.set_network_drawing_frequency(None)
+                family.set_network_drawing_frequency(None)
 
-            self.agents_list[group_name].append(agent)
-            self.agents_list['all'].append(agent)
+            self.family_list[group_name].append(family)
             self.manager_list[group_name].append(manager)
         self._messages[group_name] = tuple([] for _ in range(num_agents_this_group))
 
