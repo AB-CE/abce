@@ -99,13 +99,37 @@ cdef class Offer:
     cdef public char* open_offer_status
     cdef public int status_round
 
+    def __cinit__(self, sender_group, sender_idn, receiver_group,
+                  receiver_idn, good, quantity, price,
+                  buysell, status, final_quantity, idn,
+                  made, open_offer_status, status_round):
+        self.sender_group = sender_group
+        self.sender_idn = sender_idn
+        self.receiver_group = receiver_group
+        self.receiver_idn = receiver_idn
+        self.good = good
+        self.quantity = quantity
+        self.price = price
+        self.buysell = buysell
+        self.status = status
+        self.final_quantity = final_quantity
+        self.idn = idn
+        self.made = made
+        self.open_offer_status = open_offer_status
+        self.status_round = status_round
+
+
     def __getitem__(self, key):
         return self.__getattribute__(key)
 
     def __setitem__(self, key, value):
         self.__setattr__(key, value)
 
-
+    def pickle(self):
+        return (self.sender_group, self.sender_idn, self.receiver_group,
+                self.receiver_idn, self.good, self.quantity, self.price,
+                self.buysell, self.status, self.final_quantity, self.idn,
+                self.made, self.open_offer_status, self.status_round)
 
 class Trade:
     """ Agents can trade with each other. The clearing of the trade is taken care
@@ -294,19 +318,21 @@ class Trade:
         price = bound_zero(price)
         quantity = self._quantity_smaller_goods(quantity, good)
         self._haves[good] -= quantity
-        cdef Offer offer = Offer()
-        offer.sender_group = self.group
-        offer.sender_idn = self.idn
-        offer.receiver_group = receiver_group
-        offer.receiver_idn = receiver_idn
-        offer.good = good
-        offer.quantity = quantity
-        offer.price = price
-        offer.buysell = 115
-        offer.status = 'new'
-        offer.made = self.round
-        offer.idn = self._offer_counter()
-        self._send(receiver_group, receiver_idn, '_o', offer)
+        cdef Offer offer = Offer(self.group,
+                                 self.idn,
+                                 receiver_group,
+                                 receiver_idn,
+                                 good,
+                                 quantity,
+                                 price,
+                                 115,
+                                 'new',
+                                 -1,
+                                 self._offer_counter(),
+                                 self.round,
+                                 '',
+                                 -1)
+        self._send(receiver_group, receiver_idn, '_o', offer.pickle())
         self.given_offers[offer.idn] = offer
         return offer
 
@@ -329,19 +355,21 @@ class Trade:
         money_amount = quantity * price
         money_amount = self._quantity_smaller_goods(money_amount, 'money')
         self._haves['money'] -= money_amount
-        cdef Offer offer = Offer()
-        offer.sender_group = self.group
-        offer.sender_idn = self.idn
-        offer.receiver_group = receiver_group
-        offer.receiver_idn = receiver_idn
-        offer.good = good
-        offer.quantity = quantity
-        offer.price = price
-        offer.buysell = 'b'
-        offer.status = 'new'
-        offer.made = self.round
-        offer.idn = self._offer_counter()
-        self._send(receiver_group, receiver_idn, '_o', offer)
+        cdef Offer offer = Offer(self.group,
+                                 self.idn,
+                                 receiver_group,
+                                 receiver_idn,
+                                 good,
+                                 quantity,
+                                 price,
+                                 98,
+                                 'new',
+                                 -1,
+                                 self._offer_counter(),
+                                 self.round,
+                                 '',
+                                 -1)
+        self._send(receiver_group, receiver_idn, '_o', offer.pickle())
         self.given_offers[offer.idn] = offer
         return offer
 
@@ -393,7 +421,7 @@ class Trade:
             self._haves[offer['good']] -= quantity
             self._haves['money'] += quantity * offer['price']
         offer['final_quantity'] = quantity
-        self._send(offer['sender_group'], offer['sender_idn'], '_p', offer)
+        self._send(offer['sender_group'], offer['sender_idn'], '_p', (offer['idn'], quantity))
         del self._open_offers[offer['good']][offer['idn']]
         return {offer['good']: quantity, 'money': money_amount}
 
@@ -419,11 +447,13 @@ class Trade:
         else:
             self._trade_log['%s,%s,%s,%f' % (offer['good'], '%s_%i' % (offer['receiver_group'], offer['receiver_idn']), self.name_without_colon, offer['price'])] += offer['quantity']
 
-    def _receive_accept(self, offer):
+    def _receive_accept(self, offer_idn_final_quantity):
         """ When the other party partially accepted the  money or good is
         received, remaining good or money is added back to haves and the offer
         is deleted
         """
+        offer = self.given_offers[offer_idn_final_quantity[0]]
+        offer['final_quantity'] = offer_idn_final_quantity[1]
         if offer['buysell'] == 115:
             self._haves['money'] += offer['final_quantity'] * offer['price']
             self._haves[offer['good']] += offer['quantity'] - offer['final_quantity']
@@ -535,8 +565,9 @@ class Trade:
         """
         for typ, msg in incomming_messages:
             if typ == '_o':
-                msg.open_offer_status ='received'
-                self._open_offers[msg['good']][msg['idn']] = msg
+                offer = Offer(*msg)
+                offer.open_offer_status ='received'
+                self._open_offers[offer['good']][offer['idn']] = offer
             elif typ == '_d':
                 del self._open_offers[msg['good']][msg['idn']]
             elif typ == '_p':
