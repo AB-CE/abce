@@ -34,7 +34,7 @@ def main():
                 (all, 'two'),
                 (all, 'three'),
                 (all, 'clean_up')
-                ], 600),
+                ], 20),
             #('buy', 'panel'),
             ('endowment', 'Iconsume'),
             ('productionmultifirm', 'production'),
@@ -52,7 +52,7 @@ def main():
             #('contractbuyer', 'control'),
             #('expiringcapital', 'go'),
 
-            ('all', 'all_tests_completed')]
+            (all, 'all_tests_completed')]
         s.add_action_list(action_list)
 
         s.declare_round_endowment(resource='labor_endowment', units=5, product='labor')
@@ -61,9 +61,9 @@ def main():
         #s.panel('buy', variables=['price'])
         #s.declare_expiring('xcapital', 5)
 
-        s.build_agents(Buy, 2)
+        s.build_agents(Buy, 1000)
         #s.build_agents(QuoteBuy, 2)
-        s.build_agents(Sell, 2)
+        s.build_agents(Sell, 1000)
         s.build_agents(Give, 2)  # tests give and messaging
         s.build_agents(Endowment, 2)  # tests declare_round_endowment and declare_perishable
         s.build_agents(LoggerTest, 1)
@@ -76,7 +76,7 @@ def main():
         #s.build_agents(GiveExpiringCapital, 2)
         s.build_agents(BuyExpiringCapital, 2)
 
-        s.run()
+        s.run(parallel=False)
 
 if __name__ == '__main__':
     main()

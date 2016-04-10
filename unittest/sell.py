@@ -12,16 +12,16 @@ class Sell(abce.Agent):
             self.tests['not_answered'] = False
 
     def one(self):
-        if self.idn == 0:
+        if self.idn % 2 == 0:
             self.create('cookies', random.uniform(0, 10000))
             self.cookies = self.possession('cookies')
             self.price = random.uniform(0.0001, 1)
             quantity = random.uniform(0, self.cookies)
-            self.offer = self.sell('sell', 1, 'cookies', quantity, self.price)
+            self.offer = self.sell('sell', self.idn + 1, 'cookies', quantity, self.price)
             assert self.possession('cookies') == self.cookies - quantity
 
     def two(self):
-        if self.idn == 1:
+        if self.idn % 2 == 1:
             self.create('money', random.uniform(0, 10000))
             money = self.possession('money')
             oo = self.get_offers('cookies')
@@ -56,7 +56,7 @@ class Sell(abce.Agent):
                     self.tests['partial'] = True
 
     def three(self):
-        if self.idn == 0:
+        if self.idn % 2 == 0:
             offer = self.offer
             if offer['status'] == 'rejected':
                 assert is_zero(self.cookies - self.possession('cookies'))
@@ -81,8 +81,8 @@ class Sell(abce.Agent):
         self.destroy_all('money')
 
     def all_tests_completed(self):
-        assert all(self.tests.values()), 'not all tests have been run; ABCE workes correctly, restart the unittesting to do all tests %s' % self.tests
         if self.round == self.last_round and self.idn == 0:
+            assert all(self.tests.values()), 'not all tests have been run; ABCE workes correctly, restart the unittesting to do all tests %s' % self.tests
             print('Test abce.buy:\t\t\t\t\tOK')
             print('Test abce.accept\t(abce.buy):\t\tOK')
             print('Test abce.reject\t(abce.buy):\t\tOK')
