@@ -40,6 +40,7 @@ This is a minimal template for a start.py::
         s.build_agents(Agent, 2)
         s.run()
 """
+from __future__ import division
 import csv
 import datetime
 import os
