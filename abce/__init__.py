@@ -564,14 +564,14 @@ class Simulation:
         return processed_list
 
     def execute_parallel(self, groups, command, messagess):
-        ret = []
+        parameters = ((family, command, messagess) for group in groups for family in self.family_list[group])
+        messages = self.pool.map(execute_wrapper, parameters)
         for group in groups:
-            parameters = ((family, command, messagess) for family in self.family_list[group])
-            messages = self.pool.map(execute_wrapper, parameters)
             for i in range(len(messagess[group])):
                 del messagess[group][i][:]
-            for msg_family in messages:
-                ret.extend(msg_family)
+        ret = []
+        for msg_family in messages:
+            ret.extend(msg_family)
         return ret
 
     def execute_serial(self, groups, command, messagess):
