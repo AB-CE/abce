@@ -730,11 +730,7 @@ class Simulation:
             manager = MyManager()
             manager.start()
             manager_list.append(manager)
-            if i == number_of_managers - 1:
-                remaining = num_agents_this_group % number_of_managers
-            else:
-                remaining = 0
-            family = manager.Family(AgentClass, number=int(num_agents_this_group / number_of_managers), batch=i, remaining=remaining,
+            family = manager.Family(AgentClass, num_agents_this_group=num_agents_this_group, batch=i, num_managers=number_of_managers,
                                     agent_args={'simulation_parameters': self.simulation_parameters,
                                                 'agent_parameters': agent_parameters,
                                                 'group': group_name,
