@@ -41,6 +41,8 @@ from abce.tools import is_zero, NotEnoughGoods, is_negative, is_positive, epsilo
 from sys import float_info
 save_err = np.seterr(invalid='ignore')
 from messaging import Message
+from libc.math cimport fmax
+from libc.float cimport DBL_EPSILON
 
 
 cdef class Offer:
@@ -283,7 +285,7 @@ class Trade:
         ret.sort(key=lambda objects: objects['price'], reverse=descending)
         return ret
 
-    def sell(self, receiver_group, receiver_idn, good, quantity, price):
+    def sell(self, receiver_group, receiver_idn, good, double quantity, double price):
         """ commits to sell the quantity of good at price
 
         The good is not available for the agent. When the offer is
@@ -315,8 +317,17 @@ class Trade:
                     offer['status'] == 'rejected':
                     print('On diet')
         """
+        cdef double available
         price = bound_zero(price)
-        quantity = self._quantity_smaller_goods(quantity, good)
+        # makes sure the quantity is between zero and maximum available, but
+        # if its only a little bit above or below its set to the bounds
+        available = self._haves[good]
+        quantity = bound_zero(quantity)
+        if quantity > available + DBL_EPSILON + DBL_EPSILON * fmax(quantity, available):
+            raise NotEnoughGoods(self.name, good, quantity - available)
+        if quantity > available:
+            quantity = available
+
         self._haves[good] -= quantity
         cdef Offer offer = Offer(self.group,
                                  self.idn,
@@ -336,7 +347,7 @@ class Trade:
         self.given_offers[offer.idn] = offer
         return offer
 
-    def buy(self, receiver_group, receiver_idn, good, quantity, price):
+    def buy(self, receiver_group, receiver_idn, good, double quantity, double price):
         """ commits to sell the quantity of good at price
 
         The goods are not in haves or self.count(). When the offer is
@@ -351,9 +362,19 @@ class Trade:
             quantity: maximum units disposed to buy at this price
             price: price per unit
         """
+        cdef double available
+        cdef double money_amount
         price = bound_zero(price)
         money_amount = quantity * price
-        money_amount = self._quantity_smaller_goods(money_amount, 'money')
+        # makes sure the money_amount is between zero and maximum available, but
+        # if its only a little bit above or below its set to the bounds
+        available = self._haves['money']
+        money_amount = bound_zero(money_amount)
+        if money_amount > available + DBL_EPSILON + DBL_EPSILON * fmax(money_amount, available):
+            raise NotEnoughGoods(self.name, 'money', money_amount - available)
+        if money_amount > available:
+            money_amount = available
+
         self._haves['money'] -= money_amount
         cdef Offer offer = Offer(self.group,
                                  self.idn,
@@ -388,7 +409,7 @@ class Trade:
         del self.given_offers[offer['idn']]
 
 
-    def accept(self, offer, quantity=None):
+    def accept(self, offer, double quantity=-999):
         """ The buy or sell offer is accepted and cleared. If no quantity is
         given the offer is fully accepted; If a quantity is given the offer is
         partial accepted
@@ -403,14 +424,18 @@ class Trade:
         Return:
             Returns a dictionary with the good's quantity and the amount paid.
         """
-        if quantity is None:
-            quantity = offer['quantity']
+        cdef double money_amount
+        cdef double offer_quantity = offer['quantity']
+
+        if quantity == -999:
+            quantity = offer_quantity
         quantity = bound_zero(quantity)
-        try:
-            quantity = a_smaller_b(quantity, offer['quantity'])
-        except AssertionError:
+        if quantity > offer_quantity + DBL_EPSILON * fmax(quantity, offer_quantity):
             raise AssertionError('accepted more than offered %s: %.100f >= %.100f'
-                                 % (offer['good'], quantity, offer['quantity']))
+                                 % (offer['good'], quantity, offer_quantity))
+        if quantity > offer_quantity:
+            quantity = offer_quantity
+
         money_amount = quantity * offer['price']
         if offer['buysell'] == 115:  # ord('s')
             money_amount = self._quantity_smaller_goods(money_amount, 'money')
@@ -605,7 +630,7 @@ class Trade:
 cdef double bound_zero(double x):
     """ asserts that variable is above zero, where foating point imprecission is accounted for,
     and than makes sure it is above 0, without floating point imprecission """
-    assert x > - float_info.epsilon, '%.30f is smaller than 0 - epsilon (%.30f)' % (x, - epsilon)
+    assert x > - DBL_EPSILON, '%.30f is smaller than 0 - epsilon (%.30f)' % (x, - epsilon)
     assert np.isfinite(x), x
     if x < 0:
         return 0
