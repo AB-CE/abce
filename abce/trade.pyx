@@ -41,8 +41,14 @@ from abce.tools import is_zero, NotEnoughGoods, is_negative, is_positive, epsilo
 from sys import float_info
 save_err = np.seterr(invalid='ignore')
 from messaging import Message
-from libc.math cimport fmax
 from libc.float cimport DBL_EPSILON
+
+
+cdef double fmax(double a, double b):
+    if a > b:
+        return a
+    else:
+        return b
 
 
 cdef class Offer:
