@@ -1,9 +1,23 @@
 #!/usr/bin/env python
-
-from setuptools import setup
 import os
 
-# MUST ASSERT THAT python-dev is installed
+try:
+    from setuptools import setup
+    from setuptools import Extension
+except ImportError:
+    from distutils.core import setup
+    from distutils.extension import Extension
+
+
+cmdclass = {}
+ext_modules = []
+
+
+ext_modules += [
+Extension("abce.trade", [ "abce/trade.c" ]),
+]
+
+
 
 setup(name='abce',
       version='0.4b',
@@ -14,8 +28,9 @@ setup(name='abce',
       package_dir={'abce': 'abce'},
       packages=['abce'],
       long_description=open('README.rst').read(),
-      install_requires=['numpy', 'scipy', 'dataset', 'pandas', 'networkx'],
-      include_package_data=True)
+      install_requires=['psutil', 'numpy', 'pandas', 'networkx'],
+      include_package_data=True,
+      ext_modules=ext_modules)
 
 print('** **************************************************************************')
 print('**                                                                         **')
