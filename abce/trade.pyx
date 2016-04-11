@@ -37,7 +37,7 @@ from __future__ import division
 from collections import defaultdict
 import numpy as np
 from random import shuffle
-from abce.tools import is_zero, NotEnoughGoods, is_negative, is_positive, epsilon, bound_zero, a_smaller_b
+from abce.tools import is_zero, NotEnoughGoods, is_negative, is_positive, epsilon, a_smaller_b
 from sys import float_info
 save_err = np.seterr(invalid='ignore')
 from messaging import Message
@@ -601,4 +601,16 @@ class Trade:
                 self._log_receive_accept(msg)
             else:
                 self._msgs.setdefault(typ, []).append(Message(msg))
+
+cdef double bound_zero(double x):
+    """ asserts that variable is above zero, where foating point imprecission is accounted for,
+    and than makes sure it is above 0, without floating point imprecission """
+    assert x > - float_info.epsilon, '%.30f is smaller than 0 - epsilon (%.30f)' % (x, - epsilon)
+    assert np.isfinite(x), x
+    if x < 0:
+        return 0
+    else:
+        return x
+
+
 
