@@ -1,7 +1,7 @@
 class Family:
     def __init__(self, Agent, number, batch, remaining, agent_args):
         self.agents = []
-        for i in range(batch * number, batch * number + number + remaining):
+        for i in xrange(batch * number, batch * number + number + remaining):
             self.agents.append(Agent(idn=i, **agent_args))
 
     def execute(self, command, messages):
