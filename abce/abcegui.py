@@ -10,6 +10,7 @@ from abce.webtext import abcedescription
 import shutil
 import traceback
 
+_ = __file__  # makes sure that the templates can be reached
 
 DEBUG = True
 SECRET_KEY = 'development key'
