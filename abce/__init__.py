@@ -62,11 +62,7 @@ from quote import Quote
 import json
 import abcegui
 from family import Family
-try:
-    import numpy as np
-except ImportError:
-    pass
-
+import psutil
 
 
 def gui(parameters, names=None, title=None, text=None):
@@ -599,7 +595,7 @@ class Simulation:
                     goods or resource False is faster.
         """
         if parallel:
-            self.pool = mp.Pool()
+            self.pool = mp.Pool(psutil.cpu_count(logical=False))
             self._db.start()
             self.execute = self.execute_parallel
         else:
@@ -728,7 +724,7 @@ class Simulation:
         MyManager.register('Family', Family)
 
         manager_list = []
-        number_of_managers = min(mp.cpu_count(), num_agents_this_group)
+        number_of_managers = min(psutil.cpu_count(logical=False), num_agents_this_group)
 
         for i in range(number_of_managers):
             manager = MyManager()
