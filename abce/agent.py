@@ -451,7 +451,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         typ =(_o,c,u,r) are
         reserved for internally processed offers.
         """
-        self._out.append([receiver_group, receiver_idn, (typ, msg)])
+        self._out.append((receiver_group, receiver_idn, (typ, msg)))
 
     def _send_to_group(self, receiver_group, typ, msg):
         """ sends a message to 'receiver_group', who can be an agent, a group or
