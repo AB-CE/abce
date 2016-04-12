@@ -76,7 +76,7 @@ def main():
         #s.build_agents(GiveExpiringCapital, 2)
         s.build_agents(BuyExpiringCapital, 2)
 
-        s.run(parallel=False)
+        s.run(parallel=True)
 
 if __name__ == '__main__':
     main()

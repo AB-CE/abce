@@ -1,11 +1,25 @@
+from collections import defaultdict
+import traceback
+
+
 class Family:
     def __init__(self, Agent, num_agents_this_group, num_managers, batch, agent_args):
         self.agents = []
+        self.batch = batch
+        self.group = agent_args['group']
         for i in xrange(batch, num_agents_this_group, num_managers):
             self.agents.append(Agent(idn=i, **agent_args))
 
     def execute(self, command, messages):
-        return [agent.execute(command, messages[agent.group][agent.idn]) for agent in self.agents]
+        out = defaultdict(list)
+        messages = sortmessages(messages)
+        for agent in self.agents:
+            for message in agent.execute(command, messages[agent.idn]):
+                out[(message[0], message[1] % 4)].append(message)
+        return out
+
+    def name(self):
+        return (self.group, self.batch)
 
     def execute_internal(self, command):
         for agent in self.agents:
@@ -44,3 +58,8 @@ class Family:
 
 
 
+def sortmessages(new_messages):
+    messagess = defaultdict(list)
+    for message in new_messages:
+        messagess[message[1]].append(message[2])
+    return messagess

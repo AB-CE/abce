@@ -1,4 +1,3 @@
-
 # Copyright 2012 Davoud Taghawi-Nejad
 #
 # Module Author: Davoud Taghawi-Nejad
@@ -559,16 +558,15 @@ class Simulation:
                 processed_list.append((self.execute, action[0], action[1]))
         return processed_list
 
-    def execute_parallel(self, groups, command, messagess):
-        parameters = ((family, command, messagess) for group in groups for family in self.family_list[group])
-        messages = self.pool.map(execute_wrapper, parameters)
-        for group in groups:
-            for i in range(len(messagess[group])):
-                del messagess[group][i][:]
-        ret = []
-        for msg_family in messages:
-            ret.extend(msg_family)
-        return ret
+    def execute_parallel(self, groups, command, messages):
+        parameters = ((family, command, messages[family.name()]) for group in groups for family in self.family_list[group])
+        families_messages = self.pool.map(execute_wrapper, parameters)
+        out = defaultdict(list)
+        for block in families_messages:
+            for family_name, family_msgs in block.iteritems():
+                if len(family_msgs):
+                    out[family_name].extend(family_msgs)
+        return out
 
     def execute_serial(self, groups, command, messagess):
         ret = []
@@ -612,7 +610,12 @@ class Simulation:
 
         start_time = time.time()
 
-        messagess = self._messages
+        messagess = defaultdict(dict)
+
+        self.family_names = []
+        for group in self.family_list.values():
+            for family in group:
+                self.family_names.append(family.name())
         try:
             for year in xrange(self._start_year, self.simulation_parameters['num_rounds']):
                 self.round = year
@@ -620,9 +623,7 @@ class Simulation:
                 self.execute_internal('produce_resource')
 
                 for processor, group, action in self._action_list:
-                    new_messages = processor(group, action, messagess)
-                    messagess = sortmessages(messagess, new_messages)
-
+                    messagess = processor(group, action, messagess)
                 self.execute_internal('advance_round')
                 self.execute_internal('perish')
         except:
@@ -764,7 +765,8 @@ class Simulation:
 
             self.family_list[group_name].append(family)
             self.manager_list[group_name].append(manager)
-        self._messages[group_name] = tuple([] for _ in range(num_agents_this_group))
+
+
 
     def build_agents_from_file(self, AgentClass, parameters_file=None, multiply=1):
         """ This command builds agents of the class AgentClass from an csv file.
@@ -932,17 +934,6 @@ class repeat:
     def __init__(self, action_list, repetitions):
         self.action_list = action_list
         self.repetitions = repetitions
-
-
-def sortmessages(messagess, new_messages):
-    for messages in new_messages:
-        for group, idn, message in messages:
-            try:
-                messagess[group][idn].append(message)
-            except KeyError:
-                print(message)
-                raise
-    return messagess
 
 
 def _number_or_string(word):
