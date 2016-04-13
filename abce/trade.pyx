@@ -43,7 +43,6 @@ save_err = np.seterr(invalid='ignore')
 from messaging import Message
 from libc.float cimport DBL_EPSILON
 
-
 cdef double fmax(double a, double b):
     if a > b:
         return a
@@ -334,6 +333,7 @@ class Trade:
         if quantity > available:
             quantity = available
 
+        offer_idn = self._offer_counter()
         self._haves[good] -= quantity
         cdef Offer offer = Offer(self.group,
                                  self.idn,
@@ -344,13 +344,13 @@ class Trade:
                                  price,
                                  115,
                                  'new',
-                                 -1,
-                                 self._offer_counter(),
+                                 -2,
+                                 offer_idn,
                                  self.round,
-                                 '',
-                                 -1)
+                                 '-',
+                                 -2)
+        self.given_offers[offer_idn] = offer
         self._send(receiver_group, receiver_idn, '_o', offer.pickle())
-        self.given_offers[offer.idn] = offer
         return offer
 
     def buy(self, receiver_group, receiver_idn, good, double quantity, double price):
@@ -381,6 +381,7 @@ class Trade:
         if money_amount > available:
             money_amount = available
 
+        offer_idn = self._offer_counter()
         self._haves['money'] -= money_amount
         cdef Offer offer = Offer(self.group,
                                  self.idn,
@@ -392,12 +393,12 @@ class Trade:
                                  98,
                                  'new',
                                  -1,
-                                 self._offer_counter(),
+                                 offer_idn,
                                  self.round,
                                  '',
                                  -1)
         self._send(receiver_group, receiver_idn, '_o', offer.pickle())
-        self.given_offers[offer.idn] = offer
+        self.given_offers[offer_idn] = offer
         return offer
 
     def retract(self, offer):
