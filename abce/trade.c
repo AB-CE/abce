@@ -258,8 +258,8 @@ static CYTHON_INLINE float __PYX_NAN() {
   #endif
 #endif
 
-#define __PYX_HAVE__abce__trade
-#define __PYX_HAVE_API__abce__trade
+#define __PYX_HAVE__trade
+#define __PYX_HAVE_API__trade
 #include "float.h"
 #ifdef _OPENMP
 #include <omp.h>
@@ -476,34 +476,34 @@ static const char *__pyx_filename;
 
 
 static const char *__pyx_f[] = {
-  "abce\\trade.pyx",
+  "trade.pyx",
 };
 
 /*--- Type declarations ---*/
-struct __pyx_obj_4abce_5trade_Offer;
+struct __pyx_obj_5trade_Offer;
 
-/* "abce/trade.pyx":54
+/* "trade.pyx":53
  * 
  * 
  * cdef class Offer:             # <<<<<<<<<<<<<<
  *     """ This is an offer container that is send to the other agent. You can
  *     access the offer container both at the receiver as well as at the sender,
  */
-struct __pyx_obj_4abce_5trade_Offer {
+struct __pyx_obj_5trade_Offer {
   PyObject_HEAD
-  char *sender_group;
+  PyObject *sender_group;
   int sender_idn;
-  char *receiver_group;
+  PyObject *receiver_group;
   int receiver_idn;
-  char *good;
+  PyObject *good;
   double quantity;
   double price;
   char buysell;
-  char *status;
+  PyObject *status;
   double final_quantity;
-  long idn;
+  PyObject *idn;
   int made;
-  char *open_offer_status;
+  PyObject *open_offer_status;
   int status_round;
 };
 
@@ -602,6 +602,10 @@ static void __Pyx_RaiseDoubleKeywordsError(const char* func_name, PyObject* kw_n
 static int __Pyx_ParseOptionalKeywords(PyObject *kwds, PyObject **argnames[],\
     PyObject *kwds2, PyObject *values[], Py_ssize_t num_pos_args,\
     const char* function_name);
+
+/* ArgTypeTest.proto */
+static CYTHON_INLINE int __Pyx_ArgTypeTest(PyObject *obj, PyTypeObject *type, int none_allowed,
+    const char *name, int exact);
 
 /* PyObjectCall.proto */
 #if CYTHON_COMPILING_IN_CPYTHON
@@ -729,16 +733,6 @@ static CYTHON_INLINE void __Pyx_ErrFetchInState(PyThreadState *tstate, PyObject 
 /* RaiseException.proto */
 static void __Pyx_Raise(PyObject *type, PyObject *value, PyObject *tb, PyObject *cause);
 
-/* SetItemInt.proto */
-#define __Pyx_SetItemInt(o, i, v, type, is_signed, to_py_func, is_list, wraparound, boundscheck)\
-    (__Pyx_fits_Py_ssize_t(i, type, is_signed) ?\
-    __Pyx_SetItemInt_Fast(o, (Py_ssize_t)i, v, is_list, wraparound, boundscheck) :\
-    (is_list ? (PyErr_SetString(PyExc_IndexError, "list assignment index out of range"), -1) :\
-               __Pyx_SetItemInt_Generic(o, to_py_func(i), v)))
-static CYTHON_INLINE int __Pyx_SetItemInt_Generic(PyObject *o, PyObject *j, PyObject *v);
-static CYTHON_INLINE int __Pyx_SetItemInt_Fast(PyObject *o, Py_ssize_t i, PyObject *v,
-                                               int is_list, int wraparound, int boundscheck);
-
 /* PyIntBinop.proto */
 #if CYTHON_COMPILING_IN_CPYTHON
 static PyObject* __Pyx_PyInt_EqObjC(PyObject *op1, PyObject *op2, long intval, int inplace);
@@ -861,13 +855,13 @@ static void __Pyx_AddTraceback(const char *funcname, int c_line,
                                int py_line, const char *filename);
 
 /* CIntToPy.proto */
+static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value);
+
+/* CIntToPy.proto */
 static CYTHON_INLINE PyObject* __Pyx_PyInt_From_int(int value);
 
 /* CIntToPy.proto */
 static CYTHON_INLINE PyObject* __Pyx_PyInt_From_char(char value);
-
-/* CIntToPy.proto */
-static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value);
 
 /* CIntFromPy.proto */
 static CYTHON_INLINE int __Pyx_PyInt_As_int(PyObject *);
@@ -887,22 +881,23 @@ static int __Pyx_InitStrings(__Pyx_StringTabEntry *t);
 
 /* Module declarations from 'libc.float' */
 
-/* Module declarations from 'abce.trade' */
-static PyTypeObject *__pyx_ptype_4abce_5trade_Offer = 0;
-static double __pyx_f_4abce_5trade_fmax(double, double); /*proto*/
-static double __pyx_f_4abce_5trade_bound_zero(double); /*proto*/
-#define __Pyx_MODULE_NAME "abce.trade"
-int __pyx_module_is_main_abce__trade = 0;
+/* Module declarations from 'trade' */
+static PyTypeObject *__pyx_ptype_5trade_Offer = 0;
+static double __pyx_f_5trade_fmax(double, double); /*proto*/
+static double __pyx_f_5trade_bound_zero(double); /*proto*/
+#define __Pyx_MODULE_NAME "trade"
+int __pyx_module_is_main_trade = 0;
 
-/* Implementation of 'abce.trade' */
+/* Implementation of 'trade' */
 static PyObject *__pyx_builtin_AssertionError;
-static const char __pyx_k_[] = "";
+static const char __pyx_k_[] = "-";
 static const char __pyx_k_d[] = "_d";
 static const char __pyx_k_g[] = "_g";
 static const char __pyx_k_o[] = "_o";
 static const char __pyx_k_p[] = "_p";
 static const char __pyx_k_q[] = "_q";
 static const char __pyx_k_r[] = "_r";
+static const char __pyx_k__2[] = "";
 static const char __pyx_k_np[] = "np";
 static const char __pyx_k_buy[] = "buy";
 static const char __pyx_k_d_2[] = "+d";
@@ -941,6 +936,7 @@ static const char __pyx_k_numpy[] = "numpy";
 static const char __pyx_k_offer[] = "offer";
 static const char __pyx_k_price[] = "price";
 static const char __pyx_k_round[] = "round";
+static const char __pyx_k_trade[] = "trade";
 static const char __pyx_k_accept[] = "accept";
 static const char __pyx_k_append[] = "append";
 static const char __pyx_k_ignore[] = "ignore";
@@ -977,13 +973,13 @@ static const char __pyx_k_Trade_buy[] = "Trade.buy";
 static const char __pyx_k_available[] = "available";
 static const char __pyx_k_messaging[] = "messaging";
 static const char __pyx_k_metaclass[] = "__metaclass__";
+static const char __pyx_k_offer_idn[] = "offer_idn";
 static const char __pyx_k_peak_only[] = "peak_only";
 static const char __pyx_k_trade_log[] = "_trade_log";
 static const char __pyx_k_Trade_give[] = "Trade.give";
 static const char __pyx_k_Trade_sell[] = "Trade.sell";
 static const char __pyx_k_Trade_take[] = "Trade.take";
 static const char __pyx_k_abce_tools[] = "abce.tools";
-static const char __pyx_k_abce_trade[] = "abce.trade";
 static const char __pyx_k_descending[] = "descending";
 static const char __pyx_k_float_info[] = "float_info";
 static const char __pyx_k_get_offers[] = "get_offers";
@@ -1049,6 +1045,7 @@ static const char __pyx_k_Trade_peak_offers_locals_lambda[] = "Trade.peak_offers
 static const char __pyx_k_Trade__clearing__end_of_subround[] = "Trade._clearing__end_of_subround";
 static const char __pyx_k_accepted_more_than_offered_s_100[] = "accepted more than offered %s: %.100f >= %.100f";
 static const char __pyx_k_c_Users_programing_Dropbox_works[] = "c:\\Users\\programing\\Dropbox\\workspace\\abce\\abce\\trade.pyx";
+static const char __pyx_k_sender_s_i_receiver_group_s_rece[] = "sender: %s, %i, receiver_group: %s,\n                receiver_idn: %i, good: %s, quantity: %f, price: %f,\n                buysell: %s, status: %s, final_quantity: % f, idn: %i,\n                made: %i, open_offer_status: % s, status_round: %i ";
 static PyObject *__pyx_kp_s_;
 static PyObject *__pyx_kp_s_30f_is_smaller_than_0_epsilon_3;
 static PyObject *__pyx_kp_s_Agents_can_trade_with_each_othe;
@@ -1075,9 +1072,9 @@ static PyObject *__pyx_n_s_Trade_reject;
 static PyObject *__pyx_n_s_Trade_retract;
 static PyObject *__pyx_n_s_Trade_sell;
 static PyObject *__pyx_n_s_Trade_take;
+static PyObject *__pyx_kp_s__2;
 static PyObject *__pyx_n_s_a_smaller_b;
 static PyObject *__pyx_n_s_abce_tools;
-static PyObject *__pyx_n_s_abce_trade;
 static PyObject *__pyx_n_s_accept;
 static PyObject *__pyx_n_s_accepted;
 static PyObject *__pyx_kp_s_accepted_more_than_offered_s_100;
@@ -1146,6 +1143,7 @@ static PyObject *__pyx_kp_s_o_2;
 static PyObject *__pyx_n_s_offer;
 static PyObject *__pyx_n_s_offer_counter;
 static PyObject *__pyx_n_s_offer_id;
+static PyObject *__pyx_n_s_offer_idn;
 static PyObject *__pyx_n_s_offer_idn_final_quantity;
 static PyObject *__pyx_n_s_offer_quantity;
 static PyObject *__pyx_n_s_open_offer_status;
@@ -1187,6 +1185,7 @@ static PyObject *__pyx_n_s_sell;
 static PyObject *__pyx_n_s_send;
 static PyObject *__pyx_n_s_sender_group;
 static PyObject *__pyx_n_s_sender_idn;
+static PyObject *__pyx_kp_s_sender_s_i_receiver_group_s_rece;
 static PyObject *__pyx_n_s_setattr;
 static PyObject *__pyx_n_s_setdefault;
 static PyObject *__pyx_n_s_seterr;
@@ -1197,117 +1196,122 @@ static PyObject *__pyx_n_s_status_round;
 static PyObject *__pyx_n_s_sys;
 static PyObject *__pyx_n_s_take;
 static PyObject *__pyx_n_s_test;
+static PyObject *__pyx_n_s_trade;
 static PyObject *__pyx_n_s_trade_log;
 static PyObject *__pyx_n_s_trade_logging;
 static PyObject *__pyx_n_s_typ;
 static PyObject *__pyx_n_s_values;
-static int __pyx_pf_4abce_5trade_5Offer___cinit__(struct __pyx_obj_4abce_5trade_Offer *__pyx_v_self, PyObject *__pyx_v_sender_group, PyObject *__pyx_v_sender_idn, PyObject *__pyx_v_receiver_group, PyObject *__pyx_v_receiver_idn, PyObject *__pyx_v_good, PyObject *__pyx_v_quantity, PyObject *__pyx_v_price, PyObject *__pyx_v_buysell, PyObject *__pyx_v_status, PyObject *__pyx_v_final_quantity, PyObject *__pyx_v_idn, PyObject *__pyx_v_made, PyObject *__pyx_v_open_offer_status, PyObject *__pyx_v_status_round); /* proto */
-static PyObject *__pyx_pf_4abce_5trade_5Offer_2__getitem__(struct __pyx_obj_4abce_5trade_Offer *__pyx_v_self, PyObject *__pyx_v_key); /* proto */
-static int __pyx_pf_4abce_5trade_5Offer_4__setitem__(struct __pyx_obj_4abce_5trade_Offer *__pyx_v_self, PyObject *__pyx_v_key, PyObject *__pyx_v_value); /* proto */
-static PyObject *__pyx_pf_4abce_5trade_5Offer_6pickle(struct __pyx_obj_4abce_5trade_Offer *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_4abce_5trade_5Offer_12sender_group___get__(struct __pyx_obj_4abce_5trade_Offer *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_4abce_5trade_5Offer_10sender_idn___get__(struct __pyx_obj_4abce_5trade_Offer *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_4abce_5trade_5Offer_14receiver_group___get__(struct __pyx_obj_4abce_5trade_Offer *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_4abce_5trade_5Offer_12receiver_idn___get__(struct __pyx_obj_4abce_5trade_Offer *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_4abce_5trade_5Offer_4good___get__(struct __pyx_obj_4abce_5trade_Offer *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_4abce_5trade_5Offer_8quantity___get__(struct __pyx_obj_4abce_5trade_Offer *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_4abce_5trade_5Offer_5price___get__(struct __pyx_obj_4abce_5trade_Offer *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_4abce_5trade_5Offer_7buysell___get__(struct __pyx_obj_4abce_5trade_Offer *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_4abce_5trade_5Offer_6status___get__(struct __pyx_obj_4abce_5trade_Offer *__pyx_v_self); /* proto */
-static int __pyx_pf_4abce_5trade_5Offer_6status_2__set__(struct __pyx_obj_4abce_5trade_Offer *__pyx_v_self, PyObject *__pyx_v_value); /* proto */
-static PyObject *__pyx_pf_4abce_5trade_5Offer_14final_quantity___get__(struct __pyx_obj_4abce_5trade_Offer *__pyx_v_self); /* proto */
-static int __pyx_pf_4abce_5trade_5Offer_14final_quantity_2__set__(struct __pyx_obj_4abce_5trade_Offer *__pyx_v_self, PyObject *__pyx_v_value); /* proto */
-static PyObject *__pyx_pf_4abce_5trade_5Offer_3idn___get__(struct __pyx_obj_4abce_5trade_Offer *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_4abce_5trade_5Offer_4made___get__(struct __pyx_obj_4abce_5trade_Offer *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_4abce_5trade_5Offer_17open_offer_status___get__(struct __pyx_obj_4abce_5trade_Offer *__pyx_v_self); /* proto */
-static int __pyx_pf_4abce_5trade_5Offer_17open_offer_status_2__set__(struct __pyx_obj_4abce_5trade_Offer *__pyx_v_self, PyObject *__pyx_v_value); /* proto */
-static PyObject *__pyx_pf_4abce_5trade_5Offer_12status_round___get__(struct __pyx_obj_4abce_5trade_Offer *__pyx_v_self); /* proto */
-static int __pyx_pf_4abce_5trade_5Offer_12status_round_2__set__(struct __pyx_obj_4abce_5trade_Offer *__pyx_v_self, PyObject *__pyx_v_value); /* proto */
-static PyObject *__pyx_pf_4abce_5trade_5Trade_get_offers_all(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_descending); /* proto */
+static int __pyx_pf_5trade_5Offer___cinit__(struct __pyx_obj_5trade_Offer *__pyx_v_self, PyObject *__pyx_v_sender_group, int __pyx_v_sender_idn, PyObject *__pyx_v_receiver_group, int __pyx_v_receiver_idn, PyObject *__pyx_v_good, double __pyx_v_quantity, double __pyx_v_price, char __pyx_v_buysell, PyObject *__pyx_v_status, double __pyx_v_final_quantity, long __pyx_v_idn, int __pyx_v_made, PyObject *__pyx_v_open_offer_status, int __pyx_v_status_round); /* proto */
+static PyObject *__pyx_pf_5trade_5Offer_2__getitem__(struct __pyx_obj_5trade_Offer *__pyx_v_self, PyObject *__pyx_v_key); /* proto */
+static int __pyx_pf_5trade_5Offer_4__setitem__(struct __pyx_obj_5trade_Offer *__pyx_v_self, PyObject *__pyx_v_key, PyObject *__pyx_v_value); /* proto */
+static PyObject *__pyx_pf_5trade_5Offer_6pickle(struct __pyx_obj_5trade_Offer *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_5trade_5Offer_8__repr__(struct __pyx_obj_5trade_Offer *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_5trade_5Offer_12sender_group___get__(struct __pyx_obj_5trade_Offer *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_5trade_5Offer_10sender_idn___get__(struct __pyx_obj_5trade_Offer *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_5trade_5Offer_14receiver_group___get__(struct __pyx_obj_5trade_Offer *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_5trade_5Offer_12receiver_idn___get__(struct __pyx_obj_5trade_Offer *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_5trade_5Offer_4good___get__(struct __pyx_obj_5trade_Offer *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_5trade_5Offer_8quantity___get__(struct __pyx_obj_5trade_Offer *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_5trade_5Offer_5price___get__(struct __pyx_obj_5trade_Offer *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_5trade_5Offer_7buysell___get__(struct __pyx_obj_5trade_Offer *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_5trade_5Offer_6status___get__(struct __pyx_obj_5trade_Offer *__pyx_v_self); /* proto */
+static int __pyx_pf_5trade_5Offer_6status_2__set__(struct __pyx_obj_5trade_Offer *__pyx_v_self, PyObject *__pyx_v_value); /* proto */
+static int __pyx_pf_5trade_5Offer_6status_4__del__(struct __pyx_obj_5trade_Offer *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_5trade_5Offer_14final_quantity___get__(struct __pyx_obj_5trade_Offer *__pyx_v_self); /* proto */
+static int __pyx_pf_5trade_5Offer_14final_quantity_2__set__(struct __pyx_obj_5trade_Offer *__pyx_v_self, PyObject *__pyx_v_value); /* proto */
+static PyObject *__pyx_pf_5trade_5Offer_3idn___get__(struct __pyx_obj_5trade_Offer *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_5trade_5Offer_4made___get__(struct __pyx_obj_5trade_Offer *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_5trade_5Offer_17open_offer_status___get__(struct __pyx_obj_5trade_Offer *__pyx_v_self); /* proto */
+static int __pyx_pf_5trade_5Offer_17open_offer_status_2__set__(struct __pyx_obj_5trade_Offer *__pyx_v_self, PyObject *__pyx_v_value); /* proto */
+static int __pyx_pf_5trade_5Offer_17open_offer_status_4__del__(struct __pyx_obj_5trade_Offer *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_5trade_5Offer_12status_round___get__(struct __pyx_obj_5trade_Offer *__pyx_v_self); /* proto */
+static int __pyx_pf_5trade_5Offer_12status_round_2__set__(struct __pyx_obj_5trade_Offer *__pyx_v_self, PyObject *__pyx_v_value); /* proto */
+static PyObject *__pyx_pf_5trade_5Trade_get_offers_all(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_descending); /* proto */
 static PyObject *__pyx_lambda_funcdef_lambda(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_objects); /* proto */
-static PyObject *__pyx_pf_4abce_5trade_5Trade_2get_offers(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_good, PyObject *__pyx_v_descending); /* proto */
+static PyObject *__pyx_pf_5trade_5Trade_2get_offers(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_good, PyObject *__pyx_v_descending); /* proto */
 static PyObject *__pyx_lambda_funcdef_lambda1(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_objects); /* proto */
-static PyObject *__pyx_pf_4abce_5trade_5Trade_4peak_offers(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_good, PyObject *__pyx_v_descending); /* proto */
-static PyObject *__pyx_pf_4abce_5trade_5Trade_6sell(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_receiver_group, PyObject *__pyx_v_receiver_idn, PyObject *__pyx_v_good, double __pyx_v_quantity, double __pyx_v_price); /* proto */
-static PyObject *__pyx_pf_4abce_5trade_5Trade_8buy(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_receiver_group, PyObject *__pyx_v_receiver_idn, PyObject *__pyx_v_good, double __pyx_v_quantity, double __pyx_v_price); /* proto */
-static PyObject *__pyx_pf_4abce_5trade_5Trade_10retract(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_offer); /* proto */
-static PyObject *__pyx_pf_4abce_5trade_5Trade_12accept(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_offer, double __pyx_v_quantity); /* proto */
-static PyObject *__pyx_pf_4abce_5trade_5Trade_14reject(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_offer); /* proto */
-static PyObject *__pyx_pf_4abce_5trade_5Trade_16_log_receive_accept_group(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_offer); /* proto */
-static PyObject *__pyx_pf_4abce_5trade_5Trade_18_log_receive_accept_agent(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_offer); /* proto */
-static PyObject *__pyx_pf_4abce_5trade_5Trade_20_receive_accept(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_offer_idn_final_quantity); /* proto */
-static PyObject *__pyx_pf_4abce_5trade_5Trade_22_log_receive_accept_group(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_offer); /* proto */
-static PyObject *__pyx_pf_4abce_5trade_5Trade_24_log_receive_accept_agent(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_offer); /* proto */
-static PyObject *__pyx_pf_4abce_5trade_5Trade_26_receive_reject(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_offer_id); /* proto */
-static PyObject *__pyx_pf_4abce_5trade_5Trade_28_delete_given_offer(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_offer_id); /* proto */
-static PyObject *__pyx_pf_4abce_5trade_5Trade_30give(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_receiver_group, PyObject *__pyx_v_receiver_idn, PyObject *__pyx_v_good, PyObject *__pyx_v_quantity); /* proto */
-static PyObject *__pyx_pf_4abce_5trade_5Trade_32take(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_receiver_group, PyObject *__pyx_v_receiver_idn, PyObject *__pyx_v_good, PyObject *__pyx_v_quantity); /* proto */
-static PyObject *__pyx_pf_4abce_5trade_5Trade_34_quantity_smaller_goods(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_quantity, PyObject *__pyx_v_good); /* proto */
-static PyObject *__pyx_pf_4abce_5trade_5Trade_36_clearing__end_of_subround(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_incomming_messages); /* proto */
-static PyObject *__pyx_tp_new_4abce_5trade_Offer(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
+static PyObject *__pyx_pf_5trade_5Trade_4peak_offers(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_good, PyObject *__pyx_v_descending); /* proto */
+static PyObject *__pyx_pf_5trade_5Trade_6sell(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_receiver_group, PyObject *__pyx_v_receiver_idn, PyObject *__pyx_v_good, double __pyx_v_quantity, double __pyx_v_price); /* proto */
+static PyObject *__pyx_pf_5trade_5Trade_8buy(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_receiver_group, PyObject *__pyx_v_receiver_idn, PyObject *__pyx_v_good, double __pyx_v_quantity, double __pyx_v_price); /* proto */
+static PyObject *__pyx_pf_5trade_5Trade_10retract(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_offer); /* proto */
+static PyObject *__pyx_pf_5trade_5Trade_12accept(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_offer, double __pyx_v_quantity); /* proto */
+static PyObject *__pyx_pf_5trade_5Trade_14reject(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_offer); /* proto */
+static PyObject *__pyx_pf_5trade_5Trade_16_log_receive_accept_group(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_offer); /* proto */
+static PyObject *__pyx_pf_5trade_5Trade_18_log_receive_accept_agent(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_offer); /* proto */
+static PyObject *__pyx_pf_5trade_5Trade_20_receive_accept(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_offer_idn_final_quantity); /* proto */
+static PyObject *__pyx_pf_5trade_5Trade_22_log_receive_accept_group(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_offer); /* proto */
+static PyObject *__pyx_pf_5trade_5Trade_24_log_receive_accept_agent(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_offer); /* proto */
+static PyObject *__pyx_pf_5trade_5Trade_26_receive_reject(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_offer_id); /* proto */
+static PyObject *__pyx_pf_5trade_5Trade_28_delete_given_offer(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_offer_id); /* proto */
+static PyObject *__pyx_pf_5trade_5Trade_30give(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_receiver_group, PyObject *__pyx_v_receiver_idn, PyObject *__pyx_v_good, PyObject *__pyx_v_quantity); /* proto */
+static PyObject *__pyx_pf_5trade_5Trade_32take(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_receiver_group, PyObject *__pyx_v_receiver_idn, PyObject *__pyx_v_good, PyObject *__pyx_v_quantity); /* proto */
+static PyObject *__pyx_pf_5trade_5Trade_34_quantity_smaller_goods(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_quantity, PyObject *__pyx_v_good); /* proto */
+static PyObject *__pyx_pf_5trade_5Trade_36_clearing__end_of_subround(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_incomming_messages); /* proto */
+static PyObject *__pyx_tp_new_5trade_Offer(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
 static PyObject *__pyx_int_0;
 static PyObject *__pyx_int_1;
 static PyObject *__pyx_int_2;
 static PyObject *__pyx_int_98;
 static PyObject *__pyx_int_115;
 static PyObject *__pyx_int_neg_1;
-static PyObject *__pyx_tuple__2;
-static PyObject *__pyx_tuple__4;
+static PyObject *__pyx_int_neg_2;
+static PyObject *__pyx_tuple__3;
 static PyObject *__pyx_tuple__5;
-static PyObject *__pyx_tuple__7;
+static PyObject *__pyx_tuple__6;
 static PyObject *__pyx_tuple__8;
-static PyObject *__pyx_tuple__10;
+static PyObject *__pyx_tuple__9;
 static PyObject *__pyx_tuple__11;
-static PyObject *__pyx_tuple__13;
-static PyObject *__pyx_tuple__15;
-static PyObject *__pyx_tuple__17;
-static PyObject *__pyx_tuple__19;
-static PyObject *__pyx_tuple__21;
-static PyObject *__pyx_tuple__23;
-static PyObject *__pyx_tuple__25;
-static PyObject *__pyx_tuple__27;
-static PyObject *__pyx_tuple__29;
-static PyObject *__pyx_tuple__31;
-static PyObject *__pyx_tuple__33;
-static PyObject *__pyx_tuple__35;
-static PyObject *__pyx_tuple__37;
-static PyObject *__pyx_tuple__39;
-static PyObject *__pyx_tuple__41;
-static PyObject *__pyx_codeobj__3;
-static PyObject *__pyx_codeobj__6;
-static PyObject *__pyx_codeobj__9;
-static PyObject *__pyx_codeobj__12;
-static PyObject *__pyx_codeobj__14;
-static PyObject *__pyx_codeobj__16;
-static PyObject *__pyx_codeobj__18;
-static PyObject *__pyx_codeobj__20;
-static PyObject *__pyx_codeobj__22;
-static PyObject *__pyx_codeobj__24;
-static PyObject *__pyx_codeobj__26;
-static PyObject *__pyx_codeobj__28;
-static PyObject *__pyx_codeobj__30;
-static PyObject *__pyx_codeobj__32;
-static PyObject *__pyx_codeobj__34;
-static PyObject *__pyx_codeobj__36;
-static PyObject *__pyx_codeobj__38;
-static PyObject *__pyx_codeobj__40;
-static PyObject *__pyx_codeobj__42;
+static PyObject *__pyx_tuple__12;
+static PyObject *__pyx_tuple__14;
+static PyObject *__pyx_tuple__16;
+static PyObject *__pyx_tuple__18;
+static PyObject *__pyx_tuple__20;
+static PyObject *__pyx_tuple__22;
+static PyObject *__pyx_tuple__24;
+static PyObject *__pyx_tuple__26;
+static PyObject *__pyx_tuple__28;
+static PyObject *__pyx_tuple__30;
+static PyObject *__pyx_tuple__32;
+static PyObject *__pyx_tuple__34;
+static PyObject *__pyx_tuple__36;
+static PyObject *__pyx_tuple__38;
+static PyObject *__pyx_tuple__40;
+static PyObject *__pyx_tuple__42;
+static PyObject *__pyx_codeobj__4;
+static PyObject *__pyx_codeobj__7;
+static PyObject *__pyx_codeobj__10;
+static PyObject *__pyx_codeobj__13;
+static PyObject *__pyx_codeobj__15;
+static PyObject *__pyx_codeobj__17;
+static PyObject *__pyx_codeobj__19;
+static PyObject *__pyx_codeobj__21;
+static PyObject *__pyx_codeobj__23;
+static PyObject *__pyx_codeobj__25;
+static PyObject *__pyx_codeobj__27;
+static PyObject *__pyx_codeobj__29;
+static PyObject *__pyx_codeobj__31;
+static PyObject *__pyx_codeobj__33;
+static PyObject *__pyx_codeobj__35;
+static PyObject *__pyx_codeobj__37;
+static PyObject *__pyx_codeobj__39;
+static PyObject *__pyx_codeobj__41;
+static PyObject *__pyx_codeobj__43;
 
-/* "abce/trade.pyx":47
- * 
+/* "trade.pyx":46
+ * from libc.float cimport DBL_EPSILON
  * 
  * cdef double fmax(double a, double b):             # <<<<<<<<<<<<<<
  *     if a > b:
  *         return a
  */
 
-static double __pyx_f_4abce_5trade_fmax(double __pyx_v_a, double __pyx_v_b) {
+static double __pyx_f_5trade_fmax(double __pyx_v_a, double __pyx_v_b) {
   double __pyx_r;
   __Pyx_RefNannyDeclarations
   int __pyx_t_1;
   __Pyx_RefNannySetupContext("fmax", 0);
 
-  /* "abce/trade.pyx":48
+  /* "trade.pyx":47
  * 
  * cdef double fmax(double a, double b):
  *     if a > b:             # <<<<<<<<<<<<<<
@@ -1317,7 +1321,7 @@ static double __pyx_f_4abce_5trade_fmax(double __pyx_v_a, double __pyx_v_b) {
   __pyx_t_1 = ((__pyx_v_a > __pyx_v_b) != 0);
   if (__pyx_t_1) {
 
-    /* "abce/trade.pyx":49
+    /* "trade.pyx":48
  * cdef double fmax(double a, double b):
  *     if a > b:
  *         return a             # <<<<<<<<<<<<<<
@@ -1327,7 +1331,7 @@ static double __pyx_f_4abce_5trade_fmax(double __pyx_v_a, double __pyx_v_b) {
     __pyx_r = __pyx_v_a;
     goto __pyx_L0;
 
-    /* "abce/trade.pyx":48
+    /* "trade.pyx":47
  * 
  * cdef double fmax(double a, double b):
  *     if a > b:             # <<<<<<<<<<<<<<
@@ -1336,7 +1340,7 @@ static double __pyx_f_4abce_5trade_fmax(double __pyx_v_a, double __pyx_v_b) {
  */
   }
 
-  /* "abce/trade.pyx":51
+  /* "trade.pyx":50
  *         return a
  *     else:
  *         return b             # <<<<<<<<<<<<<<
@@ -1348,8 +1352,8 @@ static double __pyx_f_4abce_5trade_fmax(double __pyx_v_a, double __pyx_v_b) {
     goto __pyx_L0;
   }
 
-  /* "abce/trade.pyx":47
- * 
+  /* "trade.pyx":46
+ * from libc.float cimport DBL_EPSILON
  * 
  * cdef double fmax(double a, double b):             # <<<<<<<<<<<<<<
  *     if a > b:
@@ -1362,31 +1366,31 @@ static double __pyx_f_4abce_5trade_fmax(double __pyx_v_a, double __pyx_v_b) {
   return __pyx_r;
 }
 
-/* "abce/trade.pyx":110
+/* "trade.pyx":109
  *     cdef public int status_round
  * 
- *     def __cinit__(self, sender_group, sender_idn, receiver_group,             # <<<<<<<<<<<<<<
- *                   receiver_idn, good, quantity, price,
- *                   buysell, status, final_quantity, idn,
+ *     def __cinit__(self, str sender_group, int sender_idn, str receiver_group,             # <<<<<<<<<<<<<<
+ *                   int receiver_idn, str good, double quantity, double price,
+ *                   char buysell, str status, double final_quantity, long idn,
  */
 
 /* Python wrapper */
-static int __pyx_pw_4abce_5trade_5Offer_1__cinit__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static int __pyx_pw_4abce_5trade_5Offer_1__cinit__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static int __pyx_pw_5trade_5Offer_1__cinit__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static int __pyx_pw_5trade_5Offer_1__cinit__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_sender_group = 0;
-  PyObject *__pyx_v_sender_idn = 0;
+  int __pyx_v_sender_idn;
   PyObject *__pyx_v_receiver_group = 0;
-  PyObject *__pyx_v_receiver_idn = 0;
+  int __pyx_v_receiver_idn;
   PyObject *__pyx_v_good = 0;
-  PyObject *__pyx_v_quantity = 0;
-  PyObject *__pyx_v_price = 0;
-  PyObject *__pyx_v_buysell = 0;
+  double __pyx_v_quantity;
+  double __pyx_v_price;
+  char __pyx_v_buysell;
   PyObject *__pyx_v_status = 0;
-  PyObject *__pyx_v_final_quantity = 0;
-  PyObject *__pyx_v_idn = 0;
-  PyObject *__pyx_v_made = 0;
+  double __pyx_v_final_quantity;
+  long __pyx_v_idn;
+  int __pyx_v_made;
   PyObject *__pyx_v_open_offer_status = 0;
-  PyObject *__pyx_v_status_round = 0;
+  int __pyx_v_status_round;
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__cinit__ (wrapper)", 0);
@@ -1422,71 +1426,71 @@ static int __pyx_pw_4abce_5trade_5Offer_1__cinit__(PyObject *__pyx_v_self, PyObj
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_sender_idn)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 14, 14, 1); __PYX_ERR(0, 110, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 14, 14, 1); __PYX_ERR(0, 109, __pyx_L3_error)
         }
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_receiver_group)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 14, 14, 2); __PYX_ERR(0, 110, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 14, 14, 2); __PYX_ERR(0, 109, __pyx_L3_error)
         }
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_receiver_idn)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 14, 14, 3); __PYX_ERR(0, 110, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 14, 14, 3); __PYX_ERR(0, 109, __pyx_L3_error)
         }
         case  4:
         if (likely((values[4] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_good)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 14, 14, 4); __PYX_ERR(0, 110, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 14, 14, 4); __PYX_ERR(0, 109, __pyx_L3_error)
         }
         case  5:
         if (likely((values[5] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_quantity)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 14, 14, 5); __PYX_ERR(0, 110, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 14, 14, 5); __PYX_ERR(0, 109, __pyx_L3_error)
         }
         case  6:
         if (likely((values[6] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_price)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 14, 14, 6); __PYX_ERR(0, 110, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 14, 14, 6); __PYX_ERR(0, 109, __pyx_L3_error)
         }
         case  7:
         if (likely((values[7] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_buysell)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 14, 14, 7); __PYX_ERR(0, 110, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 14, 14, 7); __PYX_ERR(0, 109, __pyx_L3_error)
         }
         case  8:
         if (likely((values[8] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_status)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 14, 14, 8); __PYX_ERR(0, 110, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 14, 14, 8); __PYX_ERR(0, 109, __pyx_L3_error)
         }
         case  9:
         if (likely((values[9] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_final_quantity)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 14, 14, 9); __PYX_ERR(0, 110, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 14, 14, 9); __PYX_ERR(0, 109, __pyx_L3_error)
         }
         case 10:
         if (likely((values[10] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_idn)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 14, 14, 10); __PYX_ERR(0, 110, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 14, 14, 10); __PYX_ERR(0, 109, __pyx_L3_error)
         }
         case 11:
         if (likely((values[11] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_made)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 14, 14, 11); __PYX_ERR(0, 110, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 14, 14, 11); __PYX_ERR(0, 109, __pyx_L3_error)
         }
         case 12:
         if (likely((values[12] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_open_offer_status)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 14, 14, 12); __PYX_ERR(0, 110, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 14, 14, 12); __PYX_ERR(0, 109, __pyx_L3_error)
         }
         case 13:
         if (likely((values[13] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_status_round)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 14, 14, 13); __PYX_ERR(0, 110, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 14, 14, 13); __PYX_ERR(0, 109, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__cinit__") < 0)) __PYX_ERR(0, 110, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__cinit__") < 0)) __PYX_ERR(0, 109, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 14) {
       goto __pyx_L5_argtuple_error;
@@ -1506,206 +1510,224 @@ static int __pyx_pw_4abce_5trade_5Offer_1__cinit__(PyObject *__pyx_v_self, PyObj
       values[12] = PyTuple_GET_ITEM(__pyx_args, 12);
       values[13] = PyTuple_GET_ITEM(__pyx_args, 13);
     }
-    __pyx_v_sender_group = values[0];
-    __pyx_v_sender_idn = values[1];
-    __pyx_v_receiver_group = values[2];
-    __pyx_v_receiver_idn = values[3];
-    __pyx_v_good = values[4];
-    __pyx_v_quantity = values[5];
-    __pyx_v_price = values[6];
-    __pyx_v_buysell = values[7];
-    __pyx_v_status = values[8];
-    __pyx_v_final_quantity = values[9];
-    __pyx_v_idn = values[10];
-    __pyx_v_made = values[11];
-    __pyx_v_open_offer_status = values[12];
-    __pyx_v_status_round = values[13];
+    __pyx_v_sender_group = ((PyObject*)values[0]);
+    __pyx_v_sender_idn = __Pyx_PyInt_As_int(values[1]); if (unlikely((__pyx_v_sender_idn == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 109, __pyx_L3_error)
+    __pyx_v_receiver_group = ((PyObject*)values[2]);
+    __pyx_v_receiver_idn = __Pyx_PyInt_As_int(values[3]); if (unlikely((__pyx_v_receiver_idn == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 110, __pyx_L3_error)
+    __pyx_v_good = ((PyObject*)values[4]);
+    __pyx_v_quantity = __pyx_PyFloat_AsDouble(values[5]); if (unlikely((__pyx_v_quantity == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 110, __pyx_L3_error)
+    __pyx_v_price = __pyx_PyFloat_AsDouble(values[6]); if (unlikely((__pyx_v_price == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 110, __pyx_L3_error)
+    __pyx_v_buysell = __Pyx_PyInt_As_char(values[7]); if (unlikely((__pyx_v_buysell == (char)-1) && PyErr_Occurred())) __PYX_ERR(0, 111, __pyx_L3_error)
+    __pyx_v_status = ((PyObject*)values[8]);
+    __pyx_v_final_quantity = __pyx_PyFloat_AsDouble(values[9]); if (unlikely((__pyx_v_final_quantity == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 111, __pyx_L3_error)
+    __pyx_v_idn = __Pyx_PyInt_As_long(values[10]); if (unlikely((__pyx_v_idn == (long)-1) && PyErr_Occurred())) __PYX_ERR(0, 111, __pyx_L3_error)
+    __pyx_v_made = __Pyx_PyInt_As_int(values[11]); if (unlikely((__pyx_v_made == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 112, __pyx_L3_error)
+    __pyx_v_open_offer_status = ((PyObject*)values[12]);
+    __pyx_v_status_round = __Pyx_PyInt_As_int(values[13]); if (unlikely((__pyx_v_status_round == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 112, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 14, 14, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 110, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 14, 14, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 109, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("abce.trade.Offer.__cinit__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Offer.__cinit__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return -1;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_4abce_5trade_5Offer___cinit__(((struct __pyx_obj_4abce_5trade_Offer *)__pyx_v_self), __pyx_v_sender_group, __pyx_v_sender_idn, __pyx_v_receiver_group, __pyx_v_receiver_idn, __pyx_v_good, __pyx_v_quantity, __pyx_v_price, __pyx_v_buysell, __pyx_v_status, __pyx_v_final_quantity, __pyx_v_idn, __pyx_v_made, __pyx_v_open_offer_status, __pyx_v_status_round);
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_sender_group), (&PyString_Type), 1, "sender_group", 1))) __PYX_ERR(0, 109, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_receiver_group), (&PyString_Type), 1, "receiver_group", 1))) __PYX_ERR(0, 109, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_good), (&PyString_Type), 1, "good", 1))) __PYX_ERR(0, 110, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_status), (&PyString_Type), 1, "status", 1))) __PYX_ERR(0, 111, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_open_offer_status), (&PyString_Type), 1, "open_offer_status", 1))) __PYX_ERR(0, 112, __pyx_L1_error)
+  __pyx_r = __pyx_pf_5trade_5Offer___cinit__(((struct __pyx_obj_5trade_Offer *)__pyx_v_self), __pyx_v_sender_group, __pyx_v_sender_idn, __pyx_v_receiver_group, __pyx_v_receiver_idn, __pyx_v_good, __pyx_v_quantity, __pyx_v_price, __pyx_v_buysell, __pyx_v_status, __pyx_v_final_quantity, __pyx_v_idn, __pyx_v_made, __pyx_v_open_offer_status, __pyx_v_status_round);
 
   /* function exit code */
-  __Pyx_RefNannyFinishContext();
-  return __pyx_r;
-}
-
-static int __pyx_pf_4abce_5trade_5Offer___cinit__(struct __pyx_obj_4abce_5trade_Offer *__pyx_v_self, PyObject *__pyx_v_sender_group, PyObject *__pyx_v_sender_idn, PyObject *__pyx_v_receiver_group, PyObject *__pyx_v_receiver_idn, PyObject *__pyx_v_good, PyObject *__pyx_v_quantity, PyObject *__pyx_v_price, PyObject *__pyx_v_buysell, PyObject *__pyx_v_status, PyObject *__pyx_v_final_quantity, PyObject *__pyx_v_idn, PyObject *__pyx_v_made, PyObject *__pyx_v_open_offer_status, PyObject *__pyx_v_status_round) {
-  int __pyx_r;
-  __Pyx_RefNannyDeclarations
-  char *__pyx_t_1;
-  int __pyx_t_2;
-  double __pyx_t_3;
-  char __pyx_t_4;
-  long __pyx_t_5;
-  __Pyx_RefNannySetupContext("__cinit__", 0);
-
-  /* "abce/trade.pyx":114
- *                   buysell, status, final_quantity, idn,
- *                   made, open_offer_status, status_round):
- *         self.sender_group = sender_group             # <<<<<<<<<<<<<<
- *         self.sender_idn = sender_idn
- *         self.receiver_group = receiver_group
- */
-  __pyx_t_1 = __Pyx_PyObject_AsString(__pyx_v_sender_group); if (unlikely((!__pyx_t_1) && PyErr_Occurred())) __PYX_ERR(0, 114, __pyx_L1_error)
-  __pyx_v_self->sender_group = __pyx_t_1;
-
-  /* "abce/trade.pyx":115
- *                   made, open_offer_status, status_round):
- *         self.sender_group = sender_group
- *         self.sender_idn = sender_idn             # <<<<<<<<<<<<<<
- *         self.receiver_group = receiver_group
- *         self.receiver_idn = receiver_idn
- */
-  __pyx_t_2 = __Pyx_PyInt_As_int(__pyx_v_sender_idn); if (unlikely((__pyx_t_2 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 115, __pyx_L1_error)
-  __pyx_v_self->sender_idn = __pyx_t_2;
-
-  /* "abce/trade.pyx":116
- *         self.sender_group = sender_group
- *         self.sender_idn = sender_idn
- *         self.receiver_group = receiver_group             # <<<<<<<<<<<<<<
- *         self.receiver_idn = receiver_idn
- *         self.good = good
- */
-  __pyx_t_1 = __Pyx_PyObject_AsString(__pyx_v_receiver_group); if (unlikely((!__pyx_t_1) && PyErr_Occurred())) __PYX_ERR(0, 116, __pyx_L1_error)
-  __pyx_v_self->receiver_group = __pyx_t_1;
-
-  /* "abce/trade.pyx":117
- *         self.sender_idn = sender_idn
- *         self.receiver_group = receiver_group
- *         self.receiver_idn = receiver_idn             # <<<<<<<<<<<<<<
- *         self.good = good
- *         self.quantity = quantity
- */
-  __pyx_t_2 = __Pyx_PyInt_As_int(__pyx_v_receiver_idn); if (unlikely((__pyx_t_2 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 117, __pyx_L1_error)
-  __pyx_v_self->receiver_idn = __pyx_t_2;
-
-  /* "abce/trade.pyx":118
- *         self.receiver_group = receiver_group
- *         self.receiver_idn = receiver_idn
- *         self.good = good             # <<<<<<<<<<<<<<
- *         self.quantity = quantity
- *         self.price = price
- */
-  __pyx_t_1 = __Pyx_PyObject_AsString(__pyx_v_good); if (unlikely((!__pyx_t_1) && PyErr_Occurred())) __PYX_ERR(0, 118, __pyx_L1_error)
-  __pyx_v_self->good = __pyx_t_1;
-
-  /* "abce/trade.pyx":119
- *         self.receiver_idn = receiver_idn
- *         self.good = good
- *         self.quantity = quantity             # <<<<<<<<<<<<<<
- *         self.price = price
- *         self.buysell = buysell
- */
-  __pyx_t_3 = __pyx_PyFloat_AsDouble(__pyx_v_quantity); if (unlikely((__pyx_t_3 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 119, __pyx_L1_error)
-  __pyx_v_self->quantity = __pyx_t_3;
-
-  /* "abce/trade.pyx":120
- *         self.good = good
- *         self.quantity = quantity
- *         self.price = price             # <<<<<<<<<<<<<<
- *         self.buysell = buysell
- *         self.status = status
- */
-  __pyx_t_3 = __pyx_PyFloat_AsDouble(__pyx_v_price); if (unlikely((__pyx_t_3 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 120, __pyx_L1_error)
-  __pyx_v_self->price = __pyx_t_3;
-
-  /* "abce/trade.pyx":121
- *         self.quantity = quantity
- *         self.price = price
- *         self.buysell = buysell             # <<<<<<<<<<<<<<
- *         self.status = status
- *         self.final_quantity = final_quantity
- */
-  __pyx_t_4 = __Pyx_PyInt_As_char(__pyx_v_buysell); if (unlikely((__pyx_t_4 == (char)-1) && PyErr_Occurred())) __PYX_ERR(0, 121, __pyx_L1_error)
-  __pyx_v_self->buysell = __pyx_t_4;
-
-  /* "abce/trade.pyx":122
- *         self.price = price
- *         self.buysell = buysell
- *         self.status = status             # <<<<<<<<<<<<<<
- *         self.final_quantity = final_quantity
- *         self.idn = idn
- */
-  __pyx_t_1 = __Pyx_PyObject_AsString(__pyx_v_status); if (unlikely((!__pyx_t_1) && PyErr_Occurred())) __PYX_ERR(0, 122, __pyx_L1_error)
-  __pyx_v_self->status = __pyx_t_1;
-
-  /* "abce/trade.pyx":123
- *         self.buysell = buysell
- *         self.status = status
- *         self.final_quantity = final_quantity             # <<<<<<<<<<<<<<
- *         self.idn = idn
- *         self.made = made
- */
-  __pyx_t_3 = __pyx_PyFloat_AsDouble(__pyx_v_final_quantity); if (unlikely((__pyx_t_3 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 123, __pyx_L1_error)
-  __pyx_v_self->final_quantity = __pyx_t_3;
-
-  /* "abce/trade.pyx":124
- *         self.status = status
- *         self.final_quantity = final_quantity
- *         self.idn = idn             # <<<<<<<<<<<<<<
- *         self.made = made
- *         self.open_offer_status = open_offer_status
- */
-  __pyx_t_5 = __Pyx_PyInt_As_long(__pyx_v_idn); if (unlikely((__pyx_t_5 == (long)-1) && PyErr_Occurred())) __PYX_ERR(0, 124, __pyx_L1_error)
-  __pyx_v_self->idn = __pyx_t_5;
-
-  /* "abce/trade.pyx":125
- *         self.final_quantity = final_quantity
- *         self.idn = idn
- *         self.made = made             # <<<<<<<<<<<<<<
- *         self.open_offer_status = open_offer_status
- *         self.status_round = status_round
- */
-  __pyx_t_2 = __Pyx_PyInt_As_int(__pyx_v_made); if (unlikely((__pyx_t_2 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 125, __pyx_L1_error)
-  __pyx_v_self->made = __pyx_t_2;
-
-  /* "abce/trade.pyx":126
- *         self.idn = idn
- *         self.made = made
- *         self.open_offer_status = open_offer_status             # <<<<<<<<<<<<<<
- *         self.status_round = status_round
- * 
- */
-  __pyx_t_1 = __Pyx_PyObject_AsString(__pyx_v_open_offer_status); if (unlikely((!__pyx_t_1) && PyErr_Occurred())) __PYX_ERR(0, 126, __pyx_L1_error)
-  __pyx_v_self->open_offer_status = __pyx_t_1;
-
-  /* "abce/trade.pyx":127
- *         self.made = made
- *         self.open_offer_status = open_offer_status
- *         self.status_round = status_round             # <<<<<<<<<<<<<<
- * 
- * 
- */
-  __pyx_t_2 = __Pyx_PyInt_As_int(__pyx_v_status_round); if (unlikely((__pyx_t_2 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 127, __pyx_L1_error)
-  __pyx_v_self->status_round = __pyx_t_2;
-
-  /* "abce/trade.pyx":110
- *     cdef public int status_round
- * 
- *     def __cinit__(self, sender_group, sender_idn, receiver_group,             # <<<<<<<<<<<<<<
- *                   receiver_idn, good, quantity, price,
- *                   buysell, status, final_quantity, idn,
- */
-
-  /* function exit code */
-  __pyx_r = 0;
   goto __pyx_L0;
   __pyx_L1_error:;
-  __Pyx_AddTraceback("abce.trade.Offer.__cinit__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
   __pyx_L0:;
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-/* "abce/trade.pyx":130
+static int __pyx_pf_5trade_5Offer___cinit__(struct __pyx_obj_5trade_Offer *__pyx_v_self, PyObject *__pyx_v_sender_group, int __pyx_v_sender_idn, PyObject *__pyx_v_receiver_group, int __pyx_v_receiver_idn, PyObject *__pyx_v_good, double __pyx_v_quantity, double __pyx_v_price, char __pyx_v_buysell, PyObject *__pyx_v_status, double __pyx_v_final_quantity, long __pyx_v_idn, int __pyx_v_made, PyObject *__pyx_v_open_offer_status, int __pyx_v_status_round) {
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  __Pyx_RefNannySetupContext("__cinit__", 0);
+
+  /* "trade.pyx":113
+ *                   char buysell, str status, double final_quantity, long idn,
+ *                   int made, str open_offer_status, int status_round):
+ *         self.sender_group = sender_group             # <<<<<<<<<<<<<<
+ *         self.sender_idn = sender_idn
+ *         self.receiver_group = receiver_group
+ */
+  __Pyx_INCREF(__pyx_v_sender_group);
+  __Pyx_GIVEREF(__pyx_v_sender_group);
+  __Pyx_GOTREF(__pyx_v_self->sender_group);
+  __Pyx_DECREF(__pyx_v_self->sender_group);
+  __pyx_v_self->sender_group = __pyx_v_sender_group;
+
+  /* "trade.pyx":114
+ *                   int made, str open_offer_status, int status_round):
+ *         self.sender_group = sender_group
+ *         self.sender_idn = sender_idn             # <<<<<<<<<<<<<<
+ *         self.receiver_group = receiver_group
+ *         self.receiver_idn = receiver_idn
+ */
+  __pyx_v_self->sender_idn = __pyx_v_sender_idn;
+
+  /* "trade.pyx":115
+ *         self.sender_group = sender_group
+ *         self.sender_idn = sender_idn
+ *         self.receiver_group = receiver_group             # <<<<<<<<<<<<<<
+ *         self.receiver_idn = receiver_idn
+ *         self.good = good
+ */
+  __Pyx_INCREF(__pyx_v_receiver_group);
+  __Pyx_GIVEREF(__pyx_v_receiver_group);
+  __Pyx_GOTREF(__pyx_v_self->receiver_group);
+  __Pyx_DECREF(__pyx_v_self->receiver_group);
+  __pyx_v_self->receiver_group = __pyx_v_receiver_group;
+
+  /* "trade.pyx":116
+ *         self.sender_idn = sender_idn
+ *         self.receiver_group = receiver_group
+ *         self.receiver_idn = receiver_idn             # <<<<<<<<<<<<<<
+ *         self.good = good
+ *         self.quantity = quantity
+ */
+  __pyx_v_self->receiver_idn = __pyx_v_receiver_idn;
+
+  /* "trade.pyx":117
+ *         self.receiver_group = receiver_group
+ *         self.receiver_idn = receiver_idn
+ *         self.good = good             # <<<<<<<<<<<<<<
+ *         self.quantity = quantity
+ *         self.price = price
+ */
+  __Pyx_INCREF(__pyx_v_good);
+  __Pyx_GIVEREF(__pyx_v_good);
+  __Pyx_GOTREF(__pyx_v_self->good);
+  __Pyx_DECREF(__pyx_v_self->good);
+  __pyx_v_self->good = __pyx_v_good;
+
+  /* "trade.pyx":118
+ *         self.receiver_idn = receiver_idn
+ *         self.good = good
+ *         self.quantity = quantity             # <<<<<<<<<<<<<<
+ *         self.price = price
+ *         self.buysell = buysell
+ */
+  __pyx_v_self->quantity = __pyx_v_quantity;
+
+  /* "trade.pyx":119
+ *         self.good = good
+ *         self.quantity = quantity
+ *         self.price = price             # <<<<<<<<<<<<<<
+ *         self.buysell = buysell
+ *         self.status = status
+ */
+  __pyx_v_self->price = __pyx_v_price;
+
+  /* "trade.pyx":120
+ *         self.quantity = quantity
+ *         self.price = price
+ *         self.buysell = buysell             # <<<<<<<<<<<<<<
+ *         self.status = status
+ *         self.final_quantity = final_quantity
+ */
+  __pyx_v_self->buysell = __pyx_v_buysell;
+
+  /* "trade.pyx":121
+ *         self.price = price
+ *         self.buysell = buysell
+ *         self.status = status             # <<<<<<<<<<<<<<
+ *         self.final_quantity = final_quantity
+ *         self.idn = idn
+ */
+  __Pyx_INCREF(__pyx_v_status);
+  __Pyx_GIVEREF(__pyx_v_status);
+  __Pyx_GOTREF(__pyx_v_self->status);
+  __Pyx_DECREF(__pyx_v_self->status);
+  __pyx_v_self->status = __pyx_v_status;
+
+  /* "trade.pyx":122
+ *         self.buysell = buysell
+ *         self.status = status
+ *         self.final_quantity = final_quantity             # <<<<<<<<<<<<<<
+ *         self.idn = idn
+ *         self.made = made
+ */
+  __pyx_v_self->final_quantity = __pyx_v_final_quantity;
+
+  /* "trade.pyx":123
+ *         self.status = status
+ *         self.final_quantity = final_quantity
+ *         self.idn = idn             # <<<<<<<<<<<<<<
+ *         self.made = made
+ *         self.open_offer_status = open_offer_status
+ */
+  __pyx_t_1 = __Pyx_PyInt_From_long(__pyx_v_idn); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 123, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_GIVEREF(__pyx_t_1);
+  __Pyx_GOTREF(__pyx_v_self->idn);
+  __Pyx_DECREF(__pyx_v_self->idn);
+  __pyx_v_self->idn = __pyx_t_1;
+  __pyx_t_1 = 0;
+
+  /* "trade.pyx":124
+ *         self.final_quantity = final_quantity
+ *         self.idn = idn
+ *         self.made = made             # <<<<<<<<<<<<<<
+ *         self.open_offer_status = open_offer_status
+ *         self.status_round = status_round
+ */
+  __pyx_v_self->made = __pyx_v_made;
+
+  /* "trade.pyx":125
+ *         self.idn = idn
+ *         self.made = made
+ *         self.open_offer_status = open_offer_status             # <<<<<<<<<<<<<<
+ *         self.status_round = status_round
+ * 
+ */
+  __Pyx_INCREF(__pyx_v_open_offer_status);
+  __Pyx_GIVEREF(__pyx_v_open_offer_status);
+  __Pyx_GOTREF(__pyx_v_self->open_offer_status);
+  __Pyx_DECREF(__pyx_v_self->open_offer_status);
+  __pyx_v_self->open_offer_status = __pyx_v_open_offer_status;
+
+  /* "trade.pyx":126
+ *         self.made = made
+ *         self.open_offer_status = open_offer_status
+ *         self.status_round = status_round             # <<<<<<<<<<<<<<
+ * 
+ * 
+ */
+  __pyx_v_self->status_round = __pyx_v_status_round;
+
+  /* "trade.pyx":109
+ *     cdef public int status_round
+ * 
+ *     def __cinit__(self, str sender_group, int sender_idn, str receiver_group,             # <<<<<<<<<<<<<<
+ *                   int receiver_idn, str good, double quantity, double price,
+ *                   char buysell, str status, double final_quantity, long idn,
+ */
+
+  /* function exit code */
+  __pyx_r = 0;
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("trade.Offer.__cinit__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = -1;
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "trade.pyx":129
  * 
  * 
  *     def __getitem__(self, key):             # <<<<<<<<<<<<<<
@@ -1714,19 +1736,19 @@ static int __pyx_pf_4abce_5trade_5Offer___cinit__(struct __pyx_obj_4abce_5trade_
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_4abce_5trade_5Offer_3__getitem__(PyObject *__pyx_v_self, PyObject *__pyx_v_key); /*proto*/
-static PyObject *__pyx_pw_4abce_5trade_5Offer_3__getitem__(PyObject *__pyx_v_self, PyObject *__pyx_v_key) {
+static PyObject *__pyx_pw_5trade_5Offer_3__getitem__(PyObject *__pyx_v_self, PyObject *__pyx_v_key); /*proto*/
+static PyObject *__pyx_pw_5trade_5Offer_3__getitem__(PyObject *__pyx_v_self, PyObject *__pyx_v_key) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__getitem__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_4abce_5trade_5Offer_2__getitem__(((struct __pyx_obj_4abce_5trade_Offer *)__pyx_v_self), ((PyObject *)__pyx_v_key));
+  __pyx_r = __pyx_pf_5trade_5Offer_2__getitem__(((struct __pyx_obj_5trade_Offer *)__pyx_v_self), ((PyObject *)__pyx_v_key));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_4abce_5trade_5Offer_2__getitem__(struct __pyx_obj_4abce_5trade_Offer *__pyx_v_self, PyObject *__pyx_v_key) {
+static PyObject *__pyx_pf_5trade_5Offer_2__getitem__(struct __pyx_obj_5trade_Offer *__pyx_v_self, PyObject *__pyx_v_key) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -1735,7 +1757,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Offer_2__getitem__(struct __pyx_obj_4abc
   PyObject *__pyx_t_4 = NULL;
   __Pyx_RefNannySetupContext("__getitem__", 0);
 
-  /* "abce/trade.pyx":131
+  /* "trade.pyx":130
  * 
  *     def __getitem__(self, key):
  *         return self.__getattribute__(key)             # <<<<<<<<<<<<<<
@@ -1743,7 +1765,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Offer_2__getitem__(struct __pyx_obj_4abc
  *     def __setitem__(self, key, value):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_getattribute); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 131, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_getattribute); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 130, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_2))) {
@@ -1756,16 +1778,16 @@ static PyObject *__pyx_pf_4abce_5trade_5Offer_2__getitem__(struct __pyx_obj_4abc
     }
   }
   if (!__pyx_t_3) {
-    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_v_key); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 131, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_v_key); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 130, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
   } else {
-    __pyx_t_4 = PyTuple_New(1+1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 131, __pyx_L1_error)
+    __pyx_t_4 = PyTuple_New(1+1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 130, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_GIVEREF(__pyx_t_3); PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_3); __pyx_t_3 = NULL;
     __Pyx_INCREF(__pyx_v_key);
     __Pyx_GIVEREF(__pyx_v_key);
     PyTuple_SET_ITEM(__pyx_t_4, 0+1, __pyx_v_key);
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_4, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 131, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_4, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 130, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   }
@@ -1774,7 +1796,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Offer_2__getitem__(struct __pyx_obj_4abc
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "abce/trade.pyx":130
+  /* "trade.pyx":129
  * 
  * 
  *     def __getitem__(self, key):             # <<<<<<<<<<<<<<
@@ -1788,7 +1810,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Offer_2__getitem__(struct __pyx_obj_4abc
   __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_4);
-  __Pyx_AddTraceback("abce.trade.Offer.__getitem__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Offer.__getitem__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -1796,7 +1818,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Offer_2__getitem__(struct __pyx_obj_4abc
   return __pyx_r;
 }
 
-/* "abce/trade.pyx":133
+/* "trade.pyx":132
  *         return self.__getattribute__(key)
  * 
  *     def __setitem__(self, key, value):             # <<<<<<<<<<<<<<
@@ -1805,19 +1827,19 @@ static PyObject *__pyx_pf_4abce_5trade_5Offer_2__getitem__(struct __pyx_obj_4abc
  */
 
 /* Python wrapper */
-static int __pyx_pw_4abce_5trade_5Offer_5__setitem__(PyObject *__pyx_v_self, PyObject *__pyx_v_key, PyObject *__pyx_v_value); /*proto*/
-static int __pyx_pw_4abce_5trade_5Offer_5__setitem__(PyObject *__pyx_v_self, PyObject *__pyx_v_key, PyObject *__pyx_v_value) {
+static int __pyx_pw_5trade_5Offer_5__setitem__(PyObject *__pyx_v_self, PyObject *__pyx_v_key, PyObject *__pyx_v_value); /*proto*/
+static int __pyx_pw_5trade_5Offer_5__setitem__(PyObject *__pyx_v_self, PyObject *__pyx_v_key, PyObject *__pyx_v_value) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__setitem__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_4abce_5trade_5Offer_4__setitem__(((struct __pyx_obj_4abce_5trade_Offer *)__pyx_v_self), ((PyObject *)__pyx_v_key), ((PyObject *)__pyx_v_value));
+  __pyx_r = __pyx_pf_5trade_5Offer_4__setitem__(((struct __pyx_obj_5trade_Offer *)__pyx_v_self), ((PyObject *)__pyx_v_key), ((PyObject *)__pyx_v_value));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static int __pyx_pf_4abce_5trade_5Offer_4__setitem__(struct __pyx_obj_4abce_5trade_Offer *__pyx_v_self, PyObject *__pyx_v_key, PyObject *__pyx_v_value) {
+static int __pyx_pf_5trade_5Offer_4__setitem__(struct __pyx_obj_5trade_Offer *__pyx_v_self, PyObject *__pyx_v_key, PyObject *__pyx_v_value) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -1827,14 +1849,14 @@ static int __pyx_pf_4abce_5trade_5Offer_4__setitem__(struct __pyx_obj_4abce_5tra
   PyObject *__pyx_t_5 = NULL;
   __Pyx_RefNannySetupContext("__setitem__", 0);
 
-  /* "abce/trade.pyx":134
+  /* "trade.pyx":133
  * 
  *     def __setitem__(self, key, value):
  *         self.__setattr__(key, value)             # <<<<<<<<<<<<<<
  * 
  *     def pickle(self):
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_setattr); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 134, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_setattr); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 133, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   __pyx_t_4 = 0;
@@ -1848,7 +1870,7 @@ static int __pyx_pf_4abce_5trade_5Offer_4__setitem__(struct __pyx_obj_4abce_5tra
       __pyx_t_4 = 1;
     }
   }
-  __pyx_t_5 = PyTuple_New(2+__pyx_t_4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 134, __pyx_L1_error)
+  __pyx_t_5 = PyTuple_New(2+__pyx_t_4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 133, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   if (__pyx_t_3) {
     __Pyx_GIVEREF(__pyx_t_3); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_3); __pyx_t_3 = NULL;
@@ -1859,13 +1881,13 @@ static int __pyx_pf_4abce_5trade_5Offer_4__setitem__(struct __pyx_obj_4abce_5tra
   __Pyx_INCREF(__pyx_v_value);
   __Pyx_GIVEREF(__pyx_v_value);
   PyTuple_SET_ITEM(__pyx_t_5, 1+__pyx_t_4, __pyx_v_value);
-  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 134, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 133, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "abce/trade.pyx":133
+  /* "trade.pyx":132
  *         return self.__getattribute__(key)
  * 
  *     def __setitem__(self, key, value):             # <<<<<<<<<<<<<<
@@ -1881,14 +1903,14 @@ static int __pyx_pf_4abce_5trade_5Offer_4__setitem__(struct __pyx_obj_4abce_5tra
   __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_5);
-  __Pyx_AddTraceback("abce.trade.Offer.__setitem__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Offer.__setitem__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
   __pyx_L0:;
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-/* "abce/trade.pyx":136
+/* "trade.pyx":135
  *         self.__setattr__(key, value)
  * 
  *     def pickle(self):             # <<<<<<<<<<<<<<
@@ -1897,19 +1919,19 @@ static int __pyx_pf_4abce_5trade_5Offer_4__setitem__(struct __pyx_obj_4abce_5tra
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_4abce_5trade_5Offer_7pickle(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static PyObject *__pyx_pw_4abce_5trade_5Offer_7pickle(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused) {
+static PyObject *__pyx_pw_5trade_5Offer_7pickle(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static PyObject *__pyx_pw_5trade_5Offer_7pickle(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("pickle (wrapper)", 0);
-  __pyx_r = __pyx_pf_4abce_5trade_5Offer_6pickle(((struct __pyx_obj_4abce_5trade_Offer *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5trade_5Offer_6pickle(((struct __pyx_obj_5trade_Offer *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_4abce_5trade_5Offer_6pickle(struct __pyx_obj_4abce_5trade_Offer *__pyx_v_self) {
+static PyObject *__pyx_pf_5trade_5Offer_6pickle(struct __pyx_obj_5trade_Offer *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -1921,15 +1943,9 @@ static PyObject *__pyx_pf_4abce_5trade_5Offer_6pickle(struct __pyx_obj_4abce_5tr
   PyObject *__pyx_t_7 = NULL;
   PyObject *__pyx_t_8 = NULL;
   PyObject *__pyx_t_9 = NULL;
-  PyObject *__pyx_t_10 = NULL;
-  PyObject *__pyx_t_11 = NULL;
-  PyObject *__pyx_t_12 = NULL;
-  PyObject *__pyx_t_13 = NULL;
-  PyObject *__pyx_t_14 = NULL;
-  PyObject *__pyx_t_15 = NULL;
   __Pyx_RefNannySetupContext("pickle", 0);
 
-  /* "abce/trade.pyx":137
+  /* "trade.pyx":136
  * 
  *     def pickle(self):
  *         return (self.sender_group, self.sender_idn, self.receiver_group,             # <<<<<<<<<<<<<<
@@ -1937,96 +1953,90 @@ static PyObject *__pyx_pf_4abce_5trade_5Offer_6pickle(struct __pyx_obj_4abce_5tr
  *                 self.buysell, self.status, self.final_quantity, self.idn,
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyBytes_FromString(__pyx_v_self->sender_group); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 137, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->sender_idn); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 136, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_self->sender_idn); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 137, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyBytes_FromString(__pyx_v_self->receiver_group); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 137, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_3);
 
-  /* "abce/trade.pyx":138
+  /* "trade.pyx":137
  *     def pickle(self):
  *         return (self.sender_group, self.sender_idn, self.receiver_group,
  *                 self.receiver_idn, self.good, self.quantity, self.price,             # <<<<<<<<<<<<<<
  *                 self.buysell, self.status, self.final_quantity, self.idn,
  *                 self.made, self.open_offer_status, self.status_round)
  */
-  __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_self->receiver_idn); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 138, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_self->receiver_idn); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 137, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = PyFloat_FromDouble(__pyx_v_self->quantity); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 137, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __pyx_t_4 = PyFloat_FromDouble(__pyx_v_self->price); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 137, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_5 = __Pyx_PyBytes_FromString(__pyx_v_self->good); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 138, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_5);
-  __pyx_t_6 = PyFloat_FromDouble(__pyx_v_self->quantity); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 138, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_6);
-  __pyx_t_7 = PyFloat_FromDouble(__pyx_v_self->price); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 138, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_7);
 
-  /* "abce/trade.pyx":139
+  /* "trade.pyx":138
  *         return (self.sender_group, self.sender_idn, self.receiver_group,
  *                 self.receiver_idn, self.good, self.quantity, self.price,
  *                 self.buysell, self.status, self.final_quantity, self.idn,             # <<<<<<<<<<<<<<
  *                 self.made, self.open_offer_status, self.status_round)
  * 
  */
-  __pyx_t_8 = __Pyx_PyInt_From_char(__pyx_v_self->buysell); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 139, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_8);
-  __pyx_t_9 = __Pyx_PyBytes_FromString(__pyx_v_self->status); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 139, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_9);
-  __pyx_t_10 = PyFloat_FromDouble(__pyx_v_self->final_quantity); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 139, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_10);
-  __pyx_t_11 = __Pyx_PyInt_From_long(__pyx_v_self->idn); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 139, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_11);
+  __pyx_t_5 = __Pyx_PyInt_From_char(__pyx_v_self->buysell); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 138, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_5);
+  __pyx_t_6 = PyFloat_FromDouble(__pyx_v_self->final_quantity); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 138, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_6);
 
-  /* "abce/trade.pyx":140
+  /* "trade.pyx":139
  *                 self.receiver_idn, self.good, self.quantity, self.price,
  *                 self.buysell, self.status, self.final_quantity, self.idn,
  *                 self.made, self.open_offer_status, self.status_round)             # <<<<<<<<<<<<<<
  * 
- * class Trade:
+ *     def __repr__(self):
  */
-  __pyx_t_12 = __Pyx_PyInt_From_int(__pyx_v_self->made); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 140, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_12);
-  __pyx_t_13 = __Pyx_PyBytes_FromString(__pyx_v_self->open_offer_status); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 140, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_13);
-  __pyx_t_14 = __Pyx_PyInt_From_int(__pyx_v_self->status_round); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 140, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_14);
+  __pyx_t_7 = __Pyx_PyInt_From_int(__pyx_v_self->made); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 139, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_7);
+  __pyx_t_8 = __Pyx_PyInt_From_int(__pyx_v_self->status_round); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 139, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_8);
 
-  /* "abce/trade.pyx":137
+  /* "trade.pyx":136
  * 
  *     def pickle(self):
  *         return (self.sender_group, self.sender_idn, self.receiver_group,             # <<<<<<<<<<<<<<
  *                 self.receiver_idn, self.good, self.quantity, self.price,
  *                 self.buysell, self.status, self.final_quantity, self.idn,
  */
-  __pyx_t_15 = PyTuple_New(14); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 137, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_15);
+  __pyx_t_9 = PyTuple_New(14); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 136, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_9);
+  __Pyx_INCREF(__pyx_v_self->sender_group);
+  __Pyx_GIVEREF(__pyx_v_self->sender_group);
+  PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_v_self->sender_group);
   __Pyx_GIVEREF(__pyx_t_1);
-  PyTuple_SET_ITEM(__pyx_t_15, 0, __pyx_t_1);
+  PyTuple_SET_ITEM(__pyx_t_9, 1, __pyx_t_1);
+  __Pyx_INCREF(__pyx_v_self->receiver_group);
+  __Pyx_GIVEREF(__pyx_v_self->receiver_group);
+  PyTuple_SET_ITEM(__pyx_t_9, 2, __pyx_v_self->receiver_group);
   __Pyx_GIVEREF(__pyx_t_2);
-  PyTuple_SET_ITEM(__pyx_t_15, 1, __pyx_t_2);
+  PyTuple_SET_ITEM(__pyx_t_9, 3, __pyx_t_2);
+  __Pyx_INCREF(__pyx_v_self->good);
+  __Pyx_GIVEREF(__pyx_v_self->good);
+  PyTuple_SET_ITEM(__pyx_t_9, 4, __pyx_v_self->good);
   __Pyx_GIVEREF(__pyx_t_3);
-  PyTuple_SET_ITEM(__pyx_t_15, 2, __pyx_t_3);
+  PyTuple_SET_ITEM(__pyx_t_9, 5, __pyx_t_3);
   __Pyx_GIVEREF(__pyx_t_4);
-  PyTuple_SET_ITEM(__pyx_t_15, 3, __pyx_t_4);
+  PyTuple_SET_ITEM(__pyx_t_9, 6, __pyx_t_4);
   __Pyx_GIVEREF(__pyx_t_5);
-  PyTuple_SET_ITEM(__pyx_t_15, 4, __pyx_t_5);
+  PyTuple_SET_ITEM(__pyx_t_9, 7, __pyx_t_5);
+  __Pyx_INCREF(__pyx_v_self->status);
+  __Pyx_GIVEREF(__pyx_v_self->status);
+  PyTuple_SET_ITEM(__pyx_t_9, 8, __pyx_v_self->status);
   __Pyx_GIVEREF(__pyx_t_6);
-  PyTuple_SET_ITEM(__pyx_t_15, 5, __pyx_t_6);
+  PyTuple_SET_ITEM(__pyx_t_9, 9, __pyx_t_6);
+  __Pyx_INCREF(__pyx_v_self->idn);
+  __Pyx_GIVEREF(__pyx_v_self->idn);
+  PyTuple_SET_ITEM(__pyx_t_9, 10, __pyx_v_self->idn);
   __Pyx_GIVEREF(__pyx_t_7);
-  PyTuple_SET_ITEM(__pyx_t_15, 6, __pyx_t_7);
+  PyTuple_SET_ITEM(__pyx_t_9, 11, __pyx_t_7);
+  __Pyx_INCREF(__pyx_v_self->open_offer_status);
+  __Pyx_GIVEREF(__pyx_v_self->open_offer_status);
+  PyTuple_SET_ITEM(__pyx_t_9, 12, __pyx_v_self->open_offer_status);
   __Pyx_GIVEREF(__pyx_t_8);
-  PyTuple_SET_ITEM(__pyx_t_15, 7, __pyx_t_8);
-  __Pyx_GIVEREF(__pyx_t_9);
-  PyTuple_SET_ITEM(__pyx_t_15, 8, __pyx_t_9);
-  __Pyx_GIVEREF(__pyx_t_10);
-  PyTuple_SET_ITEM(__pyx_t_15, 9, __pyx_t_10);
-  __Pyx_GIVEREF(__pyx_t_11);
-  PyTuple_SET_ITEM(__pyx_t_15, 10, __pyx_t_11);
-  __Pyx_GIVEREF(__pyx_t_12);
-  PyTuple_SET_ITEM(__pyx_t_15, 11, __pyx_t_12);
-  __Pyx_GIVEREF(__pyx_t_13);
-  PyTuple_SET_ITEM(__pyx_t_15, 12, __pyx_t_13);
-  __Pyx_GIVEREF(__pyx_t_14);
-  PyTuple_SET_ITEM(__pyx_t_15, 13, __pyx_t_14);
+  PyTuple_SET_ITEM(__pyx_t_9, 13, __pyx_t_8);
   __pyx_t_1 = 0;
   __pyx_t_2 = 0;
   __pyx_t_3 = 0;
@@ -2035,17 +2045,11 @@ static PyObject *__pyx_pf_4abce_5trade_5Offer_6pickle(struct __pyx_obj_4abce_5tr
   __pyx_t_6 = 0;
   __pyx_t_7 = 0;
   __pyx_t_8 = 0;
+  __pyx_r = __pyx_t_9;
   __pyx_t_9 = 0;
-  __pyx_t_10 = 0;
-  __pyx_t_11 = 0;
-  __pyx_t_12 = 0;
-  __pyx_t_13 = 0;
-  __pyx_t_14 = 0;
-  __pyx_r = __pyx_t_15;
-  __pyx_t_15 = 0;
   goto __pyx_L0;
 
-  /* "abce/trade.pyx":136
+  /* "trade.pyx":135
  *         self.__setattr__(key, value)
  * 
  *     def pickle(self):             # <<<<<<<<<<<<<<
@@ -2064,13 +2068,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Offer_6pickle(struct __pyx_obj_4abce_5tr
   __Pyx_XDECREF(__pyx_t_7);
   __Pyx_XDECREF(__pyx_t_8);
   __Pyx_XDECREF(__pyx_t_9);
-  __Pyx_XDECREF(__pyx_t_10);
-  __Pyx_XDECREF(__pyx_t_11);
-  __Pyx_XDECREF(__pyx_t_12);
-  __Pyx_XDECREF(__pyx_t_13);
-  __Pyx_XDECREF(__pyx_t_14);
-  __Pyx_XDECREF(__pyx_t_15);
-  __Pyx_AddTraceback("abce.trade.Offer.pickle", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Offer.pickle", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -2078,78 +2076,256 @@ static PyObject *__pyx_pf_4abce_5trade_5Offer_6pickle(struct __pyx_obj_4abce_5tr
   return __pyx_r;
 }
 
-/* "abce/trade.pyx":95
+/* "trade.pyx":141
+ *                 self.made, self.open_offer_status, self.status_round)
+ * 
+ *     def __repr__(self):             # <<<<<<<<<<<<<<
+ *         return """sender: %s, %i, receiver_group: %s,
+ *                 receiver_idn: %i, good: %s, quantity: %f, price: %f,
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_5trade_5Offer_9__repr__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_5trade_5Offer_9__repr__(PyObject *__pyx_v_self) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__repr__ (wrapper)", 0);
+  __pyx_r = __pyx_pf_5trade_5Offer_8__repr__(((struct __pyx_obj_5trade_Offer *)__pyx_v_self));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_5trade_5Offer_8__repr__(struct __pyx_obj_5trade_Offer *__pyx_v_self) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  PyObject *__pyx_t_4 = NULL;
+  PyObject *__pyx_t_5 = NULL;
+  PyObject *__pyx_t_6 = NULL;
+  PyObject *__pyx_t_7 = NULL;
+  PyObject *__pyx_t_8 = NULL;
+  PyObject *__pyx_t_9 = NULL;
+  __Pyx_RefNannySetupContext("__repr__", 0);
+
+  /* "trade.pyx":142
+ * 
+ *     def __repr__(self):
+ *         return """sender: %s, %i, receiver_group: %s,             # <<<<<<<<<<<<<<
+ *                 receiver_idn: %i, good: %s, quantity: %f, price: %f,
+ *                 buysell: %s, status: %s, final_quantity: % f, idn: %i,
+ */
+  __Pyx_XDECREF(__pyx_r);
+
+  /* "trade.pyx":147
+ *                 made: %i, open_offer_status: % s, status_round: %i """ % (
+ * 
+ *                     self.sender_group, self.sender_idn, self.receiver_group,             # <<<<<<<<<<<<<<
+ *                     self.receiver_idn, self.good, self.quantity, self.price,
+ *                     self.buysell, self.status, self.final_quantity, self.idn,
+ */
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->sender_idn); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 147, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+
+  /* "trade.pyx":148
+ * 
+ *                     self.sender_group, self.sender_idn, self.receiver_group,
+ *                     self.receiver_idn, self.good, self.quantity, self.price,             # <<<<<<<<<<<<<<
+ *                     self.buysell, self.status, self.final_quantity, self.idn,
+ *                     self.made, self.open_offer_status, self.status_round)
+ */
+  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_self->receiver_idn); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 148, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = PyFloat_FromDouble(__pyx_v_self->quantity); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 148, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __pyx_t_4 = PyFloat_FromDouble(__pyx_v_self->price); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 148, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_4);
+
+  /* "trade.pyx":149
+ *                     self.sender_group, self.sender_idn, self.receiver_group,
+ *                     self.receiver_idn, self.good, self.quantity, self.price,
+ *                     self.buysell, self.status, self.final_quantity, self.idn,             # <<<<<<<<<<<<<<
+ *                     self.made, self.open_offer_status, self.status_round)
+ * 
+ */
+  __pyx_t_5 = __Pyx_PyInt_From_char(__pyx_v_self->buysell); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 149, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_5);
+  __pyx_t_6 = PyFloat_FromDouble(__pyx_v_self->final_quantity); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 149, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_6);
+
+  /* "trade.pyx":150
+ *                     self.receiver_idn, self.good, self.quantity, self.price,
+ *                     self.buysell, self.status, self.final_quantity, self.idn,
+ *                     self.made, self.open_offer_status, self.status_round)             # <<<<<<<<<<<<<<
+ * 
+ * class Trade:
+ */
+  __pyx_t_7 = __Pyx_PyInt_From_int(__pyx_v_self->made); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 150, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_7);
+  __pyx_t_8 = __Pyx_PyInt_From_int(__pyx_v_self->status_round); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 150, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_8);
+
+  /* "trade.pyx":147
+ *                 made: %i, open_offer_status: % s, status_round: %i """ % (
+ * 
+ *                     self.sender_group, self.sender_idn, self.receiver_group,             # <<<<<<<<<<<<<<
+ *                     self.receiver_idn, self.good, self.quantity, self.price,
+ *                     self.buysell, self.status, self.final_quantity, self.idn,
+ */
+  __pyx_t_9 = PyTuple_New(14); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 147, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_9);
+  __Pyx_INCREF(__pyx_v_self->sender_group);
+  __Pyx_GIVEREF(__pyx_v_self->sender_group);
+  PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_v_self->sender_group);
+  __Pyx_GIVEREF(__pyx_t_1);
+  PyTuple_SET_ITEM(__pyx_t_9, 1, __pyx_t_1);
+  __Pyx_INCREF(__pyx_v_self->receiver_group);
+  __Pyx_GIVEREF(__pyx_v_self->receiver_group);
+  PyTuple_SET_ITEM(__pyx_t_9, 2, __pyx_v_self->receiver_group);
+  __Pyx_GIVEREF(__pyx_t_2);
+  PyTuple_SET_ITEM(__pyx_t_9, 3, __pyx_t_2);
+  __Pyx_INCREF(__pyx_v_self->good);
+  __Pyx_GIVEREF(__pyx_v_self->good);
+  PyTuple_SET_ITEM(__pyx_t_9, 4, __pyx_v_self->good);
+  __Pyx_GIVEREF(__pyx_t_3);
+  PyTuple_SET_ITEM(__pyx_t_9, 5, __pyx_t_3);
+  __Pyx_GIVEREF(__pyx_t_4);
+  PyTuple_SET_ITEM(__pyx_t_9, 6, __pyx_t_4);
+  __Pyx_GIVEREF(__pyx_t_5);
+  PyTuple_SET_ITEM(__pyx_t_9, 7, __pyx_t_5);
+  __Pyx_INCREF(__pyx_v_self->status);
+  __Pyx_GIVEREF(__pyx_v_self->status);
+  PyTuple_SET_ITEM(__pyx_t_9, 8, __pyx_v_self->status);
+  __Pyx_GIVEREF(__pyx_t_6);
+  PyTuple_SET_ITEM(__pyx_t_9, 9, __pyx_t_6);
+  __Pyx_INCREF(__pyx_v_self->idn);
+  __Pyx_GIVEREF(__pyx_v_self->idn);
+  PyTuple_SET_ITEM(__pyx_t_9, 10, __pyx_v_self->idn);
+  __Pyx_GIVEREF(__pyx_t_7);
+  PyTuple_SET_ITEM(__pyx_t_9, 11, __pyx_t_7);
+  __Pyx_INCREF(__pyx_v_self->open_offer_status);
+  __Pyx_GIVEREF(__pyx_v_self->open_offer_status);
+  PyTuple_SET_ITEM(__pyx_t_9, 12, __pyx_v_self->open_offer_status);
+  __Pyx_GIVEREF(__pyx_t_8);
+  PyTuple_SET_ITEM(__pyx_t_9, 13, __pyx_t_8);
+  __pyx_t_1 = 0;
+  __pyx_t_2 = 0;
+  __pyx_t_3 = 0;
+  __pyx_t_4 = 0;
+  __pyx_t_5 = 0;
+  __pyx_t_6 = 0;
+  __pyx_t_7 = 0;
+  __pyx_t_8 = 0;
+
+  /* "trade.pyx":145
+ *                 receiver_idn: %i, good: %s, quantity: %f, price: %f,
+ *                 buysell: %s, status: %s, final_quantity: % f, idn: %i,
+ *                 made: %i, open_offer_status: % s, status_round: %i """ % (             # <<<<<<<<<<<<<<
+ * 
+ *                     self.sender_group, self.sender_idn, self.receiver_group,
+ */
+  __pyx_t_8 = __Pyx_PyString_Format(__pyx_kp_s_sender_s_i_receiver_group_s_rece, __pyx_t_9); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 145, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_8);
+  __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+  __pyx_r = __pyx_t_8;
+  __pyx_t_8 = 0;
+  goto __pyx_L0;
+
+  /* "trade.pyx":141
+ *                 self.made, self.open_offer_status, self.status_round)
+ * 
+ *     def __repr__(self):             # <<<<<<<<<<<<<<
+ *         return """sender: %s, %i, receiver_group: %s,
+ *                 receiver_idn: %i, good: %s, quantity: %f, price: %f,
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_5);
+  __Pyx_XDECREF(__pyx_t_6);
+  __Pyx_XDECREF(__pyx_t_7);
+  __Pyx_XDECREF(__pyx_t_8);
+  __Pyx_XDECREF(__pyx_t_9);
+  __Pyx_AddTraceback("trade.Offer.__repr__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "trade.pyx":94
  *             a unique identifier
  *     """
- *     cdef readonly char* sender_group             # <<<<<<<<<<<<<<
+ *     cdef readonly str sender_group             # <<<<<<<<<<<<<<
  *     cdef readonly int sender_idn
- *     cdef readonly char* receiver_group
+ *     cdef readonly str receiver_group
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_4abce_5trade_5Offer_12sender_group_1__get__(PyObject *__pyx_v_self); /*proto*/
-static PyObject *__pyx_pw_4abce_5trade_5Offer_12sender_group_1__get__(PyObject *__pyx_v_self) {
+static PyObject *__pyx_pw_5trade_5Offer_12sender_group_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_5trade_5Offer_12sender_group_1__get__(PyObject *__pyx_v_self) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_4abce_5trade_5Offer_12sender_group___get__(((struct __pyx_obj_4abce_5trade_Offer *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5trade_5Offer_12sender_group___get__(((struct __pyx_obj_5trade_Offer *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_4abce_5trade_5Offer_12sender_group___get__(struct __pyx_obj_4abce_5trade_Offer *__pyx_v_self) {
+static PyObject *__pyx_pf_5trade_5Offer_12sender_group___get__(struct __pyx_obj_5trade_Offer *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
-  PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyBytes_FromString(__pyx_v_self->sender_group); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 95, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_r = __pyx_t_1;
-  __pyx_t_1 = 0;
+  __Pyx_INCREF(__pyx_v_self->sender_group);
+  __pyx_r = __pyx_v_self->sender_group;
   goto __pyx_L0;
 
   /* function exit code */
-  __pyx_L1_error:;
-  __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("abce.trade.Offer.sender_group.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
-  __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-/* "abce/trade.pyx":96
+/* "trade.pyx":95
  *     """
- *     cdef readonly char* sender_group
+ *     cdef readonly str sender_group
  *     cdef readonly int sender_idn             # <<<<<<<<<<<<<<
- *     cdef readonly char* receiver_group
+ *     cdef readonly str receiver_group
  *     cdef readonly int receiver_idn
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_4abce_5trade_5Offer_10sender_idn_1__get__(PyObject *__pyx_v_self); /*proto*/
-static PyObject *__pyx_pw_4abce_5trade_5Offer_10sender_idn_1__get__(PyObject *__pyx_v_self) {
+static PyObject *__pyx_pw_5trade_5Offer_10sender_idn_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_5trade_5Offer_10sender_idn_1__get__(PyObject *__pyx_v_self) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_4abce_5trade_5Offer_10sender_idn___get__(((struct __pyx_obj_4abce_5trade_Offer *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5trade_5Offer_10sender_idn___get__(((struct __pyx_obj_5trade_Offer *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_4abce_5trade_5Offer_10sender_idn___get__(struct __pyx_obj_4abce_5trade_Offer *__pyx_v_self) {
+static PyObject *__pyx_pf_5trade_5Offer_10sender_idn___get__(struct __pyx_obj_5trade_Offer *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->sender_idn); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 96, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->sender_idn); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 95, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -2158,7 +2334,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Offer_10sender_idn___get__(struct __pyx_
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("abce.trade.Offer.sender_idn.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Offer.sender_idn.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -2166,78 +2342,71 @@ static PyObject *__pyx_pf_4abce_5trade_5Offer_10sender_idn___get__(struct __pyx_
   return __pyx_r;
 }
 
-/* "abce/trade.pyx":97
- *     cdef readonly char* sender_group
+/* "trade.pyx":96
+ *     cdef readonly str sender_group
  *     cdef readonly int sender_idn
- *     cdef readonly char* receiver_group             # <<<<<<<<<<<<<<
+ *     cdef readonly str receiver_group             # <<<<<<<<<<<<<<
  *     cdef readonly int receiver_idn
- *     cdef readonly char* good
+ *     cdef readonly str good
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_4abce_5trade_5Offer_14receiver_group_1__get__(PyObject *__pyx_v_self); /*proto*/
-static PyObject *__pyx_pw_4abce_5trade_5Offer_14receiver_group_1__get__(PyObject *__pyx_v_self) {
+static PyObject *__pyx_pw_5trade_5Offer_14receiver_group_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_5trade_5Offer_14receiver_group_1__get__(PyObject *__pyx_v_self) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_4abce_5trade_5Offer_14receiver_group___get__(((struct __pyx_obj_4abce_5trade_Offer *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5trade_5Offer_14receiver_group___get__(((struct __pyx_obj_5trade_Offer *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_4abce_5trade_5Offer_14receiver_group___get__(struct __pyx_obj_4abce_5trade_Offer *__pyx_v_self) {
+static PyObject *__pyx_pf_5trade_5Offer_14receiver_group___get__(struct __pyx_obj_5trade_Offer *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
-  PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyBytes_FromString(__pyx_v_self->receiver_group); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 97, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_r = __pyx_t_1;
-  __pyx_t_1 = 0;
+  __Pyx_INCREF(__pyx_v_self->receiver_group);
+  __pyx_r = __pyx_v_self->receiver_group;
   goto __pyx_L0;
 
   /* function exit code */
-  __pyx_L1_error:;
-  __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("abce.trade.Offer.receiver_group.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
-  __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-/* "abce/trade.pyx":98
+/* "trade.pyx":97
  *     cdef readonly int sender_idn
- *     cdef readonly char* receiver_group
+ *     cdef readonly str receiver_group
  *     cdef readonly int receiver_idn             # <<<<<<<<<<<<<<
- *     cdef readonly char* good
+ *     cdef readonly str good
  *     cdef readonly double quantity
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_4abce_5trade_5Offer_12receiver_idn_1__get__(PyObject *__pyx_v_self); /*proto*/
-static PyObject *__pyx_pw_4abce_5trade_5Offer_12receiver_idn_1__get__(PyObject *__pyx_v_self) {
+static PyObject *__pyx_pw_5trade_5Offer_12receiver_idn_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_5trade_5Offer_12receiver_idn_1__get__(PyObject *__pyx_v_self) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_4abce_5trade_5Offer_12receiver_idn___get__(((struct __pyx_obj_4abce_5trade_Offer *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5trade_5Offer_12receiver_idn___get__(((struct __pyx_obj_5trade_Offer *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_4abce_5trade_5Offer_12receiver_idn___get__(struct __pyx_obj_4abce_5trade_Offer *__pyx_v_self) {
+static PyObject *__pyx_pf_5trade_5Offer_12receiver_idn___get__(struct __pyx_obj_5trade_Offer *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->receiver_idn); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 98, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->receiver_idn); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 97, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -2246,7 +2415,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Offer_12receiver_idn___get__(struct __py
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("abce.trade.Offer.receiver_idn.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Offer.receiver_idn.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -2254,78 +2423,71 @@ static PyObject *__pyx_pf_4abce_5trade_5Offer_12receiver_idn___get__(struct __py
   return __pyx_r;
 }
 
-/* "abce/trade.pyx":99
- *     cdef readonly char* receiver_group
+/* "trade.pyx":98
+ *     cdef readonly str receiver_group
  *     cdef readonly int receiver_idn
- *     cdef readonly char* good             # <<<<<<<<<<<<<<
+ *     cdef readonly str good             # <<<<<<<<<<<<<<
  *     cdef readonly double quantity
  *     cdef readonly double price
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_4abce_5trade_5Offer_4good_1__get__(PyObject *__pyx_v_self); /*proto*/
-static PyObject *__pyx_pw_4abce_5trade_5Offer_4good_1__get__(PyObject *__pyx_v_self) {
+static PyObject *__pyx_pw_5trade_5Offer_4good_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_5trade_5Offer_4good_1__get__(PyObject *__pyx_v_self) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_4abce_5trade_5Offer_4good___get__(((struct __pyx_obj_4abce_5trade_Offer *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5trade_5Offer_4good___get__(((struct __pyx_obj_5trade_Offer *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_4abce_5trade_5Offer_4good___get__(struct __pyx_obj_4abce_5trade_Offer *__pyx_v_self) {
+static PyObject *__pyx_pf_5trade_5Offer_4good___get__(struct __pyx_obj_5trade_Offer *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
-  PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyBytes_FromString(__pyx_v_self->good); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 99, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_r = __pyx_t_1;
-  __pyx_t_1 = 0;
+  __Pyx_INCREF(__pyx_v_self->good);
+  __pyx_r = __pyx_v_self->good;
   goto __pyx_L0;
 
   /* function exit code */
-  __pyx_L1_error:;
-  __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("abce.trade.Offer.good.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
-  __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-/* "abce/trade.pyx":100
+/* "trade.pyx":99
  *     cdef readonly int receiver_idn
- *     cdef readonly char* good
+ *     cdef readonly str good
  *     cdef readonly double quantity             # <<<<<<<<<<<<<<
  *     cdef readonly double price
  *     cdef readonly char buysell
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_4abce_5trade_5Offer_8quantity_1__get__(PyObject *__pyx_v_self); /*proto*/
-static PyObject *__pyx_pw_4abce_5trade_5Offer_8quantity_1__get__(PyObject *__pyx_v_self) {
+static PyObject *__pyx_pw_5trade_5Offer_8quantity_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_5trade_5Offer_8quantity_1__get__(PyObject *__pyx_v_self) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_4abce_5trade_5Offer_8quantity___get__(((struct __pyx_obj_4abce_5trade_Offer *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5trade_5Offer_8quantity___get__(((struct __pyx_obj_5trade_Offer *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_4abce_5trade_5Offer_8quantity___get__(struct __pyx_obj_4abce_5trade_Offer *__pyx_v_self) {
+static PyObject *__pyx_pf_5trade_5Offer_8quantity___get__(struct __pyx_obj_5trade_Offer *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->quantity); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 100, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->quantity); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 99, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -2334,7 +2496,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Offer_8quantity___get__(struct __pyx_obj
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("abce.trade.Offer.quantity.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Offer.quantity.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -2342,34 +2504,34 @@ static PyObject *__pyx_pf_4abce_5trade_5Offer_8quantity___get__(struct __pyx_obj
   return __pyx_r;
 }
 
-/* "abce/trade.pyx":101
- *     cdef readonly char* good
+/* "trade.pyx":100
+ *     cdef readonly str good
  *     cdef readonly double quantity
  *     cdef readonly double price             # <<<<<<<<<<<<<<
  *     cdef readonly char buysell
- *     cdef public char* status
+ *     cdef public str status
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_4abce_5trade_5Offer_5price_1__get__(PyObject *__pyx_v_self); /*proto*/
-static PyObject *__pyx_pw_4abce_5trade_5Offer_5price_1__get__(PyObject *__pyx_v_self) {
+static PyObject *__pyx_pw_5trade_5Offer_5price_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_5trade_5Offer_5price_1__get__(PyObject *__pyx_v_self) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_4abce_5trade_5Offer_5price___get__(((struct __pyx_obj_4abce_5trade_Offer *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5trade_5Offer_5price___get__(((struct __pyx_obj_5trade_Offer *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_4abce_5trade_5Offer_5price___get__(struct __pyx_obj_4abce_5trade_Offer *__pyx_v_self) {
+static PyObject *__pyx_pf_5trade_5Offer_5price___get__(struct __pyx_obj_5trade_Offer *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->price); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 101, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->price); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 100, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -2378,7 +2540,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Offer_5price___get__(struct __pyx_obj_4a
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("abce.trade.Offer.price.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Offer.price.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -2386,34 +2548,34 @@ static PyObject *__pyx_pf_4abce_5trade_5Offer_5price___get__(struct __pyx_obj_4a
   return __pyx_r;
 }
 
-/* "abce/trade.pyx":102
+/* "trade.pyx":101
  *     cdef readonly double quantity
  *     cdef readonly double price
  *     cdef readonly char buysell             # <<<<<<<<<<<<<<
- *     cdef public char* status
+ *     cdef public str status
  *     cdef public double final_quantity
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_4abce_5trade_5Offer_7buysell_1__get__(PyObject *__pyx_v_self); /*proto*/
-static PyObject *__pyx_pw_4abce_5trade_5Offer_7buysell_1__get__(PyObject *__pyx_v_self) {
+static PyObject *__pyx_pw_5trade_5Offer_7buysell_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_5trade_5Offer_7buysell_1__get__(PyObject *__pyx_v_self) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_4abce_5trade_5Offer_7buysell___get__(((struct __pyx_obj_4abce_5trade_Offer *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5trade_5Offer_7buysell___get__(((struct __pyx_obj_5trade_Offer *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_4abce_5trade_5Offer_7buysell___get__(struct __pyx_obj_4abce_5trade_Offer *__pyx_v_self) {
+static PyObject *__pyx_pf_5trade_5Offer_7buysell___get__(struct __pyx_obj_5trade_Offer *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_char(__pyx_v_self->buysell); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 102, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_char(__pyx_v_self->buysell); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 101, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -2422,7 +2584,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Offer_7buysell___get__(struct __pyx_obj_
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("abce.trade.Offer.buysell.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Offer.buysell.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -2430,44 +2592,37 @@ static PyObject *__pyx_pf_4abce_5trade_5Offer_7buysell___get__(struct __pyx_obj_
   return __pyx_r;
 }
 
-/* "abce/trade.pyx":103
+/* "trade.pyx":102
  *     cdef readonly double price
  *     cdef readonly char buysell
- *     cdef public char* status             # <<<<<<<<<<<<<<
+ *     cdef public str status             # <<<<<<<<<<<<<<
  *     cdef public double final_quantity
- *     cdef readonly long idn
+ *     cdef readonly object idn
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_4abce_5trade_5Offer_6status_1__get__(PyObject *__pyx_v_self); /*proto*/
-static PyObject *__pyx_pw_4abce_5trade_5Offer_6status_1__get__(PyObject *__pyx_v_self) {
+static PyObject *__pyx_pw_5trade_5Offer_6status_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_5trade_5Offer_6status_1__get__(PyObject *__pyx_v_self) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_4abce_5trade_5Offer_6status___get__(((struct __pyx_obj_4abce_5trade_Offer *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5trade_5Offer_6status___get__(((struct __pyx_obj_5trade_Offer *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_4abce_5trade_5Offer_6status___get__(struct __pyx_obj_4abce_5trade_Offer *__pyx_v_self) {
+static PyObject *__pyx_pf_5trade_5Offer_6status___get__(struct __pyx_obj_5trade_Offer *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
-  PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyBytes_FromString(__pyx_v_self->status); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 103, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_r = __pyx_t_1;
-  __pyx_t_1 = 0;
+  __Pyx_INCREF(__pyx_v_self->status);
+  __pyx_r = __pyx_v_self->status;
   goto __pyx_L0;
 
   /* function exit code */
-  __pyx_L1_error:;
-  __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("abce.trade.Offer.status.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
-  __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
@@ -2475,65 +2630,101 @@ static PyObject *__pyx_pf_4abce_5trade_5Offer_6status___get__(struct __pyx_obj_4
 }
 
 /* Python wrapper */
-static int __pyx_pw_4abce_5trade_5Offer_6status_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value); /*proto*/
-static int __pyx_pw_4abce_5trade_5Offer_6status_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value) {
+static int __pyx_pw_5trade_5Offer_6status_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value); /*proto*/
+static int __pyx_pw_5trade_5Offer_6status_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__set__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_4abce_5trade_5Offer_6status_2__set__(((struct __pyx_obj_4abce_5trade_Offer *)__pyx_v_self), ((PyObject *)__pyx_v_value));
+  __pyx_r = __pyx_pf_5trade_5Offer_6status_2__set__(((struct __pyx_obj_5trade_Offer *)__pyx_v_self), ((PyObject *)__pyx_v_value));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static int __pyx_pf_4abce_5trade_5Offer_6status_2__set__(struct __pyx_obj_4abce_5trade_Offer *__pyx_v_self, PyObject *__pyx_v_value) {
+static int __pyx_pf_5trade_5Offer_6status_2__set__(struct __pyx_obj_5trade_Offer *__pyx_v_self, PyObject *__pyx_v_value) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
-  char *__pyx_t_1;
+  PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("__set__", 0);
-  __pyx_t_1 = __Pyx_PyObject_AsString(__pyx_v_value); if (unlikely((!__pyx_t_1) && PyErr_Occurred())) __PYX_ERR(0, 103, __pyx_L1_error)
-  __pyx_v_self->status = __pyx_t_1;
+  if (!(likely(PyString_CheckExact(__pyx_v_value))||((__pyx_v_value) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_v_value)->tp_name), 0))) __PYX_ERR(0, 102, __pyx_L1_error)
+  __pyx_t_1 = __pyx_v_value;
+  __Pyx_INCREF(__pyx_t_1);
+  __Pyx_GIVEREF(__pyx_t_1);
+  __Pyx_GOTREF(__pyx_v_self->status);
+  __Pyx_DECREF(__pyx_v_self->status);
+  __pyx_v_self->status = ((PyObject*)__pyx_t_1);
+  __pyx_t_1 = 0;
 
   /* function exit code */
   __pyx_r = 0;
   goto __pyx_L0;
   __pyx_L1_error:;
-  __Pyx_AddTraceback("abce.trade.Offer.status.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("trade.Offer.status.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
   __pyx_L0:;
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-/* "abce/trade.pyx":104
- *     cdef readonly char buysell
- *     cdef public char* status
- *     cdef public double final_quantity             # <<<<<<<<<<<<<<
- *     cdef readonly long idn
- *     cdef readonly int made
- */
-
 /* Python wrapper */
-static PyObject *__pyx_pw_4abce_5trade_5Offer_14final_quantity_1__get__(PyObject *__pyx_v_self); /*proto*/
-static PyObject *__pyx_pw_4abce_5trade_5Offer_14final_quantity_1__get__(PyObject *__pyx_v_self) {
-  PyObject *__pyx_r = 0;
+static int __pyx_pw_5trade_5Offer_6status_5__del__(PyObject *__pyx_v_self); /*proto*/
+static int __pyx_pw_5trade_5Offer_6status_5__del__(PyObject *__pyx_v_self) {
+  int __pyx_r;
   __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_4abce_5trade_5Offer_14final_quantity___get__(((struct __pyx_obj_4abce_5trade_Offer *)__pyx_v_self));
+  __Pyx_RefNannySetupContext("__del__ (wrapper)", 0);
+  __pyx_r = __pyx_pf_5trade_5Offer_6status_4__del__(((struct __pyx_obj_5trade_Offer *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_4abce_5trade_5Offer_14final_quantity___get__(struct __pyx_obj_4abce_5trade_Offer *__pyx_v_self) {
+static int __pyx_pf_5trade_5Offer_6status_4__del__(struct __pyx_obj_5trade_Offer *__pyx_v_self) {
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__del__", 0);
+  __Pyx_INCREF(Py_None);
+  __Pyx_GIVEREF(Py_None);
+  __Pyx_GOTREF(__pyx_v_self->status);
+  __Pyx_DECREF(__pyx_v_self->status);
+  __pyx_v_self->status = ((PyObject*)Py_None);
+
+  /* function exit code */
+  __pyx_r = 0;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "trade.pyx":103
+ *     cdef readonly char buysell
+ *     cdef public str status
+ *     cdef public double final_quantity             # <<<<<<<<<<<<<<
+ *     cdef readonly object idn
+ *     cdef readonly int made
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_5trade_5Offer_14final_quantity_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_5trade_5Offer_14final_quantity_1__get__(PyObject *__pyx_v_self) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
+  __pyx_r = __pyx_pf_5trade_5Offer_14final_quantity___get__(((struct __pyx_obj_5trade_Offer *)__pyx_v_self));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_5trade_5Offer_14final_quantity___get__(struct __pyx_obj_5trade_Offer *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->final_quantity); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 104, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->final_quantity); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 103, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -2542,7 +2733,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Offer_14final_quantity___get__(struct __
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("abce.trade.Offer.final_quantity.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Offer.final_quantity.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -2551,109 +2742,102 @@ static PyObject *__pyx_pf_4abce_5trade_5Offer_14final_quantity___get__(struct __
 }
 
 /* Python wrapper */
-static int __pyx_pw_4abce_5trade_5Offer_14final_quantity_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value); /*proto*/
-static int __pyx_pw_4abce_5trade_5Offer_14final_quantity_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value) {
+static int __pyx_pw_5trade_5Offer_14final_quantity_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value); /*proto*/
+static int __pyx_pw_5trade_5Offer_14final_quantity_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__set__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_4abce_5trade_5Offer_14final_quantity_2__set__(((struct __pyx_obj_4abce_5trade_Offer *)__pyx_v_self), ((PyObject *)__pyx_v_value));
+  __pyx_r = __pyx_pf_5trade_5Offer_14final_quantity_2__set__(((struct __pyx_obj_5trade_Offer *)__pyx_v_self), ((PyObject *)__pyx_v_value));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static int __pyx_pf_4abce_5trade_5Offer_14final_quantity_2__set__(struct __pyx_obj_4abce_5trade_Offer *__pyx_v_self, PyObject *__pyx_v_value) {
+static int __pyx_pf_5trade_5Offer_14final_quantity_2__set__(struct __pyx_obj_5trade_Offer *__pyx_v_self, PyObject *__pyx_v_value) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   double __pyx_t_1;
   __Pyx_RefNannySetupContext("__set__", 0);
-  __pyx_t_1 = __pyx_PyFloat_AsDouble(__pyx_v_value); if (unlikely((__pyx_t_1 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 104, __pyx_L1_error)
+  __pyx_t_1 = __pyx_PyFloat_AsDouble(__pyx_v_value); if (unlikely((__pyx_t_1 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 103, __pyx_L1_error)
   __pyx_v_self->final_quantity = __pyx_t_1;
 
   /* function exit code */
   __pyx_r = 0;
   goto __pyx_L0;
   __pyx_L1_error:;
-  __Pyx_AddTraceback("abce.trade.Offer.final_quantity.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Offer.final_quantity.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
   __pyx_L0:;
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-/* "abce/trade.pyx":105
- *     cdef public char* status
+/* "trade.pyx":104
+ *     cdef public str status
  *     cdef public double final_quantity
- *     cdef readonly long idn             # <<<<<<<<<<<<<<
+ *     cdef readonly object idn             # <<<<<<<<<<<<<<
  *     cdef readonly int made
- *     cdef public char* open_offer_status
+ *     cdef public str open_offer_status
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_4abce_5trade_5Offer_3idn_1__get__(PyObject *__pyx_v_self); /*proto*/
-static PyObject *__pyx_pw_4abce_5trade_5Offer_3idn_1__get__(PyObject *__pyx_v_self) {
+static PyObject *__pyx_pw_5trade_5Offer_3idn_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_5trade_5Offer_3idn_1__get__(PyObject *__pyx_v_self) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_4abce_5trade_5Offer_3idn___get__(((struct __pyx_obj_4abce_5trade_Offer *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5trade_5Offer_3idn___get__(((struct __pyx_obj_5trade_Offer *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_4abce_5trade_5Offer_3idn___get__(struct __pyx_obj_4abce_5trade_Offer *__pyx_v_self) {
+static PyObject *__pyx_pf_5trade_5Offer_3idn___get__(struct __pyx_obj_5trade_Offer *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
-  PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_long(__pyx_v_self->idn); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 105, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_r = __pyx_t_1;
-  __pyx_t_1 = 0;
+  __Pyx_INCREF(__pyx_v_self->idn);
+  __pyx_r = __pyx_v_self->idn;
   goto __pyx_L0;
 
   /* function exit code */
-  __pyx_L1_error:;
-  __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("abce.trade.Offer.idn.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
-  __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-/* "abce/trade.pyx":106
+/* "trade.pyx":105
  *     cdef public double final_quantity
- *     cdef readonly long idn
+ *     cdef readonly object idn
  *     cdef readonly int made             # <<<<<<<<<<<<<<
- *     cdef public char* open_offer_status
+ *     cdef public str open_offer_status
  *     cdef public int status_round
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_4abce_5trade_5Offer_4made_1__get__(PyObject *__pyx_v_self); /*proto*/
-static PyObject *__pyx_pw_4abce_5trade_5Offer_4made_1__get__(PyObject *__pyx_v_self) {
+static PyObject *__pyx_pw_5trade_5Offer_4made_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_5trade_5Offer_4made_1__get__(PyObject *__pyx_v_self) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_4abce_5trade_5Offer_4made___get__(((struct __pyx_obj_4abce_5trade_Offer *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5trade_5Offer_4made___get__(((struct __pyx_obj_5trade_Offer *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_4abce_5trade_5Offer_4made___get__(struct __pyx_obj_4abce_5trade_Offer *__pyx_v_self) {
+static PyObject *__pyx_pf_5trade_5Offer_4made___get__(struct __pyx_obj_5trade_Offer *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->made); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 106, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->made); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 105, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -2662,7 +2846,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Offer_4made___get__(struct __pyx_obj_4ab
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("abce.trade.Offer.made.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Offer.made.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -2670,44 +2854,37 @@ static PyObject *__pyx_pf_4abce_5trade_5Offer_4made___get__(struct __pyx_obj_4ab
   return __pyx_r;
 }
 
-/* "abce/trade.pyx":107
- *     cdef readonly long idn
+/* "trade.pyx":106
+ *     cdef readonly object idn
  *     cdef readonly int made
- *     cdef public char* open_offer_status             # <<<<<<<<<<<<<<
+ *     cdef public str open_offer_status             # <<<<<<<<<<<<<<
  *     cdef public int status_round
  * 
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_4abce_5trade_5Offer_17open_offer_status_1__get__(PyObject *__pyx_v_self); /*proto*/
-static PyObject *__pyx_pw_4abce_5trade_5Offer_17open_offer_status_1__get__(PyObject *__pyx_v_self) {
+static PyObject *__pyx_pw_5trade_5Offer_17open_offer_status_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_5trade_5Offer_17open_offer_status_1__get__(PyObject *__pyx_v_self) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_4abce_5trade_5Offer_17open_offer_status___get__(((struct __pyx_obj_4abce_5trade_Offer *)__pyx_v_self));
+  __pyx_r = __pyx_pf_5trade_5Offer_17open_offer_status___get__(((struct __pyx_obj_5trade_Offer *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_4abce_5trade_5Offer_17open_offer_status___get__(struct __pyx_obj_4abce_5trade_Offer *__pyx_v_self) {
+static PyObject *__pyx_pf_5trade_5Offer_17open_offer_status___get__(struct __pyx_obj_5trade_Offer *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
-  PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyBytes_FromString(__pyx_v_self->open_offer_status); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 107, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_r = __pyx_t_1;
-  __pyx_t_1 = 0;
+  __Pyx_INCREF(__pyx_v_self->open_offer_status);
+  __pyx_r = __pyx_v_self->open_offer_status;
   goto __pyx_L0;
 
   /* function exit code */
-  __pyx_L1_error:;
-  __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("abce.trade.Offer.open_offer_status.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
-  __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
@@ -2715,65 +2892,101 @@ static PyObject *__pyx_pf_4abce_5trade_5Offer_17open_offer_status___get__(struct
 }
 
 /* Python wrapper */
-static int __pyx_pw_4abce_5trade_5Offer_17open_offer_status_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value); /*proto*/
-static int __pyx_pw_4abce_5trade_5Offer_17open_offer_status_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value) {
+static int __pyx_pw_5trade_5Offer_17open_offer_status_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value); /*proto*/
+static int __pyx_pw_5trade_5Offer_17open_offer_status_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__set__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_4abce_5trade_5Offer_17open_offer_status_2__set__(((struct __pyx_obj_4abce_5trade_Offer *)__pyx_v_self), ((PyObject *)__pyx_v_value));
+  __pyx_r = __pyx_pf_5trade_5Offer_17open_offer_status_2__set__(((struct __pyx_obj_5trade_Offer *)__pyx_v_self), ((PyObject *)__pyx_v_value));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static int __pyx_pf_4abce_5trade_5Offer_17open_offer_status_2__set__(struct __pyx_obj_4abce_5trade_Offer *__pyx_v_self, PyObject *__pyx_v_value) {
+static int __pyx_pf_5trade_5Offer_17open_offer_status_2__set__(struct __pyx_obj_5trade_Offer *__pyx_v_self, PyObject *__pyx_v_value) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
-  char *__pyx_t_1;
+  PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("__set__", 0);
-  __pyx_t_1 = __Pyx_PyObject_AsString(__pyx_v_value); if (unlikely((!__pyx_t_1) && PyErr_Occurred())) __PYX_ERR(0, 107, __pyx_L1_error)
-  __pyx_v_self->open_offer_status = __pyx_t_1;
+  if (!(likely(PyString_CheckExact(__pyx_v_value))||((__pyx_v_value) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_v_value)->tp_name), 0))) __PYX_ERR(0, 106, __pyx_L1_error)
+  __pyx_t_1 = __pyx_v_value;
+  __Pyx_INCREF(__pyx_t_1);
+  __Pyx_GIVEREF(__pyx_t_1);
+  __Pyx_GOTREF(__pyx_v_self->open_offer_status);
+  __Pyx_DECREF(__pyx_v_self->open_offer_status);
+  __pyx_v_self->open_offer_status = ((PyObject*)__pyx_t_1);
+  __pyx_t_1 = 0;
 
   /* function exit code */
   __pyx_r = 0;
   goto __pyx_L0;
   __pyx_L1_error:;
-  __Pyx_AddTraceback("abce.trade.Offer.open_offer_status.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("trade.Offer.open_offer_status.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
   __pyx_L0:;
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-/* "abce/trade.pyx":108
- *     cdef readonly int made
- *     cdef public char* open_offer_status
- *     cdef public int status_round             # <<<<<<<<<<<<<<
- * 
- *     def __cinit__(self, sender_group, sender_idn, receiver_group,
- */
-
 /* Python wrapper */
-static PyObject *__pyx_pw_4abce_5trade_5Offer_12status_round_1__get__(PyObject *__pyx_v_self); /*proto*/
-static PyObject *__pyx_pw_4abce_5trade_5Offer_12status_round_1__get__(PyObject *__pyx_v_self) {
-  PyObject *__pyx_r = 0;
+static int __pyx_pw_5trade_5Offer_17open_offer_status_5__del__(PyObject *__pyx_v_self); /*proto*/
+static int __pyx_pw_5trade_5Offer_17open_offer_status_5__del__(PyObject *__pyx_v_self) {
+  int __pyx_r;
   __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_4abce_5trade_5Offer_12status_round___get__(((struct __pyx_obj_4abce_5trade_Offer *)__pyx_v_self));
+  __Pyx_RefNannySetupContext("__del__ (wrapper)", 0);
+  __pyx_r = __pyx_pf_5trade_5Offer_17open_offer_status_4__del__(((struct __pyx_obj_5trade_Offer *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_4abce_5trade_5Offer_12status_round___get__(struct __pyx_obj_4abce_5trade_Offer *__pyx_v_self) {
+static int __pyx_pf_5trade_5Offer_17open_offer_status_4__del__(struct __pyx_obj_5trade_Offer *__pyx_v_self) {
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__del__", 0);
+  __Pyx_INCREF(Py_None);
+  __Pyx_GIVEREF(Py_None);
+  __Pyx_GOTREF(__pyx_v_self->open_offer_status);
+  __Pyx_DECREF(__pyx_v_self->open_offer_status);
+  __pyx_v_self->open_offer_status = ((PyObject*)Py_None);
+
+  /* function exit code */
+  __pyx_r = 0;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "trade.pyx":107
+ *     cdef readonly int made
+ *     cdef public str open_offer_status
+ *     cdef public int status_round             # <<<<<<<<<<<<<<
+ * 
+ *     def __cinit__(self, str sender_group, int sender_idn, str receiver_group,
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_5trade_5Offer_12status_round_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_5trade_5Offer_12status_round_1__get__(PyObject *__pyx_v_self) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
+  __pyx_r = __pyx_pf_5trade_5Offer_12status_round___get__(((struct __pyx_obj_5trade_Offer *)__pyx_v_self));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_5trade_5Offer_12status_round___get__(struct __pyx_obj_5trade_Offer *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->status_round); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 108, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->status_round); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 107, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -2782,7 +2995,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Offer_12status_round___get__(struct __py
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("abce.trade.Offer.status_round.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Offer.status_round.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -2791,38 +3004,38 @@ static PyObject *__pyx_pf_4abce_5trade_5Offer_12status_round___get__(struct __py
 }
 
 /* Python wrapper */
-static int __pyx_pw_4abce_5trade_5Offer_12status_round_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value); /*proto*/
-static int __pyx_pw_4abce_5trade_5Offer_12status_round_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value) {
+static int __pyx_pw_5trade_5Offer_12status_round_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value); /*proto*/
+static int __pyx_pw_5trade_5Offer_12status_round_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__set__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_4abce_5trade_5Offer_12status_round_2__set__(((struct __pyx_obj_4abce_5trade_Offer *)__pyx_v_self), ((PyObject *)__pyx_v_value));
+  __pyx_r = __pyx_pf_5trade_5Offer_12status_round_2__set__(((struct __pyx_obj_5trade_Offer *)__pyx_v_self), ((PyObject *)__pyx_v_value));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static int __pyx_pf_4abce_5trade_5Offer_12status_round_2__set__(struct __pyx_obj_4abce_5trade_Offer *__pyx_v_self, PyObject *__pyx_v_value) {
+static int __pyx_pf_5trade_5Offer_12status_round_2__set__(struct __pyx_obj_5trade_Offer *__pyx_v_self, PyObject *__pyx_v_value) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   int __pyx_t_1;
   __Pyx_RefNannySetupContext("__set__", 0);
-  __pyx_t_1 = __Pyx_PyInt_As_int(__pyx_v_value); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 108, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_As_int(__pyx_v_value); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 107, __pyx_L1_error)
   __pyx_v_self->status_round = __pyx_t_1;
 
   /* function exit code */
   __pyx_r = 0;
   goto __pyx_L0;
   __pyx_L1_error:;
-  __Pyx_AddTraceback("abce.trade.Offer.status_round.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Offer.status_round.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
   __pyx_L0:;
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-/* "abce/trade.pyx":190
+/* "trade.pyx":200
  *                 self.price *= offer['final_quantity'] / offer['quantity']
  *     """
  *     def get_offers_all(self, descending=False):             # <<<<<<<<<<<<<<
@@ -2831,10 +3044,10 @@ static int __pyx_pf_4abce_5trade_5Offer_12status_round_2__set__(struct __pyx_obj
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_4abce_5trade_5Trade_1get_offers_all(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_4abce_5trade_5Trade_get_offers_all[] = " returns all offers in a dictionary, with goods as key. The in each\n        goods-category the goods are ordered by price. The order can be reversed\n        by setting descending=True\n\n        *Offers that are not accepted in the same subround (def block) are\n        automatically rejected.* However you can also manually reject.\n\n        Args::\n\n         descending(optional): is a bool. False for descending True for\n                               ascending by price\n\n        Example2::\n\n         oo = get_offers_all(descending=False)\n         for good_category in oo:\n            print('The cheapest good of category' + good_category\n            + ' is ' + good_category[0])\n         #sorted list of beer prices and seller\n         for offer in oo['beer']:\n            print(offer['price'], offer['sender'])\n\n        Lists can only efficiently pop the last item. Therefore it is more\n        efficient to order backwards and buy the last good first::\n\n         def buy_input_good(self):\n            offers = self.get_offers_all(descending=True)\n            while offers:\n                if offers[good][-1]['quantity'] == self.prices_for_which_buy[good]:\n                    self.accept(offers[good].pop())\n        ";
-static PyMethodDef __pyx_mdef_4abce_5trade_5Trade_1get_offers_all = {"get_offers_all", (PyCFunction)__pyx_pw_4abce_5trade_5Trade_1get_offers_all, METH_VARARGS|METH_KEYWORDS, __pyx_doc_4abce_5trade_5Trade_get_offers_all};
-static PyObject *__pyx_pw_4abce_5trade_5Trade_1get_offers_all(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_5trade_5Trade_1get_offers_all(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_5trade_5Trade_get_offers_all[] = " returns all offers in a dictionary, with goods as key. The in each\n        goods-category the goods are ordered by price. The order can be reversed\n        by setting descending=True\n\n        *Offers that are not accepted in the same subround (def block) are\n        automatically rejected.* However you can also manually reject.\n\n        Args::\n\n         descending(optional): is a bool. False for descending True for\n                               ascending by price\n\n        Example2::\n\n         oo = get_offers_all(descending=False)\n         for good_category in oo:\n            print('The cheapest good of category' + good_category\n            + ' is ' + good_category[0])\n         #sorted list of beer prices and seller\n         for offer in oo['beer']:\n            print(offer['price'], offer['sender'])\n\n        Lists can only efficiently pop the last item. Therefore it is more\n        efficient to order backwards and buy the last good first::\n\n         def buy_input_good(self):\n            offers = self.get_offers_all(descending=True)\n            while offers:\n                if offers[good][-1]['quantity'] == self.prices_for_which_buy[good]:\n                    self.accept(offers[good].pop())\n        ";
+static PyMethodDef __pyx_mdef_5trade_5Trade_1get_offers_all = {"get_offers_all", (PyCFunction)__pyx_pw_5trade_5Trade_1get_offers_all, METH_VARARGS|METH_KEYWORDS, __pyx_doc_5trade_5Trade_get_offers_all};
+static PyObject *__pyx_pw_5trade_5Trade_1get_offers_all(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_self = 0;
   PyObject *__pyx_v_descending = 0;
   PyObject *__pyx_r = 0;
@@ -2865,7 +3078,7 @@ static PyObject *__pyx_pw_4abce_5trade_5Trade_1get_offers_all(PyObject *__pyx_se
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "get_offers_all") < 0)) __PYX_ERR(0, 190, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "get_offers_all") < 0)) __PYX_ERR(0, 200, __pyx_L3_error)
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -2880,20 +3093,20 @@ static PyObject *__pyx_pw_4abce_5trade_5Trade_1get_offers_all(PyObject *__pyx_se
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("get_offers_all", 0, 1, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 190, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("get_offers_all", 0, 1, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 200, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("abce.trade.Trade.get_offers_all", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Trade.get_offers_all", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_4abce_5trade_5Trade_get_offers_all(__pyx_self, __pyx_v_self, __pyx_v_descending);
+  __pyx_r = __pyx_pf_5trade_5Trade_get_offers_all(__pyx_self, __pyx_v_self, __pyx_v_descending);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_4abce_5trade_5Trade_get_offers_all(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_descending) {
+static PyObject *__pyx_pf_5trade_5Trade_get_offers_all(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_descending) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -2907,7 +3120,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_get_offers_all(CYTHON_UNUSED PyObj
   PyObject *__pyx_t_9 = NULL;
   __Pyx_RefNannySetupContext("get_offers_all", 0);
 
-  /* "abce/trade.pyx":222
+  /* "trade.pyx":232
  *                     self.accept(offers[good].pop())
  *         """
  *         return {good: self.get_offers(good, descending) for good in self._open_offers}             # <<<<<<<<<<<<<<
@@ -2917,17 +3130,17 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_get_offers_all(CYTHON_UNUSED PyObj
   __Pyx_XDECREF(__pyx_r);
   { /* enter inner scope */
     PyObject *__pyx_7genexpr__pyx_v_good = NULL;
-    __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 222, __pyx_L5_error)
+    __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 232, __pyx_L5_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_open_offers); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 222, __pyx_L5_error)
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_open_offers); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 232, __pyx_L5_error)
     __Pyx_GOTREF(__pyx_t_2);
     if (likely(PyList_CheckExact(__pyx_t_2)) || PyTuple_CheckExact(__pyx_t_2)) {
       __pyx_t_3 = __pyx_t_2; __Pyx_INCREF(__pyx_t_3); __pyx_t_4 = 0;
       __pyx_t_5 = NULL;
     } else {
-      __pyx_t_4 = -1; __pyx_t_3 = PyObject_GetIter(__pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 222, __pyx_L5_error)
+      __pyx_t_4 = -1; __pyx_t_3 = PyObject_GetIter(__pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 232, __pyx_L5_error)
       __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_5 = Py_TYPE(__pyx_t_3)->tp_iternext; if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 222, __pyx_L5_error)
+      __pyx_t_5 = Py_TYPE(__pyx_t_3)->tp_iternext; if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 232, __pyx_L5_error)
     }
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     for (;;) {
@@ -2935,17 +3148,17 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_get_offers_all(CYTHON_UNUSED PyObj
         if (likely(PyList_CheckExact(__pyx_t_3))) {
           if (__pyx_t_4 >= PyList_GET_SIZE(__pyx_t_3)) break;
           #if CYTHON_COMPILING_IN_CPYTHON
-          __pyx_t_2 = PyList_GET_ITEM(__pyx_t_3, __pyx_t_4); __Pyx_INCREF(__pyx_t_2); __pyx_t_4++; if (unlikely(0 < 0)) __PYX_ERR(0, 222, __pyx_L5_error)
+          __pyx_t_2 = PyList_GET_ITEM(__pyx_t_3, __pyx_t_4); __Pyx_INCREF(__pyx_t_2); __pyx_t_4++; if (unlikely(0 < 0)) __PYX_ERR(0, 232, __pyx_L5_error)
           #else
-          __pyx_t_2 = PySequence_ITEM(__pyx_t_3, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 222, __pyx_L5_error)
+          __pyx_t_2 = PySequence_ITEM(__pyx_t_3, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 232, __pyx_L5_error)
           __Pyx_GOTREF(__pyx_t_2);
           #endif
         } else {
           if (__pyx_t_4 >= PyTuple_GET_SIZE(__pyx_t_3)) break;
           #if CYTHON_COMPILING_IN_CPYTHON
-          __pyx_t_2 = PyTuple_GET_ITEM(__pyx_t_3, __pyx_t_4); __Pyx_INCREF(__pyx_t_2); __pyx_t_4++; if (unlikely(0 < 0)) __PYX_ERR(0, 222, __pyx_L5_error)
+          __pyx_t_2 = PyTuple_GET_ITEM(__pyx_t_3, __pyx_t_4); __Pyx_INCREF(__pyx_t_2); __pyx_t_4++; if (unlikely(0 < 0)) __PYX_ERR(0, 232, __pyx_L5_error)
           #else
-          __pyx_t_2 = PySequence_ITEM(__pyx_t_3, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 222, __pyx_L5_error)
+          __pyx_t_2 = PySequence_ITEM(__pyx_t_3, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 232, __pyx_L5_error)
           __Pyx_GOTREF(__pyx_t_2);
           #endif
         }
@@ -2955,7 +3168,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_get_offers_all(CYTHON_UNUSED PyObj
           PyObject* exc_type = PyErr_Occurred();
           if (exc_type) {
             if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-            else __PYX_ERR(0, 222, __pyx_L5_error)
+            else __PYX_ERR(0, 232, __pyx_L5_error)
           }
           break;
         }
@@ -2963,7 +3176,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_get_offers_all(CYTHON_UNUSED PyObj
       }
       __Pyx_XDECREF_SET(__pyx_7genexpr__pyx_v_good, __pyx_t_2);
       __pyx_t_2 = 0;
-      __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_get_offers); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 222, __pyx_L5_error)
+      __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_get_offers); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 232, __pyx_L5_error)
       __Pyx_GOTREF(__pyx_t_6);
       __pyx_t_7 = NULL;
       __pyx_t_8 = 0;
@@ -2977,7 +3190,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_get_offers_all(CYTHON_UNUSED PyObj
           __pyx_t_8 = 1;
         }
       }
-      __pyx_t_9 = PyTuple_New(2+__pyx_t_8); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 222, __pyx_L5_error)
+      __pyx_t_9 = PyTuple_New(2+__pyx_t_8); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 232, __pyx_L5_error)
       __Pyx_GOTREF(__pyx_t_9);
       if (__pyx_t_7) {
         __Pyx_GIVEREF(__pyx_t_7); PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_t_7); __pyx_t_7 = NULL;
@@ -2988,11 +3201,11 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_get_offers_all(CYTHON_UNUSED PyObj
       __Pyx_INCREF(__pyx_v_descending);
       __Pyx_GIVEREF(__pyx_v_descending);
       PyTuple_SET_ITEM(__pyx_t_9, 1+__pyx_t_8, __pyx_v_descending);
-      __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_t_9, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 222, __pyx_L5_error)
+      __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_t_9, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 232, __pyx_L5_error)
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-      if (unlikely(PyDict_SetItem(__pyx_t_1, (PyObject*)__pyx_7genexpr__pyx_v_good, (PyObject*)__pyx_t_2))) __PYX_ERR(0, 222, __pyx_L5_error)
+      if (unlikely(PyDict_SetItem(__pyx_t_1, (PyObject*)__pyx_7genexpr__pyx_v_good, (PyObject*)__pyx_t_2))) __PYX_ERR(0, 232, __pyx_L5_error)
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     }
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -3007,7 +3220,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_get_offers_all(CYTHON_UNUSED PyObj
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "abce/trade.pyx":190
+  /* "trade.pyx":200
  *                 self.price *= offer['final_quantity'] / offer['quantity']
  *     """
  *     def get_offers_all(self, descending=False):             # <<<<<<<<<<<<<<
@@ -3023,7 +3236,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_get_offers_all(CYTHON_UNUSED PyObj
   __Pyx_XDECREF(__pyx_t_6);
   __Pyx_XDECREF(__pyx_t_7);
   __Pyx_XDECREF(__pyx_t_9);
-  __Pyx_AddTraceback("abce.trade.Trade.get_offers_all", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Trade.get_offers_all", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -3031,7 +3244,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_get_offers_all(CYTHON_UNUSED PyObj
   return __pyx_r;
 }
 
-/* "abce/trade.pyx":224
+/* "trade.pyx":234
  *         return {good: self.get_offers(good, descending) for good in self._open_offers}
  * 
  *     def get_offers(self, good, descending=False):             # <<<<<<<<<<<<<<
@@ -3040,10 +3253,10 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_get_offers_all(CYTHON_UNUSED PyObj
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_4abce_5trade_5Trade_3get_offers(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_4abce_5trade_5Trade_2get_offers[] = " returns all offers of the 'good' ordered by price.\n\n        *Offers that are not accepted in the same subround (def block) are\n        automatically rejected.* However you can also manualy reject.\n\n        peek_offers can be used to look at the offers without them being\n        rejected automatically\n\n        Args:\n            good:\n                the good which should be retrieved\n            descending(bool,default=False):\n                False for descending True for ascending by price\n\n        Returns:\n            A list of offers ordered by price\n\n        Example::\n\n            offers = get_offers('books')\n            for offer in offers:\n                if offer['price'] < 50:\n                    self.accept(offer)\n                elif offer['price'] < 100:\n                    self.accept(offer, 1)\n                else:\n                    self.reject(offer)  # optional\n        ";
-static PyMethodDef __pyx_mdef_4abce_5trade_5Trade_3get_offers = {"get_offers", (PyCFunction)__pyx_pw_4abce_5trade_5Trade_3get_offers, METH_VARARGS|METH_KEYWORDS, __pyx_doc_4abce_5trade_5Trade_2get_offers};
-static PyObject *__pyx_pw_4abce_5trade_5Trade_3get_offers(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_5trade_5Trade_3get_offers(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_5trade_5Trade_2get_offers[] = " returns all offers of the 'good' ordered by price.\n\n        *Offers that are not accepted in the same subround (def block) are\n        automatically rejected.* However you can also manualy reject.\n\n        peek_offers can be used to look at the offers without them being\n        rejected automatically\n\n        Args:\n            good:\n                the good which should be retrieved\n            descending(bool,default=False):\n                False for descending True for ascending by price\n\n        Returns:\n            A list of offers ordered by price\n\n        Example::\n\n            offers = get_offers('books')\n            for offer in offers:\n                if offer['price'] < 50:\n                    self.accept(offer)\n                elif offer['price'] < 100:\n                    self.accept(offer, 1)\n                else:\n                    self.reject(offer)  # optional\n        ";
+static PyMethodDef __pyx_mdef_5trade_5Trade_3get_offers = {"get_offers", (PyCFunction)__pyx_pw_5trade_5Trade_3get_offers, METH_VARARGS|METH_KEYWORDS, __pyx_doc_5trade_5Trade_2get_offers};
+static PyObject *__pyx_pw_5trade_5Trade_3get_offers(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_self = 0;
   PyObject *__pyx_v_good = 0;
   PyObject *__pyx_v_descending = 0;
@@ -3072,7 +3285,7 @@ static PyObject *__pyx_pw_4abce_5trade_5Trade_3get_offers(PyObject *__pyx_self, 
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_good)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("get_offers", 0, 2, 3, 1); __PYX_ERR(0, 224, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("get_offers", 0, 2, 3, 1); __PYX_ERR(0, 234, __pyx_L3_error)
         }
         case  2:
         if (kw_args > 0) {
@@ -3081,7 +3294,7 @@ static PyObject *__pyx_pw_4abce_5trade_5Trade_3get_offers(PyObject *__pyx_self, 
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "get_offers") < 0)) __PYX_ERR(0, 224, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "get_offers") < 0)) __PYX_ERR(0, 234, __pyx_L3_error)
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -3098,20 +3311,20 @@ static PyObject *__pyx_pw_4abce_5trade_5Trade_3get_offers(PyObject *__pyx_self, 
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("get_offers", 0, 2, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 224, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("get_offers", 0, 2, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 234, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("abce.trade.Trade.get_offers", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Trade.get_offers", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_4abce_5trade_5Trade_2get_offers(__pyx_self, __pyx_v_self, __pyx_v_good, __pyx_v_descending);
+  __pyx_r = __pyx_pf_5trade_5Trade_2get_offers(__pyx_self, __pyx_v_self, __pyx_v_good, __pyx_v_descending);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-/* "abce/trade.pyx":258
+/* "trade.pyx":268
  *             ret.append(offer)
  *         shuffle(ret)
  *         ret.sort(key=lambda objects: objects['price'], reverse=descending)             # <<<<<<<<<<<<<<
@@ -3120,9 +3333,9 @@ static PyObject *__pyx_pw_4abce_5trade_5Trade_3get_offers(PyObject *__pyx_self, 
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_4abce_5trade_5Trade_10get_offers_lambda(PyObject *__pyx_self, PyObject *__pyx_v_objects); /*proto*/
-static PyMethodDef __pyx_mdef_4abce_5trade_5Trade_10get_offers_lambda = {"lambda", (PyCFunction)__pyx_pw_4abce_5trade_5Trade_10get_offers_lambda, METH_O, 0};
-static PyObject *__pyx_pw_4abce_5trade_5Trade_10get_offers_lambda(PyObject *__pyx_self, PyObject *__pyx_v_objects) {
+static PyObject *__pyx_pw_5trade_5Trade_10get_offers_lambda(PyObject *__pyx_self, PyObject *__pyx_v_objects); /*proto*/
+static PyMethodDef __pyx_mdef_5trade_5Trade_10get_offers_lambda = {"lambda", (PyCFunction)__pyx_pw_5trade_5Trade_10get_offers_lambda, METH_O, 0};
+static PyObject *__pyx_pw_5trade_5Trade_10get_offers_lambda(PyObject *__pyx_self, PyObject *__pyx_v_objects) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("lambda (wrapper)", 0);
@@ -3139,7 +3352,7 @@ static PyObject *__pyx_lambda_funcdef_lambda(CYTHON_UNUSED PyObject *__pyx_self,
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("lambda", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyObject_GetItem(__pyx_v_objects, __pyx_n_s_price); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 258, __pyx_L1_error)
+  __pyx_t_1 = PyObject_GetItem(__pyx_v_objects, __pyx_n_s_price); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 268, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3148,7 +3361,7 @@ static PyObject *__pyx_lambda_funcdef_lambda(CYTHON_UNUSED PyObject *__pyx_self,
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("abce.trade.Trade.get_offers.lambda", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Trade.get_offers.lambda", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -3156,7 +3369,7 @@ static PyObject *__pyx_lambda_funcdef_lambda(CYTHON_UNUSED PyObject *__pyx_self,
   return __pyx_r;
 }
 
-/* "abce/trade.pyx":224
+/* "trade.pyx":234
  *         return {good: self.get_offers(good, descending) for good in self._open_offers}
  * 
  *     def get_offers(self, good, descending=False):             # <<<<<<<<<<<<<<
@@ -3164,7 +3377,7 @@ static PyObject *__pyx_lambda_funcdef_lambda(CYTHON_UNUSED PyObject *__pyx_self,
  * 
  */
 
-static PyObject *__pyx_pf_4abce_5trade_5Trade_2get_offers(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_good, PyObject *__pyx_v_descending) {
+static PyObject *__pyx_pf_5trade_5Trade_2get_offers(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_good, PyObject *__pyx_v_descending) {
   PyObject *__pyx_v_ret = NULL;
   PyObject *__pyx_v_offer = NULL;
   PyObject *__pyx_r = NULL;
@@ -3178,31 +3391,31 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_2get_offers(CYTHON_UNUSED PyObject
   PyObject *__pyx_t_7 = NULL;
   __Pyx_RefNannySetupContext("get_offers", 0);
 
-  /* "abce/trade.pyx":253
+  /* "trade.pyx":263
  *                     self.reject(offer)  # optional
  *         """
  *         ret = []             # <<<<<<<<<<<<<<
  *         for offer in self._open_offers[good].values():
  *             offer['open_offer_status'] = 'polled'
  */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 253, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 263, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_ret = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "abce/trade.pyx":254
+  /* "trade.pyx":264
  *         """
  *         ret = []
  *         for offer in self._open_offers[good].values():             # <<<<<<<<<<<<<<
  *             offer['open_offer_status'] = 'polled'
  *             ret.append(offer)
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_open_offers); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 254, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_open_offers); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 264, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = PyObject_GetItem(__pyx_t_2, __pyx_v_good); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 254, __pyx_L1_error)
+  __pyx_t_3 = PyObject_GetItem(__pyx_t_2, __pyx_v_good); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 264, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_values); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 254, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_values); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 264, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_t_3 = NULL;
@@ -3216,10 +3429,10 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_2get_offers(CYTHON_UNUSED PyObject
     }
   }
   if (__pyx_t_3) {
-    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 254, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 264, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   } else {
-    __pyx_t_1 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 254, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 264, __pyx_L1_error)
   }
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -3227,9 +3440,9 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_2get_offers(CYTHON_UNUSED PyObject
     __pyx_t_2 = __pyx_t_1; __Pyx_INCREF(__pyx_t_2); __pyx_t_4 = 0;
     __pyx_t_5 = NULL;
   } else {
-    __pyx_t_4 = -1; __pyx_t_2 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 254, __pyx_L1_error)
+    __pyx_t_4 = -1; __pyx_t_2 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 264, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_5 = Py_TYPE(__pyx_t_2)->tp_iternext; if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 254, __pyx_L1_error)
+    __pyx_t_5 = Py_TYPE(__pyx_t_2)->tp_iternext; if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 264, __pyx_L1_error)
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   for (;;) {
@@ -3237,17 +3450,17 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_2get_offers(CYTHON_UNUSED PyObject
       if (likely(PyList_CheckExact(__pyx_t_2))) {
         if (__pyx_t_4 >= PyList_GET_SIZE(__pyx_t_2)) break;
         #if CYTHON_COMPILING_IN_CPYTHON
-        __pyx_t_1 = PyList_GET_ITEM(__pyx_t_2, __pyx_t_4); __Pyx_INCREF(__pyx_t_1); __pyx_t_4++; if (unlikely(0 < 0)) __PYX_ERR(0, 254, __pyx_L1_error)
+        __pyx_t_1 = PyList_GET_ITEM(__pyx_t_2, __pyx_t_4); __Pyx_INCREF(__pyx_t_1); __pyx_t_4++; if (unlikely(0 < 0)) __PYX_ERR(0, 264, __pyx_L1_error)
         #else
-        __pyx_t_1 = PySequence_ITEM(__pyx_t_2, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 254, __pyx_L1_error)
+        __pyx_t_1 = PySequence_ITEM(__pyx_t_2, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 264, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
         #endif
       } else {
         if (__pyx_t_4 >= PyTuple_GET_SIZE(__pyx_t_2)) break;
         #if CYTHON_COMPILING_IN_CPYTHON
-        __pyx_t_1 = PyTuple_GET_ITEM(__pyx_t_2, __pyx_t_4); __Pyx_INCREF(__pyx_t_1); __pyx_t_4++; if (unlikely(0 < 0)) __PYX_ERR(0, 254, __pyx_L1_error)
+        __pyx_t_1 = PyTuple_GET_ITEM(__pyx_t_2, __pyx_t_4); __Pyx_INCREF(__pyx_t_1); __pyx_t_4++; if (unlikely(0 < 0)) __PYX_ERR(0, 264, __pyx_L1_error)
         #else
-        __pyx_t_1 = PySequence_ITEM(__pyx_t_2, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 254, __pyx_L1_error)
+        __pyx_t_1 = PySequence_ITEM(__pyx_t_2, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 264, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
         #endif
       }
@@ -3257,7 +3470,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_2get_offers(CYTHON_UNUSED PyObject
         PyObject* exc_type = PyErr_Occurred();
         if (exc_type) {
           if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-          else __PYX_ERR(0, 254, __pyx_L1_error)
+          else __PYX_ERR(0, 264, __pyx_L1_error)
         }
         break;
       }
@@ -3266,25 +3479,25 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_2get_offers(CYTHON_UNUSED PyObject
     __Pyx_XDECREF_SET(__pyx_v_offer, __pyx_t_1);
     __pyx_t_1 = 0;
 
-    /* "abce/trade.pyx":255
+    /* "trade.pyx":265
  *         ret = []
  *         for offer in self._open_offers[good].values():
  *             offer['open_offer_status'] = 'polled'             # <<<<<<<<<<<<<<
  *             ret.append(offer)
  *         shuffle(ret)
  */
-    if (unlikely(PyObject_SetItem(__pyx_v_offer, __pyx_n_s_open_offer_status, __pyx_n_s_polled) < 0)) __PYX_ERR(0, 255, __pyx_L1_error)
+    if (unlikely(PyObject_SetItem(__pyx_v_offer, __pyx_n_s_open_offer_status, __pyx_n_s_polled) < 0)) __PYX_ERR(0, 265, __pyx_L1_error)
 
-    /* "abce/trade.pyx":256
+    /* "trade.pyx":266
  *         for offer in self._open_offers[good].values():
  *             offer['open_offer_status'] = 'polled'
  *             ret.append(offer)             # <<<<<<<<<<<<<<
  *         shuffle(ret)
  *         ret.sort(key=lambda objects: objects['price'], reverse=descending)
  */
-    __pyx_t_6 = __Pyx_PyList_Append(__pyx_v_ret, __pyx_v_offer); if (unlikely(__pyx_t_6 == -1)) __PYX_ERR(0, 256, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyList_Append(__pyx_v_ret, __pyx_v_offer); if (unlikely(__pyx_t_6 == -1)) __PYX_ERR(0, 266, __pyx_L1_error)
 
-    /* "abce/trade.pyx":254
+    /* "trade.pyx":264
  *         """
  *         ret = []
  *         for offer in self._open_offers[good].values():             # <<<<<<<<<<<<<<
@@ -3294,14 +3507,14 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_2get_offers(CYTHON_UNUSED PyObject
   }
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "abce/trade.pyx":257
+  /* "trade.pyx":267
  *             offer['open_offer_status'] = 'polled'
  *             ret.append(offer)
  *         shuffle(ret)             # <<<<<<<<<<<<<<
  *         ret.sort(key=lambda objects: objects['price'], reverse=descending)
  *         return ret
  */
-  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_shuffle); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 257, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_shuffle); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 267, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_t_3 = NULL;
   if (CYTHON_COMPILING_IN_CPYTHON && unlikely(PyMethod_Check(__pyx_t_1))) {
@@ -3314,45 +3527,45 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_2get_offers(CYTHON_UNUSED PyObject
     }
   }
   if (!__pyx_t_3) {
-    __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_v_ret); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 257, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_v_ret); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 267, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
   } else {
-    __pyx_t_7 = PyTuple_New(1+1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 257, __pyx_L1_error)
+    __pyx_t_7 = PyTuple_New(1+1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 267, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __Pyx_GIVEREF(__pyx_t_3); PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_t_3); __pyx_t_3 = NULL;
     __Pyx_INCREF(__pyx_v_ret);
     __Pyx_GIVEREF(__pyx_v_ret);
     PyTuple_SET_ITEM(__pyx_t_7, 0+1, __pyx_v_ret);
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_7, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 257, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_7, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 267, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "abce/trade.pyx":258
+  /* "trade.pyx":268
  *             ret.append(offer)
  *         shuffle(ret)
  *         ret.sort(key=lambda objects: objects['price'], reverse=descending)             # <<<<<<<<<<<<<<
  *         return ret
  * 
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_ret, __pyx_n_s_sort); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 258, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_ret, __pyx_n_s_sort); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 268, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 258, __pyx_L1_error)
+  __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 268, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_7 = __Pyx_CyFunction_NewEx(&__pyx_mdef_4abce_5trade_5Trade_10get_offers_lambda, 0, __pyx_n_s_Trade_get_offers_locals_lambda, NULL, __pyx_n_s_abce_trade, __pyx_d, NULL); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 258, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_CyFunction_NewEx(&__pyx_mdef_5trade_5Trade_10get_offers_lambda, 0, __pyx_n_s_Trade_get_offers_locals_lambda, NULL, __pyx_n_s_trade, __pyx_d, NULL); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 268, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_key, __pyx_t_7) < 0) __PYX_ERR(0, 258, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_key, __pyx_t_7) < 0) __PYX_ERR(0, 268, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_reverse, __pyx_v_descending) < 0) __PYX_ERR(0, 258, __pyx_L1_error)
-  __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_empty_tuple, __pyx_t_1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 258, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_reverse, __pyx_v_descending) < 0) __PYX_ERR(0, 268, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_empty_tuple, __pyx_t_1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 268, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-  /* "abce/trade.pyx":259
+  /* "trade.pyx":269
  *         shuffle(ret)
  *         ret.sort(key=lambda objects: objects['price'], reverse=descending)
  *         return ret             # <<<<<<<<<<<<<<
@@ -3364,7 +3577,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_2get_offers(CYTHON_UNUSED PyObject
   __pyx_r = __pyx_v_ret;
   goto __pyx_L0;
 
-  /* "abce/trade.pyx":224
+  /* "trade.pyx":234
  *         return {good: self.get_offers(good, descending) for good in self._open_offers}
  * 
  *     def get_offers(self, good, descending=False):             # <<<<<<<<<<<<<<
@@ -3378,7 +3591,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_2get_offers(CYTHON_UNUSED PyObject
   __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_7);
-  __Pyx_AddTraceback("abce.trade.Trade.get_offers", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Trade.get_offers", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_ret);
@@ -3388,7 +3601,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_2get_offers(CYTHON_UNUSED PyObject
   return __pyx_r;
 }
 
-/* "abce/trade.pyx":261
+/* "trade.pyx":271
  *         return ret
  * 
  *     def peak_offers(self, good, descending=False):             # <<<<<<<<<<<<<<
@@ -3397,10 +3610,10 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_2get_offers(CYTHON_UNUSED PyObject
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_4abce_5trade_5Trade_5peak_offers(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_4abce_5trade_5Trade_4peak_offers[] = " returns a peak on all offers of the 'good' ordered by price.\n        Peaked offers can not be accepted or rejected, but they do not\n        expire.\n\n        Args:\n            good:\n                the good which should be retrieved\n                descending(bool,default=False):\n                False for descending True for ascending by price\n\n        Returns:\n            A list of offers ordered by price\n\n        Example::\n\n            offers = get_offers('books')\n            for offer in offers:\n                if offer['price'] < 50:\n                    self.accept(offer)\n                elif offer['price'] < 100:\n                    self.accept(offer, 1)\n                else:\n                    self.reject(offer)  # optional\n        ";
-static PyMethodDef __pyx_mdef_4abce_5trade_5Trade_5peak_offers = {"peak_offers", (PyCFunction)__pyx_pw_4abce_5trade_5Trade_5peak_offers, METH_VARARGS|METH_KEYWORDS, __pyx_doc_4abce_5trade_5Trade_4peak_offers};
-static PyObject *__pyx_pw_4abce_5trade_5Trade_5peak_offers(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_5trade_5Trade_5peak_offers(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_5trade_5Trade_4peak_offers[] = " returns a peak on all offers of the 'good' ordered by price.\n        Peaked offers can not be accepted or rejected, but they do not\n        expire.\n\n        Args:\n            good:\n                the good which should be retrieved\n                descending(bool,default=False):\n                False for descending True for ascending by price\n\n        Returns:\n            A list of offers ordered by price\n\n        Example::\n\n            offers = get_offers('books')\n            for offer in offers:\n                if offer['price'] < 50:\n                    self.accept(offer)\n                elif offer['price'] < 100:\n                    self.accept(offer, 1)\n                else:\n                    self.reject(offer)  # optional\n        ";
+static PyMethodDef __pyx_mdef_5trade_5Trade_5peak_offers = {"peak_offers", (PyCFunction)__pyx_pw_5trade_5Trade_5peak_offers, METH_VARARGS|METH_KEYWORDS, __pyx_doc_5trade_5Trade_4peak_offers};
+static PyObject *__pyx_pw_5trade_5Trade_5peak_offers(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_self = 0;
   PyObject *__pyx_v_good = 0;
   PyObject *__pyx_v_descending = 0;
@@ -3429,7 +3642,7 @@ static PyObject *__pyx_pw_4abce_5trade_5Trade_5peak_offers(PyObject *__pyx_self,
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_good)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("peak_offers", 0, 2, 3, 1); __PYX_ERR(0, 261, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("peak_offers", 0, 2, 3, 1); __PYX_ERR(0, 271, __pyx_L3_error)
         }
         case  2:
         if (kw_args > 0) {
@@ -3438,7 +3651,7 @@ static PyObject *__pyx_pw_4abce_5trade_5Trade_5peak_offers(PyObject *__pyx_self,
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "peak_offers") < 0)) __PYX_ERR(0, 261, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "peak_offers") < 0)) __PYX_ERR(0, 271, __pyx_L3_error)
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -3455,20 +3668,20 @@ static PyObject *__pyx_pw_4abce_5trade_5Trade_5peak_offers(PyObject *__pyx_self,
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("peak_offers", 0, 2, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 261, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("peak_offers", 0, 2, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 271, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("abce.trade.Trade.peak_offers", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Trade.peak_offers", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_4abce_5trade_5Trade_4peak_offers(__pyx_self, __pyx_v_self, __pyx_v_good, __pyx_v_descending);
+  __pyx_r = __pyx_pf_5trade_5Trade_4peak_offers(__pyx_self, __pyx_v_self, __pyx_v_good, __pyx_v_descending);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-/* "abce/trade.pyx":291
+/* "trade.pyx":301
  *             ret.append(offer)
  *         shuffle(ret)
  *         ret.sort(key=lambda objects: objects['price'], reverse=descending)             # <<<<<<<<<<<<<<
@@ -3477,9 +3690,9 @@ static PyObject *__pyx_pw_4abce_5trade_5Trade_5peak_offers(PyObject *__pyx_self,
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_4abce_5trade_5Trade_11peak_offers_lambda1(PyObject *__pyx_self, PyObject *__pyx_v_objects); /*proto*/
-static PyMethodDef __pyx_mdef_4abce_5trade_5Trade_11peak_offers_lambda1 = {"lambda1", (PyCFunction)__pyx_pw_4abce_5trade_5Trade_11peak_offers_lambda1, METH_O, 0};
-static PyObject *__pyx_pw_4abce_5trade_5Trade_11peak_offers_lambda1(PyObject *__pyx_self, PyObject *__pyx_v_objects) {
+static PyObject *__pyx_pw_5trade_5Trade_11peak_offers_lambda1(PyObject *__pyx_self, PyObject *__pyx_v_objects); /*proto*/
+static PyMethodDef __pyx_mdef_5trade_5Trade_11peak_offers_lambda1 = {"lambda1", (PyCFunction)__pyx_pw_5trade_5Trade_11peak_offers_lambda1, METH_O, 0};
+static PyObject *__pyx_pw_5trade_5Trade_11peak_offers_lambda1(PyObject *__pyx_self, PyObject *__pyx_v_objects) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("lambda1 (wrapper)", 0);
@@ -3496,7 +3709,7 @@ static PyObject *__pyx_lambda_funcdef_lambda1(CYTHON_UNUSED PyObject *__pyx_self
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("lambda1", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyObject_GetItem(__pyx_v_objects, __pyx_n_s_price); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 291, __pyx_L1_error)
+  __pyx_t_1 = PyObject_GetItem(__pyx_v_objects, __pyx_n_s_price); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 301, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3505,7 +3718,7 @@ static PyObject *__pyx_lambda_funcdef_lambda1(CYTHON_UNUSED PyObject *__pyx_self
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("abce.trade.Trade.peak_offers.lambda1", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Trade.peak_offers.lambda1", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -3513,7 +3726,7 @@ static PyObject *__pyx_lambda_funcdef_lambda1(CYTHON_UNUSED PyObject *__pyx_self
   return __pyx_r;
 }
 
-/* "abce/trade.pyx":261
+/* "trade.pyx":271
  *         return ret
  * 
  *     def peak_offers(self, good, descending=False):             # <<<<<<<<<<<<<<
@@ -3521,7 +3734,7 @@ static PyObject *__pyx_lambda_funcdef_lambda1(CYTHON_UNUSED PyObject *__pyx_self
  *         Peaked offers can not be accepted or rejected, but they do not
  */
 
-static PyObject *__pyx_pf_4abce_5trade_5Trade_4peak_offers(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_good, PyObject *__pyx_v_descending) {
+static PyObject *__pyx_pf_5trade_5Trade_4peak_offers(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_good, PyObject *__pyx_v_descending) {
   PyObject *__pyx_v_ret = NULL;
   PyObject *__pyx_v_offer = NULL;
   PyObject *__pyx_r = NULL;
@@ -3535,31 +3748,31 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_4peak_offers(CYTHON_UNUSED PyObjec
   PyObject *__pyx_t_7 = NULL;
   __Pyx_RefNannySetupContext("peak_offers", 0);
 
-  /* "abce/trade.pyx":286
+  /* "trade.pyx":296
  *                     self.reject(offer)  # optional
  *         """
  *         ret = []             # <<<<<<<<<<<<<<
  *         for offer in self._open_offers[good].values():
  *             offer['open_offer_status'] = 'peak_only'
  */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 286, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 296, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_ret = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "abce/trade.pyx":287
+  /* "trade.pyx":297
  *         """
  *         ret = []
  *         for offer in self._open_offers[good].values():             # <<<<<<<<<<<<<<
  *             offer['open_offer_status'] = 'peak_only'
  *             ret.append(offer)
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_open_offers); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 287, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_open_offers); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 297, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = PyObject_GetItem(__pyx_t_2, __pyx_v_good); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 287, __pyx_L1_error)
+  __pyx_t_3 = PyObject_GetItem(__pyx_t_2, __pyx_v_good); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 297, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_values); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 287, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_values); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 297, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_t_3 = NULL;
@@ -3573,10 +3786,10 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_4peak_offers(CYTHON_UNUSED PyObjec
     }
   }
   if (__pyx_t_3) {
-    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 287, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 297, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   } else {
-    __pyx_t_1 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 287, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_CallNoArg(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 297, __pyx_L1_error)
   }
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -3584,9 +3797,9 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_4peak_offers(CYTHON_UNUSED PyObjec
     __pyx_t_2 = __pyx_t_1; __Pyx_INCREF(__pyx_t_2); __pyx_t_4 = 0;
     __pyx_t_5 = NULL;
   } else {
-    __pyx_t_4 = -1; __pyx_t_2 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 287, __pyx_L1_error)
+    __pyx_t_4 = -1; __pyx_t_2 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 297, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_5 = Py_TYPE(__pyx_t_2)->tp_iternext; if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 287, __pyx_L1_error)
+    __pyx_t_5 = Py_TYPE(__pyx_t_2)->tp_iternext; if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 297, __pyx_L1_error)
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   for (;;) {
@@ -3594,17 +3807,17 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_4peak_offers(CYTHON_UNUSED PyObjec
       if (likely(PyList_CheckExact(__pyx_t_2))) {
         if (__pyx_t_4 >= PyList_GET_SIZE(__pyx_t_2)) break;
         #if CYTHON_COMPILING_IN_CPYTHON
-        __pyx_t_1 = PyList_GET_ITEM(__pyx_t_2, __pyx_t_4); __Pyx_INCREF(__pyx_t_1); __pyx_t_4++; if (unlikely(0 < 0)) __PYX_ERR(0, 287, __pyx_L1_error)
+        __pyx_t_1 = PyList_GET_ITEM(__pyx_t_2, __pyx_t_4); __Pyx_INCREF(__pyx_t_1); __pyx_t_4++; if (unlikely(0 < 0)) __PYX_ERR(0, 297, __pyx_L1_error)
         #else
-        __pyx_t_1 = PySequence_ITEM(__pyx_t_2, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 287, __pyx_L1_error)
+        __pyx_t_1 = PySequence_ITEM(__pyx_t_2, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 297, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
         #endif
       } else {
         if (__pyx_t_4 >= PyTuple_GET_SIZE(__pyx_t_2)) break;
         #if CYTHON_COMPILING_IN_CPYTHON
-        __pyx_t_1 = PyTuple_GET_ITEM(__pyx_t_2, __pyx_t_4); __Pyx_INCREF(__pyx_t_1); __pyx_t_4++; if (unlikely(0 < 0)) __PYX_ERR(0, 287, __pyx_L1_error)
+        __pyx_t_1 = PyTuple_GET_ITEM(__pyx_t_2, __pyx_t_4); __Pyx_INCREF(__pyx_t_1); __pyx_t_4++; if (unlikely(0 < 0)) __PYX_ERR(0, 297, __pyx_L1_error)
         #else
-        __pyx_t_1 = PySequence_ITEM(__pyx_t_2, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 287, __pyx_L1_error)
+        __pyx_t_1 = PySequence_ITEM(__pyx_t_2, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 297, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
         #endif
       }
@@ -3614,7 +3827,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_4peak_offers(CYTHON_UNUSED PyObjec
         PyObject* exc_type = PyErr_Occurred();
         if (exc_type) {
           if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-          else __PYX_ERR(0, 287, __pyx_L1_error)
+          else __PYX_ERR(0, 297, __pyx_L1_error)
         }
         break;
       }
@@ -3623,25 +3836,25 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_4peak_offers(CYTHON_UNUSED PyObjec
     __Pyx_XDECREF_SET(__pyx_v_offer, __pyx_t_1);
     __pyx_t_1 = 0;
 
-    /* "abce/trade.pyx":288
+    /* "trade.pyx":298
  *         ret = []
  *         for offer in self._open_offers[good].values():
  *             offer['open_offer_status'] = 'peak_only'             # <<<<<<<<<<<<<<
  *             ret.append(offer)
  *         shuffle(ret)
  */
-    if (unlikely(PyObject_SetItem(__pyx_v_offer, __pyx_n_s_open_offer_status, __pyx_n_s_peak_only) < 0)) __PYX_ERR(0, 288, __pyx_L1_error)
+    if (unlikely(PyObject_SetItem(__pyx_v_offer, __pyx_n_s_open_offer_status, __pyx_n_s_peak_only) < 0)) __PYX_ERR(0, 298, __pyx_L1_error)
 
-    /* "abce/trade.pyx":289
+    /* "trade.pyx":299
  *         for offer in self._open_offers[good].values():
  *             offer['open_offer_status'] = 'peak_only'
  *             ret.append(offer)             # <<<<<<<<<<<<<<
  *         shuffle(ret)
  *         ret.sort(key=lambda objects: objects['price'], reverse=descending)
  */
-    __pyx_t_6 = __Pyx_PyList_Append(__pyx_v_ret, __pyx_v_offer); if (unlikely(__pyx_t_6 == -1)) __PYX_ERR(0, 289, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyList_Append(__pyx_v_ret, __pyx_v_offer); if (unlikely(__pyx_t_6 == -1)) __PYX_ERR(0, 299, __pyx_L1_error)
 
-    /* "abce/trade.pyx":287
+    /* "trade.pyx":297
  *         """
  *         ret = []
  *         for offer in self._open_offers[good].values():             # <<<<<<<<<<<<<<
@@ -3651,14 +3864,14 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_4peak_offers(CYTHON_UNUSED PyObjec
   }
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "abce/trade.pyx":290
+  /* "trade.pyx":300
  *             offer['open_offer_status'] = 'peak_only'
  *             ret.append(offer)
  *         shuffle(ret)             # <<<<<<<<<<<<<<
  *         ret.sort(key=lambda objects: objects['price'], reverse=descending)
  *         return ret
  */
-  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_shuffle); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 290, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_shuffle); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 300, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_t_3 = NULL;
   if (CYTHON_COMPILING_IN_CPYTHON && unlikely(PyMethod_Check(__pyx_t_1))) {
@@ -3671,45 +3884,45 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_4peak_offers(CYTHON_UNUSED PyObjec
     }
   }
   if (!__pyx_t_3) {
-    __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_v_ret); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 290, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_v_ret); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 300, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
   } else {
-    __pyx_t_7 = PyTuple_New(1+1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 290, __pyx_L1_error)
+    __pyx_t_7 = PyTuple_New(1+1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 300, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __Pyx_GIVEREF(__pyx_t_3); PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_t_3); __pyx_t_3 = NULL;
     __Pyx_INCREF(__pyx_v_ret);
     __Pyx_GIVEREF(__pyx_v_ret);
     PyTuple_SET_ITEM(__pyx_t_7, 0+1, __pyx_v_ret);
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_7, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 290, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_7, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 300, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "abce/trade.pyx":291
+  /* "trade.pyx":301
  *             ret.append(offer)
  *         shuffle(ret)
  *         ret.sort(key=lambda objects: objects['price'], reverse=descending)             # <<<<<<<<<<<<<<
  *         return ret
  * 
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_ret, __pyx_n_s_sort); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 291, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_ret, __pyx_n_s_sort); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 301, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 291, __pyx_L1_error)
+  __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 301, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_7 = __Pyx_CyFunction_NewEx(&__pyx_mdef_4abce_5trade_5Trade_11peak_offers_lambda1, 0, __pyx_n_s_Trade_peak_offers_locals_lambda, NULL, __pyx_n_s_abce_trade, __pyx_d, NULL); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 291, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_CyFunction_NewEx(&__pyx_mdef_5trade_5Trade_11peak_offers_lambda1, 0, __pyx_n_s_Trade_peak_offers_locals_lambda, NULL, __pyx_n_s_trade, __pyx_d, NULL); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 301, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_key, __pyx_t_7) < 0) __PYX_ERR(0, 291, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_key, __pyx_t_7) < 0) __PYX_ERR(0, 301, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_reverse, __pyx_v_descending) < 0) __PYX_ERR(0, 291, __pyx_L1_error)
-  __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_empty_tuple, __pyx_t_1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 291, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_reverse, __pyx_v_descending) < 0) __PYX_ERR(0, 301, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_empty_tuple, __pyx_t_1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 301, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-  /* "abce/trade.pyx":292
+  /* "trade.pyx":302
  *         shuffle(ret)
  *         ret.sort(key=lambda objects: objects['price'], reverse=descending)
  *         return ret             # <<<<<<<<<<<<<<
@@ -3721,7 +3934,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_4peak_offers(CYTHON_UNUSED PyObjec
   __pyx_r = __pyx_v_ret;
   goto __pyx_L0;
 
-  /* "abce/trade.pyx":261
+  /* "trade.pyx":271
  *         return ret
  * 
  *     def peak_offers(self, good, descending=False):             # <<<<<<<<<<<<<<
@@ -3735,7 +3948,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_4peak_offers(CYTHON_UNUSED PyObjec
   __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_7);
-  __Pyx_AddTraceback("abce.trade.Trade.peak_offers", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Trade.peak_offers", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_ret);
@@ -3745,7 +3958,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_4peak_offers(CYTHON_UNUSED PyObjec
   return __pyx_r;
 }
 
-/* "abce/trade.pyx":294
+/* "trade.pyx":304
  *         return ret
  * 
  *     def sell(self, receiver_group, receiver_idn, good, double quantity, double price):             # <<<<<<<<<<<<<<
@@ -3754,10 +3967,10 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_4peak_offers(CYTHON_UNUSED PyObjec
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_4abce_5trade_5Trade_7sell(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_4abce_5trade_5Trade_6sell[] = " commits to sell the quantity of good at price\n\n        The good is not available for the agent. When the offer is\n        rejected it is automatically re-credited. When the offer is\n        accepted the money amount is credited. (partial acceptance\n        accordingly)\n\n        Args:\n            receiver_group: an agent name  NEVER a group or 'all'!!!\n            (its an error but with a confusing warning)\n            'good': name of the good\n            quantity: maximum units disposed to buy at this price\n            price: price per unit\n\n        Returns:\n            A reference to the offer. The offer and the offer status can\n            be accessed with `self.info(offer_reference)`.\n\n        Example::\n\n            def subround_1(self):\n                self.offer = self.sell('household', 1, 'cookies', quantity=5, price=0.1)\n\n            def subround_2(self):\n                offer = self.info(self.offer)\n                if offer['status'] == 'accepted':\n                    print(offer['final_quantity'] , 'cookies have be bougth')\n                else:\n                    offer['status'] == 'rejected':\n                    print('On diet')\n        ";
-static PyMethodDef __pyx_mdef_4abce_5trade_5Trade_7sell = {"sell", (PyCFunction)__pyx_pw_4abce_5trade_5Trade_7sell, METH_VARARGS|METH_KEYWORDS, __pyx_doc_4abce_5trade_5Trade_6sell};
-static PyObject *__pyx_pw_4abce_5trade_5Trade_7sell(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_5trade_5Trade_7sell(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_5trade_5Trade_6sell[] = " commits to sell the quantity of good at price\n\n        The good is not available for the agent. When the offer is\n        rejected it is automatically re-credited. When the offer is\n        accepted the money amount is credited. (partial acceptance\n        accordingly)\n\n        Args:\n            receiver_group: an agent name  NEVER a group or 'all'!!!\n            (its an error but with a confusing warning)\n            'good': name of the good\n            quantity: maximum units disposed to buy at this price\n            price: price per unit\n\n        Returns:\n            A reference to the offer. The offer and the offer status can\n            be accessed with `self.info(offer_reference)`.\n\n        Example::\n\n            def subround_1(self):\n                self.offer = self.sell('household', 1, 'cookies', quantity=5, price=0.1)\n\n            def subround_2(self):\n                offer = self.info(self.offer)\n                if offer['status'] == 'accepted':\n                    print(offer['final_quantity'] , 'cookies have be bougth')\n                else:\n                    offer['status'] == 'rejected':\n                    print('On diet')\n        ";
+static PyMethodDef __pyx_mdef_5trade_5Trade_7sell = {"sell", (PyCFunction)__pyx_pw_5trade_5Trade_7sell, METH_VARARGS|METH_KEYWORDS, __pyx_doc_5trade_5Trade_6sell};
+static PyObject *__pyx_pw_5trade_5Trade_7sell(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_self = 0;
   PyObject *__pyx_v_receiver_group = 0;
   PyObject *__pyx_v_receiver_idn = 0;
@@ -3791,31 +4004,31 @@ static PyObject *__pyx_pw_4abce_5trade_5Trade_7sell(PyObject *__pyx_self, PyObje
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_receiver_group)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("sell", 1, 6, 6, 1); __PYX_ERR(0, 294, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("sell", 1, 6, 6, 1); __PYX_ERR(0, 304, __pyx_L3_error)
         }
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_receiver_idn)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("sell", 1, 6, 6, 2); __PYX_ERR(0, 294, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("sell", 1, 6, 6, 2); __PYX_ERR(0, 304, __pyx_L3_error)
         }
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_good)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("sell", 1, 6, 6, 3); __PYX_ERR(0, 294, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("sell", 1, 6, 6, 3); __PYX_ERR(0, 304, __pyx_L3_error)
         }
         case  4:
         if (likely((values[4] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_quantity)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("sell", 1, 6, 6, 4); __PYX_ERR(0, 294, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("sell", 1, 6, 6, 4); __PYX_ERR(0, 304, __pyx_L3_error)
         }
         case  5:
         if (likely((values[5] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_price)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("sell", 1, 6, 6, 5); __PYX_ERR(0, 294, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("sell", 1, 6, 6, 5); __PYX_ERR(0, 304, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "sell") < 0)) __PYX_ERR(0, 294, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "sell") < 0)) __PYX_ERR(0, 304, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 6) {
       goto __pyx_L5_argtuple_error;
@@ -3831,27 +4044,28 @@ static PyObject *__pyx_pw_4abce_5trade_5Trade_7sell(PyObject *__pyx_self, PyObje
     __pyx_v_receiver_group = values[1];
     __pyx_v_receiver_idn = values[2];
     __pyx_v_good = values[3];
-    __pyx_v_quantity = __pyx_PyFloat_AsDouble(values[4]); if (unlikely((__pyx_v_quantity == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 294, __pyx_L3_error)
-    __pyx_v_price = __pyx_PyFloat_AsDouble(values[5]); if (unlikely((__pyx_v_price == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 294, __pyx_L3_error)
+    __pyx_v_quantity = __pyx_PyFloat_AsDouble(values[4]); if (unlikely((__pyx_v_quantity == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 304, __pyx_L3_error)
+    __pyx_v_price = __pyx_PyFloat_AsDouble(values[5]); if (unlikely((__pyx_v_price == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 304, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("sell", 1, 6, 6, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 294, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("sell", 1, 6, 6, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 304, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("abce.trade.Trade.sell", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Trade.sell", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_4abce_5trade_5Trade_6sell(__pyx_self, __pyx_v_self, __pyx_v_receiver_group, __pyx_v_receiver_idn, __pyx_v_good, __pyx_v_quantity, __pyx_v_price);
+  __pyx_r = __pyx_pf_5trade_5Trade_6sell(__pyx_self, __pyx_v_self, __pyx_v_receiver_group, __pyx_v_receiver_idn, __pyx_v_good, __pyx_v_quantity, __pyx_v_price);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_4abce_5trade_5Trade_6sell(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_receiver_group, PyObject *__pyx_v_receiver_idn, PyObject *__pyx_v_good, double __pyx_v_quantity, double __pyx_v_price) {
+static PyObject *__pyx_pf_5trade_5Trade_6sell(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_receiver_group, PyObject *__pyx_v_receiver_idn, PyObject *__pyx_v_good, double __pyx_v_quantity, double __pyx_v_price) {
   double __pyx_v_available;
-  struct __pyx_obj_4abce_5trade_Offer *__pyx_v_offer = 0;
+  PyObject *__pyx_v_offer_idn = NULL;
+  struct __pyx_obj_5trade_Offer *__pyx_v_offer = 0;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -3863,65 +4077,64 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_6sell(CYTHON_UNUSED PyObject *__py
   PyObject *__pyx_t_7 = NULL;
   Py_ssize_t __pyx_t_8;
   PyObject *__pyx_t_9 = NULL;
-  PyObject *__pyx_t_10 = NULL;
   __Pyx_RefNannySetupContext("sell", 0);
 
-  /* "abce/trade.pyx":327
+  /* "trade.pyx":337
  *         """
  *         cdef double available
  *         price = bound_zero(price)             # <<<<<<<<<<<<<<
  *         # makes sure the quantity is between zero and maximum available, but
  *         # if its only a little bit above or below its set to the bounds
  */
-  __pyx_v_price = __pyx_f_4abce_5trade_bound_zero(__pyx_v_price);
+  __pyx_v_price = __pyx_f_5trade_bound_zero(__pyx_v_price);
 
-  /* "abce/trade.pyx":330
+  /* "trade.pyx":340
  *         # makes sure the quantity is between zero and maximum available, but
  *         # if its only a little bit above or below its set to the bounds
  *         available = self._haves[good]             # <<<<<<<<<<<<<<
  *         quantity = bound_zero(quantity)
  *         if quantity > available + DBL_EPSILON + DBL_EPSILON * fmax(quantity, available):
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_haves); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 330, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_haves); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 340, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = PyObject_GetItem(__pyx_t_1, __pyx_v_good); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 330, __pyx_L1_error)
+  __pyx_t_2 = PyObject_GetItem(__pyx_t_1, __pyx_v_good); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 340, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_3 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_3 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 330, __pyx_L1_error)
+  __pyx_t_3 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_3 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 340, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_v_available = __pyx_t_3;
 
-  /* "abce/trade.pyx":331
+  /* "trade.pyx":341
  *         # if its only a little bit above or below its set to the bounds
  *         available = self._haves[good]
  *         quantity = bound_zero(quantity)             # <<<<<<<<<<<<<<
  *         if quantity > available + DBL_EPSILON + DBL_EPSILON * fmax(quantity, available):
  *             raise NotEnoughGoods(self.name, good, quantity - available)
  */
-  __pyx_v_quantity = __pyx_f_4abce_5trade_bound_zero(__pyx_v_quantity);
+  __pyx_v_quantity = __pyx_f_5trade_bound_zero(__pyx_v_quantity);
 
-  /* "abce/trade.pyx":332
+  /* "trade.pyx":342
  *         available = self._haves[good]
  *         quantity = bound_zero(quantity)
  *         if quantity > available + DBL_EPSILON + DBL_EPSILON * fmax(quantity, available):             # <<<<<<<<<<<<<<
  *             raise NotEnoughGoods(self.name, good, quantity - available)
  *         if quantity > available:
  */
-  __pyx_t_4 = ((__pyx_v_quantity > ((__pyx_v_available + DBL_EPSILON) + (DBL_EPSILON * __pyx_f_4abce_5trade_fmax(__pyx_v_quantity, __pyx_v_available)))) != 0);
+  __pyx_t_4 = ((__pyx_v_quantity > ((__pyx_v_available + DBL_EPSILON) + (DBL_EPSILON * __pyx_f_5trade_fmax(__pyx_v_quantity, __pyx_v_available)))) != 0);
   if (__pyx_t_4) {
 
-    /* "abce/trade.pyx":333
+    /* "trade.pyx":343
  *         quantity = bound_zero(quantity)
  *         if quantity > available + DBL_EPSILON + DBL_EPSILON * fmax(quantity, available):
  *             raise NotEnoughGoods(self.name, good, quantity - available)             # <<<<<<<<<<<<<<
  *         if quantity > available:
  *             quantity = available
  */
-    __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_NotEnoughGoods); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 333, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_NotEnoughGoods); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 343, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_name); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 333, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_name); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 343, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_6 = PyFloat_FromDouble((__pyx_v_quantity - __pyx_v_available)); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 333, __pyx_L1_error)
+    __pyx_t_6 = PyFloat_FromDouble((__pyx_v_quantity - __pyx_v_available)); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 343, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __pyx_t_7 = NULL;
     __pyx_t_8 = 0;
@@ -3935,7 +4148,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_6sell(CYTHON_UNUSED PyObject *__py
         __pyx_t_8 = 1;
       }
     }
-    __pyx_t_9 = PyTuple_New(3+__pyx_t_8); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 333, __pyx_L1_error)
+    __pyx_t_9 = PyTuple_New(3+__pyx_t_8); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 343, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_9);
     if (__pyx_t_7) {
       __Pyx_GIVEREF(__pyx_t_7); PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_t_7); __pyx_t_7 = NULL;
@@ -3949,15 +4162,15 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_6sell(CYTHON_UNUSED PyObject *__py
     PyTuple_SET_ITEM(__pyx_t_9, 2+__pyx_t_8, __pyx_t_6);
     __pyx_t_5 = 0;
     __pyx_t_6 = 0;
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_9, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 333, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_9, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 343, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_Raise(__pyx_t_2, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __PYX_ERR(0, 333, __pyx_L1_error)
+    __PYX_ERR(0, 343, __pyx_L1_error)
 
-    /* "abce/trade.pyx":332
+    /* "trade.pyx":342
  *         available = self._haves[good]
  *         quantity = bound_zero(quantity)
  *         if quantity > available + DBL_EPSILON + DBL_EPSILON * fmax(quantity, available):             # <<<<<<<<<<<<<<
@@ -3966,7 +4179,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_6sell(CYTHON_UNUSED PyObject *__py
  */
   }
 
-  /* "abce/trade.pyx":334
+  /* "trade.pyx":344
  *         if quantity > available + DBL_EPSILON + DBL_EPSILON * fmax(quantity, available):
  *             raise NotEnoughGoods(self.name, good, quantity - available)
  *         if quantity > available:             # <<<<<<<<<<<<<<
@@ -3976,16 +4189,16 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_6sell(CYTHON_UNUSED PyObject *__py
   __pyx_t_4 = ((__pyx_v_quantity > __pyx_v_available) != 0);
   if (__pyx_t_4) {
 
-    /* "abce/trade.pyx":335
+    /* "trade.pyx":345
  *             raise NotEnoughGoods(self.name, good, quantity - available)
  *         if quantity > available:
  *             quantity = available             # <<<<<<<<<<<<<<
  * 
- *         self._haves[good] -= quantity
+ *         offer_idn = self._offer_counter()
  */
     __pyx_v_quantity = __pyx_v_available;
 
-    /* "abce/trade.pyx":334
+    /* "trade.pyx":344
  *         if quantity > available + DBL_EPSILON + DBL_EPSILON * fmax(quantity, available):
  *             raise NotEnoughGoods(self.name, good, quantity - available)
  *         if quantity > available:             # <<<<<<<<<<<<<<
@@ -3994,244 +4207,246 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_6sell(CYTHON_UNUSED PyObject *__py
  */
   }
 
-  /* "abce/trade.pyx":337
+  /* "trade.pyx":347
  *             quantity = available
  * 
+ *         offer_idn = self._offer_counter()             # <<<<<<<<<<<<<<
+ *         self._haves[good] -= quantity
+ *         cdef Offer offer = Offer(self.group,
+ */
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_offer_counter); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 347, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_9 = NULL;
+  if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_1))) {
+    __pyx_t_9 = PyMethod_GET_SELF(__pyx_t_1);
+    if (likely(__pyx_t_9)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_1);
+      __Pyx_INCREF(__pyx_t_9);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_1, function);
+    }
+  }
+  if (__pyx_t_9) {
+    __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_t_9); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 347, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+  } else {
+    __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 347, __pyx_L1_error)
+  }
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_v_offer_idn = __pyx_t_2;
+  __pyx_t_2 = 0;
+
+  /* "trade.pyx":348
+ * 
+ *         offer_idn = self._offer_counter()
  *         self._haves[good] -= quantity             # <<<<<<<<<<<<<<
  *         cdef Offer offer = Offer(self.group,
  *                                  self.idn,
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_haves); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 337, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_haves); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 348, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_INCREF(__pyx_v_good);
   __pyx_t_1 = __pyx_v_good;
-  __pyx_t_9 = PyObject_GetItem(__pyx_t_2, __pyx_t_1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 337, __pyx_L1_error)
+  __pyx_t_9 = PyObject_GetItem(__pyx_t_2, __pyx_t_1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 348, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_9);
-  __pyx_t_6 = PyFloat_FromDouble(__pyx_v_quantity); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 337, __pyx_L1_error)
+  __pyx_t_6 = PyFloat_FromDouble(__pyx_v_quantity); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 348, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
-  __pyx_t_5 = PyNumber_InPlaceSubtract(__pyx_t_9, __pyx_t_6); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 337, __pyx_L1_error)
+  __pyx_t_5 = PyNumber_InPlaceSubtract(__pyx_t_9, __pyx_t_6); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 348, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  if (unlikely(PyObject_SetItem(__pyx_t_2, __pyx_t_1, __pyx_t_5) < 0)) __PYX_ERR(0, 337, __pyx_L1_error)
+  if (unlikely(PyObject_SetItem(__pyx_t_2, __pyx_t_1, __pyx_t_5) < 0)) __PYX_ERR(0, 348, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "abce/trade.pyx":338
- * 
+  /* "trade.pyx":349
+ *         offer_idn = self._offer_counter()
  *         self._haves[good] -= quantity
  *         cdef Offer offer = Offer(self.group,             # <<<<<<<<<<<<<<
  *                                  self.idn,
  *                                  receiver_group,
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_group); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 338, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_group); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 349, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
 
-  /* "abce/trade.pyx":339
+  /* "trade.pyx":350
  *         self._haves[good] -= quantity
  *         cdef Offer offer = Offer(self.group,
  *                                  self.idn,             # <<<<<<<<<<<<<<
  *                                  receiver_group,
  *                                  receiver_idn,
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_idn); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 339, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_idn); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 350, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
 
-  /* "abce/trade.pyx":343
+  /* "trade.pyx":354
  *                                  receiver_idn,
  *                                  good,
  *                                  quantity,             # <<<<<<<<<<<<<<
  *                                  price,
  *                                  115,
  */
-  __pyx_t_5 = PyFloat_FromDouble(__pyx_v_quantity); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 343, __pyx_L1_error)
+  __pyx_t_5 = PyFloat_FromDouble(__pyx_v_quantity); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 354, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
 
-  /* "abce/trade.pyx":344
+  /* "trade.pyx":355
  *                                  good,
  *                                  quantity,
  *                                  price,             # <<<<<<<<<<<<<<
  *                                  115,
  *                                  'new',
  */
-  __pyx_t_6 = PyFloat_FromDouble(__pyx_v_price); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 344, __pyx_L1_error)
+  __pyx_t_6 = PyFloat_FromDouble(__pyx_v_price); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 355, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
 
-  /* "abce/trade.pyx":348
- *                                  'new',
- *                                  -1,
- *                                  self._offer_counter(),             # <<<<<<<<<<<<<<
- *                                  self.round,
- *                                  '',
- */
-  __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_offer_counter); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 348, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_7);
-  __pyx_t_10 = NULL;
-  if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_7))) {
-    __pyx_t_10 = PyMethod_GET_SELF(__pyx_t_7);
-    if (likely(__pyx_t_10)) {
-      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_7);
-      __Pyx_INCREF(__pyx_t_10);
-      __Pyx_INCREF(function);
-      __Pyx_DECREF_SET(__pyx_t_7, function);
-    }
-  }
-  if (__pyx_t_10) {
-    __pyx_t_9 = __Pyx_PyObject_CallOneArg(__pyx_t_7, __pyx_t_10); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 348, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-  } else {
-    __pyx_t_9 = __Pyx_PyObject_CallNoArg(__pyx_t_7); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 348, __pyx_L1_error)
-  }
-  __Pyx_GOTREF(__pyx_t_9);
-  __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-
-  /* "abce/trade.pyx":349
- *                                  -1,
- *                                  self._offer_counter(),
+  /* "trade.pyx":360
+ *                                  -2,
+ *                                  offer_idn,
  *                                  self.round,             # <<<<<<<<<<<<<<
- *                                  '',
- *                                  -1)
+ *                                  '-',
+ *                                  -2)
  */
-  __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_round); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 349, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_7);
+  __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_round); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 360, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_9);
 
-  /* "abce/trade.pyx":338
- * 
+  /* "trade.pyx":349
+ *         offer_idn = self._offer_counter()
  *         self._haves[good] -= quantity
  *         cdef Offer offer = Offer(self.group,             # <<<<<<<<<<<<<<
  *                                  self.idn,
  *                                  receiver_group,
  */
-  __pyx_t_10 = PyTuple_New(14); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 338, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_10);
+  __pyx_t_7 = PyTuple_New(14); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 349, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_7);
   __Pyx_GIVEREF(__pyx_t_2);
-  PyTuple_SET_ITEM(__pyx_t_10, 0, __pyx_t_2);
+  PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_t_2);
   __Pyx_GIVEREF(__pyx_t_1);
-  PyTuple_SET_ITEM(__pyx_t_10, 1, __pyx_t_1);
+  PyTuple_SET_ITEM(__pyx_t_7, 1, __pyx_t_1);
   __Pyx_INCREF(__pyx_v_receiver_group);
   __Pyx_GIVEREF(__pyx_v_receiver_group);
-  PyTuple_SET_ITEM(__pyx_t_10, 2, __pyx_v_receiver_group);
+  PyTuple_SET_ITEM(__pyx_t_7, 2, __pyx_v_receiver_group);
   __Pyx_INCREF(__pyx_v_receiver_idn);
   __Pyx_GIVEREF(__pyx_v_receiver_idn);
-  PyTuple_SET_ITEM(__pyx_t_10, 3, __pyx_v_receiver_idn);
+  PyTuple_SET_ITEM(__pyx_t_7, 3, __pyx_v_receiver_idn);
   __Pyx_INCREF(__pyx_v_good);
   __Pyx_GIVEREF(__pyx_v_good);
-  PyTuple_SET_ITEM(__pyx_t_10, 4, __pyx_v_good);
+  PyTuple_SET_ITEM(__pyx_t_7, 4, __pyx_v_good);
   __Pyx_GIVEREF(__pyx_t_5);
-  PyTuple_SET_ITEM(__pyx_t_10, 5, __pyx_t_5);
+  PyTuple_SET_ITEM(__pyx_t_7, 5, __pyx_t_5);
   __Pyx_GIVEREF(__pyx_t_6);
-  PyTuple_SET_ITEM(__pyx_t_10, 6, __pyx_t_6);
+  PyTuple_SET_ITEM(__pyx_t_7, 6, __pyx_t_6);
   __Pyx_INCREF(__pyx_int_115);
   __Pyx_GIVEREF(__pyx_int_115);
-  PyTuple_SET_ITEM(__pyx_t_10, 7, __pyx_int_115);
+  PyTuple_SET_ITEM(__pyx_t_7, 7, __pyx_int_115);
   __Pyx_INCREF(__pyx_n_s_new);
   __Pyx_GIVEREF(__pyx_n_s_new);
-  PyTuple_SET_ITEM(__pyx_t_10, 8, __pyx_n_s_new);
-  __Pyx_INCREF(__pyx_int_neg_1);
-  __Pyx_GIVEREF(__pyx_int_neg_1);
-  PyTuple_SET_ITEM(__pyx_t_10, 9, __pyx_int_neg_1);
+  PyTuple_SET_ITEM(__pyx_t_7, 8, __pyx_n_s_new);
+  __Pyx_INCREF(__pyx_int_neg_2);
+  __Pyx_GIVEREF(__pyx_int_neg_2);
+  PyTuple_SET_ITEM(__pyx_t_7, 9, __pyx_int_neg_2);
+  __Pyx_INCREF(__pyx_v_offer_idn);
+  __Pyx_GIVEREF(__pyx_v_offer_idn);
+  PyTuple_SET_ITEM(__pyx_t_7, 10, __pyx_v_offer_idn);
   __Pyx_GIVEREF(__pyx_t_9);
-  PyTuple_SET_ITEM(__pyx_t_10, 10, __pyx_t_9);
-  __Pyx_GIVEREF(__pyx_t_7);
-  PyTuple_SET_ITEM(__pyx_t_10, 11, __pyx_t_7);
+  PyTuple_SET_ITEM(__pyx_t_7, 11, __pyx_t_9);
   __Pyx_INCREF(__pyx_kp_s_);
   __Pyx_GIVEREF(__pyx_kp_s_);
-  PyTuple_SET_ITEM(__pyx_t_10, 12, __pyx_kp_s_);
-  __Pyx_INCREF(__pyx_int_neg_1);
-  __Pyx_GIVEREF(__pyx_int_neg_1);
-  PyTuple_SET_ITEM(__pyx_t_10, 13, __pyx_int_neg_1);
+  PyTuple_SET_ITEM(__pyx_t_7, 12, __pyx_kp_s_);
+  __Pyx_INCREF(__pyx_int_neg_2);
+  __Pyx_GIVEREF(__pyx_int_neg_2);
+  PyTuple_SET_ITEM(__pyx_t_7, 13, __pyx_int_neg_2);
   __pyx_t_2 = 0;
   __pyx_t_1 = 0;
   __pyx_t_5 = 0;
   __pyx_t_6 = 0;
   __pyx_t_9 = 0;
-  __pyx_t_7 = 0;
-  __pyx_t_7 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_4abce_5trade_Offer), __pyx_t_10, NULL); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 338, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_7);
-  __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-  __pyx_v_offer = ((struct __pyx_obj_4abce_5trade_Offer *)__pyx_t_7);
-  __pyx_t_7 = 0;
+  __pyx_t_9 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_5trade_Offer), __pyx_t_7, NULL); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 349, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_9);
+  __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+  __pyx_v_offer = ((struct __pyx_obj_5trade_Offer *)__pyx_t_9);
+  __pyx_t_9 = 0;
 
-  /* "abce/trade.pyx":352
- *                                  '',
- *                                  -1)
- *         self._send(receiver_group, receiver_idn, '_o', offer.pickle())             # <<<<<<<<<<<<<<
- *         self.given_offers[offer.idn] = offer
+  /* "trade.pyx":363
+ *                                  '-',
+ *                                  -2)
+ *         self.given_offers[offer_idn] = offer             # <<<<<<<<<<<<<<
+ *         self._send(receiver_group, receiver_idn, '_o', offer.pickle())
  *         return offer
  */
-  __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_send); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 352, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_10);
-  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_offer), __pyx_n_s_pickle); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 352, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_6);
-  __pyx_t_5 = NULL;
-  if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_6))) {
-    __pyx_t_5 = PyMethod_GET_SELF(__pyx_t_6);
-    if (likely(__pyx_t_5)) {
-      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_6);
-      __Pyx_INCREF(__pyx_t_5);
-      __Pyx_INCREF(function);
-      __Pyx_DECREF_SET(__pyx_t_6, function);
-    }
-  }
-  if (__pyx_t_5) {
-    __pyx_t_9 = __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_t_5); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 352, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  } else {
-    __pyx_t_9 = __Pyx_PyObject_CallNoArg(__pyx_t_6); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 352, __pyx_L1_error)
-  }
+  __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_given_offers); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 363, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_9);
-  __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  __pyx_t_6 = NULL;
-  __pyx_t_8 = 0;
-  if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_10))) {
-    __pyx_t_6 = PyMethod_GET_SELF(__pyx_t_10);
-    if (likely(__pyx_t_6)) {
-      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_10);
-      __Pyx_INCREF(__pyx_t_6);
-      __Pyx_INCREF(function);
-      __Pyx_DECREF_SET(__pyx_t_10, function);
-      __pyx_t_8 = 1;
-    }
-  }
-  __pyx_t_5 = PyTuple_New(4+__pyx_t_8); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 352, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_5);
-  if (__pyx_t_6) {
-    __Pyx_GIVEREF(__pyx_t_6); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_6); __pyx_t_6 = NULL;
-  }
-  __Pyx_INCREF(__pyx_v_receiver_group);
-  __Pyx_GIVEREF(__pyx_v_receiver_group);
-  PyTuple_SET_ITEM(__pyx_t_5, 0+__pyx_t_8, __pyx_v_receiver_group);
-  __Pyx_INCREF(__pyx_v_receiver_idn);
-  __Pyx_GIVEREF(__pyx_v_receiver_idn);
-  PyTuple_SET_ITEM(__pyx_t_5, 1+__pyx_t_8, __pyx_v_receiver_idn);
-  __Pyx_INCREF(__pyx_n_s_o);
-  __Pyx_GIVEREF(__pyx_n_s_o);
-  PyTuple_SET_ITEM(__pyx_t_5, 2+__pyx_t_8, __pyx_n_s_o);
-  __Pyx_GIVEREF(__pyx_t_9);
-  PyTuple_SET_ITEM(__pyx_t_5, 3+__pyx_t_8, __pyx_t_9);
-  __pyx_t_9 = 0;
-  __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_t_5, NULL); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 352, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_7);
-  __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-  __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+  if (unlikely(PyObject_SetItem(__pyx_t_9, __pyx_v_offer_idn, ((PyObject *)__pyx_v_offer)) < 0)) __PYX_ERR(0, 363, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
 
-  /* "abce/trade.pyx":353
- *                                  -1)
- *         self._send(receiver_group, receiver_idn, '_o', offer.pickle())
- *         self.given_offers[offer.idn] = offer             # <<<<<<<<<<<<<<
+  /* "trade.pyx":364
+ *                                  -2)
+ *         self.given_offers[offer_idn] = offer
+ *         self._send(receiver_group, receiver_idn, '_o', offer.pickle())             # <<<<<<<<<<<<<<
  *         return offer
  * 
  */
-  __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_given_offers); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 353, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_send); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 364, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
-  if (unlikely(__Pyx_SetItemInt(__pyx_t_7, __pyx_v_offer->idn, ((PyObject *)__pyx_v_offer), long, 1, __Pyx_PyInt_From_long, 0, 1, 1) < 0)) __PYX_ERR(0, 353, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_offer), __pyx_n_s_pickle); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 364, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_5);
+  __pyx_t_1 = NULL;
+  if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_5))) {
+    __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_5);
+    if (likely(__pyx_t_1)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_5);
+      __Pyx_INCREF(__pyx_t_1);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_5, function);
+    }
+  }
+  if (__pyx_t_1) {
+    __pyx_t_6 = __Pyx_PyObject_CallOneArg(__pyx_t_5, __pyx_t_1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 364, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  } else {
+    __pyx_t_6 = __Pyx_PyObject_CallNoArg(__pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 364, __pyx_L1_error)
+  }
+  __Pyx_GOTREF(__pyx_t_6);
+  __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+  __pyx_t_5 = NULL;
+  __pyx_t_8 = 0;
+  if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_7))) {
+    __pyx_t_5 = PyMethod_GET_SELF(__pyx_t_7);
+    if (likely(__pyx_t_5)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_7);
+      __Pyx_INCREF(__pyx_t_5);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_7, function);
+      __pyx_t_8 = 1;
+    }
+  }
+  __pyx_t_1 = PyTuple_New(4+__pyx_t_8); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 364, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  if (__pyx_t_5) {
+    __Pyx_GIVEREF(__pyx_t_5); PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_5); __pyx_t_5 = NULL;
+  }
+  __Pyx_INCREF(__pyx_v_receiver_group);
+  __Pyx_GIVEREF(__pyx_v_receiver_group);
+  PyTuple_SET_ITEM(__pyx_t_1, 0+__pyx_t_8, __pyx_v_receiver_group);
+  __Pyx_INCREF(__pyx_v_receiver_idn);
+  __Pyx_GIVEREF(__pyx_v_receiver_idn);
+  PyTuple_SET_ITEM(__pyx_t_1, 1+__pyx_t_8, __pyx_v_receiver_idn);
+  __Pyx_INCREF(__pyx_n_s_o);
+  __Pyx_GIVEREF(__pyx_n_s_o);
+  PyTuple_SET_ITEM(__pyx_t_1, 2+__pyx_t_8, __pyx_n_s_o);
+  __Pyx_GIVEREF(__pyx_t_6);
+  PyTuple_SET_ITEM(__pyx_t_1, 3+__pyx_t_8, __pyx_t_6);
+  __pyx_t_6 = 0;
+  __pyx_t_9 = __Pyx_PyObject_Call(__pyx_t_7, __pyx_t_1, NULL); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 364, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_9);
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+  __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
 
-  /* "abce/trade.pyx":354
+  /* "trade.pyx":365
+ *         self.given_offers[offer_idn] = offer
  *         self._send(receiver_group, receiver_idn, '_o', offer.pickle())
- *         self.given_offers[offer.idn] = offer
  *         return offer             # <<<<<<<<<<<<<<
  * 
  *     def buy(self, receiver_group, receiver_idn, good, double quantity, double price):
@@ -4241,7 +4456,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_6sell(CYTHON_UNUSED PyObject *__py
   __pyx_r = ((PyObject *)__pyx_v_offer);
   goto __pyx_L0;
 
-  /* "abce/trade.pyx":294
+  /* "trade.pyx":304
  *         return ret
  * 
  *     def sell(self, receiver_group, receiver_idn, good, double quantity, double price):             # <<<<<<<<<<<<<<
@@ -4257,17 +4472,17 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_6sell(CYTHON_UNUSED PyObject *__py
   __Pyx_XDECREF(__pyx_t_6);
   __Pyx_XDECREF(__pyx_t_7);
   __Pyx_XDECREF(__pyx_t_9);
-  __Pyx_XDECREF(__pyx_t_10);
-  __Pyx_AddTraceback("abce.trade.Trade.sell", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Trade.sell", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
+  __Pyx_XDECREF(__pyx_v_offer_idn);
   __Pyx_XDECREF((PyObject *)__pyx_v_offer);
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-/* "abce/trade.pyx":356
+/* "trade.pyx":367
  *         return offer
  * 
  *     def buy(self, receiver_group, receiver_idn, good, double quantity, double price):             # <<<<<<<<<<<<<<
@@ -4276,10 +4491,10 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_6sell(CYTHON_UNUSED PyObject *__py
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_4abce_5trade_5Trade_9buy(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_4abce_5trade_5Trade_8buy[] = " commits to sell the quantity of good at price\n\n        The goods are not in haves or self.count(). When the offer is\n        rejected it is automatically re-credited. When the offer is\n        accepted the money amount is credited. (partial acceptance\n        accordingly)\n\n        Args:\n            receiver_group: an agent name  NEVER a group or 'all'!\n            (it is an error but with a confusing warning)\n            'good': name of the good\n            quantity: maximum units disposed to buy at this price\n            price: price per unit\n        ";
-static PyMethodDef __pyx_mdef_4abce_5trade_5Trade_9buy = {"buy", (PyCFunction)__pyx_pw_4abce_5trade_5Trade_9buy, METH_VARARGS|METH_KEYWORDS, __pyx_doc_4abce_5trade_5Trade_8buy};
-static PyObject *__pyx_pw_4abce_5trade_5Trade_9buy(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_5trade_5Trade_9buy(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_5trade_5Trade_8buy[] = " commits to sell the quantity of good at price\n\n        The goods are not in haves or self.count(). When the offer is\n        rejected it is automatically re-credited. When the offer is\n        accepted the money amount is credited. (partial acceptance\n        accordingly)\n\n        Args:\n            receiver_group: an agent name  NEVER a group or 'all'!\n            (it is an error but with a confusing warning)\n            'good': name of the good\n            quantity: maximum units disposed to buy at this price\n            price: price per unit\n        ";
+static PyMethodDef __pyx_mdef_5trade_5Trade_9buy = {"buy", (PyCFunction)__pyx_pw_5trade_5Trade_9buy, METH_VARARGS|METH_KEYWORDS, __pyx_doc_5trade_5Trade_8buy};
+static PyObject *__pyx_pw_5trade_5Trade_9buy(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_self = 0;
   PyObject *__pyx_v_receiver_group = 0;
   PyObject *__pyx_v_receiver_idn = 0;
@@ -4313,31 +4528,31 @@ static PyObject *__pyx_pw_4abce_5trade_5Trade_9buy(PyObject *__pyx_self, PyObjec
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_receiver_group)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("buy", 1, 6, 6, 1); __PYX_ERR(0, 356, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("buy", 1, 6, 6, 1); __PYX_ERR(0, 367, __pyx_L3_error)
         }
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_receiver_idn)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("buy", 1, 6, 6, 2); __PYX_ERR(0, 356, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("buy", 1, 6, 6, 2); __PYX_ERR(0, 367, __pyx_L3_error)
         }
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_good)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("buy", 1, 6, 6, 3); __PYX_ERR(0, 356, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("buy", 1, 6, 6, 3); __PYX_ERR(0, 367, __pyx_L3_error)
         }
         case  4:
         if (likely((values[4] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_quantity)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("buy", 1, 6, 6, 4); __PYX_ERR(0, 356, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("buy", 1, 6, 6, 4); __PYX_ERR(0, 367, __pyx_L3_error)
         }
         case  5:
         if (likely((values[5] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_price)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("buy", 1, 6, 6, 5); __PYX_ERR(0, 356, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("buy", 1, 6, 6, 5); __PYX_ERR(0, 367, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "buy") < 0)) __PYX_ERR(0, 356, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "buy") < 0)) __PYX_ERR(0, 367, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 6) {
       goto __pyx_L5_argtuple_error;
@@ -4353,28 +4568,29 @@ static PyObject *__pyx_pw_4abce_5trade_5Trade_9buy(PyObject *__pyx_self, PyObjec
     __pyx_v_receiver_group = values[1];
     __pyx_v_receiver_idn = values[2];
     __pyx_v_good = values[3];
-    __pyx_v_quantity = __pyx_PyFloat_AsDouble(values[4]); if (unlikely((__pyx_v_quantity == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 356, __pyx_L3_error)
-    __pyx_v_price = __pyx_PyFloat_AsDouble(values[5]); if (unlikely((__pyx_v_price == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 356, __pyx_L3_error)
+    __pyx_v_quantity = __pyx_PyFloat_AsDouble(values[4]); if (unlikely((__pyx_v_quantity == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 367, __pyx_L3_error)
+    __pyx_v_price = __pyx_PyFloat_AsDouble(values[5]); if (unlikely((__pyx_v_price == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 367, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("buy", 1, 6, 6, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 356, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("buy", 1, 6, 6, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 367, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("abce.trade.Trade.buy", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Trade.buy", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_4abce_5trade_5Trade_8buy(__pyx_self, __pyx_v_self, __pyx_v_receiver_group, __pyx_v_receiver_idn, __pyx_v_good, __pyx_v_quantity, __pyx_v_price);
+  __pyx_r = __pyx_pf_5trade_5Trade_8buy(__pyx_self, __pyx_v_self, __pyx_v_receiver_group, __pyx_v_receiver_idn, __pyx_v_good, __pyx_v_quantity, __pyx_v_price);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_4abce_5trade_5Trade_8buy(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_receiver_group, PyObject *__pyx_v_receiver_idn, PyObject *__pyx_v_good, double __pyx_v_quantity, double __pyx_v_price) {
+static PyObject *__pyx_pf_5trade_5Trade_8buy(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_receiver_group, PyObject *__pyx_v_receiver_idn, PyObject *__pyx_v_good, double __pyx_v_quantity, double __pyx_v_price) {
   double __pyx_v_available;
   double __pyx_v_money_amount;
-  struct __pyx_obj_4abce_5trade_Offer *__pyx_v_offer = 0;
+  PyObject *__pyx_v_offer_idn = NULL;
+  struct __pyx_obj_5trade_Offer *__pyx_v_offer = 0;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -4387,19 +4603,18 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_8buy(CYTHON_UNUSED PyObject *__pyx
   Py_ssize_t __pyx_t_8;
   PyObject *__pyx_t_9 = NULL;
   PyObject *__pyx_t_10 = NULL;
-  PyObject *__pyx_t_11 = NULL;
   __Pyx_RefNannySetupContext("buy", 0);
 
-  /* "abce/trade.pyx":373
+  /* "trade.pyx":384
  *         cdef double available
  *         cdef double money_amount
  *         price = bound_zero(price)             # <<<<<<<<<<<<<<
  *         money_amount = quantity * price
  *         # makes sure the money_amount is between zero and maximum available, but
  */
-  __pyx_v_price = __pyx_f_4abce_5trade_bound_zero(__pyx_v_price);
+  __pyx_v_price = __pyx_f_5trade_bound_zero(__pyx_v_price);
 
-  /* "abce/trade.pyx":374
+  /* "trade.pyx":385
  *         cdef double money_amount
  *         price = bound_zero(price)
  *         money_amount = quantity * price             # <<<<<<<<<<<<<<
@@ -4408,53 +4623,53 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_8buy(CYTHON_UNUSED PyObject *__pyx
  */
   __pyx_v_money_amount = (__pyx_v_quantity * __pyx_v_price);
 
-  /* "abce/trade.pyx":377
+  /* "trade.pyx":388
  *         # makes sure the money_amount is between zero and maximum available, but
  *         # if its only a little bit above or below its set to the bounds
  *         available = self._haves['money']             # <<<<<<<<<<<<<<
  *         money_amount = bound_zero(money_amount)
  *         if money_amount > available + DBL_EPSILON + DBL_EPSILON * fmax(money_amount, available):
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_haves); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 377, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_haves); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 388, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = PyObject_GetItem(__pyx_t_1, __pyx_n_s_money); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 377, __pyx_L1_error)
+  __pyx_t_2 = PyObject_GetItem(__pyx_t_1, __pyx_n_s_money); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 388, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_3 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_3 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 377, __pyx_L1_error)
+  __pyx_t_3 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_3 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 388, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_v_available = __pyx_t_3;
 
-  /* "abce/trade.pyx":378
+  /* "trade.pyx":389
  *         # if its only a little bit above or below its set to the bounds
  *         available = self._haves['money']
  *         money_amount = bound_zero(money_amount)             # <<<<<<<<<<<<<<
  *         if money_amount > available + DBL_EPSILON + DBL_EPSILON * fmax(money_amount, available):
  *             raise NotEnoughGoods(self.name, 'money', money_amount - available)
  */
-  __pyx_v_money_amount = __pyx_f_4abce_5trade_bound_zero(__pyx_v_money_amount);
+  __pyx_v_money_amount = __pyx_f_5trade_bound_zero(__pyx_v_money_amount);
 
-  /* "abce/trade.pyx":379
+  /* "trade.pyx":390
  *         available = self._haves['money']
  *         money_amount = bound_zero(money_amount)
  *         if money_amount > available + DBL_EPSILON + DBL_EPSILON * fmax(money_amount, available):             # <<<<<<<<<<<<<<
  *             raise NotEnoughGoods(self.name, 'money', money_amount - available)
  *         if money_amount > available:
  */
-  __pyx_t_4 = ((__pyx_v_money_amount > ((__pyx_v_available + DBL_EPSILON) + (DBL_EPSILON * __pyx_f_4abce_5trade_fmax(__pyx_v_money_amount, __pyx_v_available)))) != 0);
+  __pyx_t_4 = ((__pyx_v_money_amount > ((__pyx_v_available + DBL_EPSILON) + (DBL_EPSILON * __pyx_f_5trade_fmax(__pyx_v_money_amount, __pyx_v_available)))) != 0);
   if (__pyx_t_4) {
 
-    /* "abce/trade.pyx":380
+    /* "trade.pyx":391
  *         money_amount = bound_zero(money_amount)
  *         if money_amount > available + DBL_EPSILON + DBL_EPSILON * fmax(money_amount, available):
  *             raise NotEnoughGoods(self.name, 'money', money_amount - available)             # <<<<<<<<<<<<<<
  *         if money_amount > available:
  *             money_amount = available
  */
-    __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_NotEnoughGoods); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 380, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_NotEnoughGoods); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 391, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_name); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 380, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_name); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 391, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_6 = PyFloat_FromDouble((__pyx_v_money_amount - __pyx_v_available)); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 380, __pyx_L1_error)
+    __pyx_t_6 = PyFloat_FromDouble((__pyx_v_money_amount - __pyx_v_available)); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 391, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __pyx_t_7 = NULL;
     __pyx_t_8 = 0;
@@ -4468,7 +4683,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_8buy(CYTHON_UNUSED PyObject *__pyx
         __pyx_t_8 = 1;
       }
     }
-    __pyx_t_9 = PyTuple_New(3+__pyx_t_8); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 380, __pyx_L1_error)
+    __pyx_t_9 = PyTuple_New(3+__pyx_t_8); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 391, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_9);
     if (__pyx_t_7) {
       __Pyx_GIVEREF(__pyx_t_7); PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_t_7); __pyx_t_7 = NULL;
@@ -4482,15 +4697,15 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_8buy(CYTHON_UNUSED PyObject *__pyx
     PyTuple_SET_ITEM(__pyx_t_9, 2+__pyx_t_8, __pyx_t_6);
     __pyx_t_5 = 0;
     __pyx_t_6 = 0;
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_9, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 380, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_9, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 391, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_Raise(__pyx_t_2, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __PYX_ERR(0, 380, __pyx_L1_error)
+    __PYX_ERR(0, 391, __pyx_L1_error)
 
-    /* "abce/trade.pyx":379
+    /* "trade.pyx":390
  *         available = self._haves['money']
  *         money_amount = bound_zero(money_amount)
  *         if money_amount > available + DBL_EPSILON + DBL_EPSILON * fmax(money_amount, available):             # <<<<<<<<<<<<<<
@@ -4499,7 +4714,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_8buy(CYTHON_UNUSED PyObject *__pyx
  */
   }
 
-  /* "abce/trade.pyx":381
+  /* "trade.pyx":392
  *         if money_amount > available + DBL_EPSILON + DBL_EPSILON * fmax(money_amount, available):
  *             raise NotEnoughGoods(self.name, 'money', money_amount - available)
  *         if money_amount > available:             # <<<<<<<<<<<<<<
@@ -4509,16 +4724,16 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_8buy(CYTHON_UNUSED PyObject *__pyx
   __pyx_t_4 = ((__pyx_v_money_amount > __pyx_v_available) != 0);
   if (__pyx_t_4) {
 
-    /* "abce/trade.pyx":382
+    /* "trade.pyx":393
  *             raise NotEnoughGoods(self.name, 'money', money_amount - available)
  *         if money_amount > available:
  *             money_amount = available             # <<<<<<<<<<<<<<
  * 
- *         self._haves['money'] -= money_amount
+ *         offer_idn = self._offer_counter()
  */
     __pyx_v_money_amount = __pyx_v_available;
 
-    /* "abce/trade.pyx":381
+    /* "trade.pyx":392
  *         if money_amount > available + DBL_EPSILON + DBL_EPSILON * fmax(money_amount, available):
  *             raise NotEnoughGoods(self.name, 'money', money_amount - available)
  *         if money_amount > available:             # <<<<<<<<<<<<<<
@@ -4527,175 +4742,14 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_8buy(CYTHON_UNUSED PyObject *__pyx
  */
   }
 
-  /* "abce/trade.pyx":384
+  /* "trade.pyx":395
  *             money_amount = available
  * 
- *         self._haves['money'] -= money_amount             # <<<<<<<<<<<<<<
- *         cdef Offer offer = Offer(self.group,
- *                                  self.idn,
- */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_haves); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 384, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __Pyx_INCREF(__pyx_n_s_money);
-  __pyx_t_10 = __pyx_n_s_money;
-  __pyx_t_1 = PyObject_GetItem(__pyx_t_2, __pyx_t_10); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 384, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_9 = PyFloat_FromDouble(__pyx_v_money_amount); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 384, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_9);
-  __pyx_t_6 = PyNumber_InPlaceSubtract(__pyx_t_1, __pyx_t_9); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 384, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_6);
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-  if (unlikely(PyObject_SetItem(__pyx_t_2, __pyx_t_10, __pyx_t_6) < 0)) __PYX_ERR(0, 384, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-
-  /* "abce/trade.pyx":385
- * 
- *         self._haves['money'] -= money_amount
- *         cdef Offer offer = Offer(self.group,             # <<<<<<<<<<<<<<
- *                                  self.idn,
- *                                  receiver_group,
- */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_group); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 385, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-
-  /* "abce/trade.pyx":386
+ *         offer_idn = self._offer_counter()             # <<<<<<<<<<<<<<
  *         self._haves['money'] -= money_amount
  *         cdef Offer offer = Offer(self.group,
- *                                  self.idn,             # <<<<<<<<<<<<<<
- *                                  receiver_group,
- *                                  receiver_idn,
  */
-  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_idn); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 386, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_6);
-
-  /* "abce/trade.pyx":390
- *                                  receiver_idn,
- *                                  good,
- *                                  quantity,             # <<<<<<<<<<<<<<
- *                                  price,
- *                                  98,
- */
-  __pyx_t_9 = PyFloat_FromDouble(__pyx_v_quantity); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 390, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_9);
-
-  /* "abce/trade.pyx":391
- *                                  good,
- *                                  quantity,
- *                                  price,             # <<<<<<<<<<<<<<
- *                                  98,
- *                                  'new',
- */
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_price); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 391, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-
-  /* "abce/trade.pyx":395
- *                                  'new',
- *                                  -1,
- *                                  self._offer_counter(),             # <<<<<<<<<<<<<<
- *                                  self.round,
- *                                  '',
- */
-  __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_offer_counter); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 395, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_7);
-  __pyx_t_11 = NULL;
-  if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_7))) {
-    __pyx_t_11 = PyMethod_GET_SELF(__pyx_t_7);
-    if (likely(__pyx_t_11)) {
-      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_7);
-      __Pyx_INCREF(__pyx_t_11);
-      __Pyx_INCREF(function);
-      __Pyx_DECREF_SET(__pyx_t_7, function);
-    }
-  }
-  if (__pyx_t_11) {
-    __pyx_t_5 = __Pyx_PyObject_CallOneArg(__pyx_t_7, __pyx_t_11); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 395, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-  } else {
-    __pyx_t_5 = __Pyx_PyObject_CallNoArg(__pyx_t_7); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 395, __pyx_L1_error)
-  }
-  __Pyx_GOTREF(__pyx_t_5);
-  __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-
-  /* "abce/trade.pyx":396
- *                                  -1,
- *                                  self._offer_counter(),
- *                                  self.round,             # <<<<<<<<<<<<<<
- *                                  '',
- *                                  -1)
- */
-  __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_round); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 396, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_7);
-
-  /* "abce/trade.pyx":385
- * 
- *         self._haves['money'] -= money_amount
- *         cdef Offer offer = Offer(self.group,             # <<<<<<<<<<<<<<
- *                                  self.idn,
- *                                  receiver_group,
- */
-  __pyx_t_11 = PyTuple_New(14); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 385, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_11);
-  __Pyx_GIVEREF(__pyx_t_2);
-  PyTuple_SET_ITEM(__pyx_t_11, 0, __pyx_t_2);
-  __Pyx_GIVEREF(__pyx_t_6);
-  PyTuple_SET_ITEM(__pyx_t_11, 1, __pyx_t_6);
-  __Pyx_INCREF(__pyx_v_receiver_group);
-  __Pyx_GIVEREF(__pyx_v_receiver_group);
-  PyTuple_SET_ITEM(__pyx_t_11, 2, __pyx_v_receiver_group);
-  __Pyx_INCREF(__pyx_v_receiver_idn);
-  __Pyx_GIVEREF(__pyx_v_receiver_idn);
-  PyTuple_SET_ITEM(__pyx_t_11, 3, __pyx_v_receiver_idn);
-  __Pyx_INCREF(__pyx_v_good);
-  __Pyx_GIVEREF(__pyx_v_good);
-  PyTuple_SET_ITEM(__pyx_t_11, 4, __pyx_v_good);
-  __Pyx_GIVEREF(__pyx_t_9);
-  PyTuple_SET_ITEM(__pyx_t_11, 5, __pyx_t_9);
-  __Pyx_GIVEREF(__pyx_t_1);
-  PyTuple_SET_ITEM(__pyx_t_11, 6, __pyx_t_1);
-  __Pyx_INCREF(__pyx_int_98);
-  __Pyx_GIVEREF(__pyx_int_98);
-  PyTuple_SET_ITEM(__pyx_t_11, 7, __pyx_int_98);
-  __Pyx_INCREF(__pyx_n_s_new);
-  __Pyx_GIVEREF(__pyx_n_s_new);
-  PyTuple_SET_ITEM(__pyx_t_11, 8, __pyx_n_s_new);
-  __Pyx_INCREF(__pyx_int_neg_1);
-  __Pyx_GIVEREF(__pyx_int_neg_1);
-  PyTuple_SET_ITEM(__pyx_t_11, 9, __pyx_int_neg_1);
-  __Pyx_GIVEREF(__pyx_t_5);
-  PyTuple_SET_ITEM(__pyx_t_11, 10, __pyx_t_5);
-  __Pyx_GIVEREF(__pyx_t_7);
-  PyTuple_SET_ITEM(__pyx_t_11, 11, __pyx_t_7);
-  __Pyx_INCREF(__pyx_kp_s_);
-  __Pyx_GIVEREF(__pyx_kp_s_);
-  PyTuple_SET_ITEM(__pyx_t_11, 12, __pyx_kp_s_);
-  __Pyx_INCREF(__pyx_int_neg_1);
-  __Pyx_GIVEREF(__pyx_int_neg_1);
-  PyTuple_SET_ITEM(__pyx_t_11, 13, __pyx_int_neg_1);
-  __pyx_t_2 = 0;
-  __pyx_t_6 = 0;
-  __pyx_t_9 = 0;
-  __pyx_t_1 = 0;
-  __pyx_t_5 = 0;
-  __pyx_t_7 = 0;
-  __pyx_t_7 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_4abce_5trade_Offer), __pyx_t_11, NULL); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 385, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_7);
-  __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-  __pyx_v_offer = ((struct __pyx_obj_4abce_5trade_Offer *)__pyx_t_7);
-  __pyx_t_7 = 0;
-
-  /* "abce/trade.pyx":399
- *                                  '',
- *                                  -1)
- *         self._send(receiver_group, receiver_idn, '_o', offer.pickle())             # <<<<<<<<<<<<<<
- *         self.given_offers[offer.idn] = offer
- *         return offer
- */
-  __pyx_t_11 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_send); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 399, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_11);
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_offer), __pyx_n_s_pickle); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 399, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_offer_counter); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 395, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_t_9 = NULL;
   if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_1))) {
@@ -4708,63 +4762,226 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_8buy(CYTHON_UNUSED PyObject *__pyx
     }
   }
   if (__pyx_t_9) {
-    __pyx_t_5 = __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_t_9); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 399, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_t_9); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 395, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
   } else {
-    __pyx_t_5 = __Pyx_PyObject_CallNoArg(__pyx_t_1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 399, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 395, __pyx_L1_error)
   }
-  __Pyx_GOTREF(__pyx_t_5);
+  __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = NULL;
-  __pyx_t_8 = 0;
-  if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_11))) {
-    __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_11);
-    if (likely(__pyx_t_1)) {
-      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_11);
-      __Pyx_INCREF(__pyx_t_1);
+  __pyx_v_offer_idn = __pyx_t_2;
+  __pyx_t_2 = 0;
+
+  /* "trade.pyx":396
+ * 
+ *         offer_idn = self._offer_counter()
+ *         self._haves['money'] -= money_amount             # <<<<<<<<<<<<<<
+ *         cdef Offer offer = Offer(self.group,
+ *                                  self.idn,
+ */
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_haves); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 396, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_INCREF(__pyx_n_s_money);
+  __pyx_t_10 = __pyx_n_s_money;
+  __pyx_t_1 = PyObject_GetItem(__pyx_t_2, __pyx_t_10); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 396, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_9 = PyFloat_FromDouble(__pyx_v_money_amount); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 396, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_9);
+  __pyx_t_6 = PyNumber_InPlaceSubtract(__pyx_t_1, __pyx_t_9); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 396, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_6);
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+  if (unlikely(PyObject_SetItem(__pyx_t_2, __pyx_t_10, __pyx_t_6) < 0)) __PYX_ERR(0, 396, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+  __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+  /* "trade.pyx":397
+ *         offer_idn = self._offer_counter()
+ *         self._haves['money'] -= money_amount
+ *         cdef Offer offer = Offer(self.group,             # <<<<<<<<<<<<<<
+ *                                  self.idn,
+ *                                  receiver_group,
+ */
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_group); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 397, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+
+  /* "trade.pyx":398
+ *         self._haves['money'] -= money_amount
+ *         cdef Offer offer = Offer(self.group,
+ *                                  self.idn,             # <<<<<<<<<<<<<<
+ *                                  receiver_group,
+ *                                  receiver_idn,
+ */
+  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_idn); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 398, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_6);
+
+  /* "trade.pyx":402
+ *                                  receiver_idn,
+ *                                  good,
+ *                                  quantity,             # <<<<<<<<<<<<<<
+ *                                  price,
+ *                                  98,
+ */
+  __pyx_t_9 = PyFloat_FromDouble(__pyx_v_quantity); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 402, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_9);
+
+  /* "trade.pyx":403
+ *                                  good,
+ *                                  quantity,
+ *                                  price,             # <<<<<<<<<<<<<<
+ *                                  98,
+ *                                  'new',
+ */
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_price); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 403, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+
+  /* "trade.pyx":408
+ *                                  -1,
+ *                                  offer_idn,
+ *                                  self.round,             # <<<<<<<<<<<<<<
+ *                                  '',
+ *                                  -1)
+ */
+  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_round); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 408, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_5);
+
+  /* "trade.pyx":397
+ *         offer_idn = self._offer_counter()
+ *         self._haves['money'] -= money_amount
+ *         cdef Offer offer = Offer(self.group,             # <<<<<<<<<<<<<<
+ *                                  self.idn,
+ *                                  receiver_group,
+ */
+  __pyx_t_7 = PyTuple_New(14); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 397, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_7);
+  __Pyx_GIVEREF(__pyx_t_2);
+  PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_t_2);
+  __Pyx_GIVEREF(__pyx_t_6);
+  PyTuple_SET_ITEM(__pyx_t_7, 1, __pyx_t_6);
+  __Pyx_INCREF(__pyx_v_receiver_group);
+  __Pyx_GIVEREF(__pyx_v_receiver_group);
+  PyTuple_SET_ITEM(__pyx_t_7, 2, __pyx_v_receiver_group);
+  __Pyx_INCREF(__pyx_v_receiver_idn);
+  __Pyx_GIVEREF(__pyx_v_receiver_idn);
+  PyTuple_SET_ITEM(__pyx_t_7, 3, __pyx_v_receiver_idn);
+  __Pyx_INCREF(__pyx_v_good);
+  __Pyx_GIVEREF(__pyx_v_good);
+  PyTuple_SET_ITEM(__pyx_t_7, 4, __pyx_v_good);
+  __Pyx_GIVEREF(__pyx_t_9);
+  PyTuple_SET_ITEM(__pyx_t_7, 5, __pyx_t_9);
+  __Pyx_GIVEREF(__pyx_t_1);
+  PyTuple_SET_ITEM(__pyx_t_7, 6, __pyx_t_1);
+  __Pyx_INCREF(__pyx_int_98);
+  __Pyx_GIVEREF(__pyx_int_98);
+  PyTuple_SET_ITEM(__pyx_t_7, 7, __pyx_int_98);
+  __Pyx_INCREF(__pyx_n_s_new);
+  __Pyx_GIVEREF(__pyx_n_s_new);
+  PyTuple_SET_ITEM(__pyx_t_7, 8, __pyx_n_s_new);
+  __Pyx_INCREF(__pyx_int_neg_1);
+  __Pyx_GIVEREF(__pyx_int_neg_1);
+  PyTuple_SET_ITEM(__pyx_t_7, 9, __pyx_int_neg_1);
+  __Pyx_INCREF(__pyx_v_offer_idn);
+  __Pyx_GIVEREF(__pyx_v_offer_idn);
+  PyTuple_SET_ITEM(__pyx_t_7, 10, __pyx_v_offer_idn);
+  __Pyx_GIVEREF(__pyx_t_5);
+  PyTuple_SET_ITEM(__pyx_t_7, 11, __pyx_t_5);
+  __Pyx_INCREF(__pyx_kp_s__2);
+  __Pyx_GIVEREF(__pyx_kp_s__2);
+  PyTuple_SET_ITEM(__pyx_t_7, 12, __pyx_kp_s__2);
+  __Pyx_INCREF(__pyx_int_neg_1);
+  __Pyx_GIVEREF(__pyx_int_neg_1);
+  PyTuple_SET_ITEM(__pyx_t_7, 13, __pyx_int_neg_1);
+  __pyx_t_2 = 0;
+  __pyx_t_6 = 0;
+  __pyx_t_9 = 0;
+  __pyx_t_1 = 0;
+  __pyx_t_5 = 0;
+  __pyx_t_5 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_5trade_Offer), __pyx_t_7, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 397, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_5);
+  __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+  __pyx_v_offer = ((struct __pyx_obj_5trade_Offer *)__pyx_t_5);
+  __pyx_t_5 = 0;
+
+  /* "trade.pyx":411
+ *                                  '',
+ *                                  -1)
+ *         self._send(receiver_group, receiver_idn, '_o', offer.pickle())             # <<<<<<<<<<<<<<
+ *         self.given_offers[offer_idn] = offer
+ *         return offer
+ */
+  __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_send); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 411, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_7);
+  __pyx_t_9 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_offer), __pyx_n_s_pickle); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 411, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_9);
+  __pyx_t_6 = NULL;
+  if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_9))) {
+    __pyx_t_6 = PyMethod_GET_SELF(__pyx_t_9);
+    if (likely(__pyx_t_6)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_9);
+      __Pyx_INCREF(__pyx_t_6);
       __Pyx_INCREF(function);
-      __Pyx_DECREF_SET(__pyx_t_11, function);
+      __Pyx_DECREF_SET(__pyx_t_9, function);
+    }
+  }
+  if (__pyx_t_6) {
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_9, __pyx_t_6); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 411, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+  } else {
+    __pyx_t_1 = __Pyx_PyObject_CallNoArg(__pyx_t_9); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 411, __pyx_L1_error)
+  }
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+  __pyx_t_9 = NULL;
+  __pyx_t_8 = 0;
+  if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_7))) {
+    __pyx_t_9 = PyMethod_GET_SELF(__pyx_t_7);
+    if (likely(__pyx_t_9)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_7);
+      __Pyx_INCREF(__pyx_t_9);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_7, function);
       __pyx_t_8 = 1;
     }
   }
-  __pyx_t_9 = PyTuple_New(4+__pyx_t_8); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 399, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_9);
-  if (__pyx_t_1) {
-    __Pyx_GIVEREF(__pyx_t_1); PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_t_1); __pyx_t_1 = NULL;
+  __pyx_t_6 = PyTuple_New(4+__pyx_t_8); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 411, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_6);
+  if (__pyx_t_9) {
+    __Pyx_GIVEREF(__pyx_t_9); PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_9); __pyx_t_9 = NULL;
   }
   __Pyx_INCREF(__pyx_v_receiver_group);
   __Pyx_GIVEREF(__pyx_v_receiver_group);
-  PyTuple_SET_ITEM(__pyx_t_9, 0+__pyx_t_8, __pyx_v_receiver_group);
+  PyTuple_SET_ITEM(__pyx_t_6, 0+__pyx_t_8, __pyx_v_receiver_group);
   __Pyx_INCREF(__pyx_v_receiver_idn);
   __Pyx_GIVEREF(__pyx_v_receiver_idn);
-  PyTuple_SET_ITEM(__pyx_t_9, 1+__pyx_t_8, __pyx_v_receiver_idn);
+  PyTuple_SET_ITEM(__pyx_t_6, 1+__pyx_t_8, __pyx_v_receiver_idn);
   __Pyx_INCREF(__pyx_n_s_o);
   __Pyx_GIVEREF(__pyx_n_s_o);
-  PyTuple_SET_ITEM(__pyx_t_9, 2+__pyx_t_8, __pyx_n_s_o);
-  __Pyx_GIVEREF(__pyx_t_5);
-  PyTuple_SET_ITEM(__pyx_t_9, 3+__pyx_t_8, __pyx_t_5);
-  __pyx_t_5 = 0;
-  __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_11, __pyx_t_9, NULL); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 399, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_7);
-  __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-  __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+  PyTuple_SET_ITEM(__pyx_t_6, 2+__pyx_t_8, __pyx_n_s_o);
+  __Pyx_GIVEREF(__pyx_t_1);
+  PyTuple_SET_ITEM(__pyx_t_6, 3+__pyx_t_8, __pyx_t_1);
+  __pyx_t_1 = 0;
+  __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_7, __pyx_t_6, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 411, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_5);
+  __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+  __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-  /* "abce/trade.pyx":400
+  /* "trade.pyx":412
  *                                  -1)
  *         self._send(receiver_group, receiver_idn, '_o', offer.pickle())
- *         self.given_offers[offer.idn] = offer             # <<<<<<<<<<<<<<
+ *         self.given_offers[offer_idn] = offer             # <<<<<<<<<<<<<<
  *         return offer
  * 
  */
-  __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_given_offers); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 400, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_7);
-  if (unlikely(__Pyx_SetItemInt(__pyx_t_7, __pyx_v_offer->idn, ((PyObject *)__pyx_v_offer), long, 1, __Pyx_PyInt_From_long, 0, 1, 1) < 0)) __PYX_ERR(0, 400, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_given_offers); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 412, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_5);
+  if (unlikely(PyObject_SetItem(__pyx_t_5, __pyx_v_offer_idn, ((PyObject *)__pyx_v_offer)) < 0)) __PYX_ERR(0, 412, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-  /* "abce/trade.pyx":401
+  /* "trade.pyx":413
  *         self._send(receiver_group, receiver_idn, '_o', offer.pickle())
- *         self.given_offers[offer.idn] = offer
+ *         self.given_offers[offer_idn] = offer
  *         return offer             # <<<<<<<<<<<<<<
  * 
  *     def retract(self, offer):
@@ -4774,7 +4991,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_8buy(CYTHON_UNUSED PyObject *__pyx
   __pyx_r = ((PyObject *)__pyx_v_offer);
   goto __pyx_L0;
 
-  /* "abce/trade.pyx":356
+  /* "trade.pyx":367
  *         return offer
  * 
  *     def buy(self, receiver_group, receiver_idn, good, double quantity, double price):             # <<<<<<<<<<<<<<
@@ -4791,17 +5008,17 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_8buy(CYTHON_UNUSED PyObject *__pyx
   __Pyx_XDECREF(__pyx_t_7);
   __Pyx_XDECREF(__pyx_t_9);
   __Pyx_XDECREF(__pyx_t_10);
-  __Pyx_XDECREF(__pyx_t_11);
-  __Pyx_AddTraceback("abce.trade.Trade.buy", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Trade.buy", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
+  __Pyx_XDECREF(__pyx_v_offer_idn);
   __Pyx_XDECREF((PyObject *)__pyx_v_offer);
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-/* "abce/trade.pyx":403
+/* "trade.pyx":415
  *         return offer
  * 
  *     def retract(self, offer):             # <<<<<<<<<<<<<<
@@ -4810,10 +5027,10 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_8buy(CYTHON_UNUSED PyObject *__pyx
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_4abce_5trade_5Trade_11retract(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_4abce_5trade_5Trade_10retract[] = " The agent who made a buy or sell offer can retract it\n\n        The offer an agent made is deleted at the end of the sub-round and the\n        committed good reappears in the haves. However if another agent\n        accepts in the same round the trade will be cleared and not retracted.\n\n        Args:\n            offer: the offer he made with buy or sell\n            (offer not quote!)\n        ";
-static PyMethodDef __pyx_mdef_4abce_5trade_5Trade_11retract = {"retract", (PyCFunction)__pyx_pw_4abce_5trade_5Trade_11retract, METH_VARARGS|METH_KEYWORDS, __pyx_doc_4abce_5trade_5Trade_10retract};
-static PyObject *__pyx_pw_4abce_5trade_5Trade_11retract(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_5trade_5Trade_11retract(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_5trade_5Trade_10retract[] = " The agent who made a buy or sell offer can retract it\n\n        The offer an agent made is deleted at the end of the sub-round and the\n        committed good reappears in the haves. However if another agent\n        accepts in the same round the trade will be cleared and not retracted.\n\n        Args:\n            offer: the offer he made with buy or sell\n            (offer not quote!)\n        ";
+static PyMethodDef __pyx_mdef_5trade_5Trade_11retract = {"retract", (PyCFunction)__pyx_pw_5trade_5Trade_11retract, METH_VARARGS|METH_KEYWORDS, __pyx_doc_5trade_5Trade_10retract};
+static PyObject *__pyx_pw_5trade_5Trade_11retract(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_self = 0;
   PyObject *__pyx_v_offer = 0;
   PyObject *__pyx_r = 0;
@@ -4839,11 +5056,11 @@ static PyObject *__pyx_pw_4abce_5trade_5Trade_11retract(PyObject *__pyx_self, Py
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_offer)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("retract", 1, 2, 2, 1); __PYX_ERR(0, 403, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("retract", 1, 2, 2, 1); __PYX_ERR(0, 415, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "retract") < 0)) __PYX_ERR(0, 403, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "retract") < 0)) __PYX_ERR(0, 415, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -4856,20 +5073,20 @@ static PyObject *__pyx_pw_4abce_5trade_5Trade_11retract(PyObject *__pyx_self, Py
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("retract", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 403, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("retract", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 415, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("abce.trade.Trade.retract", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Trade.retract", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_4abce_5trade_5Trade_10retract(__pyx_self, __pyx_v_self, __pyx_v_offer);
+  __pyx_r = __pyx_pf_5trade_5Trade_10retract(__pyx_self, __pyx_v_self, __pyx_v_offer);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_4abce_5trade_5Trade_10retract(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_offer) {
+static PyObject *__pyx_pf_5trade_5Trade_10retract(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_offer) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -4880,16 +5097,16 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_10retract(CYTHON_UNUSED PyObject *
   PyObject *__pyx_t_6 = NULL;
   __Pyx_RefNannySetupContext("retract", 0);
 
-  /* "abce/trade.pyx":414
+  /* "trade.pyx":426
  *             (offer not quote!)
  *         """
  *         self._send(offer['receiver_group'], '_d', offer)             # <<<<<<<<<<<<<<
  *         del self.given_offers[offer['idn']]
  * 
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_send); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 414, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_send); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 426, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_receiver_group); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 414, __pyx_L1_error)
+  __pyx_t_3 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_receiver_group); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 426, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_t_4 = NULL;
   __pyx_t_5 = 0;
@@ -4903,7 +5120,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_10retract(CYTHON_UNUSED PyObject *
       __pyx_t_5 = 1;
     }
   }
-  __pyx_t_6 = PyTuple_New(3+__pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 414, __pyx_L1_error)
+  __pyx_t_6 = PyTuple_New(3+__pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 426, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   if (__pyx_t_4) {
     __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_4); __pyx_t_4 = NULL;
@@ -4917,28 +5134,28 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_10retract(CYTHON_UNUSED PyObject *
   __Pyx_GIVEREF(__pyx_v_offer);
   PyTuple_SET_ITEM(__pyx_t_6, 2+__pyx_t_5, __pyx_v_offer);
   __pyx_t_3 = 0;
-  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_6, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 414, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_6, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 426, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "abce/trade.pyx":415
+  /* "trade.pyx":427
  *         """
  *         self._send(offer['receiver_group'], '_d', offer)
  *         del self.given_offers[offer['idn']]             # <<<<<<<<<<<<<<
  * 
  * 
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_given_offers); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 415, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_given_offers); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 427, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_idn); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 415, __pyx_L1_error)
+  __pyx_t_2 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_idn); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 427, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (unlikely(PyObject_DelItem(__pyx_t_1, __pyx_t_2) < 0)) __PYX_ERR(0, 415, __pyx_L1_error)
+  if (unlikely(PyObject_DelItem(__pyx_t_1, __pyx_t_2) < 0)) __PYX_ERR(0, 427, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "abce/trade.pyx":403
+  /* "trade.pyx":415
  *         return offer
  * 
  *     def retract(self, offer):             # <<<<<<<<<<<<<<
@@ -4955,7 +5172,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_10retract(CYTHON_UNUSED PyObject *
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_6);
-  __Pyx_AddTraceback("abce.trade.Trade.retract", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Trade.retract", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -4963,7 +5180,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_10retract(CYTHON_UNUSED PyObject *
   return __pyx_r;
 }
 
-/* "abce/trade.pyx":418
+/* "trade.pyx":430
  * 
  * 
  *     def accept(self, offer, double quantity=-999):             # <<<<<<<<<<<<<<
@@ -4972,10 +5189,10 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_10retract(CYTHON_UNUSED PyObject *
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_4abce_5trade_5Trade_13accept(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_4abce_5trade_5Trade_12accept[] = " The buy or sell offer is accepted and cleared. If no quantity is\n        given the offer is fully accepted; If a quantity is given the offer is\n        partial accepted\n\n        Args:\n\n            offer:\n                the offer the other party made\n            quantity:\n                quantity to accept. If not given all is accepted\n\n        Return:\n            Returns a dictionary with the good's quantity and the amount paid.\n        ";
-static PyMethodDef __pyx_mdef_4abce_5trade_5Trade_13accept = {"accept", (PyCFunction)__pyx_pw_4abce_5trade_5Trade_13accept, METH_VARARGS|METH_KEYWORDS, __pyx_doc_4abce_5trade_5Trade_12accept};
-static PyObject *__pyx_pw_4abce_5trade_5Trade_13accept(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_5trade_5Trade_13accept(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_5trade_5Trade_12accept[] = " The buy or sell offer is accepted and cleared. If no quantity is\n        given the offer is fully accepted; If a quantity is given the offer is\n        partial accepted\n\n        Args:\n\n            offer:\n                the offer the other party made\n            quantity:\n                quantity to accept. If not given all is accepted\n\n        Return:\n            Returns a dictionary with the good's quantity and the amount paid.\n        ";
+static PyMethodDef __pyx_mdef_5trade_5Trade_13accept = {"accept", (PyCFunction)__pyx_pw_5trade_5Trade_13accept, METH_VARARGS|METH_KEYWORDS, __pyx_doc_5trade_5Trade_12accept};
+static PyObject *__pyx_pw_5trade_5Trade_13accept(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_self = 0;
   PyObject *__pyx_v_offer = 0;
   double __pyx_v_quantity;
@@ -5003,7 +5220,7 @@ static PyObject *__pyx_pw_4abce_5trade_5Trade_13accept(PyObject *__pyx_self, PyO
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_offer)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("accept", 0, 2, 3, 1); __PYX_ERR(0, 418, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("accept", 0, 2, 3, 1); __PYX_ERR(0, 430, __pyx_L3_error)
         }
         case  2:
         if (kw_args > 0) {
@@ -5012,7 +5229,7 @@ static PyObject *__pyx_pw_4abce_5trade_5Trade_13accept(PyObject *__pyx_self, PyO
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "accept") < 0)) __PYX_ERR(0, 418, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "accept") < 0)) __PYX_ERR(0, 430, __pyx_L3_error)
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -5026,27 +5243,27 @@ static PyObject *__pyx_pw_4abce_5trade_5Trade_13accept(PyObject *__pyx_self, PyO
     __pyx_v_self = values[0];
     __pyx_v_offer = values[1];
     if (values[2]) {
-      __pyx_v_quantity = __pyx_PyFloat_AsDouble(values[2]); if (unlikely((__pyx_v_quantity == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 418, __pyx_L3_error)
+      __pyx_v_quantity = __pyx_PyFloat_AsDouble(values[2]); if (unlikely((__pyx_v_quantity == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 430, __pyx_L3_error)
     } else {
       __pyx_v_quantity = ((double)((double)-999.0));
     }
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("accept", 0, 2, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 418, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("accept", 0, 2, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 430, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("abce.trade.Trade.accept", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Trade.accept", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_4abce_5trade_5Trade_12accept(__pyx_self, __pyx_v_self, __pyx_v_offer, __pyx_v_quantity);
+  __pyx_r = __pyx_pf_5trade_5Trade_12accept(__pyx_self, __pyx_v_self, __pyx_v_offer, __pyx_v_quantity);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_4abce_5trade_5Trade_12accept(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_offer, double __pyx_v_quantity) {
+static PyObject *__pyx_pf_5trade_5Trade_12accept(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_offer, double __pyx_v_quantity) {
   double __pyx_v_money_amount;
   double __pyx_v_offer_quantity;
   PyObject *__pyx_r = NULL;
@@ -5064,20 +5281,20 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_12accept(CYTHON_UNUSED PyObject *_
   PyObject *__pyx_t_11 = NULL;
   __Pyx_RefNannySetupContext("accept", 0);
 
-  /* "abce/trade.pyx":434
+  /* "trade.pyx":446
  *         """
  *         cdef double money_amount
  *         cdef double offer_quantity = offer['quantity']             # <<<<<<<<<<<<<<
  * 
  *         if quantity == -999:
  */
-  __pyx_t_1 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_quantity); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 434, __pyx_L1_error)
+  __pyx_t_1 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_quantity); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 446, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_2 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 434, __pyx_L1_error)
+  __pyx_t_2 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_2 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 446, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_offer_quantity = __pyx_t_2;
 
-  /* "abce/trade.pyx":436
+  /* "trade.pyx":448
  *         cdef double offer_quantity = offer['quantity']
  * 
  *         if quantity == -999:             # <<<<<<<<<<<<<<
@@ -5087,7 +5304,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_12accept(CYTHON_UNUSED PyObject *_
   __pyx_t_3 = ((__pyx_v_quantity == -999.0) != 0);
   if (__pyx_t_3) {
 
-    /* "abce/trade.pyx":437
+    /* "trade.pyx":449
  * 
  *         if quantity == -999:
  *             quantity = offer_quantity             # <<<<<<<<<<<<<<
@@ -5096,7 +5313,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_12accept(CYTHON_UNUSED PyObject *_
  */
     __pyx_v_quantity = __pyx_v_offer_quantity;
 
-    /* "abce/trade.pyx":436
+    /* "trade.pyx":448
  *         cdef double offer_quantity = offer['quantity']
  * 
  *         if quantity == -999:             # <<<<<<<<<<<<<<
@@ -5105,39 +5322,39 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_12accept(CYTHON_UNUSED PyObject *_
  */
   }
 
-  /* "abce/trade.pyx":438
+  /* "trade.pyx":450
  *         if quantity == -999:
  *             quantity = offer_quantity
  *         quantity = bound_zero(quantity)             # <<<<<<<<<<<<<<
  *         if quantity > offer_quantity + DBL_EPSILON * fmax(quantity, offer_quantity):
  *             raise AssertionError('accepted more than offered %s: %.100f >= %.100f'
  */
-  __pyx_v_quantity = __pyx_f_4abce_5trade_bound_zero(__pyx_v_quantity);
+  __pyx_v_quantity = __pyx_f_5trade_bound_zero(__pyx_v_quantity);
 
-  /* "abce/trade.pyx":439
+  /* "trade.pyx":451
  *             quantity = offer_quantity
  *         quantity = bound_zero(quantity)
  *         if quantity > offer_quantity + DBL_EPSILON * fmax(quantity, offer_quantity):             # <<<<<<<<<<<<<<
  *             raise AssertionError('accepted more than offered %s: %.100f >= %.100f'
  *                                  % (offer['good'], quantity, offer_quantity))
  */
-  __pyx_t_3 = ((__pyx_v_quantity > (__pyx_v_offer_quantity + (DBL_EPSILON * __pyx_f_4abce_5trade_fmax(__pyx_v_quantity, __pyx_v_offer_quantity)))) != 0);
+  __pyx_t_3 = ((__pyx_v_quantity > (__pyx_v_offer_quantity + (DBL_EPSILON * __pyx_f_5trade_fmax(__pyx_v_quantity, __pyx_v_offer_quantity)))) != 0);
   if (__pyx_t_3) {
 
-    /* "abce/trade.pyx":441
+    /* "trade.pyx":453
  *         if quantity > offer_quantity + DBL_EPSILON * fmax(quantity, offer_quantity):
  *             raise AssertionError('accepted more than offered %s: %.100f >= %.100f'
  *                                  % (offer['good'], quantity, offer_quantity))             # <<<<<<<<<<<<<<
  *         if quantity > offer_quantity:
  *             quantity = offer_quantity
  */
-    __pyx_t_1 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_good); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 441, __pyx_L1_error)
+    __pyx_t_1 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_good); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 453, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_4 = PyFloat_FromDouble(__pyx_v_quantity); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 441, __pyx_L1_error)
+    __pyx_t_4 = PyFloat_FromDouble(__pyx_v_quantity); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 453, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_5 = PyFloat_FromDouble(__pyx_v_offer_quantity); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 441, __pyx_L1_error)
+    __pyx_t_5 = PyFloat_FromDouble(__pyx_v_offer_quantity); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 453, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_6 = PyTuple_New(3); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 441, __pyx_L1_error)
+    __pyx_t_6 = PyTuple_New(3); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 453, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_GIVEREF(__pyx_t_1);
     PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_1);
@@ -5148,30 +5365,30 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_12accept(CYTHON_UNUSED PyObject *_
     __pyx_t_1 = 0;
     __pyx_t_4 = 0;
     __pyx_t_5 = 0;
-    __pyx_t_5 = __Pyx_PyString_Format(__pyx_kp_s_accepted_more_than_offered_s_100, __pyx_t_6); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 441, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyString_Format(__pyx_kp_s_accepted_more_than_offered_s_100, __pyx_t_6); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 453, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-    /* "abce/trade.pyx":440
+    /* "trade.pyx":452
  *         quantity = bound_zero(quantity)
  *         if quantity > offer_quantity + DBL_EPSILON * fmax(quantity, offer_quantity):
  *             raise AssertionError('accepted more than offered %s: %.100f >= %.100f'             # <<<<<<<<<<<<<<
  *                                  % (offer['good'], quantity, offer_quantity))
  *         if quantity > offer_quantity:
  */
-    __pyx_t_6 = PyTuple_New(1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 440, __pyx_L1_error)
+    __pyx_t_6 = PyTuple_New(1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 452, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_GIVEREF(__pyx_t_5);
     PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_5);
     __pyx_t_5 = 0;
-    __pyx_t_5 = __Pyx_PyObject_Call(__pyx_builtin_AssertionError, __pyx_t_6, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 440, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_Call(__pyx_builtin_AssertionError, __pyx_t_6, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 452, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_Raise(__pyx_t_5, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    __PYX_ERR(0, 440, __pyx_L1_error)
+    __PYX_ERR(0, 452, __pyx_L1_error)
 
-    /* "abce/trade.pyx":439
+    /* "trade.pyx":451
  *             quantity = offer_quantity
  *         quantity = bound_zero(quantity)
  *         if quantity > offer_quantity + DBL_EPSILON * fmax(quantity, offer_quantity):             # <<<<<<<<<<<<<<
@@ -5180,7 +5397,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_12accept(CYTHON_UNUSED PyObject *_
  */
   }
 
-  /* "abce/trade.pyx":442
+  /* "trade.pyx":454
  *             raise AssertionError('accepted more than offered %s: %.100f >= %.100f'
  *                                  % (offer['good'], quantity, offer_quantity))
  *         if quantity > offer_quantity:             # <<<<<<<<<<<<<<
@@ -5190,7 +5407,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_12accept(CYTHON_UNUSED PyObject *_
   __pyx_t_3 = ((__pyx_v_quantity > __pyx_v_offer_quantity) != 0);
   if (__pyx_t_3) {
 
-    /* "abce/trade.pyx":443
+    /* "trade.pyx":455
  *                                  % (offer['good'], quantity, offer_quantity))
  *         if quantity > offer_quantity:
  *             quantity = offer_quantity             # <<<<<<<<<<<<<<
@@ -5199,7 +5416,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_12accept(CYTHON_UNUSED PyObject *_
  */
     __pyx_v_quantity = __pyx_v_offer_quantity;
 
-    /* "abce/trade.pyx":442
+    /* "trade.pyx":454
  *             raise AssertionError('accepted more than offered %s: %.100f >= %.100f'
  *                                  % (offer['good'], quantity, offer_quantity))
  *         if quantity > offer_quantity:             # <<<<<<<<<<<<<<
@@ -5208,51 +5425,51 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_12accept(CYTHON_UNUSED PyObject *_
  */
   }
 
-  /* "abce/trade.pyx":445
+  /* "trade.pyx":457
  *             quantity = offer_quantity
  * 
  *         money_amount = quantity * offer['price']             # <<<<<<<<<<<<<<
  *         if offer['buysell'] == 115:  # ord('s')
  *             money_amount = self._quantity_smaller_goods(money_amount, 'money')
  */
-  __pyx_t_5 = PyFloat_FromDouble(__pyx_v_quantity); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 445, __pyx_L1_error)
+  __pyx_t_5 = PyFloat_FromDouble(__pyx_v_quantity); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 457, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
-  __pyx_t_6 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_price); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 445, __pyx_L1_error)
+  __pyx_t_6 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_price); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 457, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
-  __pyx_t_4 = PyNumber_Multiply(__pyx_t_5, __pyx_t_6); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 445, __pyx_L1_error)
+  __pyx_t_4 = PyNumber_Multiply(__pyx_t_5, __pyx_t_6); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 457, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  __pyx_t_2 = __pyx_PyFloat_AsDouble(__pyx_t_4); if (unlikely((__pyx_t_2 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 445, __pyx_L1_error)
+  __pyx_t_2 = __pyx_PyFloat_AsDouble(__pyx_t_4); if (unlikely((__pyx_t_2 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 457, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __pyx_v_money_amount = __pyx_t_2;
 
-  /* "abce/trade.pyx":446
+  /* "trade.pyx":458
  * 
  *         money_amount = quantity * offer['price']
  *         if offer['buysell'] == 115:  # ord('s')             # <<<<<<<<<<<<<<
  *             money_amount = self._quantity_smaller_goods(money_amount, 'money')
  *             self._haves[offer['good']] += quantity
  */
-  __pyx_t_4 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_buysell); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 446, __pyx_L1_error)
+  __pyx_t_4 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_buysell); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 458, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_6 = __Pyx_PyInt_EqObjC(__pyx_t_4, __pyx_int_115, 0x73, 0); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 446, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyInt_EqObjC(__pyx_t_4, __pyx_int_115, 0x73, 0); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 458, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_6); if (unlikely(__pyx_t_3 < 0)) __PYX_ERR(0, 446, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_6); if (unlikely(__pyx_t_3 < 0)) __PYX_ERR(0, 458, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   if (__pyx_t_3) {
 
-    /* "abce/trade.pyx":447
+    /* "trade.pyx":459
  *         money_amount = quantity * offer['price']
  *         if offer['buysell'] == 115:  # ord('s')
  *             money_amount = self._quantity_smaller_goods(money_amount, 'money')             # <<<<<<<<<<<<<<
  *             self._haves[offer['good']] += quantity
  *             self._haves['money'] -= quantity * offer['price']
  */
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_quantity_smaller_goods); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 447, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_quantity_smaller_goods); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 459, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_5 = PyFloat_FromDouble(__pyx_v_money_amount); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 447, __pyx_L1_error)
+    __pyx_t_5 = PyFloat_FromDouble(__pyx_v_money_amount); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 459, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __pyx_t_1 = NULL;
     __pyx_t_7 = 0;
@@ -5266,7 +5483,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_12accept(CYTHON_UNUSED PyObject *_
         __pyx_t_7 = 1;
       }
     }
-    __pyx_t_8 = PyTuple_New(2+__pyx_t_7); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 447, __pyx_L1_error)
+    __pyx_t_8 = PyTuple_New(2+__pyx_t_7); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 459, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
     if (__pyx_t_1) {
       __Pyx_GIVEREF(__pyx_t_1); PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_1); __pyx_t_1 = NULL;
@@ -5277,69 +5494,69 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_12accept(CYTHON_UNUSED PyObject *_
     __Pyx_GIVEREF(__pyx_n_s_money);
     PyTuple_SET_ITEM(__pyx_t_8, 1+__pyx_t_7, __pyx_n_s_money);
     __pyx_t_5 = 0;
-    __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_8, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 447, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_8, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 459, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_2 = __pyx_PyFloat_AsDouble(__pyx_t_6); if (unlikely((__pyx_t_2 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 447, __pyx_L1_error)
+    __pyx_t_2 = __pyx_PyFloat_AsDouble(__pyx_t_6); if (unlikely((__pyx_t_2 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 459, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     __pyx_v_money_amount = __pyx_t_2;
 
-    /* "abce/trade.pyx":448
+    /* "trade.pyx":460
  *         if offer['buysell'] == 115:  # ord('s')
  *             money_amount = self._quantity_smaller_goods(money_amount, 'money')
  *             self._haves[offer['good']] += quantity             # <<<<<<<<<<<<<<
  *             self._haves['money'] -= quantity * offer['price']
  *         else:
  */
-    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_haves); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 448, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_haves); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 460, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_4 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_good); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 448, __pyx_L1_error)
+    __pyx_t_4 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_good); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 460, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_8 = PyObject_GetItem(__pyx_t_6, __pyx_t_4); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 448, __pyx_L1_error)
+    __pyx_t_8 = PyObject_GetItem(__pyx_t_6, __pyx_t_4); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 460, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
-    __pyx_t_5 = PyFloat_FromDouble(__pyx_v_quantity); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 448, __pyx_L1_error)
+    __pyx_t_5 = PyFloat_FromDouble(__pyx_v_quantity); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 460, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_1 = PyNumber_InPlaceAdd(__pyx_t_8, __pyx_t_5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 448, __pyx_L1_error)
+    __pyx_t_1 = PyNumber_InPlaceAdd(__pyx_t_8, __pyx_t_5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 460, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    if (unlikely(PyObject_SetItem(__pyx_t_6, __pyx_t_4, __pyx_t_1) < 0)) __PYX_ERR(0, 448, __pyx_L1_error)
+    if (unlikely(PyObject_SetItem(__pyx_t_6, __pyx_t_4, __pyx_t_1) < 0)) __PYX_ERR(0, 460, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-    /* "abce/trade.pyx":449
+    /* "trade.pyx":461
  *             money_amount = self._quantity_smaller_goods(money_amount, 'money')
  *             self._haves[offer['good']] += quantity
  *             self._haves['money'] -= quantity * offer['price']             # <<<<<<<<<<<<<<
  *         else:
  *             quantity = self._quantity_smaller_goods(quantity, offer['good'])
  */
-    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_haves); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 449, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_haves); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 461, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_INCREF(__pyx_n_s_money);
     __pyx_t_9 = __pyx_n_s_money;
-    __pyx_t_4 = PyObject_GetItem(__pyx_t_6, __pyx_t_9); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 449, __pyx_L1_error)
+    __pyx_t_4 = PyObject_GetItem(__pyx_t_6, __pyx_t_9); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 461, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_1 = PyFloat_FromDouble(__pyx_v_quantity); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 449, __pyx_L1_error)
+    __pyx_t_1 = PyFloat_FromDouble(__pyx_v_quantity); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 461, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_5 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_price); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 449, __pyx_L1_error)
+    __pyx_t_5 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_price); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 461, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_8 = PyNumber_Multiply(__pyx_t_1, __pyx_t_5); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 449, __pyx_L1_error)
+    __pyx_t_8 = PyNumber_Multiply(__pyx_t_1, __pyx_t_5); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 461, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    __pyx_t_5 = PyNumber_InPlaceSubtract(__pyx_t_4, __pyx_t_8); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 449, __pyx_L1_error)
+    __pyx_t_5 = PyNumber_InPlaceSubtract(__pyx_t_4, __pyx_t_8); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 461, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-    if (unlikely(PyObject_SetItem(__pyx_t_6, __pyx_t_9, __pyx_t_5) < 0)) __PYX_ERR(0, 449, __pyx_L1_error)
+    if (unlikely(PyObject_SetItem(__pyx_t_6, __pyx_t_9, __pyx_t_5) < 0)) __PYX_ERR(0, 461, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-    /* "abce/trade.pyx":446
+    /* "trade.pyx":458
  * 
  *         money_amount = quantity * offer['price']
  *         if offer['buysell'] == 115:  # ord('s')             # <<<<<<<<<<<<<<
@@ -5349,7 +5566,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_12accept(CYTHON_UNUSED PyObject *_
     goto __pyx_L6;
   }
 
-  /* "abce/trade.pyx":451
+  /* "trade.pyx":463
  *             self._haves['money'] -= quantity * offer['price']
  *         else:
  *             quantity = self._quantity_smaller_goods(quantity, offer['good'])             # <<<<<<<<<<<<<<
@@ -5357,11 +5574,11 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_12accept(CYTHON_UNUSED PyObject *_
  *             self._haves['money'] += quantity * offer['price']
  */
   /*else*/ {
-    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_quantity_smaller_goods); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 451, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_quantity_smaller_goods); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 463, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_8 = PyFloat_FromDouble(__pyx_v_quantity); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 451, __pyx_L1_error)
+    __pyx_t_8 = PyFloat_FromDouble(__pyx_v_quantity); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 463, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
-    __pyx_t_4 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_good); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 451, __pyx_L1_error)
+    __pyx_t_4 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_good); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 463, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __pyx_t_1 = NULL;
     __pyx_t_7 = 0;
@@ -5375,7 +5592,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_12accept(CYTHON_UNUSED PyObject *_
         __pyx_t_7 = 1;
       }
     }
-    __pyx_t_10 = PyTuple_New(2+__pyx_t_7); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 451, __pyx_L1_error)
+    __pyx_t_10 = PyTuple_New(2+__pyx_t_7); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 463, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_10);
     if (__pyx_t_1) {
       __Pyx_GIVEREF(__pyx_t_1); PyTuple_SET_ITEM(__pyx_t_10, 0, __pyx_t_1); __pyx_t_1 = NULL;
@@ -5386,100 +5603,100 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_12accept(CYTHON_UNUSED PyObject *_
     PyTuple_SET_ITEM(__pyx_t_10, 1+__pyx_t_7, __pyx_t_4);
     __pyx_t_8 = 0;
     __pyx_t_4 = 0;
-    __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_10, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 451, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_10, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 463, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    __pyx_t_2 = __pyx_PyFloat_AsDouble(__pyx_t_6); if (unlikely((__pyx_t_2 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 451, __pyx_L1_error)
+    __pyx_t_2 = __pyx_PyFloat_AsDouble(__pyx_t_6); if (unlikely((__pyx_t_2 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 463, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     __pyx_v_quantity = __pyx_t_2;
 
-    /* "abce/trade.pyx":452
+    /* "trade.pyx":464
  *         else:
  *             quantity = self._quantity_smaller_goods(quantity, offer['good'])
  *             self._haves[offer['good']] -= quantity             # <<<<<<<<<<<<<<
  *             self._haves['money'] += quantity * offer['price']
  *         offer['final_quantity'] = quantity
  */
-    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_haves); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 452, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_haves); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 464, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_5 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_good); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 452, __pyx_L1_error)
+    __pyx_t_5 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_good); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 464, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_10 = PyObject_GetItem(__pyx_t_6, __pyx_t_5); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 452, __pyx_L1_error)
+    __pyx_t_10 = PyObject_GetItem(__pyx_t_6, __pyx_t_5); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 464, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_10);
-    __pyx_t_4 = PyFloat_FromDouble(__pyx_v_quantity); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 452, __pyx_L1_error)
+    __pyx_t_4 = PyFloat_FromDouble(__pyx_v_quantity); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 464, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_8 = PyNumber_InPlaceSubtract(__pyx_t_10, __pyx_t_4); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 452, __pyx_L1_error)
+    __pyx_t_8 = PyNumber_InPlaceSubtract(__pyx_t_10, __pyx_t_4); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 464, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
     __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    if (unlikely(PyObject_SetItem(__pyx_t_6, __pyx_t_5, __pyx_t_8) < 0)) __PYX_ERR(0, 452, __pyx_L1_error)
+    if (unlikely(PyObject_SetItem(__pyx_t_6, __pyx_t_5, __pyx_t_8) < 0)) __PYX_ERR(0, 464, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-    /* "abce/trade.pyx":453
+    /* "trade.pyx":465
  *             quantity = self._quantity_smaller_goods(quantity, offer['good'])
  *             self._haves[offer['good']] -= quantity
  *             self._haves['money'] += quantity * offer['price']             # <<<<<<<<<<<<<<
  *         offer['final_quantity'] = quantity
  *         self._send(offer['sender_group'], offer['sender_idn'], '_p', (offer['idn'], quantity))
  */
-    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_haves); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 453, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_haves); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 465, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_INCREF(__pyx_n_s_money);
     __pyx_t_9 = __pyx_n_s_money;
-    __pyx_t_5 = PyObject_GetItem(__pyx_t_6, __pyx_t_9); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 453, __pyx_L1_error)
+    __pyx_t_5 = PyObject_GetItem(__pyx_t_6, __pyx_t_9); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 465, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_8 = PyFloat_FromDouble(__pyx_v_quantity); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 453, __pyx_L1_error)
+    __pyx_t_8 = PyFloat_FromDouble(__pyx_v_quantity); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 465, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
-    __pyx_t_4 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_price); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 453, __pyx_L1_error)
+    __pyx_t_4 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_price); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 465, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_10 = PyNumber_Multiply(__pyx_t_8, __pyx_t_4); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 453, __pyx_L1_error)
+    __pyx_t_10 = PyNumber_Multiply(__pyx_t_8, __pyx_t_4); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 465, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_10);
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_4 = PyNumber_InPlaceAdd(__pyx_t_5, __pyx_t_10); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 453, __pyx_L1_error)
+    __pyx_t_4 = PyNumber_InPlaceAdd(__pyx_t_5, __pyx_t_10); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 465, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-    if (unlikely(PyObject_SetItem(__pyx_t_6, __pyx_t_9, __pyx_t_4) < 0)) __PYX_ERR(0, 453, __pyx_L1_error)
+    if (unlikely(PyObject_SetItem(__pyx_t_6, __pyx_t_9, __pyx_t_4) < 0)) __PYX_ERR(0, 465, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   }
   __pyx_L6:;
 
-  /* "abce/trade.pyx":454
+  /* "trade.pyx":466
  *             self._haves[offer['good']] -= quantity
  *             self._haves['money'] += quantity * offer['price']
  *         offer['final_quantity'] = quantity             # <<<<<<<<<<<<<<
  *         self._send(offer['sender_group'], offer['sender_idn'], '_p', (offer['idn'], quantity))
  *         del self._open_offers[offer['good']][offer['idn']]
  */
-  __pyx_t_6 = PyFloat_FromDouble(__pyx_v_quantity); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 454, __pyx_L1_error)
+  __pyx_t_6 = PyFloat_FromDouble(__pyx_v_quantity); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 466, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
-  if (unlikely(PyObject_SetItem(__pyx_v_offer, __pyx_n_s_final_quantity, __pyx_t_6) < 0)) __PYX_ERR(0, 454, __pyx_L1_error)
+  if (unlikely(PyObject_SetItem(__pyx_v_offer, __pyx_n_s_final_quantity, __pyx_t_6) < 0)) __PYX_ERR(0, 466, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-  /* "abce/trade.pyx":455
+  /* "trade.pyx":467
  *             self._haves['money'] += quantity * offer['price']
  *         offer['final_quantity'] = quantity
  *         self._send(offer['sender_group'], offer['sender_idn'], '_p', (offer['idn'], quantity))             # <<<<<<<<<<<<<<
  *         del self._open_offers[offer['good']][offer['idn']]
  *         return {offer['good']: quantity, 'money': money_amount}
  */
-  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_send); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 455, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_send); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 467, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_10 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_sender_group); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 455, __pyx_L1_error)
+  __pyx_t_10 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_sender_group); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 467, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_10);
-  __pyx_t_5 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_sender_idn); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 455, __pyx_L1_error)
+  __pyx_t_5 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_sender_idn); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 467, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
-  __pyx_t_8 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_idn); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 455, __pyx_L1_error)
+  __pyx_t_8 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_idn); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 467, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_8);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_quantity); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 455, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_quantity); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 467, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_11 = PyTuple_New(2); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 455, __pyx_L1_error)
+  __pyx_t_11 = PyTuple_New(2); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 467, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_11);
   __Pyx_GIVEREF(__pyx_t_8);
   PyTuple_SET_ITEM(__pyx_t_11, 0, __pyx_t_8);
@@ -5499,7 +5716,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_12accept(CYTHON_UNUSED PyObject *_
       __pyx_t_7 = 1;
     }
   }
-  __pyx_t_8 = PyTuple_New(4+__pyx_t_7); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 455, __pyx_L1_error)
+  __pyx_t_8 = PyTuple_New(4+__pyx_t_7); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 467, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_8);
   if (__pyx_t_1) {
     __Pyx_GIVEREF(__pyx_t_1); PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_1); __pyx_t_1 = NULL;
@@ -5516,34 +5733,34 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_12accept(CYTHON_UNUSED PyObject *_
   __pyx_t_10 = 0;
   __pyx_t_5 = 0;
   __pyx_t_11 = 0;
-  __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_8, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 455, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_8, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 467, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-  /* "abce/trade.pyx":456
+  /* "trade.pyx":468
  *         offer['final_quantity'] = quantity
  *         self._send(offer['sender_group'], offer['sender_idn'], '_p', (offer['idn'], quantity))
  *         del self._open_offers[offer['good']][offer['idn']]             # <<<<<<<<<<<<<<
  *         return {offer['good']: quantity, 'money': money_amount}
  * 
  */
-  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_open_offers); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 456, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_open_offers); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 468, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
-  __pyx_t_4 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_good); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 456, __pyx_L1_error)
+  __pyx_t_4 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_good); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 468, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_8 = PyObject_GetItem(__pyx_t_6, __pyx_t_4); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 456, __pyx_L1_error)
+  __pyx_t_8 = PyObject_GetItem(__pyx_t_6, __pyx_t_4); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 468, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_8);
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_4 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_idn); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 456, __pyx_L1_error)
+  __pyx_t_4 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_idn); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 468, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  if (unlikely(PyObject_DelItem(__pyx_t_8, __pyx_t_4) < 0)) __PYX_ERR(0, 456, __pyx_L1_error)
+  if (unlikely(PyObject_DelItem(__pyx_t_8, __pyx_t_4) < 0)) __PYX_ERR(0, 468, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-  /* "abce/trade.pyx":457
+  /* "trade.pyx":469
  *         self._send(offer['sender_group'], offer['sender_idn'], '_p', (offer['idn'], quantity))
  *         del self._open_offers[offer['good']][offer['idn']]
  *         return {offer['good']: quantity, 'money': money_amount}             # <<<<<<<<<<<<<<
@@ -5551,24 +5768,24 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_12accept(CYTHON_UNUSED PyObject *_
  *     def reject(self, offer):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_4 = PyDict_New(); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 457, __pyx_L1_error)
+  __pyx_t_4 = PyDict_New(); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 469, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_8 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_good); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 457, __pyx_L1_error)
+  __pyx_t_8 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_good); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 469, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_8);
-  __pyx_t_6 = PyFloat_FromDouble(__pyx_v_quantity); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 457, __pyx_L1_error)
+  __pyx_t_6 = PyFloat_FromDouble(__pyx_v_quantity); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 469, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
-  if (PyDict_SetItem(__pyx_t_4, __pyx_t_8, __pyx_t_6) < 0) __PYX_ERR(0, 457, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_4, __pyx_t_8, __pyx_t_6) < 0) __PYX_ERR(0, 469, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  __pyx_t_6 = PyFloat_FromDouble(__pyx_v_money_amount); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 457, __pyx_L1_error)
+  __pyx_t_6 = PyFloat_FromDouble(__pyx_v_money_amount); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 469, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
-  if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_money, __pyx_t_6) < 0) __PYX_ERR(0, 457, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_money, __pyx_t_6) < 0) __PYX_ERR(0, 469, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   __pyx_r = __pyx_t_4;
   __pyx_t_4 = 0;
   goto __pyx_L0;
 
-  /* "abce/trade.pyx":418
+  /* "trade.pyx":430
  * 
  * 
  *     def accept(self, offer, double quantity=-999):             # <<<<<<<<<<<<<<
@@ -5586,7 +5803,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_12accept(CYTHON_UNUSED PyObject *_
   __Pyx_XDECREF(__pyx_t_9);
   __Pyx_XDECREF(__pyx_t_10);
   __Pyx_XDECREF(__pyx_t_11);
-  __Pyx_AddTraceback("abce.trade.Trade.accept", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Trade.accept", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -5594,7 +5811,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_12accept(CYTHON_UNUSED PyObject *_
   return __pyx_r;
 }
 
-/* "abce/trade.pyx":459
+/* "trade.pyx":471
  *         return {offer['good']: quantity, 'money': money_amount}
  * 
  *     def reject(self, offer):             # <<<<<<<<<<<<<<
@@ -5603,10 +5820,10 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_12accept(CYTHON_UNUSED PyObject *_
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_4abce_5trade_5Trade_15reject(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_4abce_5trade_5Trade_14reject[] = " The offer is rejected\n\n        Args:\n            offer: the offer the other party made\n            (offer not quote!)\n        ";
-static PyMethodDef __pyx_mdef_4abce_5trade_5Trade_15reject = {"reject", (PyCFunction)__pyx_pw_4abce_5trade_5Trade_15reject, METH_VARARGS|METH_KEYWORDS, __pyx_doc_4abce_5trade_5Trade_14reject};
-static PyObject *__pyx_pw_4abce_5trade_5Trade_15reject(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_5trade_5Trade_15reject(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_5trade_5Trade_14reject[] = " The offer is rejected\n\n        Args:\n            offer: the offer the other party made\n            (offer not quote!)\n        ";
+static PyMethodDef __pyx_mdef_5trade_5Trade_15reject = {"reject", (PyCFunction)__pyx_pw_5trade_5Trade_15reject, METH_VARARGS|METH_KEYWORDS, __pyx_doc_5trade_5Trade_14reject};
+static PyObject *__pyx_pw_5trade_5Trade_15reject(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_self = 0;
   PyObject *__pyx_v_offer = 0;
   PyObject *__pyx_r = 0;
@@ -5632,11 +5849,11 @@ static PyObject *__pyx_pw_4abce_5trade_5Trade_15reject(PyObject *__pyx_self, PyO
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_offer)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("reject", 1, 2, 2, 1); __PYX_ERR(0, 459, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("reject", 1, 2, 2, 1); __PYX_ERR(0, 471, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "reject") < 0)) __PYX_ERR(0, 459, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "reject") < 0)) __PYX_ERR(0, 471, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -5649,20 +5866,20 @@ static PyObject *__pyx_pw_4abce_5trade_5Trade_15reject(PyObject *__pyx_self, PyO
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("reject", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 459, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("reject", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 471, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("abce.trade.Trade.reject", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Trade.reject", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_4abce_5trade_5Trade_14reject(__pyx_self, __pyx_v_self, __pyx_v_offer);
+  __pyx_r = __pyx_pf_5trade_5Trade_14reject(__pyx_self, __pyx_v_self, __pyx_v_offer);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_4abce_5trade_5Trade_14reject(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_offer) {
+static PyObject *__pyx_pf_5trade_5Trade_14reject(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_offer) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -5675,20 +5892,20 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_14reject(CYTHON_UNUSED PyObject *_
   PyObject *__pyx_t_8 = NULL;
   __Pyx_RefNannySetupContext("reject", 0);
 
-  /* "abce/trade.pyx":466
+  /* "trade.pyx":478
  *             (offer not quote!)
  *         """
  *         self._send(offer['sender_group'], offer['sender_idn'], '_r', offer['idn'])             # <<<<<<<<<<<<<<
  *         del self._open_offers[offer['good']][offer['idn']]
  * 
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_send); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 466, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_send); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 478, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_sender_group); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 466, __pyx_L1_error)
+  __pyx_t_3 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_sender_group); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 478, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_4 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_sender_idn); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 466, __pyx_L1_error)
+  __pyx_t_4 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_sender_idn); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 478, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_5 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_idn); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 466, __pyx_L1_error)
+  __pyx_t_5 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_idn); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 478, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __pyx_t_6 = NULL;
   __pyx_t_7 = 0;
@@ -5702,7 +5919,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_14reject(CYTHON_UNUSED PyObject *_
       __pyx_t_7 = 1;
     }
   }
-  __pyx_t_8 = PyTuple_New(4+__pyx_t_7); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 466, __pyx_L1_error)
+  __pyx_t_8 = PyTuple_New(4+__pyx_t_7); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 478, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_8);
   if (__pyx_t_6) {
     __Pyx_GIVEREF(__pyx_t_6); PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_6); __pyx_t_6 = NULL;
@@ -5719,34 +5936,34 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_14reject(CYTHON_UNUSED PyObject *_
   __pyx_t_3 = 0;
   __pyx_t_4 = 0;
   __pyx_t_5 = 0;
-  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_8, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 466, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_8, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 478, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "abce/trade.pyx":467
+  /* "trade.pyx":479
  *         """
  *         self._send(offer['sender_group'], offer['sender_idn'], '_r', offer['idn'])
  *         del self._open_offers[offer['good']][offer['idn']]             # <<<<<<<<<<<<<<
  * 
  *     def _log_receive_accept_group(self, offer):
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_open_offers); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 467, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_open_offers); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 479, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_good); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 467, __pyx_L1_error)
+  __pyx_t_2 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_good); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 479, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_8 = PyObject_GetItem(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 467, __pyx_L1_error)
+  __pyx_t_8 = PyObject_GetItem(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 479, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_8);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_idn); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 467, __pyx_L1_error)
+  __pyx_t_2 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_idn); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 479, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (unlikely(PyObject_DelItem(__pyx_t_8, __pyx_t_2) < 0)) __PYX_ERR(0, 467, __pyx_L1_error)
+  if (unlikely(PyObject_DelItem(__pyx_t_8, __pyx_t_2) < 0)) __PYX_ERR(0, 479, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "abce/trade.pyx":459
+  /* "trade.pyx":471
  *         return {offer['good']: quantity, 'money': money_amount}
  * 
  *     def reject(self, offer):             # <<<<<<<<<<<<<<
@@ -5765,7 +5982,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_14reject(CYTHON_UNUSED PyObject *_
   __Pyx_XDECREF(__pyx_t_5);
   __Pyx_XDECREF(__pyx_t_6);
   __Pyx_XDECREF(__pyx_t_8);
-  __Pyx_AddTraceback("abce.trade.Trade.reject", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Trade.reject", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -5773,7 +5990,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_14reject(CYTHON_UNUSED PyObject *_
   return __pyx_r;
 }
 
-/* "abce/trade.pyx":469
+/* "trade.pyx":481
  *         del self._open_offers[offer['good']][offer['idn']]
  * 
  *     def _log_receive_accept_group(self, offer):             # <<<<<<<<<<<<<<
@@ -5782,9 +5999,9 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_14reject(CYTHON_UNUSED PyObject *_
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_4abce_5trade_5Trade_17_log_receive_accept_group(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyMethodDef __pyx_mdef_4abce_5trade_5Trade_17_log_receive_accept_group = {"_log_receive_accept_group", (PyCFunction)__pyx_pw_4abce_5trade_5Trade_17_log_receive_accept_group, METH_VARARGS|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_4abce_5trade_5Trade_17_log_receive_accept_group(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_5trade_5Trade_17_log_receive_accept_group(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyMethodDef __pyx_mdef_5trade_5Trade_17_log_receive_accept_group = {"_log_receive_accept_group", (PyCFunction)__pyx_pw_5trade_5Trade_17_log_receive_accept_group, METH_VARARGS|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_5trade_5Trade_17_log_receive_accept_group(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_self = 0;
   PyObject *__pyx_v_offer = 0;
   PyObject *__pyx_r = 0;
@@ -5810,11 +6027,11 @@ static PyObject *__pyx_pw_4abce_5trade_5Trade_17_log_receive_accept_group(PyObje
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_offer)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("_log_receive_accept_group", 1, 2, 2, 1); __PYX_ERR(0, 469, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("_log_receive_accept_group", 1, 2, 2, 1); __PYX_ERR(0, 481, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "_log_receive_accept_group") < 0)) __PYX_ERR(0, 469, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "_log_receive_accept_group") < 0)) __PYX_ERR(0, 481, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -5827,20 +6044,20 @@ static PyObject *__pyx_pw_4abce_5trade_5Trade_17_log_receive_accept_group(PyObje
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("_log_receive_accept_group", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 469, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("_log_receive_accept_group", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 481, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("abce.trade.Trade._log_receive_accept_group", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Trade._log_receive_accept_group", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_4abce_5trade_5Trade_16_log_receive_accept_group(__pyx_self, __pyx_v_self, __pyx_v_offer);
+  __pyx_r = __pyx_pf_5trade_5Trade_16_log_receive_accept_group(__pyx_self, __pyx_v_self, __pyx_v_offer);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_4abce_5trade_5Trade_16_log_receive_accept_group(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_offer) {
+static PyObject *__pyx_pf_5trade_5Trade_16_log_receive_accept_group(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_offer) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -5852,40 +6069,40 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_16_log_receive_accept_group(CYTHON
   PyObject *__pyx_t_7 = NULL;
   __Pyx_RefNannySetupContext("_log_receive_accept_group", 0);
 
-  /* "abce/trade.pyx":470
+  /* "trade.pyx":482
  * 
  *     def _log_receive_accept_group(self, offer):
  *         if offer['buysell'] == 115:             # <<<<<<<<<<<<<<
  *             self._trade_log['%s,%s,%s,%f' % (offer['good'], self.group, offer['receiver_group'], offer['price'])] += offer['quantity']
  *         else:
  */
-  __pyx_t_1 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_buysell); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 470, __pyx_L1_error)
+  __pyx_t_1 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_buysell); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 482, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyInt_EqObjC(__pyx_t_1, __pyx_int_115, 0x73, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 470, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_EqObjC(__pyx_t_1, __pyx_int_115, 0x73, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 482, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely(__pyx_t_3 < 0)) __PYX_ERR(0, 470, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely(__pyx_t_3 < 0)) __PYX_ERR(0, 482, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   if (__pyx_t_3) {
 
-    /* "abce/trade.pyx":471
+    /* "trade.pyx":483
  *     def _log_receive_accept_group(self, offer):
  *         if offer['buysell'] == 115:
  *             self._trade_log['%s,%s,%s,%f' % (offer['good'], self.group, offer['receiver_group'], offer['price'])] += offer['quantity']             # <<<<<<<<<<<<<<
  *         else:
  *             self._trade_log['%s,%s,%s,%f' % (offer['good'], offer['receiver_group'], self.group, offer['price'])] += offer['quantity']
  */
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_trade_log); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 471, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_trade_log); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 483, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_1 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_good); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 471, __pyx_L1_error)
+    __pyx_t_1 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_good); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 483, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_group); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 471, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_group); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 483, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_5 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_receiver_group); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 471, __pyx_L1_error)
+    __pyx_t_5 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_receiver_group); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 483, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_6 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_price); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 471, __pyx_L1_error)
+    __pyx_t_6 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_price); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 483, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_7 = PyTuple_New(4); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 471, __pyx_L1_error)
+    __pyx_t_7 = PyTuple_New(4); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 483, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __Pyx_GIVEREF(__pyx_t_1);
     PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_t_1);
@@ -5899,23 +6116,23 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_16_log_receive_accept_group(CYTHON
     __pyx_t_4 = 0;
     __pyx_t_5 = 0;
     __pyx_t_6 = 0;
-    __pyx_t_6 = __Pyx_PyString_Format(__pyx_kp_s_s_s_s_f, __pyx_t_7); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 471, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyString_Format(__pyx_kp_s_s_s_s_f, __pyx_t_7); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 483, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-    __pyx_t_7 = PyObject_GetItem(__pyx_t_2, __pyx_t_6); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 471, __pyx_L1_error)
+    __pyx_t_7 = PyObject_GetItem(__pyx_t_2, __pyx_t_6); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 483, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
-    __pyx_t_5 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_quantity); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 471, __pyx_L1_error)
+    __pyx_t_5 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_quantity); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 483, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_4 = PyNumber_InPlaceAdd(__pyx_t_7, __pyx_t_5); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 471, __pyx_L1_error)
+    __pyx_t_4 = PyNumber_InPlaceAdd(__pyx_t_7, __pyx_t_5); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 483, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    if (unlikely(PyObject_SetItem(__pyx_t_2, __pyx_t_6, __pyx_t_4) < 0)) __PYX_ERR(0, 471, __pyx_L1_error)
+    if (unlikely(PyObject_SetItem(__pyx_t_2, __pyx_t_6, __pyx_t_4) < 0)) __PYX_ERR(0, 483, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-    /* "abce/trade.pyx":470
+    /* "trade.pyx":482
  * 
  *     def _log_receive_accept_group(self, offer):
  *         if offer['buysell'] == 115:             # <<<<<<<<<<<<<<
@@ -5925,7 +6142,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_16_log_receive_accept_group(CYTHON
     goto __pyx_L3;
   }
 
-  /* "abce/trade.pyx":473
+  /* "trade.pyx":485
  *             self._trade_log['%s,%s,%s,%f' % (offer['good'], self.group, offer['receiver_group'], offer['price'])] += offer['quantity']
  *         else:
  *             self._trade_log['%s,%s,%s,%f' % (offer['good'], offer['receiver_group'], self.group, offer['price'])] += offer['quantity']             # <<<<<<<<<<<<<<
@@ -5933,17 +6150,17 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_16_log_receive_accept_group(CYTHON
  *     def _log_receive_accept_agent(self, offer):
  */
   /*else*/ {
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_trade_log); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 473, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_trade_log); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 485, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_6 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_good); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 473, __pyx_L1_error)
+    __pyx_t_6 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_good); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 485, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_4 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_receiver_group); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 473, __pyx_L1_error)
+    __pyx_t_4 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_receiver_group); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 485, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_group); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 473, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_group); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 485, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_7 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_price); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 473, __pyx_L1_error)
+    __pyx_t_7 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_price); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 485, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
-    __pyx_t_1 = PyTuple_New(4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 473, __pyx_L1_error)
+    __pyx_t_1 = PyTuple_New(4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 485, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_GIVEREF(__pyx_t_6);
     PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_6);
@@ -5957,25 +6174,25 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_16_log_receive_accept_group(CYTHON
     __pyx_t_4 = 0;
     __pyx_t_5 = 0;
     __pyx_t_7 = 0;
-    __pyx_t_7 = __Pyx_PyString_Format(__pyx_kp_s_s_s_s_f, __pyx_t_1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 473, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyString_Format(__pyx_kp_s_s_s_s_f, __pyx_t_1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 485, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_1 = PyObject_GetItem(__pyx_t_2, __pyx_t_7); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 473, __pyx_L1_error)
+    __pyx_t_1 = PyObject_GetItem(__pyx_t_2, __pyx_t_7); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 485, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_5 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_quantity); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 473, __pyx_L1_error)
+    __pyx_t_5 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_quantity); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 485, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_4 = PyNumber_InPlaceAdd(__pyx_t_1, __pyx_t_5); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 473, __pyx_L1_error)
+    __pyx_t_4 = PyNumber_InPlaceAdd(__pyx_t_1, __pyx_t_5); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 485, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    if (unlikely(PyObject_SetItem(__pyx_t_2, __pyx_t_7, __pyx_t_4) < 0)) __PYX_ERR(0, 473, __pyx_L1_error)
+    if (unlikely(PyObject_SetItem(__pyx_t_2, __pyx_t_7, __pyx_t_4) < 0)) __PYX_ERR(0, 485, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   }
   __pyx_L3:;
 
-  /* "abce/trade.pyx":469
+  /* "trade.pyx":481
  *         del self._open_offers[offer['good']][offer['idn']]
  * 
  *     def _log_receive_accept_group(self, offer):             # <<<<<<<<<<<<<<
@@ -5993,7 +6210,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_16_log_receive_accept_group(CYTHON
   __Pyx_XDECREF(__pyx_t_5);
   __Pyx_XDECREF(__pyx_t_6);
   __Pyx_XDECREF(__pyx_t_7);
-  __Pyx_AddTraceback("abce.trade.Trade._log_receive_accept_group", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Trade._log_receive_accept_group", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -6001,7 +6218,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_16_log_receive_accept_group(CYTHON
   return __pyx_r;
 }
 
-/* "abce/trade.pyx":475
+/* "trade.pyx":487
  *             self._trade_log['%s,%s,%s,%f' % (offer['good'], offer['receiver_group'], self.group, offer['price'])] += offer['quantity']
  * 
  *     def _log_receive_accept_agent(self, offer):             # <<<<<<<<<<<<<<
@@ -6010,9 +6227,9 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_16_log_receive_accept_group(CYTHON
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_4abce_5trade_5Trade_19_log_receive_accept_agent(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyMethodDef __pyx_mdef_4abce_5trade_5Trade_19_log_receive_accept_agent = {"_log_receive_accept_agent", (PyCFunction)__pyx_pw_4abce_5trade_5Trade_19_log_receive_accept_agent, METH_VARARGS|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_4abce_5trade_5Trade_19_log_receive_accept_agent(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_5trade_5Trade_19_log_receive_accept_agent(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyMethodDef __pyx_mdef_5trade_5Trade_19_log_receive_accept_agent = {"_log_receive_accept_agent", (PyCFunction)__pyx_pw_5trade_5Trade_19_log_receive_accept_agent, METH_VARARGS|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_5trade_5Trade_19_log_receive_accept_agent(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_self = 0;
   PyObject *__pyx_v_offer = 0;
   PyObject *__pyx_r = 0;
@@ -6038,11 +6255,11 @@ static PyObject *__pyx_pw_4abce_5trade_5Trade_19_log_receive_accept_agent(PyObje
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_offer)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("_log_receive_accept_agent", 1, 2, 2, 1); __PYX_ERR(0, 475, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("_log_receive_accept_agent", 1, 2, 2, 1); __PYX_ERR(0, 487, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "_log_receive_accept_agent") < 0)) __PYX_ERR(0, 475, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "_log_receive_accept_agent") < 0)) __PYX_ERR(0, 487, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -6055,20 +6272,20 @@ static PyObject *__pyx_pw_4abce_5trade_5Trade_19_log_receive_accept_agent(PyObje
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("_log_receive_accept_agent", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 475, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("_log_receive_accept_agent", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 487, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("abce.trade.Trade._log_receive_accept_agent", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Trade._log_receive_accept_agent", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_4abce_5trade_5Trade_18_log_receive_accept_agent(__pyx_self, __pyx_v_self, __pyx_v_offer);
+  __pyx_r = __pyx_pf_5trade_5Trade_18_log_receive_accept_agent(__pyx_self, __pyx_v_self, __pyx_v_offer);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_4abce_5trade_5Trade_18_log_receive_accept_agent(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_offer) {
+static PyObject *__pyx_pf_5trade_5Trade_18_log_receive_accept_agent(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_offer) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -6080,40 +6297,40 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_18_log_receive_accept_agent(CYTHON
   PyObject *__pyx_t_7 = NULL;
   __Pyx_RefNannySetupContext("_log_receive_accept_agent", 0);
 
-  /* "abce/trade.pyx":476
+  /* "trade.pyx":488
  * 
  *     def _log_receive_accept_agent(self, offer):
  *         if offer['buysell'] == 115:             # <<<<<<<<<<<<<<
  *             self._trade_log['%s,%s,%s,%f' % (offer['good'], self.name_without_colon, '%s_%i' % (offer['receiver_group'], offer['receiver_idn']), offer['price'])] += offer['quantity']
  *         else:
  */
-  __pyx_t_1 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_buysell); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 476, __pyx_L1_error)
+  __pyx_t_1 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_buysell); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 488, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyInt_EqObjC(__pyx_t_1, __pyx_int_115, 0x73, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 476, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_EqObjC(__pyx_t_1, __pyx_int_115, 0x73, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 488, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely(__pyx_t_3 < 0)) __PYX_ERR(0, 476, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely(__pyx_t_3 < 0)) __PYX_ERR(0, 488, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   if (__pyx_t_3) {
 
-    /* "abce/trade.pyx":477
+    /* "trade.pyx":489
  *     def _log_receive_accept_agent(self, offer):
  *         if offer['buysell'] == 115:
  *             self._trade_log['%s,%s,%s,%f' % (offer['good'], self.name_without_colon, '%s_%i' % (offer['receiver_group'], offer['receiver_idn']), offer['price'])] += offer['quantity']             # <<<<<<<<<<<<<<
  *         else:
  *             self._trade_log['%s,%s,%s,%f' % (offer['good'], '%s_%i' % (offer['receiver_group'], offer['receiver_idn']), self.name_without_colon, offer['price'])] += offer['quantity']
  */
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_trade_log); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 477, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_trade_log); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 489, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_1 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_good); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 477, __pyx_L1_error)
+    __pyx_t_1 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_good); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 489, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_name_without_colon); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 477, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_name_without_colon); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 489, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_5 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_receiver_group); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 477, __pyx_L1_error)
+    __pyx_t_5 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_receiver_group); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 489, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_6 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_receiver_idn); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 477, __pyx_L1_error)
+    __pyx_t_6 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_receiver_idn); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 489, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_7 = PyTuple_New(2); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 477, __pyx_L1_error)
+    __pyx_t_7 = PyTuple_New(2); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 489, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __Pyx_GIVEREF(__pyx_t_5);
     PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_t_5);
@@ -6121,12 +6338,12 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_18_log_receive_accept_agent(CYTHON
     PyTuple_SET_ITEM(__pyx_t_7, 1, __pyx_t_6);
     __pyx_t_5 = 0;
     __pyx_t_6 = 0;
-    __pyx_t_6 = __Pyx_PyString_Format(__pyx_kp_s_s__i, __pyx_t_7); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 477, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyString_Format(__pyx_kp_s_s__i, __pyx_t_7); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 489, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-    __pyx_t_7 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_price); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 477, __pyx_L1_error)
+    __pyx_t_7 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_price); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 489, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
-    __pyx_t_5 = PyTuple_New(4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 477, __pyx_L1_error)
+    __pyx_t_5 = PyTuple_New(4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 489, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_GIVEREF(__pyx_t_1);
     PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_1);
@@ -6140,23 +6357,23 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_18_log_receive_accept_agent(CYTHON
     __pyx_t_4 = 0;
     __pyx_t_6 = 0;
     __pyx_t_7 = 0;
-    __pyx_t_7 = __Pyx_PyString_Format(__pyx_kp_s_s_s_s_f, __pyx_t_5); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 477, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyString_Format(__pyx_kp_s_s_s_s_f, __pyx_t_5); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 489, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    __pyx_t_5 = PyObject_GetItem(__pyx_t_2, __pyx_t_7); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 477, __pyx_L1_error)
+    __pyx_t_5 = PyObject_GetItem(__pyx_t_2, __pyx_t_7); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 489, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_6 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_quantity); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 477, __pyx_L1_error)
+    __pyx_t_6 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_quantity); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 489, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_4 = PyNumber_InPlaceAdd(__pyx_t_5, __pyx_t_6); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 477, __pyx_L1_error)
+    __pyx_t_4 = PyNumber_InPlaceAdd(__pyx_t_5, __pyx_t_6); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 489, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-    if (unlikely(PyObject_SetItem(__pyx_t_2, __pyx_t_7, __pyx_t_4) < 0)) __PYX_ERR(0, 477, __pyx_L1_error)
+    if (unlikely(PyObject_SetItem(__pyx_t_2, __pyx_t_7, __pyx_t_4) < 0)) __PYX_ERR(0, 489, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-    /* "abce/trade.pyx":476
+    /* "trade.pyx":488
  * 
  *     def _log_receive_accept_agent(self, offer):
  *         if offer['buysell'] == 115:             # <<<<<<<<<<<<<<
@@ -6166,7 +6383,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_18_log_receive_accept_agent(CYTHON
     goto __pyx_L3;
   }
 
-  /* "abce/trade.pyx":479
+  /* "trade.pyx":491
  *             self._trade_log['%s,%s,%s,%f' % (offer['good'], self.name_without_colon, '%s_%i' % (offer['receiver_group'], offer['receiver_idn']), offer['price'])] += offer['quantity']
  *         else:
  *             self._trade_log['%s,%s,%s,%f' % (offer['good'], '%s_%i' % (offer['receiver_group'], offer['receiver_idn']), self.name_without_colon, offer['price'])] += offer['quantity']             # <<<<<<<<<<<<<<
@@ -6174,15 +6391,15 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_18_log_receive_accept_agent(CYTHON
  *     def _receive_accept(self, offer_idn_final_quantity):
  */
   /*else*/ {
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_trade_log); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 479, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_trade_log); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 491, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_7 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_good); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 479, __pyx_L1_error)
+    __pyx_t_7 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_good); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 491, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
-    __pyx_t_4 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_receiver_group); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 479, __pyx_L1_error)
+    __pyx_t_4 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_receiver_group); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 491, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_6 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_receiver_idn); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 479, __pyx_L1_error)
+    __pyx_t_6 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_receiver_idn); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 491, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_5 = PyTuple_New(2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 479, __pyx_L1_error)
+    __pyx_t_5 = PyTuple_New(2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 491, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_GIVEREF(__pyx_t_4);
     PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_4);
@@ -6190,14 +6407,14 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_18_log_receive_accept_agent(CYTHON
     PyTuple_SET_ITEM(__pyx_t_5, 1, __pyx_t_6);
     __pyx_t_4 = 0;
     __pyx_t_6 = 0;
-    __pyx_t_6 = __Pyx_PyString_Format(__pyx_kp_s_s__i, __pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 479, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyString_Format(__pyx_kp_s_s__i, __pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 491, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_name_without_colon); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 479, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_name_without_colon); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 491, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_4 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_price); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 479, __pyx_L1_error)
+    __pyx_t_4 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_price); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 491, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_1 = PyTuple_New(4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 479, __pyx_L1_error)
+    __pyx_t_1 = PyTuple_New(4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 491, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_GIVEREF(__pyx_t_7);
     PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_7);
@@ -6211,25 +6428,25 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_18_log_receive_accept_agent(CYTHON
     __pyx_t_6 = 0;
     __pyx_t_5 = 0;
     __pyx_t_4 = 0;
-    __pyx_t_4 = __Pyx_PyString_Format(__pyx_kp_s_s_s_s_f, __pyx_t_1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 479, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyString_Format(__pyx_kp_s_s_s_s_f, __pyx_t_1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 491, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_1 = PyObject_GetItem(__pyx_t_2, __pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 479, __pyx_L1_error)
+    __pyx_t_1 = PyObject_GetItem(__pyx_t_2, __pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 491, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_5 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_quantity); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 479, __pyx_L1_error)
+    __pyx_t_5 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_quantity); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 491, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_6 = PyNumber_InPlaceAdd(__pyx_t_1, __pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 479, __pyx_L1_error)
+    __pyx_t_6 = PyNumber_InPlaceAdd(__pyx_t_1, __pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 491, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    if (unlikely(PyObject_SetItem(__pyx_t_2, __pyx_t_4, __pyx_t_6) < 0)) __PYX_ERR(0, 479, __pyx_L1_error)
+    if (unlikely(PyObject_SetItem(__pyx_t_2, __pyx_t_4, __pyx_t_6) < 0)) __PYX_ERR(0, 491, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   }
   __pyx_L3:;
 
-  /* "abce/trade.pyx":475
+  /* "trade.pyx":487
  *             self._trade_log['%s,%s,%s,%f' % (offer['good'], offer['receiver_group'], self.group, offer['price'])] += offer['quantity']
  * 
  *     def _log_receive_accept_agent(self, offer):             # <<<<<<<<<<<<<<
@@ -6247,7 +6464,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_18_log_receive_accept_agent(CYTHON
   __Pyx_XDECREF(__pyx_t_5);
   __Pyx_XDECREF(__pyx_t_6);
   __Pyx_XDECREF(__pyx_t_7);
-  __Pyx_AddTraceback("abce.trade.Trade._log_receive_accept_agent", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Trade._log_receive_accept_agent", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -6255,7 +6472,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_18_log_receive_accept_agent(CYTHON
   return __pyx_r;
 }
 
-/* "abce/trade.pyx":481
+/* "trade.pyx":493
  *             self._trade_log['%s,%s,%s,%f' % (offer['good'], '%s_%i' % (offer['receiver_group'], offer['receiver_idn']), self.name_without_colon, offer['price'])] += offer['quantity']
  * 
  *     def _receive_accept(self, offer_idn_final_quantity):             # <<<<<<<<<<<<<<
@@ -6264,10 +6481,10 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_18_log_receive_accept_agent(CYTHON
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_4abce_5trade_5Trade_21_receive_accept(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_4abce_5trade_5Trade_20_receive_accept[] = " When the other party partially accepted the  money or good is\n        received, remaining good or money is added back to haves and the offer\n        is deleted\n        ";
-static PyMethodDef __pyx_mdef_4abce_5trade_5Trade_21_receive_accept = {"_receive_accept", (PyCFunction)__pyx_pw_4abce_5trade_5Trade_21_receive_accept, METH_VARARGS|METH_KEYWORDS, __pyx_doc_4abce_5trade_5Trade_20_receive_accept};
-static PyObject *__pyx_pw_4abce_5trade_5Trade_21_receive_accept(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_5trade_5Trade_21_receive_accept(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_5trade_5Trade_20_receive_accept[] = " When the other party partially accepted the  money or good is\n        received, remaining good or money is added back to haves and the offer\n        is deleted\n        ";
+static PyMethodDef __pyx_mdef_5trade_5Trade_21_receive_accept = {"_receive_accept", (PyCFunction)__pyx_pw_5trade_5Trade_21_receive_accept, METH_VARARGS|METH_KEYWORDS, __pyx_doc_5trade_5Trade_20_receive_accept};
+static PyObject *__pyx_pw_5trade_5Trade_21_receive_accept(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_self = 0;
   PyObject *__pyx_v_offer_idn_final_quantity = 0;
   PyObject *__pyx_r = 0;
@@ -6293,11 +6510,11 @@ static PyObject *__pyx_pw_4abce_5trade_5Trade_21_receive_accept(PyObject *__pyx_
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_offer_idn_final_quantity)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("_receive_accept", 1, 2, 2, 1); __PYX_ERR(0, 481, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("_receive_accept", 1, 2, 2, 1); __PYX_ERR(0, 493, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "_receive_accept") < 0)) __PYX_ERR(0, 481, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "_receive_accept") < 0)) __PYX_ERR(0, 493, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -6310,20 +6527,20 @@ static PyObject *__pyx_pw_4abce_5trade_5Trade_21_receive_accept(PyObject *__pyx_
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("_receive_accept", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 481, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("_receive_accept", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 493, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("abce.trade.Trade._receive_accept", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Trade._receive_accept", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_4abce_5trade_5Trade_20_receive_accept(__pyx_self, __pyx_v_self, __pyx_v_offer_idn_final_quantity);
+  __pyx_r = __pyx_pf_5trade_5Trade_20_receive_accept(__pyx_self, __pyx_v_self, __pyx_v_offer_idn_final_quantity);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_4abce_5trade_5Trade_20_receive_accept(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_offer_idn_final_quantity) {
+static PyObject *__pyx_pf_5trade_5Trade_20_receive_accept(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_offer_idn_final_quantity) {
   PyObject *__pyx_v_offer = NULL;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
@@ -6337,113 +6554,113 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_20_receive_accept(CYTHON_UNUSED Py
   PyObject *__pyx_t_8 = NULL;
   __Pyx_RefNannySetupContext("_receive_accept", 0);
 
-  /* "abce/trade.pyx":486
+  /* "trade.pyx":498
  *         is deleted
  *         """
  *         offer = self.given_offers[offer_idn_final_quantity[0]]             # <<<<<<<<<<<<<<
  *         offer['final_quantity'] = offer_idn_final_quantity[1]
  *         if offer['buysell'] == 115:
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_given_offers); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 486, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_given_offers); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 498, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_GetItemInt(__pyx_v_offer_idn_final_quantity, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 486, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_GetItemInt(__pyx_v_offer_idn_final_quantity, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 498, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = PyObject_GetItem(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 486, __pyx_L1_error)
+  __pyx_t_3 = PyObject_GetItem(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 498, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_v_offer = __pyx_t_3;
   __pyx_t_3 = 0;
 
-  /* "abce/trade.pyx":487
+  /* "trade.pyx":499
  *         """
  *         offer = self.given_offers[offer_idn_final_quantity[0]]
  *         offer['final_quantity'] = offer_idn_final_quantity[1]             # <<<<<<<<<<<<<<
  *         if offer['buysell'] == 115:
  *             self._haves['money'] += offer['final_quantity'] * offer['price']
  */
-  __pyx_t_3 = __Pyx_GetItemInt(__pyx_v_offer_idn_final_quantity, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 487, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_GetItemInt(__pyx_v_offer_idn_final_quantity, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 499, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (unlikely(PyObject_SetItem(__pyx_v_offer, __pyx_n_s_final_quantity, __pyx_t_3) < 0)) __PYX_ERR(0, 487, __pyx_L1_error)
+  if (unlikely(PyObject_SetItem(__pyx_v_offer, __pyx_n_s_final_quantity, __pyx_t_3) < 0)) __PYX_ERR(0, 499, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "abce/trade.pyx":488
+  /* "trade.pyx":500
  *         offer = self.given_offers[offer_idn_final_quantity[0]]
  *         offer['final_quantity'] = offer_idn_final_quantity[1]
  *         if offer['buysell'] == 115:             # <<<<<<<<<<<<<<
  *             self._haves['money'] += offer['final_quantity'] * offer['price']
  *             self._haves[offer['good']] += offer['quantity'] - offer['final_quantity']
  */
-  __pyx_t_3 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_buysell); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 488, __pyx_L1_error)
+  __pyx_t_3 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_buysell); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 500, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_2 = __Pyx_PyInt_EqObjC(__pyx_t_3, __pyx_int_115, 0x73, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 488, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_EqObjC(__pyx_t_3, __pyx_int_115, 0x73, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 500, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 488, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely(__pyx_t_4 < 0)) __PYX_ERR(0, 500, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   if (__pyx_t_4) {
 
-    /* "abce/trade.pyx":489
+    /* "trade.pyx":501
  *         offer['final_quantity'] = offer_idn_final_quantity[1]
  *         if offer['buysell'] == 115:
  *             self._haves['money'] += offer['final_quantity'] * offer['price']             # <<<<<<<<<<<<<<
  *             self._haves[offer['good']] += offer['quantity'] - offer['final_quantity']
  *         else:
  */
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_haves); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 489, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_haves); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 501, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_INCREF(__pyx_n_s_money);
     __pyx_t_5 = __pyx_n_s_money;
-    __pyx_t_3 = PyObject_GetItem(__pyx_t_2, __pyx_t_5); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 489, __pyx_L1_error)
+    __pyx_t_3 = PyObject_GetItem(__pyx_t_2, __pyx_t_5); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 501, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_1 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_final_quantity); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 489, __pyx_L1_error)
+    __pyx_t_1 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_final_quantity); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 501, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_6 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_price); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 489, __pyx_L1_error)
+    __pyx_t_6 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_price); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 501, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_7 = PyNumber_Multiply(__pyx_t_1, __pyx_t_6); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 489, __pyx_L1_error)
+    __pyx_t_7 = PyNumber_Multiply(__pyx_t_1, __pyx_t_6); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 501, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-    __pyx_t_6 = PyNumber_InPlaceAdd(__pyx_t_3, __pyx_t_7); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 489, __pyx_L1_error)
+    __pyx_t_6 = PyNumber_InPlaceAdd(__pyx_t_3, __pyx_t_7); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 501, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-    if (unlikely(PyObject_SetItem(__pyx_t_2, __pyx_t_5, __pyx_t_6) < 0)) __PYX_ERR(0, 489, __pyx_L1_error)
+    if (unlikely(PyObject_SetItem(__pyx_t_2, __pyx_t_5, __pyx_t_6) < 0)) __PYX_ERR(0, 501, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-    /* "abce/trade.pyx":490
+    /* "trade.pyx":502
  *         if offer['buysell'] == 115:
  *             self._haves['money'] += offer['final_quantity'] * offer['price']
  *             self._haves[offer['good']] += offer['quantity'] - offer['final_quantity']             # <<<<<<<<<<<<<<
  *         else:
  *             self._haves[offer['good']] += offer['final_quantity']
  */
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_haves); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 490, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_haves); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 502, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_6 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_good); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 490, __pyx_L1_error)
+    __pyx_t_6 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_good); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 502, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_7 = PyObject_GetItem(__pyx_t_2, __pyx_t_6); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 490, __pyx_L1_error)
+    __pyx_t_7 = PyObject_GetItem(__pyx_t_2, __pyx_t_6); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 502, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
-    __pyx_t_3 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_quantity); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 490, __pyx_L1_error)
+    __pyx_t_3 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_quantity); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 502, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_1 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_final_quantity); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 490, __pyx_L1_error)
+    __pyx_t_1 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_final_quantity); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 502, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_8 = PyNumber_Subtract(__pyx_t_3, __pyx_t_1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 490, __pyx_L1_error)
+    __pyx_t_8 = PyNumber_Subtract(__pyx_t_3, __pyx_t_1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 502, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_1 = PyNumber_InPlaceAdd(__pyx_t_7, __pyx_t_8); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 490, __pyx_L1_error)
+    __pyx_t_1 = PyNumber_InPlaceAdd(__pyx_t_7, __pyx_t_8); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 502, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-    if (unlikely(PyObject_SetItem(__pyx_t_2, __pyx_t_6, __pyx_t_1) < 0)) __PYX_ERR(0, 490, __pyx_L1_error)
+    if (unlikely(PyObject_SetItem(__pyx_t_2, __pyx_t_6, __pyx_t_1) < 0)) __PYX_ERR(0, 502, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-    /* "abce/trade.pyx":488
+    /* "trade.pyx":500
  *         offer = self.given_offers[offer_idn_final_quantity[0]]
  *         offer['final_quantity'] = offer_idn_final_quantity[1]
  *         if offer['buysell'] == 115:             # <<<<<<<<<<<<<<
@@ -6453,7 +6670,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_20_receive_accept(CYTHON_UNUSED Py
     goto __pyx_L3;
   }
 
-  /* "abce/trade.pyx":492
+  /* "trade.pyx":504
  *             self._haves[offer['good']] += offer['quantity'] - offer['final_quantity']
  *         else:
  *             self._haves[offer['good']] += offer['final_quantity']             # <<<<<<<<<<<<<<
@@ -6461,98 +6678,98 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_20_receive_accept(CYTHON_UNUSED Py
  *         offer['status'] = "accepted"
  */
   /*else*/ {
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_haves); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 492, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_haves); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 504, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_6 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_good); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 492, __pyx_L1_error)
+    __pyx_t_6 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_good); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 504, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_1 = PyObject_GetItem(__pyx_t_2, __pyx_t_6); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 492, __pyx_L1_error)
+    __pyx_t_1 = PyObject_GetItem(__pyx_t_2, __pyx_t_6); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 504, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_8 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_final_quantity); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 492, __pyx_L1_error)
+    __pyx_t_8 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_final_quantity); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 504, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
-    __pyx_t_7 = PyNumber_InPlaceAdd(__pyx_t_1, __pyx_t_8); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 492, __pyx_L1_error)
+    __pyx_t_7 = PyNumber_InPlaceAdd(__pyx_t_1, __pyx_t_8); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 504, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-    if (unlikely(PyObject_SetItem(__pyx_t_2, __pyx_t_6, __pyx_t_7) < 0)) __PYX_ERR(0, 492, __pyx_L1_error)
+    if (unlikely(PyObject_SetItem(__pyx_t_2, __pyx_t_6, __pyx_t_7) < 0)) __PYX_ERR(0, 504, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-    /* "abce/trade.pyx":493
+    /* "trade.pyx":505
  *         else:
  *             self._haves[offer['good']] += offer['final_quantity']
  *             self._haves['money'] += (offer['quantity'] - offer['final_quantity']) * offer['price']             # <<<<<<<<<<<<<<
  *         offer['status'] = "accepted"
  *         offer['status_round'] = self.round
  */
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_haves); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 493, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_haves); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 505, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_INCREF(__pyx_n_s_money);
     __pyx_t_5 = __pyx_n_s_money;
-    __pyx_t_6 = PyObject_GetItem(__pyx_t_2, __pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 493, __pyx_L1_error)
+    __pyx_t_6 = PyObject_GetItem(__pyx_t_2, __pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 505, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_7 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_quantity); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 493, __pyx_L1_error)
+    __pyx_t_7 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_quantity); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 505, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
-    __pyx_t_8 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_final_quantity); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 493, __pyx_L1_error)
+    __pyx_t_8 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_final_quantity); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 505, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
-    __pyx_t_1 = PyNumber_Subtract(__pyx_t_7, __pyx_t_8); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 493, __pyx_L1_error)
+    __pyx_t_1 = PyNumber_Subtract(__pyx_t_7, __pyx_t_8); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 505, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-    __pyx_t_8 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_price); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 493, __pyx_L1_error)
+    __pyx_t_8 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_price); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 505, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
-    __pyx_t_7 = PyNumber_Multiply(__pyx_t_1, __pyx_t_8); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 493, __pyx_L1_error)
+    __pyx_t_7 = PyNumber_Multiply(__pyx_t_1, __pyx_t_8); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 505, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-    __pyx_t_8 = PyNumber_InPlaceAdd(__pyx_t_6, __pyx_t_7); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 493, __pyx_L1_error)
+    __pyx_t_8 = PyNumber_InPlaceAdd(__pyx_t_6, __pyx_t_7); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 505, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-    if (unlikely(PyObject_SetItem(__pyx_t_2, __pyx_t_5, __pyx_t_8) < 0)) __PYX_ERR(0, 493, __pyx_L1_error)
+    if (unlikely(PyObject_SetItem(__pyx_t_2, __pyx_t_5, __pyx_t_8) < 0)) __PYX_ERR(0, 505, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   }
   __pyx_L3:;
 
-  /* "abce/trade.pyx":494
+  /* "trade.pyx":506
  *             self._haves[offer['good']] += offer['final_quantity']
  *             self._haves['money'] += (offer['quantity'] - offer['final_quantity']) * offer['price']
  *         offer['status'] = "accepted"             # <<<<<<<<<<<<<<
  *         offer['status_round'] = self.round
  *         del self.given_offers[offer['idn']]
  */
-  if (unlikely(PyObject_SetItem(__pyx_v_offer, __pyx_n_s_status, __pyx_n_s_accepted) < 0)) __PYX_ERR(0, 494, __pyx_L1_error)
+  if (unlikely(PyObject_SetItem(__pyx_v_offer, __pyx_n_s_status, __pyx_n_s_accepted) < 0)) __PYX_ERR(0, 506, __pyx_L1_error)
 
-  /* "abce/trade.pyx":495
+  /* "trade.pyx":507
  *             self._haves['money'] += (offer['quantity'] - offer['final_quantity']) * offer['price']
  *         offer['status'] = "accepted"
  *         offer['status_round'] = self.round             # <<<<<<<<<<<<<<
  *         del self.given_offers[offer['idn']]
  *         return offer
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_round); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 495, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_round); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 507, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (unlikely(PyObject_SetItem(__pyx_v_offer, __pyx_n_s_status_round, __pyx_t_2) < 0)) __PYX_ERR(0, 495, __pyx_L1_error)
+  if (unlikely(PyObject_SetItem(__pyx_v_offer, __pyx_n_s_status_round, __pyx_t_2) < 0)) __PYX_ERR(0, 507, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "abce/trade.pyx":496
+  /* "trade.pyx":508
  *         offer['status'] = "accepted"
  *         offer['status_round'] = self.round
  *         del self.given_offers[offer['idn']]             # <<<<<<<<<<<<<<
  *         return offer
  * 
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_given_offers); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 496, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_given_offers); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 508, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_8 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_idn); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 496, __pyx_L1_error)
+  __pyx_t_8 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_idn); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 508, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_8);
-  if (unlikely(PyObject_DelItem(__pyx_t_2, __pyx_t_8) < 0)) __PYX_ERR(0, 496, __pyx_L1_error)
+  if (unlikely(PyObject_DelItem(__pyx_t_2, __pyx_t_8) < 0)) __PYX_ERR(0, 508, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
 
-  /* "abce/trade.pyx":497
+  /* "trade.pyx":509
  *         offer['status_round'] = self.round
  *         del self.given_offers[offer['idn']]
  *         return offer             # <<<<<<<<<<<<<<
@@ -6564,7 +6781,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_20_receive_accept(CYTHON_UNUSED Py
   __pyx_r = __pyx_v_offer;
   goto __pyx_L0;
 
-  /* "abce/trade.pyx":481
+  /* "trade.pyx":493
  *             self._trade_log['%s,%s,%s,%f' % (offer['good'], '%s_%i' % (offer['receiver_group'], offer['receiver_idn']), self.name_without_colon, offer['price'])] += offer['quantity']
  * 
  *     def _receive_accept(self, offer_idn_final_quantity):             # <<<<<<<<<<<<<<
@@ -6581,7 +6798,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_20_receive_accept(CYTHON_UNUSED Py
   __Pyx_XDECREF(__pyx_t_6);
   __Pyx_XDECREF(__pyx_t_7);
   __Pyx_XDECREF(__pyx_t_8);
-  __Pyx_AddTraceback("abce.trade.Trade._receive_accept", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Trade._receive_accept", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_offer);
@@ -6590,7 +6807,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_20_receive_accept(CYTHON_UNUSED Py
   return __pyx_r;
 }
 
-/* "abce/trade.pyx":499
+/* "trade.pyx":511
  *         return offer
  * 
  *     def _log_receive_accept_group(self, offer):             # <<<<<<<<<<<<<<
@@ -6599,9 +6816,9 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_20_receive_accept(CYTHON_UNUSED Py
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_4abce_5trade_5Trade_23_log_receive_accept_group(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyMethodDef __pyx_mdef_4abce_5trade_5Trade_23_log_receive_accept_group = {"_log_receive_accept_group", (PyCFunction)__pyx_pw_4abce_5trade_5Trade_23_log_receive_accept_group, METH_VARARGS|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_4abce_5trade_5Trade_23_log_receive_accept_group(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_5trade_5Trade_23_log_receive_accept_group(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyMethodDef __pyx_mdef_5trade_5Trade_23_log_receive_accept_group = {"_log_receive_accept_group", (PyCFunction)__pyx_pw_5trade_5Trade_23_log_receive_accept_group, METH_VARARGS|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_5trade_5Trade_23_log_receive_accept_group(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_self = 0;
   PyObject *__pyx_v_offer = 0;
   PyObject *__pyx_r = 0;
@@ -6627,11 +6844,11 @@ static PyObject *__pyx_pw_4abce_5trade_5Trade_23_log_receive_accept_group(PyObje
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_offer)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("_log_receive_accept_group", 1, 2, 2, 1); __PYX_ERR(0, 499, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("_log_receive_accept_group", 1, 2, 2, 1); __PYX_ERR(0, 511, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "_log_receive_accept_group") < 0)) __PYX_ERR(0, 499, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "_log_receive_accept_group") < 0)) __PYX_ERR(0, 511, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -6644,20 +6861,20 @@ static PyObject *__pyx_pw_4abce_5trade_5Trade_23_log_receive_accept_group(PyObje
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("_log_receive_accept_group", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 499, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("_log_receive_accept_group", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 511, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("abce.trade.Trade._log_receive_accept_group", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Trade._log_receive_accept_group", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_4abce_5trade_5Trade_22_log_receive_accept_group(__pyx_self, __pyx_v_self, __pyx_v_offer);
+  __pyx_r = __pyx_pf_5trade_5Trade_22_log_receive_accept_group(__pyx_self, __pyx_v_self, __pyx_v_offer);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_4abce_5trade_5Trade_22_log_receive_accept_group(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_offer) {
+static PyObject *__pyx_pf_5trade_5Trade_22_log_receive_accept_group(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_offer) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -6669,40 +6886,40 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_22_log_receive_accept_group(CYTHON
   PyObject *__pyx_t_7 = NULL;
   __Pyx_RefNannySetupContext("_log_receive_accept_group", 0);
 
-  /* "abce/trade.pyx":500
+  /* "trade.pyx":512
  * 
  *     def _log_receive_accept_group(self, offer):
  *         if offer['buysell'] == 115:             # <<<<<<<<<<<<<<
  *             self._trade_log['%s,%s,%s,%f' % (offer['good'], self.group, offer['receiver_group'], offer['price'])] += offer['final_quantity']
  *         else:
  */
-  __pyx_t_1 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_buysell); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 500, __pyx_L1_error)
+  __pyx_t_1 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_buysell); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 512, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyInt_EqObjC(__pyx_t_1, __pyx_int_115, 0x73, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 500, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_EqObjC(__pyx_t_1, __pyx_int_115, 0x73, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 512, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely(__pyx_t_3 < 0)) __PYX_ERR(0, 500, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely(__pyx_t_3 < 0)) __PYX_ERR(0, 512, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   if (__pyx_t_3) {
 
-    /* "abce/trade.pyx":501
+    /* "trade.pyx":513
  *     def _log_receive_accept_group(self, offer):
  *         if offer['buysell'] == 115:
  *             self._trade_log['%s,%s,%s,%f' % (offer['good'], self.group, offer['receiver_group'], offer['price'])] += offer['final_quantity']             # <<<<<<<<<<<<<<
  *         else:
  *             self._trade_log['%s,%s,%s,%f' % (offer['good'], offer['receiver_group'], self.group, offer['price'])] += offer['final_quantity']
  */
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_trade_log); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 501, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_trade_log); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 513, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_1 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_good); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 501, __pyx_L1_error)
+    __pyx_t_1 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_good); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 513, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_group); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 501, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_group); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 513, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_5 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_receiver_group); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 501, __pyx_L1_error)
+    __pyx_t_5 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_receiver_group); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 513, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_6 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_price); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 501, __pyx_L1_error)
+    __pyx_t_6 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_price); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 513, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_7 = PyTuple_New(4); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 501, __pyx_L1_error)
+    __pyx_t_7 = PyTuple_New(4); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 513, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __Pyx_GIVEREF(__pyx_t_1);
     PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_t_1);
@@ -6716,23 +6933,23 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_22_log_receive_accept_group(CYTHON
     __pyx_t_4 = 0;
     __pyx_t_5 = 0;
     __pyx_t_6 = 0;
-    __pyx_t_6 = __Pyx_PyString_Format(__pyx_kp_s_s_s_s_f, __pyx_t_7); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 501, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyString_Format(__pyx_kp_s_s_s_s_f, __pyx_t_7); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 513, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-    __pyx_t_7 = PyObject_GetItem(__pyx_t_2, __pyx_t_6); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 501, __pyx_L1_error)
+    __pyx_t_7 = PyObject_GetItem(__pyx_t_2, __pyx_t_6); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 513, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
-    __pyx_t_5 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_final_quantity); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 501, __pyx_L1_error)
+    __pyx_t_5 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_final_quantity); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 513, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_4 = PyNumber_InPlaceAdd(__pyx_t_7, __pyx_t_5); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 501, __pyx_L1_error)
+    __pyx_t_4 = PyNumber_InPlaceAdd(__pyx_t_7, __pyx_t_5); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 513, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    if (unlikely(PyObject_SetItem(__pyx_t_2, __pyx_t_6, __pyx_t_4) < 0)) __PYX_ERR(0, 501, __pyx_L1_error)
+    if (unlikely(PyObject_SetItem(__pyx_t_2, __pyx_t_6, __pyx_t_4) < 0)) __PYX_ERR(0, 513, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-    /* "abce/trade.pyx":500
+    /* "trade.pyx":512
  * 
  *     def _log_receive_accept_group(self, offer):
  *         if offer['buysell'] == 115:             # <<<<<<<<<<<<<<
@@ -6742,7 +6959,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_22_log_receive_accept_group(CYTHON
     goto __pyx_L3;
   }
 
-  /* "abce/trade.pyx":503
+  /* "trade.pyx":515
  *             self._trade_log['%s,%s,%s,%f' % (offer['good'], self.group, offer['receiver_group'], offer['price'])] += offer['final_quantity']
  *         else:
  *             self._trade_log['%s,%s,%s,%f' % (offer['good'], offer['receiver_group'], self.group, offer['price'])] += offer['final_quantity']             # <<<<<<<<<<<<<<
@@ -6750,17 +6967,17 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_22_log_receive_accept_group(CYTHON
  *     def _log_receive_accept_agent(self, offer):
  */
   /*else*/ {
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_trade_log); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 503, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_trade_log); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 515, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_6 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_good); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 503, __pyx_L1_error)
+    __pyx_t_6 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_good); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 515, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_4 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_receiver_group); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 503, __pyx_L1_error)
+    __pyx_t_4 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_receiver_group); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 515, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_group); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 503, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_group); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 515, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_7 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_price); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 503, __pyx_L1_error)
+    __pyx_t_7 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_price); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 515, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
-    __pyx_t_1 = PyTuple_New(4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 503, __pyx_L1_error)
+    __pyx_t_1 = PyTuple_New(4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 515, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_GIVEREF(__pyx_t_6);
     PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_6);
@@ -6774,25 +6991,25 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_22_log_receive_accept_group(CYTHON
     __pyx_t_4 = 0;
     __pyx_t_5 = 0;
     __pyx_t_7 = 0;
-    __pyx_t_7 = __Pyx_PyString_Format(__pyx_kp_s_s_s_s_f, __pyx_t_1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 503, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyString_Format(__pyx_kp_s_s_s_s_f, __pyx_t_1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 515, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_1 = PyObject_GetItem(__pyx_t_2, __pyx_t_7); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 503, __pyx_L1_error)
+    __pyx_t_1 = PyObject_GetItem(__pyx_t_2, __pyx_t_7); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 515, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_5 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_final_quantity); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 503, __pyx_L1_error)
+    __pyx_t_5 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_final_quantity); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 515, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_4 = PyNumber_InPlaceAdd(__pyx_t_1, __pyx_t_5); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 503, __pyx_L1_error)
+    __pyx_t_4 = PyNumber_InPlaceAdd(__pyx_t_1, __pyx_t_5); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 515, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    if (unlikely(PyObject_SetItem(__pyx_t_2, __pyx_t_7, __pyx_t_4) < 0)) __PYX_ERR(0, 503, __pyx_L1_error)
+    if (unlikely(PyObject_SetItem(__pyx_t_2, __pyx_t_7, __pyx_t_4) < 0)) __PYX_ERR(0, 515, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   }
   __pyx_L3:;
 
-  /* "abce/trade.pyx":499
+  /* "trade.pyx":511
  *         return offer
  * 
  *     def _log_receive_accept_group(self, offer):             # <<<<<<<<<<<<<<
@@ -6810,7 +7027,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_22_log_receive_accept_group(CYTHON
   __Pyx_XDECREF(__pyx_t_5);
   __Pyx_XDECREF(__pyx_t_6);
   __Pyx_XDECREF(__pyx_t_7);
-  __Pyx_AddTraceback("abce.trade.Trade._log_receive_accept_group", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Trade._log_receive_accept_group", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -6818,7 +7035,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_22_log_receive_accept_group(CYTHON
   return __pyx_r;
 }
 
-/* "abce/trade.pyx":505
+/* "trade.pyx":517
  *             self._trade_log['%s,%s,%s,%f' % (offer['good'], offer['receiver_group'], self.group, offer['price'])] += offer['final_quantity']
  * 
  *     def _log_receive_accept_agent(self, offer):             # <<<<<<<<<<<<<<
@@ -6827,9 +7044,9 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_22_log_receive_accept_group(CYTHON
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_4abce_5trade_5Trade_25_log_receive_accept_agent(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyMethodDef __pyx_mdef_4abce_5trade_5Trade_25_log_receive_accept_agent = {"_log_receive_accept_agent", (PyCFunction)__pyx_pw_4abce_5trade_5Trade_25_log_receive_accept_agent, METH_VARARGS|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_4abce_5trade_5Trade_25_log_receive_accept_agent(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_5trade_5Trade_25_log_receive_accept_agent(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyMethodDef __pyx_mdef_5trade_5Trade_25_log_receive_accept_agent = {"_log_receive_accept_agent", (PyCFunction)__pyx_pw_5trade_5Trade_25_log_receive_accept_agent, METH_VARARGS|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_5trade_5Trade_25_log_receive_accept_agent(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_self = 0;
   PyObject *__pyx_v_offer = 0;
   PyObject *__pyx_r = 0;
@@ -6855,11 +7072,11 @@ static PyObject *__pyx_pw_4abce_5trade_5Trade_25_log_receive_accept_agent(PyObje
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_offer)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("_log_receive_accept_agent", 1, 2, 2, 1); __PYX_ERR(0, 505, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("_log_receive_accept_agent", 1, 2, 2, 1); __PYX_ERR(0, 517, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "_log_receive_accept_agent") < 0)) __PYX_ERR(0, 505, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "_log_receive_accept_agent") < 0)) __PYX_ERR(0, 517, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -6872,20 +7089,20 @@ static PyObject *__pyx_pw_4abce_5trade_5Trade_25_log_receive_accept_agent(PyObje
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("_log_receive_accept_agent", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 505, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("_log_receive_accept_agent", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 517, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("abce.trade.Trade._log_receive_accept_agent", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Trade._log_receive_accept_agent", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_4abce_5trade_5Trade_24_log_receive_accept_agent(__pyx_self, __pyx_v_self, __pyx_v_offer);
+  __pyx_r = __pyx_pf_5trade_5Trade_24_log_receive_accept_agent(__pyx_self, __pyx_v_self, __pyx_v_offer);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_4abce_5trade_5Trade_24_log_receive_accept_agent(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_offer) {
+static PyObject *__pyx_pf_5trade_5Trade_24_log_receive_accept_agent(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_offer) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -6897,40 +7114,40 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_24_log_receive_accept_agent(CYTHON
   PyObject *__pyx_t_7 = NULL;
   __Pyx_RefNannySetupContext("_log_receive_accept_agent", 0);
 
-  /* "abce/trade.pyx":506
+  /* "trade.pyx":518
  * 
  *     def _log_receive_accept_agent(self, offer):
  *         if offer['buysell'] == 115:             # <<<<<<<<<<<<<<
  *             self._trade_log['%s,%s,%s,%f' % (offer['good'], self.name_without_colon, '%s_%i' % (offer['receiver_group'], offer['receiver_idn']), offer['price'])] += offer['final_quantity']
  *         else:
  */
-  __pyx_t_1 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_buysell); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 506, __pyx_L1_error)
+  __pyx_t_1 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_buysell); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 518, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyInt_EqObjC(__pyx_t_1, __pyx_int_115, 0x73, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 506, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_EqObjC(__pyx_t_1, __pyx_int_115, 0x73, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 518, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely(__pyx_t_3 < 0)) __PYX_ERR(0, 506, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely(__pyx_t_3 < 0)) __PYX_ERR(0, 518, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   if (__pyx_t_3) {
 
-    /* "abce/trade.pyx":507
+    /* "trade.pyx":519
  *     def _log_receive_accept_agent(self, offer):
  *         if offer['buysell'] == 115:
  *             self._trade_log['%s,%s,%s,%f' % (offer['good'], self.name_without_colon, '%s_%i' % (offer['receiver_group'], offer['receiver_idn']), offer['price'])] += offer['final_quantity']             # <<<<<<<<<<<<<<
  *         else:
  *             self._trade_log['%s,%s,%s,%f' % (offer['good'], '%s_%i' % (offer['receiver_group'], offer['receiver_idn']), self.name_without_colon, offer['price'])] += offer['final_quantity']
  */
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_trade_log); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 507, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_trade_log); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 519, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_1 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_good); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 507, __pyx_L1_error)
+    __pyx_t_1 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_good); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 519, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_name_without_colon); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 507, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_name_without_colon); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 519, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_5 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_receiver_group); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 507, __pyx_L1_error)
+    __pyx_t_5 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_receiver_group); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 519, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_6 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_receiver_idn); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 507, __pyx_L1_error)
+    __pyx_t_6 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_receiver_idn); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 519, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_7 = PyTuple_New(2); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 507, __pyx_L1_error)
+    __pyx_t_7 = PyTuple_New(2); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 519, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __Pyx_GIVEREF(__pyx_t_5);
     PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_t_5);
@@ -6938,12 +7155,12 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_24_log_receive_accept_agent(CYTHON
     PyTuple_SET_ITEM(__pyx_t_7, 1, __pyx_t_6);
     __pyx_t_5 = 0;
     __pyx_t_6 = 0;
-    __pyx_t_6 = __Pyx_PyString_Format(__pyx_kp_s_s__i, __pyx_t_7); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 507, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyString_Format(__pyx_kp_s_s__i, __pyx_t_7); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 519, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-    __pyx_t_7 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_price); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 507, __pyx_L1_error)
+    __pyx_t_7 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_price); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 519, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
-    __pyx_t_5 = PyTuple_New(4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 507, __pyx_L1_error)
+    __pyx_t_5 = PyTuple_New(4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 519, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_GIVEREF(__pyx_t_1);
     PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_1);
@@ -6957,23 +7174,23 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_24_log_receive_accept_agent(CYTHON
     __pyx_t_4 = 0;
     __pyx_t_6 = 0;
     __pyx_t_7 = 0;
-    __pyx_t_7 = __Pyx_PyString_Format(__pyx_kp_s_s_s_s_f, __pyx_t_5); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 507, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyString_Format(__pyx_kp_s_s_s_s_f, __pyx_t_5); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 519, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    __pyx_t_5 = PyObject_GetItem(__pyx_t_2, __pyx_t_7); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 507, __pyx_L1_error)
+    __pyx_t_5 = PyObject_GetItem(__pyx_t_2, __pyx_t_7); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 519, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_6 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_final_quantity); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 507, __pyx_L1_error)
+    __pyx_t_6 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_final_quantity); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 519, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_4 = PyNumber_InPlaceAdd(__pyx_t_5, __pyx_t_6); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 507, __pyx_L1_error)
+    __pyx_t_4 = PyNumber_InPlaceAdd(__pyx_t_5, __pyx_t_6); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 519, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-    if (unlikely(PyObject_SetItem(__pyx_t_2, __pyx_t_7, __pyx_t_4) < 0)) __PYX_ERR(0, 507, __pyx_L1_error)
+    if (unlikely(PyObject_SetItem(__pyx_t_2, __pyx_t_7, __pyx_t_4) < 0)) __PYX_ERR(0, 519, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-    /* "abce/trade.pyx":506
+    /* "trade.pyx":518
  * 
  *     def _log_receive_accept_agent(self, offer):
  *         if offer['buysell'] == 115:             # <<<<<<<<<<<<<<
@@ -6983,7 +7200,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_24_log_receive_accept_agent(CYTHON
     goto __pyx_L3;
   }
 
-  /* "abce/trade.pyx":509
+  /* "trade.pyx":521
  *             self._trade_log['%s,%s,%s,%f' % (offer['good'], self.name_without_colon, '%s_%i' % (offer['receiver_group'], offer['receiver_idn']), offer['price'])] += offer['final_quantity']
  *         else:
  *             self._trade_log['%s,%s,%s,%f' % (offer['good'], '%s_%i' % (offer['receiver_group'], offer['receiver_idn']), self.name_without_colon, offer['price'])] += offer['final_quantity']             # <<<<<<<<<<<<<<
@@ -6991,15 +7208,15 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_24_log_receive_accept_agent(CYTHON
  *     def _receive_reject(self, offer_id):
  */
   /*else*/ {
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_trade_log); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 509, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_trade_log); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 521, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_7 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_good); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 509, __pyx_L1_error)
+    __pyx_t_7 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_good); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 521, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
-    __pyx_t_4 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_receiver_group); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 509, __pyx_L1_error)
+    __pyx_t_4 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_receiver_group); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 521, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_6 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_receiver_idn); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 509, __pyx_L1_error)
+    __pyx_t_6 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_receiver_idn); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 521, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_5 = PyTuple_New(2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 509, __pyx_L1_error)
+    __pyx_t_5 = PyTuple_New(2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 521, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_GIVEREF(__pyx_t_4);
     PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_4);
@@ -7007,14 +7224,14 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_24_log_receive_accept_agent(CYTHON
     PyTuple_SET_ITEM(__pyx_t_5, 1, __pyx_t_6);
     __pyx_t_4 = 0;
     __pyx_t_6 = 0;
-    __pyx_t_6 = __Pyx_PyString_Format(__pyx_kp_s_s__i, __pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 509, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyString_Format(__pyx_kp_s_s__i, __pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 521, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_name_without_colon); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 509, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_name_without_colon); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 521, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_4 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_price); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 509, __pyx_L1_error)
+    __pyx_t_4 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_price); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 521, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_1 = PyTuple_New(4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 509, __pyx_L1_error)
+    __pyx_t_1 = PyTuple_New(4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 521, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_GIVEREF(__pyx_t_7);
     PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_7);
@@ -7028,25 +7245,25 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_24_log_receive_accept_agent(CYTHON
     __pyx_t_6 = 0;
     __pyx_t_5 = 0;
     __pyx_t_4 = 0;
-    __pyx_t_4 = __Pyx_PyString_Format(__pyx_kp_s_s_s_s_f, __pyx_t_1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 509, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyString_Format(__pyx_kp_s_s_s_s_f, __pyx_t_1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 521, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_1 = PyObject_GetItem(__pyx_t_2, __pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 509, __pyx_L1_error)
+    __pyx_t_1 = PyObject_GetItem(__pyx_t_2, __pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 521, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_5 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_final_quantity); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 509, __pyx_L1_error)
+    __pyx_t_5 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_final_quantity); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 521, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_6 = PyNumber_InPlaceAdd(__pyx_t_1, __pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 509, __pyx_L1_error)
+    __pyx_t_6 = PyNumber_InPlaceAdd(__pyx_t_1, __pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 521, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    if (unlikely(PyObject_SetItem(__pyx_t_2, __pyx_t_4, __pyx_t_6) < 0)) __PYX_ERR(0, 509, __pyx_L1_error)
+    if (unlikely(PyObject_SetItem(__pyx_t_2, __pyx_t_4, __pyx_t_6) < 0)) __PYX_ERR(0, 521, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   }
   __pyx_L3:;
 
-  /* "abce/trade.pyx":505
+  /* "trade.pyx":517
  *             self._trade_log['%s,%s,%s,%f' % (offer['good'], offer['receiver_group'], self.group, offer['price'])] += offer['final_quantity']
  * 
  *     def _log_receive_accept_agent(self, offer):             # <<<<<<<<<<<<<<
@@ -7064,7 +7281,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_24_log_receive_accept_agent(CYTHON
   __Pyx_XDECREF(__pyx_t_5);
   __Pyx_XDECREF(__pyx_t_6);
   __Pyx_XDECREF(__pyx_t_7);
-  __Pyx_AddTraceback("abce.trade.Trade._log_receive_accept_agent", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Trade._log_receive_accept_agent", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -7072,7 +7289,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_24_log_receive_accept_agent(CYTHON
   return __pyx_r;
 }
 
-/* "abce/trade.pyx":511
+/* "trade.pyx":523
  *             self._trade_log['%s,%s,%s,%f' % (offer['good'], '%s_%i' % (offer['receiver_group'], offer['receiver_idn']), self.name_without_colon, offer['price'])] += offer['final_quantity']
  * 
  *     def _receive_reject(self, offer_id):             # <<<<<<<<<<<<<<
@@ -7081,10 +7298,10 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_24_log_receive_accept_agent(CYTHON
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_4abce_5trade_5Trade_27_receive_reject(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_4abce_5trade_5Trade_26_receive_reject[] = " delets a given offer\n\n        is used by _msg_clearing__end_of_subround, when the other party rejects\n        or at the end of the subround when agent retracted the offer\n\n        ";
-static PyMethodDef __pyx_mdef_4abce_5trade_5Trade_27_receive_reject = {"_receive_reject", (PyCFunction)__pyx_pw_4abce_5trade_5Trade_27_receive_reject, METH_VARARGS|METH_KEYWORDS, __pyx_doc_4abce_5trade_5Trade_26_receive_reject};
-static PyObject *__pyx_pw_4abce_5trade_5Trade_27_receive_reject(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_5trade_5Trade_27_receive_reject(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_5trade_5Trade_26_receive_reject[] = " delets a given offer\n\n        is used by _msg_clearing__end_of_subround, when the other party rejects\n        or at the end of the subround when agent retracted the offer\n\n        ";
+static PyMethodDef __pyx_mdef_5trade_5Trade_27_receive_reject = {"_receive_reject", (PyCFunction)__pyx_pw_5trade_5Trade_27_receive_reject, METH_VARARGS|METH_KEYWORDS, __pyx_doc_5trade_5Trade_26_receive_reject};
+static PyObject *__pyx_pw_5trade_5Trade_27_receive_reject(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_self = 0;
   PyObject *__pyx_v_offer_id = 0;
   PyObject *__pyx_r = 0;
@@ -7110,11 +7327,11 @@ static PyObject *__pyx_pw_4abce_5trade_5Trade_27_receive_reject(PyObject *__pyx_
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_offer_id)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("_receive_reject", 1, 2, 2, 1); __PYX_ERR(0, 511, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("_receive_reject", 1, 2, 2, 1); __PYX_ERR(0, 523, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "_receive_reject") < 0)) __PYX_ERR(0, 511, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "_receive_reject") < 0)) __PYX_ERR(0, 523, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -7127,20 +7344,20 @@ static PyObject *__pyx_pw_4abce_5trade_5Trade_27_receive_reject(PyObject *__pyx_
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("_receive_reject", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 511, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("_receive_reject", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 523, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("abce.trade.Trade._receive_reject", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Trade._receive_reject", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_4abce_5trade_5Trade_26_receive_reject(__pyx_self, __pyx_v_self, __pyx_v_offer_id);
+  __pyx_r = __pyx_pf_5trade_5Trade_26_receive_reject(__pyx_self, __pyx_v_self, __pyx_v_offer_id);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_4abce_5trade_5Trade_26_receive_reject(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_offer_id) {
+static PyObject *__pyx_pf_5trade_5Trade_26_receive_reject(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_offer_id) {
   PyObject *__pyx_v_offer = NULL;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
@@ -7153,62 +7370,62 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_26_receive_reject(CYTHON_UNUSED Py
   PyObject *__pyx_t_7 = NULL;
   __Pyx_RefNannySetupContext("_receive_reject", 0);
 
-  /* "abce/trade.pyx":518
+  /* "trade.pyx":530
  * 
  *         """
  *         offer = self.given_offers[offer_id]             # <<<<<<<<<<<<<<
  *         if offer['buysell'] == 115:
  *             self._haves[offer['good']] += offer['quantity']
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_given_offers); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 518, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_given_offers); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 530, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = PyObject_GetItem(__pyx_t_1, __pyx_v_offer_id); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 518, __pyx_L1_error)
+  __pyx_t_2 = PyObject_GetItem(__pyx_t_1, __pyx_v_offer_id); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 530, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_offer = __pyx_t_2;
   __pyx_t_2 = 0;
 
-  /* "abce/trade.pyx":519
+  /* "trade.pyx":531
  *         """
  *         offer = self.given_offers[offer_id]
  *         if offer['buysell'] == 115:             # <<<<<<<<<<<<<<
  *             self._haves[offer['good']] += offer['quantity']
  *         else:
  */
-  __pyx_t_2 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_buysell); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 519, __pyx_L1_error)
+  __pyx_t_2 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_buysell); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 531, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_1 = __Pyx_PyInt_EqObjC(__pyx_t_2, __pyx_int_115, 0x73, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 519, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_EqObjC(__pyx_t_2, __pyx_int_115, 0x73, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 531, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_3 < 0)) __PYX_ERR(0, 519, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_3 < 0)) __PYX_ERR(0, 531, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   if (__pyx_t_3) {
 
-    /* "abce/trade.pyx":520
+    /* "trade.pyx":532
  *         offer = self.given_offers[offer_id]
  *         if offer['buysell'] == 115:
  *             self._haves[offer['good']] += offer['quantity']             # <<<<<<<<<<<<<<
  *         else:
  *             self._haves['money'] += offer['quantity'] * offer['price']
  */
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_haves); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 520, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_haves); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 532, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_2 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_good); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 520, __pyx_L1_error)
+    __pyx_t_2 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_good); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 532, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_4 = PyObject_GetItem(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 520, __pyx_L1_error)
+    __pyx_t_4 = PyObject_GetItem(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 532, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_5 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_quantity); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 520, __pyx_L1_error)
+    __pyx_t_5 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_quantity); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 532, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_6 = PyNumber_InPlaceAdd(__pyx_t_4, __pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 520, __pyx_L1_error)
+    __pyx_t_6 = PyNumber_InPlaceAdd(__pyx_t_4, __pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 532, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    if (unlikely(PyObject_SetItem(__pyx_t_1, __pyx_t_2, __pyx_t_6) < 0)) __PYX_ERR(0, 520, __pyx_L1_error)
+    if (unlikely(PyObject_SetItem(__pyx_t_1, __pyx_t_2, __pyx_t_6) < 0)) __PYX_ERR(0, 532, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-    /* "abce/trade.pyx":519
+    /* "trade.pyx":531
  *         """
  *         offer = self.given_offers[offer_id]
  *         if offer['buysell'] == 115:             # <<<<<<<<<<<<<<
@@ -7218,7 +7435,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_26_receive_reject(CYTHON_UNUSED Py
     goto __pyx_L3;
   }
 
-  /* "abce/trade.pyx":522
+  /* "trade.pyx":534
  *             self._haves[offer['good']] += offer['quantity']
  *         else:
  *             self._haves['money'] += offer['quantity'] * offer['price']             # <<<<<<<<<<<<<<
@@ -7226,65 +7443,65 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_26_receive_reject(CYTHON_UNUSED Py
  *         offer['status_round'] = self.round
  */
   /*else*/ {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_haves); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 522, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_haves); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 534, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_INCREF(__pyx_n_s_money);
     __pyx_t_7 = __pyx_n_s_money;
-    __pyx_t_2 = PyObject_GetItem(__pyx_t_1, __pyx_t_7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 522, __pyx_L1_error)
+    __pyx_t_2 = PyObject_GetItem(__pyx_t_1, __pyx_t_7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 534, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_6 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_quantity); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 522, __pyx_L1_error)
+    __pyx_t_6 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_quantity); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 534, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_5 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_price); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 522, __pyx_L1_error)
+    __pyx_t_5 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_price); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 534, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_4 = PyNumber_Multiply(__pyx_t_6, __pyx_t_5); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 522, __pyx_L1_error)
+    __pyx_t_4 = PyNumber_Multiply(__pyx_t_6, __pyx_t_5); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 534, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    __pyx_t_5 = PyNumber_InPlaceAdd(__pyx_t_2, __pyx_t_4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 522, __pyx_L1_error)
+    __pyx_t_5 = PyNumber_InPlaceAdd(__pyx_t_2, __pyx_t_4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 534, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    if (unlikely(PyObject_SetItem(__pyx_t_1, __pyx_t_7, __pyx_t_5) < 0)) __PYX_ERR(0, 522, __pyx_L1_error)
+    if (unlikely(PyObject_SetItem(__pyx_t_1, __pyx_t_7, __pyx_t_5) < 0)) __PYX_ERR(0, 534, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
   __pyx_L3:;
 
-  /* "abce/trade.pyx":523
+  /* "trade.pyx":535
  *         else:
  *             self._haves['money'] += offer['quantity'] * offer['price']
  *         offer['status'] = "rejected"             # <<<<<<<<<<<<<<
  *         offer['status_round'] = self.round
  *         del self.given_offers[offer_id]
  */
-  if (unlikely(PyObject_SetItem(__pyx_v_offer, __pyx_n_s_status, __pyx_n_s_rejected) < 0)) __PYX_ERR(0, 523, __pyx_L1_error)
+  if (unlikely(PyObject_SetItem(__pyx_v_offer, __pyx_n_s_status, __pyx_n_s_rejected) < 0)) __PYX_ERR(0, 535, __pyx_L1_error)
 
-  /* "abce/trade.pyx":524
+  /* "trade.pyx":536
  *             self._haves['money'] += offer['quantity'] * offer['price']
  *         offer['status'] = "rejected"
  *         offer['status_round'] = self.round             # <<<<<<<<<<<<<<
  *         del self.given_offers[offer_id]
  * 
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_round); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 524, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_round); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 536, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (unlikely(PyObject_SetItem(__pyx_v_offer, __pyx_n_s_status_round, __pyx_t_1) < 0)) __PYX_ERR(0, 524, __pyx_L1_error)
+  if (unlikely(PyObject_SetItem(__pyx_v_offer, __pyx_n_s_status_round, __pyx_t_1) < 0)) __PYX_ERR(0, 536, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "abce/trade.pyx":525
+  /* "trade.pyx":537
  *         offer['status'] = "rejected"
  *         offer['status_round'] = self.round
  *         del self.given_offers[offer_id]             # <<<<<<<<<<<<<<
  * 
  *     def _delete_given_offer(self, offer_id):
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_given_offers); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 525, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_given_offers); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 537, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (unlikely(PyObject_DelItem(__pyx_t_1, __pyx_v_offer_id) < 0)) __PYX_ERR(0, 525, __pyx_L1_error)
+  if (unlikely(PyObject_DelItem(__pyx_t_1, __pyx_v_offer_id) < 0)) __PYX_ERR(0, 537, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "abce/trade.pyx":511
+  /* "trade.pyx":523
  *             self._trade_log['%s,%s,%s,%f' % (offer['good'], '%s_%i' % (offer['receiver_group'], offer['receiver_idn']), self.name_without_colon, offer['price'])] += offer['final_quantity']
  * 
  *     def _receive_reject(self, offer_id):             # <<<<<<<<<<<<<<
@@ -7302,7 +7519,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_26_receive_reject(CYTHON_UNUSED Py
   __Pyx_XDECREF(__pyx_t_5);
   __Pyx_XDECREF(__pyx_t_6);
   __Pyx_XDECREF(__pyx_t_7);
-  __Pyx_AddTraceback("abce.trade.Trade._receive_reject", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Trade._receive_reject", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_offer);
@@ -7311,7 +7528,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_26_receive_reject(CYTHON_UNUSED Py
   return __pyx_r;
 }
 
-/* "abce/trade.pyx":527
+/* "trade.pyx":539
  *         del self.given_offers[offer_id]
  * 
  *     def _delete_given_offer(self, offer_id):             # <<<<<<<<<<<<<<
@@ -7320,9 +7537,9 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_26_receive_reject(CYTHON_UNUSED Py
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_4abce_5trade_5Trade_29_delete_given_offer(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyMethodDef __pyx_mdef_4abce_5trade_5Trade_29_delete_given_offer = {"_delete_given_offer", (PyCFunction)__pyx_pw_4abce_5trade_5Trade_29_delete_given_offer, METH_VARARGS|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_4abce_5trade_5Trade_29_delete_given_offer(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_5trade_5Trade_29_delete_given_offer(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyMethodDef __pyx_mdef_5trade_5Trade_29_delete_given_offer = {"_delete_given_offer", (PyCFunction)__pyx_pw_5trade_5Trade_29_delete_given_offer, METH_VARARGS|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_5trade_5Trade_29_delete_given_offer(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_self = 0;
   PyObject *__pyx_v_offer_id = 0;
   PyObject *__pyx_r = 0;
@@ -7348,11 +7565,11 @@ static PyObject *__pyx_pw_4abce_5trade_5Trade_29_delete_given_offer(PyObject *__
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_offer_id)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("_delete_given_offer", 1, 2, 2, 1); __PYX_ERR(0, 527, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("_delete_given_offer", 1, 2, 2, 1); __PYX_ERR(0, 539, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "_delete_given_offer") < 0)) __PYX_ERR(0, 527, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "_delete_given_offer") < 0)) __PYX_ERR(0, 539, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -7365,20 +7582,20 @@ static PyObject *__pyx_pw_4abce_5trade_5Trade_29_delete_given_offer(PyObject *__
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("_delete_given_offer", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 527, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("_delete_given_offer", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 539, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("abce.trade.Trade._delete_given_offer", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Trade._delete_given_offer", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_4abce_5trade_5Trade_28_delete_given_offer(__pyx_self, __pyx_v_self, __pyx_v_offer_id);
+  __pyx_r = __pyx_pf_5trade_5Trade_28_delete_given_offer(__pyx_self, __pyx_v_self, __pyx_v_offer_id);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_4abce_5trade_5Trade_28_delete_given_offer(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_offer_id) {
+static PyObject *__pyx_pf_5trade_5Trade_28_delete_given_offer(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_offer_id) {
   PyObject *__pyx_v_offer = NULL;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
@@ -7391,16 +7608,16 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_28_delete_given_offer(CYTHON_UNUSE
   PyObject *__pyx_t_7 = NULL;
   __Pyx_RefNannySetupContext("_delete_given_offer", 0);
 
-  /* "abce/trade.pyx":528
+  /* "trade.pyx":540
  * 
  *     def _delete_given_offer(self, offer_id):
  *         offer = self.given_offers.pop(offer_id)             # <<<<<<<<<<<<<<
  *         if offer['buysell'] == 115:
  *             self._haves[offer['good']] += offer['quantity']
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_given_offers); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 528, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_given_offers); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 540, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_pop); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 528, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_pop); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 540, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_t_2 = NULL;
@@ -7414,16 +7631,16 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_28_delete_given_offer(CYTHON_UNUSE
     }
   }
   if (!__pyx_t_2) {
-    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_v_offer_id); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 528, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_v_offer_id); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 540, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
   } else {
-    __pyx_t_4 = PyTuple_New(1+1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 528, __pyx_L1_error)
+    __pyx_t_4 = PyTuple_New(1+1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 540, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_GIVEREF(__pyx_t_2); PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_2); __pyx_t_2 = NULL;
     __Pyx_INCREF(__pyx_v_offer_id);
     __Pyx_GIVEREF(__pyx_v_offer_id);
     PyTuple_SET_ITEM(__pyx_t_4, 0+1, __pyx_v_offer_id);
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_4, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 528, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_4, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 540, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   }
@@ -7431,47 +7648,47 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_28_delete_given_offer(CYTHON_UNUSE
   __pyx_v_offer = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "abce/trade.pyx":529
+  /* "trade.pyx":541
  *     def _delete_given_offer(self, offer_id):
  *         offer = self.given_offers.pop(offer_id)
  *         if offer['buysell'] == 115:             # <<<<<<<<<<<<<<
  *             self._haves[offer['good']] += offer['quantity']
  *         else:
  */
-  __pyx_t_1 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_buysell); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 529, __pyx_L1_error)
+  __pyx_t_1 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_buysell); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 541, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = __Pyx_PyInt_EqObjC(__pyx_t_1, __pyx_int_115, 0x73, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 529, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyInt_EqObjC(__pyx_t_1, __pyx_int_115, 0x73, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 541, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_5 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely(__pyx_t_5 < 0)) __PYX_ERR(0, 529, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely(__pyx_t_5 < 0)) __PYX_ERR(0, 541, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   if (__pyx_t_5) {
 
-    /* "abce/trade.pyx":530
+    /* "trade.pyx":542
  *         offer = self.given_offers.pop(offer_id)
  *         if offer['buysell'] == 115:
  *             self._haves[offer['good']] += offer['quantity']             # <<<<<<<<<<<<<<
  *         else:
  *             self._haves['money'] += offer['quantity'] * offer['price']
  */
-    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_haves); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 530, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_haves); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 542, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_1 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_good); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 530, __pyx_L1_error)
+    __pyx_t_1 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_good); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 542, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_4 = PyObject_GetItem(__pyx_t_3, __pyx_t_1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 530, __pyx_L1_error)
+    __pyx_t_4 = PyObject_GetItem(__pyx_t_3, __pyx_t_1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 542, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_2 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_quantity); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 530, __pyx_L1_error)
+    __pyx_t_2 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_quantity); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 542, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_6 = PyNumber_InPlaceAdd(__pyx_t_4, __pyx_t_2); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 530, __pyx_L1_error)
+    __pyx_t_6 = PyNumber_InPlaceAdd(__pyx_t_4, __pyx_t_2); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 542, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    if (unlikely(PyObject_SetItem(__pyx_t_3, __pyx_t_1, __pyx_t_6) < 0)) __PYX_ERR(0, 530, __pyx_L1_error)
+    if (unlikely(PyObject_SetItem(__pyx_t_3, __pyx_t_1, __pyx_t_6) < 0)) __PYX_ERR(0, 542, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-    /* "abce/trade.pyx":529
+    /* "trade.pyx":541
  *     def _delete_given_offer(self, offer_id):
  *         offer = self.given_offers.pop(offer_id)
  *         if offer['buysell'] == 115:             # <<<<<<<<<<<<<<
@@ -7481,7 +7698,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_28_delete_given_offer(CYTHON_UNUSE
     goto __pyx_L3;
   }
 
-  /* "abce/trade.pyx":532
+  /* "trade.pyx":544
  *             self._haves[offer['good']] += offer['quantity']
  *         else:
  *             self._haves['money'] += offer['quantity'] * offer['price']             # <<<<<<<<<<<<<<
@@ -7489,32 +7706,32 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_28_delete_given_offer(CYTHON_UNUSE
  *     def give(self, receiver_group, receiver_idn, good, quantity):
  */
   /*else*/ {
-    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_haves); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 532, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_haves); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 544, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_INCREF(__pyx_n_s_money);
     __pyx_t_7 = __pyx_n_s_money;
-    __pyx_t_1 = PyObject_GetItem(__pyx_t_3, __pyx_t_7); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 532, __pyx_L1_error)
+    __pyx_t_1 = PyObject_GetItem(__pyx_t_3, __pyx_t_7); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 544, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_6 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_quantity); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 532, __pyx_L1_error)
+    __pyx_t_6 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_quantity); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 544, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_2 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_price); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 532, __pyx_L1_error)
+    __pyx_t_2 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_price); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 544, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_4 = PyNumber_Multiply(__pyx_t_6, __pyx_t_2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 532, __pyx_L1_error)
+    __pyx_t_4 = PyNumber_Multiply(__pyx_t_6, __pyx_t_2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 544, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_2 = PyNumber_InPlaceAdd(__pyx_t_1, __pyx_t_4); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 532, __pyx_L1_error)
+    __pyx_t_2 = PyNumber_InPlaceAdd(__pyx_t_1, __pyx_t_4); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 544, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    if (unlikely(PyObject_SetItem(__pyx_t_3, __pyx_t_7, __pyx_t_2) < 0)) __PYX_ERR(0, 532, __pyx_L1_error)
+    if (unlikely(PyObject_SetItem(__pyx_t_3, __pyx_t_7, __pyx_t_2) < 0)) __PYX_ERR(0, 544, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   }
   __pyx_L3:;
 
-  /* "abce/trade.pyx":527
+  /* "trade.pyx":539
  *         del self.given_offers[offer_id]
  * 
  *     def _delete_given_offer(self, offer_id):             # <<<<<<<<<<<<<<
@@ -7532,7 +7749,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_28_delete_given_offer(CYTHON_UNUSE
   __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_6);
   __Pyx_XDECREF(__pyx_t_7);
-  __Pyx_AddTraceback("abce.trade.Trade._delete_given_offer", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Trade._delete_given_offer", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_offer);
@@ -7541,7 +7758,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_28_delete_given_offer(CYTHON_UNUSE
   return __pyx_r;
 }
 
-/* "abce/trade.pyx":534
+/* "trade.pyx":546
  *             self._haves['money'] += offer['quantity'] * offer['price']
  * 
  *     def give(self, receiver_group, receiver_idn, good, quantity):             # <<<<<<<<<<<<<<
@@ -7550,10 +7767,10 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_28_delete_given_offer(CYTHON_UNUSE
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_4abce_5trade_5Trade_31give(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_4abce_5trade_5Trade_30give[] = " gives a good to another agent\n\n        Args:\n\n            receiver_group:\n                Group name of the receiver\n            receiver_idn:\n                id number of the receiver\n            good:\n                the good to be transfered\n            quantity:\n                amount to be transfered\n\n        Raises:\n\n            AssertionError, when good smaller than 0.\n\n        Return:\n            Dictionary, with the transfer, which can be used by self.log(...).\n\n        Example::\n\n            self.log('taxes', self.give('money': 0.05 * self.possession('money'))\n\n        ";
-static PyMethodDef __pyx_mdef_4abce_5trade_5Trade_31give = {"give", (PyCFunction)__pyx_pw_4abce_5trade_5Trade_31give, METH_VARARGS|METH_KEYWORDS, __pyx_doc_4abce_5trade_5Trade_30give};
-static PyObject *__pyx_pw_4abce_5trade_5Trade_31give(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_5trade_5Trade_31give(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_5trade_5Trade_30give[] = " gives a good to another agent\n\n        Args:\n\n            receiver_group:\n                Group name of the receiver\n            receiver_idn:\n                id number of the receiver\n            good:\n                the good to be transfered\n            quantity:\n                amount to be transfered\n\n        Raises:\n\n            AssertionError, when good smaller than 0.\n\n        Return:\n            Dictionary, with the transfer, which can be used by self.log(...).\n\n        Example::\n\n            self.log('taxes', self.give('money': 0.05 * self.possession('money'))\n\n        ";
+static PyMethodDef __pyx_mdef_5trade_5Trade_31give = {"give", (PyCFunction)__pyx_pw_5trade_5Trade_31give, METH_VARARGS|METH_KEYWORDS, __pyx_doc_5trade_5Trade_30give};
+static PyObject *__pyx_pw_5trade_5Trade_31give(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_self = 0;
   PyObject *__pyx_v_receiver_group = 0;
   PyObject *__pyx_v_receiver_idn = 0;
@@ -7585,26 +7802,26 @@ static PyObject *__pyx_pw_4abce_5trade_5Trade_31give(PyObject *__pyx_self, PyObj
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_receiver_group)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("give", 1, 5, 5, 1); __PYX_ERR(0, 534, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("give", 1, 5, 5, 1); __PYX_ERR(0, 546, __pyx_L3_error)
         }
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_receiver_idn)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("give", 1, 5, 5, 2); __PYX_ERR(0, 534, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("give", 1, 5, 5, 2); __PYX_ERR(0, 546, __pyx_L3_error)
         }
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_good)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("give", 1, 5, 5, 3); __PYX_ERR(0, 534, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("give", 1, 5, 5, 3); __PYX_ERR(0, 546, __pyx_L3_error)
         }
         case  4:
         if (likely((values[4] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_quantity)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("give", 1, 5, 5, 4); __PYX_ERR(0, 534, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("give", 1, 5, 5, 4); __PYX_ERR(0, 546, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "give") < 0)) __PYX_ERR(0, 534, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "give") < 0)) __PYX_ERR(0, 546, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 5) {
       goto __pyx_L5_argtuple_error;
@@ -7623,20 +7840,20 @@ static PyObject *__pyx_pw_4abce_5trade_5Trade_31give(PyObject *__pyx_self, PyObj
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("give", 1, 5, 5, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 534, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("give", 1, 5, 5, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 546, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("abce.trade.Trade.give", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Trade.give", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_4abce_5trade_5Trade_30give(__pyx_self, __pyx_v_self, __pyx_v_receiver_group, __pyx_v_receiver_idn, __pyx_v_good, __pyx_v_quantity);
+  __pyx_r = __pyx_pf_5trade_5Trade_30give(__pyx_self, __pyx_v_self, __pyx_v_receiver_group, __pyx_v_receiver_idn, __pyx_v_good, __pyx_v_quantity);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_4abce_5trade_5Trade_30give(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_receiver_group, PyObject *__pyx_v_receiver_idn, PyObject *__pyx_v_good, PyObject *__pyx_v_quantity) {
+static PyObject *__pyx_pf_5trade_5Trade_30give(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_receiver_group, PyObject *__pyx_v_receiver_idn, PyObject *__pyx_v_good, PyObject *__pyx_v_quantity) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   double __pyx_t_1;
@@ -7649,27 +7866,27 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_30give(CYTHON_UNUSED PyObject *__p
   __Pyx_RefNannySetupContext("give", 0);
   __Pyx_INCREF(__pyx_v_quantity);
 
-  /* "abce/trade.pyx":560
+  /* "trade.pyx":572
  * 
  *         """
  *         quantity = bound_zero(quantity)             # <<<<<<<<<<<<<<
  *         quantity = self._quantity_smaller_goods(quantity, good)
  *         self._haves[good] -= quantity
  */
-  __pyx_t_1 = __pyx_PyFloat_AsDouble(__pyx_v_quantity); if (unlikely((__pyx_t_1 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 560, __pyx_L1_error)
-  __pyx_t_2 = PyFloat_FromDouble(__pyx_f_4abce_5trade_bound_zero(__pyx_t_1)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 560, __pyx_L1_error)
+  __pyx_t_1 = __pyx_PyFloat_AsDouble(__pyx_v_quantity); if (unlikely((__pyx_t_1 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 572, __pyx_L1_error)
+  __pyx_t_2 = PyFloat_FromDouble(__pyx_f_5trade_bound_zero(__pyx_t_1)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 572, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF_SET(__pyx_v_quantity, __pyx_t_2);
   __pyx_t_2 = 0;
 
-  /* "abce/trade.pyx":561
+  /* "trade.pyx":573
  *         """
  *         quantity = bound_zero(quantity)
  *         quantity = self._quantity_smaller_goods(quantity, good)             # <<<<<<<<<<<<<<
  *         self._haves[good] -= quantity
  *         self._send(receiver_group, receiver_idn, '_g', [good, quantity])
  */
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_quantity_smaller_goods); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 561, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_quantity_smaller_goods); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 573, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_t_4 = NULL;
   __pyx_t_5 = 0;
@@ -7683,7 +7900,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_30give(CYTHON_UNUSED PyObject *__p
       __pyx_t_5 = 1;
     }
   }
-  __pyx_t_6 = PyTuple_New(2+__pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 561, __pyx_L1_error)
+  __pyx_t_6 = PyTuple_New(2+__pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 573, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   if (__pyx_t_4) {
     __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_4); __pyx_t_4 = NULL;
@@ -7694,44 +7911,44 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_30give(CYTHON_UNUSED PyObject *__p
   __Pyx_INCREF(__pyx_v_good);
   __Pyx_GIVEREF(__pyx_v_good);
   PyTuple_SET_ITEM(__pyx_t_6, 1+__pyx_t_5, __pyx_v_good);
-  __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_6, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 561, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_6, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 573, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __Pyx_DECREF_SET(__pyx_v_quantity, __pyx_t_2);
   __pyx_t_2 = 0;
 
-  /* "abce/trade.pyx":562
+  /* "trade.pyx":574
  *         quantity = bound_zero(quantity)
  *         quantity = self._quantity_smaller_goods(quantity, good)
  *         self._haves[good] -= quantity             # <<<<<<<<<<<<<<
  *         self._send(receiver_group, receiver_idn, '_g', [good, quantity])
  *         return {good: quantity}
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_haves); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 562, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_haves); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 574, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_INCREF(__pyx_v_good);
   __pyx_t_3 = __pyx_v_good;
-  __pyx_t_6 = PyObject_GetItem(__pyx_t_2, __pyx_t_3); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 562, __pyx_L1_error)
+  __pyx_t_6 = PyObject_GetItem(__pyx_t_2, __pyx_t_3); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 574, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
-  __pyx_t_4 = PyNumber_InPlaceSubtract(__pyx_t_6, __pyx_v_quantity); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 562, __pyx_L1_error)
+  __pyx_t_4 = PyNumber_InPlaceSubtract(__pyx_t_6, __pyx_v_quantity); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 574, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  if (unlikely(PyObject_SetItem(__pyx_t_2, __pyx_t_3, __pyx_t_4) < 0)) __PYX_ERR(0, 562, __pyx_L1_error)
+  if (unlikely(PyObject_SetItem(__pyx_t_2, __pyx_t_3, __pyx_t_4) < 0)) __PYX_ERR(0, 574, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "abce/trade.pyx":563
+  /* "trade.pyx":575
  *         quantity = self._quantity_smaller_goods(quantity, good)
  *         self._haves[good] -= quantity
  *         self._send(receiver_group, receiver_idn, '_g', [good, quantity])             # <<<<<<<<<<<<<<
  *         return {good: quantity}
  * 
  */
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_send); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 563, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_send); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 575, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_4 = PyList_New(2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 563, __pyx_L1_error)
+  __pyx_t_4 = PyList_New(2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 575, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_INCREF(__pyx_v_good);
   __Pyx_GIVEREF(__pyx_v_good);
@@ -7751,7 +7968,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_30give(CYTHON_UNUSED PyObject *__p
       __pyx_t_5 = 1;
     }
   }
-  __pyx_t_7 = PyTuple_New(4+__pyx_t_5); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 563, __pyx_L1_error)
+  __pyx_t_7 = PyTuple_New(4+__pyx_t_5); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 575, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   if (__pyx_t_6) {
     __Pyx_GIVEREF(__pyx_t_6); PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_t_6); __pyx_t_6 = NULL;
@@ -7768,13 +7985,13 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_30give(CYTHON_UNUSED PyObject *__p
   __Pyx_GIVEREF(__pyx_t_4);
   PyTuple_SET_ITEM(__pyx_t_7, 3+__pyx_t_5, __pyx_t_4);
   __pyx_t_4 = 0;
-  __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_7, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 563, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_7, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 575, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "abce/trade.pyx":564
+  /* "trade.pyx":576
  *         self._haves[good] -= quantity
  *         self._send(receiver_group, receiver_idn, '_g', [good, quantity])
  *         return {good: quantity}             # <<<<<<<<<<<<<<
@@ -7782,14 +7999,14 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_30give(CYTHON_UNUSED PyObject *__p
  *     def take(self, receiver_group, receiver_idn, good, quantity):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_2 = PyDict_New(); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 564, __pyx_L1_error)
+  __pyx_t_2 = PyDict_New(); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 576, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_2, __pyx_v_good, __pyx_v_quantity) < 0) __PYX_ERR(0, 564, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_v_good, __pyx_v_quantity) < 0) __PYX_ERR(0, 576, __pyx_L1_error)
   __pyx_r = __pyx_t_2;
   __pyx_t_2 = 0;
   goto __pyx_L0;
 
-  /* "abce/trade.pyx":534
+  /* "trade.pyx":546
  *             self._haves['money'] += offer['quantity'] * offer['price']
  * 
  *     def give(self, receiver_group, receiver_idn, good, quantity):             # <<<<<<<<<<<<<<
@@ -7804,7 +8021,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_30give(CYTHON_UNUSED PyObject *__p
   __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_6);
   __Pyx_XDECREF(__pyx_t_7);
-  __Pyx_AddTraceback("abce.trade.Trade.give", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Trade.give", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_quantity);
@@ -7813,7 +8030,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_30give(CYTHON_UNUSED PyObject *__p
   return __pyx_r;
 }
 
-/* "abce/trade.pyx":566
+/* "trade.pyx":578
  *         return {good: quantity}
  * 
  *     def take(self, receiver_group, receiver_idn, good, quantity):             # <<<<<<<<<<<<<<
@@ -7822,10 +8039,10 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_30give(CYTHON_UNUSED PyObject *__p
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_4abce_5trade_5Trade_33take(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_4abce_5trade_5Trade_32take[] = " take a good from another agent. The other agent has to accept.\n        Args:\n\n            receiver_group, receiver_idn, good, quantity\n        ";
-static PyMethodDef __pyx_mdef_4abce_5trade_5Trade_33take = {"take", (PyCFunction)__pyx_pw_4abce_5trade_5Trade_33take, METH_VARARGS|METH_KEYWORDS, __pyx_doc_4abce_5trade_5Trade_32take};
-static PyObject *__pyx_pw_4abce_5trade_5Trade_33take(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_5trade_5Trade_33take(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_5trade_5Trade_32take[] = " take a good from another agent. The other agent has to accept.\n        Args:\n\n            receiver_group, receiver_idn, good, quantity\n        ";
+static PyMethodDef __pyx_mdef_5trade_5Trade_33take = {"take", (PyCFunction)__pyx_pw_5trade_5Trade_33take, METH_VARARGS|METH_KEYWORDS, __pyx_doc_5trade_5Trade_32take};
+static PyObject *__pyx_pw_5trade_5Trade_33take(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_self = 0;
   PyObject *__pyx_v_receiver_group = 0;
   PyObject *__pyx_v_receiver_idn = 0;
@@ -7857,26 +8074,26 @@ static PyObject *__pyx_pw_4abce_5trade_5Trade_33take(PyObject *__pyx_self, PyObj
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_receiver_group)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("take", 1, 5, 5, 1); __PYX_ERR(0, 566, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("take", 1, 5, 5, 1); __PYX_ERR(0, 578, __pyx_L3_error)
         }
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_receiver_idn)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("take", 1, 5, 5, 2); __PYX_ERR(0, 566, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("take", 1, 5, 5, 2); __PYX_ERR(0, 578, __pyx_L3_error)
         }
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_good)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("take", 1, 5, 5, 3); __PYX_ERR(0, 566, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("take", 1, 5, 5, 3); __PYX_ERR(0, 578, __pyx_L3_error)
         }
         case  4:
         if (likely((values[4] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_quantity)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("take", 1, 5, 5, 4); __PYX_ERR(0, 566, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("take", 1, 5, 5, 4); __PYX_ERR(0, 578, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "take") < 0)) __PYX_ERR(0, 566, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "take") < 0)) __PYX_ERR(0, 578, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 5) {
       goto __pyx_L5_argtuple_error;
@@ -7895,20 +8112,20 @@ static PyObject *__pyx_pw_4abce_5trade_5Trade_33take(PyObject *__pyx_self, PyObj
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("take", 1, 5, 5, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 566, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("take", 1, 5, 5, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 578, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("abce.trade.Trade.take", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Trade.take", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_4abce_5trade_5Trade_32take(__pyx_self, __pyx_v_self, __pyx_v_receiver_group, __pyx_v_receiver_idn, __pyx_v_good, __pyx_v_quantity);
+  __pyx_r = __pyx_pf_5trade_5Trade_32take(__pyx_self, __pyx_v_self, __pyx_v_receiver_group, __pyx_v_receiver_idn, __pyx_v_good, __pyx_v_quantity);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_4abce_5trade_5Trade_32take(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_receiver_group, PyObject *__pyx_v_receiver_idn, PyObject *__pyx_v_good, PyObject *__pyx_v_quantity) {
+static PyObject *__pyx_pf_5trade_5Trade_32take(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_receiver_group, PyObject *__pyx_v_receiver_idn, PyObject *__pyx_v_good, PyObject *__pyx_v_quantity) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -7917,16 +8134,16 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_32take(CYTHON_UNUSED PyObject *__p
   PyObject *__pyx_t_4 = NULL;
   __Pyx_RefNannySetupContext("take", 0);
 
-  /* "abce/trade.pyx":572
+  /* "trade.pyx":584
  *             receiver_group, receiver_idn, good, quantity
  *         """
  *         self.buy(receiver_group, receiver_idn, good=good, quantity=quantity, price=0)             # <<<<<<<<<<<<<<
  * 
  *     def _quantity_smaller_goods(self, quantity, good):
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_buy); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 572, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_buy); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 584, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = PyTuple_New(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 572, __pyx_L1_error)
+  __pyx_t_2 = PyTuple_New(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 584, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_INCREF(__pyx_v_receiver_group);
   __Pyx_GIVEREF(__pyx_v_receiver_group);
@@ -7934,19 +8151,19 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_32take(CYTHON_UNUSED PyObject *__p
   __Pyx_INCREF(__pyx_v_receiver_idn);
   __Pyx_GIVEREF(__pyx_v_receiver_idn);
   PyTuple_SET_ITEM(__pyx_t_2, 1, __pyx_v_receiver_idn);
-  __pyx_t_3 = PyDict_New(); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 572, __pyx_L1_error)
+  __pyx_t_3 = PyDict_New(); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 584, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_good, __pyx_v_good) < 0) __PYX_ERR(0, 572, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_quantity, __pyx_v_quantity) < 0) __PYX_ERR(0, 572, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_price, __pyx_int_0) < 0) __PYX_ERR(0, 572, __pyx_L1_error)
-  __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_2, __pyx_t_3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 572, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_good, __pyx_v_good) < 0) __PYX_ERR(0, 584, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_quantity, __pyx_v_quantity) < 0) __PYX_ERR(0, 584, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_price, __pyx_int_0) < 0) __PYX_ERR(0, 584, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_2, __pyx_t_3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 584, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-  /* "abce/trade.pyx":566
+  /* "trade.pyx":578
  *         return {good: quantity}
  * 
  *     def take(self, receiver_group, receiver_idn, good, quantity):             # <<<<<<<<<<<<<<
@@ -7962,7 +8179,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_32take(CYTHON_UNUSED PyObject *__p
   __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_4);
-  __Pyx_AddTraceback("abce.trade.Trade.take", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Trade.take", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -7970,7 +8187,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_32take(CYTHON_UNUSED PyObject *__p
   return __pyx_r;
 }
 
-/* "abce/trade.pyx":574
+/* "trade.pyx":586
  *         self.buy(receiver_group, receiver_idn, good=good, quantity=quantity, price=0)
  * 
  *     def _quantity_smaller_goods(self, quantity, good):             # <<<<<<<<<<<<<<
@@ -7979,10 +8196,10 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_32take(CYTHON_UNUSED PyObject *__p
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_4abce_5trade_5Trade_35_quantity_smaller_goods(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_4abce_5trade_5Trade_34_quantity_smaller_goods[] = " asserts that quantity is smaller then goods, taking floating point imprecission into account and\n        then sets a so that it is exacly smaller or equal the available ";
-static PyMethodDef __pyx_mdef_4abce_5trade_5Trade_35_quantity_smaller_goods = {"_quantity_smaller_goods", (PyCFunction)__pyx_pw_4abce_5trade_5Trade_35_quantity_smaller_goods, METH_VARARGS|METH_KEYWORDS, __pyx_doc_4abce_5trade_5Trade_34_quantity_smaller_goods};
-static PyObject *__pyx_pw_4abce_5trade_5Trade_35_quantity_smaller_goods(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_5trade_5Trade_35_quantity_smaller_goods(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_5trade_5Trade_34_quantity_smaller_goods[] = " asserts that quantity is smaller then goods, taking floating point imprecission into account and\n        then sets a so that it is exacly smaller or equal the available ";
+static PyMethodDef __pyx_mdef_5trade_5Trade_35_quantity_smaller_goods = {"_quantity_smaller_goods", (PyCFunction)__pyx_pw_5trade_5Trade_35_quantity_smaller_goods, METH_VARARGS|METH_KEYWORDS, __pyx_doc_5trade_5Trade_34_quantity_smaller_goods};
+static PyObject *__pyx_pw_5trade_5Trade_35_quantity_smaller_goods(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_self = 0;
   PyObject *__pyx_v_quantity = 0;
   PyObject *__pyx_v_good = 0;
@@ -8010,16 +8227,16 @@ static PyObject *__pyx_pw_4abce_5trade_5Trade_35_quantity_smaller_goods(PyObject
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_quantity)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("_quantity_smaller_goods", 1, 3, 3, 1); __PYX_ERR(0, 574, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("_quantity_smaller_goods", 1, 3, 3, 1); __PYX_ERR(0, 586, __pyx_L3_error)
         }
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_good)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("_quantity_smaller_goods", 1, 3, 3, 2); __PYX_ERR(0, 574, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("_quantity_smaller_goods", 1, 3, 3, 2); __PYX_ERR(0, 586, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "_quantity_smaller_goods") < 0)) __PYX_ERR(0, 574, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "_quantity_smaller_goods") < 0)) __PYX_ERR(0, 586, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 3) {
       goto __pyx_L5_argtuple_error;
@@ -8034,20 +8251,20 @@ static PyObject *__pyx_pw_4abce_5trade_5Trade_35_quantity_smaller_goods(PyObject
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("_quantity_smaller_goods", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 574, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("_quantity_smaller_goods", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 586, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("abce.trade.Trade._quantity_smaller_goods", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Trade._quantity_smaller_goods", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_4abce_5trade_5Trade_34_quantity_smaller_goods(__pyx_self, __pyx_v_self, __pyx_v_quantity, __pyx_v_good);
+  __pyx_r = __pyx_pf_5trade_5Trade_34_quantity_smaller_goods(__pyx_self, __pyx_v_self, __pyx_v_quantity, __pyx_v_good);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_4abce_5trade_5Trade_34_quantity_smaller_goods(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_quantity, PyObject *__pyx_v_good) {
+static PyObject *__pyx_pf_5trade_5Trade_34_quantity_smaller_goods(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_quantity, PyObject *__pyx_v_good) {
   PyObject *__pyx_v_available = NULL;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
@@ -8063,47 +8280,47 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_34_quantity_smaller_goods(CYTHON_U
   __Pyx_RefNannySetupContext("_quantity_smaller_goods", 0);
   __Pyx_INCREF(__pyx_v_quantity);
 
-  /* "abce/trade.pyx":577
+  /* "trade.pyx":589
  *         """ asserts that quantity is smaller then goods, taking floating point imprecission into account and
  *         then sets a so that it is exacly smaller or equal the available """
  *         available = self._haves[good]             # <<<<<<<<<<<<<<
  *         if quantity > available + float_info.epsilon + float_info.epsilon * max(abs(quantity), abs(available)):
  *             raise NotEnoughGoods(self.name, good, quantity - available)
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_haves); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 577, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_haves); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 589, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = PyObject_GetItem(__pyx_t_1, __pyx_v_good); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 577, __pyx_L1_error)
+  __pyx_t_2 = PyObject_GetItem(__pyx_t_1, __pyx_v_good); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 589, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_available = __pyx_t_2;
   __pyx_t_2 = 0;
 
-  /* "abce/trade.pyx":578
+  /* "trade.pyx":590
  *         then sets a so that it is exacly smaller or equal the available """
  *         available = self._haves[good]
  *         if quantity > available + float_info.epsilon + float_info.epsilon * max(abs(quantity), abs(available)):             # <<<<<<<<<<<<<<
  *             raise NotEnoughGoods(self.name, good, quantity - available)
  *         quantity = bound_zero(quantity)
  */
-  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_float_info); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 578, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_float_info); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 590, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_epsilon); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 578, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_epsilon); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 590, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = PyNumber_Add(__pyx_v_available, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 578, __pyx_L1_error)
+  __pyx_t_2 = PyNumber_Add(__pyx_v_available, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 590, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_float_info); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 578, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_float_info); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 590, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_epsilon); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 578, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_epsilon); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 590, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = PyNumber_Absolute(__pyx_v_available); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 578, __pyx_L1_error)
+  __pyx_t_1 = PyNumber_Absolute(__pyx_v_available); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 590, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_4 = PyNumber_Absolute(__pyx_v_quantity); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 578, __pyx_L1_error)
+  __pyx_t_4 = PyNumber_Absolute(__pyx_v_quantity); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 590, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_6 = PyObject_RichCompare(__pyx_t_1, __pyx_t_4, Py_GT); __Pyx_XGOTREF(__pyx_t_6); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 578, __pyx_L1_error)
-  __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_6); if (unlikely(__pyx_t_7 < 0)) __PYX_ERR(0, 578, __pyx_L1_error)
+  __pyx_t_6 = PyObject_RichCompare(__pyx_t_1, __pyx_t_4, Py_GT); __Pyx_XGOTREF(__pyx_t_6); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 590, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_6); if (unlikely(__pyx_t_7 < 0)) __PYX_ERR(0, 590, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   if (__pyx_t_7) {
     __Pyx_INCREF(__pyx_t_1);
@@ -8114,32 +8331,32 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_34_quantity_smaller_goods(CYTHON_U
   }
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = PyNumber_Multiply(__pyx_t_3, __pyx_t_5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 578, __pyx_L1_error)
+  __pyx_t_1 = PyNumber_Multiply(__pyx_t_3, __pyx_t_5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 590, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  __pyx_t_5 = PyNumber_Add(__pyx_t_2, __pyx_t_1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 578, __pyx_L1_error)
+  __pyx_t_5 = PyNumber_Add(__pyx_t_2, __pyx_t_1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 590, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = PyObject_RichCompare(__pyx_v_quantity, __pyx_t_5, Py_GT); __Pyx_XGOTREF(__pyx_t_1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 578, __pyx_L1_error)
+  __pyx_t_1 = PyObject_RichCompare(__pyx_v_quantity, __pyx_t_5, Py_GT); __Pyx_XGOTREF(__pyx_t_1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 590, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_7 < 0)) __PYX_ERR(0, 578, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_7 < 0)) __PYX_ERR(0, 590, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   if (__pyx_t_7) {
 
-    /* "abce/trade.pyx":579
+    /* "trade.pyx":591
  *         available = self._haves[good]
  *         if quantity > available + float_info.epsilon + float_info.epsilon * max(abs(quantity), abs(available)):
  *             raise NotEnoughGoods(self.name, good, quantity - available)             # <<<<<<<<<<<<<<
  *         quantity = bound_zero(quantity)
  *         if quantity <= available:
  */
-    __pyx_t_5 = __Pyx_GetModuleGlobalName(__pyx_n_s_NotEnoughGoods); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 579, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_GetModuleGlobalName(__pyx_n_s_NotEnoughGoods); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 591, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_name); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 579, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_name); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 591, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_3 = PyNumber_Subtract(__pyx_v_quantity, __pyx_v_available); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 579, __pyx_L1_error)
+    __pyx_t_3 = PyNumber_Subtract(__pyx_v_quantity, __pyx_v_available); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 591, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_t_4 = NULL;
     __pyx_t_8 = 0;
@@ -8153,7 +8370,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_34_quantity_smaller_goods(CYTHON_U
         __pyx_t_8 = 1;
       }
     }
-    __pyx_t_6 = PyTuple_New(3+__pyx_t_8); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 579, __pyx_L1_error)
+    __pyx_t_6 = PyTuple_New(3+__pyx_t_8); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 591, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     if (__pyx_t_4) {
       __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_4); __pyx_t_4 = NULL;
@@ -8167,15 +8384,15 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_34_quantity_smaller_goods(CYTHON_U
     PyTuple_SET_ITEM(__pyx_t_6, 2+__pyx_t_8, __pyx_t_3);
     __pyx_t_2 = 0;
     __pyx_t_3 = 0;
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_6, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 579, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_6, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 591, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_Raise(__pyx_t_1, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __PYX_ERR(0, 579, __pyx_L1_error)
+    __PYX_ERR(0, 591, __pyx_L1_error)
 
-    /* "abce/trade.pyx":578
+    /* "trade.pyx":590
  *         then sets a so that it is exacly smaller or equal the available """
  *         available = self._haves[good]
  *         if quantity > available + float_info.epsilon + float_info.epsilon * max(abs(quantity), abs(available)):             # <<<<<<<<<<<<<<
@@ -8184,32 +8401,32 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_34_quantity_smaller_goods(CYTHON_U
  */
   }
 
-  /* "abce/trade.pyx":580
+  /* "trade.pyx":592
  *         if quantity > available + float_info.epsilon + float_info.epsilon * max(abs(quantity), abs(available)):
  *             raise NotEnoughGoods(self.name, good, quantity - available)
  *         quantity = bound_zero(quantity)             # <<<<<<<<<<<<<<
  *         if quantity <= available:
  *             return quantity
  */
-  __pyx_t_9 = __pyx_PyFloat_AsDouble(__pyx_v_quantity); if (unlikely((__pyx_t_9 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 580, __pyx_L1_error)
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_4abce_5trade_bound_zero(__pyx_t_9)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 580, __pyx_L1_error)
+  __pyx_t_9 = __pyx_PyFloat_AsDouble(__pyx_v_quantity); if (unlikely((__pyx_t_9 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 592, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_5trade_bound_zero(__pyx_t_9)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 592, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF_SET(__pyx_v_quantity, __pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "abce/trade.pyx":581
+  /* "trade.pyx":593
  *             raise NotEnoughGoods(self.name, good, quantity - available)
  *         quantity = bound_zero(quantity)
  *         if quantity <= available:             # <<<<<<<<<<<<<<
  *             return quantity
  *         else:
  */
-  __pyx_t_1 = PyObject_RichCompare(__pyx_v_quantity, __pyx_v_available, Py_LE); __Pyx_XGOTREF(__pyx_t_1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 581, __pyx_L1_error)
-  __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_7 < 0)) __PYX_ERR(0, 581, __pyx_L1_error)
+  __pyx_t_1 = PyObject_RichCompare(__pyx_v_quantity, __pyx_v_available, Py_LE); __Pyx_XGOTREF(__pyx_t_1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 593, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_7 < 0)) __PYX_ERR(0, 593, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   if (__pyx_t_7) {
 
-    /* "abce/trade.pyx":582
+    /* "trade.pyx":594
  *         quantity = bound_zero(quantity)
  *         if quantity <= available:
  *             return quantity             # <<<<<<<<<<<<<<
@@ -8221,7 +8438,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_34_quantity_smaller_goods(CYTHON_U
     __pyx_r = __pyx_v_quantity;
     goto __pyx_L0;
 
-    /* "abce/trade.pyx":581
+    /* "trade.pyx":593
  *             raise NotEnoughGoods(self.name, good, quantity - available)
  *         quantity = bound_zero(quantity)
  *         if quantity <= available:             # <<<<<<<<<<<<<<
@@ -8230,7 +8447,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_34_quantity_smaller_goods(CYTHON_U
  */
   }
 
-  /* "abce/trade.pyx":584
+  /* "trade.pyx":596
  *             return quantity
  *         else:
  *             return available             # <<<<<<<<<<<<<<
@@ -8244,7 +8461,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_34_quantity_smaller_goods(CYTHON_U
     goto __pyx_L0;
   }
 
-  /* "abce/trade.pyx":574
+  /* "trade.pyx":586
  *         self.buy(receiver_group, receiver_idn, good=good, quantity=quantity, price=0)
  * 
  *     def _quantity_smaller_goods(self, quantity, good):             # <<<<<<<<<<<<<<
@@ -8260,7 +8477,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_34_quantity_smaller_goods(CYTHON_U
   __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_5);
   __Pyx_XDECREF(__pyx_t_6);
-  __Pyx_AddTraceback("abce.trade.Trade._quantity_smaller_goods", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Trade._quantity_smaller_goods", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_available);
@@ -8270,7 +8487,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_34_quantity_smaller_goods(CYTHON_U
   return __pyx_r;
 }
 
-/* "abce/trade.pyx":587
+/* "trade.pyx":599
  * 
  * 
  *     def _clearing__end_of_subround(self, incomming_messages):             # <<<<<<<<<<<<<<
@@ -8279,10 +8496,10 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_34_quantity_smaller_goods(CYTHON_U
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_4abce_5trade_5Trade_37_clearing__end_of_subround(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_4abce_5trade_5Trade_36_clearing__end_of_subround[] = " agent receives all messages and objects that have been send in this\n        subround and deletes the offers that where retracted, but not executed.\n\n        '_o': registers a new offer\n        '_d': delete received that the issuing agent retract\n        '_p': clears a made offer that was accepted by the other agent\n        '_r': deletes an offer that the other agent rejected\n        '_g': recive a 'free' good from another party\n        ";
-static PyMethodDef __pyx_mdef_4abce_5trade_5Trade_37_clearing__end_of_subround = {"_clearing__end_of_subround", (PyCFunction)__pyx_pw_4abce_5trade_5Trade_37_clearing__end_of_subround, METH_VARARGS|METH_KEYWORDS, __pyx_doc_4abce_5trade_5Trade_36_clearing__end_of_subround};
-static PyObject *__pyx_pw_4abce_5trade_5Trade_37_clearing__end_of_subround(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_5trade_5Trade_37_clearing__end_of_subround(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_5trade_5Trade_36_clearing__end_of_subround[] = " agent receives all messages and objects that have been send in this\n        subround and deletes the offers that where retracted, but not executed.\n\n        '_o': registers a new offer\n        '_d': delete received that the issuing agent retract\n        '_p': clears a made offer that was accepted by the other agent\n        '_r': deletes an offer that the other agent rejected\n        '_g': recive a 'free' good from another party\n        ";
+static PyMethodDef __pyx_mdef_5trade_5Trade_37_clearing__end_of_subround = {"_clearing__end_of_subround", (PyCFunction)__pyx_pw_5trade_5Trade_37_clearing__end_of_subround, METH_VARARGS|METH_KEYWORDS, __pyx_doc_5trade_5Trade_36_clearing__end_of_subround};
+static PyObject *__pyx_pw_5trade_5Trade_37_clearing__end_of_subround(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_self = 0;
   PyObject *__pyx_v_incomming_messages = 0;
   PyObject *__pyx_r = 0;
@@ -8308,11 +8525,11 @@ static PyObject *__pyx_pw_4abce_5trade_5Trade_37_clearing__end_of_subround(PyObj
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_incomming_messages)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("_clearing__end_of_subround", 1, 2, 2, 1); __PYX_ERR(0, 587, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("_clearing__end_of_subround", 1, 2, 2, 1); __PYX_ERR(0, 599, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "_clearing__end_of_subround") < 0)) __PYX_ERR(0, 587, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "_clearing__end_of_subround") < 0)) __PYX_ERR(0, 599, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -8325,20 +8542,20 @@ static PyObject *__pyx_pw_4abce_5trade_5Trade_37_clearing__end_of_subround(PyObj
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("_clearing__end_of_subround", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 587, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("_clearing__end_of_subround", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 599, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("abce.trade.Trade._clearing__end_of_subround", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Trade._clearing__end_of_subround", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_4abce_5trade_5Trade_36_clearing__end_of_subround(__pyx_self, __pyx_v_self, __pyx_v_incomming_messages);
+  __pyx_r = __pyx_pf_5trade_5Trade_36_clearing__end_of_subround(__pyx_self, __pyx_v_self, __pyx_v_incomming_messages);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_4abce_5trade_5Trade_36_clearing__end_of_subround(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_incomming_messages) {
+static PyObject *__pyx_pf_5trade_5Trade_36_clearing__end_of_subround(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_self, PyObject *__pyx_v_incomming_messages) {
   PyObject *__pyx_v_typ = NULL;
   PyObject *__pyx_v_msg = NULL;
   PyObject *__pyx_v_offer = NULL;
@@ -8359,7 +8576,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_36_clearing__end_of_subround(CYTHO
   Py_ssize_t __pyx_t_13;
   __Pyx_RefNannySetupContext("_clearing__end_of_subround", 0);
 
-  /* "abce/trade.pyx":597
+  /* "trade.pyx":609
  *         '_g': recive a 'free' good from another party
  *         """
  *         for typ, msg in incomming_messages:             # <<<<<<<<<<<<<<
@@ -8370,26 +8587,26 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_36_clearing__end_of_subround(CYTHO
     __pyx_t_1 = __pyx_v_incomming_messages; __Pyx_INCREF(__pyx_t_1); __pyx_t_2 = 0;
     __pyx_t_3 = NULL;
   } else {
-    __pyx_t_2 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_v_incomming_messages); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 597, __pyx_L1_error)
+    __pyx_t_2 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_v_incomming_messages); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 609, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_3 = Py_TYPE(__pyx_t_1)->tp_iternext; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 597, __pyx_L1_error)
+    __pyx_t_3 = Py_TYPE(__pyx_t_1)->tp_iternext; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 609, __pyx_L1_error)
   }
   for (;;) {
     if (likely(!__pyx_t_3)) {
       if (likely(PyList_CheckExact(__pyx_t_1))) {
         if (__pyx_t_2 >= PyList_GET_SIZE(__pyx_t_1)) break;
         #if CYTHON_COMPILING_IN_CPYTHON
-        __pyx_t_4 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_4); __pyx_t_2++; if (unlikely(0 < 0)) __PYX_ERR(0, 597, __pyx_L1_error)
+        __pyx_t_4 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_4); __pyx_t_2++; if (unlikely(0 < 0)) __PYX_ERR(0, 609, __pyx_L1_error)
         #else
-        __pyx_t_4 = PySequence_ITEM(__pyx_t_1, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 597, __pyx_L1_error)
+        __pyx_t_4 = PySequence_ITEM(__pyx_t_1, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 609, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
         #endif
       } else {
         if (__pyx_t_2 >= PyTuple_GET_SIZE(__pyx_t_1)) break;
         #if CYTHON_COMPILING_IN_CPYTHON
-        __pyx_t_4 = PyTuple_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_4); __pyx_t_2++; if (unlikely(0 < 0)) __PYX_ERR(0, 597, __pyx_L1_error)
+        __pyx_t_4 = PyTuple_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_4); __pyx_t_2++; if (unlikely(0 < 0)) __PYX_ERR(0, 609, __pyx_L1_error)
         #else
-        __pyx_t_4 = PySequence_ITEM(__pyx_t_1, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 597, __pyx_L1_error)
+        __pyx_t_4 = PySequence_ITEM(__pyx_t_1, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 609, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
         #endif
       }
@@ -8399,7 +8616,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_36_clearing__end_of_subround(CYTHO
         PyObject* exc_type = PyErr_Occurred();
         if (exc_type) {
           if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-          else __PYX_ERR(0, 597, __pyx_L1_error)
+          else __PYX_ERR(0, 609, __pyx_L1_error)
         }
         break;
       }
@@ -8415,7 +8632,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_36_clearing__end_of_subround(CYTHO
       if (unlikely(size != 2)) {
         if (size > 2) __Pyx_RaiseTooManyValuesError(2);
         else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-        __PYX_ERR(0, 597, __pyx_L1_error)
+        __PYX_ERR(0, 609, __pyx_L1_error)
       }
       #if CYTHON_COMPILING_IN_CPYTHON
       if (likely(PyTuple_CheckExact(sequence))) {
@@ -8428,15 +8645,15 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_36_clearing__end_of_subround(CYTHO
       __Pyx_INCREF(__pyx_t_5);
       __Pyx_INCREF(__pyx_t_6);
       #else
-      __pyx_t_5 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 597, __pyx_L1_error)
+      __pyx_t_5 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 609, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_6 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 597, __pyx_L1_error)
+      __pyx_t_6 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 609, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
       #endif
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     } else {
       Py_ssize_t index = -1;
-      __pyx_t_7 = PyObject_GetIter(__pyx_t_4); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 597, __pyx_L1_error)
+      __pyx_t_7 = PyObject_GetIter(__pyx_t_4); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 609, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       __pyx_t_8 = Py_TYPE(__pyx_t_7)->tp_iternext;
@@ -8444,7 +8661,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_36_clearing__end_of_subround(CYTHO
       __Pyx_GOTREF(__pyx_t_5);
       index = 1; __pyx_t_6 = __pyx_t_8(__pyx_t_7); if (unlikely(!__pyx_t_6)) goto __pyx_L5_unpacking_failed;
       __Pyx_GOTREF(__pyx_t_6);
-      if (__Pyx_IternextUnpackEndCheck(__pyx_t_8(__pyx_t_7), 2) < 0) __PYX_ERR(0, 597, __pyx_L1_error)
+      if (__Pyx_IternextUnpackEndCheck(__pyx_t_8(__pyx_t_7), 2) < 0) __PYX_ERR(0, 609, __pyx_L1_error)
       __pyx_t_8 = NULL;
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
       goto __pyx_L6_unpacking_done;
@@ -8452,7 +8669,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_36_clearing__end_of_subround(CYTHO
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
       __pyx_t_8 = NULL;
       if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-      __PYX_ERR(0, 597, __pyx_L1_error)
+      __PYX_ERR(0, 609, __pyx_L1_error)
       __pyx_L6_unpacking_done:;
     }
     __Pyx_XDECREF_SET(__pyx_v_typ, __pyx_t_5);
@@ -8460,62 +8677,62 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_36_clearing__end_of_subround(CYTHO
     __Pyx_XDECREF_SET(__pyx_v_msg, __pyx_t_6);
     __pyx_t_6 = 0;
 
-    /* "abce/trade.pyx":598
+    /* "trade.pyx":610
  *         """
  *         for typ, msg in incomming_messages:
  *             if typ == '_o':             # <<<<<<<<<<<<<<
  *                 offer = Offer(*msg)
  *                 offer.open_offer_status ='received'
  */
-    __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_v_typ, __pyx_n_s_o, Py_EQ)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 598, __pyx_L1_error)
+    __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_v_typ, __pyx_n_s_o, Py_EQ)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 610, __pyx_L1_error)
     if (__pyx_t_9) {
 
-      /* "abce/trade.pyx":599
+      /* "trade.pyx":611
  *         for typ, msg in incomming_messages:
  *             if typ == '_o':
  *                 offer = Offer(*msg)             # <<<<<<<<<<<<<<
  *                 offer.open_offer_status ='received'
  *                 self._open_offers[offer['good']][offer['idn']] = offer
  */
-      __pyx_t_4 = PySequence_Tuple(__pyx_v_msg); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 599, __pyx_L1_error)
+      __pyx_t_4 = PySequence_Tuple(__pyx_v_msg); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 611, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_6 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_4abce_5trade_Offer), __pyx_t_4, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 599, __pyx_L1_error)
+      __pyx_t_6 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_5trade_Offer), __pyx_t_4, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 611, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       __Pyx_XDECREF_SET(__pyx_v_offer, __pyx_t_6);
       __pyx_t_6 = 0;
 
-      /* "abce/trade.pyx":600
+      /* "trade.pyx":612
  *             if typ == '_o':
  *                 offer = Offer(*msg)
  *                 offer.open_offer_status ='received'             # <<<<<<<<<<<<<<
  *                 self._open_offers[offer['good']][offer['idn']] = offer
  *             elif typ == '_d':
  */
-      if (__Pyx_PyObject_SetAttrStr(__pyx_v_offer, __pyx_n_s_open_offer_status, __pyx_n_s_received) < 0) __PYX_ERR(0, 600, __pyx_L1_error)
+      if (__Pyx_PyObject_SetAttrStr(__pyx_v_offer, __pyx_n_s_open_offer_status, __pyx_n_s_received) < 0) __PYX_ERR(0, 612, __pyx_L1_error)
 
-      /* "abce/trade.pyx":601
+      /* "trade.pyx":613
  *                 offer = Offer(*msg)
  *                 offer.open_offer_status ='received'
  *                 self._open_offers[offer['good']][offer['idn']] = offer             # <<<<<<<<<<<<<<
  *             elif typ == '_d':
  *                 del self._open_offers[msg['good']][msg['idn']]
  */
-      __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_open_offers); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 601, __pyx_L1_error)
+      __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_open_offers); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 613, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
-      __pyx_t_4 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_good); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 601, __pyx_L1_error)
+      __pyx_t_4 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_good); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 613, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_5 = PyObject_GetItem(__pyx_t_6, __pyx_t_4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 601, __pyx_L1_error)
+      __pyx_t_5 = PyObject_GetItem(__pyx_t_6, __pyx_t_4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 613, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      __pyx_t_4 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_idn); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 601, __pyx_L1_error)
+      __pyx_t_4 = PyObject_GetItem(__pyx_v_offer, __pyx_n_s_idn); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 613, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
-      if (unlikely(PyObject_SetItem(__pyx_t_5, __pyx_t_4, __pyx_v_offer) < 0)) __PYX_ERR(0, 601, __pyx_L1_error)
+      if (unlikely(PyObject_SetItem(__pyx_t_5, __pyx_t_4, __pyx_v_offer) < 0)) __PYX_ERR(0, 613, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-      /* "abce/trade.pyx":598
+      /* "trade.pyx":610
  *         """
  *         for typ, msg in incomming_messages:
  *             if typ == '_o':             # <<<<<<<<<<<<<<
@@ -8525,38 +8742,38 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_36_clearing__end_of_subround(CYTHO
       goto __pyx_L7;
     }
 
-    /* "abce/trade.pyx":602
+    /* "trade.pyx":614
  *                 offer.open_offer_status ='received'
  *                 self._open_offers[offer['good']][offer['idn']] = offer
  *             elif typ == '_d':             # <<<<<<<<<<<<<<
  *                 del self._open_offers[msg['good']][msg['idn']]
  *             elif typ == '_p':
  */
-    __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_v_typ, __pyx_n_s_d, Py_EQ)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 602, __pyx_L1_error)
+    __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_v_typ, __pyx_n_s_d, Py_EQ)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 614, __pyx_L1_error)
     if (__pyx_t_9) {
 
-      /* "abce/trade.pyx":603
+      /* "trade.pyx":615
  *                 self._open_offers[offer['good']][offer['idn']] = offer
  *             elif typ == '_d':
  *                 del self._open_offers[msg['good']][msg['idn']]             # <<<<<<<<<<<<<<
  *             elif typ == '_p':
  *                 offer = self._receive_accept(msg)
  */
-      __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_open_offers); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 603, __pyx_L1_error)
+      __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_open_offers); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 615, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_5 = PyObject_GetItem(__pyx_v_msg, __pyx_n_s_good); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 603, __pyx_L1_error)
+      __pyx_t_5 = PyObject_GetItem(__pyx_v_msg, __pyx_n_s_good); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 615, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_6 = PyObject_GetItem(__pyx_t_4, __pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 603, __pyx_L1_error)
+      __pyx_t_6 = PyObject_GetItem(__pyx_t_4, __pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 615, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-      __pyx_t_5 = PyObject_GetItem(__pyx_v_msg, __pyx_n_s_idn); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 603, __pyx_L1_error)
+      __pyx_t_5 = PyObject_GetItem(__pyx_v_msg, __pyx_n_s_idn); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 615, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      if (unlikely(PyObject_DelItem(__pyx_t_6, __pyx_t_5) < 0)) __PYX_ERR(0, 603, __pyx_L1_error)
+      if (unlikely(PyObject_DelItem(__pyx_t_6, __pyx_t_5) < 0)) __PYX_ERR(0, 615, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-      /* "abce/trade.pyx":602
+      /* "trade.pyx":614
  *                 offer.open_offer_status ='received'
  *                 self._open_offers[offer['good']][offer['idn']] = offer
  *             elif typ == '_d':             # <<<<<<<<<<<<<<
@@ -8566,24 +8783,24 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_36_clearing__end_of_subround(CYTHO
       goto __pyx_L7;
     }
 
-    /* "abce/trade.pyx":604
+    /* "trade.pyx":616
  *             elif typ == '_d':
  *                 del self._open_offers[msg['good']][msg['idn']]
  *             elif typ == '_p':             # <<<<<<<<<<<<<<
  *                 offer = self._receive_accept(msg)
  *                 if self.trade_logging == 2:
  */
-    __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_v_typ, __pyx_n_s_p, Py_EQ)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 604, __pyx_L1_error)
+    __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_v_typ, __pyx_n_s_p, Py_EQ)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 616, __pyx_L1_error)
     if (__pyx_t_9) {
 
-      /* "abce/trade.pyx":605
+      /* "trade.pyx":617
  *                 del self._open_offers[msg['good']][msg['idn']]
  *             elif typ == '_p':
  *                 offer = self._receive_accept(msg)             # <<<<<<<<<<<<<<
  *                 if self.trade_logging == 2:
  *                     self._log_receive_accept_group(offer)
  */
-      __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_receive_accept); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 605, __pyx_L1_error)
+      __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_receive_accept); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 617, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
       __pyx_t_4 = NULL;
       if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_6))) {
@@ -8596,16 +8813,16 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_36_clearing__end_of_subround(CYTHO
         }
       }
       if (!__pyx_t_4) {
-        __pyx_t_5 = __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_v_msg); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 605, __pyx_L1_error)
+        __pyx_t_5 = __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_v_msg); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 617, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
       } else {
-        __pyx_t_7 = PyTuple_New(1+1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 605, __pyx_L1_error)
+        __pyx_t_7 = PyTuple_New(1+1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 617, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_7);
         __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_t_4); __pyx_t_4 = NULL;
         __Pyx_INCREF(__pyx_v_msg);
         __Pyx_GIVEREF(__pyx_v_msg);
         PyTuple_SET_ITEM(__pyx_t_7, 0+1, __pyx_v_msg);
-        __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_t_7, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 605, __pyx_L1_error)
+        __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_t_7, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 617, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
         __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
       }
@@ -8613,30 +8830,30 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_36_clearing__end_of_subround(CYTHO
       __Pyx_XDECREF_SET(__pyx_v_offer, __pyx_t_5);
       __pyx_t_5 = 0;
 
-      /* "abce/trade.pyx":606
+      /* "trade.pyx":618
  *             elif typ == '_p':
  *                 offer = self._receive_accept(msg)
  *                 if self.trade_logging == 2:             # <<<<<<<<<<<<<<
  *                     self._log_receive_accept_group(offer)
  *                 elif self.trade_logging == 1:
  */
-      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_trade_logging); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 606, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_trade_logging); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 618, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_6 = __Pyx_PyInt_EqObjC(__pyx_t_5, __pyx_int_2, 2, 0); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 606, __pyx_L1_error)
+      __pyx_t_6 = __Pyx_PyInt_EqObjC(__pyx_t_5, __pyx_int_2, 2, 0); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 618, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-      __pyx_t_9 = __Pyx_PyObject_IsTrue(__pyx_t_6); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 606, __pyx_L1_error)
+      __pyx_t_9 = __Pyx_PyObject_IsTrue(__pyx_t_6); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 618, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
       if (__pyx_t_9) {
 
-        /* "abce/trade.pyx":607
+        /* "trade.pyx":619
  *                 offer = self._receive_accept(msg)
  *                 if self.trade_logging == 2:
  *                     self._log_receive_accept_group(offer)             # <<<<<<<<<<<<<<
  *                 elif self.trade_logging == 1:
  *                     self._log_receive_accept_agent(offer)
  */
-        __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_log_receive_accept_group); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 607, __pyx_L1_error)
+        __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_log_receive_accept_group); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 619, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
         __pyx_t_7 = NULL;
         if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_5))) {
@@ -8649,23 +8866,23 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_36_clearing__end_of_subround(CYTHO
           }
         }
         if (!__pyx_t_7) {
-          __pyx_t_6 = __Pyx_PyObject_CallOneArg(__pyx_t_5, __pyx_v_offer); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 607, __pyx_L1_error)
+          __pyx_t_6 = __Pyx_PyObject_CallOneArg(__pyx_t_5, __pyx_v_offer); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 619, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_6);
         } else {
-          __pyx_t_4 = PyTuple_New(1+1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 607, __pyx_L1_error)
+          __pyx_t_4 = PyTuple_New(1+1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 619, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_4);
           __Pyx_GIVEREF(__pyx_t_7); PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_7); __pyx_t_7 = NULL;
           __Pyx_INCREF(__pyx_v_offer);
           __Pyx_GIVEREF(__pyx_v_offer);
           PyTuple_SET_ITEM(__pyx_t_4, 0+1, __pyx_v_offer);
-          __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_4, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 607, __pyx_L1_error)
+          __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_4, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 619, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_6);
           __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
         }
         __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
         __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-        /* "abce/trade.pyx":606
+        /* "trade.pyx":618
  *             elif typ == '_p':
  *                 offer = self._receive_accept(msg)
  *                 if self.trade_logging == 2:             # <<<<<<<<<<<<<<
@@ -8675,30 +8892,30 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_36_clearing__end_of_subround(CYTHO
         goto __pyx_L8;
       }
 
-      /* "abce/trade.pyx":608
+      /* "trade.pyx":620
  *                 if self.trade_logging == 2:
  *                     self._log_receive_accept_group(offer)
  *                 elif self.trade_logging == 1:             # <<<<<<<<<<<<<<
  *                     self._log_receive_accept_agent(offer)
  *             elif typ == '_r':
  */
-      __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_trade_logging); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 608, __pyx_L1_error)
+      __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_trade_logging); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 620, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
-      __pyx_t_5 = __Pyx_PyInt_EqObjC(__pyx_t_6, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 608, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyInt_EqObjC(__pyx_t_6, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 620, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-      __pyx_t_9 = __Pyx_PyObject_IsTrue(__pyx_t_5); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 608, __pyx_L1_error)
+      __pyx_t_9 = __Pyx_PyObject_IsTrue(__pyx_t_5); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 620, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       if (__pyx_t_9) {
 
-        /* "abce/trade.pyx":609
+        /* "trade.pyx":621
  *                     self._log_receive_accept_group(offer)
  *                 elif self.trade_logging == 1:
  *                     self._log_receive_accept_agent(offer)             # <<<<<<<<<<<<<<
  *             elif typ == '_r':
  *                 self._receive_reject(msg)
  */
-        __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_log_receive_accept_agent); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 609, __pyx_L1_error)
+        __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_log_receive_accept_agent); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 621, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_6);
         __pyx_t_4 = NULL;
         if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_6))) {
@@ -8711,23 +8928,23 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_36_clearing__end_of_subround(CYTHO
           }
         }
         if (!__pyx_t_4) {
-          __pyx_t_5 = __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_v_offer); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 609, __pyx_L1_error)
+          __pyx_t_5 = __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_v_offer); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 621, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_5);
         } else {
-          __pyx_t_7 = PyTuple_New(1+1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 609, __pyx_L1_error)
+          __pyx_t_7 = PyTuple_New(1+1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 621, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_7);
           __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_t_4); __pyx_t_4 = NULL;
           __Pyx_INCREF(__pyx_v_offer);
           __Pyx_GIVEREF(__pyx_v_offer);
           PyTuple_SET_ITEM(__pyx_t_7, 0+1, __pyx_v_offer);
-          __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_t_7, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 609, __pyx_L1_error)
+          __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_t_7, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 621, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_5);
           __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
         }
         __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
         __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-        /* "abce/trade.pyx":608
+        /* "trade.pyx":620
  *                 if self.trade_logging == 2:
  *                     self._log_receive_accept_group(offer)
  *                 elif self.trade_logging == 1:             # <<<<<<<<<<<<<<
@@ -8737,7 +8954,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_36_clearing__end_of_subround(CYTHO
       }
       __pyx_L8:;
 
-      /* "abce/trade.pyx":604
+      /* "trade.pyx":616
  *             elif typ == '_d':
  *                 del self._open_offers[msg['good']][msg['idn']]
  *             elif typ == '_p':             # <<<<<<<<<<<<<<
@@ -8747,24 +8964,24 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_36_clearing__end_of_subround(CYTHO
       goto __pyx_L7;
     }
 
-    /* "abce/trade.pyx":610
+    /* "trade.pyx":622
  *                 elif self.trade_logging == 1:
  *                     self._log_receive_accept_agent(offer)
  *             elif typ == '_r':             # <<<<<<<<<<<<<<
  *                 self._receive_reject(msg)
  *             elif typ == '_g':
  */
-    __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_v_typ, __pyx_n_s_r, Py_EQ)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 610, __pyx_L1_error)
+    __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_v_typ, __pyx_n_s_r, Py_EQ)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 622, __pyx_L1_error)
     if (__pyx_t_9) {
 
-      /* "abce/trade.pyx":611
+      /* "trade.pyx":623
  *                     self._log_receive_accept_agent(offer)
  *             elif typ == '_r':
  *                 self._receive_reject(msg)             # <<<<<<<<<<<<<<
  *             elif typ == '_g':
  *                 self._haves[msg[0]] += msg[1]
  */
-      __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_receive_reject); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 611, __pyx_L1_error)
+      __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_receive_reject); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 623, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
       __pyx_t_7 = NULL;
       if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_6))) {
@@ -8777,23 +8994,23 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_36_clearing__end_of_subround(CYTHO
         }
       }
       if (!__pyx_t_7) {
-        __pyx_t_5 = __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_v_msg); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 611, __pyx_L1_error)
+        __pyx_t_5 = __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_v_msg); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 623, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
       } else {
-        __pyx_t_4 = PyTuple_New(1+1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 611, __pyx_L1_error)
+        __pyx_t_4 = PyTuple_New(1+1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 623, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
         __Pyx_GIVEREF(__pyx_t_7); PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_7); __pyx_t_7 = NULL;
         __Pyx_INCREF(__pyx_v_msg);
         __Pyx_GIVEREF(__pyx_v_msg);
         PyTuple_SET_ITEM(__pyx_t_4, 0+1, __pyx_v_msg);
-        __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_t_4, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 611, __pyx_L1_error)
+        __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_t_4, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 623, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       }
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-      /* "abce/trade.pyx":610
+      /* "trade.pyx":622
  *                 elif self.trade_logging == 1:
  *                     self._log_receive_accept_agent(offer)
  *             elif typ == '_r':             # <<<<<<<<<<<<<<
@@ -8803,41 +9020,41 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_36_clearing__end_of_subround(CYTHO
       goto __pyx_L7;
     }
 
-    /* "abce/trade.pyx":612
+    /* "trade.pyx":624
  *             elif typ == '_r':
  *                 self._receive_reject(msg)
  *             elif typ == '_g':             # <<<<<<<<<<<<<<
  *                 self._haves[msg[0]] += msg[1]
  *             elif typ == '_q':
  */
-    __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_v_typ, __pyx_n_s_g, Py_EQ)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 612, __pyx_L1_error)
+    __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_v_typ, __pyx_n_s_g, Py_EQ)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 624, __pyx_L1_error)
     if (__pyx_t_9) {
 
-      /* "abce/trade.pyx":613
+      /* "trade.pyx":625
  *                 self._receive_reject(msg)
  *             elif typ == '_g':
  *                 self._haves[msg[0]] += msg[1]             # <<<<<<<<<<<<<<
  *             elif typ == '_q':
  *                 self._quotes[msg['idn']] = msg
  */
-      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_haves); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 613, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_haves); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 625, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_6 = __Pyx_GetItemInt(__pyx_v_msg, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 613, __pyx_L1_error)
+      __pyx_t_6 = __Pyx_GetItemInt(__pyx_v_msg, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 625, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
-      __pyx_t_4 = PyObject_GetItem(__pyx_t_5, __pyx_t_6); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 613, __pyx_L1_error)
+      __pyx_t_4 = PyObject_GetItem(__pyx_t_5, __pyx_t_6); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 625, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_7 = __Pyx_GetItemInt(__pyx_v_msg, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 613, __pyx_L1_error)
+      __pyx_t_7 = __Pyx_GetItemInt(__pyx_v_msg, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 625, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
-      __pyx_t_10 = PyNumber_InPlaceAdd(__pyx_t_4, __pyx_t_7); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 613, __pyx_L1_error)
+      __pyx_t_10 = PyNumber_InPlaceAdd(__pyx_t_4, __pyx_t_7); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 625, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-      if (unlikely(PyObject_SetItem(__pyx_t_5, __pyx_t_6, __pyx_t_10) < 0)) __PYX_ERR(0, 613, __pyx_L1_error)
+      if (unlikely(PyObject_SetItem(__pyx_t_5, __pyx_t_6, __pyx_t_10) < 0)) __PYX_ERR(0, 625, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-      /* "abce/trade.pyx":612
+      /* "trade.pyx":624
  *             elif typ == '_r':
  *                 self._receive_reject(msg)
  *             elif typ == '_g':             # <<<<<<<<<<<<<<
@@ -8847,32 +9064,32 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_36_clearing__end_of_subround(CYTHO
       goto __pyx_L7;
     }
 
-    /* "abce/trade.pyx":614
+    /* "trade.pyx":626
  *             elif typ == '_g':
  *                 self._haves[msg[0]] += msg[1]
  *             elif typ == '_q':             # <<<<<<<<<<<<<<
  *                 self._quotes[msg['idn']] = msg
  *             elif typ == '!o':
  */
-    __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_v_typ, __pyx_n_s_q, Py_EQ)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 614, __pyx_L1_error)
+    __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_v_typ, __pyx_n_s_q, Py_EQ)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 626, __pyx_L1_error)
     if (__pyx_t_9) {
 
-      /* "abce/trade.pyx":615
+      /* "trade.pyx":627
  *                 self._haves[msg[0]] += msg[1]
  *             elif typ == '_q':
  *                 self._quotes[msg['idn']] = msg             # <<<<<<<<<<<<<<
  *             elif typ == '!o':
  *                 if msg['makerequest'] == 'r':
  */
-      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_quotes); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 615, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_quotes); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 627, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_6 = PyObject_GetItem(__pyx_v_msg, __pyx_n_s_idn); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 615, __pyx_L1_error)
+      __pyx_t_6 = PyObject_GetItem(__pyx_v_msg, __pyx_n_s_idn); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 627, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
-      if (unlikely(PyObject_SetItem(__pyx_t_5, __pyx_t_6, __pyx_v_msg) < 0)) __PYX_ERR(0, 615, __pyx_L1_error)
+      if (unlikely(PyObject_SetItem(__pyx_t_5, __pyx_t_6, __pyx_v_msg) < 0)) __PYX_ERR(0, 627, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-      /* "abce/trade.pyx":614
+      /* "trade.pyx":626
  *             elif typ == '_g':
  *                 self._haves[msg[0]] += msg[1]
  *             elif typ == '_q':             # <<<<<<<<<<<<<<
@@ -8882,48 +9099,48 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_36_clearing__end_of_subround(CYTHO
       goto __pyx_L7;
     }
 
-    /* "abce/trade.pyx":616
+    /* "trade.pyx":628
  *             elif typ == '_q':
  *                 self._quotes[msg['idn']] = msg
  *             elif typ == '!o':             # <<<<<<<<<<<<<<
  *                 if msg['makerequest'] == 'r':
  *                     self._contract_requests[msg['good']].append(msg)
  */
-    __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_v_typ, __pyx_kp_s_o_2, Py_EQ)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 616, __pyx_L1_error)
+    __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_v_typ, __pyx_kp_s_o_2, Py_EQ)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 628, __pyx_L1_error)
     if (__pyx_t_9) {
 
-      /* "abce/trade.pyx":617
+      /* "trade.pyx":629
  *                 self._quotes[msg['idn']] = msg
  *             elif typ == '!o':
  *                 if msg['makerequest'] == 'r':             # <<<<<<<<<<<<<<
  *                     self._contract_requests[msg['good']].append(msg)
  *                 else:
  */
-      __pyx_t_6 = PyObject_GetItem(__pyx_v_msg, __pyx_n_s_makerequest); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 617, __pyx_L1_error)
+      __pyx_t_6 = PyObject_GetItem(__pyx_v_msg, __pyx_n_s_makerequest); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 629, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
-      __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_t_6, __pyx_n_s_r_2, Py_EQ)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 617, __pyx_L1_error)
+      __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_t_6, __pyx_n_s_r_2, Py_EQ)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 629, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
       if (__pyx_t_9) {
 
-        /* "abce/trade.pyx":618
+        /* "trade.pyx":630
  *             elif typ == '!o':
  *                 if msg['makerequest'] == 'r':
  *                     self._contract_requests[msg['good']].append(msg)             # <<<<<<<<<<<<<<
  *                 else:
  *                     self._contract_offers[msg['good']].append(msg)
  */
-        __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_contract_requests); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 618, __pyx_L1_error)
+        __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_contract_requests); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 630, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_6);
-        __pyx_t_5 = PyObject_GetItem(__pyx_v_msg, __pyx_n_s_good); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 618, __pyx_L1_error)
+        __pyx_t_5 = PyObject_GetItem(__pyx_v_msg, __pyx_n_s_good); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 630, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
-        __pyx_t_10 = PyObject_GetItem(__pyx_t_6, __pyx_t_5); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 618, __pyx_L1_error)
+        __pyx_t_10 = PyObject_GetItem(__pyx_t_6, __pyx_t_5); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 630, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
         __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
         __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-        __pyx_t_11 = __Pyx_PyObject_Append(__pyx_t_10, __pyx_v_msg); if (unlikely(__pyx_t_11 == -1)) __PYX_ERR(0, 618, __pyx_L1_error)
+        __pyx_t_11 = __Pyx_PyObject_Append(__pyx_t_10, __pyx_v_msg); if (unlikely(__pyx_t_11 == -1)) __PYX_ERR(0, 630, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
 
-        /* "abce/trade.pyx":617
+        /* "trade.pyx":629
  *                 self._quotes[msg['idn']] = msg
  *             elif typ == '!o':
  *                 if msg['makerequest'] == 'r':             # <<<<<<<<<<<<<<
@@ -8933,7 +9150,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_36_clearing__end_of_subround(CYTHO
         goto __pyx_L9;
       }
 
-      /* "abce/trade.pyx":620
+      /* "trade.pyx":632
  *                     self._contract_requests[msg['good']].append(msg)
  *                 else:
  *                     self._contract_offers[msg['good']].append(msg)             # <<<<<<<<<<<<<<
@@ -8941,20 +9158,20 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_36_clearing__end_of_subround(CYTHO
  *                 self._contracts_deliver[msg['good']].append(msg)
  */
       /*else*/ {
-        __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_contract_offers); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 620, __pyx_L1_error)
+        __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_contract_offers); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 632, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
-        __pyx_t_5 = PyObject_GetItem(__pyx_v_msg, __pyx_n_s_good); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 620, __pyx_L1_error)
+        __pyx_t_5 = PyObject_GetItem(__pyx_v_msg, __pyx_n_s_good); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 632, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
-        __pyx_t_6 = PyObject_GetItem(__pyx_t_10, __pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 620, __pyx_L1_error)
+        __pyx_t_6 = PyObject_GetItem(__pyx_t_10, __pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 632, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_6);
         __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
         __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-        __pyx_t_11 = __Pyx_PyObject_Append(__pyx_t_6, __pyx_v_msg); if (unlikely(__pyx_t_11 == -1)) __PYX_ERR(0, 620, __pyx_L1_error)
+        __pyx_t_11 = __Pyx_PyObject_Append(__pyx_t_6, __pyx_v_msg); if (unlikely(__pyx_t_11 == -1)) __PYX_ERR(0, 632, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
       }
       __pyx_L9:;
 
-      /* "abce/trade.pyx":616
+      /* "trade.pyx":628
  *             elif typ == '_q':
  *                 self._quotes[msg['idn']] = msg
  *             elif typ == '!o':             # <<<<<<<<<<<<<<
@@ -8964,35 +9181,35 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_36_clearing__end_of_subround(CYTHO
       goto __pyx_L7;
     }
 
-    /* "abce/trade.pyx":621
+    /* "trade.pyx":633
  *                 else:
  *                     self._contract_offers[msg['good']].append(msg)
  *             elif typ == '+d':             # <<<<<<<<<<<<<<
  *                 self._contracts_deliver[msg['good']].append(msg)
  *             elif typ == '+p':
  */
-    __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_v_typ, __pyx_kp_s_d_2, Py_EQ)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 621, __pyx_L1_error)
+    __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_v_typ, __pyx_kp_s_d_2, Py_EQ)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 633, __pyx_L1_error)
     if (__pyx_t_9) {
 
-      /* "abce/trade.pyx":622
+      /* "trade.pyx":634
  *                     self._contract_offers[msg['good']].append(msg)
  *             elif typ == '+d':
  *                 self._contracts_deliver[msg['good']].append(msg)             # <<<<<<<<<<<<<<
  *             elif typ == '+p':
  *                 self._contracts_pay[msg['good']].append(msg)
  */
-      __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_contracts_deliver); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 622, __pyx_L1_error)
+      __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_contracts_deliver); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 634, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
-      __pyx_t_5 = PyObject_GetItem(__pyx_v_msg, __pyx_n_s_good); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 622, __pyx_L1_error)
+      __pyx_t_5 = PyObject_GetItem(__pyx_v_msg, __pyx_n_s_good); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 634, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_10 = PyObject_GetItem(__pyx_t_6, __pyx_t_5); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 622, __pyx_L1_error)
+      __pyx_t_10 = PyObject_GetItem(__pyx_t_6, __pyx_t_5); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 634, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-      __pyx_t_11 = __Pyx_PyObject_Append(__pyx_t_10, __pyx_v_msg); if (unlikely(__pyx_t_11 == -1)) __PYX_ERR(0, 622, __pyx_L1_error)
+      __pyx_t_11 = __Pyx_PyObject_Append(__pyx_t_10, __pyx_v_msg); if (unlikely(__pyx_t_11 == -1)) __PYX_ERR(0, 634, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
 
-      /* "abce/trade.pyx":621
+      /* "trade.pyx":633
  *                 else:
  *                     self._contract_offers[msg['good']].append(msg)
  *             elif typ == '+d':             # <<<<<<<<<<<<<<
@@ -9002,35 +9219,35 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_36_clearing__end_of_subround(CYTHO
       goto __pyx_L7;
     }
 
-    /* "abce/trade.pyx":623
+    /* "trade.pyx":635
  *             elif typ == '+d':
  *                 self._contracts_deliver[msg['good']].append(msg)
  *             elif typ == '+p':             # <<<<<<<<<<<<<<
  *                 self._contracts_pay[msg['good']].append(msg)
  *             elif typ == '!d':
  */
-    __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_v_typ, __pyx_kp_s_p_2, Py_EQ)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 623, __pyx_L1_error)
+    __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_v_typ, __pyx_kp_s_p_2, Py_EQ)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 635, __pyx_L1_error)
     if (__pyx_t_9) {
 
-      /* "abce/trade.pyx":624
+      /* "trade.pyx":636
  *                 self._contracts_deliver[msg['good']].append(msg)
  *             elif typ == '+p':
  *                 self._contracts_pay[msg['good']].append(msg)             # <<<<<<<<<<<<<<
  *             elif typ == '!d':
  *                 self._haves[msg['good']] += msg['quantity']
  */
-      __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_contracts_pay); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 624, __pyx_L1_error)
+      __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_contracts_pay); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 636, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
-      __pyx_t_5 = PyObject_GetItem(__pyx_v_msg, __pyx_n_s_good); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 624, __pyx_L1_error)
+      __pyx_t_5 = PyObject_GetItem(__pyx_v_msg, __pyx_n_s_good); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 636, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_6 = PyObject_GetItem(__pyx_t_10, __pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 624, __pyx_L1_error)
+      __pyx_t_6 = PyObject_GetItem(__pyx_t_10, __pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 636, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
       __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-      __pyx_t_11 = __Pyx_PyObject_Append(__pyx_t_6, __pyx_v_msg); if (unlikely(__pyx_t_11 == -1)) __PYX_ERR(0, 624, __pyx_L1_error)
+      __pyx_t_11 = __Pyx_PyObject_Append(__pyx_t_6, __pyx_v_msg); if (unlikely(__pyx_t_11 == -1)) __PYX_ERR(0, 636, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-      /* "abce/trade.pyx":623
+      /* "trade.pyx":635
  *             elif typ == '+d':
  *                 self._contracts_deliver[msg['good']].append(msg)
  *             elif typ == '+p':             # <<<<<<<<<<<<<<
@@ -9040,54 +9257,54 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_36_clearing__end_of_subround(CYTHO
       goto __pyx_L7;
     }
 
-    /* "abce/trade.pyx":625
+    /* "trade.pyx":637
  *             elif typ == '+p':
  *                 self._contracts_pay[msg['good']].append(msg)
  *             elif typ == '!d':             # <<<<<<<<<<<<<<
  *                 self._haves[msg['good']] += msg['quantity']
  *                 self._contracts_delivered.append((msg['receiver_group'], msg['receiver_idn']))
  */
-    __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_v_typ, __pyx_kp_s_d_3, Py_EQ)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 625, __pyx_L1_error)
+    __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_v_typ, __pyx_kp_s_d_3, Py_EQ)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 637, __pyx_L1_error)
     if (__pyx_t_9) {
 
-      /* "abce/trade.pyx":626
+      /* "trade.pyx":638
  *                 self._contracts_pay[msg['good']].append(msg)
  *             elif typ == '!d':
  *                 self._haves[msg['good']] += msg['quantity']             # <<<<<<<<<<<<<<
  *                 self._contracts_delivered.append((msg['receiver_group'], msg['receiver_idn']))
  *                 self._log_receive_accept(msg)
  */
-      __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_haves); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 626, __pyx_L1_error)
+      __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_haves); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 638, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
-      __pyx_t_5 = PyObject_GetItem(__pyx_v_msg, __pyx_n_s_good); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 626, __pyx_L1_error)
+      __pyx_t_5 = PyObject_GetItem(__pyx_v_msg, __pyx_n_s_good); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 638, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_10 = PyObject_GetItem(__pyx_t_6, __pyx_t_5); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 626, __pyx_L1_error)
+      __pyx_t_10 = PyObject_GetItem(__pyx_t_6, __pyx_t_5); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 638, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
-      __pyx_t_7 = PyObject_GetItem(__pyx_v_msg, __pyx_n_s_quantity); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 626, __pyx_L1_error)
+      __pyx_t_7 = PyObject_GetItem(__pyx_v_msg, __pyx_n_s_quantity); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 638, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
-      __pyx_t_4 = PyNumber_InPlaceAdd(__pyx_t_10, __pyx_t_7); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 626, __pyx_L1_error)
+      __pyx_t_4 = PyNumber_InPlaceAdd(__pyx_t_10, __pyx_t_7); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 638, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-      if (unlikely(PyObject_SetItem(__pyx_t_6, __pyx_t_5, __pyx_t_4) < 0)) __PYX_ERR(0, 626, __pyx_L1_error)
+      if (unlikely(PyObject_SetItem(__pyx_t_6, __pyx_t_5, __pyx_t_4) < 0)) __PYX_ERR(0, 638, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-      /* "abce/trade.pyx":627
+      /* "trade.pyx":639
  *             elif typ == '!d':
  *                 self._haves[msg['good']] += msg['quantity']
  *                 self._contracts_delivered.append((msg['receiver_group'], msg['receiver_idn']))             # <<<<<<<<<<<<<<
  *                 self._log_receive_accept(msg)
  *             elif typ == '!p':
  */
-      __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_contracts_delivered); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 627, __pyx_L1_error)
+      __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_contracts_delivered); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 639, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
-      __pyx_t_5 = PyObject_GetItem(__pyx_v_msg, __pyx_n_s_receiver_group); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 627, __pyx_L1_error)
+      __pyx_t_5 = PyObject_GetItem(__pyx_v_msg, __pyx_n_s_receiver_group); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 639, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_4 = PyObject_GetItem(__pyx_v_msg, __pyx_n_s_receiver_idn); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 627, __pyx_L1_error)
+      __pyx_t_4 = PyObject_GetItem(__pyx_v_msg, __pyx_n_s_receiver_idn); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 639, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_7 = PyTuple_New(2); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 627, __pyx_L1_error)
+      __pyx_t_7 = PyTuple_New(2); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 639, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
       __Pyx_GIVEREF(__pyx_t_5);
       PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_t_5);
@@ -9095,18 +9312,18 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_36_clearing__end_of_subround(CYTHO
       PyTuple_SET_ITEM(__pyx_t_7, 1, __pyx_t_4);
       __pyx_t_5 = 0;
       __pyx_t_4 = 0;
-      __pyx_t_11 = __Pyx_PyObject_Append(__pyx_t_6, __pyx_t_7); if (unlikely(__pyx_t_11 == -1)) __PYX_ERR(0, 627, __pyx_L1_error)
+      __pyx_t_11 = __Pyx_PyObject_Append(__pyx_t_6, __pyx_t_7); if (unlikely(__pyx_t_11 == -1)) __PYX_ERR(0, 639, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-      /* "abce/trade.pyx":628
+      /* "trade.pyx":640
  *                 self._haves[msg['good']] += msg['quantity']
  *                 self._contracts_delivered.append((msg['receiver_group'], msg['receiver_idn']))
  *                 self._log_receive_accept(msg)             # <<<<<<<<<<<<<<
  *             elif typ == '!p':
  *                 self._haves['money'] += msg['price']
  */
-      __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_log_receive_accept); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 628, __pyx_L1_error)
+      __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_log_receive_accept); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 640, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
       __pyx_t_4 = NULL;
       if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_6))) {
@@ -9119,23 +9336,23 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_36_clearing__end_of_subround(CYTHO
         }
       }
       if (!__pyx_t_4) {
-        __pyx_t_7 = __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_v_msg); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 628, __pyx_L1_error)
+        __pyx_t_7 = __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_v_msg); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 640, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_7);
       } else {
-        __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 628, __pyx_L1_error)
+        __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 640, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
         __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_4); __pyx_t_4 = NULL;
         __Pyx_INCREF(__pyx_v_msg);
         __Pyx_GIVEREF(__pyx_v_msg);
         PyTuple_SET_ITEM(__pyx_t_5, 0+1, __pyx_v_msg);
-        __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_t_5, NULL); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 628, __pyx_L1_error)
+        __pyx_t_7 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_t_5, NULL); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 640, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_7);
         __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       }
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-      /* "abce/trade.pyx":625
+      /* "trade.pyx":637
  *             elif typ == '+p':
  *                 self._contracts_pay[msg['good']].append(msg)
  *             elif typ == '!d':             # <<<<<<<<<<<<<<
@@ -9145,54 +9362,54 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_36_clearing__end_of_subround(CYTHO
       goto __pyx_L7;
     }
 
-    /* "abce/trade.pyx":629
+    /* "trade.pyx":641
  *                 self._contracts_delivered.append((msg['receiver_group'], msg['receiver_idn']))
  *                 self._log_receive_accept(msg)
  *             elif typ == '!p':             # <<<<<<<<<<<<<<
  *                 self._haves['money'] += msg['price']
  *                 self._contracts_payed.append((msg['receiver_group'], msg['receiver_idn']))
  */
-    __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_v_typ, __pyx_kp_s_p_3, Py_EQ)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 629, __pyx_L1_error)
+    __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_v_typ, __pyx_kp_s_p_3, Py_EQ)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 641, __pyx_L1_error)
     if (__pyx_t_9) {
 
-      /* "abce/trade.pyx":630
+      /* "trade.pyx":642
  *                 self._log_receive_accept(msg)
  *             elif typ == '!p':
  *                 self._haves['money'] += msg['price']             # <<<<<<<<<<<<<<
  *                 self._contracts_payed.append((msg['receiver_group'], msg['receiver_idn']))
  *                 self._log_receive_accept(msg)
  */
-      __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_haves); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 630, __pyx_L1_error)
+      __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_haves); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 642, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
       __Pyx_INCREF(__pyx_n_s_money);
       __pyx_t_12 = __pyx_n_s_money;
-      __pyx_t_6 = PyObject_GetItem(__pyx_t_7, __pyx_t_12); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 630, __pyx_L1_error)
+      __pyx_t_6 = PyObject_GetItem(__pyx_t_7, __pyx_t_12); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 642, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
-      __pyx_t_5 = PyObject_GetItem(__pyx_v_msg, __pyx_n_s_price); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 630, __pyx_L1_error)
+      __pyx_t_5 = PyObject_GetItem(__pyx_v_msg, __pyx_n_s_price); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 642, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_4 = PyNumber_InPlaceAdd(__pyx_t_6, __pyx_t_5); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 630, __pyx_L1_error)
+      __pyx_t_4 = PyNumber_InPlaceAdd(__pyx_t_6, __pyx_t_5); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 642, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-      if (unlikely(PyObject_SetItem(__pyx_t_7, __pyx_t_12, __pyx_t_4) < 0)) __PYX_ERR(0, 630, __pyx_L1_error)
+      if (unlikely(PyObject_SetItem(__pyx_t_7, __pyx_t_12, __pyx_t_4) < 0)) __PYX_ERR(0, 642, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-      /* "abce/trade.pyx":631
+      /* "trade.pyx":643
  *             elif typ == '!p':
  *                 self._haves['money'] += msg['price']
  *                 self._contracts_payed.append((msg['receiver_group'], msg['receiver_idn']))             # <<<<<<<<<<<<<<
  *                 self._log_receive_accept(msg)
  *             else:
  */
-      __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_contracts_payed); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 631, __pyx_L1_error)
+      __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_contracts_payed); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 643, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
-      __pyx_t_4 = PyObject_GetItem(__pyx_v_msg, __pyx_n_s_receiver_group); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 631, __pyx_L1_error)
+      __pyx_t_4 = PyObject_GetItem(__pyx_v_msg, __pyx_n_s_receiver_group); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 643, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_5 = PyObject_GetItem(__pyx_v_msg, __pyx_n_s_receiver_idn); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 631, __pyx_L1_error)
+      __pyx_t_5 = PyObject_GetItem(__pyx_v_msg, __pyx_n_s_receiver_idn); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 643, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_6 = PyTuple_New(2); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 631, __pyx_L1_error)
+      __pyx_t_6 = PyTuple_New(2); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 643, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
       __Pyx_GIVEREF(__pyx_t_4);
       PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_4);
@@ -9200,18 +9417,18 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_36_clearing__end_of_subround(CYTHO
       PyTuple_SET_ITEM(__pyx_t_6, 1, __pyx_t_5);
       __pyx_t_4 = 0;
       __pyx_t_5 = 0;
-      __pyx_t_11 = __Pyx_PyObject_Append(__pyx_t_7, __pyx_t_6); if (unlikely(__pyx_t_11 == -1)) __PYX_ERR(0, 631, __pyx_L1_error)
+      __pyx_t_11 = __Pyx_PyObject_Append(__pyx_t_7, __pyx_t_6); if (unlikely(__pyx_t_11 == -1)) __PYX_ERR(0, 643, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-      /* "abce/trade.pyx":632
+      /* "trade.pyx":644
  *                 self._haves['money'] += msg['price']
  *                 self._contracts_payed.append((msg['receiver_group'], msg['receiver_idn']))
  *                 self._log_receive_accept(msg)             # <<<<<<<<<<<<<<
  *             else:
  *                 self._msgs.setdefault(typ, []).append(Message(msg))
  */
-      __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_log_receive_accept); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 632, __pyx_L1_error)
+      __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_log_receive_accept); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 644, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
       __pyx_t_5 = NULL;
       if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_7))) {
@@ -9224,23 +9441,23 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_36_clearing__end_of_subround(CYTHO
         }
       }
       if (!__pyx_t_5) {
-        __pyx_t_6 = __Pyx_PyObject_CallOneArg(__pyx_t_7, __pyx_v_msg); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 632, __pyx_L1_error)
+        __pyx_t_6 = __Pyx_PyObject_CallOneArg(__pyx_t_7, __pyx_v_msg); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 644, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_6);
       } else {
-        __pyx_t_4 = PyTuple_New(1+1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 632, __pyx_L1_error)
+        __pyx_t_4 = PyTuple_New(1+1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 644, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
         __Pyx_GIVEREF(__pyx_t_5); PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_5); __pyx_t_5 = NULL;
         __Pyx_INCREF(__pyx_v_msg);
         __Pyx_GIVEREF(__pyx_v_msg);
         PyTuple_SET_ITEM(__pyx_t_4, 0+1, __pyx_v_msg);
-        __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_7, __pyx_t_4, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 632, __pyx_L1_error)
+        __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_7, __pyx_t_4, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 644, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_6);
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       }
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
-      /* "abce/trade.pyx":629
+      /* "trade.pyx":641
  *                 self._contracts_delivered.append((msg['receiver_group'], msg['receiver_idn']))
  *                 self._log_receive_accept(msg)
  *             elif typ == '!p':             # <<<<<<<<<<<<<<
@@ -9250,7 +9467,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_36_clearing__end_of_subround(CYTHO
       goto __pyx_L7;
     }
 
-    /* "abce/trade.pyx":634
+    /* "trade.pyx":646
  *                 self._log_receive_accept(msg)
  *             else:
  *                 self._msgs.setdefault(typ, []).append(Message(msg))             # <<<<<<<<<<<<<<
@@ -9258,12 +9475,12 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_36_clearing__end_of_subround(CYTHO
  * cdef double bound_zero(double x):
  */
     /*else*/ {
-      __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_msgs); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 634, __pyx_L1_error)
+      __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_msgs); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 646, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
-      __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_setdefault); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 634, __pyx_L1_error)
+      __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_setdefault); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 646, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-      __pyx_t_7 = PyList_New(0); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 634, __pyx_L1_error)
+      __pyx_t_7 = PyList_New(0); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 646, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
       __pyx_t_5 = NULL;
       __pyx_t_13 = 0;
@@ -9277,7 +9494,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_36_clearing__end_of_subround(CYTHO
           __pyx_t_13 = 1;
         }
       }
-      __pyx_t_10 = PyTuple_New(2+__pyx_t_13); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 634, __pyx_L1_error)
+      __pyx_t_10 = PyTuple_New(2+__pyx_t_13); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 646, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
       if (__pyx_t_5) {
         __Pyx_GIVEREF(__pyx_t_5); PyTuple_SET_ITEM(__pyx_t_10, 0, __pyx_t_5); __pyx_t_5 = NULL;
@@ -9288,11 +9505,11 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_36_clearing__end_of_subround(CYTHO
       __Pyx_GIVEREF(__pyx_t_7);
       PyTuple_SET_ITEM(__pyx_t_10, 1+__pyx_t_13, __pyx_t_7);
       __pyx_t_7 = 0;
-      __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_10, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 634, __pyx_L1_error)
+      __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_10, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 646, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
       __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      __pyx_t_10 = __Pyx_GetModuleGlobalName(__pyx_n_s_Message); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 634, __pyx_L1_error)
+      __pyx_t_10 = __Pyx_GetModuleGlobalName(__pyx_n_s_Message); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 646, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
       __pyx_t_7 = NULL;
       if (CYTHON_COMPILING_IN_CPYTHON && unlikely(PyMethod_Check(__pyx_t_10))) {
@@ -9305,27 +9522,27 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_36_clearing__end_of_subround(CYTHO
         }
       }
       if (!__pyx_t_7) {
-        __pyx_t_4 = __Pyx_PyObject_CallOneArg(__pyx_t_10, __pyx_v_msg); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 634, __pyx_L1_error)
+        __pyx_t_4 = __Pyx_PyObject_CallOneArg(__pyx_t_10, __pyx_v_msg); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 646, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
       } else {
-        __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 634, __pyx_L1_error)
+        __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 646, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
         __Pyx_GIVEREF(__pyx_t_7); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_7); __pyx_t_7 = NULL;
         __Pyx_INCREF(__pyx_v_msg);
         __Pyx_GIVEREF(__pyx_v_msg);
         PyTuple_SET_ITEM(__pyx_t_5, 0+1, __pyx_v_msg);
-        __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_t_5, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 634, __pyx_L1_error)
+        __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_t_5, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 646, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
         __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       }
       __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-      __pyx_t_11 = __Pyx_PyObject_Append(__pyx_t_6, __pyx_t_4); if (unlikely(__pyx_t_11 == -1)) __PYX_ERR(0, 634, __pyx_L1_error)
+      __pyx_t_11 = __Pyx_PyObject_Append(__pyx_t_6, __pyx_t_4); if (unlikely(__pyx_t_11 == -1)) __PYX_ERR(0, 646, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     }
     __pyx_L7:;
 
-    /* "abce/trade.pyx":597
+    /* "trade.pyx":609
  *         '_g': recive a 'free' good from another party
  *         """
  *         for typ, msg in incomming_messages:             # <<<<<<<<<<<<<<
@@ -9335,7 +9552,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_36_clearing__end_of_subround(CYTHO
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "abce/trade.pyx":587
+  /* "trade.pyx":599
  * 
  * 
  *     def _clearing__end_of_subround(self, incomming_messages):             # <<<<<<<<<<<<<<
@@ -9354,7 +9571,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_36_clearing__end_of_subround(CYTHO
   __Pyx_XDECREF(__pyx_t_7);
   __Pyx_XDECREF(__pyx_t_10);
   __Pyx_XDECREF(__pyx_t_12);
-  __Pyx_AddTraceback("abce.trade.Trade._clearing__end_of_subround", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("trade.Trade._clearing__end_of_subround", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_typ);
@@ -9365,7 +9582,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_36_clearing__end_of_subround(CYTHO
   return __pyx_r;
 }
 
-/* "abce/trade.pyx":636
+/* "trade.pyx":648
  *                 self._msgs.setdefault(typ, []).append(Message(msg))
  * 
  * cdef double bound_zero(double x):             # <<<<<<<<<<<<<<
@@ -9373,7 +9590,7 @@ static PyObject *__pyx_pf_4abce_5trade_5Trade_36_clearing__end_of_subround(CYTHO
  *     and than makes sure it is above 0, without floating point imprecission """
  */
 
-static double __pyx_f_4abce_5trade_bound_zero(double __pyx_v_x) {
+static double __pyx_f_5trade_bound_zero(double __pyx_v_x) {
   double __pyx_r;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -9384,7 +9601,7 @@ static double __pyx_f_4abce_5trade_bound_zero(double __pyx_v_x) {
   int __pyx_t_6;
   __Pyx_RefNannySetupContext("bound_zero", 0);
 
-  /* "abce/trade.pyx":639
+  /* "trade.pyx":651
  *     """ asserts that variable is above zero, where foating point imprecission is accounted for,
  *     and than makes sure it is above 0, without floating point imprecission """
  *     assert x > - DBL_EPSILON, '%.30f is smaller than 0 - epsilon (%.30f)' % (x, - epsilon)             # <<<<<<<<<<<<<<
@@ -9394,14 +9611,14 @@ static double __pyx_f_4abce_5trade_bound_zero(double __pyx_v_x) {
   #ifndef CYTHON_WITHOUT_ASSERTIONS
   if (unlikely(!Py_OptimizeFlag)) {
     if (unlikely(!((__pyx_v_x > (-DBL_EPSILON)) != 0))) {
-      __pyx_t_1 = PyFloat_FromDouble(__pyx_v_x); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 639, __pyx_L1_error)
+      __pyx_t_1 = PyFloat_FromDouble(__pyx_v_x); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 651, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_epsilon); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 639, __pyx_L1_error)
+      __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_epsilon); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 651, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_3 = PyNumber_Negative(__pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 639, __pyx_L1_error)
+      __pyx_t_3 = PyNumber_Negative(__pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 651, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-      __pyx_t_2 = PyTuple_New(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 639, __pyx_L1_error)
+      __pyx_t_2 = PyTuple_New(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 651, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_GIVEREF(__pyx_t_1);
       PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_t_1);
@@ -9409,17 +9626,17 @@ static double __pyx_f_4abce_5trade_bound_zero(double __pyx_v_x) {
       PyTuple_SET_ITEM(__pyx_t_2, 1, __pyx_t_3);
       __pyx_t_1 = 0;
       __pyx_t_3 = 0;
-      __pyx_t_3 = __Pyx_PyString_Format(__pyx_kp_s_30f_is_smaller_than_0_epsilon_3, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 639, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyString_Format(__pyx_kp_s_30f_is_smaller_than_0_epsilon_3, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 651, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       PyErr_SetObject(PyExc_AssertionError, __pyx_t_3);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      __PYX_ERR(0, 639, __pyx_L1_error)
+      __PYX_ERR(0, 651, __pyx_L1_error)
     }
   }
   #endif
 
-  /* "abce/trade.pyx":640
+  /* "trade.pyx":652
  *     and than makes sure it is above 0, without floating point imprecission """
  *     assert x > - DBL_EPSILON, '%.30f is smaller than 0 - epsilon (%.30f)' % (x, - epsilon)
  *     assert np.isfinite(x), x             # <<<<<<<<<<<<<<
@@ -9428,12 +9645,12 @@ static double __pyx_f_4abce_5trade_bound_zero(double __pyx_v_x) {
  */
   #ifndef CYTHON_WITHOUT_ASSERTIONS
   if (unlikely(!Py_OptimizeFlag)) {
-    __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 640, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 652, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_isfinite); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 640, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_isfinite); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 652, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_2 = PyFloat_FromDouble(__pyx_v_x); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 640, __pyx_L1_error)
+    __pyx_t_2 = PyFloat_FromDouble(__pyx_v_x); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 652, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __pyx_t_4 = NULL;
     if (CYTHON_COMPILING_IN_CPYTHON && unlikely(PyMethod_Check(__pyx_t_1))) {
@@ -9446,39 +9663,39 @@ static double __pyx_f_4abce_5trade_bound_zero(double __pyx_v_x) {
       }
     }
     if (!__pyx_t_4) {
-      __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 640, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 652, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       __Pyx_GOTREF(__pyx_t_3);
     } else {
-      __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 640, __pyx_L1_error)
+      __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 652, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_4); __pyx_t_4 = NULL;
       __Pyx_GIVEREF(__pyx_t_2);
       PyTuple_SET_ITEM(__pyx_t_5, 0+1, __pyx_t_2);
       __pyx_t_2 = 0;
-      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_5, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 640, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_5, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 652, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     }
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely(__pyx_t_6 < 0)) __PYX_ERR(0, 640, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely(__pyx_t_6 < 0)) __PYX_ERR(0, 652, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     if (unlikely(!__pyx_t_6)) {
-      __pyx_t_3 = PyFloat_FromDouble(__pyx_v_x); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 640, __pyx_L1_error)
+      __pyx_t_3 = PyFloat_FromDouble(__pyx_v_x); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 652, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 640, __pyx_L1_error)
+      __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 652, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_GIVEREF(__pyx_t_3);
       PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_3);
       __pyx_t_3 = 0;
       PyErr_SetObject(PyExc_AssertionError, __pyx_t_1);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __PYX_ERR(0, 640, __pyx_L1_error)
+      __PYX_ERR(0, 652, __pyx_L1_error)
     }
   }
   #endif
 
-  /* "abce/trade.pyx":641
+  /* "trade.pyx":653
  *     assert x > - DBL_EPSILON, '%.30f is smaller than 0 - epsilon (%.30f)' % (x, - epsilon)
  *     assert np.isfinite(x), x
  *     if x < 0:             # <<<<<<<<<<<<<<
@@ -9488,7 +9705,7 @@ static double __pyx_f_4abce_5trade_bound_zero(double __pyx_v_x) {
   __pyx_t_6 = ((__pyx_v_x < 0.0) != 0);
   if (__pyx_t_6) {
 
-    /* "abce/trade.pyx":642
+    /* "trade.pyx":654
  *     assert np.isfinite(x), x
  *     if x < 0:
  *         return 0             # <<<<<<<<<<<<<<
@@ -9498,7 +9715,7 @@ static double __pyx_f_4abce_5trade_bound_zero(double __pyx_v_x) {
     __pyx_r = 0.0;
     goto __pyx_L0;
 
-    /* "abce/trade.pyx":641
+    /* "trade.pyx":653
  *     assert x > - DBL_EPSILON, '%.30f is smaller than 0 - epsilon (%.30f)' % (x, - epsilon)
  *     assert np.isfinite(x), x
  *     if x < 0:             # <<<<<<<<<<<<<<
@@ -9507,7 +9724,7 @@ static double __pyx_f_4abce_5trade_bound_zero(double __pyx_v_x) {
  */
   }
 
-  /* "abce/trade.pyx":644
+  /* "trade.pyx":656
  *         return 0
  *     else:
  *         return x             # <<<<<<<<<<<<<<
@@ -9519,7 +9736,7 @@ static double __pyx_f_4abce_5trade_bound_zero(double __pyx_v_x) {
     goto __pyx_L0;
   }
 
-  /* "abce/trade.pyx":636
+  /* "trade.pyx":648
  *                 self._msgs.setdefault(typ, []).append(Message(msg))
  * 
  * cdef double bound_zero(double x):             # <<<<<<<<<<<<<<
@@ -9534,14 +9751,15 @@ static double __pyx_f_4abce_5trade_bound_zero(double __pyx_v_x) {
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_5);
-  __Pyx_WriteUnraisable("abce.trade.bound_zero", __pyx_clineno, __pyx_lineno, __pyx_filename, 0, 0);
+  __Pyx_WriteUnraisable("trade.bound_zero", __pyx_clineno, __pyx_lineno, __pyx_filename, 0, 0);
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_tp_new_4abce_5trade_Offer(PyTypeObject *t, PyObject *a, PyObject *k) {
+static PyObject *__pyx_tp_new_5trade_Offer(PyTypeObject *t, PyObject *a, PyObject *k) {
+  struct __pyx_obj_5trade_Offer *p;
   PyObject *o;
   if (likely((t->tp_flags & Py_TPFLAGS_IS_ABSTRACT) == 0)) {
     o = (*t->tp_alloc)(t, 0);
@@ -9549,21 +9767,54 @@ static PyObject *__pyx_tp_new_4abce_5trade_Offer(PyTypeObject *t, PyObject *a, P
     o = (PyObject *) PyBaseObject_Type.tp_new(t, __pyx_empty_tuple, 0);
   }
   if (unlikely(!o)) return 0;
-  if (unlikely(__pyx_pw_4abce_5trade_5Offer_1__cinit__(o, a, k) < 0)) {
+  p = ((struct __pyx_obj_5trade_Offer *)o);
+  p->sender_group = ((PyObject*)Py_None); Py_INCREF(Py_None);
+  p->receiver_group = ((PyObject*)Py_None); Py_INCREF(Py_None);
+  p->good = ((PyObject*)Py_None); Py_INCREF(Py_None);
+  p->status = ((PyObject*)Py_None); Py_INCREF(Py_None);
+  p->idn = Py_None; Py_INCREF(Py_None);
+  p->open_offer_status = ((PyObject*)Py_None); Py_INCREF(Py_None);
+  if (unlikely(__pyx_pw_5trade_5Offer_1__cinit__(o, a, k) < 0)) {
     Py_DECREF(o); o = 0;
   }
   return o;
 }
 
-static void __pyx_tp_dealloc_4abce_5trade_Offer(PyObject *o) {
+static void __pyx_tp_dealloc_5trade_Offer(PyObject *o) {
+  struct __pyx_obj_5trade_Offer *p = (struct __pyx_obj_5trade_Offer *)o;
   #if PY_VERSION_HEX >= 0x030400a1
-  if (unlikely(Py_TYPE(o)->tp_finalize) && (!PyType_IS_GC(Py_TYPE(o)) || !_PyGC_FINALIZED(o))) {
+  if (unlikely(Py_TYPE(o)->tp_finalize) && !_PyGC_FINALIZED(o)) {
     if (PyObject_CallFinalizerFromDealloc(o)) return;
   }
   #endif
+  PyObject_GC_UnTrack(o);
+  Py_CLEAR(p->sender_group);
+  Py_CLEAR(p->receiver_group);
+  Py_CLEAR(p->good);
+  Py_CLEAR(p->status);
+  Py_CLEAR(p->idn);
+  Py_CLEAR(p->open_offer_status);
   (*Py_TYPE(o)->tp_free)(o);
 }
-static PyObject *__pyx_sq_item_4abce_5trade_Offer(PyObject *o, Py_ssize_t i) {
+
+static int __pyx_tp_traverse_5trade_Offer(PyObject *o, visitproc v, void *a) {
+  int e;
+  struct __pyx_obj_5trade_Offer *p = (struct __pyx_obj_5trade_Offer *)o;
+  if (p->idn) {
+    e = (*v)(p->idn, a); if (e) return e;
+  }
+  return 0;
+}
+
+static int __pyx_tp_clear_5trade_Offer(PyObject *o) {
+  PyObject* tmp;
+  struct __pyx_obj_5trade_Offer *p = (struct __pyx_obj_5trade_Offer *)o;
+  tmp = ((PyObject*)p->idn);
+  p->idn = Py_None; Py_INCREF(Py_None);
+  Py_XDECREF(tmp);
+  return 0;
+}
+static PyObject *__pyx_sq_item_5trade_Offer(PyObject *o, Py_ssize_t i) {
   PyObject *r;
   PyObject *x = PyInt_FromSsize_t(i); if(!x) return 0;
   r = Py_TYPE(o)->tp_as_mapping->mp_subscript(o, x);
@@ -9571,9 +9822,9 @@ static PyObject *__pyx_sq_item_4abce_5trade_Offer(PyObject *o, Py_ssize_t i) {
   return r;
 }
 
-static int __pyx_mp_ass_subscript_4abce_5trade_Offer(PyObject *o, PyObject *i, PyObject *v) {
+static int __pyx_mp_ass_subscript_5trade_Offer(PyObject *o, PyObject *i, PyObject *v) {
   if (v) {
-    return __pyx_pw_4abce_5trade_5Offer_5__setitem__(o, i, v);
+    return __pyx_pw_5trade_5Offer_5__setitem__(o, i, v);
   }
   else {
     PyErr_Format(PyExc_NotImplementedError,
@@ -9582,45 +9833,58 @@ static int __pyx_mp_ass_subscript_4abce_5trade_Offer(PyObject *o, PyObject *i, P
   }
 }
 
-static PyObject *__pyx_getprop_4abce_5trade_5Offer_sender_group(PyObject *o, CYTHON_UNUSED void *x) {
-  return __pyx_pw_4abce_5trade_5Offer_12sender_group_1__get__(o);
+static PyObject *__pyx_getprop_5trade_5Offer_sender_group(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_5trade_5Offer_12sender_group_1__get__(o);
 }
 
-static PyObject *__pyx_getprop_4abce_5trade_5Offer_sender_idn(PyObject *o, CYTHON_UNUSED void *x) {
-  return __pyx_pw_4abce_5trade_5Offer_10sender_idn_1__get__(o);
+static PyObject *__pyx_getprop_5trade_5Offer_sender_idn(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_5trade_5Offer_10sender_idn_1__get__(o);
 }
 
-static PyObject *__pyx_getprop_4abce_5trade_5Offer_receiver_group(PyObject *o, CYTHON_UNUSED void *x) {
-  return __pyx_pw_4abce_5trade_5Offer_14receiver_group_1__get__(o);
+static PyObject *__pyx_getprop_5trade_5Offer_receiver_group(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_5trade_5Offer_14receiver_group_1__get__(o);
 }
 
-static PyObject *__pyx_getprop_4abce_5trade_5Offer_receiver_idn(PyObject *o, CYTHON_UNUSED void *x) {
-  return __pyx_pw_4abce_5trade_5Offer_12receiver_idn_1__get__(o);
+static PyObject *__pyx_getprop_5trade_5Offer_receiver_idn(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_5trade_5Offer_12receiver_idn_1__get__(o);
 }
 
-static PyObject *__pyx_getprop_4abce_5trade_5Offer_good(PyObject *o, CYTHON_UNUSED void *x) {
-  return __pyx_pw_4abce_5trade_5Offer_4good_1__get__(o);
+static PyObject *__pyx_getprop_5trade_5Offer_good(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_5trade_5Offer_4good_1__get__(o);
 }
 
-static PyObject *__pyx_getprop_4abce_5trade_5Offer_quantity(PyObject *o, CYTHON_UNUSED void *x) {
-  return __pyx_pw_4abce_5trade_5Offer_8quantity_1__get__(o);
+static PyObject *__pyx_getprop_5trade_5Offer_quantity(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_5trade_5Offer_8quantity_1__get__(o);
 }
 
-static PyObject *__pyx_getprop_4abce_5trade_5Offer_price(PyObject *o, CYTHON_UNUSED void *x) {
-  return __pyx_pw_4abce_5trade_5Offer_5price_1__get__(o);
+static PyObject *__pyx_getprop_5trade_5Offer_price(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_5trade_5Offer_5price_1__get__(o);
 }
 
-static PyObject *__pyx_getprop_4abce_5trade_5Offer_buysell(PyObject *o, CYTHON_UNUSED void *x) {
-  return __pyx_pw_4abce_5trade_5Offer_7buysell_1__get__(o);
+static PyObject *__pyx_getprop_5trade_5Offer_buysell(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_5trade_5Offer_7buysell_1__get__(o);
 }
 
-static PyObject *__pyx_getprop_4abce_5trade_5Offer_status(PyObject *o, CYTHON_UNUSED void *x) {
-  return __pyx_pw_4abce_5trade_5Offer_6status_1__get__(o);
+static PyObject *__pyx_getprop_5trade_5Offer_status(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_5trade_5Offer_6status_1__get__(o);
 }
 
-static int __pyx_setprop_4abce_5trade_5Offer_status(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
+static int __pyx_setprop_5trade_5Offer_status(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
   if (v) {
-    return __pyx_pw_4abce_5trade_5Offer_6status_3__set__(o, v);
+    return __pyx_pw_5trade_5Offer_6status_3__set__(o, v);
+  }
+  else {
+    return __pyx_pw_5trade_5Offer_6status_5__del__(o);
+  }
+}
+
+static PyObject *__pyx_getprop_5trade_5Offer_final_quantity(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_5trade_5Offer_14final_quantity_1__get__(o);
+}
+
+static int __pyx_setprop_5trade_5Offer_final_quantity(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
+  if (v) {
+    return __pyx_pw_5trade_5Offer_14final_quantity_3__set__(o, v);
   }
   else {
     PyErr_SetString(PyExc_NotImplementedError, "__del__");
@@ -9628,13 +9892,34 @@ static int __pyx_setprop_4abce_5trade_5Offer_status(PyObject *o, PyObject *v, CY
   }
 }
 
-static PyObject *__pyx_getprop_4abce_5trade_5Offer_final_quantity(PyObject *o, CYTHON_UNUSED void *x) {
-  return __pyx_pw_4abce_5trade_5Offer_14final_quantity_1__get__(o);
+static PyObject *__pyx_getprop_5trade_5Offer_idn(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_5trade_5Offer_3idn_1__get__(o);
 }
 
-static int __pyx_setprop_4abce_5trade_5Offer_final_quantity(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
+static PyObject *__pyx_getprop_5trade_5Offer_made(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_5trade_5Offer_4made_1__get__(o);
+}
+
+static PyObject *__pyx_getprop_5trade_5Offer_open_offer_status(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_5trade_5Offer_17open_offer_status_1__get__(o);
+}
+
+static int __pyx_setprop_5trade_5Offer_open_offer_status(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
   if (v) {
-    return __pyx_pw_4abce_5trade_5Offer_14final_quantity_3__set__(o, v);
+    return __pyx_pw_5trade_5Offer_17open_offer_status_3__set__(o, v);
+  }
+  else {
+    return __pyx_pw_5trade_5Offer_17open_offer_status_5__del__(o);
+  }
+}
+
+static PyObject *__pyx_getprop_5trade_5Offer_status_round(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_5trade_5Offer_12status_round_1__get__(o);
+}
+
+static int __pyx_setprop_5trade_5Offer_status_round(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
+  if (v) {
+    return __pyx_pw_5trade_5Offer_12status_round_3__set__(o, v);
   }
   else {
     PyErr_SetString(PyExc_NotImplementedError, "__del__");
@@ -9642,62 +9927,26 @@ static int __pyx_setprop_4abce_5trade_5Offer_final_quantity(PyObject *o, PyObjec
   }
 }
 
-static PyObject *__pyx_getprop_4abce_5trade_5Offer_idn(PyObject *o, CYTHON_UNUSED void *x) {
-  return __pyx_pw_4abce_5trade_5Offer_3idn_1__get__(o);
-}
-
-static PyObject *__pyx_getprop_4abce_5trade_5Offer_made(PyObject *o, CYTHON_UNUSED void *x) {
-  return __pyx_pw_4abce_5trade_5Offer_4made_1__get__(o);
-}
-
-static PyObject *__pyx_getprop_4abce_5trade_5Offer_open_offer_status(PyObject *o, CYTHON_UNUSED void *x) {
-  return __pyx_pw_4abce_5trade_5Offer_17open_offer_status_1__get__(o);
-}
-
-static int __pyx_setprop_4abce_5trade_5Offer_open_offer_status(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
-  if (v) {
-    return __pyx_pw_4abce_5trade_5Offer_17open_offer_status_3__set__(o, v);
-  }
-  else {
-    PyErr_SetString(PyExc_NotImplementedError, "__del__");
-    return -1;
-  }
-}
-
-static PyObject *__pyx_getprop_4abce_5trade_5Offer_status_round(PyObject *o, CYTHON_UNUSED void *x) {
-  return __pyx_pw_4abce_5trade_5Offer_12status_round_1__get__(o);
-}
-
-static int __pyx_setprop_4abce_5trade_5Offer_status_round(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
-  if (v) {
-    return __pyx_pw_4abce_5trade_5Offer_12status_round_3__set__(o, v);
-  }
-  else {
-    PyErr_SetString(PyExc_NotImplementedError, "__del__");
-    return -1;
-  }
-}
-
-static PyMethodDef __pyx_methods_4abce_5trade_Offer[] = {
-  {"pickle", (PyCFunction)__pyx_pw_4abce_5trade_5Offer_7pickle, METH_NOARGS, 0},
+static PyMethodDef __pyx_methods_5trade_Offer[] = {
+  {"pickle", (PyCFunction)__pyx_pw_5trade_5Offer_7pickle, METH_NOARGS, 0},
   {0, 0, 0, 0}
 };
 
-static struct PyGetSetDef __pyx_getsets_4abce_5trade_Offer[] = {
-  {(char *)"sender_group", __pyx_getprop_4abce_5trade_5Offer_sender_group, 0, (char *)0, 0},
-  {(char *)"sender_idn", __pyx_getprop_4abce_5trade_5Offer_sender_idn, 0, (char *)0, 0},
-  {(char *)"receiver_group", __pyx_getprop_4abce_5trade_5Offer_receiver_group, 0, (char *)0, 0},
-  {(char *)"receiver_idn", __pyx_getprop_4abce_5trade_5Offer_receiver_idn, 0, (char *)0, 0},
-  {(char *)"good", __pyx_getprop_4abce_5trade_5Offer_good, 0, (char *)0, 0},
-  {(char *)"quantity", __pyx_getprop_4abce_5trade_5Offer_quantity, 0, (char *)0, 0},
-  {(char *)"price", __pyx_getprop_4abce_5trade_5Offer_price, 0, (char *)0, 0},
-  {(char *)"buysell", __pyx_getprop_4abce_5trade_5Offer_buysell, 0, (char *)0, 0},
-  {(char *)"status", __pyx_getprop_4abce_5trade_5Offer_status, __pyx_setprop_4abce_5trade_5Offer_status, (char *)0, 0},
-  {(char *)"final_quantity", __pyx_getprop_4abce_5trade_5Offer_final_quantity, __pyx_setprop_4abce_5trade_5Offer_final_quantity, (char *)0, 0},
-  {(char *)"idn", __pyx_getprop_4abce_5trade_5Offer_idn, 0, (char *)0, 0},
-  {(char *)"made", __pyx_getprop_4abce_5trade_5Offer_made, 0, (char *)0, 0},
-  {(char *)"open_offer_status", __pyx_getprop_4abce_5trade_5Offer_open_offer_status, __pyx_setprop_4abce_5trade_5Offer_open_offer_status, (char *)0, 0},
-  {(char *)"status_round", __pyx_getprop_4abce_5trade_5Offer_status_round, __pyx_setprop_4abce_5trade_5Offer_status_round, (char *)0, 0},
+static struct PyGetSetDef __pyx_getsets_5trade_Offer[] = {
+  {(char *)"sender_group", __pyx_getprop_5trade_5Offer_sender_group, 0, (char *)0, 0},
+  {(char *)"sender_idn", __pyx_getprop_5trade_5Offer_sender_idn, 0, (char *)0, 0},
+  {(char *)"receiver_group", __pyx_getprop_5trade_5Offer_receiver_group, 0, (char *)0, 0},
+  {(char *)"receiver_idn", __pyx_getprop_5trade_5Offer_receiver_idn, 0, (char *)0, 0},
+  {(char *)"good", __pyx_getprop_5trade_5Offer_good, 0, (char *)0, 0},
+  {(char *)"quantity", __pyx_getprop_5trade_5Offer_quantity, 0, (char *)0, 0},
+  {(char *)"price", __pyx_getprop_5trade_5Offer_price, 0, (char *)0, 0},
+  {(char *)"buysell", __pyx_getprop_5trade_5Offer_buysell, 0, (char *)0, 0},
+  {(char *)"status", __pyx_getprop_5trade_5Offer_status, __pyx_setprop_5trade_5Offer_status, (char *)0, 0},
+  {(char *)"final_quantity", __pyx_getprop_5trade_5Offer_final_quantity, __pyx_setprop_5trade_5Offer_final_quantity, (char *)0, 0},
+  {(char *)"idn", __pyx_getprop_5trade_5Offer_idn, 0, (char *)0, 0},
+  {(char *)"made", __pyx_getprop_5trade_5Offer_made, 0, (char *)0, 0},
+  {(char *)"open_offer_status", __pyx_getprop_5trade_5Offer_open_offer_status, __pyx_setprop_5trade_5Offer_open_offer_status, (char *)0, 0},
+  {(char *)"status_round", __pyx_getprop_5trade_5Offer_status_round, __pyx_setprop_5trade_5Offer_status_round, (char *)0, 0},
   {0, 0, 0, 0, 0}
 };
 
@@ -9705,7 +9954,7 @@ static PySequenceMethods __pyx_tp_as_sequence_Offer = {
   0, /*sq_length*/
   0, /*sq_concat*/
   0, /*sq_repeat*/
-  __pyx_sq_item_4abce_5trade_Offer, /*sq_item*/
+  __pyx_sq_item_5trade_Offer, /*sq_item*/
   0, /*sq_slice*/
   0, /*sq_ass_item*/
   0, /*sq_ass_slice*/
@@ -9716,16 +9965,16 @@ static PySequenceMethods __pyx_tp_as_sequence_Offer = {
 
 static PyMappingMethods __pyx_tp_as_mapping_Offer = {
   0, /*mp_length*/
-  __pyx_pw_4abce_5trade_5Offer_3__getitem__, /*mp_subscript*/
-  __pyx_mp_ass_subscript_4abce_5trade_Offer, /*mp_ass_subscript*/
+  __pyx_pw_5trade_5Offer_3__getitem__, /*mp_subscript*/
+  __pyx_mp_ass_subscript_5trade_Offer, /*mp_ass_subscript*/
 };
 
-static PyTypeObject __pyx_type_4abce_5trade_Offer = {
+static PyTypeObject __pyx_type_5trade_Offer = {
   PyVarObject_HEAD_INIT(0, 0)
-  "abce.trade.Offer", /*tp_name*/
-  sizeof(struct __pyx_obj_4abce_5trade_Offer), /*tp_basicsize*/
+  "trade.Offer", /*tp_name*/
+  sizeof(struct __pyx_obj_5trade_Offer), /*tp_basicsize*/
   0, /*tp_itemsize*/
-  __pyx_tp_dealloc_4abce_5trade_Offer, /*tp_dealloc*/
+  __pyx_tp_dealloc_5trade_Offer, /*tp_dealloc*/
   0, /*tp_print*/
   0, /*tp_getattr*/
   0, /*tp_setattr*/
@@ -9735,7 +9984,7 @@ static PyTypeObject __pyx_type_4abce_5trade_Offer = {
   #if PY_MAJOR_VERSION >= 3
   0, /*tp_as_async*/
   #endif
-  0, /*tp_repr*/
+  __pyx_pw_5trade_5Offer_9__repr__, /*tp_repr*/
   0, /*tp_as_number*/
   &__pyx_tp_as_sequence_Offer, /*tp_as_sequence*/
   &__pyx_tp_as_mapping_Offer, /*tp_as_mapping*/
@@ -9745,17 +9994,17 @@ static PyTypeObject __pyx_type_4abce_5trade_Offer = {
   0, /*tp_getattro*/
   0, /*tp_setattro*/
   0, /*tp_as_buffer*/
-  Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_VERSION_TAG|Py_TPFLAGS_CHECKTYPES|Py_TPFLAGS_HAVE_NEWBUFFER|Py_TPFLAGS_BASETYPE, /*tp_flags*/
+  Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_VERSION_TAG|Py_TPFLAGS_CHECKTYPES|Py_TPFLAGS_HAVE_NEWBUFFER|Py_TPFLAGS_BASETYPE|Py_TPFLAGS_HAVE_GC, /*tp_flags*/
   " This is an offer container that is send to the other agent. You can\n    access the offer container both at the receiver as well as at the sender,\n    if you have saved the offer. (e.G. self.offer = self.sell(...))\n\n    Args:\n        sender_group:\n            this is the group name of the sender\n        sender_idn:\n            this is the ID of the sender\n        receiver_group:\n            This is the group name of the receiver\n        receiver_idn:\n            this is the ID of the sender\n        good:\n            the good offered or demanded\n        quantity:\n            the quantity offered or demanded\n        price:\n            the suggested tansaction price\n        buysell:\n            this can have the values 'b' for buy; 's' for sell; 'qb' for a\n            nonbinding buy quote; and 'qs' for a nonbinding sell quote\n        status:\n            'new':\n                has been created, but not answered\n            'accepted':\n                trade fully accepted\n            'rejected':\n                trade rejected\n            'pending':\n                offer has not yet answered, and is not older than one round.\n            'perished':\n                the **perishable** good was not accepted by the end of the round\n                and therefore perished.\n        final_quantity:\n            If the offer has been answerd this returns the actual quantity\n            bought or sold. (Equal to quantity if the offer was accepted fully)\n        idn:\n            a unique identifier\n    ", /*tp_doc*/
-  0, /*tp_traverse*/
-  0, /*tp_clear*/
+  __pyx_tp_traverse_5trade_Offer, /*tp_traverse*/
+  __pyx_tp_clear_5trade_Offer, /*tp_clear*/
   0, /*tp_richcompare*/
   0, /*tp_weaklistoffset*/
   0, /*tp_iter*/
   0, /*tp_iternext*/
-  __pyx_methods_4abce_5trade_Offer, /*tp_methods*/
+  __pyx_methods_5trade_Offer, /*tp_methods*/
   0, /*tp_members*/
-  __pyx_getsets_4abce_5trade_Offer, /*tp_getset*/
+  __pyx_getsets_5trade_Offer, /*tp_getset*/
   0, /*tp_base*/
   0, /*tp_dict*/
   0, /*tp_descr_get*/
@@ -9763,7 +10012,7 @@ static PyTypeObject __pyx_type_4abce_5trade_Offer = {
   0, /*tp_dictoffset*/
   0, /*tp_init*/
   0, /*tp_alloc*/
-  __pyx_tp_new_4abce_5trade_Offer, /*tp_new*/
+  __pyx_tp_new_5trade_Offer, /*tp_new*/
   0, /*tp_free*/
   0, /*tp_is_gc*/
   0, /*tp_bases*/
@@ -9827,9 +10076,9 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_Trade_retract, __pyx_k_Trade_retract, sizeof(__pyx_k_Trade_retract), 0, 0, 1, 1},
   {&__pyx_n_s_Trade_sell, __pyx_k_Trade_sell, sizeof(__pyx_k_Trade_sell), 0, 0, 1, 1},
   {&__pyx_n_s_Trade_take, __pyx_k_Trade_take, sizeof(__pyx_k_Trade_take), 0, 0, 1, 1},
+  {&__pyx_kp_s__2, __pyx_k__2, sizeof(__pyx_k__2), 0, 0, 1, 0},
   {&__pyx_n_s_a_smaller_b, __pyx_k_a_smaller_b, sizeof(__pyx_k_a_smaller_b), 0, 0, 1, 1},
   {&__pyx_n_s_abce_tools, __pyx_k_abce_tools, sizeof(__pyx_k_abce_tools), 0, 0, 1, 1},
-  {&__pyx_n_s_abce_trade, __pyx_k_abce_trade, sizeof(__pyx_k_abce_trade), 0, 0, 1, 1},
   {&__pyx_n_s_accept, __pyx_k_accept, sizeof(__pyx_k_accept), 0, 0, 1, 1},
   {&__pyx_n_s_accepted, __pyx_k_accepted, sizeof(__pyx_k_accepted), 0, 0, 1, 1},
   {&__pyx_kp_s_accepted_more_than_offered_s_100, __pyx_k_accepted_more_than_offered_s_100, sizeof(__pyx_k_accepted_more_than_offered_s_100), 0, 0, 1, 0},
@@ -9898,6 +10147,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_offer, __pyx_k_offer, sizeof(__pyx_k_offer), 0, 0, 1, 1},
   {&__pyx_n_s_offer_counter, __pyx_k_offer_counter, sizeof(__pyx_k_offer_counter), 0, 0, 1, 1},
   {&__pyx_n_s_offer_id, __pyx_k_offer_id, sizeof(__pyx_k_offer_id), 0, 0, 1, 1},
+  {&__pyx_n_s_offer_idn, __pyx_k_offer_idn, sizeof(__pyx_k_offer_idn), 0, 0, 1, 1},
   {&__pyx_n_s_offer_idn_final_quantity, __pyx_k_offer_idn_final_quantity, sizeof(__pyx_k_offer_idn_final_quantity), 0, 0, 1, 1},
   {&__pyx_n_s_offer_quantity, __pyx_k_offer_quantity, sizeof(__pyx_k_offer_quantity), 0, 0, 1, 1},
   {&__pyx_n_s_open_offer_status, __pyx_k_open_offer_status, sizeof(__pyx_k_open_offer_status), 0, 0, 1, 1},
@@ -9939,6 +10189,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_send, __pyx_k_send, sizeof(__pyx_k_send), 0, 0, 1, 1},
   {&__pyx_n_s_sender_group, __pyx_k_sender_group, sizeof(__pyx_k_sender_group), 0, 0, 1, 1},
   {&__pyx_n_s_sender_idn, __pyx_k_sender_idn, sizeof(__pyx_k_sender_idn), 0, 0, 1, 1},
+  {&__pyx_kp_s_sender_s_i_receiver_group_s_rece, __pyx_k_sender_s_i_receiver_group_s_rece, sizeof(__pyx_k_sender_s_i_receiver_group_s_rece), 0, 0, 1, 0},
   {&__pyx_n_s_setattr, __pyx_k_setattr, sizeof(__pyx_k_setattr), 0, 0, 1, 1},
   {&__pyx_n_s_setdefault, __pyx_k_setdefault, sizeof(__pyx_k_setdefault), 0, 0, 1, 1},
   {&__pyx_n_s_seterr, __pyx_k_seterr, sizeof(__pyx_k_seterr), 0, 0, 1, 1},
@@ -9949,6 +10200,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_sys, __pyx_k_sys, sizeof(__pyx_k_sys), 0, 0, 1, 1},
   {&__pyx_n_s_take, __pyx_k_take, sizeof(__pyx_k_take), 0, 0, 1, 1},
   {&__pyx_n_s_test, __pyx_k_test, sizeof(__pyx_k_test), 0, 0, 1, 1},
+  {&__pyx_n_s_trade, __pyx_k_trade, sizeof(__pyx_k_trade), 0, 0, 1, 1},
   {&__pyx_n_s_trade_log, __pyx_k_trade_log, sizeof(__pyx_k_trade_log), 0, 0, 1, 1},
   {&__pyx_n_s_trade_logging, __pyx_k_trade_logging, sizeof(__pyx_k_trade_logging), 0, 0, 1, 1},
   {&__pyx_n_s_typ, __pyx_k_typ, sizeof(__pyx_k_typ), 0, 0, 1, 1},
@@ -9956,7 +10208,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {0, 0, 0, 0, 0, 0, 0}
 };
 static int __Pyx_InitCachedBuiltins(void) {
-  __pyx_builtin_AssertionError = __Pyx_GetBuiltinName(__pyx_n_s_AssertionError); if (!__pyx_builtin_AssertionError) __PYX_ERR(0, 440, __pyx_L1_error)
+  __pyx_builtin_AssertionError = __Pyx_GetBuiltinName(__pyx_n_s_AssertionError); if (!__pyx_builtin_AssertionError) __PYX_ERR(0, 452, __pyx_L1_error)
   return 0;
   __pyx_L1_error:;
   return -1;
@@ -9966,242 +10218,242 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__Pyx_InitCachedConstants", 0);
 
-  /* "abce/trade.pyx":190
+  /* "trade.pyx":200
  *                 self.price *= offer['final_quantity'] / offer['quantity']
  *     """
  *     def get_offers_all(self, descending=False):             # <<<<<<<<<<<<<<
  *         """ returns all offers in a dictionary, with goods as key. The in each
  *         goods-category the goods are ordered by price. The order can be reversed
  */
-  __pyx_tuple__2 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_descending); if (unlikely(!__pyx_tuple__2)) __PYX_ERR(0, 190, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__2);
-  __Pyx_GIVEREF(__pyx_tuple__2);
-  __pyx_codeobj__3 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__2, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_c_Users_programing_Dropbox_works, __pyx_n_s_get_offers_all, 190, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__3)) __PYX_ERR(0, 190, __pyx_L1_error)
-  __pyx_tuple__4 = PyTuple_Pack(1, ((PyObject *)Py_False)); if (unlikely(!__pyx_tuple__4)) __PYX_ERR(0, 190, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__4);
-  __Pyx_GIVEREF(__pyx_tuple__4);
+  __pyx_tuple__3 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_descending); if (unlikely(!__pyx_tuple__3)) __PYX_ERR(0, 200, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__3);
+  __Pyx_GIVEREF(__pyx_tuple__3);
+  __pyx_codeobj__4 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__3, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_c_Users_programing_Dropbox_works, __pyx_n_s_get_offers_all, 200, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__4)) __PYX_ERR(0, 200, __pyx_L1_error)
+  __pyx_tuple__5 = PyTuple_Pack(1, ((PyObject *)Py_False)); if (unlikely(!__pyx_tuple__5)) __PYX_ERR(0, 200, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__5);
+  __Pyx_GIVEREF(__pyx_tuple__5);
 
-  /* "abce/trade.pyx":224
+  /* "trade.pyx":234
  *         return {good: self.get_offers(good, descending) for good in self._open_offers}
  * 
  *     def get_offers(self, good, descending=False):             # <<<<<<<<<<<<<<
  *         """ returns all offers of the 'good' ordered by price.
  * 
  */
-  __pyx_tuple__5 = PyTuple_Pack(5, __pyx_n_s_self, __pyx_n_s_good, __pyx_n_s_descending, __pyx_n_s_ret, __pyx_n_s_offer); if (unlikely(!__pyx_tuple__5)) __PYX_ERR(0, 224, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__5);
-  __Pyx_GIVEREF(__pyx_tuple__5);
-  __pyx_codeobj__6 = (PyObject*)__Pyx_PyCode_New(3, 0, 5, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__5, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_c_Users_programing_Dropbox_works, __pyx_n_s_get_offers, 224, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__6)) __PYX_ERR(0, 224, __pyx_L1_error)
-  __pyx_tuple__7 = PyTuple_Pack(1, ((PyObject *)Py_False)); if (unlikely(!__pyx_tuple__7)) __PYX_ERR(0, 224, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__7);
-  __Pyx_GIVEREF(__pyx_tuple__7);
+  __pyx_tuple__6 = PyTuple_Pack(5, __pyx_n_s_self, __pyx_n_s_good, __pyx_n_s_descending, __pyx_n_s_ret, __pyx_n_s_offer); if (unlikely(!__pyx_tuple__6)) __PYX_ERR(0, 234, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__6);
+  __Pyx_GIVEREF(__pyx_tuple__6);
+  __pyx_codeobj__7 = (PyObject*)__Pyx_PyCode_New(3, 0, 5, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__6, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_c_Users_programing_Dropbox_works, __pyx_n_s_get_offers, 234, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__7)) __PYX_ERR(0, 234, __pyx_L1_error)
+  __pyx_tuple__8 = PyTuple_Pack(1, ((PyObject *)Py_False)); if (unlikely(!__pyx_tuple__8)) __PYX_ERR(0, 234, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__8);
+  __Pyx_GIVEREF(__pyx_tuple__8);
 
-  /* "abce/trade.pyx":261
+  /* "trade.pyx":271
  *         return ret
  * 
  *     def peak_offers(self, good, descending=False):             # <<<<<<<<<<<<<<
  *         """ returns a peak on all offers of the 'good' ordered by price.
  *         Peaked offers can not be accepted or rejected, but they do not
  */
-  __pyx_tuple__8 = PyTuple_Pack(5, __pyx_n_s_self, __pyx_n_s_good, __pyx_n_s_descending, __pyx_n_s_ret, __pyx_n_s_offer); if (unlikely(!__pyx_tuple__8)) __PYX_ERR(0, 261, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__8);
-  __Pyx_GIVEREF(__pyx_tuple__8);
-  __pyx_codeobj__9 = (PyObject*)__Pyx_PyCode_New(3, 0, 5, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__8, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_c_Users_programing_Dropbox_works, __pyx_n_s_peak_offers, 261, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__9)) __PYX_ERR(0, 261, __pyx_L1_error)
-  __pyx_tuple__10 = PyTuple_Pack(1, ((PyObject *)Py_False)); if (unlikely(!__pyx_tuple__10)) __PYX_ERR(0, 261, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__10);
-  __Pyx_GIVEREF(__pyx_tuple__10);
+  __pyx_tuple__9 = PyTuple_Pack(5, __pyx_n_s_self, __pyx_n_s_good, __pyx_n_s_descending, __pyx_n_s_ret, __pyx_n_s_offer); if (unlikely(!__pyx_tuple__9)) __PYX_ERR(0, 271, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__9);
+  __Pyx_GIVEREF(__pyx_tuple__9);
+  __pyx_codeobj__10 = (PyObject*)__Pyx_PyCode_New(3, 0, 5, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__9, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_c_Users_programing_Dropbox_works, __pyx_n_s_peak_offers, 271, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__10)) __PYX_ERR(0, 271, __pyx_L1_error)
+  __pyx_tuple__11 = PyTuple_Pack(1, ((PyObject *)Py_False)); if (unlikely(!__pyx_tuple__11)) __PYX_ERR(0, 271, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__11);
+  __Pyx_GIVEREF(__pyx_tuple__11);
 
-  /* "abce/trade.pyx":294
+  /* "trade.pyx":304
  *         return ret
  * 
  *     def sell(self, receiver_group, receiver_idn, good, double quantity, double price):             # <<<<<<<<<<<<<<
  *         """ commits to sell the quantity of good at price
  * 
  */
-  __pyx_tuple__11 = PyTuple_Pack(8, __pyx_n_s_self, __pyx_n_s_receiver_group, __pyx_n_s_receiver_idn, __pyx_n_s_good, __pyx_n_s_quantity, __pyx_n_s_price, __pyx_n_s_available, __pyx_n_s_offer); if (unlikely(!__pyx_tuple__11)) __PYX_ERR(0, 294, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__11);
-  __Pyx_GIVEREF(__pyx_tuple__11);
-  __pyx_codeobj__12 = (PyObject*)__Pyx_PyCode_New(6, 0, 8, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__11, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_c_Users_programing_Dropbox_works, __pyx_n_s_sell, 294, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__12)) __PYX_ERR(0, 294, __pyx_L1_error)
+  __pyx_tuple__12 = PyTuple_Pack(9, __pyx_n_s_self, __pyx_n_s_receiver_group, __pyx_n_s_receiver_idn, __pyx_n_s_good, __pyx_n_s_quantity, __pyx_n_s_price, __pyx_n_s_available, __pyx_n_s_offer_idn, __pyx_n_s_offer); if (unlikely(!__pyx_tuple__12)) __PYX_ERR(0, 304, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__12);
+  __Pyx_GIVEREF(__pyx_tuple__12);
+  __pyx_codeobj__13 = (PyObject*)__Pyx_PyCode_New(6, 0, 9, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__12, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_c_Users_programing_Dropbox_works, __pyx_n_s_sell, 304, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__13)) __PYX_ERR(0, 304, __pyx_L1_error)
 
-  /* "abce/trade.pyx":356
+  /* "trade.pyx":367
  *         return offer
  * 
  *     def buy(self, receiver_group, receiver_idn, good, double quantity, double price):             # <<<<<<<<<<<<<<
  *         """ commits to sell the quantity of good at price
  * 
  */
-  __pyx_tuple__13 = PyTuple_Pack(9, __pyx_n_s_self, __pyx_n_s_receiver_group, __pyx_n_s_receiver_idn, __pyx_n_s_good, __pyx_n_s_quantity, __pyx_n_s_price, __pyx_n_s_available, __pyx_n_s_money_amount, __pyx_n_s_offer); if (unlikely(!__pyx_tuple__13)) __PYX_ERR(0, 356, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__13);
-  __Pyx_GIVEREF(__pyx_tuple__13);
-  __pyx_codeobj__14 = (PyObject*)__Pyx_PyCode_New(6, 0, 9, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__13, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_c_Users_programing_Dropbox_works, __pyx_n_s_buy, 356, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__14)) __PYX_ERR(0, 356, __pyx_L1_error)
+  __pyx_tuple__14 = PyTuple_Pack(10, __pyx_n_s_self, __pyx_n_s_receiver_group, __pyx_n_s_receiver_idn, __pyx_n_s_good, __pyx_n_s_quantity, __pyx_n_s_price, __pyx_n_s_available, __pyx_n_s_money_amount, __pyx_n_s_offer_idn, __pyx_n_s_offer); if (unlikely(!__pyx_tuple__14)) __PYX_ERR(0, 367, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__14);
+  __Pyx_GIVEREF(__pyx_tuple__14);
+  __pyx_codeobj__15 = (PyObject*)__Pyx_PyCode_New(6, 0, 10, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__14, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_c_Users_programing_Dropbox_works, __pyx_n_s_buy, 367, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__15)) __PYX_ERR(0, 367, __pyx_L1_error)
 
-  /* "abce/trade.pyx":403
+  /* "trade.pyx":415
  *         return offer
  * 
  *     def retract(self, offer):             # <<<<<<<<<<<<<<
  *         """ The agent who made a buy or sell offer can retract it
  * 
  */
-  __pyx_tuple__15 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_offer); if (unlikely(!__pyx_tuple__15)) __PYX_ERR(0, 403, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__15);
-  __Pyx_GIVEREF(__pyx_tuple__15);
-  __pyx_codeobj__16 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__15, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_c_Users_programing_Dropbox_works, __pyx_n_s_retract, 403, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__16)) __PYX_ERR(0, 403, __pyx_L1_error)
+  __pyx_tuple__16 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_offer); if (unlikely(!__pyx_tuple__16)) __PYX_ERR(0, 415, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__16);
+  __Pyx_GIVEREF(__pyx_tuple__16);
+  __pyx_codeobj__17 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__16, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_c_Users_programing_Dropbox_works, __pyx_n_s_retract, 415, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__17)) __PYX_ERR(0, 415, __pyx_L1_error)
 
-  /* "abce/trade.pyx":418
+  /* "trade.pyx":430
  * 
  * 
  *     def accept(self, offer, double quantity=-999):             # <<<<<<<<<<<<<<
  *         """ The buy or sell offer is accepted and cleared. If no quantity is
  *         given the offer is fully accepted; If a quantity is given the offer is
  */
-  __pyx_tuple__17 = PyTuple_Pack(5, __pyx_n_s_self, __pyx_n_s_offer, __pyx_n_s_quantity, __pyx_n_s_money_amount, __pyx_n_s_offer_quantity); if (unlikely(!__pyx_tuple__17)) __PYX_ERR(0, 418, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__17);
-  __Pyx_GIVEREF(__pyx_tuple__17);
-  __pyx_codeobj__18 = (PyObject*)__Pyx_PyCode_New(3, 0, 5, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__17, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_c_Users_programing_Dropbox_works, __pyx_n_s_accept, 418, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__18)) __PYX_ERR(0, 418, __pyx_L1_error)
+  __pyx_tuple__18 = PyTuple_Pack(5, __pyx_n_s_self, __pyx_n_s_offer, __pyx_n_s_quantity, __pyx_n_s_money_amount, __pyx_n_s_offer_quantity); if (unlikely(!__pyx_tuple__18)) __PYX_ERR(0, 430, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__18);
+  __Pyx_GIVEREF(__pyx_tuple__18);
+  __pyx_codeobj__19 = (PyObject*)__Pyx_PyCode_New(3, 0, 5, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__18, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_c_Users_programing_Dropbox_works, __pyx_n_s_accept, 430, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__19)) __PYX_ERR(0, 430, __pyx_L1_error)
 
-  /* "abce/trade.pyx":459
+  /* "trade.pyx":471
  *         return {offer['good']: quantity, 'money': money_amount}
  * 
  *     def reject(self, offer):             # <<<<<<<<<<<<<<
  *         """ The offer is rejected
  * 
  */
-  __pyx_tuple__19 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_offer); if (unlikely(!__pyx_tuple__19)) __PYX_ERR(0, 459, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__19);
-  __Pyx_GIVEREF(__pyx_tuple__19);
-  __pyx_codeobj__20 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__19, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_c_Users_programing_Dropbox_works, __pyx_n_s_reject, 459, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__20)) __PYX_ERR(0, 459, __pyx_L1_error)
+  __pyx_tuple__20 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_offer); if (unlikely(!__pyx_tuple__20)) __PYX_ERR(0, 471, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__20);
+  __Pyx_GIVEREF(__pyx_tuple__20);
+  __pyx_codeobj__21 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__20, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_c_Users_programing_Dropbox_works, __pyx_n_s_reject, 471, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__21)) __PYX_ERR(0, 471, __pyx_L1_error)
 
-  /* "abce/trade.pyx":469
+  /* "trade.pyx":481
  *         del self._open_offers[offer['good']][offer['idn']]
  * 
  *     def _log_receive_accept_group(self, offer):             # <<<<<<<<<<<<<<
  *         if offer['buysell'] == 115:
  *             self._trade_log['%s,%s,%s,%f' % (offer['good'], self.group, offer['receiver_group'], offer['price'])] += offer['quantity']
  */
-  __pyx_tuple__21 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_offer); if (unlikely(!__pyx_tuple__21)) __PYX_ERR(0, 469, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__21);
-  __Pyx_GIVEREF(__pyx_tuple__21);
-  __pyx_codeobj__22 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__21, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_c_Users_programing_Dropbox_works, __pyx_n_s_log_receive_accept_group, 469, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__22)) __PYX_ERR(0, 469, __pyx_L1_error)
+  __pyx_tuple__22 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_offer); if (unlikely(!__pyx_tuple__22)) __PYX_ERR(0, 481, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__22);
+  __Pyx_GIVEREF(__pyx_tuple__22);
+  __pyx_codeobj__23 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__22, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_c_Users_programing_Dropbox_works, __pyx_n_s_log_receive_accept_group, 481, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__23)) __PYX_ERR(0, 481, __pyx_L1_error)
 
-  /* "abce/trade.pyx":475
+  /* "trade.pyx":487
  *             self._trade_log['%s,%s,%s,%f' % (offer['good'], offer['receiver_group'], self.group, offer['price'])] += offer['quantity']
  * 
  *     def _log_receive_accept_agent(self, offer):             # <<<<<<<<<<<<<<
  *         if offer['buysell'] == 115:
  *             self._trade_log['%s,%s,%s,%f' % (offer['good'], self.name_without_colon, '%s_%i' % (offer['receiver_group'], offer['receiver_idn']), offer['price'])] += offer['quantity']
  */
-  __pyx_tuple__23 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_offer); if (unlikely(!__pyx_tuple__23)) __PYX_ERR(0, 475, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__23);
-  __Pyx_GIVEREF(__pyx_tuple__23);
-  __pyx_codeobj__24 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__23, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_c_Users_programing_Dropbox_works, __pyx_n_s_log_receive_accept_agent, 475, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__24)) __PYX_ERR(0, 475, __pyx_L1_error)
+  __pyx_tuple__24 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_offer); if (unlikely(!__pyx_tuple__24)) __PYX_ERR(0, 487, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__24);
+  __Pyx_GIVEREF(__pyx_tuple__24);
+  __pyx_codeobj__25 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__24, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_c_Users_programing_Dropbox_works, __pyx_n_s_log_receive_accept_agent, 487, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__25)) __PYX_ERR(0, 487, __pyx_L1_error)
 
-  /* "abce/trade.pyx":481
+  /* "trade.pyx":493
  *             self._trade_log['%s,%s,%s,%f' % (offer['good'], '%s_%i' % (offer['receiver_group'], offer['receiver_idn']), self.name_without_colon, offer['price'])] += offer['quantity']
  * 
  *     def _receive_accept(self, offer_idn_final_quantity):             # <<<<<<<<<<<<<<
  *         """ When the other party partially accepted the  money or good is
  *         received, remaining good or money is added back to haves and the offer
  */
-  __pyx_tuple__25 = PyTuple_Pack(3, __pyx_n_s_self, __pyx_n_s_offer_idn_final_quantity, __pyx_n_s_offer); if (unlikely(!__pyx_tuple__25)) __PYX_ERR(0, 481, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__25);
-  __Pyx_GIVEREF(__pyx_tuple__25);
-  __pyx_codeobj__26 = (PyObject*)__Pyx_PyCode_New(2, 0, 3, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__25, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_c_Users_programing_Dropbox_works, __pyx_n_s_receive_accept, 481, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__26)) __PYX_ERR(0, 481, __pyx_L1_error)
+  __pyx_tuple__26 = PyTuple_Pack(3, __pyx_n_s_self, __pyx_n_s_offer_idn_final_quantity, __pyx_n_s_offer); if (unlikely(!__pyx_tuple__26)) __PYX_ERR(0, 493, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__26);
+  __Pyx_GIVEREF(__pyx_tuple__26);
+  __pyx_codeobj__27 = (PyObject*)__Pyx_PyCode_New(2, 0, 3, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__26, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_c_Users_programing_Dropbox_works, __pyx_n_s_receive_accept, 493, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__27)) __PYX_ERR(0, 493, __pyx_L1_error)
 
-  /* "abce/trade.pyx":499
+  /* "trade.pyx":511
  *         return offer
  * 
  *     def _log_receive_accept_group(self, offer):             # <<<<<<<<<<<<<<
  *         if offer['buysell'] == 115:
  *             self._trade_log['%s,%s,%s,%f' % (offer['good'], self.group, offer['receiver_group'], offer['price'])] += offer['final_quantity']
  */
-  __pyx_tuple__27 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_offer); if (unlikely(!__pyx_tuple__27)) __PYX_ERR(0, 499, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__27);
-  __Pyx_GIVEREF(__pyx_tuple__27);
-  __pyx_codeobj__28 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__27, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_c_Users_programing_Dropbox_works, __pyx_n_s_log_receive_accept_group, 499, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__28)) __PYX_ERR(0, 499, __pyx_L1_error)
+  __pyx_tuple__28 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_offer); if (unlikely(!__pyx_tuple__28)) __PYX_ERR(0, 511, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__28);
+  __Pyx_GIVEREF(__pyx_tuple__28);
+  __pyx_codeobj__29 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__28, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_c_Users_programing_Dropbox_works, __pyx_n_s_log_receive_accept_group, 511, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__29)) __PYX_ERR(0, 511, __pyx_L1_error)
 
-  /* "abce/trade.pyx":505
+  /* "trade.pyx":517
  *             self._trade_log['%s,%s,%s,%f' % (offer['good'], offer['receiver_group'], self.group, offer['price'])] += offer['final_quantity']
  * 
  *     def _log_receive_accept_agent(self, offer):             # <<<<<<<<<<<<<<
  *         if offer['buysell'] == 115:
  *             self._trade_log['%s,%s,%s,%f' % (offer['good'], self.name_without_colon, '%s_%i' % (offer['receiver_group'], offer['receiver_idn']), offer['price'])] += offer['final_quantity']
  */
-  __pyx_tuple__29 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_offer); if (unlikely(!__pyx_tuple__29)) __PYX_ERR(0, 505, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__29);
-  __Pyx_GIVEREF(__pyx_tuple__29);
-  __pyx_codeobj__30 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__29, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_c_Users_programing_Dropbox_works, __pyx_n_s_log_receive_accept_agent, 505, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__30)) __PYX_ERR(0, 505, __pyx_L1_error)
+  __pyx_tuple__30 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_offer); if (unlikely(!__pyx_tuple__30)) __PYX_ERR(0, 517, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__30);
+  __Pyx_GIVEREF(__pyx_tuple__30);
+  __pyx_codeobj__31 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__30, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_c_Users_programing_Dropbox_works, __pyx_n_s_log_receive_accept_agent, 517, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__31)) __PYX_ERR(0, 517, __pyx_L1_error)
 
-  /* "abce/trade.pyx":511
+  /* "trade.pyx":523
  *             self._trade_log['%s,%s,%s,%f' % (offer['good'], '%s_%i' % (offer['receiver_group'], offer['receiver_idn']), self.name_without_colon, offer['price'])] += offer['final_quantity']
  * 
  *     def _receive_reject(self, offer_id):             # <<<<<<<<<<<<<<
  *         """ delets a given offer
  * 
  */
-  __pyx_tuple__31 = PyTuple_Pack(3, __pyx_n_s_self, __pyx_n_s_offer_id, __pyx_n_s_offer); if (unlikely(!__pyx_tuple__31)) __PYX_ERR(0, 511, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__31);
-  __Pyx_GIVEREF(__pyx_tuple__31);
-  __pyx_codeobj__32 = (PyObject*)__Pyx_PyCode_New(2, 0, 3, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__31, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_c_Users_programing_Dropbox_works, __pyx_n_s_receive_reject, 511, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__32)) __PYX_ERR(0, 511, __pyx_L1_error)
+  __pyx_tuple__32 = PyTuple_Pack(3, __pyx_n_s_self, __pyx_n_s_offer_id, __pyx_n_s_offer); if (unlikely(!__pyx_tuple__32)) __PYX_ERR(0, 523, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__32);
+  __Pyx_GIVEREF(__pyx_tuple__32);
+  __pyx_codeobj__33 = (PyObject*)__Pyx_PyCode_New(2, 0, 3, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__32, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_c_Users_programing_Dropbox_works, __pyx_n_s_receive_reject, 523, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__33)) __PYX_ERR(0, 523, __pyx_L1_error)
 
-  /* "abce/trade.pyx":527
+  /* "trade.pyx":539
  *         del self.given_offers[offer_id]
  * 
  *     def _delete_given_offer(self, offer_id):             # <<<<<<<<<<<<<<
  *         offer = self.given_offers.pop(offer_id)
  *         if offer['buysell'] == 115:
  */
-  __pyx_tuple__33 = PyTuple_Pack(3, __pyx_n_s_self, __pyx_n_s_offer_id, __pyx_n_s_offer); if (unlikely(!__pyx_tuple__33)) __PYX_ERR(0, 527, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__33);
-  __Pyx_GIVEREF(__pyx_tuple__33);
-  __pyx_codeobj__34 = (PyObject*)__Pyx_PyCode_New(2, 0, 3, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__33, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_c_Users_programing_Dropbox_works, __pyx_n_s_delete_given_offer, 527, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__34)) __PYX_ERR(0, 527, __pyx_L1_error)
+  __pyx_tuple__34 = PyTuple_Pack(3, __pyx_n_s_self, __pyx_n_s_offer_id, __pyx_n_s_offer); if (unlikely(!__pyx_tuple__34)) __PYX_ERR(0, 539, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__34);
+  __Pyx_GIVEREF(__pyx_tuple__34);
+  __pyx_codeobj__35 = (PyObject*)__Pyx_PyCode_New(2, 0, 3, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__34, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_c_Users_programing_Dropbox_works, __pyx_n_s_delete_given_offer, 539, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__35)) __PYX_ERR(0, 539, __pyx_L1_error)
 
-  /* "abce/trade.pyx":534
+  /* "trade.pyx":546
  *             self._haves['money'] += offer['quantity'] * offer['price']
  * 
  *     def give(self, receiver_group, receiver_idn, good, quantity):             # <<<<<<<<<<<<<<
  *         """ gives a good to another agent
  * 
  */
-  __pyx_tuple__35 = PyTuple_Pack(5, __pyx_n_s_self, __pyx_n_s_receiver_group, __pyx_n_s_receiver_idn, __pyx_n_s_good, __pyx_n_s_quantity); if (unlikely(!__pyx_tuple__35)) __PYX_ERR(0, 534, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__35);
-  __Pyx_GIVEREF(__pyx_tuple__35);
-  __pyx_codeobj__36 = (PyObject*)__Pyx_PyCode_New(5, 0, 5, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__35, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_c_Users_programing_Dropbox_works, __pyx_n_s_give, 534, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__36)) __PYX_ERR(0, 534, __pyx_L1_error)
+  __pyx_tuple__36 = PyTuple_Pack(5, __pyx_n_s_self, __pyx_n_s_receiver_group, __pyx_n_s_receiver_idn, __pyx_n_s_good, __pyx_n_s_quantity); if (unlikely(!__pyx_tuple__36)) __PYX_ERR(0, 546, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__36);
+  __Pyx_GIVEREF(__pyx_tuple__36);
+  __pyx_codeobj__37 = (PyObject*)__Pyx_PyCode_New(5, 0, 5, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__36, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_c_Users_programing_Dropbox_works, __pyx_n_s_give, 546, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__37)) __PYX_ERR(0, 546, __pyx_L1_error)
 
-  /* "abce/trade.pyx":566
+  /* "trade.pyx":578
  *         return {good: quantity}
  * 
  *     def take(self, receiver_group, receiver_idn, good, quantity):             # <<<<<<<<<<<<<<
  *         """ take a good from another agent. The other agent has to accept.
  *         Args:
  */
-  __pyx_tuple__37 = PyTuple_Pack(5, __pyx_n_s_self, __pyx_n_s_receiver_group, __pyx_n_s_receiver_idn, __pyx_n_s_good, __pyx_n_s_quantity); if (unlikely(!__pyx_tuple__37)) __PYX_ERR(0, 566, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__37);
-  __Pyx_GIVEREF(__pyx_tuple__37);
-  __pyx_codeobj__38 = (PyObject*)__Pyx_PyCode_New(5, 0, 5, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__37, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_c_Users_programing_Dropbox_works, __pyx_n_s_take, 566, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__38)) __PYX_ERR(0, 566, __pyx_L1_error)
+  __pyx_tuple__38 = PyTuple_Pack(5, __pyx_n_s_self, __pyx_n_s_receiver_group, __pyx_n_s_receiver_idn, __pyx_n_s_good, __pyx_n_s_quantity); if (unlikely(!__pyx_tuple__38)) __PYX_ERR(0, 578, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__38);
+  __Pyx_GIVEREF(__pyx_tuple__38);
+  __pyx_codeobj__39 = (PyObject*)__Pyx_PyCode_New(5, 0, 5, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__38, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_c_Users_programing_Dropbox_works, __pyx_n_s_take, 578, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__39)) __PYX_ERR(0, 578, __pyx_L1_error)
 
-  /* "abce/trade.pyx":574
+  /* "trade.pyx":586
  *         self.buy(receiver_group, receiver_idn, good=good, quantity=quantity, price=0)
  * 
  *     def _quantity_smaller_goods(self, quantity, good):             # <<<<<<<<<<<<<<
  *         """ asserts that quantity is smaller then goods, taking floating point imprecission into account and
  *         then sets a so that it is exacly smaller or equal the available """
  */
-  __pyx_tuple__39 = PyTuple_Pack(4, __pyx_n_s_self, __pyx_n_s_quantity, __pyx_n_s_good, __pyx_n_s_available); if (unlikely(!__pyx_tuple__39)) __PYX_ERR(0, 574, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__39);
-  __Pyx_GIVEREF(__pyx_tuple__39);
-  __pyx_codeobj__40 = (PyObject*)__Pyx_PyCode_New(3, 0, 4, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__39, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_c_Users_programing_Dropbox_works, __pyx_n_s_quantity_smaller_goods, 574, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__40)) __PYX_ERR(0, 574, __pyx_L1_error)
+  __pyx_tuple__40 = PyTuple_Pack(4, __pyx_n_s_self, __pyx_n_s_quantity, __pyx_n_s_good, __pyx_n_s_available); if (unlikely(!__pyx_tuple__40)) __PYX_ERR(0, 586, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__40);
+  __Pyx_GIVEREF(__pyx_tuple__40);
+  __pyx_codeobj__41 = (PyObject*)__Pyx_PyCode_New(3, 0, 4, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__40, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_c_Users_programing_Dropbox_works, __pyx_n_s_quantity_smaller_goods, 586, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__41)) __PYX_ERR(0, 586, __pyx_L1_error)
 
-  /* "abce/trade.pyx":587
+  /* "trade.pyx":599
  * 
  * 
  *     def _clearing__end_of_subround(self, incomming_messages):             # <<<<<<<<<<<<<<
  *         """ agent receives all messages and objects that have been send in this
  *         subround and deletes the offers that where retracted, but not executed.
  */
-  __pyx_tuple__41 = PyTuple_Pack(5, __pyx_n_s_self, __pyx_n_s_incomming_messages, __pyx_n_s_typ, __pyx_n_s_msg, __pyx_n_s_offer); if (unlikely(!__pyx_tuple__41)) __PYX_ERR(0, 587, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__41);
-  __Pyx_GIVEREF(__pyx_tuple__41);
-  __pyx_codeobj__42 = (PyObject*)__Pyx_PyCode_New(2, 0, 5, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__41, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_c_Users_programing_Dropbox_works, __pyx_n_s_clearing__end_of_subround, 587, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__42)) __PYX_ERR(0, 587, __pyx_L1_error)
+  __pyx_tuple__42 = PyTuple_Pack(5, __pyx_n_s_self, __pyx_n_s_incomming_messages, __pyx_n_s_typ, __pyx_n_s_msg, __pyx_n_s_offer); if (unlikely(!__pyx_tuple__42)) __PYX_ERR(0, 599, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__42);
+  __Pyx_GIVEREF(__pyx_tuple__42);
+  __pyx_codeobj__43 = (PyObject*)__Pyx_PyCode_New(2, 0, 5, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__42, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_c_Users_programing_Dropbox_works, __pyx_n_s_clearing__end_of_subround, 599, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__43)) __PYX_ERR(0, 599, __pyx_L1_error)
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -10217,6 +10469,7 @@ static int __Pyx_InitGlobals(void) {
   __pyx_int_98 = PyInt_FromLong(98); if (unlikely(!__pyx_int_98)) __PYX_ERR(0, 2, __pyx_L1_error)
   __pyx_int_115 = PyInt_FromLong(115); if (unlikely(!__pyx_int_115)) __PYX_ERR(0, 2, __pyx_L1_error)
   __pyx_int_neg_1 = PyInt_FromLong(-1); if (unlikely(!__pyx_int_neg_1)) __PYX_ERR(0, 2, __pyx_L1_error)
+  __pyx_int_neg_2 = PyInt_FromLong(-2); if (unlikely(!__pyx_int_neg_2)) __PYX_ERR(0, 2, __pyx_L1_error)
   return 0;
   __pyx_L1_error:;
   return -1;
@@ -10289,14 +10542,14 @@ PyMODINIT_FUNC PyInit_trade(void)
   #if PY_MAJOR_VERSION < 3 && (__PYX_DEFAULT_STRING_ENCODING_IS_ASCII || __PYX_DEFAULT_STRING_ENCODING_IS_DEFAULT)
   if (__Pyx_init_sys_getdefaultencoding_params() < 0) __PYX_ERR(0, 2, __pyx_L1_error)
   #endif
-  if (__pyx_module_is_main_abce__trade) {
+  if (__pyx_module_is_main_trade) {
     if (PyObject_SetAttrString(__pyx_m, "__name__", __pyx_n_s_main) < 0) __PYX_ERR(0, 2, __pyx_L1_error)
   }
   #if PY_MAJOR_VERSION >= 3
   {
     PyObject *modules = PyImport_GetModuleDict(); if (unlikely(!modules)) __PYX_ERR(0, 2, __pyx_L1_error)
-    if (!PyDict_GetItemString(modules, "abce.trade")) {
-      if (unlikely(PyDict_SetItemString(modules, "abce.trade", __pyx_m) < 0)) __PYX_ERR(0, 2, __pyx_L1_error)
+    if (!PyDict_GetItemString(modules, "trade")) {
+      if (unlikely(PyDict_SetItemString(modules, "trade", __pyx_m) < 0)) __PYX_ERR(0, 2, __pyx_L1_error)
     }
   }
   #endif
@@ -10308,10 +10561,10 @@ PyMODINIT_FUNC PyInit_trade(void)
   /*--- Variable export code ---*/
   /*--- Function export code ---*/
   /*--- Type init code ---*/
-  if (PyType_Ready(&__pyx_type_4abce_5trade_Offer) < 0) __PYX_ERR(0, 54, __pyx_L1_error)
-  __pyx_type_4abce_5trade_Offer.tp_print = 0;
-  if (PyObject_SetAttrString(__pyx_m, "Offer", (PyObject *)&__pyx_type_4abce_5trade_Offer) < 0) __PYX_ERR(0, 54, __pyx_L1_error)
-  __pyx_ptype_4abce_5trade_Offer = &__pyx_type_4abce_5trade_Offer;
+  if (PyType_Ready(&__pyx_type_5trade_Offer) < 0) __PYX_ERR(0, 53, __pyx_L1_error)
+  __pyx_type_5trade_Offer.tp_print = 0;
+  if (PyObject_SetAttrString(__pyx_m, "Offer", (PyObject *)&__pyx_type_5trade_Offer) < 0) __PYX_ERR(0, 53, __pyx_L1_error)
+  __pyx_ptype_5trade_Offer = &__pyx_type_5trade_Offer;
   /*--- Type import code ---*/
   /*--- Variable import code ---*/
   /*--- Function import code ---*/
@@ -10320,7 +10573,7 @@ PyMODINIT_FUNC PyInit_trade(void)
   if (__Pyx_patch_abc() < 0) __PYX_ERR(0, 2, __pyx_L1_error)
   #endif
 
-  /* "abce/trade.pyx":37
+  /* "trade.pyx":37
  * """
  * from __future__ import division
  * from collections import defaultdict             # <<<<<<<<<<<<<<
@@ -10341,7 +10594,7 @@ PyMODINIT_FUNC PyInit_trade(void)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "abce/trade.pyx":38
+  /* "trade.pyx":38
  * from __future__ import division
  * from collections import defaultdict
  * import numpy as np             # <<<<<<<<<<<<<<
@@ -10353,7 +10606,7 @@ PyMODINIT_FUNC PyInit_trade(void)
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_np, __pyx_t_2) < 0) __PYX_ERR(0, 38, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "abce/trade.pyx":39
+  /* "trade.pyx":39
  * from collections import defaultdict
  * import numpy as np
  * from random import shuffle             # <<<<<<<<<<<<<<
@@ -10374,7 +10627,7 @@ PyMODINIT_FUNC PyInit_trade(void)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "abce/trade.pyx":40
+  /* "trade.pyx":40
  * import numpy as np
  * from random import shuffle
  * from abce.tools import is_zero, NotEnoughGoods, is_negative, is_positive, epsilon, a_smaller_b             # <<<<<<<<<<<<<<
@@ -10430,7 +10683,7 @@ PyMODINIT_FUNC PyInit_trade(void)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "abce/trade.pyx":41
+  /* "trade.pyx":41
  * from random import shuffle
  * from abce.tools import is_zero, NotEnoughGoods, is_negative, is_positive, epsilon, a_smaller_b
  * from sys import float_info             # <<<<<<<<<<<<<<
@@ -10451,7 +10704,7 @@ PyMODINIT_FUNC PyInit_trade(void)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "abce/trade.pyx":42
+  /* "trade.pyx":42
  * from abce.tools import is_zero, NotEnoughGoods, is_negative, is_positive, epsilon, a_smaller_b
  * from sys import float_info
  * save_err = np.seterr(invalid='ignore')             # <<<<<<<<<<<<<<
@@ -10473,7 +10726,7 @@ PyMODINIT_FUNC PyInit_trade(void)
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_save_err, __pyx_t_3) < 0) __PYX_ERR(0, 42, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "abce/trade.pyx":43
+  /* "trade.pyx":43
  * from sys import float_info
  * save_err = np.seterr(invalid='ignore')
  * from messaging import Message             # <<<<<<<<<<<<<<
@@ -10494,270 +10747,270 @@ PyMODINIT_FUNC PyInit_trade(void)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "abce/trade.pyx":142
- *                 self.made, self.open_offer_status, self.status_round)
+  /* "trade.pyx":152
+ *                     self.made, self.open_offer_status, self.status_round)
  * 
  * class Trade:             # <<<<<<<<<<<<<<
  *     """ Agents can trade with each other. The clearing of the trade is taken care
  *     of fully by ABCE.
  */
-  __pyx_t_1 = __Pyx_Py3MetaclassPrepare((PyObject *) NULL, __pyx_empty_tuple, __pyx_n_s_Trade, __pyx_n_s_Trade, (PyObject *) NULL, __pyx_n_s_abce_trade, __pyx_kp_s_Agents_can_trade_with_each_othe); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 142, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_Py3MetaclassPrepare((PyObject *) NULL, __pyx_empty_tuple, __pyx_n_s_Trade, __pyx_n_s_Trade, (PyObject *) NULL, __pyx_n_s_trade, __pyx_kp_s_Agents_can_trade_with_each_othe); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 152, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
 
-  /* "abce/trade.pyx":190
+  /* "trade.pyx":200
  *                 self.price *= offer['final_quantity'] / offer['quantity']
  *     """
  *     def get_offers_all(self, descending=False):             # <<<<<<<<<<<<<<
  *         """ returns all offers in a dictionary, with goods as key. The in each
  *         goods-category the goods are ordered by price. The order can be reversed
  */
-  __pyx_t_3 = __Pyx_CyFunction_NewEx(&__pyx_mdef_4abce_5trade_5Trade_1get_offers_all, 0, __pyx_n_s_Trade_get_offers_all, NULL, __pyx_n_s_abce_trade, __pyx_d, ((PyObject *)__pyx_codeobj__3)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 190, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_NewEx(&__pyx_mdef_5trade_5Trade_1get_offers_all, 0, __pyx_n_s_Trade_get_offers_all, NULL, __pyx_n_s_trade, __pyx_d, ((PyObject *)__pyx_codeobj__4)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 200, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __Pyx_CyFunction_SetDefaultsTuple(__pyx_t_3, __pyx_tuple__4);
-  if (PyObject_SetItem(__pyx_t_1, __pyx_n_s_get_offers_all, __pyx_t_3) < 0) __PYX_ERR(0, 190, __pyx_L1_error)
+  __Pyx_CyFunction_SetDefaultsTuple(__pyx_t_3, __pyx_tuple__5);
+  if (PyObject_SetItem(__pyx_t_1, __pyx_n_s_get_offers_all, __pyx_t_3) < 0) __PYX_ERR(0, 200, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "abce/trade.pyx":224
+  /* "trade.pyx":234
  *         return {good: self.get_offers(good, descending) for good in self._open_offers}
  * 
  *     def get_offers(self, good, descending=False):             # <<<<<<<<<<<<<<
  *         """ returns all offers of the 'good' ordered by price.
  * 
  */
-  __pyx_t_3 = __Pyx_CyFunction_NewEx(&__pyx_mdef_4abce_5trade_5Trade_3get_offers, 0, __pyx_n_s_Trade_get_offers, NULL, __pyx_n_s_abce_trade, __pyx_d, ((PyObject *)__pyx_codeobj__6)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 224, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_NewEx(&__pyx_mdef_5trade_5Trade_3get_offers, 0, __pyx_n_s_Trade_get_offers, NULL, __pyx_n_s_trade, __pyx_d, ((PyObject *)__pyx_codeobj__7)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 234, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __Pyx_CyFunction_SetDefaultsTuple(__pyx_t_3, __pyx_tuple__7);
-  if (PyObject_SetItem(__pyx_t_1, __pyx_n_s_get_offers, __pyx_t_3) < 0) __PYX_ERR(0, 224, __pyx_L1_error)
+  __Pyx_CyFunction_SetDefaultsTuple(__pyx_t_3, __pyx_tuple__8);
+  if (PyObject_SetItem(__pyx_t_1, __pyx_n_s_get_offers, __pyx_t_3) < 0) __PYX_ERR(0, 234, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "abce/trade.pyx":261
+  /* "trade.pyx":271
  *         return ret
  * 
  *     def peak_offers(self, good, descending=False):             # <<<<<<<<<<<<<<
  *         """ returns a peak on all offers of the 'good' ordered by price.
  *         Peaked offers can not be accepted or rejected, but they do not
  */
-  __pyx_t_3 = __Pyx_CyFunction_NewEx(&__pyx_mdef_4abce_5trade_5Trade_5peak_offers, 0, __pyx_n_s_Trade_peak_offers, NULL, __pyx_n_s_abce_trade, __pyx_d, ((PyObject *)__pyx_codeobj__9)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 261, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_NewEx(&__pyx_mdef_5trade_5Trade_5peak_offers, 0, __pyx_n_s_Trade_peak_offers, NULL, __pyx_n_s_trade, __pyx_d, ((PyObject *)__pyx_codeobj__10)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 271, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __Pyx_CyFunction_SetDefaultsTuple(__pyx_t_3, __pyx_tuple__10);
-  if (PyObject_SetItem(__pyx_t_1, __pyx_n_s_peak_offers, __pyx_t_3) < 0) __PYX_ERR(0, 261, __pyx_L1_error)
+  __Pyx_CyFunction_SetDefaultsTuple(__pyx_t_3, __pyx_tuple__11);
+  if (PyObject_SetItem(__pyx_t_1, __pyx_n_s_peak_offers, __pyx_t_3) < 0) __PYX_ERR(0, 271, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "abce/trade.pyx":294
+  /* "trade.pyx":304
  *         return ret
  * 
  *     def sell(self, receiver_group, receiver_idn, good, double quantity, double price):             # <<<<<<<<<<<<<<
  *         """ commits to sell the quantity of good at price
  * 
  */
-  __pyx_t_3 = __Pyx_CyFunction_NewEx(&__pyx_mdef_4abce_5trade_5Trade_7sell, 0, __pyx_n_s_Trade_sell, NULL, __pyx_n_s_abce_trade, __pyx_d, ((PyObject *)__pyx_codeobj__12)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 294, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_NewEx(&__pyx_mdef_5trade_5Trade_7sell, 0, __pyx_n_s_Trade_sell, NULL, __pyx_n_s_trade, __pyx_d, ((PyObject *)__pyx_codeobj__13)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 304, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyObject_SetItem(__pyx_t_1, __pyx_n_s_sell, __pyx_t_3) < 0) __PYX_ERR(0, 294, __pyx_L1_error)
+  if (PyObject_SetItem(__pyx_t_1, __pyx_n_s_sell, __pyx_t_3) < 0) __PYX_ERR(0, 304, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "abce/trade.pyx":356
+  /* "trade.pyx":367
  *         return offer
  * 
  *     def buy(self, receiver_group, receiver_idn, good, double quantity, double price):             # <<<<<<<<<<<<<<
  *         """ commits to sell the quantity of good at price
  * 
  */
-  __pyx_t_3 = __Pyx_CyFunction_NewEx(&__pyx_mdef_4abce_5trade_5Trade_9buy, 0, __pyx_n_s_Trade_buy, NULL, __pyx_n_s_abce_trade, __pyx_d, ((PyObject *)__pyx_codeobj__14)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 356, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_NewEx(&__pyx_mdef_5trade_5Trade_9buy, 0, __pyx_n_s_Trade_buy, NULL, __pyx_n_s_trade, __pyx_d, ((PyObject *)__pyx_codeobj__15)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 367, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyObject_SetItem(__pyx_t_1, __pyx_n_s_buy, __pyx_t_3) < 0) __PYX_ERR(0, 356, __pyx_L1_error)
+  if (PyObject_SetItem(__pyx_t_1, __pyx_n_s_buy, __pyx_t_3) < 0) __PYX_ERR(0, 367, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "abce/trade.pyx":403
+  /* "trade.pyx":415
  *         return offer
  * 
  *     def retract(self, offer):             # <<<<<<<<<<<<<<
  *         """ The agent who made a buy or sell offer can retract it
  * 
  */
-  __pyx_t_3 = __Pyx_CyFunction_NewEx(&__pyx_mdef_4abce_5trade_5Trade_11retract, 0, __pyx_n_s_Trade_retract, NULL, __pyx_n_s_abce_trade, __pyx_d, ((PyObject *)__pyx_codeobj__16)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 403, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_NewEx(&__pyx_mdef_5trade_5Trade_11retract, 0, __pyx_n_s_Trade_retract, NULL, __pyx_n_s_trade, __pyx_d, ((PyObject *)__pyx_codeobj__17)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 415, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyObject_SetItem(__pyx_t_1, __pyx_n_s_retract, __pyx_t_3) < 0) __PYX_ERR(0, 403, __pyx_L1_error)
+  if (PyObject_SetItem(__pyx_t_1, __pyx_n_s_retract, __pyx_t_3) < 0) __PYX_ERR(0, 415, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "abce/trade.pyx":418
+  /* "trade.pyx":430
  * 
  * 
  *     def accept(self, offer, double quantity=-999):             # <<<<<<<<<<<<<<
  *         """ The buy or sell offer is accepted and cleared. If no quantity is
  *         given the offer is fully accepted; If a quantity is given the offer is
  */
-  __pyx_t_3 = PyFloat_FromDouble(((double)-999.0)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 418, __pyx_L1_error)
+  __pyx_t_3 = PyFloat_FromDouble(((double)-999.0)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 430, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 418, __pyx_L1_error)
+  __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 430, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_GIVEREF(__pyx_t_3);
   PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_t_3);
   __pyx_t_3 = 0;
-  __pyx_t_3 = __Pyx_CyFunction_NewEx(&__pyx_mdef_4abce_5trade_5Trade_13accept, 0, __pyx_n_s_Trade_accept, NULL, __pyx_n_s_abce_trade, __pyx_d, ((PyObject *)__pyx_codeobj__18)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 418, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_NewEx(&__pyx_mdef_5trade_5Trade_13accept, 0, __pyx_n_s_Trade_accept, NULL, __pyx_n_s_trade, __pyx_d, ((PyObject *)__pyx_codeobj__19)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 430, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_CyFunction_SetDefaultsTuple(__pyx_t_3, __pyx_t_2);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (PyObject_SetItem(__pyx_t_1, __pyx_n_s_accept, __pyx_t_3) < 0) __PYX_ERR(0, 418, __pyx_L1_error)
+  if (PyObject_SetItem(__pyx_t_1, __pyx_n_s_accept, __pyx_t_3) < 0) __PYX_ERR(0, 430, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "abce/trade.pyx":459
+  /* "trade.pyx":471
  *         return {offer['good']: quantity, 'money': money_amount}
  * 
  *     def reject(self, offer):             # <<<<<<<<<<<<<<
  *         """ The offer is rejected
  * 
  */
-  __pyx_t_3 = __Pyx_CyFunction_NewEx(&__pyx_mdef_4abce_5trade_5Trade_15reject, 0, __pyx_n_s_Trade_reject, NULL, __pyx_n_s_abce_trade, __pyx_d, ((PyObject *)__pyx_codeobj__20)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 459, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_NewEx(&__pyx_mdef_5trade_5Trade_15reject, 0, __pyx_n_s_Trade_reject, NULL, __pyx_n_s_trade, __pyx_d, ((PyObject *)__pyx_codeobj__21)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 471, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyObject_SetItem(__pyx_t_1, __pyx_n_s_reject, __pyx_t_3) < 0) __PYX_ERR(0, 459, __pyx_L1_error)
+  if (PyObject_SetItem(__pyx_t_1, __pyx_n_s_reject, __pyx_t_3) < 0) __PYX_ERR(0, 471, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "abce/trade.pyx":469
+  /* "trade.pyx":481
  *         del self._open_offers[offer['good']][offer['idn']]
  * 
  *     def _log_receive_accept_group(self, offer):             # <<<<<<<<<<<<<<
  *         if offer['buysell'] == 115:
  *             self._trade_log['%s,%s,%s,%f' % (offer['good'], self.group, offer['receiver_group'], offer['price'])] += offer['quantity']
  */
-  __pyx_t_3 = __Pyx_CyFunction_NewEx(&__pyx_mdef_4abce_5trade_5Trade_17_log_receive_accept_group, 0, __pyx_n_s_Trade__log_receive_accept_group, NULL, __pyx_n_s_abce_trade, __pyx_d, ((PyObject *)__pyx_codeobj__22)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 469, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_NewEx(&__pyx_mdef_5trade_5Trade_17_log_receive_accept_group, 0, __pyx_n_s_Trade__log_receive_accept_group, NULL, __pyx_n_s_trade, __pyx_d, ((PyObject *)__pyx_codeobj__23)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 481, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyObject_SetItem(__pyx_t_1, __pyx_n_s_log_receive_accept_group, __pyx_t_3) < 0) __PYX_ERR(0, 469, __pyx_L1_error)
+  if (PyObject_SetItem(__pyx_t_1, __pyx_n_s_log_receive_accept_group, __pyx_t_3) < 0) __PYX_ERR(0, 481, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "abce/trade.pyx":475
+  /* "trade.pyx":487
  *             self._trade_log['%s,%s,%s,%f' % (offer['good'], offer['receiver_group'], self.group, offer['price'])] += offer['quantity']
  * 
  *     def _log_receive_accept_agent(self, offer):             # <<<<<<<<<<<<<<
  *         if offer['buysell'] == 115:
  *             self._trade_log['%s,%s,%s,%f' % (offer['good'], self.name_without_colon, '%s_%i' % (offer['receiver_group'], offer['receiver_idn']), offer['price'])] += offer['quantity']
  */
-  __pyx_t_3 = __Pyx_CyFunction_NewEx(&__pyx_mdef_4abce_5trade_5Trade_19_log_receive_accept_agent, 0, __pyx_n_s_Trade__log_receive_accept_agent, NULL, __pyx_n_s_abce_trade, __pyx_d, ((PyObject *)__pyx_codeobj__24)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 475, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_NewEx(&__pyx_mdef_5trade_5Trade_19_log_receive_accept_agent, 0, __pyx_n_s_Trade__log_receive_accept_agent, NULL, __pyx_n_s_trade, __pyx_d, ((PyObject *)__pyx_codeobj__25)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 487, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyObject_SetItem(__pyx_t_1, __pyx_n_s_log_receive_accept_agent, __pyx_t_3) < 0) __PYX_ERR(0, 475, __pyx_L1_error)
+  if (PyObject_SetItem(__pyx_t_1, __pyx_n_s_log_receive_accept_agent, __pyx_t_3) < 0) __PYX_ERR(0, 487, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "abce/trade.pyx":481
+  /* "trade.pyx":493
  *             self._trade_log['%s,%s,%s,%f' % (offer['good'], '%s_%i' % (offer['receiver_group'], offer['receiver_idn']), self.name_without_colon, offer['price'])] += offer['quantity']
  * 
  *     def _receive_accept(self, offer_idn_final_quantity):             # <<<<<<<<<<<<<<
  *         """ When the other party partially accepted the  money or good is
  *         received, remaining good or money is added back to haves and the offer
  */
-  __pyx_t_3 = __Pyx_CyFunction_NewEx(&__pyx_mdef_4abce_5trade_5Trade_21_receive_accept, 0, __pyx_n_s_Trade__receive_accept, NULL, __pyx_n_s_abce_trade, __pyx_d, ((PyObject *)__pyx_codeobj__26)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 481, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_NewEx(&__pyx_mdef_5trade_5Trade_21_receive_accept, 0, __pyx_n_s_Trade__receive_accept, NULL, __pyx_n_s_trade, __pyx_d, ((PyObject *)__pyx_codeobj__27)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 493, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyObject_SetItem(__pyx_t_1, __pyx_n_s_receive_accept, __pyx_t_3) < 0) __PYX_ERR(0, 481, __pyx_L1_error)
+  if (PyObject_SetItem(__pyx_t_1, __pyx_n_s_receive_accept, __pyx_t_3) < 0) __PYX_ERR(0, 493, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "abce/trade.pyx":499
+  /* "trade.pyx":511
  *         return offer
  * 
  *     def _log_receive_accept_group(self, offer):             # <<<<<<<<<<<<<<
  *         if offer['buysell'] == 115:
  *             self._trade_log['%s,%s,%s,%f' % (offer['good'], self.group, offer['receiver_group'], offer['price'])] += offer['final_quantity']
  */
-  __pyx_t_3 = __Pyx_CyFunction_NewEx(&__pyx_mdef_4abce_5trade_5Trade_23_log_receive_accept_group, 0, __pyx_n_s_Trade__log_receive_accept_group, NULL, __pyx_n_s_abce_trade, __pyx_d, ((PyObject *)__pyx_codeobj__28)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 499, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_NewEx(&__pyx_mdef_5trade_5Trade_23_log_receive_accept_group, 0, __pyx_n_s_Trade__log_receive_accept_group, NULL, __pyx_n_s_trade, __pyx_d, ((PyObject *)__pyx_codeobj__29)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 511, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyObject_SetItem(__pyx_t_1, __pyx_n_s_log_receive_accept_group, __pyx_t_3) < 0) __PYX_ERR(0, 499, __pyx_L1_error)
+  if (PyObject_SetItem(__pyx_t_1, __pyx_n_s_log_receive_accept_group, __pyx_t_3) < 0) __PYX_ERR(0, 511, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "abce/trade.pyx":505
+  /* "trade.pyx":517
  *             self._trade_log['%s,%s,%s,%f' % (offer['good'], offer['receiver_group'], self.group, offer['price'])] += offer['final_quantity']
  * 
  *     def _log_receive_accept_agent(self, offer):             # <<<<<<<<<<<<<<
  *         if offer['buysell'] == 115:
  *             self._trade_log['%s,%s,%s,%f' % (offer['good'], self.name_without_colon, '%s_%i' % (offer['receiver_group'], offer['receiver_idn']), offer['price'])] += offer['final_quantity']
  */
-  __pyx_t_3 = __Pyx_CyFunction_NewEx(&__pyx_mdef_4abce_5trade_5Trade_25_log_receive_accept_agent, 0, __pyx_n_s_Trade__log_receive_accept_agent, NULL, __pyx_n_s_abce_trade, __pyx_d, ((PyObject *)__pyx_codeobj__30)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 505, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_NewEx(&__pyx_mdef_5trade_5Trade_25_log_receive_accept_agent, 0, __pyx_n_s_Trade__log_receive_accept_agent, NULL, __pyx_n_s_trade, __pyx_d, ((PyObject *)__pyx_codeobj__31)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 517, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyObject_SetItem(__pyx_t_1, __pyx_n_s_log_receive_accept_agent, __pyx_t_3) < 0) __PYX_ERR(0, 505, __pyx_L1_error)
+  if (PyObject_SetItem(__pyx_t_1, __pyx_n_s_log_receive_accept_agent, __pyx_t_3) < 0) __PYX_ERR(0, 517, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "abce/trade.pyx":511
+  /* "trade.pyx":523
  *             self._trade_log['%s,%s,%s,%f' % (offer['good'], '%s_%i' % (offer['receiver_group'], offer['receiver_idn']), self.name_without_colon, offer['price'])] += offer['final_quantity']
  * 
  *     def _receive_reject(self, offer_id):             # <<<<<<<<<<<<<<
  *         """ delets a given offer
  * 
  */
-  __pyx_t_3 = __Pyx_CyFunction_NewEx(&__pyx_mdef_4abce_5trade_5Trade_27_receive_reject, 0, __pyx_n_s_Trade__receive_reject, NULL, __pyx_n_s_abce_trade, __pyx_d, ((PyObject *)__pyx_codeobj__32)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 511, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_NewEx(&__pyx_mdef_5trade_5Trade_27_receive_reject, 0, __pyx_n_s_Trade__receive_reject, NULL, __pyx_n_s_trade, __pyx_d, ((PyObject *)__pyx_codeobj__33)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 523, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyObject_SetItem(__pyx_t_1, __pyx_n_s_receive_reject, __pyx_t_3) < 0) __PYX_ERR(0, 511, __pyx_L1_error)
+  if (PyObject_SetItem(__pyx_t_1, __pyx_n_s_receive_reject, __pyx_t_3) < 0) __PYX_ERR(0, 523, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "abce/trade.pyx":527
+  /* "trade.pyx":539
  *         del self.given_offers[offer_id]
  * 
  *     def _delete_given_offer(self, offer_id):             # <<<<<<<<<<<<<<
  *         offer = self.given_offers.pop(offer_id)
  *         if offer['buysell'] == 115:
  */
-  __pyx_t_3 = __Pyx_CyFunction_NewEx(&__pyx_mdef_4abce_5trade_5Trade_29_delete_given_offer, 0, __pyx_n_s_Trade__delete_given_offer, NULL, __pyx_n_s_abce_trade, __pyx_d, ((PyObject *)__pyx_codeobj__34)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 527, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_NewEx(&__pyx_mdef_5trade_5Trade_29_delete_given_offer, 0, __pyx_n_s_Trade__delete_given_offer, NULL, __pyx_n_s_trade, __pyx_d, ((PyObject *)__pyx_codeobj__35)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 539, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyObject_SetItem(__pyx_t_1, __pyx_n_s_delete_given_offer, __pyx_t_3) < 0) __PYX_ERR(0, 527, __pyx_L1_error)
+  if (PyObject_SetItem(__pyx_t_1, __pyx_n_s_delete_given_offer, __pyx_t_3) < 0) __PYX_ERR(0, 539, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "abce/trade.pyx":534
+  /* "trade.pyx":546
  *             self._haves['money'] += offer['quantity'] * offer['price']
  * 
  *     def give(self, receiver_group, receiver_idn, good, quantity):             # <<<<<<<<<<<<<<
  *         """ gives a good to another agent
  * 
  */
-  __pyx_t_3 = __Pyx_CyFunction_NewEx(&__pyx_mdef_4abce_5trade_5Trade_31give, 0, __pyx_n_s_Trade_give, NULL, __pyx_n_s_abce_trade, __pyx_d, ((PyObject *)__pyx_codeobj__36)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 534, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_NewEx(&__pyx_mdef_5trade_5Trade_31give, 0, __pyx_n_s_Trade_give, NULL, __pyx_n_s_trade, __pyx_d, ((PyObject *)__pyx_codeobj__37)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 546, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyObject_SetItem(__pyx_t_1, __pyx_n_s_give, __pyx_t_3) < 0) __PYX_ERR(0, 534, __pyx_L1_error)
+  if (PyObject_SetItem(__pyx_t_1, __pyx_n_s_give, __pyx_t_3) < 0) __PYX_ERR(0, 546, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "abce/trade.pyx":566
+  /* "trade.pyx":578
  *         return {good: quantity}
  * 
  *     def take(self, receiver_group, receiver_idn, good, quantity):             # <<<<<<<<<<<<<<
  *         """ take a good from another agent. The other agent has to accept.
  *         Args:
  */
-  __pyx_t_3 = __Pyx_CyFunction_NewEx(&__pyx_mdef_4abce_5trade_5Trade_33take, 0, __pyx_n_s_Trade_take, NULL, __pyx_n_s_abce_trade, __pyx_d, ((PyObject *)__pyx_codeobj__38)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 566, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_NewEx(&__pyx_mdef_5trade_5Trade_33take, 0, __pyx_n_s_Trade_take, NULL, __pyx_n_s_trade, __pyx_d, ((PyObject *)__pyx_codeobj__39)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 578, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyObject_SetItem(__pyx_t_1, __pyx_n_s_take, __pyx_t_3) < 0) __PYX_ERR(0, 566, __pyx_L1_error)
+  if (PyObject_SetItem(__pyx_t_1, __pyx_n_s_take, __pyx_t_3) < 0) __PYX_ERR(0, 578, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "abce/trade.pyx":574
+  /* "trade.pyx":586
  *         self.buy(receiver_group, receiver_idn, good=good, quantity=quantity, price=0)
  * 
  *     def _quantity_smaller_goods(self, quantity, good):             # <<<<<<<<<<<<<<
  *         """ asserts that quantity is smaller then goods, taking floating point imprecission into account and
  *         then sets a so that it is exacly smaller or equal the available """
  */
-  __pyx_t_3 = __Pyx_CyFunction_NewEx(&__pyx_mdef_4abce_5trade_5Trade_35_quantity_smaller_goods, 0, __pyx_n_s_Trade__quantity_smaller_goods, NULL, __pyx_n_s_abce_trade, __pyx_d, ((PyObject *)__pyx_codeobj__40)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 574, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_NewEx(&__pyx_mdef_5trade_5Trade_35_quantity_smaller_goods, 0, __pyx_n_s_Trade__quantity_smaller_goods, NULL, __pyx_n_s_trade, __pyx_d, ((PyObject *)__pyx_codeobj__41)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 586, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyObject_SetItem(__pyx_t_1, __pyx_n_s_quantity_smaller_goods, __pyx_t_3) < 0) __PYX_ERR(0, 574, __pyx_L1_error)
+  if (PyObject_SetItem(__pyx_t_1, __pyx_n_s_quantity_smaller_goods, __pyx_t_3) < 0) __PYX_ERR(0, 586, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "abce/trade.pyx":587
+  /* "trade.pyx":599
  * 
  * 
  *     def _clearing__end_of_subround(self, incomming_messages):             # <<<<<<<<<<<<<<
  *         """ agent receives all messages and objects that have been send in this
  *         subround and deletes the offers that where retracted, but not executed.
  */
-  __pyx_t_3 = __Pyx_CyFunction_NewEx(&__pyx_mdef_4abce_5trade_5Trade_37_clearing__end_of_subround, 0, __pyx_n_s_Trade__clearing__end_of_subround, NULL, __pyx_n_s_abce_trade, __pyx_d, ((PyObject *)__pyx_codeobj__42)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 587, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_NewEx(&__pyx_mdef_5trade_5Trade_37_clearing__end_of_subround, 0, __pyx_n_s_Trade__clearing__end_of_subround, NULL, __pyx_n_s_trade, __pyx_d, ((PyObject *)__pyx_codeobj__43)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 599, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyObject_SetItem(__pyx_t_1, __pyx_n_s_clearing__end_of_subround, __pyx_t_3) < 0) __PYX_ERR(0, 587, __pyx_L1_error)
+  if (PyObject_SetItem(__pyx_t_1, __pyx_n_s_clearing__end_of_subround, __pyx_t_3) < 0) __PYX_ERR(0, 599, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "abce/trade.pyx":142
- *                 self.made, self.open_offer_status, self.status_round)
+  /* "trade.pyx":152
+ *                     self.made, self.open_offer_status, self.status_round)
  * 
  * class Trade:             # <<<<<<<<<<<<<<
  *     """ Agents can trade with each other. The clearing of the trade is taken care
  *     of fully by ABCE.
  */
-  __pyx_t_3 = __Pyx_Py3ClassCreate(((PyObject*)&__Pyx_DefaultClassType), __pyx_n_s_Trade, __pyx_empty_tuple, __pyx_t_1, NULL, 0, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 142, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_Py3ClassCreate(((PyObject*)&__Pyx_DefaultClassType), __pyx_n_s_Trade, __pyx_empty_tuple, __pyx_t_1, NULL, 0, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 152, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_Trade, __pyx_t_3) < 0) __PYX_ERR(0, 142, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_Trade, __pyx_t_3) < 0) __PYX_ERR(0, 152, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "abce/trade.pyx":2
+  /* "trade.pyx":2
  * 
  * # Copyright 2012 Davoud Taghawi-Nejad             # <<<<<<<<<<<<<<
  * #
@@ -10777,11 +11030,11 @@ PyMODINIT_FUNC PyInit_trade(void)
   __Pyx_XDECREF(__pyx_t_3);
   if (__pyx_m) {
     if (__pyx_d) {
-      __Pyx_AddTraceback("init abce.trade", __pyx_clineno, __pyx_lineno, __pyx_filename);
+      __Pyx_AddTraceback("init trade", __pyx_clineno, __pyx_lineno, __pyx_filename);
     }
     Py_DECREF(__pyx_m); __pyx_m = 0;
   } else if (!PyErr_Occurred()) {
-    PyErr_SetString(PyExc_ImportError, "init abce.trade");
+    PyErr_SetString(PyExc_ImportError, "init trade");
   }
   __pyx_L0:;
   __Pyx_RefNannyFinishContext();
@@ -10964,6 +11217,33 @@ invalid_keyword:
     #endif
 bad:
     return -1;
+}
+
+/* ArgTypeTest */
+static void __Pyx_RaiseArgumentTypeInvalid(const char* name, PyObject *obj, PyTypeObject *type) {
+    PyErr_Format(PyExc_TypeError,
+        "Argument '%.200s' has incorrect type (expected %.200s, got %.200s)",
+        name, type->tp_name, Py_TYPE(obj)->tp_name);
+}
+static CYTHON_INLINE int __Pyx_ArgTypeTest(PyObject *obj, PyTypeObject *type, int none_allowed,
+    const char *name, int exact)
+{
+    if (unlikely(!type)) {
+        PyErr_SetString(PyExc_SystemError, "Missing type object");
+        return 0;
+    }
+    if (none_allowed && obj == Py_None) return 1;
+    else if (exact) {
+        if (likely(Py_TYPE(obj) == type)) return 1;
+        #if PY_MAJOR_VERSION == 2
+        else if ((type == &PyBaseString_Type) && likely(__Pyx_PyBaseString_CheckExact(obj))) return 1;
+        #endif
+    }
+    else {
+        if (likely(PyObject_TypeCheck(obj, type))) return 1;
+    }
+    __Pyx_RaiseArgumentTypeInvalid(name, obj, type);
+    return 0;
 }
 
 /* PyObjectCall */
@@ -11868,56 +12148,8 @@ bad:
 }
 #endif
 
-/* SetItemInt */
-            static CYTHON_INLINE int __Pyx_SetItemInt_Generic(PyObject *o, PyObject *j, PyObject *v) {
-    int r;
-    if (!j) return -1;
-    r = PyObject_SetItem(o, j, v);
-    Py_DECREF(j);
-    return r;
-}
-static CYTHON_INLINE int __Pyx_SetItemInt_Fast(PyObject *o, Py_ssize_t i, PyObject *v, int is_list,
-                                               CYTHON_NCP_UNUSED int wraparound, CYTHON_NCP_UNUSED int boundscheck) {
-#if CYTHON_COMPILING_IN_CPYTHON
-    if (is_list || PyList_CheckExact(o)) {
-        Py_ssize_t n = (!wraparound) ? i : ((likely(i >= 0)) ? i : i + PyList_GET_SIZE(o));
-        if ((!boundscheck) || likely((n >= 0) & (n < PyList_GET_SIZE(o)))) {
-            PyObject* old = PyList_GET_ITEM(o, n);
-            Py_INCREF(v);
-            PyList_SET_ITEM(o, n, v);
-            Py_DECREF(old);
-            return 1;
-        }
-    } else {
-        PySequenceMethods *m = Py_TYPE(o)->tp_as_sequence;
-        if (likely(m && m->sq_ass_item)) {
-            if (wraparound && unlikely(i < 0) && likely(m->sq_length)) {
-                Py_ssize_t l = m->sq_length(o);
-                if (likely(l >= 0)) {
-                    i += l;
-                } else {
-                    if (!PyErr_ExceptionMatches(PyExc_OverflowError))
-                        return -1;
-                    PyErr_Clear();
-                }
-            }
-            return m->sq_ass_item(o, i, v);
-        }
-    }
-#else
-#if CYTHON_COMPILING_IN_PYPY
-    if (is_list || (PySequence_Check(o) && !PyDict_Check(o))) {
-#else
-    if (is_list || PySequence_Check(o)) {
-#endif
-        return PySequence_SetItem(o, i, v);
-    }
-#endif
-    return __Pyx_SetItemInt_Generic(o, PyInt_FromSsize_t(i), v);
-}
-
 /* PyIntBinop */
-              #if CYTHON_COMPILING_IN_CPYTHON
+            #if CYTHON_COMPILING_IN_CPYTHON
 static PyObject* __Pyx_PyInt_EqObjC(PyObject *op1, PyObject *op2, CYTHON_UNUSED long intval, CYTHON_UNUSED int inplace) {
     if (op1 == op2) {
         Py_RETURN_TRUE;
@@ -12002,7 +12234,7 @@ static PyObject* __Pyx_PyInt_EqObjC(PyObject *op1, PyObject *op2, CYTHON_UNUSED 
 #endif
 
 /* GetItemInt */
-              static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Generic(PyObject *o, PyObject* j) {
+            static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Generic(PyObject *o, PyObject* j) {
     PyObject *r;
     if (!j) return NULL;
     r = PyObject_GetItem(o, j);
@@ -12083,20 +12315,20 @@ static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Fast(PyObject *o, Py_ssize_t i, 
 }
 
 /* RaiseTooManyValuesToUnpack */
-              static CYTHON_INLINE void __Pyx_RaiseTooManyValuesError(Py_ssize_t expected) {
+            static CYTHON_INLINE void __Pyx_RaiseTooManyValuesError(Py_ssize_t expected) {
     PyErr_Format(PyExc_ValueError,
                  "too many values to unpack (expected %" CYTHON_FORMAT_SSIZE_T "d)", expected);
 }
 
 /* RaiseNeedMoreValuesToUnpack */
-              static CYTHON_INLINE void __Pyx_RaiseNeedMoreValuesError(Py_ssize_t index) {
+            static CYTHON_INLINE void __Pyx_RaiseNeedMoreValuesError(Py_ssize_t index) {
     PyErr_Format(PyExc_ValueError,
                  "need more than %" CYTHON_FORMAT_SSIZE_T "d value%.1s to unpack",
                  index, (index == 1) ? "" : "s");
 }
 
 /* IterFinish */
-              static CYTHON_INLINE int __Pyx_IterFinish(void) {
+            static CYTHON_INLINE int __Pyx_IterFinish(void) {
 #if CYTHON_COMPILING_IN_CPYTHON
     PyThreadState *tstate = PyThreadState_GET();
     PyObject* exc_type = tstate->curexc_type;
@@ -12131,7 +12363,7 @@ static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Fast(PyObject *o, Py_ssize_t i, 
 }
 
 /* UnpackItemEndCheck */
-              static int __Pyx_IternextUnpackEndCheck(PyObject *retval, Py_ssize_t expected) {
+            static int __Pyx_IternextUnpackEndCheck(PyObject *retval, Py_ssize_t expected) {
     if (unlikely(retval)) {
         Py_DECREF(retval);
         __Pyx_RaiseTooManyValuesError(expected);
@@ -12143,7 +12375,7 @@ static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Fast(PyObject *o, Py_ssize_t i, 
 }
 
 /* BytesEquals */
-              static CYTHON_INLINE int __Pyx_PyBytes_Equals(PyObject* s1, PyObject* s2, int equals) {
+            static CYTHON_INLINE int __Pyx_PyBytes_Equals(PyObject* s1, PyObject* s2, int equals) {
 #if CYTHON_COMPILING_IN_PYPY
     return PyObject_RichCompareBool(s1, s2, equals);
 #else
@@ -12181,7 +12413,7 @@ static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Fast(PyObject *o, Py_ssize_t i, 
 }
 
 /* UnicodeEquals */
-              static CYTHON_INLINE int __Pyx_PyUnicode_Equals(PyObject* s1, PyObject* s2, int equals) {
+            static CYTHON_INLINE int __Pyx_PyUnicode_Equals(PyObject* s1, PyObject* s2, int equals) {
 #if CYTHON_COMPILING_IN_PYPY
     return PyObject_RichCompareBool(s1, s2, equals);
 #else
@@ -12265,7 +12497,7 @@ return_ne:
 }
 
 /* PyObjectCallMethod1 */
-              static PyObject* __Pyx_PyObject_CallMethod1(PyObject* obj, PyObject* method_name, PyObject* arg) {
+            static PyObject* __Pyx_PyObject_CallMethod1(PyObject* obj, PyObject* method_name, PyObject* arg) {
     PyObject *method, *result = NULL;
     method = __Pyx_PyObject_GetAttrStr(obj, method_name);
     if (unlikely(!method)) goto bad;
@@ -12297,7 +12529,7 @@ bad:
 }
 
 /* append */
-              static CYTHON_INLINE int __Pyx_PyObject_Append(PyObject* L, PyObject* x) {
+            static CYTHON_INLINE int __Pyx_PyObject_Append(PyObject* L, PyObject* x) {
     if (likely(PyList_CheckExact(L))) {
         if (unlikely(__Pyx_PyList_Append(L, x) < 0)) return -1;
     } else {
@@ -12310,7 +12542,7 @@ bad:
 }
 
 /* WriteUnraisableException */
-              static void __Pyx_WriteUnraisable(const char *name, CYTHON_UNUSED int clineno,
+            static void __Pyx_WriteUnraisable(const char *name, CYTHON_UNUSED int clineno,
                                   CYTHON_UNUSED int lineno, CYTHON_UNUSED const char *filename,
                                   int full_traceback, CYTHON_UNUSED int nogil) {
     PyObject *old_exc, *old_val, *old_tb;
@@ -12352,7 +12584,7 @@ bad:
 }
 
 /* Import */
-              static PyObject *__Pyx_Import(PyObject *name, PyObject *from_list, int level) {
+            static PyObject *__Pyx_Import(PyObject *name, PyObject *from_list, int level) {
     PyObject *empty_list = 0;
     PyObject *module = 0;
     PyObject *global_dict = 0;
@@ -12426,7 +12658,7 @@ bad:
 }
 
 /* ImportFrom */
-              static PyObject* __Pyx_ImportFrom(PyObject* module, PyObject* name) {
+            static PyObject* __Pyx_ImportFrom(PyObject* module, PyObject* name) {
     PyObject* value = __Pyx_PyObject_GetAttrStr(module, name);
     if (unlikely(!value) && PyErr_ExceptionMatches(PyExc_AttributeError)) {
         PyErr_Format(PyExc_ImportError,
@@ -12440,7 +12672,7 @@ bad:
 }
 
 /* CalculateMetaclass */
-              static PyObject *__Pyx_CalculateMetaclass(PyTypeObject *metaclass, PyObject *bases) {
+            static PyObject *__Pyx_CalculateMetaclass(PyTypeObject *metaclass, PyObject *bases) {
     Py_ssize_t i, nbases = PyTuple_GET_SIZE(bases);
     for (i=0; i < nbases; i++) {
         PyTypeObject *tmptype;
@@ -12479,7 +12711,7 @@ bad:
 }
 
 /* Py3ClassCreate */
-              static PyObject *__Pyx_Py3MetaclassPrepare(PyObject *metaclass, PyObject *bases, PyObject *name,
+            static PyObject *__Pyx_Py3MetaclassPrepare(PyObject *metaclass, PyObject *bases, PyObject *name,
                                            PyObject *qualname, PyObject *mkw, PyObject *modname, PyObject *doc) {
     PyObject *ns;
     if (metaclass) {
@@ -12546,7 +12778,7 @@ static PyObject *__Pyx_Py3ClassCreate(PyObject *metaclass, PyObject *name, PyObj
 }
 
 /* CodeObjectCache */
-              static int __pyx_bisect_code_objects(__Pyx_CodeObjectCacheEntry* entries, int count, int code_line) {
+            static int __pyx_bisect_code_objects(__Pyx_CodeObjectCacheEntry* entries, int count, int code_line) {
     int start = 0, mid = 0, end = count - 1;
     if (end >= 0 && code_line > entries[end].code_line) {
         return count;
@@ -12626,7 +12858,7 @@ static void __pyx_insert_code_object(int code_line, PyCodeObject* code_object) {
 }
 
 /* AddTraceback */
-              #include "compile.h"
+            #include "compile.h"
 #include "frameobject.h"
 #include "traceback.h"
 static PyCodeObject* __Pyx_CreateCodeObjectForTraceback(
@@ -12707,7 +12939,7 @@ bad:
 }
 
 /* CIntFromPyVerify */
-              #define __PYX_VERIFY_RETURN_INT(target_type, func_type, func_value)\
+            #define __PYX_VERIFY_RETURN_INT(target_type, func_type, func_value)\
     __PYX__VERIFY_RETURN_INT(target_type, func_type, func_value, 0)
 #define __PYX_VERIFY_RETURN_INT_EXC(target_type, func_type, func_value)\
     __PYX__VERIFY_RETURN_INT(target_type, func_type, func_value, 1)
@@ -12729,7 +12961,34 @@ bad:
     }
 
 /* CIntToPy */
-              static CYTHON_INLINE PyObject* __Pyx_PyInt_From_int(int value) {
+            static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value) {
+    const long neg_one = (long) -1, const_zero = (long) 0;
+    const int is_unsigned = neg_one > const_zero;
+    if (is_unsigned) {
+        if (sizeof(long) < sizeof(long)) {
+            return PyInt_FromLong((long) value);
+        } else if (sizeof(long) <= sizeof(unsigned long)) {
+            return PyLong_FromUnsignedLong((unsigned long) value);
+        } else if (sizeof(long) <= sizeof(unsigned PY_LONG_LONG)) {
+            return PyLong_FromUnsignedLongLong((unsigned PY_LONG_LONG) value);
+        }
+    } else {
+        if (sizeof(long) <= sizeof(long)) {
+            return PyInt_FromLong((long) value);
+        } else if (sizeof(long) <= sizeof(PY_LONG_LONG)) {
+            return PyLong_FromLongLong((PY_LONG_LONG) value);
+        }
+    }
+    {
+        int one = 1; int little = (int)*(unsigned char *)&one;
+        unsigned char *bytes = (unsigned char *)&value;
+        return _PyLong_FromByteArray(bytes, sizeof(long),
+                                     little, !is_unsigned);
+    }
+}
+
+/* CIntToPy */
+            static CYTHON_INLINE PyObject* __Pyx_PyInt_From_int(int value) {
     const int neg_one = (int) -1, const_zero = (int) 0;
     const int is_unsigned = neg_one > const_zero;
     if (is_unsigned) {
@@ -12756,7 +13015,7 @@ bad:
 }
 
 /* CIntToPy */
-              static CYTHON_INLINE PyObject* __Pyx_PyInt_From_char(char value) {
+            static CYTHON_INLINE PyObject* __Pyx_PyInt_From_char(char value) {
     const char neg_one = (char) -1, const_zero = (char) 0;
     const int is_unsigned = neg_one > const_zero;
     if (is_unsigned) {
@@ -12782,35 +13041,8 @@ bad:
     }
 }
 
-/* CIntToPy */
-              static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value) {
-    const long neg_one = (long) -1, const_zero = (long) 0;
-    const int is_unsigned = neg_one > const_zero;
-    if (is_unsigned) {
-        if (sizeof(long) < sizeof(long)) {
-            return PyInt_FromLong((long) value);
-        } else if (sizeof(long) <= sizeof(unsigned long)) {
-            return PyLong_FromUnsignedLong((unsigned long) value);
-        } else if (sizeof(long) <= sizeof(unsigned PY_LONG_LONG)) {
-            return PyLong_FromUnsignedLongLong((unsigned PY_LONG_LONG) value);
-        }
-    } else {
-        if (sizeof(long) <= sizeof(long)) {
-            return PyInt_FromLong((long) value);
-        } else if (sizeof(long) <= sizeof(PY_LONG_LONG)) {
-            return PyLong_FromLongLong((PY_LONG_LONG) value);
-        }
-    }
-    {
-        int one = 1; int little = (int)*(unsigned char *)&one;
-        unsigned char *bytes = (unsigned char *)&value;
-        return _PyLong_FromByteArray(bytes, sizeof(long),
-                                     little, !is_unsigned);
-    }
-}
-
 /* CIntFromPy */
-              static CYTHON_INLINE int __Pyx_PyInt_As_int(PyObject *x) {
+            static CYTHON_INLINE int __Pyx_PyInt_As_int(PyObject *x) {
     const int neg_one = (int) -1, const_zero = (int) 0;
     const int is_unsigned = neg_one > const_zero;
 #if PY_MAJOR_VERSION < 3
@@ -12995,7 +13227,7 @@ raise_neg_overflow:
 }
 
 /* CIntFromPy */
-              static CYTHON_INLINE char __Pyx_PyInt_As_char(PyObject *x) {
+            static CYTHON_INLINE char __Pyx_PyInt_As_char(PyObject *x) {
     const char neg_one = (char) -1, const_zero = (char) 0;
     const int is_unsigned = neg_one > const_zero;
 #if PY_MAJOR_VERSION < 3
@@ -13180,7 +13412,7 @@ raise_neg_overflow:
 }
 
 /* CIntFromPy */
-              static CYTHON_INLINE long __Pyx_PyInt_As_long(PyObject *x) {
+            static CYTHON_INLINE long __Pyx_PyInt_As_long(PyObject *x) {
     const long neg_one = (long) -1, const_zero = (long) 0;
     const int is_unsigned = neg_one > const_zero;
 #if PY_MAJOR_VERSION < 3
@@ -13365,7 +13597,7 @@ raise_neg_overflow:
 }
 
 /* CheckBinaryVersion */
-              static int __Pyx_check_binary_version(void) {
+            static int __Pyx_check_binary_version(void) {
     char ctversion[4], rtversion[4];
     PyOS_snprintf(ctversion, 4, "%d.%d", PY_MAJOR_VERSION, PY_MINOR_VERSION);
     PyOS_snprintf(rtversion, 4, "%s", Py_GetVersion());
@@ -13381,7 +13613,7 @@ raise_neg_overflow:
 }
 
 /* InitStrings */
-              static int __Pyx_InitStrings(__Pyx_StringTabEntry *t) {
+            static int __Pyx_InitStrings(__Pyx_StringTabEntry *t) {
     while (t->p) {
         #if PY_MAJOR_VERSION < 3
         if (t->is_unicode) {

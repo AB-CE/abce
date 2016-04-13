@@ -91,25 +91,25 @@ cdef class Offer:
         idn:
             a unique identifier
     """
-    cdef readonly char* sender_group
+    cdef readonly str sender_group
     cdef readonly int sender_idn
-    cdef readonly char* receiver_group
+    cdef readonly str receiver_group
     cdef readonly int receiver_idn
-    cdef readonly char* good
+    cdef readonly str good
     cdef readonly double quantity
     cdef readonly double price
     cdef readonly char buysell
-    cdef public char* status
+    cdef public str status
     cdef public double final_quantity
-    cdef readonly long idn
+    cdef readonly object idn
     cdef readonly int made
-    cdef public char* open_offer_status
+    cdef public str open_offer_status
     cdef public int status_round
 
-    def __cinit__(self, sender_group, sender_idn, receiver_group,
-                  receiver_idn, good, quantity, price,
-                  buysell, status, final_quantity, idn,
-                  made, open_offer_status, status_round):
+    def __cinit__(self, str sender_group, int sender_idn, str receiver_group,
+                  int receiver_idn, str good, double quantity, double price,
+                  char buysell, str status, double final_quantity, long idn,
+                  int made, str open_offer_status, int status_round):
         self.sender_group = sender_group
         self.sender_idn = sender_idn
         self.receiver_group = receiver_group
@@ -137,6 +137,17 @@ cdef class Offer:
                 self.receiver_idn, self.good, self.quantity, self.price,
                 self.buysell, self.status, self.final_quantity, self.idn,
                 self.made, self.open_offer_status, self.status_round)
+
+    def __repr__(self):
+        return """sender: %s, %i, receiver_group: %s,
+                receiver_idn: %i, good: %s, quantity: %f, price: %f,
+                buysell: %s, status: %s, final_quantity: % f, idn: %i,
+                made: %i, open_offer_status: % s, status_round: %i """ % (
+
+                    self.sender_group, self.sender_idn, self.receiver_group,
+                    self.receiver_idn, self.good, self.quantity, self.price,
+                    self.buysell, self.status, self.final_quantity, self.idn,
+                    self.made, self.open_offer_status, self.status_round)
 
 class Trade:
     """ Agents can trade with each other. The clearing of the trade is taken care
