@@ -66,7 +66,7 @@ class UtilityHousehold(abce.Agent, abce.Household):
             self.create('b', 10)
             self.create('c', 10)
             utility = self.consume_everything()
-            assert utility == max(10 ** 0.2, 10 ** 0.5 * 10 ** 0.3), utility
+            assert utility == max(10 ** 0.2, 10 ** 0.5 * 10 ** 0.3), (utility, max(10 ** 0.2, 10 ** 0.5 * 10 ** 0.3))
             assert self.possession('a') == 0
             assert self.possession('b') == 9
             assert self.possession('c') == 10
@@ -79,7 +79,7 @@ class UtilityHousehold(abce.Agent, abce.Household):
             self.create('b', 10)
             self.create('c', 10)
             utility = self.consume_everything()
-            assert utility == 10 ** 0.2 * 10 ** 0.5 * 10 ** 0.3, utility
+            assert utility == 10 ** 0.2 * 10 ** 0.5 * 10 ** 0.3, (utility, 10 ** 0.2 * 10 ** 0.5 * 10 ** 0.3)
             assert self.possession('a') == 0
             assert self.possession('b') == 0
             assert self.possession('c') == 0
