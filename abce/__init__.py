@@ -570,16 +570,16 @@ class Simulation:
                     messages[family_name].extend(family_msgs)
         return messages
 
-    def execute_serial(self, groups, command, messagess):
-        ret = []
+    def execute_serial(self, groups, command, messages):
+        families_messages = [execute_wrapper((family, command, messages[family.name()])) for group in groups for family in self.family_list[group]]
         for group in groups:
-            messages = [execute_wrapper((family, command, messagess)) for family in self.family_list[group]]
-            for i in range(len(messagess[group])):
-                del messagess[group][i][:]
-            for msg_family in messages:
-                ret.extend(msg_family)
-        return ret
-
+            for family in self.family_list[group]:
+                messages[family.name()] = []
+        for block in families_messages:
+            for family_name, family_msgs in block.iteritems():
+                if len(family_msgs):
+                    messages[family_name].extend(family_msgs)
+        return messages
     def execute_internal(self, command):
         for group in self.family_list:
             for family in self.family_list[group]:
