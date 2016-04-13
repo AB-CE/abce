@@ -54,7 +54,7 @@ class Family:
             agent.set_network_drawing_frequency(_network_drawing_frequency)
 
     def repr(self):
-        return "%i - %i" % (self.agents[0].idn, self.agents[-1].idn)
+        return "%s: %i - %i" % (self.group, self.agents[0].idn, self.agents[-1].idn)
 
 
 
