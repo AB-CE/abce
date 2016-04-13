@@ -561,12 +561,14 @@ class Simulation:
     def execute_parallel(self, groups, command, messages):
         parameters = ((family, command, messages[family.name()]) for group in groups for family in self.family_list[group])
         families_messages = self.pool.map(execute_wrapper, parameters)
-        out = defaultdict(list)
+        for group in groups:
+            for family in self.family_list[group]:
+                messages[family.name()] = []
         for block in families_messages:
             for family_name, family_msgs in block.iteritems():
                 if len(family_msgs):
-                    out[family_name].extend(family_msgs)
-        return out
+                    messages[family_name].extend(family_msgs)
+        return messages
 
     def execute_serial(self, groups, command, messagess):
         ret = []
@@ -612,10 +614,12 @@ class Simulation:
 
         messagess = defaultdict(dict)
 
+        messagess = {}
         self.family_names = []
         for group in self.family_list.values():
             for family in group:
                 self.family_names.append(family.name())
+                messagess[family.name()] = []
         try:
             for year in xrange(self._start_year, self.simulation_parameters['num_rounds']):
                 self.round = year
