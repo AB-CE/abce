@@ -237,8 +237,10 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
     def advance_round(self):
         for offer in self.given_offers.values():
             if offer['made'] < self.round:
-                pprint(self.given_offers)
-                raise SystemExit('%s_%i: There are offers have been made before'
+                print("this offers have not been retrieved:")
+                for offer in self.given_offers.values():
+                    print(offer.__repr__())
+                raise Exception('%s_%i: There are offers have been made before'
                                  'last round and not been retrieved in this'
                                  'round get_offer(.)' % (self.group, self.idn))
 
@@ -253,7 +255,6 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
 
         for good in self._contracts_pay:
             self._contracts_pay[good] = [contract for contract in self._contracts_pay[good] if contract['end_date'] > self.round]
-
         # expiring goods
         for good in self._expiring_goods:
             self._haves[good]._advance_round()
