@@ -33,6 +33,11 @@ Messaging between agents:
 
 .. [1] or :class:`abceagent.FirmMultiTechnologies` for simulations with complex technologies.
 """
+#******************************************************************************************
+# trade.pyx is written in cython. trade.pyx is not distributed for installation.
+# instead, when you modify trade.pyx you need to compile it with compile.sh and compile.py
+# and the resulting trade.c file, is distributed. Don't forget to commit it to git
+#******************************************************************************************
 from __future__ import division
 from collections import defaultdict
 import numpy as np
