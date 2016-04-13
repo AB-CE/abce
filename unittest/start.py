@@ -14,6 +14,8 @@ from expiringcapital import ExpiringCapital
 from giveexpiringcapital import GiveExpiringCapital
 from buyexpiringcapital import BuyExpiringCapital
 from abce import Simulation, read_parameters, repeat
+from messagea import MessageA
+from messageb import MessageB
 
 
 def main():
@@ -40,7 +42,8 @@ def main():
             ('productionmultifirm', 'production'),
             ('productionfirm', 'production'),
             ('utilityhousehold', 'consumption'),
-
+            (('messagea', 'messageb'), 'sendmsg'),
+            (('messageb', 'messagea'), 'recvmsg'),
             #('contractseller', 'make_offer'),
             #('contractseller', 'accept_offer'),
             #('contractseller', 'deliver_or_pay'),
@@ -75,6 +78,8 @@ def main():
         #s.build_agents(ExpiringCapital, 1)
         #s.build_agents(GiveExpiringCapital, 2)
         s.build_agents(BuyExpiringCapital, 2)
+        s.build_agents(MessageA, 20)
+        s.build_agents(MessageB, 20)
 
         s.run(parallel=True)
 
