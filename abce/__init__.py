@@ -429,7 +429,7 @@ class Simulation:
             duration:
                 the duration before the good expires
         """
-        if len(self.agents_list['all']) > 0:
+        if len(self.family_list) > 0:
             raise SystemExit("WARNING: agents build before declare_expiring")
         self.expiring.append((good, duration))
         self.simulation_parameters[good] = duration
@@ -476,7 +476,7 @@ class Simulation:
          w.panel(group='firm', possessions=['money', 'input1'],
             variables=['production_target', 'gross_revenue'])
         """
-        if len(self.agents_list['all']) > 0:
+        if len(self.family_list) > 0:
             raise SystemExit("WARNING: agents build before panel")
         self._db.add_panel(group)
         self.variables_to_track_panel[group] = variables
@@ -500,7 +500,7 @@ class Simulation:
          w.aggregate(group='firm', possessions=['money', 'input1'],
             variables=['production_target', 'gross_revenue'])
         """
-        if len(self.agents_list['all']) > 0:
+        if len(self.family_list) > 0:
             raise SystemExit("WARNING: agents build before aggregate")
         self._db.add_aggregate(group)
         self.variables_to_track_aggregate[group] = variables
