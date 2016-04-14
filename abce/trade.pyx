@@ -449,6 +449,7 @@ class Trade:
         """
         cdef double money_amount
         cdef double offer_quantity = offer['quantity']
+        cdef double available
 
         if quantity == -999:
             quantity = offer_quantity
@@ -461,11 +462,21 @@ class Trade:
 
         money_amount = quantity * offer['price']
         if offer['buysell'] == 115:  # ord('s')
-            money_amount = self._quantity_smaller_goods(money_amount, 'money')
+            money_amount = bound_zero(money_amount)
+            available = self._haves['money']
+            if money_amount > available + float_info.epsilon + float_info.epsilon * max(money_amount, available):
+                raise NotEnoughGoods(self.name, 'money', money_amount - available)
+            if money_amount > available:
+                money_amount = available
             self._haves[offer['good']] += quantity
             self._haves['money'] -= quantity * offer['price']
         else:
-            quantity = self._quantity_smaller_goods(quantity, offer['good'])
+            quantity = bound_zero(quantity)
+            available = self._haves[offer['good']]
+            if quantity > available + float_info.epsilon + float_info.epsilon * max(quantity, available):
+                raise NotEnoughGoods(self.name, offer['good'], quantity - available)
+            if quantity > available:
+                quantity = available
             self._haves[offer['good']] -= quantity
             self._haves['money'] += quantity * offer['price']
         offer['final_quantity'] = quantity
@@ -575,7 +586,11 @@ class Trade:
 
         """
         quantity = bound_zero(quantity)
-        quantity = self._quantity_smaller_goods(quantity, good)
+        available = self._haves[good]
+        if quantity > available + float_info.epsilon + float_info.epsilon * max(quantity, available):
+            raise NotEnoughGoods(self.name, good, quantity - available)
+        if quantity > available:
+            quantity = available
         self._haves[good] -= quantity
         self._send(receiver_group, receiver_idn, '_g', [good, quantity])
         return {good: quantity}
@@ -587,18 +602,6 @@ class Trade:
             receiver_group, receiver_idn, good, quantity
         """
         self.buy(receiver_group, receiver_idn, good=good, quantity=quantity, price=0)
-
-    def _quantity_smaller_goods(self, quantity, good):
-        """ asserts that quantity is smaller then goods, taking floating point imprecission into account and
-        then sets a so that it is exacly smaller or equal the available """
-        available = self._haves[good]
-        if quantity > available + float_info.epsilon + float_info.epsilon * max(abs(quantity), abs(available)):
-            raise NotEnoughGoods(self.name, good, quantity - available)
-        quantity = bound_zero(quantity)
-        if quantity <= available:
-            return quantity
-        else:
-            return available
 
 
     def _clearing__end_of_subround(self, incomming_messages):
