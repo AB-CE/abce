@@ -7,6 +7,7 @@ class Family:
         self.agents = []
         self.batch = batch
         self.group = agent_args['group']
+        self.num_managers = num_managers
         for i in xrange(batch, num_agents_this_group, num_managers):
             self.agents.append(Agent(idn=i, **agent_args))
 
@@ -15,7 +16,7 @@ class Family:
         messages = sortmessages(messages)
         for agent in self.agents:
             for message in agent.execute(command, messages[agent.idn]):
-                out[(message[0], message[1] % 4)].append(message)
+                out[(message[0], message[1] % self.num_managers)].append(message)
         return out
 
     def name(self):
