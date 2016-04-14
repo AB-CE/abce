@@ -61,7 +61,6 @@ from quote import Quote
 import json
 import abcegui
 from family import Family
-import psutil
 
 
 def gui(parameters, names=None, title=None, text=None):
@@ -236,10 +235,23 @@ class Simulation:
 
         w.run()
     """
-    def __init__(self, simulation_parameters):
+    def __init__(self, simulation_parameters, cores=None):
         self.simulation_parameters = simulation_parameters
-        """ Simulation parameters are the parameter you specify for the current
-        simulation. Either in simulation_parameters.csv or as a dictionary
+        """ This sets up the simulation.
+
+        simulation_parameters:
+            Simulation parameters are the parameter you specify for the current
+            simulation. It is a dictionary. That contains at least a key 'rounds'.
+            That specifies the number of rounds.
+
+        cores:
+            The number of cores of your processor that are used for the simulation.
+            Default is all your logical cores using hyper-threading when available.
+            For easy debugging set cores to one and the simulation is executed
+            without parallelization.
+            Sometimes it is advisable to decrease the number of cores to the number
+            of physical cores on your computer.
+            'None' for all cores.
         """
         self.family_list = {}
         self.manager_list = {}
@@ -300,6 +312,11 @@ class Simulation:
         self.database_queue = manager.Queue()
         self._db = abce.db.Database(self.path, self.database_queue, trade_log=trade_log)
         self.logger_queue = manager.Queue()
+
+        if cores is None:
+            self.cores = mp.cpu_count()
+        else:
+            self.cores = cores
 
 
     def add_action_list(self, action_list):
@@ -585,7 +602,7 @@ class Simulation:
             for family in self.family_list[group]:
                 family.execute_internal(command)
 
-    def run(self, parallel=True):
+    def run(self):
         """ This runs the simulation
 
             Args:
@@ -594,8 +611,8 @@ class Simulation:
                     For simulation that don't have hundreds of separate perishable
                     goods or resource False is faster.
         """
-        if parallel:
-            self.pool = mp.Pool(psutil.cpu_count(logical=False))
+        if self.cores > 1:
+            self.pool = mp.Pool(self.cores)
             self._db.start()
             self.execute = self.execute_parallel
         else:
@@ -729,7 +746,7 @@ class Simulation:
         MyManager.register('Family', Family)
 
         manager_list = []
-        number_of_managers = min(psutil.cpu_count(logical=False), num_agents_this_group)
+        number_of_managers = min(self.cores, num_agents_this_group)
 
         for i in range(number_of_managers):
             manager = MyManager()

@@ -29,7 +29,7 @@ def main():
            'utilityhousehold']
 
     for parameters in read_parameters('simulation_parameters.csv'):
-        s = Simulation(parameters)
+        s = Simulation(parameters, cores=None)
         action_list = [
             repeat([
                 (all, 'one'),
@@ -81,7 +81,7 @@ def main():
         s.build_agents(MessageA, 20)
         s.build_agents(MessageB, 20)
 
-        s.run(parallel=True)
+        s.run()
 
 if __name__ == '__main__':
     main()
