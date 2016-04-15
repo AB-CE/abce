@@ -8871,7 +8871,7 @@ static PyObject *__pyx_pf_5trade_5Trade_34_clearing__end_of_subround(CYTHON_UNUS
  *             elif typ == '_g':
  *                 self._haves[msg[0]] += msg[1]             # <<<<<<<<<<<<<<
  *             elif typ == '_q':
- *                 self._quotes[msg.idn] = msg
+ *                 self._quotes[msg['idn']] = msg
  */
       __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_haves); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 634; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_6);
@@ -8904,7 +8904,7 @@ static PyObject *__pyx_pf_5trade_5Trade_34_clearing__end_of_subround(CYTHON_UNUS
  *             elif typ == '_g':
  *                 self._haves[msg[0]] += msg[1]
  *             elif typ == '_q':             # <<<<<<<<<<<<<<
- *                 self._quotes[msg.idn] = msg
+ *                 self._quotes[msg['idn']] = msg
  *             elif typ == '!o':
  */
     __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_v_typ, __pyx_n_s_q, Py_EQ)); if (unlikely(__pyx_t_9 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 635; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
@@ -8913,13 +8913,13 @@ static PyObject *__pyx_pf_5trade_5Trade_34_clearing__end_of_subround(CYTHON_UNUS
       /* "trade.pyx":636
  *                 self._haves[msg[0]] += msg[1]
  *             elif typ == '_q':
- *                 self._quotes[msg.idn] = msg             # <<<<<<<<<<<<<<
+ *                 self._quotes[msg['idn']] = msg             # <<<<<<<<<<<<<<
  *             elif typ == '!o':
  *                 if msg['makerequest'] == 'r':
  */
       __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_quotes); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 636; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_6);
-      __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_msg, __pyx_n_s_idn); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 636; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_5 = PyObject_GetItem(__pyx_v_msg, __pyx_n_s_idn); if (unlikely(__pyx_t_5 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 636; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
       __Pyx_GOTREF(__pyx_t_5);
       if (unlikely(PyObject_SetItem(__pyx_t_6, __pyx_t_5, __pyx_v_msg) < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 636; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
@@ -8929,7 +8929,7 @@ static PyObject *__pyx_pf_5trade_5Trade_34_clearing__end_of_subround(CYTHON_UNUS
  *             elif typ == '_g':
  *                 self._haves[msg[0]] += msg[1]
  *             elif typ == '_q':             # <<<<<<<<<<<<<<
- *                 self._quotes[msg.idn] = msg
+ *                 self._quotes[msg['idn']] = msg
  *             elif typ == '!o':
  */
       goto __pyx_L7;
@@ -8937,7 +8937,7 @@ static PyObject *__pyx_pf_5trade_5Trade_34_clearing__end_of_subround(CYTHON_UNUS
 
     /* "trade.pyx":637
  *             elif typ == '_q':
- *                 self._quotes[msg.idn] = msg
+ *                 self._quotes[msg['idn']] = msg
  *             elif typ == '!o':             # <<<<<<<<<<<<<<
  *                 if msg['makerequest'] == 'r':
  *                     self._contract_requests[msg['good']].append(msg)
@@ -8946,7 +8946,7 @@ static PyObject *__pyx_pf_5trade_5Trade_34_clearing__end_of_subround(CYTHON_UNUS
     if (__pyx_t_9) {
 
       /* "trade.pyx":638
- *                 self._quotes[msg.idn] = msg
+ *                 self._quotes[msg['idn']] = msg
  *             elif typ == '!o':
  *                 if msg['makerequest'] == 'r':             # <<<<<<<<<<<<<<
  *                     self._contract_requests[msg['good']].append(msg)
@@ -8977,7 +8977,7 @@ static PyObject *__pyx_pf_5trade_5Trade_34_clearing__end_of_subround(CYTHON_UNUS
         __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
 
         /* "trade.pyx":638
- *                 self._quotes[msg.idn] = msg
+ *                 self._quotes[msg['idn']] = msg
  *             elif typ == '!o':
  *                 if msg['makerequest'] == 'r':             # <<<<<<<<<<<<<<
  *                     self._contract_requests[msg['good']].append(msg)
@@ -9009,7 +9009,7 @@ static PyObject *__pyx_pf_5trade_5Trade_34_clearing__end_of_subround(CYTHON_UNUS
 
       /* "trade.pyx":637
  *             elif typ == '_q':
- *                 self._quotes[msg.idn] = msg
+ *                 self._quotes[msg['idn']] = msg
  *             elif typ == '!o':             # <<<<<<<<<<<<<<
  *                 if msg['makerequest'] == 'r':
  *                     self._contract_requests[msg['good']].append(msg)
