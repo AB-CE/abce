@@ -39,13 +39,11 @@ Messaging between agents:
 # and the resulting trade.c file, is distributed. Don't forget to commit it to git
 #******************************************************************************************
 from __future__ import division
-from collections import defaultdict
-import numpy as np
 from random import shuffle
-from abce.tools import is_zero, NotEnoughGoods, is_negative, is_positive, epsilon, a_smaller_b
-save_err = np.seterr(invalid='ignore')
+from abce.tools import NotEnoughGoods
 from messaging import Message
 from libc.float cimport DBL_EPSILON
+from libc.math cimport isfinite
 
 cdef double fmax(double a, double b):
     if a > b:
@@ -659,12 +657,9 @@ class Trade:
 cdef double bound_zero(double x):
     """ asserts that variable is above zero, where foating point imprecission is accounted for,
     and than makes sure it is above 0, without floating point imprecission """
-    assert x > - DBL_EPSILON, '%.30f is smaller than 0 - epsilon (%.30f)' % (x, - epsilon)
-    assert np.isfinite(x), x
+    assert x > - DBL_EPSILON, '%.30f is smaller than 0 - epsilon (%.30f)' % (x, - DBL_EPSILON)
+    assert isfinite(x), x
     if x < 0:
         return 0
     else:
         return x
-
-
-
