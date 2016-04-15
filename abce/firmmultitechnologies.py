@@ -1,3 +1,4 @@
+
 # Copyright 2012 Davoud Taghawi-Nejad
 #
 # Module Author: Davoud Taghawi-Nejad
@@ -365,8 +366,6 @@ class FirmMultiTechnologies:
 
     def predict_net_value(self, production_function, input_goods, price_vector):
         """ Predicts the net value of a production, given a price vector
-
-
 
 
         Args:

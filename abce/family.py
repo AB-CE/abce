@@ -32,7 +32,7 @@ class Family:
 
     def init(self, simulation_parameters, agent_parameters):
         for agent in self.agents:
-            agent.init(simulation_parameters, agent_parameters)
+            agent.init(simulation_parameters, agent_parameters[agent.idn])
 
     def register_perish(self, good):
         for agent in self.agents:
