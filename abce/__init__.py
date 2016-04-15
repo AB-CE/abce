@@ -254,13 +254,11 @@ class Simulation:
             'None' for all cores.
         """
         self.family_list = {}
-        self.manager_list = {}
         self._messages = {}
         self._action_list = []
         self._resource_command_group = {}
         self._db_commands = {}
         self.num_agents = 0
-        self.num_agents_in_group = {}
         self._build_first_run = True
         self._agent_parameters = None
         self.resource_endowment = defaultdict(list)
@@ -570,7 +568,7 @@ class Simulation:
                     except IndexError:
                         action = ((action[0],), action[1])
                 for group in action[0]:
-                    assert group in self.num_agents_in_group.keys(), \
+                    assert group in self.family_list.keys(), \
                         '%s in (%s, %s) in the action_list is not a known agent' % (action[0], action[0], action[1])
                 processed_list.append((self.execute, action[0], action[1]))
         return processed_list
@@ -678,24 +676,18 @@ class Simulation:
             pass
 
     def build_agents(self, AgentClass, number=None, group_name=None, agent_parameters=None):
-        """ This method creates agents, the first parameter is the agent class.
-        "num_agent_class" (e.G. "num_firm") should be defined in
-        simulation_parameters.csv. Alternatively you can also specify number = 1
+        """ This method creates agents.
 
         Args::
 
          AgentClass:
             is the name of the AgentClass that you imported
 
-        number (optional):
+        number:
             number of agents to be created.
-            of the row in simulation_parameters.csv that contains this number. If not
-            specified the column name is assumed to be "num_" + agent_name
-            (all lowercase). For example num_firm, if the class is called
-            Firm or name = Firm.
 
          group_name (optional):
-            to give the group a different name than the
+            to give the group a different name than the lowercase
             class_name.
 
         agent_parameters:
@@ -707,50 +699,22 @@ class Simulation:
          w.build_agents(Bank, 1)
          w.build_agents(CentralBank, number=1)
         """
-        # TODO single agent groups get extra name without number
-        # TODO when there is a group with a single agent the ask_agent has a confusing name
         if not(group_name):
             group_name = AgentClass.__name__.lower()
-        if number and not(agent_parameters):
-            try:
-                num_agents_this_group = int(number)
-            except ValueError:
-                try:
-                    num_agents_this_group = self.simulation_parameters[number]
-                except KeyError:
-                    SystemExit('build_agents ' + group_name + ': ' + number +
-                               ' is not a number or a column name in simulation_parameters.csv'
-                               'or the parameterfile you choose')
-        elif not(number) and not(agent_parameters):
-            try:
-                num_agents_this_group = self.simulation_parameters['num_' + group_name.lower()]
-            except KeyError:
-                raise SystemExit('num_' + group_name.lower() + ' is not in simulation_parameters.csv')
-        elif not(number) and agent_parameters:
-            num_agents_this_group = len(agent_parameters)
-        else:
-            raise SystemExit('build_agents ' + group_name + ': Either '
-                             'number_or_parameter_column or agent_parameters must be'
-                             'specied, NOT both.')
-        if not(agent_parameters):
+        assert number is None or agent_parameters is None, 'either set number or agent_parameters in build_agents'
+        if number is not None:
+            num_agents_this_group = number
             agent_parameters = [None] * num_agents_this_group
+        else:
+            number = len(agent_parameters)
 
-        self.simulation_parameters['num_' + group_name.lower()] = num_agents_this_group
-
-        self.num_agents += num_agents_this_group
-        self.num_agents_in_group[group_name] = num_agents_this_group
-        self.num_agents_in_group['all'] = self.num_agents
         self.family_list[group_name] = []
-        self.manager_list[group_name] = []
 
         MyManager.register('Family', Family)
-
-        manager_list = []
 
         for i in range(min(self.cores, num_agents_this_group)):
             manager = MyManager()
             manager.start()
-            manager_list.append(manager)
             family = manager.Family(AgentClass, num_agents_this_group=num_agents_this_group, batch=i, num_managers=self.cores,
                                     agent_args={'simulation_parameters': self.simulation_parameters,
                                                 'agent_parameters': agent_parameters,
@@ -784,7 +748,6 @@ class Simulation:
                 family.set_network_drawing_frequency(None)
 
             self.family_list[group_name].append(family)
-            self.manager_list[group_name].append(manager)
 
 
 
@@ -797,14 +760,13 @@ class Simulation:
         headers. The first column "agent_class" specifies the agent_class. The
         second column "number" (optional) allows you to create more than one
         agent of this type. The other columns are parameters that you can
-        access in own_parameters the __init__ function of the agent.
+        access in own_parameters the init function of the agent.
 
         Agent created from a csv-file::
 
          class Agent(AgentEngine):
-            def __init__(self, simulation_parameter, own_parameters, _pass_to_engine):
-                AgentEngine.__init__(self, *_pass_to_engine)
-                self.size = own_parameters['firm_size']
+            def init(self, simulation_parameter, agent_parameters):
+                self.size = agent_parameters['firm_size']
         """
         # TODO declare all self.simulation_parameters['num_XXXXX'], when this is called the first time
         if parameters_file is None:
