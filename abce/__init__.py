@@ -746,13 +746,12 @@ class Simulation:
         MyManager.register('Family', Family)
 
         manager_list = []
-        number_of_managers = min(self.cores, num_agents_this_group)
 
-        for i in range(number_of_managers):
+        for i in range(min(self.cores, num_agents_this_group)):
             manager = MyManager()
             manager.start()
             manager_list.append(manager)
-            family = manager.Family(AgentClass, num_agents_this_group=num_agents_this_group, batch=i, num_managers=number_of_managers,
+            family = manager.Family(AgentClass, num_agents_this_group=num_agents_this_group, batch=i, num_managers=self.cores,
                                     agent_args={'simulation_parameters': self.simulation_parameters,
                                                 'agent_parameters': agent_parameters,
                                                 'group': group_name,
