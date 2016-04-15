@@ -139,61 +139,6 @@ def gui(parameters, names=None, title=None, text=None):
 def execute_wrapper(inp):
     return inp[0].execute(inp[1], inp[2])
 
-
-def read_parameters(parameters_file='simulation_parameters.csv'):
-    """ reads a parameter file line by line and gives a list. Where each line
-    contains all parameters for a particular run of the simulation.
-
-    Args:
-
-        parameters_file (optional):
-            filename of the csv file. (default:`simulation_parameters.csv`)
-
-        delimiter (optional):
-            delimiter of the csv file. (default: tabs)
-
-        quotechar (optional):
-            for single entries that contain the delimiter. (default: ")
-            See python csv lib http://docs.python.org/library/csv.html
-
-
-    This code reads the file and runs a simulation for every line::
-
-     for parameter in read_parameters('simulation_parameters.csv'):
-        w = Simulation(parameter)
-        w.build_agents(Agent, 'agent', 'num_agents')
-        w.run()
-    """
-    parameter_array = []
-
-    with open(parameters_file, 'Ur') as csvfile:
-        reader = csv.DictReader(csvfile)
-        for parameter in reader:
-            if 'num_rounds' not in parameter.keys():
-                raise SystemExit('No "num_rounds" column in ' + parameters_file)
-            if 'name' not in parameter:
-                parameter['name'] = 'abce'
-                print("WARNING no 'name' in parameters")
-            parameter['name'] = str(parameter['name']).strip("""\"""").strip("""\'""")
-            if 'random_seed' not in parameter.keys():
-                parameter['random_seed'] = None
-            elif parameter['random_seed'] == 0 or parameter['random_seed'] in ['None', 'none', 'null']:
-                parameter['random_seed'] = None
-                print("WARNING: no 'random_seed' in parameters, default to None, which initializes with system time")
-            if 'trade_logging' not in parameter.keys():
-                parameter['trade_logging'] = 'off'
-                print("WARNING: 'trade_logging not set, it can be 'off', 'individual or 'group', defaults to 'off'")
-            for key in parameter.keys():
-                try:
-                    parameter[key] = _number_or_string(parameter[key])
-                except TypeError:
-                    parameter[key] = parameter[key]
-
-            parameter_array.append(parameter)
-        if 'name' not in parameter:
-            print("no 'name' (lowercase) column in " + parameters_file)
-    return parameter_array
-
 class MyManager(BaseManager):
     pass
 
