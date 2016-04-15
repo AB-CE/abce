@@ -215,12 +215,14 @@ class Simulation:
         self.possessions_to_track_aggregate = defaultdict(list)
         self._start_year = 0
 
-        start_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
         try:
             os.makedirs(os.path.abspath('.') + '/result/')
         except OSError:
             pass
-        self.path = os.path.abspath('.') + '/result/' + simulation_parameters['name'] + '_' + start_time
+        if 'name' not in simulation_parameters:
+            simulation_parameters['name'] = 'set_name_in_simulation_parameters'
+        self.path = (os.path.abspath('.') + '/result/' + simulation_parameters['name'] + '_' +
+            datetime.datetime.now().strftime("%Y-%m-%d_%H-%M"))
         """ the path variable contains the path to the simulation outcomes it can be used
         to generate your own graphs as all resulting csv files are there.
         """
