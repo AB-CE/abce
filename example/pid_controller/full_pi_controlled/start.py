@@ -17,7 +17,7 @@ simulation_parameters = {'name': 'Sticky Prices Microfoundations'}
 
 @gui(simulation_parameters)
 def main(simulation_parameters):
-    s = Simulation(simulation_parameters)
+    s = Simulation(**simulation_parameters)
     action_list = [
         ('firm', 'quote_hire'),
         ('labormarket', 'accepting'),

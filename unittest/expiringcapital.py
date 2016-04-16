@@ -5,7 +5,7 @@ from abce.firm import Firm
 
 class ExpiringCapital(abce.Agent, Firm):
     def init(self, simulation_parameters, _,):
-        self.last_round = simulation_parameters['num_rounds'] - 1
+        self.last_round = simulation_parameters['rounds'] - 1
         self.create('xcapital', 1)
         print '============', self.simulation_parameters['xcapital']
 

@@ -16,12 +16,12 @@ import graphs
 
 simulation_parameters = {'name': "analitical",
                          'random_seed': None,
-                         'num_rounds': 3000,
+                         'rounds': 3000,
                          'trade_repetitions': 20}
 
 @gui(simulation_parameters)
 def main(simulation_parameters):
-    s = Simulation(simulation_parameters)
+    s = Simulation(**simulation_parameters)
     action_list = [
         ('firm', 'my_production'),
         ('firm', 'selling'),
@@ -33,8 +33,8 @@ def main(simulation_parameters):
 
     s.add_action_list(action_list)
 
-    s.build_agents(Firm, 1)
-    s.build_agents(Market, 1)
+    s.build_agents(Firm, parameters=simulation_parameters, number=1)
+    s.build_agents(Market, parameters=simulation_parameters, number=1)
 
     s.run()
 

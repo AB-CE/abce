@@ -6,7 +6,7 @@ from abce.tools import is_zero
 
 class UtilityHousehold(abce.Agent, abce.Household):
     def init(self, simulation_parameters, agent_parameters):
-        self.last_round = simulation_parameters['num_rounds'] - 1
+        self.last_round = simulation_parameters['rounds'] - 1
 
         if self.idn == 0 or self.idn == 2:
             def utility(goods):

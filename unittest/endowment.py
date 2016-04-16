@@ -5,7 +5,7 @@ from abce.tools import *
 
 class Endowment(abce.Agent, abce.Household):
     def init(self, simulation_parameters, agent_parameters):
-        self.last_round = simulation_parameters['num_rounds'] - 1
+        self.last_round = simulation_parameters['rounds'] - 1
         self.create('labor_endowment', 1)
         self.create('cow', 1)
         self.set_cobb_douglas_utility_function({'milk': 2})

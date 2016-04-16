@@ -28,16 +28,16 @@ This is a minimal template for a start.py::
     from abce import *
 
 
-    for parameters in read_parameters('simulation_parameters.csv'):
-        s = Simulation(parameters)
-        action_list = [
-        ('all', 'one'),
-        ('all', 'two'),
-        ('all', 'three'),
-        ]
-        s.add_action_list(action_list)
-        s.build_agents(Agent, 2)
-        s.run()
+    parameters = {'name': 'name', num_rounds': 100}
+    s = Simulation(parameters)
+    action_list = [
+    ('all', 'one'),
+    ('all', 'two'),
+    ('all', 'three'),
+    ]
+    s.add_action_list(action_list)
+    s.build_agents(Agent, 2)
+    s.run()
 """
 from __future__ import division
 import csv
@@ -158,7 +158,8 @@ class Simulation:
 
 
     Example::
-     for simulation_parameters in read_parameters('simulation_parameters.csv'):
+
+        simulation_parameters = {'num_rounds': 500}
         action_list = [
         ('household', 'recieve_connections'),
         ('household', 'offer_capital'),
@@ -180,14 +181,18 @@ class Simulation:
 
         w.run()
     """
-    def __init__(self, simulation_parameters, cores=None):
-        self.simulation_parameters = simulation_parameters
+    def __init__(self, rounds, name='abce', random_seed=None, trade_logging='off', cores=None, **chatch):
         """ This sets up the simulation.
 
-        simulation_parameters:
-            Simulation parameters are the parameter you specify for the current
-            simulation. It is a dictionary. That contains at least a key 'rounds'.
-            That specifies the number of rounds.
+        rounds:
+            how many rounds the simulation lasts
+
+        random_seed:
+            Not implemented in this verion
+
+        trade_logging:
+            Whether trades are logged,trade_logging can be
+            'group' (fast) or 'individual' (slow) or 'off'
 
         cores:
             The number of cores of your processor that are used for the simulation.
@@ -197,6 +202,14 @@ class Simulation:
             Sometimes it is advisable to decrease the number of cores to the number
             of physical cores on your computer.
             'None' for all cores.
+
+        Example::
+
+            simulation = Simulation(rounds=1000, name='sim', trade_logging='individual', cores=None)
+
+            or
+
+            simulation = Simulation(**parameters, cores=None)
         """
         self.family_list = {}
         self._messages = {}
@@ -205,7 +218,6 @@ class Simulation:
         self._db_commands = {}
         self.num_agents = 0
         self._build_first_run = True
-        self._agent_parameters = None
         self.resource_endowment = defaultdict(list)
         self.perishable = []
         self.expiring = []
@@ -215,13 +227,13 @@ class Simulation:
         self.possessions_to_track_aggregate = defaultdict(list)
         self._start_year = 0
 
+        self.rounds = rounds
+
         try:
             os.makedirs(os.path.abspath('.') + '/result/')
         except OSError:
             pass
-        if 'name' not in simulation_parameters:
-            simulation_parameters['name'] = 'set_name_in_simulation_parameters'
-        self.path = (os.path.abspath('.') + '/result/' + simulation_parameters['name'] + '_' +
+        self.path = (os.path.abspath('.') + '/result/' + name + '_' +
             datetime.datetime.now().strftime("%Y-%m-%d_%H-%M"))
         """ the path variable contains the path to the simulation outcomes it can be used
         to generate your own graphs as all resulting csv files are there.
@@ -234,28 +246,15 @@ class Simulation:
                 self.path += 'I'
 
         self.round = 0
-        try:
-            self.trade_logging_mode = simulation_parameters['trade_logging'].lower()
-        except KeyError:
-            self.trade_logging_mode = 'off'
-            print("'trade_logging' in simulation_parameters.csv not set"
-                  ", default to 'off', possible values "
-                  "('group' (fast) or 'individual' (slow) or 'off')")
-        if not(self.trade_logging_mode in ['individual', 'group', 'off']):
-            print(type(self.trade_logging_mode), self.trade_logging_mode, 'error')
-            SystemExit("'trade_logging' in simulation_parameters.csv can be "
+        self.trade_logging_mode = trade_logging
+        if self.trade_logging_mode not in ['individual', 'group', 'off']:
+            SystemExit("trade_logging can be "
                        "'group' (fast) or 'individual' (slow) or 'off'"
                        ">" + self.trade_logging_mode + "< not accepted")
-        assert self.trade_logging_mode in ['individual', 'group', 'off']
-
-        if self.trade_logging_mode == 'off':
-            trade_log=False
-        else:
-            trade_log=True
 
         manager = mp.Manager()
         self.database_queue = manager.Queue()
-        self._db = abce.db.Database(self.path, self.database_queue, trade_log=trade_log)
+        self._db = abce.db.Database(self.path, self.database_queue, trade_log=self.trade_logging_mode != 'off')
         self.logger_queue = manager.Queue()
 
         if cores is None:
@@ -263,6 +262,7 @@ class Simulation:
         else:
             self.cores = cores
 
+        self.sim_parameters = OrderedDict({'name': name, 'rounds': rounds, 'random_seed': random_seed})
 
     def add_action_list(self, action_list):
         """ add an `action_list`, which is a list of either:
@@ -382,7 +382,6 @@ class Simulation:
         """ This type of good lasts for several rounds, but eventually
         expires. For example computers would last for several years and than
         become obsolete.
-        The duration can be accessed in self.simulation_parameters[good].
 
         Args:
 
@@ -394,7 +393,6 @@ class Simulation:
         if len(self.family_list) > 0:
             raise SystemExit("WARNING: agents build before declare_expiring")
         self.expiring.append((good, duration))
-        self.simulation_parameters[good] = duration
 
     def declare_service(self, human_or_other_resource, units, service, groups=['all']):
         """ When the agent holds the human_or_other_resource, he gets 'units' of service every round
@@ -583,7 +581,7 @@ class Simulation:
                 self.family_names.append(family.name())
                 messagess[family.name()] = []
         try:
-            for year in xrange(self._start_year, self.simulation_parameters['num_rounds']):
+            for year in xrange(self._start_year, self.rounds):
                 self.round = year
                 print("\rRound" + str("%3d" % year))
                 self.execute_internal('produce_resource')
@@ -622,7 +620,7 @@ class Simulation:
         except AttributeError:
             pass
 
-    def build_agents(self, AgentClass, number=None, group_name=None, agent_parameters=None):
+    def build_agents(self, AgentClass, number=None, group_name=None, parameters={}, agent_parameters=None):
         """ This method creates agents.
 
         Args::
@@ -637,14 +635,18 @@ class Simulation:
             to give the group a different name than the lowercase
             class_name.
 
+        parameters:
+            a dictionary of parameters
+
         agent_parameters:
-            a dictionary of agent parameters to be given to the agent
+            a list of dictionaries, where each agent gets one dictionary.
+            The number of agents is the length of the list
 
         Example::
 
          w.build_agents(Firm, number=simulation_parameters['num_firms'])
-         w.build_agents(Bank, 1)
-         w.build_agents(CentralBank, number=1)
+         w.build_agents(Bank, parameters=simulation_parameters, agent_parameters=[{'name': UBS'},{'name': 'amex'},{'name': 'chase'})
+         w.build_agents(CentralBank, number=1, parameters={'rounds': num_rounds})
         """
         if not(group_name):
             group_name = AgentClass.__name__.lower()
@@ -653,19 +655,21 @@ class Simulation:
             num_agents_this_group = number
             agent_parameters = [None] * num_agents_this_group
         else:
-            number = len(agent_parameters)
+            num_agents_this_group = len(agent_parameters)
 
         self.family_list[group_name] = []
 
         MyManager.register('Family', Family)
 
+        self.sim_parameters[group_name] = {key: parameter
+                                           for key, parameter in parameters.iteritems()
+                                           if key not in self.sim_parameters.keys() + ['trade_logging']}
+
         for i in range(min(self.cores, num_agents_this_group)):
             manager = MyManager()
             manager.start()
             family = manager.Family(AgentClass, num_agents_this_group=num_agents_this_group, batch=i, num_managers=self.cores,
-                                    agent_args={'simulation_parameters': self.simulation_parameters,
-                                                'agent_parameters': agent_parameters,
-                                                'group': group_name,
+                                    agent_args={'group': group_name,
                                                 'trade_logging': self.trade_logging_mode,
                                                 'database': self.database_queue,
                                                 'logger':self.logger_queue})
@@ -674,7 +678,7 @@ class Simulation:
                 family.declare_expiring(good, duration)
 
             try:
-                family.init(self.simulation_parameters, agent_parameters)
+                family.init(parameters, agent_parameters)
             except AttributeError:
                 print("Warning: agent has no init function")
 
@@ -698,7 +702,7 @@ class Simulation:
 
 
 
-    def build_agents_from_file(self, AgentClass, parameters_file=None, multiply=1):
+    def build_agents_from_file(self, AgentClass, parameters_file='agent_parameters.csv', multiply=1):
         """ This command builds agents of the class AgentClass from an csv file.
         This way you can build agents and give every single one different
         parameters.
@@ -715,14 +719,6 @@ class Simulation:
             def init(self, simulation_parameter, agent_parameters):
                 self.size = agent_parameters['firm_size']
         """
-        # TODO declare all self.simulation_parameters['num_XXXXX'], when this is called the first time
-        if parameters_file is None:
-            parameters_file = self.simulation_parameters.get('agent_parameters_file', 'agent_parameters.csv')
-        elif self._agent_parameters is None:
-            if parameters_file != self._agent_parameters:
-                SystemExit('All agents must be declared in the same agent_parameters.csv file')
-        self._agent_parameters = parameters_file
-
         agent_class = AgentClass.__name__.lower()
         agent_parameters = []
         csvfile = open(parameters_file, 'rU')
@@ -755,7 +751,7 @@ class Simulation:
 
     def _write_description_file(self):
         description = open(os.path.abspath(self.path + '/description.txt'), 'w')
-        description.write(json.dumps(self.simulation_parameters, indent=4, skipkeys=True, default=lambda x: 'not_serializeable'))
+        description.write(json.dumps(self.sim_parameters, indent=4, skipkeys=True, default=lambda x: 'not_serializeable'))
 
     def _displaydescribtion(self):
         description = open(self.path + '/description.txt', 'r')
@@ -779,7 +775,7 @@ class Simulation:
 
         Example::
 
-            w = Simulation(simulation_parameters)
+            w = Simulation(...)
             ...
             w.run()
             w.graphs()
@@ -788,7 +784,7 @@ class Simulation:
 
     def pickle(self, name):
         with open('%s.simulation' % name, 'wb') as jar:
-            json.dump({'year': self.simulation_parameters['num_rounds'],
+            json.dump({'year': self.rounds,
                        'agents': [agent.__dict__ for agent in self.agents_list['all']],
                        'messages': self.messagess},
                       jar, default=handle_non_pickleable)
@@ -841,8 +837,7 @@ class repeat:
         action_list that is repeated
 
      repetitions:
-        the number of times that an actionlist is repeated or the name of
-        the corresponding parameter in simulation_parameters.csv
+        the number of times that an actionlist is repeated
 
     Example with number of repetitions in simulation_parameters.csv::
 

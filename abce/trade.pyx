@@ -633,7 +633,7 @@ class Trade:
             elif typ == '_g':
                 self._haves[msg[0]] += msg[1]
             elif typ == '_q':
-                self._quotes[msg['idn']] = msg
+                self._quotes[msg.idn] = msg
             elif typ == '!o':
                 if msg['makerequest'] == 'r':
                     self._contract_requests[msg['good']].append(msg)

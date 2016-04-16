@@ -5,7 +5,7 @@ from abce.tools import *
 
 class ProductionMultifirm(abce.Agent, abce.FirmMultiTechnologies):
     def init(self, simulation_parameters, agent_parameters):
-        self.last_round = simulation_parameters['num_rounds'] - 1
+        self.last_round = simulation_parameters['rounds'] - 1
 
         def mes(goods):
             return max(goods['a'] ** 2, goods['a'] ** 0.5 * goods['b'])

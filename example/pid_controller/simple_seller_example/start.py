@@ -14,12 +14,12 @@ from abce import Simulation, gui
 
 simulation_parameters = {'name':'name',
                          'random_seed': None,
-                         'num_rounds': 3000,
+                         'rounds': 3000,
                          'trade_repetitions': 20}
 
 @gui(simulation_parameters)
 def main(simulation_parameters):
-    s = Simulation(simulation_parameters)
+    s = Simulation(**simulation_parameters)
     action_list = [
 
         ('firm', 'production'),

@@ -6,7 +6,7 @@ import random
 
 class Give(abce.Agent):
     def init(self, simulation_parameters, agent_parameters):
-        self.last_round = simulation_parameters['num_rounds'] - 1
+        self.last_round = simulation_parameters['rounds'] - 1
         if self.idn == 1:
             self.tests = {'all': False, 'topic': False}
         else:

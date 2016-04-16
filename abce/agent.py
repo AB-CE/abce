@@ -59,10 +59,13 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
     For example::
 
         class Household(abceagent.Agent, abceagent.Household):
-            def __init__(self, simulation_parameters, agent_parameters, _pass_to_engine):
-            abceagent.Agent.__init__(self, *_pass_to_engine)
+            def init(self, simulation_parameters, agent_parameters):
+                ...
     """
-    def __init__(self, simulation_parameters, agent_parameters, idn, group, trade_logging, database, logger):
+    def __init__(self, idn, group, trade_logging, database, logger):
+        """ Do not overwrite __init__ instead use a method called init instead.
+        init is called whenever the agent are build.
+        """
         self.idn = idn
         """ self.idn returns the agents idn READ ONLY"""
         self.name = '%s_%i:' % (group, idn)
@@ -75,19 +78,13 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         #TODO should be group_address(group), but it would not work
         # when fired manual + ':' and manual group_address need to be removed
         self._out = []
-        self.simulation_parameters = simulation_parameters
         """ The simulation parameters and the number of agents in other groups
 
          Useful entries:
 
-            'num_rounds':
+            'rounds':
                  the total number of rounds in the simulation.
-            'num_goup_name':
-                the number of agents for each group in the simulation. e.G.
-                'num_myagents'
         """
-        self.agent_parameters = agent_parameters[self.idn]
-
         self.database_connection = database
         self.logger_connection = logger
 

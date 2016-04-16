@@ -5,7 +5,7 @@ from abce.firm import Firm
 
 class GiveExpiringCapital(abce.Agent, Firm):
     def init(self, simulation_parameters, _,):
-        self.last_round = simulation_parameters['num_rounds'] - 1
+        self.last_round = simulation_parameters['rounds'] - 1
         if self.idn == 0:
             self.create('xcapital', 10)
             assert self.possession('xcapital') == 10, self.possession('xcapital')
