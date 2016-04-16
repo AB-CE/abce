@@ -43,9 +43,7 @@ from random import shuffle
 from abce.tools import NotEnoughGoods
 from messaging import Message
 from libc.float cimport DBL_EPSILON
-cdef extern from "numpy/npy_math.h":
-    bint npy_isfinite(double x)
-
+from libc.math cimport isfinite
 
 cdef double fmax(double a, double b):
     if a > b:
@@ -660,7 +658,7 @@ cdef double bound_zero(double x):
     """ asserts that variable is above zero, where foating point imprecission is accounted for,
     and than makes sure it is above 0, without floating point imprecission """
     assert x > - DBL_EPSILON, '%.30f is smaller than 0 - epsilon (%.30f)' % (x, - DBL_EPSILON)
-    assert npy_isfinite(x), x
+    assert isfinite(x), x
     if x < 0:
         return 0
     else:

@@ -1,7 +1,5 @@
 #from distutils.core import setup
 #from distutils.extension import Extension
-import numpy
-
 from Cython.Distutils import build_ext
 
 try:
@@ -14,7 +12,6 @@ except ImportError:
 setup(
   name = 'trade',
   ext_modules=[
-    Extension('trade', ['trade.pyx'], include_dirs = [numpy.get_include()])],
+    Extension('trade', ['trade.pyx'])],
   cmdclass = {'build_ext': build_ext}
-
 )
