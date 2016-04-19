@@ -28,7 +28,7 @@ setup(name='abce',
       package_dir={'abce': 'abce'},
       packages=['abce'],
       long_description=open('README.rst').read(),
-      install_requires=['numpy', 'pandas', 'networkx'],
+      install_requires=['pygal', 'numpy', 'pandas', 'networkx'],
       include_package_data=True,
       ext_modules=ext_modules)
 
