@@ -18,6 +18,22 @@ from __future__ import division
 from collections import defaultdict
 from random import shuffle
 
+class Quotation():
+    def __init__(self, msg):
+        self.__dict__ = msg
+
+    def __get__(self):
+        return self.__dict__
+
+    def __str__(self):
+        return str(self.__dict__)
+
+    def __getitem__(self, key):
+        return self.__dict__[key]
+
+    def __repr__(self):
+        return str(self.__dict__)
+
 
 class Quote:
     """ Quotes as opposed to trades are uncommitted offers. They can be made
@@ -125,7 +141,7 @@ class Quote:
             price:
                 price per unit
         """
-        offer = {'sender_group': self.group,
+        offer = Quotation({'sender_group': self.group,
                  'sender_idn': self.idn,
                  'receiver_group': receiver_group,
                  'receiver_idn': receiver_idn,
@@ -133,7 +149,7 @@ class Quote:
                  'quantity': quantity,
                  'price': price,
                  'buysell': 'qs',
-                 'idn': self._offer_counter()}
+                 'idn': self._offer_counter()})
         self._send(receiver_group, receiver_idn, '_q', offer)
         return offer
 
@@ -156,7 +172,7 @@ class Quote:
             price:
                 price per unit
         """
-        offer = {'sender_group': self.group,
+        offer = Quotation({'sender_group': self.group,
                  'sender_idn': self.idn,
                  'receiver_group': receiver_group,
                  'receiver_idn': receiver_idn,
@@ -164,6 +180,6 @@ class Quote:
                  'quantity': quantity,
                  'price': price,
                  'buysell': 'qb',
-                 'idn': self._offer_counter()}
+                 'idn': self._offer_counter()})
         self._send(receiver_group, receiver_idn, '_q', offer)
         return offer
