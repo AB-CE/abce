@@ -3,7 +3,7 @@ to the line in agents_parameter.csv
 """
 from __future__ import division
 import multiprocessing as mp
-from abce import Simulation, read_parameters, gui
+from abce import Simulation, gui
 from firm import Firm
 from household import Household
 
@@ -11,11 +11,11 @@ from household import Household
 simulation_parameters = {'name': 'name',
                          'trade_logging': 'off',
                          'random_seed': None,
-                         'num_rounds': 40}
+                         'rounds': 40}
 
 @gui(simulation_parameters)
 def main(simulation_parameters):
-    w = Simulation(simulation_parameters)
+    w = Simulation(rounds=simulation_parameters['rounds'])
     action_list = [
     ('household', 'sell_labor'),
     ('firm', 'buy_inputs'),

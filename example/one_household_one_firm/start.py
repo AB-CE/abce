@@ -14,11 +14,11 @@ from household import Household
 
 parameters = {'name': '2x2',
               'random_seed': None,
-              'num_rounds': 10}
+              'rounds': 10}
 
 @gui(parameters)
 def main(parameters):
-    w = Simulation(parameters)
+    w = Simulation(rounds=parameters['rounds'])
     action_list = [
         ('household', 'sell_labor'),
         ('firm', 'buy_labor'),
