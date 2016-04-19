@@ -47,11 +47,14 @@ Installation Windows
 1. Install the *python2.7* anaconda distribution from https://continuum.io/downloads
    (You can also install python and numpy/scipy by hand)
 
-2. download the zip file from: https://github.com/DavoudTaghawiNejad/abce
+2. Install Visual C++ for python 2.7 from here: https://www.microsoft.com/en-us/download/details.aspx?id=44266
+   (for speed much some of background things are written in C)
 
-3. extract zip file and change in the directory
+3. download the zip file from: https://github.com/DavoudTaghawiNejad/abce
 
-4. In the terminal::
+4. extract zip file and change in the directory
+
+5. In the terminal::
 
     python setup.py install
 
