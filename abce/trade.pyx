@@ -42,8 +42,9 @@ from __future__ import division
 from random import shuffle
 from abce.tools import NotEnoughGoods
 from messaging import Message
-from libc.float cimport DBL_EPSILON
-from libc.math cimport isfinite
+from numpy import isfinite
+
+cdef DBL_EPSILON = 0.0000001
 
 cdef double fmax(double a, double b):
     if a > b:
@@ -658,7 +659,8 @@ cdef double bound_zero(double x):
     """ asserts that variable is above zero, where foating point imprecission is accounted for,
     and than makes sure it is above 0, without floating point imprecission """
     assert x > - DBL_EPSILON, '%.30f is smaller than 0 - epsilon (%.30f)' % (x, - DBL_EPSILON)
-    assert isfinite(x), x
+    if not isfinite(x):
+        print 'warning infinity in trade'
     if x < 0:
         return 0
     else:
