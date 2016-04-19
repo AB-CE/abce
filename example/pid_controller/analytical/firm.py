@@ -23,7 +23,7 @@ class Firm(abce.Agent, abce.Firm):
         self.y = np.ones(20)
         self.L = 4
         self.L_1 = 0
-        self.production = 0
+
 
     def my_production(self):
         """ produce missing cookies """
@@ -38,7 +38,6 @@ class Firm(abce.Agent, abce.Firm):
 
     def adjust_price(self):
         self.total_orders = self.get_messages('demand')[0]['content']
-        self.log('total', {'orders': self.total_orders})
         self.dX[self.round % 20] = [1, self.L, self.price_1, self.L_1]
         self.X[self.round % 20] = [1, self.L]
 
@@ -65,6 +64,5 @@ class Firm(abce.Agent, abce.Firm):
             error = p + up - w - uw
             self.L = self.production_controller.update(error)
 
-            self.log('production', {'production': self.production,
-                                    'error_cum': self.production_controller.error_cum,
+            self.log('production', {'error_cum': self.production_controller.error_cum,
                                     'error': error})

@@ -14,7 +14,7 @@ from abce import Simulation, gui
 import graphs
 
 
-simulation_parameters = {'name': "analitical",
+simulation_parameters = {'name': "analytical",
                          'random_seed': None,
                          'rounds': 3000,
                          'trade_repetitions': 20}
