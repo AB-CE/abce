@@ -44,7 +44,7 @@ Installation Windows
 
 - windows currently is under development and not fully tested
 
-1. Install the python-anaconda distribution from https://continuum.io/downloads
+1. Install the *python2.7* anaconda distribution from https://continuum.io/downloads
    (You can also install python and numpy/scipy by hand)
 
 2. download the zip file from: https://github.com/DavoudTaghawiNejad/abce
