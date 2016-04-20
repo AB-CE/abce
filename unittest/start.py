@@ -19,6 +19,7 @@ from messageb import MessageB
 
 
 def main():
+    rounds = 30
     all = ['buy',
            'sell',
            'give',
@@ -29,7 +30,7 @@ def main():
            'utilityhousehold']
 
 
-    s = Simulation(rounds=30, cores=None)
+    s = Simulation(rounds=rounds, cores=None)
     action_list = [
         repeat([
             (all, 'one'),
@@ -64,22 +65,22 @@ def main():
     #s.panel('buy', variables=['price'])
     #s.declare_expiring('xcapital', 5)
 
-    s.build_agents(Buy, 'buy', 1000)
+    s.build_agents(Buy, 'buy', 1000, parameters={'rounds': rounds})
     #s.build_agents(QuoteBuy, 2)
-    s.build_agents(Sell, 'sell', 1000)
-    s.build_agents(Give, 'give', 2)  # tests give and messaging
-    s.build_agents(Endowment, 'endowment', 2)  # tests declare_round_endowment and declare_perishable
-    s.build_agents(LoggerTest, 'loggertest', 1)
-    s.build_agents(ProductionMultifirm, 'productionmultifirm', 1)
-    s.build_agents(ProductionFirm, 'productionfirm', 5)
-    s.build_agents(UtilityHousehold, 'utilityhousehold', 5)
+    s.build_agents(Sell, 'sell', 1000, parameters={'rounds': rounds})
+    s.build_agents(Give, 'give', 2, parameters={'rounds': rounds}) # tests give and messaging
+    s.build_agents(Endowment, 'endowment', 2, parameters={'rounds': rounds})  # tests declare_round_endowment and declare_perishable
+    s.build_agents(LoggerTest, 'loggertest', 1, parameters={'rounds': rounds})
+    s.build_agents(ProductionMultifirm, 'productionmultifirm', 1, parameters={'rounds': rounds})
+    s.build_agents(ProductionFirm, 'productionfirm', 5, parameters={'rounds': rounds})
+    s.build_agents(UtilityHousehold, 'utilityhousehold', 5, parameters={'rounds': rounds})
     #s.build_agents(ContractSeller, 2)
     #s.build_agents(ContractBuyer, 2)
     #s.build_agents(ExpiringCapital, 1)
     #s.build_agents(GiveExpiringCapital, 2)
-    s.build_agents(BuyExpiringCapital, 'buyexpiringcapital', 2)
-    s.build_agents(MessageA, 'messagea', 20)
-    s.build_agents(MessageB, 'messageb', 20)
+    s.build_agents(BuyExpiringCapital, 'buyexpiringcapital', 2, parameters={'rounds': rounds})
+    s.build_agents(MessageA, 'messagea', 20, parameters={'rounds': rounds})
+    s.build_agents(MessageB, 'messageb', 20, parameters={'rounds': rounds})
 
     s.run()
 
