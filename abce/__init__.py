@@ -289,40 +289,6 @@ class Simulation:
         """
         self.action_list = action_list
 
-    def add_action_list_from_file(self, parameter):
-        """ The action list can also be declared in the simulation_parameters.csv
-        file. Which allows you to run a batch of simulations with different
-        orders. In simulation_parameters.csv there must be a column with which
-        contains the a declaration of the action lists:
-
-        +-------------+-------------+--------------------------------------------+-----------+
-        | num_rounds  | num_agents  | action_list                                | endowment |
-        +=============+=============+============================================+===========+
-        | 1000,       | 10,         | [ ('firm', 'sell'), ('household', 'buy')], | (5,5)     |
-        +-------------+-------------+--------------------------------------------+-----------+
-        | 1000,       | 10,         | [ ('firm', 'buf'), ('household', 'sell')], | (5,5)     |
-        +-------------+-------------+--------------------------------------------+-----------+
-        | 1000,       | 10,         | [ ('firm', 'sell'),                        |           |
-        |             |             | ('household', 'calculate_net_wealth'),     |           |
-        |             |             | ('household', 'buy')],                     | (5,5)     |
-        +-------------+-------------+--------------------------------------------+-----------+
-
-        The command::
-
-            self.add_action_list_from_file('parameters['action_list'])
-
-        Args::
-
-            parameter
-                a string that contains the action_list. The string can be read
-                from the simulation_parameters file: parameters['action_list'], where action_list
-                is the column header in simulation_parameters.
-
-
-        """
-        self.add_action_list(eval(parameter))
-        # TODO test
-
     def declare_round_endowment(self, resource, units, product, groups=['all']):
         """ At the beginning of very round the agent gets 'units' units of good 'product' for
         every 'resource' he possesses.
