@@ -61,80 +61,9 @@ from quote import Quote
 import json
 import abcegui
 from family import Family
+from abcegui import gui
 
 
-def gui(parameters, names=None, title=None, text=None):
-    """ gui is a decorator that can be used to add a graphical user interface
-    to your simulation.
-
-    Args:
-
-        parameters:
-            a dictionary with the parameter name as key and an example value as
-            value. Instead of the example value you can also put a tuple:
-            (min, default, max)
-
-            parameters can be:
-            - float:
-                {'exponent': (0.0, 0.5, 1.1)}
-            - int:
-                {'num_firms': (0, 100, 100000)}
-            - dict or list, which should be strings of a dict or a list (see
-              example):
-                {'list_to_edit': "['brd', 'mlk', 'add']"}
-            - everything else that can be evaluated as a string, see
-              (eval)[https://docs.python.org/2/library/functions.html#eval]
-            - a list of options:
-                {'several_options': ['opt_1', 'opt_2', 'opt_3']}
-            - a sting:
-                {'name': '2x2'}
-
-        names (optional):
-            a dictionary with the parameter name as key and an alternative
-            text to be displayed instead.
-
-        title:
-            a string with the name of the simulation.
-
-        text:
-            a description text of the simulation. Can be html.
-
-
-    Example::
-
-        simulation_parameters = {'name': 'name',
-                             'trade_logging': 'off',
-                             'random_seed': None,
-                             'num_rounds': 40,
-                             'num_firms': (0, 100, 100000),
-                             'num_household': (0, 100, 100000),
-                             'exponent': (0.0, 0.5, 1.1),
-                             'several_options': ['opt_1', 'opt_2', 'opt_3']
-                             'list_to_edit': "['brd', 'mlk', 'add']",
-                             'dictionary_to_edit': "{'v1': 1, 'v2': 2}"}
-
-        names = {'num_firms': 'Number of Firms'}
-
-        @gui(parameters, simulation_parameters, names=names)
-        def main(simulation_parameters):
-            w = Simulation(simulation_parameters)
-            action_list = [
-            ('household', 'sell_labor'),
-            ('firm', 'buy_inputs'),
-            ('firm', 'production')]
-            w.add_action_list(action_list)
-
-            w.build_agents(Firm, simulation_parameters['num_firms'])
-            w.build_agents(Household, simulation_parameters['num_households'])
-            w.run()
-
-        if __name__ == '__main__':
-            main(simulation_parameters)
-    """
-    def inner(func):
-        abcegui.generate(new_inputs=parameters, new_simulation=func, names=None, title=None, text=None)
-        return abcegui.run
-    return inner  # return a function object
 
 def execute_wrapper(inp):
     return inp[0].execute(inp[1], inp[2])
@@ -589,28 +518,28 @@ class Simulation:
     def build_agents(self, AgentClass, group_name, number=None, parameters={}, agent_parameters=None):
         """ This method creates agents.
 
-        Args::
+        Args:
 
-        AgentClass:
-            is the name of the AgentClass that you imported
+            AgentClass:
+                is the name of the AgentClass that you imported
 
-        group_name:
-            the name of the group, as it will be used in the action list and transactions.
-            Should generally be lowercase of the AgentClass.
+            group_name:
+                the name of the group, as it will be used in the action list and transactions.
+                Should generally be lowercase of the AgentClass.
 
-        number:
-            number of agents to be created.
+            number:
+                number of agents to be created.
 
-         group_name (optional):
-            to give the group a different name than the lowercase
-            class_name.
+             group_name (optional):
+                to give the group a different name than the lowercase
+                class_name.
 
-        parameters:
-            a dictionary of parameters
+            parameters:
+                a dictionary of parameters
 
-        agent_parameters:
-            a list of dictionaries, where each agent gets one dictionary.
-            The number of agents is the length of the list
+            agent_parameters:
+                a list of dictionaries, where each agent gets one dictionary.
+                The number of agents is the length of the list
 
         Example::
 
@@ -667,55 +596,6 @@ class Simulation:
                 family.set_network_drawing_frequency(None)
 
             self.family_list[group_name].append(family)
-
-
-
-    def build_agents_from_file(self, AgentClass, parameters_file='agent_parameters.csv', multiply=1):
-        """ This command builds agents of the class AgentClass from an csv file.
-        This way you can build agents and give every single one different
-        parameters.
-
-        The file must be tab separated. The first line contains the column
-        headers. The first column "agent_class" specifies the agent_class. The
-        second column "number" (optional) allows you to create more than one
-        agent of this type. The other columns are parameters that you can
-        access in own_parameters the init function of the agent.
-
-        Agent created from a csv-file::
-
-         class Agent(AgentEngine):
-            def init(self, simulation_parameter, agent_parameters):
-                self.size = agent_parameters['firm_size']
-        """
-        agent_class = AgentClass.__name__.lower()
-        agent_parameters = []
-        csvfile = open(parameters_file, 'rU')
-        dialect = csv.Sniffer().sniff(csvfile.read(1024))
-        csvfile.seek(0)
-        agent_file = csv.reader(csvfile, dialect)
-        keys = [key for key in agent_file.next()]
-        if not(set(('agent_class', 'number')).issubset(keys)):
-            SystemExit(parameters_file + " does not have a column 'agent_class'"
-                       "and/or 'number'")
-
-        agents_list = []
-        for line in agent_file:
-            cells = [_number_or_string(cell) for cell in line]
-            agents_list.append(dict(zip(keys, cells)))
-
-        if self._build_first_run:
-            for line in agents_list:
-                num_entry = 'num_' + line['agent_class'].lower()
-                if num_entry not in self.simulation_parameters:
-                    self.simulation_parameters[num_entry] = 0
-                self.simulation_parameters[num_entry] += int(line['number'])
-            self._build_first_run = False
-
-        for line in agents_list:
-            if line['agent_class'] == agent_class:
-                agent_parameters.extend([line] * line['number'] * multiply)
-
-        self.build_agents(AgentClass, agent_parameters=agent_parameters)
 
     def _write_description_file(self):
         description = open(os.path.abspath(self.path + '/description.txt'), 'w')

@@ -26,6 +26,83 @@ gtitle = 'ABCE Simulation'
 gtext = abcedescription
 opened = False
 
+def gui(parameters, names=None, title=None, text=None):
+    """ gui is a decorator that can be used to add a graphical user interface
+    to your simulation.
+
+    Args:
+
+        parameters:
+            a dictionary with the parameter name as key and an example value as
+            value. Instead of the example value you can also put a tuple:
+            (min, default, max)
+
+            parameters can be:
+                - float:
+                    {'exponent': (0.0, 0.5, 1.1)}
+
+                - int:
+                    {'num_firms': (0, 100, 100000)}
+
+                - dict or list, which should be strings of a dict or a list (see example):
+                    {'list_to_edit': "['brd', 'mlk', 'add']"}
+
+                - everything else that can be evaluated as a string, see
+                  (eval)[https://docs.python.org/2/library/functions.html#eval]
+
+                - a list of options:
+                    {'several_options': ['opt_1', 'opt_2', 'opt_3']}
+
+                - a string:
+                    {'name': '2x2'}
+
+        names (optional):
+            a dictionary with the parameter name as key and an alternative
+            text to be displayed instead.
+
+        title:
+            a string with the name of the simulation.
+
+        text:
+            a description text of the simulation. Can be html.
+
+
+    Example::
+
+        simulation_parameters = {'name': 'name',
+                             'trade_logging': 'off',
+                             'random_seed': None,
+                             'num_rounds': 40,
+                             'num_firms': (0, 100, 100000),
+                             'num_household': (0, 100, 100000),
+                             'exponent': (0.0, 0.5, 1.1),
+                             'several_options': ['opt_1', 'opt_2', 'opt_3']
+                             'list_to_edit': "['brd', 'mlk', 'add']",
+                             'dictionary_to_edit': "{'v1': 1, 'v2': 2}"}
+
+        names = {'num_firms': 'Number of Firms'}
+
+        @gui(parameters, simulation_parameters, names=names)
+        def main(simulation_parameters):
+            w = Simulation(simulation_parameters)
+            action_list = [
+            ('household', 'sell_labor'),
+            ('firm', 'buy_inputs'),
+            ('firm', 'production')]
+            w.add_action_list(action_list)
+
+            w.build_agents(Firm, simulation_parameters['num_firms'])
+            w.build_agents(Household, simulation_parameters['num_households'])
+            w.run()
+
+        if __name__ == '__main__':
+            main(simulation_parameters)
+    """
+    def inner(func):
+        abcegui.generate(new_inputs=parameters, new_simulation=func, names=None, title=None, text=None)
+        return abcegui.run
+    return inner  # return a function object
+
 def newest_subdirectory(directory='.'):
     directory = os.path.abspath(directory)
     all_subdirs = [os.path.join(directory, name)
