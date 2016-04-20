@@ -99,8 +99,8 @@ def gui(parameters, names=None, title=None, text=None):
             main(simulation_parameters)
     """
     def inner(func):
-        abcegui.generate(new_inputs=parameters, new_simulation=func, names=None, title=None, text=None)
-        return abcegui.run
+        generate(new_inputs=parameters, new_simulation=func, names=None, title=None, text=None)
+        return run
     return inner  # return a function object
 
 def newest_subdirectory(directory='.'):
