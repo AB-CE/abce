@@ -1,11 +1,15 @@
 from __future__ import division
-import multiprocessing as mp
 from firm import Firm
 from household import Household
-from abce import Simulation, read_parameters, repeat
+from abce import Simulation, gui
 
+simulation_parameters = {'name', 'name',
+                         'rounds': 500,
+                         'firms': 5,
+                         'households': 5}
+
+@gui(simulation_parameters)
 def main():
-    for simulation_parameters in read_parameters('simulation_parameters.csv'):
         s = Simulation(simulation_parameters)
         action_list = [
         repeat([
@@ -16,8 +20,12 @@ def main():
         ]
         s.add_action_list(action_list)
 
-        s.build_agents(Firm, 5)
-        s.build_agents(Household, 5)
+        s.build_agents(Firm,
+                       simulation_parameters['firms'],
+                       parameters=simulation_parameters)
+        s.build_agents(Household,
+                       simulation_parameters['household'],
+                       parameters=simulation_parameters)
 
         s.declare_round_endowment(
                     resource='labor_endowment',
@@ -32,6 +40,5 @@ def main():
         s.run()
 
 if __name__ == '__main__':
-    mp.freeze_support()
     main()
 
