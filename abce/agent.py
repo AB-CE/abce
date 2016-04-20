@@ -47,6 +47,7 @@ import random
 from abce.expiringgood import ExpiringGood
 from pprint import pprint
 import traceback
+import random
 
 
 class Agent(Database, NetworkLogger, Trade, Messaging):
@@ -62,7 +63,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
             def init(self, simulation_parameters, agent_parameters):
                 ...
     """
-    def __init__(self, idn, group, trade_logging, database, logger):
+    def __init__(self, idn, group, trade_logging, database, logger, random_seed):
         """ Do not overwrite __init__ instead use a method called init instead.
         init is called whenever the agent are build.
         """
@@ -126,6 +127,8 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         self._resources = []
         self.variables_to_track_panel = []
         self.variables_to_track_aggregate = []
+
+        random.seed(random_seed)
 
     def possession(self, good):
         """ returns how much of good an agent possesses.

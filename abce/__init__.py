@@ -62,7 +62,7 @@ import json
 import abcegui
 from family import Family
 from abcegui import gui
-
+import random
 
 
 def execute_wrapper(inp):
@@ -191,7 +191,12 @@ class Simulation:
         else:
             self.cores = cores
 
+        if random_seed is None or random_seed == 0:
+            random_seed = time.time()
+        random.seed(random_seed)
+
         self.sim_parameters = OrderedDict({'name': name, 'rounds': rounds, 'random_seed': random_seed})
+
 
     def add_action_list(self, action_list):
         """ add an `action_list`, which is a list of either:
@@ -569,7 +574,8 @@ class Simulation:
                                     agent_args={'group': group_name,
                                                 'trade_logging': self.trade_logging_mode,
                                                 'database': self.database_queue,
-                                                'logger':self.logger_queue})
+                                                'logger':self.logger_queue,
+                                                'random_seed': random.random()})
 
             for good, duration in self.expiring:
                 family.declare_expiring(good, duration)
