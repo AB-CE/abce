@@ -646,11 +646,11 @@ class Trade:
                 self._contracts_pay[msg['good']].append(msg)
             elif typ == '!d':
                 self._haves[msg.good] += msg.quantity
-                self._contracts_delivered.append((msg.receiver_group, msg.receiver_idn))
+                self._contracts_deliver[msg.idn]['delivered'] = self.round
                 self._log_receive_accept(msg)
             elif typ == '!p':
                 self._haves['money'] += msg.price
-                self._contracts_payed.append((msg.receiver_group, msg.receiver_idn))
+                self._contracts_pay[msg.idn]['payed'] = self.round
                 self._log_receive_accept(msg)
             else:
                 self._msgs.setdefault(typ, []).append(Message(msg))

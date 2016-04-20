@@ -97,3 +97,51 @@ column and assigns it to the self.sector variable. The file simulation
 parameters is read - line by line - into the variable simulation_parameters.
 It can be used in start.py and in the agents with
 simulation_parameters['columnlabel'].
+
+50000 agents example
+====================
+
+This is a sheer speed demonstration, that lets 50000 agents trade.
+
+PID controllers
+===============
+
+PID controller are a simple algorithm for firms to set prices and
+quantities. PID controller, work like a steward of a ship. He
+steers to where he wants to go and after each action corrects
+the direction based on how the ship changed it's direction,
+
+pid_controller analytical
++++++++++++++++++++++++++
+
+A simulation of the first Model of Ernesto Carrella's paper:
+Sticky Prices Microfoundations in a Agent Based Supply Chain
+Section 4 Firms and Production
+
+Here we have one firm and one market agent. The market agent
+has the demand function q = 102 - p. The PID controller uses
+an analytical model of the optimization problem.
+
+Simple Seller Example
++++++++++++++++++++++
+
+A simulation of the first Model of Ernesto Carrella's paper: Zero-Knowledge Traders,
+journal of artificial societies and social simulation, december 2013
+
+This is a partial 'equilibrium' model. A firm has a fixed production of 4 it offers
+this to a fixed population of 10 household. The household willingness to pay is
+household id * 10 (10, 20, 30 ... 90).
+The firms sets the prices using a PID controller.
+
+Fully PID controlled
+++++++++++++++++++++
+
+A simulation of the first Model of Ernesto Carrella's paper:
+Sticky Prices Microfoundations in a Agent Based Supply Chain
+Section 4 Firms and Production
+
+Here we have one firm and one market agent. The market agent
+has the demand function q = 102 - p. The PID controller
+has no other knowledge then the reaction of the market in
+terms of demand.
+

@@ -1,8 +1,6 @@
 Files in this package
 =====================
 
-abce/abce:
-    the actual ABCE engine, you have to import the modules in this directory
 abce/template:
     a template from which you can start writing your own simulation including start.py, agents and parameter files
 abce/examples:
@@ -12,4 +10,6 @@ abce/unitest:
     all functions of the simulation and the agent's base classes work correctly.
 abce/doc:
     The documentation source code.
+abce/abce:
+    the actual ABCE engine, you have to import the modules in this directory
 

@@ -32,14 +32,12 @@ ABCE runs an Mac, Windows and Linux.
    Household
    Messaging
    Database
-   Contract
    FirmMultiTechnologies
+   Contracting
    simulation
-   parameters
    simulation_results
    abcetools
    files
-   amazon_ec2
 
 
 .. raw:: latex

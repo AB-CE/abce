@@ -19,11 +19,6 @@ the good anymore. That means that agents can trade, produce or consume a good.
 The ownership and transformations (production or consumption) of goods are
 automatically handled by the platform.
 
-ABCE has been designed for economic problems where spacial representation
-is not important or the spacial position of the agents is (largely) fixed.
-Therefore instead of representing the simulation graphically, ABCE collects
-data of the simulation and outputs it ready to use for R and Excel.
-
 ABCE models are programmed in standard Python, stock functions of agents
 are inherited from archetype classes (Agent, Firm or Household). The only
 not-so-standard Python is that agents are executed in parallel by the
@@ -31,11 +26,13 @@ Simulation class (in start.py).
 
 ABCE allows the modeler to program agents as ordinary Python class-objects,
 but run the simulation on a multi-core/processor computer. It takes no
-effort or intervention from the modeller to run the simulation on a
+effort or intervention from the modeler to run the simulation on a
 multi-core processor production,
 consumption, trade, communication and similar functions are automatically
 handled by the platform. The modeler only needs to instruct ABCE, which
-automatically executes the specific functions.
+automatically executes the specific functions. The speed advantages of
+ABCE are typically only observed for 10000 agents and more. Below, it
+might be between half as fast to equally fast to a pure python implementation.
 
 ABCE is a scheduler [#scheduler]_ and a set of agent classes.
 According to the schedule the simulation class calls - each sub-round - agents
@@ -54,7 +51,8 @@ running and rewriting the simulation.
 
 ABCE uses Python - a language that is especially beginner friendly, but also
 easy to learn for people who already know object oriented programming
-languages such as Java, C++ or even MATLAB.
+languages such as Java, C++ or even MATLAB. ABCE uses C++, to handle
+background tasks to increase speed.
 Python allows simple, but fully functional, programming for economists.
 What is more Python is readable even for non Python programmers.
 
@@ -69,7 +67,8 @@ to enable a modeler to quickly write down
 code and quickly explore different alternatives of a model.
 
 Execution speed is a secondary concern to the goal of rapid development.
-Execution speed is achieved by making use of multiple-cores/processors.
+Execution speed is achieved by making use of multiple-cores/processors
+and using C++ for background tasks.
 
 Secondly, the modeler can concentrate on programming the behavior of the agents and
 the specification of goods, production and consumption function.
@@ -79,8 +78,7 @@ trade, communication are provided and automatically performed by the platform.
 Python has also been chosen as a programming language, because of
 it's rich environment of standard libraries. Python for example
 comes with a stock representation of agents in a spacial world,
-which allow the modeler to model a spatial model although ABCE
-was not designed for spatial models.
+which allow the modeler to model a spatial model.
 
 Python is a language that lends itself to writing of code fast, because it
 has low overhead. In Python variables do not have to be declared, garbage
@@ -90,35 +88,21 @@ Python, is slower than Java or C, but its reputation for slow speed is usually
 exaggerated. Various packages for numerical calculations and optimization such as numpy and scipy offer
 the C like speed to numerical problems. Contrary to the common belief
 Python is not an interpreted language. Python is compiled to bytecode and
-than executed. What is more Python in combination with ZeroMQ allows us
+than executed. ABCE allows
 to parallelize the code and gain significant speed advantage over
 single-threaded code, that does not make use of the speed advantage of
 multi-core or multi-processor computers.
 
-ABCE 0.3.1 supports Python 2.7, Python 3 support is planned for
-the 0.5 release.
+ABCE 0.5 supports Python 2.7, Python 3 support is planned.
 
 .. [#interpreter] Python is often falsely believe to be an interpreted language
 
-One of the mayor impediments of speed is that the GIL - global interpreter lock -
-of Python forces us to use the processing module instead of the threading module.
-Using multi-threading would allow the usage of ZeroMQ's  'inproc' socket instead of the
-slower 'ipc' or 'tpc' sockets. Once a GIL free version compatible with ZeroMQ is
-available this speed break can readily be removed as the processing and the threading
-module have the same API.
-
-In the current 3.0.1 version simulations are not entirely deterministic,
-the order of messages depends on which agent is called first. The call
-order of the agents by the virtual parallelization is not necessarily
-consistent. In other words, if your system has less cores than agents,
-not all agents do actually run in parallel. The parallelization is achieved
-by randomizing the message order. This leads to some agents sending the
-messages (or goods) faster than others, which determines the order of
-the messages before the randomization. The randomization in turn is not
-deterministic. In the 4.0.0 the randomization will not depend on the
-message order, but on the message id, which is a deterministic
-combination of the agent's name, id and message’s sequence number.
-
+For the simulated problem all agents are executed in parallel. This is
+achieved by randomizing the arrival of messages and orders between sub-rounds.
+For example if in one sub-round all agents make offers and in the next
+sub-round all agents receive and answer the offers, the order in which
+the agents receive is random, as if the agent's in the round before
+would make offers in a random order.
 
 Differences to other agent-based modeling platforms
 ---------------------------------------------------
@@ -167,7 +151,7 @@ AgentSheets,
 LSD,
     because it is a system dynamics rather than an agent-based modeling environment
 MAML,
-    because it does not use a standard programming language, but his its own.
+    because it does not use a standard programming language, but it is it's own.
 MAS-SOC,
     because we could not find it in the Internet and its documentation
     according to :raw-tex:`\cite{Allan2010}` is sparse.
@@ -230,7 +214,7 @@ turtle
 Fourth, many frameworks such as FLAME, NetLogo, StarLogo, Ascape
 and SugerScape and, in a
 more limited sense, Repast are designed with spacial representation in mind.
-For ABCE a spacial representation was explicitly not a design goal.
+For ABCE a spacial representation is possible, but not a design goal.
 However, since agents in ABCE are ordinary Python objects, they can use
 python modules such as python-turtle and therefore gain a spacial
 representation much like NetLogo. This does by no means mean that
@@ -239,7 +223,7 @@ position plays a role. If for example the model has different
 transport costs or other properties according to the geographical
 position of the agents, but the agent's do not move or the movement
 does not have to be represented graphically, ABCE could still be a
-reasonable choice.
+good choice.
 
 .. [#30000] https://pypi.python.org/
 
@@ -306,29 +290,8 @@ it has global list of sub-rounds that establish the sequence
 of actions in every round. Each of these sub-rounds lets a
 number of agents execute the same actions in parallel.
 
-This, however does not mean that the order of actions is
-fixed. It is possible that one sub-round leads to different
-actions according to the internal logic of the agent. An
-implementation of a discrete event scheduler like in MASON
-is on the TODO list for ABCE.
-
 MASON, like Repast Java is based on Java, while ABCE is
 based on Python, the advantages have been discussed before.
-
-MASON comes with a visualization layer. ABCE, does not have
-this feature for several reasons. First spacial models are
-not an explicit design goal of ABCE. Second for models
-that have a spacial representation the Python's standard
-turtle library can be used and ad Netlogo like functionality.
-Thirdly ABCE has the ability of detailed statistical output,
-which can be readily visualized with standard software,
-such as R and Excel.
-
-One form of spacial representation in MASON are networks.
-Networks in ABCE must be created by hand: in ABCE directed links
-of an agent are simply a Python-list with the id-numbers of the
-agents that are connected to it.
-
 
 Difference to NetLogo
 =====================
@@ -338,12 +301,6 @@ the Lisp language family. Netlogo is interpreted.
 :raw-tex:`\cite{Tisue2004}` Python on the
 other hand is a compiled [#compiled]_ general programming language.
 Consequently it is faster than NetLogo.
-
-NetLogo has the unique feature to integrate the interface with
-with the programming language. ABCE goes a different direction
-rather than integrating the interface it forgoes the interface
-completely and everything is written in Python (even the
-configuration files), parameters are specified in excel-sheets (.csv).
 
 Netlogo's most prominent feature are the turtle agents. To
 have turtle agents in ABCE, Python's turtle library has to be
@@ -366,7 +323,6 @@ programming language. Repast has been superseded by
 Repast Symphony which maintains all functionality, but
 is limited to Java. Symphony has a point and click
 interface for simple models. :raw-tex:\cite{NORTH2005a}
-
 
 Repast does allow static and dynamic scheduling.
 :raw-tex:`\cite{Collier}`. ABCE,

@@ -9,9 +9,9 @@ carefully checking the code. ABCE and Pythons brevity  and readability
 are certainly helping this. However structured testing procedures
 create more robust software.
 
-Currently all trade and exchange related as well as endowment and
-data logging facilities are unit tested. It is planned to extend
-unit testing to production and consumption, so that by version 0.4
+Currently all trade and exchange related as well as endowment, production
+utility and data logging facilities are unit tested. It is planned to extend
+unit testing to quotes, so that by version 0.6
 all functions of the agents will be fully unit tested.
 
 The modeler can run the unit testing facilities on his own system and therefore

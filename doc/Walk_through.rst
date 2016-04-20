@@ -12,7 +12,7 @@ of a physically closed economy.
     -  objects can be recovered (resources)
     -  exchanged (trade)
     -  transformed (production)
-    -  consumed (transformed :-))
+    -  consumed
     -  destroyed (not really) and time depreciated
 
     ABCE, takes care of trade, production / transformation and consumption
@@ -73,23 +73,38 @@ set up. Further it is declared, what is observed and written to the database. [#
 
 ::
 
-    from Firm import Firm
-    from Household import Household
+    from abce import Simulation, gui
+    from firm import Firm
+    from household import Household
 
-Here the Agent class Firm is imported from the file Firm.py. Likewise the Household class.
+Here the Agent class Firm is imported from the file firm.py. Likewise the Household class.
+Further the Simulation base class and the graphical user interface (gui) are imported
 
 
 
-ABCE, reads the model parameter from a spreed sheet, every line is one simulation::
 
- for parameters in simulation.read_parameters('simulation_parameters.csv'):
+Parameters are specified as a python dictionary:
 
-    ...
+simulation_parameters = {'name': 'name',
+                         'trade_logging': 'off',
+                         'random_seed': None,
+                         'rounds': 40}
 
-With the parameters ABCE loops over the intended line, to create the simulation
-and then runs the simulation. (after that it reads the next line an loops again).
-The variable parameters contain all parameters from 'simulation_parameters.csv'.
-See `simulation_parameters and agent_parameters` for details.
+
+    @gui(simulation_parameters)
+    def main(simulation_parameters):
+        ...
+
+if __name__ == '__main__':
+    main(simulation_parameters)
+
+The main function is generating and executing the simulation. When the main
+function is preceded with "@gui(simulation_parameters)" The graphical user interface is executed
+in your browser the simulation_parameters are used as default values. If now
+browser window open you have to go manually to the
+address "http://127.0.0.1:5000/". The graphical user interface can than start
+the simulation.
+
 
 To set up a new model, you create a class a that will comprise your model::
 
@@ -102,39 +117,52 @@ After this the order of actions, agents and objects are added.
 ::
 
     action_list = [
-    ('Household', 'offer_capital'),
-
+    ('household', 'offer_capital'),
+    (('firm', 'household'), 'buying')
     ...
 
-    ('Household', 'consumption')
+    ('household', 'consumption')
     ]
-    s.add_action_list(action_list)
+    simulation.add_action_list(action_list)
 
-This establishes the order of the simulation. It can also be read from file :meth:`abce.Simulation.add_action_list_from_file`
+This establishes the order of the simulation. Make sure you do not overwrite
+internal abilities/properties of the agents. Such as 'sell', 'buy' or 'consume'.
 
 In order to add an agent which was imported before we simply build these agents::
 
-        s.build_agents(Firm, 'number_of_firms')
-        s.build_agents(Household, 10)
+        simulation.build_agents(Firm, number=simulation_parameters['number_of_firms'], parameters=simulation_parameters)
+        simulation.build_agents(Household, number=10, parameters=simulation_parameters)
 
-The number of firms to be built is read from the column in simulation_parameters.csv called number_of_firms.
-The number of households on the other side is fixed at 10.
-
+Each agent gets the simulation_parameters as first parameter in th init function.
 
 Or you can create panel data for a group of agents::
 
-    s.panel_db('Firm', command='after_sales_before_consumption')
-    s.panel_db('Household')  # at the beginning
+    simulation.panel('Firm', command='after_sales_before_consumption')
+    simulation.panel('Household')  # at the beginning
     ...
 
-    s.run()
+    simulation.run()
 
-.. [#db_order] panal_db must be declared after the declaration of the agents.
+
+This only initializes the panel data. In the action list you must instruct the
+agents to record panel data every round:
+
+::
+
+    (('firm', 'household'), 'panel'),
+
+
+Similar you can also record aggregate data using 'simulation.aggregate' and
+(('firm', 'household'), 'aggregate'),
+
+.. [#db_order] panel must be declared before the declaration of the agents.
 
 The order of actions: The order of actions within a round
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Every agents-based model is characterized by the order of which the actions are executed. In ABCE, there are rounds, every round is composed of sub-rounds, in which all agents, a group of agents or a single agent, act in parallel. In the
+Every agents-based model is characterized by the order of which the actions are executed.
+In ABCE, there are rounds, every round is composed of sub-rounds, in which a group or
+several groups of agents act in parallel. In the
 code below you see a typical sub-round.
 
 You have to declare an action_list, that is made of tuples telling ABCE which
@@ -142,20 +170,20 @@ agent or agent group, should execute which method::
 
     action_list = [
     repeat([
-        ('Household', 'offer_capital'),
-        ('Firm', 'buy_capital'),
+        ('household', 'offer_capital'),
+        ('firm', 'buy_capital'),
     ],
     repetitions=10),
-    ('Household', 'search_work'),
-    ('Firm', 'hire_labor'),
-    ('Firm', 'production'),
-    'after_sales_before_consumption',
+    (('firm', 'household', 'aggregate'))
+    ('household', 'search_work'),
+    ('firm', 'hire_labor'),
+    ('firm', 'production'),
+    (('firm', 'household'), 'after_sales_before_consumption'),
     ('Household', 'consumption')
     ]
-    s.add_action_list(action_list)
+    simulation.add_action_list(action_list)
 
-The first tuple for example tells all Household agents to execute the method "offer_capital".
-The 'after_sales_before_consumption' is a database command. see :meth:`abce.panel_db`.
+The first tuple for example tells all household agents to execute the method "offer_capital".
 
 The repeat function allows repeating actions within the brackets a determinate amount of times.
 
@@ -163,27 +191,27 @@ Interactions happen between sub-rounds. An agent, sends a message in one round.
 The receiving agent, receives the message the following sub-round.  A trade is
 finished in three rounds: (1) an agent sends an offer the good is blocked, so it
 can not be sold twice (2) the other agent accepts or rejects it. (3) If
-accepted, the good is automatically delivered. If the trade was rejected: the
-blocked good is unblocked.
+accepted, the good is automatically delivered at the beginning of the sub-round.
+If the trade was rejected: the blocked good is automatically unblocked.
 
 The goods
 ~~~~~~~~~
 
-A normal good can be traded and used for production or consumption.
+A good can be traded and used for production or consumption.
 The only thing you have to do is create the amount of goods for every agent with
-:meth:`abce.Agent.create` in the agent's __init__ method.
+:meth:`abce.Agent.create` in the agent's init method.
 
 If an agent receives an endowment every round this can be automatically handled,
 with :meth:`abce.Simulation.declare_round_endowment`.
 For example the following command gives, at the beginning of every round,
 to whom who possess one unit of 'field' 100 units of 'corn'::
 
-   s.declare_round_endowment('field', 100, 'corn')
+   simulation.declare_round_endowment('field', 100, 'corn')
 
 You can also declare goods that last only one round and then automatically perish.
 :meth:`abce.Simulation.declare_perishable` ::
 
-    s.declare_perishable('corn')
+    simulation.declare_perishable('corn')
 
 
 This example declares 'corn' perishable and every round the agent gets 100 units of
@@ -192,9 +220,9 @@ automatically disappears at the end of the round.
 
 One important remark, for a logically consistent **macro-model** it is best to
 not create any goods during the simulation, but only in
-:meth:`abce.Agent.__init__`. During the simulation the only new goods
+:meth:`abce.Agent.init`. During the simulation the only new goods
 should be created by declare_round_endowment. In this way the economy is physically
-closed. An exception is, of course, money.
+closed.
 
 The agents
 ----------
@@ -212,7 +240,7 @@ An agent has to import the :mod:`abce` module and some helpers::
     import abce
     from abcetools import is_zero, is_positive, is_negative, NotEnoughGoods
 
-This imports the base classes: abce, Household and Firm.
+This imports the module abce in order to use the base classes Household and Firm.
 
 An agent is a class and must at least inherit :class:`abce.Agent`.
 :class:`abce.Trade` - :class:`messaging.Messaging` and :class:`database.Database`
@@ -228,15 +256,17 @@ You see our Household agent inherits from :class:`abce.Agent`, which is compulso
 Household on the other hand are a set of methods that are unique for Household agents.
 (there is also a Firm class)
 
-The __init__ method
+The init method
 ~~~~~~~~~~~~~~~~~~~
+
+**DO NOT OVERWRITE THE __init__ method. Instead use ABCE's init method**
 
 ::
 
-    def __init__(self, simulation_parameters, agent_parameters, _pass_to_engine):
-        abce.__init__(self, *_pass_to_engine)
+    def init(self, simulation_parameters, agent_parameters):
         self.create('labor_endowment', 1)
         self.create('capital_endowment', 1)
+        self.create('money', 1)
         self.set_cobb_douglas_utility_function({"MLK": 0.300, "BRD": 0.700})
         self.prices = {}
         self.prices['labor'] = 1
@@ -245,37 +275,27 @@ The __init__ method
         self.last_utility = None
 
 
-The __init__ method is the method that is called when the agents are created (by
-the :meth:`abce.Simulation.build_agents` or :meth:`abce.Simulation.build_agents_from_file` method.)
-In this method agents can access the simulation_parameters from the 'simulation_parameters.csv'.
+The init method is the method that is called when the agents are created (by
+the :meth:`abce.Simulation.build_agents`)
+In this method agents can access the simulation_parameters given as parameters or
+agents_parameters.
 
-If the agents are built using :meth:`abce.Simulation.build_agents_from_file`. The agents
-can access the parameters in their row, in 'agents_parameters.csv', by
-agent_parameters in the __init__ function.
-
-Line 2 is compulsory to pass the parameters to the abce.
+If you build_agents and give a dictionary as `parameter`, the content of this will be made
+available to all agents. If you specify agents_parameters, which must be a list,
+then each agent gets one element of this list.
 
 With self.create the agent creates the good 'labor_endowment'. Any
-good can be created. Generally speaking. The __init__ method is the only place
-where it is consistent to create a good. (except for money, if you simulate a naive
-central bank).
+good can be created. Generally speaking. In order to have a phisically consistent
+economy goods should only be created in the init method. The good money is used
+in transactions.
 
 This agent class inherited :meth:`abce.Household.set_cobb_douglas_utility_function`
 from :class:`abce.Household`. With
 :meth:`abce.Household.set_cobb_douglas_utility_function` you can create a
 cobb-douglas function. Other functional forms are also available.
 
-self.prices is a dictionary, created by the modeler, that saves prices for
-specific goods. Here the price for labor is set to 1.
-
 In order to let the agent remember a simulation_parameter it has to be saved in the self
-domain the agent.  [#self]_
-
-There is a random number assigned to self.renter and self.last_utility is initialized
-with None. It is often necessary to initialize variable in the __init__ method to
-avoid errors in the first round.
-
-.. [#self] (self.number_of_firms = simulation_parameters['number_of_firms'])
+domain the agent.
 
 The action methods and a consuming Household
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -287,15 +307,15 @@ For example when in the action list `('household', 'eat')` is called the eat met
 is executed of each household agent is executed::
 
     class Agent(abce.Agent, abce.Household)
-        def __init__(self):
+        def init(self):
             self.set_cobb_douglas_utility_function({'cookies': 0.9', 'bread': 0.1})
             self.create('cookies', 1)
             self.create('bread', 5)
 
-    ...
-    def eat(self):
-        utility = self.consume_everything()
-        self.log('utility', {'a': utility})
+        ...
+        def eat(self):
+            utility = self.consume_everything()
+            self.log('utility', {'a': utility})
 
 
 
@@ -313,11 +333,12 @@ yeast.
 ::
 
     class Agent(abce.Agent, abce.Household):
-    def init(self):
-       set_cobb_douglas('BRD', 1.890, {"yeast": 0.333, "LAB": 0.667})
-        ..
-    def production(self):
-        self.produce_use_everything()
+        def init(self):
+           set_cobb_douglas('BRD', 1.890, {"yeast": 0.333, "LAB": 0.667})
+            ...
+
+        def production(self):
+            self.produce_use_everything()
 
 More details in :class:`abce.Firm`. :class:`abce.FirmMultiTechnologies` offers
 a more advanced interface for firms with complicated technologies.
@@ -334,7 +355,7 @@ trade and sets the criteria to accept the trade::
     # Agent 1
     def selling(self):
         offerid = self.sell(buyer, 'BRD', 1, 2.5)
-        self.checkorders.append(offerid)
+        self.checkorders.append(offerid)  # optional
 
     # Agent 2
     def buying(self):
@@ -356,6 +377,8 @@ Trade Logging
 +++++++++++++
 
 ABCE by default logs all trade and creates a SAM or IO matrix.
+This matrixes are currently not display in the GUI, but
+accessible as csv files in the `simulation.path` directory
 
 Manual in agent logging
 +++++++++++++++++++++++
@@ -375,17 +398,19 @@ Panel Data
 :py:meth:`.panel_data` creates panel data for all agents in a specific
 agent group at a specific point in every round. It is set in start.py::
 
-    s.panel_data(’Household’, command=’aftersalesbeforeconsumption’)
+    simulation.panel(’Household’, variables='goodA')
 
-The command has to be inserted in the action_list.
+A command has to be inserted in the action_list::
+
+    ('household', 'panel')
 
 Retrieving the logged data
 ++++++++++++++++++++++++++
 
 the results are stored in a subfolder of the ./results/ folder.
+simulation.path gives you the path to the folder.
 
-The tables are stored as '.csv' files which can be opened with excel and
-libreoffice.
+The tables are stored as '.csv' files which can be opened with excel.
 Further you can import the files with R:
 
  1. change to the subfolder of ./results/ that contains your simulation

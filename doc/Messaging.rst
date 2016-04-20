@@ -1,5 +1,5 @@
 Messaging
-===========
+=========
 
 .. automodule:: messaging
 

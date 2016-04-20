@@ -44,7 +44,7 @@ Installation Windows
 
 - windows currently is under development and not fully tested
 
-1. Install the *python2.7* anaconda distribution from https://continuum.io/downloads
+1. Install the **python2.7** anaconda distribution from https://continuum.io/downloads
    (You can also install python and numpy/scipy by hand)
 
 2. Install Visual C++ for python 2.7 from here: https://www.microsoft.com/en-us/download/details.aspx?id=44266
