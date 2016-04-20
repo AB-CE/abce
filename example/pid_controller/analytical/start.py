@@ -33,8 +33,8 @@ def main(simulation_parameters):
 
     s.add_action_list(action_list)
 
-    s.build_agents(Firm, parameters=simulation_parameters, number=1)
-    s.build_agents(Market, parameters=simulation_parameters, number=1)
+    s.build_agents(Firm, 'firm', parameters=simulation_parameters, number=1)
+    s.build_agents(Market, 'market', parameters=simulation_parameters, number=1)
 
     s.run()
 

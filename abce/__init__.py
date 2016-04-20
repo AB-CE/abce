@@ -586,13 +586,17 @@ class Simulation:
         except AttributeError:
             pass
 
-    def build_agents(self, AgentClass, number=None, group_name=None, parameters={}, agent_parameters=None):
+    def build_agents(self, AgentClass, group_name, number=None, parameters={}, agent_parameters=None):
         """ This method creates agents.
 
         Args::
 
-         AgentClass:
+        AgentClass:
             is the name of the AgentClass that you imported
+
+        group_name:
+            the name of the group, as it will be used in the action list and transactions.
+            Should generally be lowercase of the AgentClass.
 
         number:
             number of agents to be created.
@@ -614,8 +618,6 @@ class Simulation:
          w.build_agents(Bank, parameters=simulation_parameters, agent_parameters=[{'name': UBS'},{'name': 'amex'},{'name': 'chase'})
          w.build_agents(CentralBank, number=1, parameters={'rounds': num_rounds})
         """
-        if not(group_name):
-            group_name = AgentClass.__name__.lower()
         assert number is None or agent_parameters is None, 'either set number or agent_parameters in build_agents'
         if number is not None:
             num_agents_this_group = number

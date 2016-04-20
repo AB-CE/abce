@@ -37,8 +37,8 @@ def main(parameters):
     w.panel('household')
     w.panel('firm')
 
-    w.build_agents(Firm, 1)
-    w.build_agents(Household, 1)
+    w.build_agents(Firm, 'firm', 1)
+    w.build_agents(Household, 'household', 1)
 
     w.run()
 

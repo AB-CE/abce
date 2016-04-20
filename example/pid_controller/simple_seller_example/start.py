@@ -36,8 +36,8 @@ def main(simulation_parameters):
     s.panel('household', possessions=['cookies'])
     s.panel('firm', possessions=['cookies'])
 
-    s.build_agents(Firm, 1)
-    s.build_agents(Household, 10)
+    s.build_agents(Firm, 'firm', 1)
+    s.build_agents(Household, 'household', 10)
 
     s.run()
 

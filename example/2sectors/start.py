@@ -33,8 +33,8 @@ def main(simulation_parameters):
     w.panel('household')
     w.panel('firm')
 
-    w.build_agents(Firm, 2)
-    w.build_agents(Household, 2)
+    w.build_agents(Firm, 'firm', 2)
+    w.build_agents(Household, 'household', 2)
 
     w.run()
     #w.graphs()

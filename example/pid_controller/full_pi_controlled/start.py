@@ -33,9 +33,9 @@ def main(simulation_parameters):
     s.add_action_list(action_list)
     s.declare_perishable('labor')
 
-    s.build_agents(Firm, 1)
-    s.build_agents(Market, 1)
-    s.build_agents(LaborMarket, 1)
+    s.build_agents(Firm, 'firm', 1)
+    s.build_agents(Market, 'market', 1)
+    s.build_agents(LaborMarket, 'labormarket', 1)
 
     s.run()
 

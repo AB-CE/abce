@@ -8,8 +8,8 @@ from endowment import Endowment
 from production_multifirm import ProductionMultifirm
 from production_firm import ProductionFirm
 from utility_household import UtilityHousehold
-from contractseller import ContractSeller
-from contractbuyer import ContractBuyer
+#from contractseller import ContractSeller
+#from contractbuyer import ContractBuyer
 from expiringcapital import ExpiringCapital
 from giveexpiringcapital import GiveExpiringCapital
 from buyexpiringcapital import BuyExpiringCapital
@@ -64,22 +64,22 @@ def main():
     #s.panel('buy', variables=['price'])
     #s.declare_expiring('xcapital', 5)
 
-    s.build_agents(Buy, 1000)
+    s.build_agents(Buy, 'buy', 1000)
     #s.build_agents(QuoteBuy, 2)
-    s.build_agents(Sell, 1000)
-    s.build_agents(Give, 2)  # tests give and messaging
-    s.build_agents(Endowment, 2)  # tests declare_round_endowment and declare_perishable
-    s.build_agents(LoggerTest, 1)
-    s.build_agents(ProductionMultifirm, 1)
-    s.build_agents(ProductionFirm, 5)
-    s.build_agents(UtilityHousehold, 5)
+    s.build_agents(Sell, 'sell', 1000)
+    s.build_agents(Give, 'give', 2)  # tests give and messaging
+    s.build_agents(Endowment, 'endowment', 2)  # tests declare_round_endowment and declare_perishable
+    s.build_agents(LoggerTest, 'loggertest', 1)
+    s.build_agents(ProductionMultifirm, 'productionmultifirm', 1)
+    s.build_agents(ProductionFirm, 'productionfirm', 5)
+    s.build_agents(UtilityHousehold, 'utilityhousehold', 5)
     #s.build_agents(ContractSeller, 2)
     #s.build_agents(ContractBuyer, 2)
     #s.build_agents(ExpiringCapital, 1)
     #s.build_agents(GiveExpiringCapital, 2)
-    s.build_agents(BuyExpiringCapital, 2)
-    s.build_agents(MessageA, 20)
-    s.build_agents(MessageB, 20)
+    s.build_agents(BuyExpiringCapital, 'buyexpiringcapital', 2)
+    s.build_agents(MessageA, 'messagea', 20)
+    s.build_agents(MessageB, 'messageb', 20)
 
     s.run()
 

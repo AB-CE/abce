@@ -20,11 +20,11 @@ def main():
         ]
         s.add_action_list(action_list)
 
-        s.build_agents(Firm,
+        s.build_agents(Firm, 'firm',
                        simulation_parameters['firms'],
                        parameters=simulation_parameters)
-        s.build_agents(Household,
-                       simulation_parameters['household'],
+        s.build_agents(Household, 'household',
+                       simulation_parameters['households'],
                        parameters=simulation_parameters)
 
         s.declare_round_endowment(

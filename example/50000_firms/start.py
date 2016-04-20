@@ -16,8 +16,8 @@ def main():
                    ('myagent', 'g')]
     s.add_action_list(action_list)
 
-    s.build_agents(MyAgent, 50000)
-    s.build_agents(YourAgent, 50000)
+    s.build_agents(MyAgent, 'myagent', 50000)
+    s.build_agents(YourAgent, 'youragent', 50000)
 
     s.run()
 
