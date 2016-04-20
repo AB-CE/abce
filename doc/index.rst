@@ -33,11 +33,12 @@ ABCE runs an Mac, Windows and Linux.
    Messaging
    Database
    FirmMultiTechnologies
-   Contracting
    simulation
    simulation_results
    abcetools
    files
+   Contracting
+   Network
 
 
 .. raw:: latex
