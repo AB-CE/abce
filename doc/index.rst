@@ -34,6 +34,7 @@ ABCE runs an Mac, Windows and Linux.
    Messaging
    Database
    FirmMultiTechnologies
+   gui
    simulation_results
    abcetools
    files
