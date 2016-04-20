@@ -108,7 +108,7 @@ class Household:
                 a dictionary that specifies for every good, how much
                 it depreciates in percent.
 
-        Example:
+        Example::
 
             self init(self):
                 ...

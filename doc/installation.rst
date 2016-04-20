@@ -32,11 +32,11 @@ Installation Mac
 
 4.  In terminal::
 
-    sudo pip install scipy
+        sudo pip install scipy
 
-    sudo pip install numpy
+        sudo pip install numpy
 
-    sudo python setup.py install
+        sudo python setup.py install
 
 
 Installation Windows

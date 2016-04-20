@@ -9,4 +9,4 @@ Trade
     :undoc-members:
     :show-inheritance:
 
-.. autofunction:: abce.Offer
+.. autofunction:: abce.trade.Offer

@@ -83,20 +83,20 @@ Further the Simulation base class and the graphical user interface (gui) are imp
 
 
 
-Parameters are specified as a python dictionary:
+Parameters are specified as a python dictionary::
 
-simulation_parameters = {'name': 'name',
-                         'trade_logging': 'off',
-                         'random_seed': None,
-                         'rounds': 40}
+    simulation_parameters = {'name': 'name',
+                             'trade_logging': 'off',
+                             'random_seed': None,
+                             'rounds': 40}
 
 
     @gui(simulation_parameters)
     def main(simulation_parameters):
-        ...
+        . . .
 
-if __name__ == '__main__':
-    main(simulation_parameters)
+    if __name__ == '__main__':
+        main(simulation_parameters)
 
 The main function is generating and executing the simulation. When the main
 function is preceded with "@gui(simulation_parameters)" The graphical user interface is executed
