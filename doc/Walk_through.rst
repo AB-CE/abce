@@ -130,8 +130,8 @@ internal abilities/properties of the agents. Such as 'sell', 'buy' or 'consume'.
 
 In order to add an agent which was imported before we simply build these agents::
 
-        simulation.build_agents(Firm, number=simulation_parameters['number_of_firms'], parameters=simulation_parameters)
-        simulation.build_agents(Household, number=10, parameters=simulation_parameters)
+        simulation.build_agents(Firm, 'firm', number=simulation_parameters['number_of_firms'], parameters=simulation_parameters)
+        simulation.build_agents(Household, 'household', number=10, parameters=simulation_parameters)
 
 Each agent gets the simulation_parameters as first parameter in th init function.
 
