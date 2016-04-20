@@ -1,5 +1,5 @@
 The simulation in start.py
 ==========================
 
-.. automodule:: abce
+.. automodule:: abce.__init__
     :members:

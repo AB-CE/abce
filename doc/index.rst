@@ -25,6 +25,7 @@ ABCE runs an Mac, Windows and Linux.
    Walk_through
    examples
    unit_testing
+   simulation
    Agent_class
    Trade
    Quote
@@ -33,7 +34,6 @@ ABCE runs an Mac, Windows and Linux.
    Messaging
    Database
    FirmMultiTechnologies
-   simulation
    simulation_results
    abcetools
    files
