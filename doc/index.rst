@@ -18,7 +18,7 @@ ABCE runs an Mac, Windows and Linux.
 
 
 .. toctree::
-   :maxdepth: 5
+   :maxdepth: 1
 
    introduction
    installation
