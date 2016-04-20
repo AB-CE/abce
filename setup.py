@@ -20,7 +20,7 @@ Extension("abce.trade", [ "abce/trade.c" ]),
 
 
 setup(name='abce',
-      version='0.4b',
+      version='0.5b',
       author='Davoud Taghawi-Nejad',
       author_email='Davoud@Taghawi-Nejad.de',
       description='Agent-Based Complete Economy modelling platform',
