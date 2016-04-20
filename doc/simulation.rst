@@ -1,10 +1,10 @@
 The simulation in start.py
 ==========================
 
-.. automodule:: abce.__init__
+.. automodule:: abce
     :members:
 
-.. autoclass:: abce.__init__.Simulation
+.. autoclass:: abce.Simulation
     :members:
     :undoc-members:
     :show-inheritance:
