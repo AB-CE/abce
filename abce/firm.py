@@ -47,7 +47,7 @@ class Firm(FirmMultiTechnologies):
 
             self.produce_use_everything()
         """
-        return self.produce(self.possessions_all())
+        return self.produce(self.possessions())
 
     def produce(self, input_goods):
         """ Produces output goods given the specified amount of inputs.
