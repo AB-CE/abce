@@ -38,6 +38,12 @@ Installation Mac
 
         sudo python setup.py install
 
+5. If OSX asks you to install cc - xcode "Command Line Developer Tools", click accept
+
+6. If XCODE is installed type again in terminal::
+
+       sudo python setup.py install
+
 
 Installation Windows
 --------------------
@@ -54,7 +60,7 @@ Installation Windows
 
 4. extract zip file and change in the directory
 
-5. In the terminal::
+5. In anachonda prompt or command line, if the path to python is set::
 
     python setup.py install
 
