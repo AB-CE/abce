@@ -4,15 +4,21 @@ Observing agents
 .. default-domain::database.Database
 
 
-There are three different ways of observing your agents:
+There are different ways of observing your agents:
 
-Trade Logging
+Trade Logging:
 	ABCE by default logs all trade and creates a SAM or IO matrix.
-Manual in agent logging
+
+Manual in agent logging:
 	An agent is instructed to log a variable with :py:meth:`.log` or a
 	change in a variable with :py:meth:`.log_change`.
-Panel Data
-	:py:meth:`.panel_data` creates panel data for all agents in a specific
+
+Aggregate Data:
+    :py:meth:`.aggregate` save agents possessions and variable aggregated
+    over a group
+
+Panel Data:
+	:py:meth:`.panel` creates panel data for all agents in a specific
 	agent group at a specific point in every round. It is set in start.py
 
 How to retrieve the Simulation results is explained in :doc:`simulation_results`
