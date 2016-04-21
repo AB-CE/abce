@@ -455,7 +455,6 @@ class Simulation:
         """
         if self.cores > 1:
             self.pool = mp.Pool(self.cores)
-            self._db.start()
             self.execute = self.execute_parallel
         else:
             self.execute = self.execute_serial
@@ -465,6 +464,8 @@ class Simulation:
             raise SystemExit('No action_list declared')
         if not(self._action_list):
             self._action_list = self._process_action_list(self.action_list)
+
+        self._db.start()
 
         self._write_description_file()
         self._displaydescribtion()
