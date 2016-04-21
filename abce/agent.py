@@ -156,83 +156,10 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         """
         return float(self._haves[good])
 
-    def possessions(self, list_of_goods):
-        """ returns a dictionary of goods and the corresponding amount an agent owns
 
-        Argument:
-            A list with good names. Can be a list with a single element.
-
-        Returns:
-            A dictionary, that can be used with self.log(..)
-
-        Examples::
-
-            self.log('buget', self.possesions(['money']))
-
-            self.log('goods', self.possesions(['gold', 'wood', 'grass']))
-
-            have = self.possessions(['gold', 'wood', 'grass']))
-            for good in have:
-                if have[good] > 5:
-                    rich = True
-        """
-        return {good: float(self._haves[good]) for good in list_of_goods}
-
-    def possessions_all(self):
+    def possessions(self):
         """ returns all possessions """
         return copy(self._haves)
-
-    def possessions_filter(self, goods=None, but=None, match=None, beginswith=None, endswith=None):
-        """ returns a subset of the goods an agent owns, all arguments
-        can be combined.
-
-        Args:
-            goods (list, optional):
-                a list of goods to return
-            but(list, optional):
-                all goods but the list of goods here.
-            match(string, optional TODO):
-                goods that match pattern
-            beginswith(string, optional):
-                all goods that begin with string
-            endswith(string, optional)
-                all goods that end with string
-            is(string, optional TODO)
-                'resources':
-                    return only goods that are endowments
-                'perishable':
-                    return only goods that are perishable
-                'resources+perishable':
-                    goods that are both
-                'produced_by_resources':
-                    goods which can be produced by resources
-
-        Example::
-
-            self.consume(self.possessions_filter(but=['money']))
-            # This is redundant if money is not in the utility function
-
-        """
-        if not(goods):
-            goods = self._haves.keys()
-        if but != None:
-            try:
-                goods = set(goods) - set(but)
-            except TypeError:
-                raise SystemExit("goods and / or but must be a list e.G. ['element1', 'element2']")
-        if beginswith != None:
-            new_goods = []
-            for good in goods:
-                if good.startswith(beginswith):
-                    new_goods.append(good)
-            goods = new_goods
-        if endswith != None:
-            new_goods = []
-            for good in goods:
-                if good.endswith(endswith):
-                    new_goods.append(good)
-            goods = new_goods
-        return dict((good, self._haves[good]) for good in goods)
 
     def _offer_counter(self):
         """ returns a unique number for an offer (containing the agent's name)
@@ -334,33 +261,27 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         self._haves[good] = ExpiringGood(duration)
         self._expiring_goods.append(good)
 
-    def destroy(self, good, quantity):
-        """ destroys quantity of the good,
+    def destroy(self, good, quantity=None):
+        """ destroys quantity of the good. If quantity is omitted destroys all
 
         Args::
 
-            'good': is the name of the good
-            quantity: number
+            'good':
+                is the name of the good
+            quantity (optional):
+                number
 
         Raises::
 
             NotEnoughGoods: when goods are insufficient
         """
-        self._haves[good] -= quantity
-        if self._haves[good] < 0:
+        if quantity is None:
             self._haves[good] = 0
-            raise NotEnoughGoods(self.name, good, quantity - self._haves[good])
-
-    def destroy_all(self, good):
-        """ destroys all of the good, returns how much
-
-        Args::
-
-            'good': is the name of the good
-        """
-        quantity_destroyed = self._haves[good]
-        self._haves[good] = 0
-        return quantity_destroyed
+        else:
+            self._haves[good] -= quantity
+            if self._haves[good] < 0:
+                self._haves[good] = 0
+                raise NotEnoughGoods(self.name, good, quantity - self._haves[good])
 
     def get_group(self):
         return self.group
@@ -414,6 +335,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         self.variables_to_track_aggregate = variables
 
     def panel(self):
+        """ use in action list to create panel data """
         data_to_track = {}
         for possession in self.possessions_to_track_panel:
             data_to_track[possession] = self._haves[possession]
@@ -427,6 +349,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
                                        str(self.round)])
 
     def aggregate(self):
+        """ use in action list to create data """
         data_to_track = {}
         for possession in self.possessions_to_track_aggregate:
             data_to_track[possession] = self._haves[possession]
