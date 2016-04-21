@@ -318,9 +318,11 @@ class Simulation:
         self.declare_perishable(service)
 
     def panel(self, group, possessions=[], variables=[]):
-        """ panel(.) writes possessions and variables of a group of
-            agents into the database.
-            You must put ('agent_group', 'panel') in the action_list.
+        """ panel(.) writes a panel of variables and possessions
+            of a group of agents into the database, so that it is displayed
+            in the gui. Aggregate must be declared before the agents are build.
+            ('agent_group', 'panel') must be in the action_list, so that
+            the simulation knows when to make the aggregate snapshot.
 
             Args:
                 group:
@@ -332,8 +334,18 @@ class Simulation:
 
         Example in start.py::
 
-         w.panel(group='firm', possessions=['money', 'input1'],
-            variables=['production_target', 'gross_revenue'])
+            action_list = [('firm', produce_and_sell),
+                           ('firm', panel),
+                           ('household', 'buying')]
+
+            simulation_parameters.add_action_list(action_list)
+
+            simulation_parameters.build_agents(Firm, 'firm', number=5)
+
+            ...
+
+            simulation.panel('firm', possessions=['money', 'input'],
+                                     variables=['production_target', 'gross_revenue'])
         """
         if len(self.family_list) > 0:
             raise SystemExit("WARNING: agents build before panel")
@@ -343,8 +355,11 @@ class Simulation:
 
     def aggregate(self, group, possessions=[], variables=[]):
         """ aggregate(.) writes summary statistics of variables and possessions
-            of a group of agents into the database.
-            You must put ('agent_group', 'panel') in the action_list.
+            of a group of agents into the database, so that it is displayed in
+            the gui. Aggregate must be declared before the agents are build.
+            ('agent_group', 'aggregate') must be in the action_list, so that
+            the simulation knows when to make the aggregate snapshot.
+
 
             Args:
                 group:
@@ -356,8 +371,18 @@ class Simulation:
 
         Example in start.py::
 
-         w.aggregate(group='firm', possessions=['money', 'input1'],
-            variables=['production_target', 'gross_revenue'])
+            action_list = [('firm', produce_and_sell),
+                           ('firm', aggregate),
+                           ('household', 'buying')]
+
+            simulation_parameters.add_action_list(action_list)
+
+            simulation_parameters.build_agents(Firm, 'firm', number=5)
+
+            ...
+
+            simulation.aggregate('firm', possessions=['money', 'input'],
+                                     variables=['production_target', 'gross_revenue'])
         """
         if len(self.family_list) > 0:
             raise SystemExit("WARNING: agents build before aggregate")
