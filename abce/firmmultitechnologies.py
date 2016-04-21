@@ -27,6 +27,7 @@ methods use this variable to produce with the according technology.
 from __future__ import division
 import numpy as np
 from abce.trade import get_epsilon
+from abce.notenoughgoods import NotEnoughGoods
 save_err = np.seterr(invalid='ignore')
 epsilon = get_epsilon()
 

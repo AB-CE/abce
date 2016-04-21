@@ -30,7 +30,7 @@ Logging and data creation:
 Messaging between agents:
     see :class:`abceagent.Messaging`.
 
-.. autoexception:: abcetools.NotEnoughGoods
+.. autoexception:: abce.NotEnoughGoods
 
 .. [1] or :class:`abceagent.FirmMultiTechnologies` for simulations with complex technologies.
 """

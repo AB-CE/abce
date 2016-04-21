@@ -1,7 +1,8 @@
 from __future__ import division
 import abce
-from abce.tools import *
+from tools import *
 from abce.firm import Firm
+from abce import NotEnoughGoods
 
 
 class ProductionFirm(abce.Agent, Firm):

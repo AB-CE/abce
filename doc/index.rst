@@ -36,7 +36,7 @@ ABCE runs an Mac, Windows and Linux.
    FirmMultiTechnologies
    gui
    simulation_results
-   abcetools
+   notenoughgoods
    files
    Contracting
    Network

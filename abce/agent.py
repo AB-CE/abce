@@ -35,7 +35,6 @@ Messaging between agents:
 from __future__ import division
 from collections import OrderedDict, defaultdict
 import numpy as np
-from abce.tools import *
 save_err = np.seterr(invalid='ignore')
 from database import Database
 from networklogger import NetworkLogger
@@ -48,6 +47,7 @@ from abce.expiringgood import ExpiringGood
 from pprint import pprint
 import traceback
 import random
+from abce.notenoughgoods import NotEnoughGoods
 
 
 class Agent(Database, NetworkLogger, Trade, Messaging):

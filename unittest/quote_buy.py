@@ -2,6 +2,7 @@ from __future__ import division
 import abce
 from tools import *
 import random
+from abce import NotEnoughGoods
 
 
 class QuoteBuy(abce.Agent):

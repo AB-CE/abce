@@ -1,7 +1,8 @@
 from __future__ import division
 import random
 from abce.agent import Agent
-from abce.tools import NotEnoughGoods, is_zero
+from abce import NotEnoughGoods
+from tools import is_zero
 
 class Buy(Agent):
     def init(self, simulation_parameters, _,):

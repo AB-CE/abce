@@ -1,7 +1,8 @@
 from __future__ import division
 import abce
-from abce.tools import *
+from tools import *
 import time
+from abce import NotEnoughGoods
 
 
 class LoggerTest(abce.Agent):

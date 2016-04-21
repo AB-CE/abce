@@ -1,7 +1,8 @@
 from __future__ import division
 import abce
-from abce.tools import *
+from tools import *
 from abce.contract import Contract
+from abce import NotEnoughGoods
 
 
 class ContractBuyer(abce.Agent, Contract):

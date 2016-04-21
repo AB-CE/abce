@@ -1,5 +1,6 @@
 from __future__ import division
 from collections import deque
+from abce.notenoughgoods import NotEnoughGoods
 from abce.trade import get_epsilon
 epsilon = get_epsilon()
 
