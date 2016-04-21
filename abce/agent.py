@@ -50,16 +50,27 @@ from abce.notenoughgoods import NotEnoughGoods
 
 class Agent(Database, NetworkLogger, Trade, Messaging):
     """ Every agent has to inherit this class. It connects the agent to the simulation
-    and to other agent. The :class:`abceagent.Trade`, :class:`abceagent.Database` and
-    :class:`abceagent.Messaging` classes are included. You can enhance an agent, by also
-    inheriting from :class:`abceagent.Firm`.:class:`abceagent.FirmMultiTechnologies`
-    or :class:`abceagent.Household`.
+    and to other agent. The :class:`abce.Trade`, :class:`abce.Database` and
+    :class:`abce.Messaging` classes are included. You can enhance an agent, by also
+    inheriting from :class:`abce.Firm`. :class:`abce.FirmMultiTechnologies`
+    or :class:`abce.Household`.
 
     For example::
 
-        class Household(abceagent.Agent, abceagent.Household):
+        class Household(abce.Agent, abce.Household):
             def init(self, simulation_parameters, agent_parameters):
+                self.num_firms = simulation_parameters['num_firms']
+                self.type = agent_parameters['type']
                 ...
+
+            def selling(self):
+                for i in range(self.num_firms):
+                    self.sell('firm', i, 'good', quantity=1, price=1)
+
+            ...
+
+
+
     """
     def __init__(self, idn, group, trade_logging, database, logger, random_seed):
         """ Do not overwrite __init__ instead use a method called init instead.
