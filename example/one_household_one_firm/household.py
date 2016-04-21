@@ -10,6 +10,7 @@ class Household(abce.Agent, abce.Household):
         """
         self.create('adult', 1)
         self.set_cobb_douglas_utility_function({"GOOD": 1})
+        self.current_utiliy = 0
 
     def sell_labor(self):
         """ offers one unit of labor to firm 0, for the price of 1 "money" """
@@ -24,6 +25,6 @@ class Household(abce.Agent, abce.Household):
     def consumption(self):
         """ consumes_everything and logs the aggregate utility. current_utiliy
         """
-        current_utiliy = self.consume_everything()
-        self.log_value('HH', current_utiliy)
+        self.current_utiliy = self.consume_everything()
+        self.log_value('HH', self.current_utiliy)
 

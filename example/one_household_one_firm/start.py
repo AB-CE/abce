@@ -33,8 +33,9 @@ def main(parameters):
     w.declare_round_endowment(resource='adult', units=1, product='labor')
     w.declare_perishable(good='labor')
 
-    w.panel('household')
-    w.panel('firm')
+    w.panel('household', possessions=['money', 'GOOD'],
+                         variables=['current_utiliy'])
+    w.panel('firm', possessions=['money', 'GOOD'])
 
     w.build_agents(Firm, 'firm', 1)
     w.build_agents(Household, 'household', 1)
