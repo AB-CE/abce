@@ -7,7 +7,6 @@
 """
 
 from __future__ import division
-import multiprocessing as mp
 from abce import Simulation, gui
 from firm import Firm
 from household import Household
