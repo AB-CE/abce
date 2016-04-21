@@ -30,14 +30,14 @@ def main(simulation_parameters):
     w.declare_round_endowment(resource='labor_endowment', units=5, product='labor')
     w.declare_perishable(good='labor')
 
-    w.panel('household')
-    w.panel('firm')
+    w.panel('household', possessions=['consumption_good'])
+    w.panel('firm', possessions=['consumption_good', 'intermediate_good'])
 
     w.build_agents(Firm, 'firm', 2)
     w.build_agents(Household, 'household', 2)
 
     w.run()
-    #w.graphs()
+
 
 if __name__ == '__main__':
     main(simulation_parameters)
