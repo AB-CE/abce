@@ -40,9 +40,9 @@ class UtilityHousehold(abce.Agent, abce.Household):
             assert self.possession('a') == 5
             assert self.possession('b') == 9.7
             assert self.possession('c') == 10
-            self.destroy_all('a')
-            self.destroy_all('b')
-            self.destroy_all('c')
+            self.destroy('a')
+            self.destroy('b')
+            self.destroy('c')
 
         elif self.idn == 1:
             self.create('a', 10)
@@ -70,9 +70,9 @@ class UtilityHousehold(abce.Agent, abce.Household):
             assert self.possession('a') == 0
             assert self.possession('b') == 9
             assert self.possession('c') == 10
-            self.destroy_all('a')
-            self.destroy_all('b')
-            self.destroy_all('c')
+            self.destroy('a')
+            self.destroy('b')
+            self.destroy('c')
 
         elif self.idn == 3:
             self.create('a', 10)

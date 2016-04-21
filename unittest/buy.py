@@ -82,8 +82,8 @@ class Buy(Agent):
         self.haut = 'xxxx'
 
     def clean_up(self):
-        self.destroy_all('money')
-        self.destroy_all('cookies')
+        self.destroy('money')
+        self.destroy('cookies')
 
     def all_tests_completed(self):
         if self.round == self.last_round and self.idn == 0:

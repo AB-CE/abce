@@ -106,12 +106,12 @@ class ProductionFirm(abce.Agent, Firm):
             assert self.possession('soft_rubber') == 1 ** 0.25 * 2 ** 0.5 * 5 ** 0.25
             assert self.possession('hard_rubber') == 1 ** 0.1 * 2 ** 0.2 * 5 ** 0.01
             assert self.possession('waste') == 2 / 2, self.possession('waste')
-            self.destroy_all('a')
-            self.destroy_all('b')
-            self.destroy_all('c')
-            self.destroy_all('soft_rubber')
-            self.destroy_all('hard_rubber')
-            self.destroy_all('waste')
+            self.destroy('a')
+            self.destroy('b')
+            self.destroy('c')
+            self.destroy('soft_rubber')
+            self.destroy('hard_rubber')
+            self.destroy('waste')
 
         elif self.idn == 4:
             input_goods = {'wheels': 4, 'chassi': 1}

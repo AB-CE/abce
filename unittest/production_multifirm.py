@@ -47,9 +47,9 @@ class ProductionMultifirm(abce.Agent, abce.FirmMultiTechnologies):
         assert self.possession('a') == 1, self.possession('a')
         assert self.possession('b') == 1.8, self.possession('b')
         assert self.possession('consumption_good') == 1 ** 0.5 * 2, self.possession('consumption_good')
-        self.destroy_all('a')
-        self.destroy_all('b')
-        self.destroy_all('consumption_good')
+        self.destroy('a')
+        self.destroy('b')
+        self.destroy('consumption_good')
 
 
         output = self.predict_produce_output(self.pf, {'a': 10, 'b': 10})
@@ -69,9 +69,9 @@ class ProductionMultifirm(abce.Agent, abce.FirmMultiTechnologies):
         assert self.possession('a') == 1, self.possession('a')
         assert self.possession('b') == 0, self.possession('b')
         assert self.possession('consumption_good') == 5 * 1 ** 2 * 2 ** 1, self.possession('consumption_good')
-        self.destroy_all('a')
-        self.destroy_all('b')
-        self.destroy_all('consumption_good')
+        self.destroy('a')
+        self.destroy('b')
+        self.destroy('consumption_good')
 
         self.create('a', 2)
         self.create('b', 2)
@@ -80,8 +80,8 @@ class ProductionMultifirm(abce.Agent, abce.FirmMultiTechnologies):
         assert self.possession('a') == 1, self.possession('a')
         assert self.possession('b') == 0, self.possession('b')
         assert self.possession('consumption_good') == min(1 * 3, 2 * 1), self.possession('consumption_good')
-        self.destroy_all('a')
-        self.destroy_all('consumption_good')
+        self.destroy('a')
+        self.destroy('consumption_good')
 
         self.create('a', 10)
         self.create('b', 10)
@@ -94,12 +94,12 @@ class ProductionMultifirm(abce.Agent, abce.FirmMultiTechnologies):
         assert self.possession('soft_rubber') == 1 ** 0.25 * 2 ** 0.5 * 5 **0.25, self.possession('soft_rubber')
         assert self.possession('hard_rubber') == 1 ** 0.1 * 2 ** 0.2 * 5 ** 0.01, self.possession('hard_rubber')
         assert self.possession('waste') == 2 / 2, self.possession('waste')
-        self.destroy_all('a')
-        self.destroy_all('b')
-        self.destroy_all('c')
-        self.destroy_all('soft_rubber')
-        self.destroy_all('hard_rubber')
-        self.destroy_all('waste')
+        self.destroy('a')
+        self.destroy('b')
+        self.destroy('c')
+        self.destroy('soft_rubber')
+        self.destroy('hard_rubber')
+        self.destroy('waste')
 
 
 

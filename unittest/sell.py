@@ -79,8 +79,8 @@ class Sell(abce.Agent):
                 SystemExit('Error in sell')
 
     def clean_up(self):
-        self.destroy_all('cookies')
-        self.destroy_all('money')
+        self.destroy('cookies')
+        self.destroy('money')
 
     def all_tests_completed(self):
         if self.round == self.last_round and self.idn == 0:

@@ -12,7 +12,7 @@ class LoggerTest(abce.Agent):
         self.create('cookies', 3)
 
     def one(self):
-        self.log('possessions', self.possessions(['money', 'cookies']))
+        self.log('possessions', self.possessions())
         self.log_value('round_log', self.round)
         pass
 
