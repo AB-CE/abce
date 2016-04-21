@@ -64,6 +64,10 @@ Installation Windows
 
     python setup.py install
 
+When you run an IDE such as spyder sometimes the website blocks. In
+order to avoid that, modify the 'Run Setting' and choose
+'Execute in external System Terminal'.
+
 Installation of development version
 -----------------------------------
 

@@ -1,5 +1,5 @@
 Quote
-===========
+=====
 
 
 .. default-domain::abce.Quote

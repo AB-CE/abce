@@ -61,6 +61,14 @@ Graphical User Interface and Results
     \bibliographystyle{plain}
     \bibliography{/home/taghawi/Dropbox/zpipe/library}
 
+Troubleshooting
+===============
+
+.. toctree::
+   :maxdepth: 1
+
+   troubleshooting
+
 Indices and tables
 ==================
 
