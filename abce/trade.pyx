@@ -33,18 +33,21 @@ Messaging between agents:
 
 .. [1] or :class:`abceagent.FirmMultiTechnologies` for simulations with complex technologies.
 """
-#******************************************************************************************
-# trade.pyx is written in cython. trade.pyx is not distributed for installation.
-# instead, when you modify trade.pyx you need to compile it with compile.sh and compile.py
-# and the resulting trade.c file, is distributed. Don't forget to commit it to git
-#******************************************************************************************
+#******************************************************************************************#
+# trade.pyx is written in cython. When you modify trade.pyx you need to compile it with    #
+# compile.sh and compile.py because the resulting trade.c file is distributed.             #
+# Don't forget to commit it to git                                                         #
+#******************************************************************************************#
 from __future__ import division
 from random import shuffle
 from abce.tools import NotEnoughGoods
 from messaging import Message
 from numpy import isfinite
 
-cdef DBL_EPSILON = 0.0000001
+cdef epsilon = 0.0000000000001
+
+def get_epsilon():
+    return epsilon
 
 cdef double fmax(double a, double b):
     if a > b:
@@ -344,7 +347,7 @@ class Trade:
         # if its only a little bit above or below its set to the bounds
         available = self._haves[good]
         quantity = bound_zero(quantity)
-        if quantity > available + DBL_EPSILON + DBL_EPSILON * fmax(quantity, available):
+        if quantity > available + epsilon + epsilon * fmax(quantity, available):
             raise NotEnoughGoods(self.name, good, quantity - available)
         if quantity > available:
             quantity = available
@@ -392,7 +395,7 @@ class Trade:
         # if its only a little bit above or below its set to the bounds
         available = self._haves['money']
         money_amount = bound_zero(money_amount)
-        if money_amount > available + DBL_EPSILON + DBL_EPSILON * fmax(money_amount, available):
+        if money_amount > available + epsilon + epsilon * fmax(money_amount, available):
             raise NotEnoughGoods(self.name, 'money', money_amount - available)
         if money_amount > available:
             money_amount = available
@@ -454,7 +457,7 @@ class Trade:
         if quantity == -999:
             quantity = offer_quantity
         quantity = bound_zero(quantity)
-        if quantity > offer_quantity + DBL_EPSILON * fmax(quantity, offer_quantity):
+        if quantity > offer_quantity + epsilon * fmax(quantity, offer_quantity):
             raise AssertionError('accepted more than offered %s: %.100f >= %.100f'
                                  % (offer.good, quantity, offer_quantity))
         if quantity > offer_quantity:
@@ -464,7 +467,7 @@ class Trade:
         if offer.buysell == 115:  # ord('s')
             money_amount = bound_zero(money_amount)
             available = self._haves['money']
-            if money_amount > available + DBL_EPSILON + DBL_EPSILON * max(money_amount, available):
+            if money_amount > available + epsilon + epsilon * max(money_amount, available):
                 raise NotEnoughGoods(self.name, 'money', money_amount - available)
             if money_amount > available:
                 money_amount = available
@@ -473,7 +476,7 @@ class Trade:
         else:
             quantity = bound_zero(quantity)
             available = self._haves[offer.good]
-            if quantity > available + DBL_EPSILON + DBL_EPSILON * max(quantity, available):
+            if quantity > available + epsilon + epsilon * max(quantity, available):
                 raise NotEnoughGoods(self.name, offer.good, quantity - available)
             if quantity > available:
                 quantity = available
@@ -588,7 +591,7 @@ class Trade:
         cdef double available
         quantity = bound_zero(quantity)
         available = self._haves[good]
-        if quantity > available + DBL_EPSILON + DBL_EPSILON * max(quantity, available):
+        if quantity > available + epsilon + epsilon * max(quantity, available):
             raise NotEnoughGoods(self.name, good, quantity - available)
         if quantity > available:
             quantity = available
@@ -636,21 +639,14 @@ class Trade:
             elif typ == '_q':
                 self._quotes[msg.idn] = msg
             elif typ == '!o':
-                if msg['makerequest'] == 'r':
-                    self._contract_requests[msg['good']].append(msg)
-                else:
-                    self._contract_offers[msg['good']].append(msg)
+                self._contract_offers[msg.good].append(msg)
             elif typ == '+d':
-                self._contracts_deliver[msg['good']].append(msg)
+                self._contracts_deliver[msg.good].append(msg)
             elif typ == '+p':
-                self._contracts_pay[msg['good']].append(msg)
-            elif typ == '!d':
+                self._contracts_pay[msg.good].append(msg)
+            elif typ == '!c':
                 self._haves[msg.good] += msg.quantity
                 self._contracts_deliver[msg.idn]['delivered'] = self.round
-                self._log_receive_accept(msg)
-            elif typ == '!p':
-                self._haves['money'] += msg.price
-                self._contracts_pay[msg.idn]['payed'] = self.round
                 self._log_receive_accept(msg)
             else:
                 self._msgs.setdefault(typ, []).append(Message(msg))
@@ -658,7 +654,7 @@ class Trade:
 cdef double bound_zero(double x):
     """ asserts that variable is above zero, where foating point imprecission is accounted for,
     and than makes sure it is above 0, without floating point imprecission """
-    assert x > - DBL_EPSILON, '%.30f is smaller than 0 - epsilon (%.30f)' % (x, - DBL_EPSILON)
+    assert x > - epsilon, '%.30f is smaller than 0 - epsilon (%.30f)' % (x, - epsilon)
     if not isfinite(x):
         print 'warning infinity in trade'
     if x < 0:

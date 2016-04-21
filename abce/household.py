@@ -19,8 +19,9 @@ The Household class extends the agent by giving him utility functions and the ab
 """
 from __future__ import division
 import numpy as np
-from tools import epsilon
+from trade import get_epsilon
 save_err = np.seterr(invalid='ignore')
+epsilon = get_epsilon()
 
 
 class Household:

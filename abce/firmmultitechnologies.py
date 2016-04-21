@@ -26,8 +26,9 @@ methods use this variable to produce with the according technology.
 """
 from __future__ import division
 import numpy as np
-from abce.tools import epsilon, NotEnoughGoods
+from abce.trade import get_epsilon
 save_err = np.seterr(invalid='ignore')
+epsilon = get_epsilon()
 
 
 class FirmMultiTechnologies:
