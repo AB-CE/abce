@@ -61,36 +61,50 @@ cdef class Offer:
     access the offer container both at the receiver as well as at the sender,
     if you have saved the offer. (e.G. self.offer = self.sell(...))
 
-    Args:
+    it has the following properties
+    :
         sender_group:
             this is the group name of the sender
+
         sender_idn:
             this is the ID of the sender
+
         receiver_group:
             This is the group name of the receiver
+
         receiver_idn:
             this is the ID of the sender
+
         good:
             the good offered or demanded
+
         quantity:
             the quantity offered or demanded
+
         price:
             the suggested tansaction price
+
         buysell:
             this can have the values 'b' for buy; 's' for sell; 'qb' for a
             nonbinding buy quote; and 'qs' for a nonbinding sell quote
+
         status:
             'new':
                 has been created, but not answered
+
             'accepted':
                 trade fully accepted
+
             'rejected':
                 trade rejected
+
             'pending':
                 offer has not yet answered, and is not older than one round.
+
             'perished':
                 the **perishable** good was not accepted by the end of the round
                 and therefore perished.
+
         final_quantity:
             If the offer has been answerd this returns the actual quantity
             bought or sold. (Equal to quantity if the offer was accepted fully)
@@ -318,11 +332,20 @@ class Trade:
         accordingly)
 
         Args:
-            receiver_group: an agent name  NEVER a group or 'all'!!!
-            (its an error but with a confusing warning)
-            'good': name of the good
-            quantity: maximum units disposed to buy at this price
-            price: price per unit
+            receiver_group:
+                group of the receiving agent
+
+            receiver_idn:
+                number of the receiving agent
+
+            'good':
+                name of the good
+
+            quantity:
+                maximum units disposed to buy at this price
+
+            price:
+                price per unit
 
         Returns:
             A reference to the offer. The offer and the offer status can
@@ -381,11 +404,20 @@ class Trade:
         accordingly)
 
         Args:
-            receiver_group: an agent name  NEVER a group or 'all'!
-            (it is an error but with a confusing warning)
-            'good': name of the good
-            quantity: maximum units disposed to buy at this price
-            price: price per unit
+            receiver_group:
+                group of the receiving agent
+
+            receiver_idn:
+                number of the receiving agent
+
+            'good':
+                name of the good
+
+            quantity:
+                maximum units disposed to buy at this price
+
+            price:
+                price per unit
         """
         cdef double available
         cdef double money_amount
@@ -488,7 +520,7 @@ class Trade:
         return {offer.good: quantity, 'money': money_amount}
 
     def reject(self, Offer offer):
-        """ The offer is rejected
+        """  Rejects the offer offer
 
         Args:
             offer: the offer the other party made
@@ -601,9 +633,22 @@ class Trade:
 
     def take(self, receiver_group, receiver_idn, good, quantity):
         """ take a good from another agent. The other agent has to accept.
+        using self.accept()
+
         Args:
 
-            receiver_group, receiver_idn, good, quantity
+
+            receiver_group:
+                group of the receiving agent
+
+            receiver_idn:
+                number of the receiving agent
+
+            good:
+                the good to be taken
+
+            quantity:
+                the quantity to be taken
         """
         self.buy(receiver_group, receiver_idn, good=good, quantity=quantity, price=0)
 
