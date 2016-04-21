@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 Welcome to ABCE's documentation!
-================================
+////////////////////////////////
 
 ABCE is a Python Agent-Based Complete Economy Platform, written by Davoud Taghawi-Nejad.
 The impatient reader can jump directly to the 'walk through', which explains how to
@@ -16,7 +16,8 @@ production functions.
 ABCE runs an Mac, Windows and Linux.
 
 
-
+Introduction
+============
 .. toctree::
    :maxdepth: 1
 
@@ -25,21 +26,34 @@ ABCE runs an Mac, Windows and Linux.
    Walk_through
    examples
    unit_testing
+
+Simulation Programming
+======================
+.. toctree::
+   :maxdepth: 1
+
    simulation
    Agent_class
    Trade
-   Quote
+   Messaging
    Firm
    Household
-   Messaging
    Database
-   FirmMultiTechnologies
-   gui
-   simulation_results
    notenoughgoods
-   files
+   Quote
+   FirmMultiTechnologies
    Contracting
    Network
+
+
+Graphical User Interface and Results
+====================================
+.. toctree::
+   :maxdepth: 1
+
+   gui
+   simulation_results
+   files
 
 
 .. raw:: latex
