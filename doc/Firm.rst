@@ -3,7 +3,7 @@ Firm and production
 
 .. automodule:: firm
 
-.. autoclass:: firm.Firm
+.. autoclass:: abce.Firm
     :members:
     :undoc-members:
     :show-inheritance:

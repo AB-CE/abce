@@ -3,7 +3,7 @@ Household and consumption
 
 .. automodule:: abce.household
 
-.. autoclass:: abce.household.Household
+.. autoclass:: abce.Household
     :members:
     :undoc-members:
     :show-inheritance:

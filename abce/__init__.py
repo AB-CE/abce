@@ -483,12 +483,12 @@ class Simulation:
             for year in xrange(self._start_year, self.rounds):
                 self.round = year
                 print("\rRound" + str("%3d" % year))
-                self.execute_internal('produce_resource')
+                self.execute_internal('_produce_resource')
 
                 for processor, group, action in self._action_list:
                     messagess = processor(group, action, messagess)
-                self.execute_internal('advance_round')
-                self.execute_internal('perish')
+                self.execute_internal('_advance_round')
+                self.execute_internal('_perish')
         except:
             raise
         finally:

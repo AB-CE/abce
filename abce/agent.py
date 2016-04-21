@@ -15,22 +15,20 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 """
-The :class:`abce.agent.Agent` class is the basic class for creating your agents. It automatically handles the
+The :py:class:`abce.Agent` class is the basic class for creating your agents. It automatically handles the
 possession of goods of an agent. In order to produce/transforme goods you also need to subclass
-the :class:`abceagent.Firm` [1]_ or to create a consumer the :class:`abce.agent.Household`.
+the :py:class:`abce.Firm` or to create a consumer the :py:class:`abce.Household`.
 
 For detailed documentation on:
 
-Trading:
-    see :class:`abce.agent.Trade`
-Logging and data creation:
-    see :class:`abce.agent.Database` and :doc:`simulation_results`
-Messaging between agents:
-    see :class:`abce.agent.Messaging`.
+Trading, see :doc:`Trade`
 
-.. autoexception:: abce.tools.NotEnoughGoods
+Logging and data creation, see :doc:`Database` and :doc:`simulation_results`
 
-.. [1] or :class:`abce.agent.FirmMultiTechnologies` for simulations with complex technologies.
+Messaging between agents, see :doc:`Messaging`.
+
+
+
 """
 from __future__ import division
 from collections import OrderedDict, defaultdict
@@ -129,6 +127,14 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         self.variables_to_track_aggregate = []
 
         random.seed(random_seed)
+
+    def init(self, parameters, agent_parameters):
+        """ This method is called when the agents are build.
+        It can be overwritten by the user, to initialize the agents.
+        parameters and agent_parameters are the parameters given in
+        :py:meth:`abce.Simulation.build_agents`
+        """
+        pass
 
     def possession(self, good):
         """ returns how much of good an agent possesses.
@@ -234,7 +240,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         self._offer_count += 1
         return hash((self.name, self._offer_count))
 
-    def advance_round(self):
+    def _advance_round(self):
         for offer in self.given_offers.values():
             if offer['made'] < self.round:
                 print("in agent %s this offers have not been retrieved:" % self.name_without_colon)
@@ -322,7 +328,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
                 self._haves[good].time_structure[i] += quantity / length
 
 
-    def declare_expiring(self, good, duration):
+    def _declare_expiring(self, good, duration):
         """ creates a good that has a limited duration
         """
         self._haves[good] = ExpiringGood(duration)
@@ -362,10 +368,10 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
     def get_id(self):
         return self.idn
 
-    def set_network_drawing_frequency(self, frequency):
+    def _set_network_drawing_frequency(self, frequency):
         self._network_drawing_frequency = frequency
 
-    def execute(self, command, incomming_messages):
+    def _execute(self, command, incomming_messages):
         self._out = []
         try:
             self._clearing__end_of_subround(incomming_messages)
@@ -380,14 +386,10 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
 
         return self._out
 
-    def execute_internal(self, command):
-        getattr(self, command)()
-
-
-    def register_resource(self, resource, units, product):
+    def _register_resource(self, resource, units, product):
         self._resources.append((resource, units, product))
 
-    def produce_resource(self):
+    def _produce_resource(self):
         for resource, units, product in self._resources:
             if resource in self._haves:
                 try:
@@ -395,19 +397,19 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
                 except KeyError:
                     self._haves[product] = float(units) * self._haves[resource]
 
-    def register_perish(self, good):
+    def _register_perish(self, good):
         self._perishable.append(good)
 
-    def perish(self):
+    def _perish(self):
         for good in self._perishable:
             if good in self._haves:
                 self._haves[good] = 0
 
-    def register_panel(self, possessions, variables):
+    def _register_panel(self, possessions, variables):
         self.possessions_to_track_panel = possessions
         self.variables_to_track_panel = variables
 
-    def register_aggregate(self, possessions, variables):
+    def _register_aggregate(self, possessions, variables):
         self.possessions_to_track_aggregate = possessions
         self.variables_to_track_aggregate = variables
 
