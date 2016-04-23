@@ -98,6 +98,13 @@ def gui(parameters, names=None, title=None, text=None):
         if __name__ == '__main__':
             main(simulation_parameters)
     """
+    if any('SPYDER' in name for name in os.environ):
+        text = """WARNING: You are running this Simulation in SPYDER
+                 When you run an IDE such as spyder the website
+                 blocks. In order to avoid that, modify the 'Run Setting'
+                 and choose 'Execute in external System Terminal' and
+                 restart your system """
+        print(text)
     def inner(func):
         generate(new_inputs=parameters, new_simulation=func, names=None, title=None, text=None)
         return run
