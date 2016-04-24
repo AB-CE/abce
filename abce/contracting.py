@@ -10,25 +10,11 @@ epsilon = get_epsilon()
 
 
 class Contract():
+    # __slots__
     def __init__(self, msg):
         self.__dict__ = msg
 
-    def __get__(self):
-        return self.__dict__
-
     def __str__(self):
-        return str(self.__dict__)
-
-    def __getitem__(self, key):
-        return self.__dict__[key]
-
-    def __float__(self):
-        return float(self.__dict__)
-
-    def __int__(self):
-        return int(self.__dict__)
-
-    def __repr__(self):
         return str(self.__dict__)
 
 class Contracting:
@@ -198,7 +184,7 @@ class Contracting:
         ret = self._contract_offers[good]
         del self._contract_offers[good]
         shuffle(ret)
-        ret.sort(key=lambda objects: objects['price'], reverse=descending)
+        ret.sort(key=lambda objects: objects.price, reverse=descending)
         return ret
 
     def accept_contract(self, contract, quantity=None):
@@ -215,18 +201,18 @@ class Contracting:
                 the quantity that is accepted. Defaults to all.
         """
         if quantity is not None:
-            contract['quantity'] = min(contract['quantity'], quantity)
+            contract.quantity = min(contract.quantity, quantity)
         else:
-            assert quantity < contract.quantity + epsilon * max(quantity, contract['quantity'])
-        if quantity > contract['quantity']:
-            quantity = contract['quantity']
+            assert quantity < contract.quantity + epsilon * max(quantity, contract.quantity)
+        if quantity > contract.quantity:
+            quantity = contract.quantity
 
         if contract.pay_group == self.group and contract.pay_idn == self.idn:
             self._contracts_pay[contract.good][contract.idn] = contract
-            self._send(contract['sender_group'], contract['sender_idn'], '_ac', contract)
+            self._send(contract.sender_group, contract.sender_idn, '_ac', contract)
         else:
             self._contracts_deliver[contract.good][contract.idn] = contract
-            self._send(contract['sender_group'], contract['sender_idn'], '_ac', contract)
+            self._send(contract.sender_group, contract.sender_idn, '_ac', contract)
         return contract
 
     def deliver_contract(self, contract):
@@ -239,14 +225,14 @@ class Contracting:
         if quantity > available:
             quantity = available
 
-        self._haves[contract['good']] -= quantity
+        self._haves[contract.good] -= quantity
         self._send(contract.pay_group, contract.pay_idn, '_dp', contract)
 
 
     def pay_contract(self, contract):
         """ delivers on a contract """
         assert contract.pay_group == self.group and contract.pay_idn == self.idn
-        money = contract['quantity'] * contract['price']
+        money = contract.quantity * contract.price
         available = self._haves['money']
         if money > available + epsilon + epsilon * max(money, available):
             raise NotEnoughGoods(self.name, 'money', money - available)
