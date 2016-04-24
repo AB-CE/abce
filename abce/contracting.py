@@ -9,10 +9,26 @@ from numpy import isfinite
 epsilon = get_epsilon()
 
 
-class Contract():
-    # __slots__
-    def __init__(self, msg):
-        self.__dict__ = msg
+class Contract(object):
+    __slots__ = ['sender_group', 'sender_idn', 'deliver_good_group',
+                 'deliver_good_idn', 'pay_group', 'pay_idn', 'good', 'quantity',
+                 'price', 'end_date', 'delivered', 'paid', 'idn']
+    def __init__(self, sender_group, sender_idn, deliver_good_group,
+                 deliver_good_idn, pay_group, pay_idn, good, quantity, price,
+                 end_date, idn):
+        self.sender_group = sender_group
+        self.sender_idn = sender_idn
+        self.deliver_good_group = deliver_good_group
+        self.deliver_good_idn = deliver_good_idn
+        self.pay_group = pay_group
+        self.pay_idn = pay_idn
+        self.good = good
+        self.quantity = quantity
+        self.price = price
+        self.end_date = end_date
+        self.delivered = None
+        self.paid = None
+        self.idn = idn
 
     def __str__(self):
         return str(self.__dict__)
@@ -112,19 +128,17 @@ class Contracting:
             self.given_contract = self.make_contract_offer('firm', 1, 'labor', quantity=8, price=10, duration=10 - 1)
         """
         quantity = bound_zero(quantity)
-        offer = Contract({'sender_group': self.group,
-                          'sender_idn': self.idn,
-                          'deliver_good_group': self.group,
-                          'deliver_good_idn': self.idn,
-                          'pay_group': receiver_group,
-                          'pay_idn': receiver_idn,
-                          'good': good,
-                          'quantity': quantity,
-                          'price': price,
-                          'end_date': duration + self.round,
-                          'delivered': None,
-                          'paid': None,
-                          'idn': self._offer_counter()})
+        offer = Contract(sender_group = self.group,
+                         sender_idn = self.idn,
+                         deliver_good_group = self.group,
+                         deliver_good_idn = self.idn,
+                         pay_group = receiver_group,
+                         pay_idn = receiver_idn,
+                         good = good,
+                         quantity = quantity,
+                         price = price,
+                         end_date = duration + self.round,
+                         idn = self._offer_counter())
         self._send(receiver_group, receiver_idn, '!o', offer)
         self._contract_offers_made[offer.idn] = offer
         return offer
@@ -150,19 +164,17 @@ class Contracting:
                 the lenght of the contract
         """
         quantity = bound_zero(quantity)
-        offer = Contract({'sender_group': self.group,
-                          'sender_idn': self.idn,
-                          'pay_group': self.group,
-                          'pay_idn': self.idn,
-                          'deliver_good_group': receiver_group,
-                          'deliver_good_idn': receiver_idn,
-                          'good': good,
-                          'quantity': quantity,
-                          'price': price,
-                          'end_date': duration + self.round,
-                          'delivered': None,
-                          'paid': None,
-                          'idn': self._offer_counter()})
+        offer = Contract(sender_group = self.group,
+                         sender_idn = self.idn,
+                         pay_group = self.group,
+                         pay_idn = self.idn,
+                         deliver_good_group = receiver_group,
+                         deliver_good_idn = receiver_idn,
+                         good = good,
+                         quantity = quantity,
+                         price = price,
+                         end_date = duration + self.round,
+                         idn = self._offer_counter())
         self._send(receiver_group, receiver_idn, '!o', offer)
         self._contract_offers_made[offer.idn] = offer
         return offer
