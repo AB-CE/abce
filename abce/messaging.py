@@ -25,26 +25,17 @@ from random import shuffle
 
 
 class Message():
-    def __init__(self, msg):
-        self.__dict__ = msg
+    __slots__ = ['sender_group', 'sender_idn', 'receiver_group',
+                 'receiver_idn', 'topic','content']
+    def __init__(self, sender_group, sender_idn, receiver_group,
+                 receiver_idn, topic, content):
+        self.sender_group=sender_group
+        self.sender_idn=sender_idn
+        self.receiver_group=receiver_group
+        self.receiver_idn=receiver_idn
+        self.topic=topic
+        self.content=content
 
-    def __get__(self):
-        return self.__dict__
-
-    def __str__(self):
-        return str(self.__dict__)
-
-    def __getitem__(self, key):
-        return self.__dict__[key]
-
-    def __float__(self):
-        return float(self.__dict__)
-
-    def __int__(self):
-        return int(self.__dict__)
-
-    def __repr__(self):
-        return str(self.__dict__)
 
 
 class Messaging:
@@ -77,43 +68,13 @@ class Messaging:
          self.message('firm', 01, 'm', "hello my message")
 
         """
-        msg = {'sender_group': self.group,
-               'sender_idn': self.idn,
-               'receiver_group': receiver_group,
-               'receiver_idn': receiver_idn,
-               'topic': topic,
-               'content': content}
+        msg = Message(sender_group=self.group,
+               sender_idn=self.idn,
+               receiver_group=receiver_group,
+               receiver_idn=receiver_idn,
+               topic=topic,
+               content=content)
         self._send(receiver_group, receiver_idn, topic, msg)
-
-    def message_to_group(self, receiver_group, topic, content):
-        """ sends a message to agent, agent_group or 'all'. Agents receive it
-        at the beginning of next round with :meth:`~abceagent.Messaging.get_messages` or
-        :meth:`~abceagent.Messaging.get_messages_all`.
-
-        Args::
-
-         receiver_group: agent, agent_group or 'all'
-         topic: string, with which this message can be received
-         content: string, dictionary or class, that is send.
-
-        Example::
-
-            ... household_01 ...
-            self.message('firm_01', 'quote_sell', {'good':'BRD', 'quantity': 5})
-
-            ... firm_01 - one subround later ...
-            requests = self.get_messages('quote_sell')
-            for req in requests:
-                self.sell(req.sender, req.good, reg.quantity, self.price[req.good])
-
-        Example2::
-
-         self.message('firm_01', 'm', "hello my message")
-
-        """
-        msg = message(self.group, self.idn, receiver_group, None, topic, content)
-        self._send_to_group(receiver_group, topic, msg)
-
 
     def get_messages(self, topic='m'):
         """ self.messages() returns all new messages send with :meth:`~abceagent.Messaging.message`

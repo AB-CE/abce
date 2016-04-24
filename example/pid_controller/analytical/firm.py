@@ -37,7 +37,7 @@ class Firm(abce.Agent, abce.Firm):
         self.offer = self.sell('market', 0, 'cookies', self.possession('cookies'), self.price)
 
     def adjust_price(self):
-        self.total_orders = self.get_messages('demand')[0]['content']
+        self.total_orders = self.get_messages('demand')[0].content
         self.dX[self.round % 20] = [1, self.L, self.price_1, self.L_1]
         self.X[self.round % 20] = [1, self.L]
 

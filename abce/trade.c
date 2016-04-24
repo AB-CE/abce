@@ -9601,7 +9601,7 @@ static PyObject *__pyx_pf_5trade_5Trade_34_clearing__end_of_subround(CYTHON_UNUS
  *                 if msg[0] == 'd':
  *                     del self._contracts_deliver[msg[1]][msg[2]]             # <<<<<<<<<<<<<<
  *             else:
- *                 self._msgs.setdefault(typ, []).append(Message(msg))
+ *                 self._msgs.setdefault(typ, []).append(msg)
  */
         __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_contracts_deliver); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 708; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         __Pyx_GOTREF(__pyx_t_5);
@@ -9639,7 +9639,7 @@ static PyObject *__pyx_pf_5trade_5Trade_34_clearing__end_of_subround(CYTHON_UNUS
     /* "trade.pyx":710
  *                     del self._contracts_deliver[msg[1]][msg[2]]
  *             else:
- *                 self._msgs.setdefault(typ, []).append(Message(msg))             # <<<<<<<<<<<<<<
+ *                 self._msgs.setdefault(typ, []).append(msg)             # <<<<<<<<<<<<<<
  * 
  * cdef double bound_zero(double x):
  */
@@ -9678,36 +9678,8 @@ static PyObject *__pyx_pf_5trade_5Trade_34_clearing__end_of_subround(CYTHON_UNUS
       __Pyx_GOTREF(__pyx_t_6);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-      __pyx_t_4 = __Pyx_GetModuleGlobalName(__pyx_n_s_Message); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 710; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_7 = NULL;
-      if (CYTHON_COMPILING_IN_CPYTHON && unlikely(PyMethod_Check(__pyx_t_4))) {
-        __pyx_t_7 = PyMethod_GET_SELF(__pyx_t_4);
-        if (likely(__pyx_t_7)) {
-          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_4);
-          __Pyx_INCREF(__pyx_t_7);
-          __Pyx_INCREF(function);
-          __Pyx_DECREF_SET(__pyx_t_4, function);
-        }
-      }
-      if (!__pyx_t_7) {
-        __pyx_t_5 = __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_v_msg); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 710; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_5);
-      } else {
-        __pyx_t_10 = PyTuple_New(1+1); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 710; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_10);
-        __Pyx_GIVEREF(__pyx_t_7); PyTuple_SET_ITEM(__pyx_t_10, 0, __pyx_t_7); __pyx_t_7 = NULL;
-        __Pyx_INCREF(__pyx_v_msg);
-        __Pyx_GIVEREF(__pyx_v_msg);
-        PyTuple_SET_ITEM(__pyx_t_10, 0+1, __pyx_v_msg);
-        __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_10, NULL); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 710; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-        __Pyx_GOTREF(__pyx_t_5);
-        __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-      }
-      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      __pyx_t_11 = __Pyx_PyObject_Append(__pyx_t_6, __pyx_t_5); if (unlikely(__pyx_t_11 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 710; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_11 = __Pyx_PyObject_Append(__pyx_t_6, __pyx_v_msg); if (unlikely(__pyx_t_11 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 710; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     }
     __pyx_L7:;
 
@@ -9753,7 +9725,7 @@ static PyObject *__pyx_pf_5trade_5Trade_34_clearing__end_of_subround(CYTHON_UNUS
 }
 
 /* "trade.pyx":712
- *                 self._msgs.setdefault(typ, []).append(Message(msg))
+ *                 self._msgs.setdefault(typ, []).append(msg)
  * 
  * cdef double bound_zero(double x):             # <<<<<<<<<<<<<<
  *     """ asserts that variable is above zero, where foating point imprecission is accounted for,
@@ -9916,7 +9888,7 @@ static double __pyx_f_5trade_bound_zero(double __pyx_v_x) {
   }
 
   /* "trade.pyx":712
- *                 self._msgs.setdefault(typ, []).append(Message(msg))
+ *                 self._msgs.setdefault(typ, []).append(msg)
  * 
  * cdef double bound_zero(double x):             # <<<<<<<<<<<<<<
  *     """ asserts that variable is above zero, where foating point imprecission is accounted for,

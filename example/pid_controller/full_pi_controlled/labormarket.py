@@ -15,7 +15,7 @@ class LaborMarket(abce.Agent, abce.Household, abce.Quote):
         model)
         """
         quote = self.get_quotes('labor')[0]
-        quantity = max(0, quote['price'] - 14)
+        quantity = max(0, quote.price - 14)
         self.create('labor', quantity)
         self.accept_quote_partial(quote, quantity)
 

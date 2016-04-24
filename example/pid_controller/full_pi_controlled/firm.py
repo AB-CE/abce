@@ -33,10 +33,10 @@ class Firm(abce.Agent, abce.Firm, abce.Quote):
 
         *but not more than is offered and he can afford """
         offer = self.get_offers('labor')[0]
-        self.accept(offer, min(offer['quantity'], self.possession('money') / self.wage, self.production_target))
+        self.accept(offer, min(offer.quantity, self.possession('money') / self.wage, self.production_target))
 
         self.wage_1 = self.wage
-        error = self.production_target - offer['quantity']
+        error = self.production_target - offer.quantity
         self.wage = self.wage_controller.update(error)
 
         self.log('wage', {'wage': self.wage,
@@ -57,7 +57,7 @@ class Firm(abce.Agent, abce.Firm, abce.Quote):
         """ The prices are adjusted according to the change in inventory.
         up and uw estimates are updated
         """
-        self.total_orders = self.get_messages('demand')[0]['content']
+        self.total_orders = self.get_messages('demand')[0].content
         self.log('total', {'orders': self.total_orders})
         self.up_regression.fit(self.price, self.price_1, self.production_target, self.production_target_1)
         self.uw_regression.fit(self.wage, self.wage_1, self.production_target, self.production_target_1)

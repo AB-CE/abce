@@ -707,7 +707,7 @@ class Trade:
                 if msg[0] == 'd':
                     del self._contracts_deliver[msg[1]][msg[2]]
             else:
-                self._msgs.setdefault(typ, []).append(Message(msg))
+                self._msgs.setdefault(typ, []).append(msg)
 
 cdef double bound_zero(double x):
     """ asserts that variable is above zero, where foating point imprecission is accounted for,

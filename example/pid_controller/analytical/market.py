@@ -15,13 +15,13 @@ class Market(abce.Agent, abce.Household):
         model)
         """
         offer = self.get_offers('cookies')[0]
-        quantity = 102 - offer['price']
+        quantity = 102 - offer.price
         self.message('firm', 0, 'demand', quantity)
         if quantity < 0:
             quantity = 0
-        if quantity > offer['quantity']:
-            quantity = offer['quantity']
-        self.create('money', quantity * offer['price'] - self.possession('money'))
+        if quantity > offer.quantity:
+            quantity = offer.quantity
+        self.create('money', quantity * offer.price - self.possession('money'))
         self.accept(offer, quantity)
 
     def consumption(self):
