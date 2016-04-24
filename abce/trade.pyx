@@ -516,7 +516,10 @@ class Trade:
         offer.final_quantity = quantity
         self._send(offer.sender_group, offer.sender_idn, '_p', (offer.idn, quantity))
         del self._open_offers[offer.good][offer.idn]
-        return {offer.good: quantity, 'money': money_amount}
+        if offer.buysell == 115:  # ord('s')
+            return {offer.good: - quantity, 'money': money_amount}
+        else:
+            return {offer.good: quantity, 'money': - money_amount}
 
     def reject(self, Offer offer):
         """  Rejects the offer offer
