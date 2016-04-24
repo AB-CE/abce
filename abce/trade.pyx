@@ -174,12 +174,12 @@ class Trade:
     of fully by ABCE.
     Selling a good works in the following way:
 
-    1. An agent sends an offer. :meth:`~abceagent.Trade.sell`
+    1. An agent sends an offer. :meth:`~.sell`
 
        *The good offered is blocked and self.possession(...) does not account for it.*
 
-    2. **Next subround:** An agent receives the offer :meth:`~abceagent.Trade.get_offers`, and can
-       :meth:`~abceagent.Trade.accept`, :meth:`~abceagent.Trade.reject` or partially accept it. :meth:`~abceagent.Trade.accept`
+    2. **Next subround:** An agent receives the offer :meth:`~.get_offers`, and can
+       :meth:`~.accept`, :meth:`~.reject` or partially accept it. :meth:`~.accept`
 
        *The good is credited and the price is deducted from the agent's possesions.*
 
@@ -189,7 +189,7 @@ class Trade:
        - in case of partial acceptance *the money is credited and part of the blocked good is unblocked.*
        - in case of rejection *the good is unblocked.*
 
-    Analogously for buying. (:meth:`~buy`)
+    Analogously for buying: :meth:`~.buy`
 
     Example::
 
@@ -225,29 +225,28 @@ class Trade:
         *Offers that are not accepted in the same subround (def block) are
         automatically rejected.* However you can also manually reject.
 
-        Args::
+        Args:
 
-         descending(optional): is a bool. False for descending True for
-                               ascending by price
+         descending(optional):
+            is a bool. False for descending True for ascending by price
 
-        Example2::
+        Returns:
+
+            a dictionary with good types as keys and list of :class:`abce.trade.Offer`
+            as values
+
+        Example::
 
          oo = get_offers_all(descending=False)
          for good_category in oo:
             print('The cheapest good of category' + good_category
             + ' is ' + good_category[0])
-         #sorted list of beer prices and seller
+            for offer in oo[good_category]:
+                if offer.price < 0.5:
+                    self.accept(offer)
+
          for offer in oo['beer']:
-            print(offer.price, offer.sender)
-
-        Lists can only efficiently pop the last item. Therefore it is more
-        efficient to order backwards and buy the last good first::
-
-         def buy_input_good(self):
-            offers = self.get_offers_all(descending=True)
-            while offers:
-                if offers[good][-1]['quantity'] == self.prices_for_which_buy[good]:
-                    self.accept(offers[good].pop())
+            print(offer.price, offer.sender_group, offer.sender_idn)
         """
         return {good: self.get_offers(good, descending) for good in self._open_offers}
 
@@ -267,7 +266,7 @@ class Trade:
                 False for descending True for ascending by price
 
         Returns:
-            A list of offers ordered by price
+            A list of :class:`abce.trade.Offer` ordered by price.
 
         Example::
 
