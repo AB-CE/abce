@@ -8,8 +8,8 @@ from endowment import Endowment
 from production_multifirm import ProductionMultifirm
 from production_firm import ProductionFirm
 from utility_household import UtilityHousehold
-#from contractseller import ContractSeller
-#from contractbuyer import ContractBuyer
+from contractseller import ContractSeller
+from contractbuyer import ContractBuyer
 from expiringcapital import ExpiringCapital
 from giveexpiringcapital import GiveExpiringCapital
 from buyexpiringcapital import BuyExpiringCapital
@@ -29,6 +29,8 @@ def main():
            'productionfirm',
            'utilityhousehold']
 
+    contractagents = ['contractbuyer', 'contractseller']
+
 
     s = Simulation(rounds=rounds, cores=None)
     action_list = [
@@ -45,15 +47,14 @@ def main():
         ('utilityhousehold', 'consumption'),
         (('messagea', 'messageb'), 'sendmsg'),
         (('messageb', 'messagea'), 'recvmsg'),
-        #('contractseller', 'make_offer'),
-        #('contractseller', 'accept_offer'),
-        #('contractseller', 'deliver_or_pay'),
-        #('contractseller', 'control'),
 
-        #('contractbuyer', 'request_offer'),
-        #('contractbuyer', 'accept_offer'),
-        #('contractbuyer', 'deliver_or_pay'),
-        #('contractbuyer', 'control'),
+        ('contractbuyer', 'request_offer'),
+        ('contractseller', 'make_offer'),
+        (contractagents, 'accept_offer'),
+        (contractagents, 'deliver'),
+        (contractagents, 'pay'),
+        (contractagents, 'control'),
+
         #('expiringcapital', 'go'),
 
         (all, 'all_tests_completed')]
@@ -74,8 +75,8 @@ def main():
     s.build_agents(ProductionMultifirm, 'productionmultifirm', 1, parameters={'rounds': rounds})
     s.build_agents(ProductionFirm, 'productionfirm', 5, parameters={'rounds': rounds})
     s.build_agents(UtilityHousehold, 'utilityhousehold', 5, parameters={'rounds': rounds})
-    #s.build_agents(ContractSeller, 2)
-    #s.build_agents(ContractBuyer, 2)
+    s.build_agents(ContractSeller, 'contractseller', 2, parameters={'rounds': rounds})
+    s.build_agents(ContractBuyer, 'contractbuyer', 2, parameters={'rounds': rounds})
     #s.build_agents(ExpiringCapital, 1)
     #s.build_agents(GiveExpiringCapital, 2)
     s.build_agents(BuyExpiringCapital, 'buyexpiringcapital', 2, parameters={'rounds': rounds})

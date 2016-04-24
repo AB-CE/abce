@@ -56,6 +56,7 @@ from agent import *
 from collections import defaultdict, OrderedDict
 from firm import Firm
 from quote import Quote
+from contracting import Contracting
 import json
 import abcegui
 from family import Family

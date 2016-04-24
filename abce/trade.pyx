@@ -687,14 +687,25 @@ class Trade:
                 self._quotes[msg.idn] = msg
             elif typ == '!o':
                 self._contract_offers[msg.good].append(msg)
-            elif typ == '+d':
-                self._contracts_deliver[msg.good].append(msg)
-            elif typ == '+p':
-                self._contracts_pay[msg.good].append(msg)
-            elif typ == '!c':
-                self._haves[msg.good] += msg.quantity
-                self._contracts_deliver[msg.idn]['delivered'] = self.round
-                self._log_receive_accept(msg)
+            elif typ == '_ac':
+                contract = self._contract_offers_made[msg.idn]
+                if contract.pay_group == self.group and contract.pay_idn == self.idn:
+                    self._contracts_pay[contract.good][contract.idn] = contract
+                else:
+                    self._contracts_deliver[contract.good][contract.idn] = contract
+            elif typ == '_dp':
+                if msg.pay_group == self.group and msg.pay_idn == self.idn:
+                    self._haves[msg.good] += msg.quantity
+                    self._contracts_pay[msg.good][msg.idn].delivered = self.round
+                else:
+                    self._haves['money'] += msg.quantity * msg.price
+                    self._contracts_deliver[msg.good][msg.idn].paid = self.round
+
+            elif typ == '!d':
+                if msg[0] == 'r':
+                    del self._contracts_pay[msg[1]][msg[2]]
+                if msg[0] == 'd':
+                    del self._contracts_deliver[msg[1]][msg[2]]
             else:
                 self._msgs.setdefault(typ, []).append(Message(msg))
 

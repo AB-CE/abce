@@ -117,10 +117,11 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         self._open_offers = defaultdict(dict)
         self._offer_count = 0
         self._reject_offers_retrieved_end_subround = []
+        self._contract_offers_made = {}
         self._contract_requests = defaultdict(list)
         self._contract_offers = defaultdict(list)
-        self._contracts_pay = defaultdict(list)
-        self._contracts_deliver = defaultdict(list)
+        self._contracts_pay = defaultdict(dict)
+        self._contracts_deliver = defaultdict(dict)
         self._contracts_payed = []
         self._contracts_delivered = []
 
@@ -195,11 +196,17 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         self._contracts_payed = []
         self._contracts_delivered = []
 
+        # delete all expired contracts
         for good in self._contracts_deliver:
-            self._contracts_deliver[good] = [contract for contract in self._contracts_deliver[good] if contract['end_date'] > self.round]
+            for contract in copy(self._contracts_deliver[good]):
+                if self._contracts_deliver[good][contract].end_date == self.round:
+                    del self._contracts_deliver[good][contract]
 
         for good in self._contracts_pay:
-            self._contracts_pay[good] = [contract for contract in self._contracts_pay[good] if contract['end_date'] > self.round]
+            for contract in copy(self._contracts_pay[good]):
+                if self._contracts_pay[good][contract].end_date == self.round:
+                    del self._contracts_pay[good][contract]
+
         # expiring goods
         for good in self._expiring_goods:
             self._haves[good]._advance_round()
