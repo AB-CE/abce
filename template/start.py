@@ -3,41 +3,40 @@ from firm import Firm
 from household import Household
 from abce import Simulation, gui
 
-simulation_parameters = {'name', 'name',
+simulation_parameters = {'name': 'name',
                          'rounds': 500,
                          'firms': 5,
                          'households': 5}
 
-@gui(simulation_parameters)
+                             # commend out simulation.graphs() and uncomment
+                             # this line to run the simulation with a Graphical
+#@gui(simulation_parameters) # User Interface
 def main():
-        s = Simulation(simulation_parameters)
-        action_list = [
-        repeat([
-            ('firm', 'one'),
-            ('household', 'two'),
-            ], simulation_parameters['trade_repetitions']),
-            ('all', 'three')
-        ]
-        s.add_action_list(action_list)
+        simulation = Simulation(rounds=simulation_parameters['rounds'])
+        action_list = [('firm', 'one'),
+                       ('household', 'two'),
+                       ('all', 'three')]
+        simulation.add_action_list(action_list)
 
-        s.build_agents(Firm, 'firm',
-                       simulation_parameters['firms'],
-                       parameters=simulation_parameters)
-        s.build_agents(Household, 'household',
-                       simulation_parameters['households'],
-                       parameters=simulation_parameters)
-
-        s.declare_round_endowment(
-                    resource='labor_endowment',
-                    productivity=1,
-                    product='labor'
+        simulation.declare_round_endowment(resource='labor_endowment',
+                                           units=1,
+                                           product='labor'
         )
-        s.declare_perishable(good='labor')
+        simulation.declare_perishable(good='labor')
 
-        s.panel_data('household')
-        s.panel_data('firm')
+        simulation.panel('household', possessions=['good1', 'good2'],  # put a list of household possessions to track here
+                                      variables=['utility']) # put a list of household possessions to track here
 
-        s.run()
+        simulation.build_agents(Firm, 'firm',
+                       number=simulation_parameters['firms'],
+                       parameters=simulation_parameters)
+        simulation.build_agents(Household, 'household',
+                       number=simulation_parameters['households'],
+                       parameters=simulation_parameters)
+
+
+        simulation.run()
+        simulation.graphs()
 
 if __name__ == '__main__':
     main()
