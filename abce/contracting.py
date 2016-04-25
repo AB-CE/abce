@@ -269,16 +269,22 @@ class Contracting:
         self._send(contract.deliver_good_group, contract.deliver_good_idn, '_dp', contract)
 
     def contracts_to_deliver(self, good):
-        return self._contracts_deliver[good]
+        return self._contracts_deliver[good].values()
 
     def contracts_to_receive(self, good):
-        return self._contracts_pay[good]
+        return self._contracts_pay[good].values()
 
     def contracts_to_deliver_all(self):
-        return self._contracts_deliver
+        ret = {}
+        for good in self._contracts_deliver:
+            ret[good] = self._contracts_deliver[good].values()
+        return request_offer
 
     def contracts_to_receive_all(self):
-        return self._contracts_pay
+        ret = {}
+        for good in self._contracts_pay:
+            ret[good] = self._contracts_pay[good].values()
+        return request_offer
 
     def end_contract(self, contract):
         if contract.idn in self._contracts_deliver[contract.good]:
