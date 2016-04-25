@@ -10,6 +10,8 @@ from production_firm import ProductionFirm
 from utility_household import UtilityHousehold
 from contractseller import ContractSeller
 from contractbuyer import ContractBuyer
+from contractsellerstop import ContractSellerStop
+from contractbuyerstop import ContractBuyerStop
 from expiringcapital import ExpiringCapital
 from giveexpiringcapital import GiveExpiringCapital
 from buyexpiringcapital import BuyExpiringCapital
@@ -29,8 +31,8 @@ def main():
            'productionfirm',
            'utilityhousehold']
 
-    contractagents = ['contractbuyer', 'contractseller']
-
+    contractagents = ['contractbuyer', 'contractseller',
+                      'contractbuyerstop', 'contractsellerstop']
 
     s = Simulation(rounds=rounds, cores=None)
     action_list = [
@@ -48,8 +50,8 @@ def main():
         (('messagea', 'messageb'), 'sendmsg'),
         (('messageb', 'messagea'), 'recvmsg'),
 
-        ('contractbuyer', 'request_offer'),
-        ('contractseller', 'make_offer'),
+        (('contractbuyer','contractbuyerstop'), 'request_offer'),
+        (('contractseller', 'contractsellerstop'), 'make_offer'),
         (contractagents, 'accept_offer'),
         (contractagents, 'deliver'),
         (contractagents, 'pay'),
@@ -77,6 +79,8 @@ def main():
     s.build_agents(UtilityHousehold, 'utilityhousehold', 5, parameters={'rounds': rounds})
     s.build_agents(ContractSeller, 'contractseller', 2, parameters={'rounds': rounds})
     s.build_agents(ContractBuyer, 'contractbuyer', 2, parameters={'rounds': rounds})
+    s.build_agents(ContractSellerStop, 'contractsellerstop', 2, parameters={'rounds': rounds})
+    s.build_agents(ContractBuyerStop, 'contractbuyerstop', 2, parameters={'rounds': rounds})
     #s.build_agents(ExpiringCapital, 1)
     #s.build_agents(GiveExpiringCapital, 2)
     s.build_agents(BuyExpiringCapital, 'buyexpiringcapital', 2, parameters={'rounds': rounds})

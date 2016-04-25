@@ -4,7 +4,7 @@ from tools import *
 from abce import NotEnoughGoods
 
 
-class ContractBuyer(abce.Agent, abce.Contracting):
+class ContractBuyerStop(abce.Agent, abce.Contracting):
     def init(self, simulation_parameters, agent_parameters):
         self.last_round = simulation_parameters['rounds'] - 1
         if self.idn == 0:
@@ -13,11 +13,13 @@ class ContractBuyer(abce.Agent, abce.Contracting):
     def request_offer(self):
         if self.idn == 1:
             if self.round % 10 == 0:
-                self.given_contract = self.request_good_contract('contractbuyer', 0,
+                self.given_contract = self.request_good_contract('contractbuyerstop', 0,
                                                                  'labor',
                                                                  quantity=5,
                                                                  price=10,
-                                                                 duration=9)
+                                                                 duration=31)
+            if self.round % 5 == 0 and self.round % 10 != 0:
+                self.end_contract(self.given_contract)
 
     def accept_offer(self):
         if self.idn == 0:
@@ -38,15 +40,24 @@ class ContractBuyer(abce.Agent, abce.Contracting):
                 assert self.possession('money') == 0
 
     def control(self):
-        if self.idn == 1:
-            assert self.was_delivered_this_round(self.given_contract), self.given_contract
-            assert self.possession('money') == 0
-            assert self.possession('labor') == 5
+        if self.round % 10 < 5:
+            if self.idn == 1:
+                assert self.was_delivered_this_round(self.given_contract), self.given_contract
+                assert self.possession('money') == 0
+                assert self.possession('labor') == 5
+            else:
+                assert self.was_paid_this_round(self.accepted_contract), self._contracts_payed
+                assert self.possession('labor') == 0, self.possession('labor')
+                assert self.possession('money') == 50, self.possession('money')
+                self.destroy('money')
         else:
-            assert self.was_paid_this_round(self.accepted_contract), self._contracts_payed
-            assert self.possession('labor') == 0, self.possession('labor')
-            assert self.possession('money') == 50, self.possession('money')
-            self.destroy('money')
+            if self.idn == 1:
+                assert self.possession('money') == 0
+                assert self.possession('labor') == 0
+            else:
+                assert self.possession('labor') == 5, self.possession('labor')
+                assert self.possession('money') == 0, self.possession('money')
+                self.destroy('labor')
 
     def clean_up(self):
         pass
