@@ -64,10 +64,7 @@ class ContractSellerStop(abce.Agent, abce.Contracting):
 
     def all_tests_completed(self):
         if self.round == self.last_round and self.idn == 0:
-            print('Test make_contract_offer\t\t\tOK')
-            print('Test get_contract_offer \t\t\tOK')
-            print('Test deliver            \t\t\tOK')
-            print('Test pay_contract       \t\t\tOK')
-            print('Test is_payed    \t\t\t\tOK')
-            print('Test is_delivered\t\t\t\tOK')
+            print('Test make_offer         \t\t\tOK')
+            print('Test end_contract       \t\t\tOK')
+
 
