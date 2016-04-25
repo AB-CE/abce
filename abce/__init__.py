@@ -452,7 +452,11 @@ class Simulation:
         for block in families_messages:
             for family_name, family_msgs in block.iteritems():
                 if len(family_msgs):
-                    messages[family_name].extend(family_msgs)
+                    try:
+                        messages[family_name].extend(family_msgs)
+                    except KeyError:
+                        raise KeyError("reciever of message, contract or similar not found "
+                                       + str(family_name))
         return messages
 
     def execute_serial(self, groups, command, messages):
@@ -463,7 +467,11 @@ class Simulation:
         for block in families_messages:
             for family_name, family_msgs in block.iteritems():
                 if len(family_msgs):
-                    messages[family_name].extend(family_msgs)
+                    try:
+                        messages[family_name].extend(family_msgs)
+                    except KeyError:
+                        raise KeyError("reciever of message, contract or similar not found "
+                                       + str(family_name))
         return messages
     def execute_internal(self, command):
         for group in self.family_list:
