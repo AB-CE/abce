@@ -123,13 +123,19 @@ class Contracting:
             price:
                 the price of the good or service
             duration:
-                the lenght of the contract
+                the length of the contract, if duration is None or not set,
+                the contract has no end date.
 
         Example::
 
             self.given_contract = self.make_contract_offer('firm', 1, 'labor', quantity=8, price=10, duration=10 - 1)
         """
         quantity = bound_zero(quantity)
+        if duration is None:
+            end_date = None
+        else:
+            end_date = duration + self.round
+
         offer = Contract(sender_group = self.group,
                          sender_idn = self.idn,
                          deliver_good_group = self.group,
@@ -139,7 +145,7 @@ class Contracting:
                          good = good,
                          quantity = quantity,
                          price = price,
-                         end_date = duration + self.round,
+                         end_date = end_date,
                          idn = self._offer_counter())
         self._send(receiver_group, receiver_idn, '!o', offer)
         self._contract_offers_made[offer.idn] = offer
@@ -163,9 +169,15 @@ class Contracting:
             price:
                 the price of the good or service
             duration:
-                the lenght of the contract
+                the length of the contract, if duration is None or not set,
+                the contract has no end date.
         """
         quantity = bound_zero(quantity)
+        if duration is None:
+            end_date = None
+        else:
+            end_date = duration + self.round
+
         offer = Contract(sender_group = self.group,
                          sender_idn = self.idn,
                          pay_group = self.group,
@@ -175,7 +187,7 @@ class Contracting:
                          good = good,
                          quantity = quantity,
                          price = price,
-                         end_date = duration + self.round,
+                         end_date = end_date,
                          idn = self._offer_counter())
         self._send(receiver_group, receiver_idn, '!o', offer)
         self._contract_offers_made[offer.idn] = offer
