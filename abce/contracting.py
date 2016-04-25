@@ -290,8 +290,8 @@ class Contracting:
         if contract.idn in self._contracts_deliver[contract.good]:
             self._send(contract.pay_group, contract.pay_idn, '!d', ('r', contract.good, contract.idn))
             del self._contracts_deliver[contract.good][contract.idn]
-        elif contract.idn in self._contracts_pay:
-            self._send(contract.deliver_group, contract.deliver_idn, '!d', ('d', contract.good, contract.idn))
+        elif contract.idn in self._contracts_pay[contract.good]:
+            self._send(contract.deliver_good_group, contract.deliver_good_idn, '!d', ('d', contract.good, contract.idn))
             del self._contracts_pay[contract.good][contract.idn]
         else:
             raise Exception("Contract not found")
