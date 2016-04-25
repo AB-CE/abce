@@ -31,7 +31,9 @@ class Contract(object):
         self.idn = idn
 
     def __str__(self):
-        return str(self.__dict__)
+        return str(('sender', self.sender_group, self.sender_idn, 'deliver', self.deliver_good_group,
+                 self.deliver_good_idn, self.pay_group, self.pay_idn, self.good, self.quantity, self.price,
+                 self.end_date, self.idn))
 
 class Contracting:
     """ This is a class, that allows you to create contracts. For example a
