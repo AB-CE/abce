@@ -106,7 +106,7 @@ def gui(parameters, names=None, title=None, text=None):
                  restart your system """
         print(text)
     def inner(func):
-        generate(new_inputs=parameters, new_simulation=func, names=None, title=None, text=None)
+        generate(new_inputs=parameters, new_simulation=func, names=None, title=title, text=text)
         return run
     return inner  # return a function object
 
@@ -217,6 +217,15 @@ def generate(new_inputs, new_simulation, names=None, title=None, text=None):
     global simulation
     global gtitle
     global gtext
+
+    if text is not None:
+        gtext = text
+        print 'here'
+
+    if title is not None:
+        gtitle = title
+        print 'there'
+
     simulation = new_simulation
 
     ordered_inputs = OrderedDict()
