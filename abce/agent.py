@@ -301,12 +301,6 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
                 self._haves[good] = 0
                 raise NotEnoughGoods(self.name, good, quantity - self._haves[good])
 
-    def get_group(self):
-        return self.group
-
-    def get_id(self):
-        return self.idn
-
     def _set_network_drawing_frequency(self, frequency):
         self._network_drawing_frequency = frequency
 
