@@ -696,10 +696,10 @@ class Trade:
             elif typ == '_dp':
                 if msg.pay_group == self.group and msg.pay_idn == self.idn:
                     self._haves[msg.good] += msg.quantity
-                    self._contracts_pay[msg.good][msg.idn].delivered = self.round
+                    self._contracts_pay[msg.good][msg.idn].delivered.append(self.round)
                 else:
                     self._haves['money'] += msg.quantity * msg.price
-                    self._contracts_deliver[msg.good][msg.idn].paid = self.round
+                    self._contracts_deliver[msg.good][msg.idn].paid.append(self.round)
 
             elif typ == '!d':
                 if msg[0] == 'r':

@@ -26,8 +26,8 @@ class Contract(object):
         self.quantity = quantity
         self.price = price
         self.end_date = end_date
-        self.delivered = None
-        self.paid = None
+        self.delivered = []
+        self.paid = []
         self.idn = idn
 
     def __str__(self):
@@ -297,16 +297,16 @@ class Contracting:
             raise Exception("Contract not found")
 
     def was_paid_this_round(self, contract):
-        return contract.paid == self.round
+        return contract.paid[-1] == self.round
 
     def was_delivered_this_round(self, contract):
-        return contract.delivered == self.round
+        return contract.delivered[-1] == self.round
 
     def was_paid_last_round(self, contract):
-        return contract.paid == self.round - 1
+        return self.round - 1 in contract.paid
 
     def was_delivered_last_round(self, contract):
-        return contract.delivered == self.round - 1
+        return self.round - 1 in contract.delivered
 
 def bound_zero(x):
     """ asserts that variable is above zero, where foating point imprecission is accounted for,
