@@ -99,6 +99,7 @@ def gui(parameters, names=None, title=None, text=None):
             main(simulation_parameters)
     """
     if any('SPYDER' in name for name in os.environ):
+        title = "WARNING"
         text = """WARNING: You are running this Simulation in SPYDER
                  When you run an IDE such as spyder the website
                  blocks. In order to avoid that, modify the 'Run Setting'
