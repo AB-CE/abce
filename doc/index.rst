@@ -40,11 +40,16 @@ Simulation Programming
    Household
    Database
    notenoughgoods
-   Quote
-   FirmMultiTechnologies
-   Contracting
    Network
 
+Advanced
+========
+.. toctree::
+   :maxdepth: 1
+
+   Contracting
+   FirmMultiTechnologies
+   Quote
 
 Graphical User Interface and Results
 ====================================
@@ -52,7 +57,6 @@ Graphical User Interface and Results
    :maxdepth: 1
 
    gui
-   simulation_results
    files
 
 
