@@ -6,7 +6,7 @@
 Welcome to ABCE's documentation!
 ////////////////////////////////
 
-ABCE is a Python Agent-Based Complete Economy Platform, written by Davoud Taghawi-Nejad.
+ABCE is a Python Agent-Based Computational Economy Platform, written by Davoud Taghawi-Nejad.
 The impatient reader can jump directly to the 'walk through', which explains how to
 set up a simulation. In the walk through you learn
 how to set up an agent and how to trade with other agents. The households and firms
@@ -24,6 +24,7 @@ Introduction
    introduction
    installation
    Walk_through
+   tutorial
    examples
    unit_testing
 

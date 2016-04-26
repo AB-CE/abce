@@ -1,5 +1,5 @@
-Walk through / Tutorial
-=======================
+Walk through
+============
 
 This tutorial is a step by step guide to create an agent-based model with ABCE.
 In the following two text boxes, the two concepts that make ABCE special are
