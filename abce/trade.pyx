@@ -1,4 +1,3 @@
-
 # Copyright 2012 Davoud Taghawi-Nejad
 #
 # Module Author: Davoud Taghawi-Nejad
@@ -42,9 +41,9 @@ from __future__ import division
 from random import shuffle
 from abce.notenoughgoods import NotEnoughGoods
 from messaging import Message
-from numpy import isfinite
+from numpy import isfinite, isnan
 
-cdef epsilon = 0.0000000000001
+cdef epsilon = 0.00000000001
 
 def get_epsilon():
     return epsilon
@@ -364,11 +363,19 @@ class Trade:
                     print('On diet')
         """
         cdef double available
-        price = bound_zero(price)
+        assert price > - epsilon, '%.30f is smaller than 0 - epsilon (%.30f)' % (price, - epsilon)
+        if not isfinite(price) or isnan(price):
+            print ('warning infinity or nan in trade price:', price)
+        if price < 0:
+            price = 0
         # makes sure the quantity is between zero and maximum available, but
         # if its only a little bit above or below its set to the bounds
         available = self._haves[good]
-        quantity = bound_zero(quantity)
+        assert quantity > - epsilon, '%.30f is smaller than 0 - epsilon (%.30f)' % (quantity, - epsilon)
+        if not isfinite(quantity) or isnan(quantity):
+            print ('warning infinity or nan in trade quantity:', quantity)
+        if quantity < 0:
+            quantity = 0
         if quantity > available + epsilon + epsilon * fmax(quantity, available):
             raise NotEnoughGoods(self.name, good, quantity - available)
         if quantity > available:
@@ -420,12 +427,20 @@ class Trade:
         """
         cdef double available
         cdef double money_amount
-        price = bound_zero(price)
+        assert price > - epsilon, '%.30f is smaller than 0 - epsilon (%.30f)' % (price, - epsilon)
+        if not isfinite(price) or isnan(price):
+            print ('warning infinity or nan in trade price:', price)
+        if price < 0:
+            price = 0
         money_amount = quantity * price
         # makes sure the money_amount is between zero and maximum available, but
         # if its only a little bit above or below its set to the bounds
         available = self._haves['money']
-        money_amount = bound_zero(money_amount)
+        assert money_amount > - epsilon, '%.30f is smaller than 0 - epsilon (%.30f)' % (money_amount, - epsilon)
+        if not isfinite(money_amount) or isnan(money_amount):
+            print ('warning infinity or nan in trade money_amount', money_amount)
+        if money_amount < 0:
+            money_amount = 0
         if money_amount > available + epsilon + epsilon * fmax(money_amount, available):
             raise NotEnoughGoods(self.name, 'money', money_amount - available)
         if money_amount > available:
@@ -487,7 +502,11 @@ class Trade:
 
         if quantity == -999:
             quantity = offer_quantity
-        quantity = bound_zero(quantity)
+        assert quantity > - epsilon, '%.30f is smaller than 0 - epsilon (%.30f)' % (quantity, - epsilon)
+        if not isfinite(quantity) or isnan(quantity):
+            print ('warning infinity or nan in trade quantity:', quantity)
+        if quantity < 0:
+            quantity = 0
         if quantity > offer_quantity + epsilon * fmax(quantity, offer_quantity):
             raise AssertionError('accepted more than offered %s: %.100f >= %.100f'
                                  % (offer.good, quantity, offer_quantity))
@@ -496,7 +515,12 @@ class Trade:
 
         money_amount = quantity * offer.price
         if offer.buysell == 115:  # ord('s')
-            money_amount = bound_zero(money_amount)
+            assert money_amount > - epsilon, '%.30f is smaller than 0 - epsilon (%.30f)' % (money_amount, - epsilon)
+            if not isfinite(money_amount) or isnan(money_amount):
+                print ('warning infinity or nan in trade money_amount', money_amount)
+            if money_amount < 0:
+                money_amount = 0
+
             available = self._haves['money']
             if money_amount > available + epsilon + epsilon * max(money_amount, available):
                 raise NotEnoughGoods(self.name, 'money', money_amount - available)
@@ -505,7 +529,11 @@ class Trade:
             self._haves[offer.good] += quantity
             self._haves['money'] -= quantity * offer.price
         else:
-            quantity = bound_zero(quantity)
+            assert quantity > - epsilon, '%.30f is smaller than 0 - epsilon (%.30f)' % (quantity, - epsilon)
+            if not isfinite(quantity) or isnan(quantity):
+                print ('warning infinity or nan in trade quantity', quantity)
+            if quantity < 0:
+                quantity = 0
             available = self._haves[offer.good]
             if quantity > available + epsilon + epsilon * max(quantity, available):
                 raise NotEnoughGoods(self.name, offer.good, quantity - available)
@@ -623,7 +651,11 @@ class Trade:
 
         """
         cdef double available
-        quantity = bound_zero(quantity)
+        assert quantity > - epsilon, '%.30f is smaller than 0 - epsilon (%.30f)' % (quantity, - epsilon)
+        if not isfinite(quantity) or isnan(quantity):
+            print ('warning infinity or nan in trade quantity', quantity)
+        if quantity < 0:
+            quantity = 0
         available = self._haves[good]
         if quantity > available + epsilon + epsilon * max(quantity, available):
             raise NotEnoughGoods(self.name, good, quantity - available)
@@ -709,13 +741,3 @@ class Trade:
             else:
                 self._msgs.setdefault(typ, []).append(msg)
 
-cdef double bound_zero(double x):
-    """ asserts that variable is above zero, where foating point imprecission is accounted for,
-    and than makes sure it is above 0, without floating point imprecission """
-    assert x > - epsilon, '%.30f is smaller than 0 - epsilon (%.30f)' % (x, - epsilon)
-    if not isfinite(x):
-        print 'warning infinity in trade'
-    if x < 0:
-        return 0
-    else:
-        return x
