@@ -159,7 +159,7 @@ class Firm(FirmMultiTechnologies):
 
                 use = {'a': 1, 'b': 0.1, 'c': 0}
 
-                self.set_production_function(production_function, use)
+                self.set_production_function_many_goods(production_function, use)
 
             def production(self):
                 self.produce({'a' : 1, 'b' : 2, 'c': 5})
