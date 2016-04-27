@@ -315,7 +315,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         except:
             time.sleep(random.random())
             traceback.print_exc()
-            raise
+            raise SystemExit()
 
         return self._out
 
