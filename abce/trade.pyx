@@ -43,7 +43,7 @@ from abce.notenoughgoods import NotEnoughGoods
 from messaging import Message
 from numpy import isfinite, isnan
 
-cdef epsilon = 0.00000000001
+cdef double epsilon = 0.00000000001
 
 def get_epsilon():
     return epsilon
@@ -321,7 +321,8 @@ class Trade:
         ret.sort(key=lambda objects: objects['price'], reverse=descending)
         return ret
 
-    def sell(self, receiver_group, receiver_idn, good, double quantity, double price):
+    def sell(self, receiver_group, receiver_idn,
+             good, double quantity, double price, double epsilon=epsilon):
         """ commits to sell the quantity of good at price
 
         The good is not available for the agent. When the offer is
@@ -344,6 +345,11 @@ class Trade:
 
             price:
                 price per unit
+
+            epsilon (optional):
+                if you have floating point errors, a quantity or prices is
+                a fraction of number to high or low. You can increase the
+                floating point tolerance. See troubleshooting -- floating point problems
 
         Returns:
             A reference to the offer. The offer and the offer status can
@@ -401,7 +407,8 @@ class Trade:
         self._send(receiver_group, receiver_idn, '_o', offer.pickle())
         return offer
 
-    def buy(self, receiver_group, receiver_idn, good, double quantity, double price):
+    def buy(self, receiver_group, receiver_idn, good,
+            double quantity, double price, double epsilon=epsilon):
         """ commits to sell the quantity of good at price
 
         The goods are not in haves or self.count(). When the offer is
@@ -424,6 +431,11 @@ class Trade:
 
             price:
                 price per unit
+
+            epsilon (optional):
+                if you have floating point errors, a quantity or prices is
+                a fraction of number to high or low. You can increase the
+                floating point tolerance. See troubleshooting -- floating point problems
         """
         cdef double available
         cdef double money_amount
@@ -481,7 +493,7 @@ class Trade:
         del self.given_offers[offer.idn]
 
 
-    def accept(self, Offer offer, double quantity=-999):
+    def accept(self, Offer offer, double quantity=-999, double epsilon=epsilon):
         """ The buy or sell offer is accepted and cleared. If no quantity is
         given the offer is fully accepted; If a quantity is given the offer is
         partial accepted
@@ -492,6 +504,11 @@ class Trade:
                 the offer the other party made
             quantity:
                 quantity to accept. If not given all is accepted
+
+            epsilon (optional):
+                if you have floating point errors, a quantity or prices is
+                a fraction of number to high or low. You can increase the
+                floating point tolerance. See troubleshooting -- floating point problems
 
         Return:
             Returns a dictionary with the good's quantity and the amount paid.
@@ -624,7 +641,7 @@ class Trade:
         else:
             self._haves['money'] += offer.quantity * offer.price
 
-    def give(self, receiver_group, receiver_idn, good, double quantity):
+    def give(self, receiver_group, receiver_idn, good, double quantity, double epsilon=epsilon):
         """ gives a good to another agent
 
         Args:
@@ -637,6 +654,11 @@ class Trade:
                 the good to be transfered
             quantity:
                 amount to be transfered
+
+            epsilon (optional):
+                if you have floating point errors, a quantity or prices is
+                a fraction of number to high or low. You can increase the
+                floating point tolerance. See troubleshooting -- floating point problems
 
         Raises:
 
@@ -665,7 +687,7 @@ class Trade:
         self._send(receiver_group, receiver_idn, '_g', [good, quantity])
         return {good: quantity}
 
-    def take(self, receiver_group, receiver_idn, good, quantity):
+    def take(self, receiver_group, receiver_idn, good, double quantity, double epsilon=epsilon):
         """ take a good from another agent. The other agent has to accept.
         using self.accept()
 
@@ -683,8 +705,13 @@ class Trade:
 
             quantity:
                 the quantity to be taken
+
+            epsilon (optional):
+                if you have floating point errors, a quantity or prices is
+                a fraction of number to high or low. You can increase the
+                floating point tolerance. See troubleshooting -- floating point problems
         """
-        self.buy(receiver_group, receiver_idn, good=good, quantity=quantity, price=0)
+        self.buy(receiver_group, receiver_idn, good=good, quantity=quantity, price=0, epsilon=epsilon)
 
 
     def _clearing__end_of_subround(self, incomming_messages):
