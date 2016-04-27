@@ -23,7 +23,7 @@ For detailed documentation on:
 
 Trading, see :doc:`Trade`
 
-Logging and data creation, see :doc:`Database` and :doc:`simulation_results`
+Logging and data creation, see :doc:`Database`.
 
 Messaging between agents, see :doc:`Messaging`.
 
