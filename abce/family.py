@@ -1,5 +1,7 @@
 from collections import defaultdict
 import traceback
+import time
+import random
 
 
 class Family:
@@ -24,7 +26,14 @@ class Family:
 
     def execute_internal(self, command):
         for agent in self.agents:
-            getattr(agent, command)()
+            try:
+                getattr(agent, command)()
+            except KeyboardInterrupt:
+                return None
+            except:
+                time.sleep(random.random())
+                traceback.print_exc()
+                raise SystemExit()
 
     def declare_expiring(self, good, duration):
         for agent in self.agents:
@@ -32,7 +41,14 @@ class Family:
 
     def init(self, simulation_parameters, agent_parameters):
         for agent in self.agents:
-            agent.init(simulation_parameters, agent_parameters[agent.idn])
+            try:
+                agent.init(simulation_parameters, agent_parameters[agent.idn])
+            except KeyboardInterrupt:
+                return None
+            except:
+                time.sleep(random.random())
+                traceback.print_exc()
+                raise SystemExit()
 
     def register_perish(self, good):
         for agent in self.agents:
