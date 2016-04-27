@@ -648,7 +648,7 @@ class Simulation:
         description = open(self.path + '/description.txt', 'r')
         print(description.read())
 
-    def graphs(self):
+    def graphs(self, open=True, new=1):
         """ after the simulatio is run, graphs() shows graphs of all data
         collected in the simulation. Shows the same output as the @gui
         decorator shows.
