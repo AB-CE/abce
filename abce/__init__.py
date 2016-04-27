@@ -525,6 +525,8 @@ class Simulation:
                     messagess = processor(group, action, messagess)
                 self.execute_internal('_advance_round')
                 self.execute_internal('_perish')
+        except EOFError:
+            pass
         except:
             raise
         finally:
