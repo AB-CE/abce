@@ -671,7 +671,9 @@ class Simulation:
             w.run()
             w.graphs()
         """
-        abcegui.run()
+        if self.round > 0:
+            abcegui.run(open=open, new=new)
+
 
     def pickle(self, name):
         with open('%s.simulation' % name, 'wb') as jar:
