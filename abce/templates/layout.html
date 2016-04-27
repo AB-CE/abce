@@ -1,8 +1,14 @@
 <!doctype html>
-<title>Flaskr</title>
-<link rel="stylesheet" href="./static/material.min.css">
-<script src="./static/material.min.js"></script>
-<!-- <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"> -->
+<html lang="en">
+<head>
+  <title>Flaskr</title>
+  <link rel="stylesheet" href="./static/material.min.css">
+  <script src="./static/material.min.js"></script>
+  <!-- <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"> -->
+  {{ js_resources | safe}}
+  {{ css_resources | safe}}
+  {{ script | safe}}
+</head>
 <style>
 .mdl-card--expand {
     width: 100%;}
@@ -10,6 +16,10 @@
     display: block;
     margin-left: auto;
     margin-right: auto }
+
+.graph {
+  height: 250px;
+}
 </style>
 
 <div class=page>
@@ -41,3 +51,4 @@
     </main>
   </div>
 </div>
+</html>

@@ -9,6 +9,11 @@ from collections import OrderedDict
 from abce.webtext import abcedescription
 import shutil
 import traceback
+import random
+from bokeh.plotting import figure, output_file
+from bokeh.embed import components
+from bokeh.resources import INLINE
+from bokeh.palettes import brewer
 
 _ = __file__  # makes sure that the templates can be reached
 
@@ -25,6 +30,8 @@ simulation = None
 gtitle = 'ABCE Simulation'
 gtext = abcedescription
 opened = False
+
+colors = brewer["Spectral"][3]
 
 def gui(parameters, names=None, title=None, text=None):
     """ gui is a decorator that can be used to add a graphical user interface
@@ -143,7 +150,8 @@ def submitted_simulation():
 @app.route('/show_simulation')
 def show_simulation():
     discard_initial_rounds = int(session.get('discard_initial_rounds', 0))
-    output = []
+    plots = {}
+    filenames = []
     path = request.args.get('subdir')
     if path is None:
         path = newest_subdirectory('./result')
@@ -163,12 +171,13 @@ def show_simulation():
                     df = df.ix[discard_initial_rounds:]
                     for c in sorted(df.columns):
                         if c not in ['index', 'round', 'id']:
+                            continue
                             graph = pg.XY(show_legend=False)
                             graph.add(c, zip(range(discard_initial_rounds, discard_initial_rounds + len(df[c])), df[c]))
                             graph.add('',
                                       ([discard_initial_rounds, max(df[c]) - 0.0000001],
                                        [discard_initial_rounds, max(df[c]) + 0.0000001]),
-                                       show_dots=False, stroke=False)  # workouround bug that shows no straight horizontal line serieses
+                                       show_dots=False, stroke=False)  # workaround bug that shows no straight horizontal line series
                             output.append({'idname': str(filename + c).replace(' ', '').replace('.', ''),
                                            'title': filename[:-4] + ' ' + c,
                                            'graph': graph.render(is_unicode=True)})
@@ -180,21 +189,37 @@ def show_simulation():
                     maxid = max(df['id']) + 1
                     for c in sorted(df.columns):
                         if c not in ['index', 'round', 'id']:
-                            graph = pg.XY()
-                            for id in range(maxid):
+                            if maxid <= 20:
+                                selected_ids = range(maxid)
+                            else:
+                                selected_ids = random.sample(range(maxid), 20)
+                            title = str(filename + c)
+                            plot = figure(title=title, responsive=True, webgl=True)
+                            plot.legend.orientation = "top_left"
+                            for id in selected_ids:
                                 series = df[c][df['id'] == id]
                                 series = series[discard_initial_rounds:]
-                                graph.add(str(id), zip(range(discard_initial_rounds, discard_initial_rounds + len(series)), series))
+                                x = range(discard_initial_rounds, discard_initial_rounds + len(series))
+                                plot.line(x, series, legend=str(id), line_width=2, line_color=None, color=colors)
+                            plots[title] = plot
+                            filenames.append(filename)
                             print str(filename + c).replace(' ', '').replace('.', '')
-                            output.append({'idname': str(filename + c).replace(' ', '').replace('.', ''),
-                                           'title': filename[:-4] + ' ' + c,
-                                           'graph': graph.render(is_unicode=True)})
             except Exception as e:
                 traceback.print_exc()
                 print('could not print %s' % filename)
 
+    script, div = components(plots)
+    output = []
+    i = 0
+    for title, graph in div.iteritems():
+        print graph
+        output.append({'idname': title,  # can not stay i otherwise the cookie minimizing does not work
+                       'title': title,
+                       'graph': graph})
+        i += 1
     setup = setup_dialog(max_rounds)
-    return render_template('show_outcome.html', entries=output, desc=desc, setup=setup)
+    return render_template('show_outcome.html', entries=output, desc=desc, setup=setup, script=script,
+                           js_resources=INLINE.render_js(), css_resources=INLINE.render_css())
 
 @app.route('/older_results')
 def older_results():
