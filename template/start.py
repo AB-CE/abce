@@ -4,18 +4,19 @@ from household import Household
 from abce import Simulation, gui
 
 simulation_parameters = {'name': 'name',
-                         'rounds': 500,
+                         'rounds': 50,
                          'firms': 5,
                          'households': 5}
 
                              # commend out simulation.graphs() and uncomment
                              # this line to run the simulation with a Graphical
 #@gui(simulation_parameters) # User Interface
-def main():
+def main(simulation_parameters):
         simulation = Simulation(rounds=simulation_parameters['rounds'])
         action_list = [('firm', 'one'),
                        ('household', 'two'),
-                       ('all', 'three')]
+                       ('all', 'three')
+                       ('household', 'panel')]  # this instructs ABCE to save panel data as declared below
         simulation.add_action_list(action_list)
 
         simulation.declare_round_endowment(resource='labor_endowment',

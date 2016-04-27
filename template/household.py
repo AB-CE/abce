@@ -1,5 +1,6 @@
 from __future__ import division
 import abce
+from abce import NotEngoughGoods
 
 
 class Household(abce.Agent, abce.Household):
