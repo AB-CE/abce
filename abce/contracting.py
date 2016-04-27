@@ -12,10 +12,10 @@ epsilon = get_epsilon()
 class Contract(object):
     __slots__ = ['sender_group', 'sender_idn', 'deliver_good_group',
                  'deliver_good_idn', 'pay_group', 'pay_idn', 'good', 'quantity',
-                 'price', 'end_date', 'delivered', 'paid', 'idn']
+                 'price', 'end_date', 'delivered', 'paid', 'idn', 'round']
     def __init__(self, sender_group, sender_idn, deliver_good_group,
                  deliver_good_idn, pay_group, pay_idn, good, quantity, price,
-                 end_date, idn):
+                 end_date, idn, round):
         self.sender_group = sender_group
         self.sender_idn = sender_idn
         self.deliver_good_group = deliver_good_group
@@ -29,11 +29,11 @@ class Contract(object):
         self.delivered = []
         self.paid = []
         self.idn = idn
-
+        self.round = round
     def __str__(self):
         return str(('sender', self.sender_group, self.sender_idn, 'deliver', self.deliver_good_group,
                  self.deliver_good_idn, self.pay_group, self.pay_idn, self.good, self.quantity, self.price,
-                 self.end_date, self.idn))
+                 self.end_date, self.idn, self.delivered, self.paid))
 
 class Contracting:
     """ This is a class, that allows you to create contracts. For example a
@@ -146,7 +146,8 @@ class Contracting:
                          quantity = quantity,
                          price = price,
                          end_date = end_date,
-                         idn = self._offer_counter())
+                         idn = self._offer_counter(),
+                         round = self.round)
         self._send(receiver_group, receiver_idn, '!o', offer)
         self._contract_offers_made[offer.idn] = offer
         return offer
@@ -188,7 +189,8 @@ class Contracting:
                          quantity = quantity,
                          price = price,
                          end_date = end_date,
-                         idn = self._offer_counter())
+                         idn = self._offer_counter(),
+                         round = self.round)
         self._send(receiver_group, receiver_idn, '!o', offer)
         self._contract_offers_made[offer.idn] = offer
         return offer
