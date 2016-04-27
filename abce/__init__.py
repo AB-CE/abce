@@ -250,7 +250,7 @@ class Simulation:
 
         """
         if len(self.family_list) > 0:
-            raise SystemExit("WARNING: agents can not be build before declare_round_endowment")
+            raise SystemExit("WARNING: declare_round_endowment(...) must be called before the agents are build")
         for group in groups:
             self.resource_endowment[group].append((resource, units, product))
 
@@ -275,7 +275,7 @@ class Simulation:
 
         """
         if len(self.family_list) > 0:
-            raise SystemExit("WARNING: agents can not be build before declare_perishable")
+            raise SystemExit("WARNING: declare_perishable(...) must be called before the agents are build")
         self.perishable.append(good)
 
     def declare_expiring(self, good, duration):
@@ -291,7 +291,7 @@ class Simulation:
                 the duration before the good expires
         """
         if len(self.family_list) > 0:
-            raise SystemExit("WARNING: agents build before declare_expiring")
+            raise SystemExit("WARNING: declare_expiring(...) must be called before the agents are build")
         self.expiring.append((good, duration))
 
     def declare_service(self, human_or_other_resource, units, service, groups=['all']):
@@ -349,7 +349,7 @@ class Simulation:
                                      variables=['production_target', 'gross_revenue'])
         """
         if len(self.family_list) > 0:
-            raise SystemExit("WARNING: agents build before panel")
+            raise SystemExit("WARNING: panel(...) must be called before the agents are build")
         self._db.add_panel(group)
         self.variables_to_track_panel[group] = variables
         self.possessins_to_track_panel[group] = possessions
@@ -386,7 +386,7 @@ class Simulation:
                                      variables=['production_target', 'gross_revenue'])
         """
         if len(self.family_list) > 0:
-            raise SystemExit("WARNING: agents build before aggregate")
+            raise SystemExit("WARNING: aggregate(...) must be called before the agents are build")
         self._db.add_aggregate(group)
         self.variables_to_track_aggregate[group] = variables
         self.possessions_to_track_aggregate[group] = possessions
@@ -473,6 +473,7 @@ class Simulation:
                         raise KeyError("reciever of message, contract or similar not found "
                                        + str(family_name))
         return messages
+
     def execute_internal(self, command):
         for group in self.family_list:
             for family in self.family_list[group]:
@@ -617,7 +618,7 @@ class Simulation:
             try:
                 family.init(parameters, agent_parameters)
             except AttributeError:
-                print("Warning: agent has no init function")
+                print("Warning: agent %s has no init function" # group_name)
 
             for good in self.perishable:
                 family.register_perish(good)
