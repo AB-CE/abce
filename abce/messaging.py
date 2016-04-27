@@ -36,6 +36,11 @@ class Message():
         self.topic=topic
         self.content=content
 
+    def __repr__(self):
+        return "sender: %s, %i; receiver: %s, %i; topic: %s; content: " % (
+                 self.sender_group, self.sender_idn, self.receiver_group,
+                 self.receiver_idn, self.topic) + str(self.content)
+
 
 
 class Messaging:
