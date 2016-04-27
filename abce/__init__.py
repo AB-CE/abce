@@ -620,7 +620,7 @@ class Simulation:
             try:
                 family.init(parameters, agent_parameters)
             except AttributeError:
-                print("Warning: agent %s has no init function" # group_name)
+                print("Warning: agent %s has no init function" % group_name)
 
             for good in self.perishable:
                 family.register_perish(good)
