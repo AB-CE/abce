@@ -48,7 +48,7 @@ In this tutorial we will implement an economy that has two plants. These plants 
 
     d. In order to produce create a production method in :py:`class CHPPlant(...):` insert the following code right after the :py:`def init(self):` method:
 
-        .. code:: python
+       .. code:: python
 
             def production(self):
                 self.produce({'biogas' : 100, 'water' : 100})
@@ -61,7 +61,7 @@ In this tutorial we will implement an economy that has two plants. These plants 
                    self.create('biogas', 100)
                    self.create('water', 100)
 
-3. We will now modify start.py to run this incomplete simulation.
+3. We will now modify :code:`start.py` to run this incomplete simulation.
 
     a. replace :py:`from firm import Firm` and :py:`household import Household` with :py:`from chpplant import CHPPLant`. This imports your agent in start.py.
 
@@ -99,6 +99,8 @@ In this tutorial we will implement an economy that has two plants. These plants 
        .. code:: python
 
            simulation.panel('chpplant', possessions=['electricity', 'biogas', 'water', 'steam'], variables=[])
+
+       panel and all other declarations must be before the agents are build.
 
  4. To run your simulation, the best is to use the terminal and in the directory of your simulation type :code:`python start.py`. In SPYDER make sure that BEFORE you run the simulation for the first time you modify the ‘Run Setting’ and choose ‘Execute in external System Terminal’. If you the simulation in the IDE without making this changes the GUI might block.
 
@@ -204,7 +206,17 @@ In this tutorial we will implement an economy that has two plants. These plants 
 
 8. let's modify start.py
 
-    b. in :code:`start.py` add :py:`from adplant import ADPlant` and :py:`simulation.build_agents(ADPlant, 'adplant', number=1)`
+    b. in :code:`start.py` add
+
+       .. code:: python
+
+           from adplant import ADPlant
+
+       and
+
+       .. code:: python
+
+          simulation.build_agents(ADPlant, 'adplant', number=1)
 
     c. change the action list to:
 
