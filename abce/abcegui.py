@@ -161,16 +161,17 @@ def make_aggregate_graphs(path, filename):
     columns = [col for col in df.columns if not col.endswith('_std')
                                          and not col.endswith('_mean')
                                          and not col in ['index', 'round', 'id']]
-    plots = []
+    plots = {}
 
     for col in columns:
-        plot = figure(title=make_title(filename, col), responsive=False, webgl=True)
+        plot = figure(title=make_title(filename, col), responsive=True, webgl=True,
+                      tools="pan, wheel_zoom, box_zoom, save, crosshair, hover")
         plot.yaxis.visible = None
         plot.legend.orientation = "top_left"
         plot.extra_y_ranges['ttl'] = Range1d(df[col].min(), df[col].max())
         print 'ttl', col, min(df[col]), max(df[col]), df[col][0]
         plot.line(range(len(df)), df[col],
-                  legend='total', line_width=2, line_color='red', y_range_name="ttl")
+                  legend='mean/total', line_width=2, line_color='red', y_range_name="ttl")
         plot.add_layout(LinearAxis(y_range_name="ttl"), 'left')
 
         plot.extra_y_ranges['std'] = Range1d(min(df[col + '_std']), max(df[col + '_std']))
@@ -180,24 +181,26 @@ def make_aggregate_graphs(path, filename):
         try:
             plot.extra_y_ranges['mean'] = Range1d(min(df[col + '_mean']), max(df[col + '_mean']))
             print 'mean', min(df[col + '_mean']), max(df[col + '_mean'])
-            plot.line(range(len(df)), df[col],
-                      legend='mean', line_width=2, line_color='green', y_range_name="mean")
+            #plot.line(range(len(df)), df[col],
+            #          legend='mean', line_width=2, line_color='green', y_range_name="mean")
             plot.add_layout(LinearAxis(y_range_name="mean"), 'left')
         except KeyError:
             pass
-        plots.append(plot)
+        plots[plot.ref['id']] = plot
     return plots
 
 def make_simple_graphs(df, filename):
     print 'make_simple_graphs', filename
-    plots = []
+    plots = {}
     for col in df.columns:
         if col not in ['round', 'id', 'index']:
-            plot = figure(title=make_title(filename, col), responsive=False, webgl=True)
+            plot = figure(title=make_title(filename, col), responsive=True, webgl=True,
+                      tools="pan, wheel_zoom, box_zoom, save, crosshair, hover")
+
             plot.legend.orientation = "top_left"
             plot.extra_y_ranges['ttl'] = Range1d(min(df[col]), max(df[col]))
             plot.line(range(len(df)), df[col], legend=col, line_width=2, line_color='red', y_range_name="ttl")
-            plots.append(plot)
+            plots[plot.ref['id']] = plot
     return plots
 
 def make_panel_graphs(df, filename):
@@ -205,19 +208,22 @@ def make_panel_graphs(df, filename):
     lines = min(10, max(df['id']))
     individuals = sorted(random.sample(range(max(df['id'])), lines))
     df = df[df['id'].isin(individuals)]
-    plots = []
+    plots = {}
     for col in df.columns:
         if col not in ['round', 'id', 'index']:
-            plot = figure(title=make_title(filename, col), responsive=False, webgl=True)
+            plot = figure(title=make_title(filename, col), responsive=True, webgl=True,
+                      tools="pan, wheel_zoom, box_zoom, save, crosshair, hover")
+
             plot.legend.orientation = "top_left"
             for i, id in enumerate(individuals):
                 series = df[col][df['id'] == id]
                 plot.line(range(len(df)), series, legend=str(id), line_width=2, line_color=colors[i])
-            plots.append(plot)
+            plots[plot.ref['id']] = plot
     return plots
 
 @app.route('/show_simulation')
 def show_simulation():
+
     plots = {}
     filenames = []
     path = request.args.get('subdir')
@@ -226,7 +232,7 @@ def show_simulation():
     with open(path + 'description.txt') as desc_file:
         desc = desc_file.read()
 
-    plots = []
+    plots = {}
 
     for filename in os.listdir(path):
         if not filename.endswith('.csv'):
@@ -234,28 +240,38 @@ def show_simulation():
         elif filename.startswith('#'):
             continue
         elif filename.startswith('aggregate_'):
-            plots.extend(make_aggregate_graphs(path, filename))
+            plots.update(make_aggregate_graphs(path, filename))
         else:
             df = pd.read_csv(path + filename)
             df = df.where((pd.notnull(df)), None)
             if max(df.get('id', [0])) == 0:
-                plots.extend(make_simple_graphs(df, filename))
+                plots.update(make_simple_graphs(df, filename))
             else:
-                plots.extend(make_panel_graphs(df, filename))
+                plots.update(make_panel_graphs(df, filename))
 
-    cols = min(int(len(plots) ** 0.5), 4)
-    aranged_plots = []
-    for i in range(len(plots)):
-        if i % cols == 0:
-            aranged_plots.append([])
-        aranged_plots[-1].append(plots[i])
-
-
-    plots = gridplot(aranged_plots)
     script, div = components(plots)
+    output = []
+    i = 0
+    for title, graph in div.iteritems():
+        print graph
+        output.append({'idname': title,  # can not stay i otherwise the cookie minimizing does not work
+                       'title': title,
+                       'graph': graph})
+        i += 1
 
+    return render_template('show_outcome.html', entries=output, desc=desc, setup='', script=script,
+                           js_resources=INLINE.render_js(), css_resources=INLINE.render_css())
 
-    return render_template('show_outcome.html', graphs_div=div, desc=desc, script=script,
+    script, div = components(plots)
+    output = []
+    i = 0
+    for title, graph in div.iteritems():
+        print graph
+        output.append({'idname': title,  # can not stay i otherwise the cookie minimizing does not work
+                       'title': title,
+                       'graph': graph})
+        i += 1
+    return render_template('show_outcome.html', entries=output, desc=desc, setup='', script=script,
                            js_resources=INLINE.render_js(), css_resources=INLINE.render_css())
 
 @app.route('/older_results')
