@@ -9,16 +9,17 @@ from abce.webtext import abcedescription
 import shutil
 import traceback
 import random
-from copy import copy
-from bokeh.plotting import figure, output_file
+from bokeh.plotting import figure
 from bokeh.embed import components
 from bokeh.resources import INLINE
-from bokeh.palettes import brewer
-from bokeh.models.widgets import Panel, Tabs
 from bokeh.models import Range1d, LinearAxis
-from bokeh.io import show
-from pprint import pprint
+from bokeh.io import gridplot
 
+
+colors = ["red","blue","green","black","purple","pink",
+          "yellow","orange","pink","Brown","Cyan","Crimson",
+          "DarkOrange","DarkSeaGreen","DarkCyan","DarkBlue","DarkViolet","Silver",
+          "#0FCFC0","#9CDED6","#D5EAE7","#F3E1EB","#F6C4E1","#F79CD4"]
 
 _ = __file__  # makes sure that the templates can be reached
 
@@ -35,8 +36,6 @@ simulation = None
 gtitle = 'ABCE Simulation'
 gtext = abcedescription
 opened = False
-
-colors = brewer["Spectral"][3]
 
 def gui(parameters, names=None, title=None, text=None):
     """ gui is a decorator that can be used to add a graphical user interface
@@ -152,44 +151,73 @@ def submitted_simulation():
     simulation(parameters)
     return redirect(url_for('show_simulation'))
 
+def make_title(title, col):
+    return title.replace('aggregate_', '').replace('panel_', '').replace('.csv', '')  + ' ' + col
+
 
 def make_aggregate_graphs(path, filename):
     df = pd.read_csv(path + filename)
     df = df.where((pd.notnull(df)), None)
-    columns = [col[:-4] for col in df.columns if col.endswith('_std')]
-    print(columns)
-    tabs = {}
+    columns = [col for col in df.columns if not col.endswith('_std')
+                                         and not col.endswith('_mean')
+                                         and not col in ['index', 'round', 'id']]
+    plots = []
+
     for col in columns:
-        plot_ttl = figure(title=filename[10:], responsive=True, webgl=True)
-        plot_ttl.legend.orientation = "top_left"
+        plot = figure(title=make_title(filename, col), responsive=False, webgl=True)
+        plot.yaxis.visible = None
+        plot.legend.orientation = "top_left"
+        plot.extra_y_ranges['ttl'] = Range1d(df[col].min(), df[col].max())
+        print 'ttl', col, min(df[col]), max(df[col]), df[col][0]
+        plot.line(range(len(df)), df[col],
+                  legend='total', line_width=2, line_color='red', y_range_name="ttl")
+        plot.add_layout(LinearAxis(y_range_name="ttl"), 'left')
 
-        plot_ttl.line(range(len(df)), df[col], legend='ttl', line_width=2, line_color='red')
+        plot.extra_y_ranges['std'] = Range1d(min(df[col + '_std']), max(df[col + '_std']))
+        plot.line(range(len(df)), df[col + '_std'],
+                  legend='std', line_width=2, line_color='blue', y_range_name="std")
+        plot.add_layout(LinearAxis(y_range_name="std"), 'right')
+        try:
+            plot.extra_y_ranges['mean'] = Range1d(min(df[col + '_mean']), max(df[col + '_mean']))
+            print 'mean', min(df[col + '_mean']), max(df[col + '_mean'])
+            plot.line(range(len(df)), df[col],
+                      legend='mean', line_width=2, line_color='green', y_range_name="mean")
+            plot.add_layout(LinearAxis(y_range_name="mean"), 'left')
+        except KeyError:
+            pass
+        plots.append(plot)
+    return plots
 
-        plot_ttl.extra_y_ranges['foo'] = Range1d(min(df[col + '_std']), max(df[col + '_std']))
-        plot_ttl.line(range(len(df)), df[col + '_std'], legend='std', line_width=2, line_color='blue', y_range_name="foo")
-        plot_ttl.add_layout(LinearAxis(y_range_name="foo"), 'right')
+def make_simple_graphs(df, filename):
+    print 'make_simple_graphs', filename
+    plots = []
+    for col in df.columns:
+        if col not in ['round', 'id', 'index']:
+            plot = figure(title=make_title(filename, col), responsive=False, webgl=True)
+            plot.legend.orientation = "top_left"
+            plot.extra_y_ranges['ttl'] = Range1d(min(df[col]), max(df[col]))
+            plot.line(range(len(df)), df[col], legend=col, line_width=2, line_color='red', y_range_name="ttl")
+            plots.append(plot)
+    return plots
 
-
-        plot_mean = figure(title=filename[10:], responsive=True, webgl=True)
-        plot_mean.legend.orientation = "top_left"
-        plot_mean.line(range(len(df)), df[col + '_mean'], legend='mean', line_width=2, line_color='red')
-        plot_mean.line(range(len(df)), df[col + '_std'], legend='std', line_width=2, line_color='green')
-        tab1 = Panel(child=plot_ttl, title="Total")
-        tab2 = Panel(child=plot_mean, title="Mean")
-
-        tabs[col] = Tabs(tabs=[ tab1, tab2 ])
-        print tabs
-
-    return tabs
-
-
+def make_panel_graphs(df, filename):
+    print 'make_panel_graphs', filename
+    lines = min(10, max(df['id']))
+    individuals = sorted(random.sample(range(max(df['id'])), lines))
+    df = df[df['id'].isin(individuals)]
+    plots = []
+    for col in df.columns:
+        if col not in ['round', 'id', 'index']:
+            plot = figure(title=make_title(filename, col), responsive=False, webgl=True)
+            plot.legend.orientation = "top_left"
+            for i, id in enumerate(individuals):
+                series = df[col][df['id'] == id]
+                plot.line(range(len(df)), series, legend=str(id), line_width=2, line_color=colors[i])
+            plots.append(plot)
+    return plots
 
 @app.route('/show_simulation')
 def show_simulation():
-
-    output_file("slider.html")
-
-
     plots = {}
     filenames = []
     path = request.args.get('subdir')
@@ -198,89 +226,36 @@ def show_simulation():
     with open(path + 'description.txt') as desc_file:
         desc = desc_file.read()
 
-    graphs = {}
+    plots = []
 
-    files = [filename for filename in os.listdir(path)]
-    pprint(files)
-    for filename in copy(files):
-        if filename.startswith('aggregate_') and filename.endswith('.csv'):
-            plots = make_aggregate_graphs(path, filename)
+    for filename in os.listdir(path):
+        if not filename.endswith('.csv'):
+            continue
+        elif filename.startswith('#'):
+            continue
+        elif filename.startswith('aggregate_'):
+            plots.extend(make_aggregate_graphs(path, filename))
         else:
-            files.remove(filename)
+            df = pd.read_csv(path + filename)
+            df = df.where((pd.notnull(df)), None)
+            if max(df.get('id', [0])) == 0:
+                plots.extend(make_simple_graphs(df, filename))
+            else:
+                plots.extend(make_panel_graphs(df, filename))
 
+    cols = min(int(len(plots) ** 0.5), 4)
+    aranged_plots = []
+    for i in range(len(plots)):
+        if i % cols == 0:
+            aranged_plots.append([])
+        aranged_plots[-1].append(plots[i])
+
+
+    plots = gridplot(aranged_plots)
     script, div = components(plots)
-    output = []
-    i = 0
-    for title, graph in div.iteritems():
-        print graph
-        output.append({'idname': title,  # can not stay i otherwise the cookie minimizing does not work
-                       'title': title,
-                       'graph': graph})
-        i += 1
-    show(plots.values()[0])
-    return render_template('show_outcome.html', entries=output, desc=desc, setup='', script=script,
-                           js_resources=INLINE.render_js(), css_resources=INLINE.render_css())
 
-    if False:
-        if filename[-4:] == '.csv' and not filename == 'trade.csv':
-            try:
-                df = pd.read_csv(path + filename)
-                df = df.where((pd.notnull(df)), None)
 
-                if max(df.get('id', [0])) == 0:
-                    max_rounds = max(df['index'])
-                    if discard_initial_rounds >= max_rounds:
-                        discard_initial_rounds = 0
-                    df = df.ix[discard_initial_rounds:]
-                    for c in sorted(df.columns):
-                        if c not in ['index', 'round', 'id']:
-                            continue
-                            graph = pg.XY(show_legend=False)
-                            graph.add(c, zip(range(discard_initial_rounds, discard_initial_rounds + len(df[c])), df[c]))
-                            graph.add('',
-                                      ([discard_initial_rounds, max(df[c]) - 0.0000001],
-                                       [discard_initial_rounds, max(df[c]) + 0.0000001]),
-                                       show_dots=False, stroke=False)  # workaround bug that shows no straight horizontal line series
-                            output.append({'idname': str(filename + c).replace(' ', '').replace('.', ''),
-                                           'title': filename[:-4] + ' ' + c,
-                                           'graph': graph.render(is_unicode=True)})
-                else:
-                    max_rounds = max(df['round'])
-                    if discard_initial_rounds >= max_rounds:
-                        discard_initial_rounds = 0
-                    df = df.ix[discard_initial_rounds:]
-                    maxid = max(df['id']) + 1
-                    for c in sorted(df.columns):
-                        if c not in ['index', 'round', 'id']:
-                            if maxid <= 20:
-                                selected_ids = range(maxid)
-                            else:
-                                selected_ids = random.sample(range(maxid), 20)
-                            title = str(filename + c)
-                            plot = figure(title=title, responsive=True, webgl=True)
-                            plot.legend.orientation = "top_left"
-                            for id in selected_ids:
-                                series = df[c][df['id'] == id]
-                                series = series[discard_initial_rounds:]
-                                x = range(discard_initial_rounds, discard_initial_rounds + len(series))
-                                plot.line(x, series, legend=str(id), line_width=2, line_color=None, color=colors)
-                            plots[title] = plot
-                            filenames.append(filename)
-                            print str(filename + c).replace(' ', '').replace('.', '')
-            except Exception as e:
-                traceback.print_exc()
-                print('could not print %s' % filename)
-
-    script, div = components(plots)
-    output = []
-    i = 0
-    for title, graph in div.iteritems():
-        print graph
-        output.append({'idname': title,  # can not stay i otherwise the cookie minimizing does not work
-                       'title': title,
-                       'graph': graph})
-        i += 1
-    return render_template('show_outcome.html', entries=output, desc=desc, setup='', script=script,
+    return render_template('show_outcome.html', graphs_div=div, desc=desc, script=script,
                            js_resources=INLINE.render_js(), css_resources=INLINE.render_css())
 
 @app.route('/older_results')

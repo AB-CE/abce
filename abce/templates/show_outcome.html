@@ -1,12 +1,5 @@
 {% extends "layout.html" %}
 {% block body %}
-  <div class="mdl-cell mdl-cell--6-col" id="setup">
-    <div class="mdl-card mdl-card--expand mdl-shadow--4dp">
-      <div class="mdl-card__supporting-text">
-          {{ setup|safe }}
-      </div>
-    </div>
-  </div>
   <div class="mdl-cell mdl-cell--6-col" id="description" style="height: 200px;">
     <div class="mdl-card mdl-card--expand mdl-card--limited_height mdl-shadow--4dp">
       <div class="mdl-card__actions mdl-card--border">
@@ -20,60 +13,16 @@
       </div>
     </div>
   </div>
-  <div id="begin">
-  </div>
-  {% for entry in entries %}
-  <div class="mdl-cell mdl-cell--3-col" id="{{ entry['idname']|safe }}">
+  <div class="mdl-cell mdl-cell--12-col" id="graphs">
     <div class="mdl-card mdl-card--expand mdl-shadow--4dp">
-      <div class="mdl-card__title">
-          <a onclick="minimize('{{ entry['idname']|safe }}')" style="color: darkblue">
-            {{ entry['title']|safe }}
-          </a>
-      </div>
-      <div class="mdl-card__actions mdl-card--border">
-        <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect"
-           onclick="minimize('{{ entry['idname']|safe }}')">
-          Min
-        </a>
-        <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect"
-           onclick="raise_window('{{ entry['idname']|safe }}')">
-          Zoom
-        </a>
-      </div>
       <div class="mdl-card__supporting-text">
-          {{ entry['graph']|safe }}
+          {{ graphs_div|safe }}
       </div>
     </div>
   </div>
-  {% else %}
-    <em>Unbelievable.  No entries here so far</em>
-  {% endfor %}
-  <div id="before_end">
-  </div>
-  <div id="end">
-  </div>
 
 <script type="text/javascript">
-function plotresizer() {
-        // arguments: use width, use height, maintain aspect ratio
-        for(var i = 0; i < Object.keys(Bokeh.index).length; i++) {
-            var plotid = Object.keys(Bokeh.index)[i];
-            var plot = Bokeh.index[plotid];
-            plot.resize_width_height(true, true, false)
-            console.log('heree')}
-    };
-function raise_window(idname) {
-       var xDiv = document.getElementById(idname);
 
-       if (xDiv.style.width == '') {
-           xDiv.style.width = '1000px';
-           xDiv.style.height = '600px'}
-       else {
-           xDiv.style.width = '';
-           xDiv.style.height = ''}
-       window.location.hash = idname;
-       plotresizer()
-}
 function raise_description() {
        var xDiv = document.getElementById('description');
 
@@ -83,36 +32,6 @@ function raise_description() {
            xDiv.style.height = '200px';}
        window.location.hash = 'description';
 }
-function minimize(idname) {
-       var xDiv = document.getElementById(idname);
-       var end = document.getElementById("end");
-       var before_end = document.getElementById("before_end");
-
-       if (xDiv.style.width == '') {
-           xDiv.style.width = '150px';
-           xDiv.style.height = '50px';
-
-           end.parentNode.insertBefore(xDiv, end);
-           document.cookie = idname + "=minimize; Expires=Wed, 09 Jun 2037 10:18:14 GMT";}
-       else {
-           xDiv.style.width = '';
-           xDiv.style.height = '';
-           end.parentNode.insertBefore(xDiv, before_end);
-           document.cookie = idname + "=full";}}
-
-window.onload = function getCookie() {
-    var keyValuePairs = document.cookie.split(/; */);
-    for(var i = 0; i < keyValuePairs.length; i++) {
-        var name = keyValuePairs[i].substring(0, keyValuePairs[i].indexOf('='));
-        var value = keyValuePairs[i].substring(keyValuePairs[i].indexOf('=')+1);
-        if (value == "minimize") {
-              minimize(name);}}}
-
-function change_text_field(x, text_field_name) {
-    document.getElementById(text_field_name).value = x;}
-
-function change_slider_field(x, slider_field_name) {
-    document.getElementById(slider_field_name).MaterialSlider.change(x);}
 
 </script>
 
