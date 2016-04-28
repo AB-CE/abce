@@ -29,10 +29,19 @@ def to_csv(directory):
             del table['id']
             grouped = table.groupby('round')
             aggregated = grouped.sum()
-            aggregated.to_csv(table_name + '_aggregate.csv', index_label='index')
             try:
                 meaned = grouped.mean()
-                meaned.to_csv(table_name + '_mean.csv', index_label='index')
+                meaned.rename(columns={col: col + '_mean' for col in meaned.columns}, inplace=True)
             except pd.core.groupby.DataError:
                 pass
+            try:
+                std = grouped.std()
+                std.rename(columns={col: col + '_std' for col in std.columns}, inplace=True)
+            except:
+                pass
+
+            result = pd.concat([aggregated, meaned, std], axis=1)
+
+            result.to_csv('aggregate_' + table_name + '.csv', index_label='index')
+
     os.chdir('../..')
