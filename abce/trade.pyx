@@ -38,10 +38,10 @@ Messaging between agents:
 # Don't forget to commit it to git                                                         #
 #******************************************************************************************#
 from __future__ import division
-from random import shuffle
 from abce.notenoughgoods import NotEnoughGoods
 from messaging import Message
 from numpy import isfinite, isnan
+import random
 
 cdef double epsilon = 0.00000000001
 
@@ -283,8 +283,7 @@ class Trade:
         for offer in self._open_offers[good].values():
             offer.open_offer_status = 'polled'
             ret.append(offer)
-        shuffle(ret)
-        ret.sort(key=lambda objects: objects['price'], reverse=descending)
+        ret.sort(key=lambda objects: objects.price, reverse=descending, cmp=compare_with_ties)
         return ret
 
     def peak_offers(self, good, descending=False):
@@ -317,8 +316,7 @@ class Trade:
         for offer in self._open_offers[good].values():
             offer.open_offer_status = 'peak_only'
             ret.append(offer)
-        shuffle(ret)
-        ret.sort(key=lambda objects: objects['price'], reverse=descending)
+        ret.sort(key=lambda objects: objects['price'], reverse=descending, cmp=compare_with_ties)
         return ret
 
     def sell(self, receiver_group, receiver_idn,
@@ -767,4 +765,13 @@ class Trade:
                     del self._contracts_deliver[msg[1]][msg[2]]
             else:
                 self._msgs.setdefault(typ, []).append(msg)
+
+# TODO when cython supports function overloading overload this function with compare_with_ties(int x, int y)
+cdef int compare_with_ties(double x, double y):
+    if x < y:
+        return -1
+    elif x > y:
+        return 1
+    else:
+        return random.randint(0, 1) * 2 - 1
 

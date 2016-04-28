@@ -10,10 +10,16 @@ from abce.webtext import abcedescription
 import shutil
 import traceback
 import random
+from copy import copy
 from bokeh.plotting import figure, output_file
 from bokeh.embed import components
 from bokeh.resources import INLINE
 from bokeh.palettes import brewer
+from bokeh.models.widgets import Panel, Tabs
+from bokeh.models import Range1d, LinearAxis
+from bokeh.io import show
+from pprint import pprint
+
 
 _ = __file__  # makes sure that the templates can be reached
 
@@ -147,9 +153,44 @@ def submitted_simulation():
     simulation(parameters)
     return redirect(url_for('show_simulation'))
 
+
+def make_aggregate_graphs(path, filename):
+    df = pd.read_csv(path + filename)
+    df = df.where((pd.notnull(df)), None)
+    columns = [col[:-4] for col in df.columns if col.endswith('_std')]
+    print(columns)
+    tabs = {}
+    for col in columns:
+        plot_ttl = figure(title=filename[10:], responsive=True, webgl=True)
+        plot_ttl.legend.orientation = "top_left"
+
+        plot_ttl.line(range(len(df)), df[col], legend='ttl', line_width=2, line_color='red')
+
+        plot_ttl.extra_y_ranges['foo'] = Range1d(min(df[col + '_std']), max(df[col + '_std']))
+        plot_ttl.line(range(len(df)), df[col + '_std'], legend='std', line_width=2, line_color='blue', y_range_name="foo")
+        plot_ttl.add_layout(LinearAxis(y_range_name="foo"), 'right')
+
+
+        plot_mean = figure(title=filename[10:], responsive=True, webgl=True)
+        plot_mean.legend.orientation = "top_left"
+        plot_mean.line(range(len(df)), df[col + '_mean'], legend='mean', line_width=2, line_color='red')
+        plot_mean.line(range(len(df)), df[col + '_std'], legend='std', line_width=2, line_color='green')
+        tab1 = Panel(child=plot_ttl, title="Total")
+        tab2 = Panel(child=plot_mean, title="Mean")
+
+        tabs[col] = Tabs(tabs=[ tab1, tab2 ])
+        print tabs
+
+    return tabs
+
+
+
 @app.route('/show_simulation')
 def show_simulation():
-    discard_initial_rounds = int(session.get('discard_initial_rounds', 0))
+
+    output_file("slider.html")
+
+
     plots = {}
     filenames = []
     path = request.args.get('subdir')
@@ -158,7 +199,30 @@ def show_simulation():
     with open(path + 'description.txt') as desc_file:
         desc = desc_file.read()
 
-    for filename in os.listdir(path):
+    graphs = {}
+
+    files = [filename for filename in os.listdir(path)]
+    pprint(files)
+    for filename in copy(files):
+        if filename.startswith('aggregate_') and filename.endswith('.csv'):
+            plots = make_aggregate_graphs(path, filename)
+        else:
+            files.remove(filename)
+
+    script, div = components(plots)
+    output = []
+    i = 0
+    for title, graph in div.iteritems():
+        print graph
+        output.append({'idname': title,  # can not stay i otherwise the cookie minimizing does not work
+                       'title': title,
+                       'graph': graph})
+        i += 1
+    show(plots.values()[0])
+    return render_template('show_outcome.html', entries=output, desc=desc, setup='', script=script,
+                           js_resources=INLINE.render_js(), css_resources=INLINE.render_css())
+
+    if False:
         if filename[-4:] == '.csv' and not filename == 'trade.csv':
             try:
                 df = pd.read_csv(path + filename)
@@ -217,8 +281,7 @@ def show_simulation():
                        'title': title,
                        'graph': graph})
         i += 1
-    setup = setup_dialog(max_rounds)
-    return render_template('show_outcome.html', entries=output, desc=desc, setup=setup, script=script,
+    return render_template('show_outcome.html', entries=output, desc=desc, setup='', script=script,
                            js_resources=INLINE.render_js(), css_resources=INLINE.render_css())
 
 @app.route('/older_results')
