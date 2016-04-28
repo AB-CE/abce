@@ -1,7 +1,6 @@
 from flask import Flask, request, session, g, redirect, url_for, \
      abort, render_template, flash, Markup
 import webbrowser
-from os.path import isfile
 import os
 import pandas as pd
 import pygal as pg
@@ -120,7 +119,7 @@ def gui(parameters, names=None, title=None, text=None):
                  restart your system """
         print(text)
     def inner(func):
-        generate(new_inputs=parameters, new_simulation=func, names=None, title=title, text=text)
+        generate(new_inputs=parameters, new_simulation=func, names=names, title=title, text=text)
         return run
     return inner  # return a function object
 
