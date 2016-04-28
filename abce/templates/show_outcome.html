@@ -25,11 +25,6 @@
   {% for entry in entries %}
   <div class="mdl-cell mdl-cell--3-col" id="{{ entry['idname']|safe }}">
     <div class="mdl-card mdl-card--expand mdl-shadow--4dp">
-      <div class="mdl-card__title">
-          <a onclick="minimize('{{ entry['idname']|safe }}')" style="color: darkblue">
-            {{ entry['title']|safe }}
-          </a>
-      </div>
       <div class="mdl-card__actions mdl-card--border">
         <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect"
            onclick="minimize('{{ entry['idname']|safe }}')">

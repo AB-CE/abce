@@ -255,24 +255,12 @@ def show_simulation():
     for title, graph in div.iteritems():
         print graph
         output.append({'idname': title,  # can not stay i otherwise the cookie minimizing does not work
-                       'title': title,
                        'graph': graph})
         i += 1
 
     return render_template('show_outcome.html', entries=output, desc=desc, setup='', script=script,
                            js_resources=INLINE.render_js(), css_resources=INLINE.render_css())
 
-    script, div = components(plots)
-    output = []
-    i = 0
-    for title, graph in div.iteritems():
-        print graph
-        output.append({'idname': title,  # can not stay i otherwise the cookie minimizing does not work
-                       'title': title,
-                       'graph': graph})
-        i += 1
-    return render_template('show_outcome.html', entries=output, desc=desc, setup='', script=script,
-                           js_resources=INLINE.render_js(), css_resources=INLINE.render_css())
 
 @app.route('/older_results')
 def older_results():
