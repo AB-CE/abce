@@ -58,15 +58,14 @@ function plotresizer() {
     };
 function raise_window(idname) {
        var xDiv = document.getElementById(idname);
-
-       if (xDiv.style.width == '') {
-           xDiv.style.width = '1000px';
-           xDiv.style.height = '600px'}
-       else {
-           xDiv.style.width = '';
-           xDiv.style.height = ''}
+       var currentClass = xDiv.className;
+       if (currentClass == "mdl-cell mdl-cell--4-col") {
+          xDiv.className = "mdl-cell mdl-cell--12-col";
+       } else {
+          xDiv.className = "mdl-cell mdl-cell--4-col";
+       }
+       plotresizer();
        window.location.hash = idname;
-       plotresizer()
 }
 function raise_description() {
        var xDiv = document.getElementById('description');
