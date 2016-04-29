@@ -219,7 +219,7 @@ def make_panel_graphs(df, filename):
             plot.legend.orientation = "top_left"
             for i, id in enumerate(individuals):
                 series = df[col][df['id'] == id]
-                plot.line(df['index'], series, legend=str(id), line_width=2, line_color=colors[i])
+                plot.line(df['round'], series, legend=str(id), line_width=2, line_color=colors[i])
             plots[json.dumps((plot.ref['id'], title))] = plot
     return plots
 
@@ -243,7 +243,11 @@ def show_simulation():
         elif filename.startswith('#'):
             continue
         df = pd.read_csv(path + filename)
-        if discard_initial_rounds >= max(df['round']):
+        try:
+            rounds = max(df['round'])
+        except KeyError:
+            rounds = max(df['index'])
+        if discard_initial_rounds >= rounds:
             discard_initial_rounds = 0
         df = df.ix[discard_initial_rounds:]
         df = df.where((pd.notnull(df)), None)
@@ -266,7 +270,7 @@ def show_simulation():
                        'graph': graph})
         i += 1
 
-    return render_template('show_outcome.html', entries=output, desc=desc, setup=setup_dialog(max(df['round'])), script=script,
+    return render_template('show_outcome.html', entries=output, desc=desc, setup=setup_dialog(rounds), script=script,
                            js_resources=INLINE.render_js(), css_resources=INLINE.render_css())
 
 
@@ -295,11 +299,9 @@ def generate(new_inputs, new_simulation, names=None, title=None, text=None):
 
     if text is not None:
         gtext = text
-        print 'here'
 
     if title is not None:
         gtitle = title
-        print 'there'
 
     simulation = new_simulation
 
