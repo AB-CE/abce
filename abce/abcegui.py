@@ -155,9 +155,7 @@ def make_title(title, col):
     return title.replace('aggregate_', '').replace('panel_', '').replace('.csv', '')  + ' ' + col
 
 
-def make_aggregate_graphs(path, filename):
-    df = pd.read_csv(path + filename)
-    df = df.where((pd.notnull(df)), None)
+def make_aggregate_graphs(df, filename):
     columns = [col for col in df.columns if not col.endswith('_std')
                                          and not col.endswith('_mean')
                                          and not col in ['index', 'round', 'id']]
@@ -169,13 +167,12 @@ def make_aggregate_graphs(path, filename):
         plot.yaxis.visible = None
         plot.legend.orientation = "top_left"
         plot.extra_y_ranges['ttl'] = Range1d(df[col].min(), df[col].max())
-        print 'ttl', col, min(df[col]), max(df[col]), df[col][0]
-        plot.line(range(len(df)), df[col],
+        plot.line(df['index'], df[col],
                   legend='mean/total', line_width=2, line_color='red', y_range_name="ttl")
         plot.add_layout(LinearAxis(y_range_name="ttl"), 'left')
 
         plot.extra_y_ranges['std'] = Range1d(min(df[col + '_std']), max(df[col + '_std']))
-        plot.line(range(len(df)), df[col + '_std'],
+        plot.line(df['index'], df[col + '_std'],
                   legend='std', line_width=2, line_color='blue', y_range_name="std")
         plot.add_layout(LinearAxis(y_range_name="std"), 'right')
         try:
@@ -199,7 +196,7 @@ def make_simple_graphs(df, filename):
 
             plot.legend.orientation = "top_left"
             plot.extra_y_ranges['ttl'] = Range1d(min(df[col]), max(df[col]))
-            plot.line(range(len(df)), df[col], legend=col, line_width=2, line_color='red', y_range_name="ttl")
+            plot.line(df['index'], df[col], legend=col, line_width=2, line_color='red', y_range_name="ttl")
             plots[plot.ref['id']] = plot
     return plots
 
@@ -217,13 +214,14 @@ def make_panel_graphs(df, filename):
             plot.legend.orientation = "top_left"
             for i, id in enumerate(individuals):
                 series = df[col][df['id'] == id]
-                plot.line(range(len(df)), series, legend=str(id), line_width=2, line_color=colors[i])
+                plot.line(df['index'], series, legend=str(id), line_width=2, line_color=colors[i])
             plots[plot.ref['id']] = plot
     return plots
 
 @app.route('/show_simulation')
 def show_simulation():
 
+    discard_initial_rounds = int(session.get('discard_initial_rounds', 0))
     plots = {}
     filenames = []
     path = request.args.get('subdir')
@@ -239,11 +237,15 @@ def show_simulation():
             continue
         elif filename.startswith('#'):
             continue
-        elif filename.startswith('aggregate_'):
-            plots.update(make_aggregate_graphs(path, filename))
+        df = pd.read_csv(path + filename)
+        if discard_initial_rounds >= max(df['round']):
+            discard_initial_rounds = 0
+        df = df.ix[discard_initial_rounds:]
+        df = df.where((pd.notnull(df)), None)
+
+        if filename.startswith('aggregate_'):
+            plots.update(make_aggregate_graphs(df, filename))
         else:
-            df = pd.read_csv(path + filename)
-            df = df.where((pd.notnull(df)), None)
             if max(df.get('id', [0])) == 0:
                 plots.update(make_simple_graphs(df, filename))
             else:
@@ -258,7 +260,7 @@ def show_simulation():
                        'graph': graph})
         i += 1
 
-    return render_template('show_outcome.html', entries=output, desc=desc, setup='', script=script,
+    return render_template('show_outcome.html', entries=output, desc=desc, setup=setup_dialog(max(df['round'])), script=script,
                            js_resources=INLINE.render_js(), css_resources=INLINE.render_css())
 
 
