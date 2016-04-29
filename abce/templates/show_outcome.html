@@ -23,15 +23,18 @@
   <div id="begin">
   </div>
   {% for entry in entries %}
-  <div class="mdl-cell mdl-cell--4-col" id="{{ entry['idname']|safe }}">
+  <div class="mdl-cell mdl-cell--4-col" id="{{ entry['title']|safe }}">
     <div class="mdl-card mdl-card--expand mdl-shadow--4dp">
+      <div class="mdl-card__actions mdl-card--title" style="display: none;"  id="{{ entry['title']|safe }}title" onclick="minimize('{{ entry['title']|safe }}', '{{ entry['idname']|safe }}', '{{ entry['title']|safe }}title')">>
+          {{ entry['title'] | safe }}
+      </div>
       <div class="mdl-card__actions mdl-card--border">
         <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect"
-           onclick="minimize('{{ entry['idname']|safe }}')">
+           onclick="minimize('{{ entry['title']|safe }}', '{{ entry['idname']|safe }}', '{{ entry['title']|safe }}title')">
           Min
         </a>
         <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect"
-           onclick="raise_window('{{ entry['idname']|safe }}')">
+           onclick="raise_window('{{ entry['title']|safe }}')">
           Zoom
         </a>
       </div>
@@ -76,22 +79,31 @@ function raise_description() {
            xDiv.style.height = '200px';}
        window.location.hash = 'description';
 }
-function minimize(idname) {
-       var xDiv = document.getElementById(idname);
+function minimize(id_box, id_graph, id_title) {
+       var xDiv = document.getElementById(id_box);
        var end = document.getElementById("end");
        var before_end = document.getElementById("before_end");
 
        if (xDiv.style.width == '') {
            xDiv.style.width = '150px';
            xDiv.style.height = '50px';
+           xDiv.style.overflow = 'hidden';
+
+           var title = document.getElementById(id_title);
+           title.style.display="inline";
 
            end.parentNode.insertBefore(xDiv, end);
-           document.cookie = idname + "=minimize; Expires=Wed, 09 Jun 2037 10:18:14 GMT";}
+           document.cookie = id_title + "=minimize; Expires=Wed, 09 Jun 2037 10:18:14 GMT";}
        else {
            xDiv.style.width = '';
            xDiv.style.height = '';
+
+           var title = document.getElementById(id_title);
+           title.style.display="none";
+
            end.parentNode.insertBefore(xDiv, before_end);
-           document.cookie = idname + "=full";}}
+           document.cookie = id_title + "=full";}
+       window.location.hash = id_box;}
 
 window.onload = function getCookie() {
     var keyValuePairs = document.cookie.split(/; */);

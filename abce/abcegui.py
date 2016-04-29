@@ -14,7 +14,7 @@ from bokeh.embed import components
 from bokeh.resources import INLINE
 from bokeh.models import Range1d, LinearAxis
 from bokeh.io import gridplot
-
+import json
 
 colors = ["red","blue","green","black","purple","pink",
           "yellow","orange","pink","Brown","Cyan","Crimson",
@@ -162,7 +162,8 @@ def make_aggregate_graphs(df, filename):
     plots = {}
 
     for col in columns:
-        plot = figure(title=make_title(filename, col), responsive=True, webgl=True,
+        title = make_title(filename, col)
+        plot = figure(title=title, responsive=True, webgl=True,
                       tools="pan, wheel_zoom, box_zoom, save, crosshair, hover")
         plot.yaxis.visible = None
         plot.legend.orientation = "top_left"
@@ -183,7 +184,7 @@ def make_aggregate_graphs(df, filename):
             plot.add_layout(LinearAxis(y_range_name="mean"), 'left')
         except KeyError:
             pass
-        plots[plot.ref['id']] = plot
+        plots[json.dumps((plot.ref['id'], title))] = plot
     return plots
 
 def make_simple_graphs(df, filename):
@@ -191,13 +192,14 @@ def make_simple_graphs(df, filename):
     plots = {}
     for col in df.columns:
         if col not in ['round', 'id', 'index']:
-            plot = figure(title=make_title(filename, col), responsive=True, webgl=True,
+            title = make_title(filename, col)
+            plot = figure(title=title, responsive=True, webgl=True,
                       tools="pan, wheel_zoom, box_zoom, save, crosshair, hover")
 
             plot.legend.orientation = "top_left"
             plot.extra_y_ranges['ttl'] = Range1d(min(df[col]), max(df[col]))
             plot.line(df['index'], df[col], legend=col, line_width=2, line_color='red', y_range_name="ttl")
-            plots[plot.ref['id']] = plot
+            plots[json.dumps((plot.ref['id'], title))] = plot
     return plots
 
 def make_panel_graphs(df, filename):
@@ -208,14 +210,15 @@ def make_panel_graphs(df, filename):
     plots = {}
     for col in df.columns:
         if col not in ['round', 'id', 'index']:
-            plot = figure(title=make_title(filename, col), responsive=True, webgl=True,
+            title = make_title(filename, col)
+            plot = figure(title=title, responsive=True, webgl=True,
                       tools="pan, wheel_zoom, box_zoom, save, crosshair, hover")
 
             plot.legend.orientation = "top_left"
             for i, id in enumerate(individuals):
                 series = df[col][df['id'] == id]
                 plot.line(df['index'], series, legend=str(id), line_width=2, line_color=colors[i])
-            plots[plot.ref['id']] = plot
+            plots[json.dumps((plot.ref['id'], title))] = plot
     return plots
 
 @app.route('/show_simulation')
@@ -254,9 +257,10 @@ def show_simulation():
     script, div = components(plots)
     output = []
     i = 0
-    for title, graph in div.iteritems():
-        print graph
-        output.append({'idname': title,  # can not stay i otherwise the cookie minimizing does not work
+    for idname_title, graph in div.iteritems():
+        idname, title = json.loads(idname_title)
+        output.append({'idname': idname,  # can not stay i otherwise the cookie minimizing does not work
+                       'title': title,
                        'graph': graph})
         i += 1
 
