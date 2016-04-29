@@ -54,8 +54,7 @@ function plotresizer() {
         for(var i = 0; i < Object.keys(Bokeh.index).length; i++) {
             var plotid = Object.keys(Bokeh.index)[i];
             var plot = Bokeh.index[plotid];
-            plot.resize_width_height(true, true, false)
-            console.log('heree')}
+            plot.resize_width_height(true, false, false)}
     };
 function raise_window(idname) {
        var xDiv = document.getElementById(idname);
