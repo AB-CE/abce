@@ -156,6 +156,7 @@ def make_title(title, col):
 
 
 def make_aggregate_graphs(df, filename):
+    print 'make_aggregate_graphs', filename
     columns = [col for col in df.columns if not col.endswith('_std')
                                          and not col.endswith('_mean')
                                          and not col in ['index', 'round', 'id']]
@@ -171,14 +172,15 @@ def make_aggregate_graphs(df, filename):
         plot.line(df['index'], df[col],
                   legend='mean/total', line_width=2, line_color='red', y_range_name="ttl")
         plot.add_layout(LinearAxis(y_range_name="ttl"), 'left')
-
-        plot.extra_y_ranges['std'] = Range1d(min(df[col + '_std']), max(df[col + '_std']))
-        plot.line(df['index'], df[col + '_std'],
-                  legend='std', line_width=2, line_color='blue', y_range_name="std")
-        plot.add_layout(LinearAxis(y_range_name="std"), 'right')
+        try:
+            plot.extra_y_ranges['std'] = Range1d(min(df[col + '_std']), max(df[col + '_std']))
+            plot.line(df['index'], df[col + '_std'],
+                      legend='std', line_width=2, line_color='blue', y_range_name="std")
+            plot.add_layout(LinearAxis(y_range_name="std"), 'right')
+        except KeyError:
+            pass
         try:
             plot.extra_y_ranges['mean'] = Range1d(min(df[col + '_mean']), max(df[col + '_mean']))
-            print 'mean', min(df[col + '_mean']), max(df[col + '_mean'])
             #plot.line(range(len(df)), df[col],
             #          legend='mean', line_width=2, line_color='green', y_range_name="mean")
             plot.add_layout(LinearAxis(y_range_name="mean"), 'left')

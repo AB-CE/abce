@@ -93,7 +93,7 @@ function minimize(id_box, id_graph, id_title) {
            title.style.display="inline";
 
            end.parentNode.insertBefore(xDiv, end);
-           document.cookie = id_title + "=minimize; Expires=Wed, 09 Jun 2037 10:18:14 GMT";}
+           document.cookie = id_box + "," + id_graph + "+" + id_title + "=minimize; Expires=Wed, 09 Jun 2037 10:18:14 GMT";}
        else {
            xDiv.style.width = '';
            xDiv.style.height = '';
@@ -102,16 +102,18 @@ function minimize(id_box, id_graph, id_title) {
            title.style.display="none";
 
            end.parentNode.insertBefore(xDiv, before_end);
-           document.cookie = id_title + "=full";}
+           document.cookie = id_box + "," + id_graph + "+" + id_title +  + "=full";}
        window.location.hash = id_box;}
 
 window.onload = function getCookie() {
     var keyValuePairs = document.cookie.split(/; */);
     for(var i = 0; i < keyValuePairs.length; i++) {
-        var name = keyValuePairs[i].substring(0, keyValuePairs[i].indexOf('='));
-        var value = keyValuePairs[i].substring(keyValuePairs[i].indexOf('=')+1);
+        var id_box = keyValuePairs[i].substring(0, keyValuePairs[i].indexOf(','));
+        var id_graph = keyValuePairs[i].substring(keyValuePairs[i].indexOf(',') + 1, keyValuePairs[i].indexOf('+'));
+        var id_title = keyValuePairs[i].substring(keyValuePairs[i].indexOf('+') + 1, keyValuePairs[i].indexOf('='));
+        var value = keyValuePairs[i].substring(keyValuePairs[i].indexOf('=') + 1);
         if (value == "minimize") {
-              minimize(name);}}}
+              minimize(id_box, id_graph, id_title);}}}
 
 function change_text_field(x, text_field_name) {
     document.getElementById(text_field_name).value = x;}
