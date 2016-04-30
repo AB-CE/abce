@@ -273,14 +273,17 @@ def show_simulation():
             else:
                 plots.update(make_panel_graphs(df, filename))
 
-    script, div = components(plots)
+    script, divs = components(plots, wrap_plot_info=False)
     output = []
     i = 0
-    for idname_title, graph in div.iteritems():
+    for idname_title, graph_info in divs.iteritems():
+
+        div = '<div class="plotdiv xpand" id="%s"></div>' % graph_info['elementid']
         idname, title = json.loads(idname_title)
+
         output.append({'idname': idname,  # can not stay i otherwise the cookie minimizing does not work
                        'title': title,
-                       'graph': graph})
+                       'graph': div})
         i += 1
 
     return render_template('show_outcome.html', entries=output, desc=desc, setup=setup_dialog(rounds), script=script,
