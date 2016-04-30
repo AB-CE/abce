@@ -197,7 +197,7 @@ def make_aggregate_graphs(df, filename):
             plot.add_layout(LinearAxis(y_range_name="mean"), 'left')
         except KeyError:
             pass
-        plots[json.dumps((plot.ref['id'], title))] = plot
+        plots[json.dumps((plot.ref['id'], title + ' (agg)'))] = plot
     return plots
 
 def make_simple_graphs(df, filename):
@@ -210,8 +210,7 @@ def make_simple_graphs(df, filename):
                       tools="pan, wheel_zoom, box_zoom, save, crosshair, hover")
 
             plot.legend.orientation = "top_left"
-            plot.extra_y_ranges['ttl'] = Range1d(min(df[col]), max(df[col]))
-            plot.line(df['index'], df[col], legend=col, line_width=2, line_color='red', y_range_name="ttl")
+            plot.line(df['index'], df[col], legend=col, line_width=2, line_color='red')
             plots[json.dumps((plot.ref['id'], title))] = plot
     return plots
 
@@ -233,7 +232,7 @@ def make_panel_graphs(df, filename):
             for i, id in enumerate(individuals):
                 series = df[col][df['id'] == id]
                 plot.line(df['index'], series, legend=str(id), line_width=2, line_color=colors[i])
-            plots[json.dumps((plot.ref['id'], title))] = plot
+            plots[json.dumps((plot.ref['id'], title + '(panel)'))] = plot
     return plots
 
 @app.route('/show_simulation')
