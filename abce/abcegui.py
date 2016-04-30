@@ -164,7 +164,7 @@ def make_aggregate_graphs(df, filename):
 
     for col in columns:
         title = make_title(filename, col)
-        plot = figure(title=title, responsive=True, webgl=True,
+        plot = figure(title=title, responsive=True, webgl=False,
                       tools="pan, wheel_zoom, box_zoom, save, crosshair, hover")
         plot.yaxis.visible = None
         plot.legend.orientation = "top_left"
@@ -206,7 +206,7 @@ def make_simple_graphs(df, filename):
     for col in df.columns:
         if col not in ['round', 'id', 'index']:
             title = make_title(filename, col)
-            plot = figure(title=title, responsive=True, webgl=True,
+            plot = figure(title=title, responsive=True, webgl=False,
                       tools="pan, wheel_zoom, box_zoom, save, crosshair, hover")
 
             plot.legend.orientation = "top_left"
@@ -225,7 +225,7 @@ def make_panel_graphs(df, filename):
     for col in df.columns:
         if col not in ['round', 'id', 'index']:
             title = make_title(filename, col)
-            plot = figure(title=title, responsive=True, webgl=True,
+            plot = figure(title=title, responsive=True, webgl=False,
                       tools="pan, wheel_zoom, box_zoom, save, crosshair, hover")
 
             plot.legend.orientation = "top_left"
