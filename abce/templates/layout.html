@@ -27,25 +27,23 @@
 
 </head>
 <body>
-  <div class="mdl-layout mdl-js-layout">
-    <header class="mdl-layout__header">
-      <div class="mdl-layout--fixed-header mdl-layout--fixed-tabs">
-        <div class="mdl-layout__header-row">
-          <span class="mdl-layout-title">ABCE Agent-Based Computational Economics Platform</span>
-        </div>
-        <div class="mdl-layout__tab-bar mdl-js-ripple-effect">
-          <a href="/" class="mdl-layout__tab is-active">New Simulation</a>
-          <a href="show_simulation" class="mdl-layout__tab">Results</a>
-          <a href="older_results" class="mdl-layout__tab">Older Results</a>
-        </div>
-
-        <div class="mdl-layout__drawer">
-          <span class="mdl-layout-title">ABCE Agent-Based Computational Economics Platform</span>
-        </div>
-      </div>
-    </header>
-  </div>
-  <main>
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+  <header class="mdl-layout__header">
+    <div class="mdl-layout__header-row">
+      <!-- Title -->
+      <span class="mdl-layout-title">ABCE Agent-Based Computational Economics Platform</span>
+      <!-- Add spacer, to align navigation to the right -->
+    </div>
+    <div class="mdl-layout__header-row">
+      <!-- Navigation. We hide it in small screens. -->
+        <nav class="mdl-navigation">
+          <a class="mdl-navigation__link" href="/" class="mdl-layout__tab is-active">New Simulation</a>
+          <a class="mdl-navigation__link" href="show_simulation" class="mdl-layout__tab">Results</a>
+          <a class="mdl-navigation__link" href="older_results" class="mdl-layout__tab">Older Results</a>
+        </nav>
+    </div>
+  </header>
+  <main class="mdl-layout__content">
     <div class="mdl-grid">
       {% block body %}{% endblock %}
     </div>
