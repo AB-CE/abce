@@ -3,7 +3,7 @@
   <div class="mdl-cell mdl-cell--6-col" id="setup">
     <div class="mdl-card mdl-card--expand mdl-shadow--4dp">
       <div class="mdl-card__supporting-text">
-          {{ setup|safe }}
+          {{ setup | safe }}
       </div>
     </div>
   </div>
@@ -34,7 +34,7 @@
           Min
         </a>
         <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect"
-           onclick="raise_window('{{ entry['title']|safe }}')">
+           onclick="raise_window('{{ entry['title']|safe }}', '{{ entry['idname']|safe }}')">
           Zoom
         </a>
       </div>
@@ -52,14 +52,7 @@
   </div>
 
 <script type="text/javascript">
-function plotresizer() {
-        // arguments: use width, use height, maintain aspect ratio
-        for(var i = 0; i < Object.keys(Bokeh.index).length; i++) {
-            var plotid = Object.keys(Bokeh.index)[i];
-            var plot = Bokeh.index[plotid];
-            plot.resize_width_height(true, false, false)}
-    };
-function raise_window(idname) {
+function raise_window(idname, id_graph) {
        var xDiv = document.getElementById(idname);
        var currentClass = xDiv.className;
        if (currentClass == "mdl-cell mdl-cell--4-col") {
@@ -67,7 +60,8 @@ function raise_window(idname) {
        } else {
           xDiv.className = "mdl-cell mdl-cell--4-col";
        }
-       plotresizer();
+       var plot = Bokeh.index[id_graph];
+       plot.resize_width_height(true, false, false);
        window.location.hash = idname;
 }
 function raise_description() {
