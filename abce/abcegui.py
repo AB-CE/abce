@@ -168,10 +168,10 @@ def make_aggregate_graphs(df, filename):
                       tools="pan, wheel_zoom, box_zoom, save, crosshair, hover")
         plot.yaxis.visible = None
         plot.legend.orientation = "top_left"
-        if df[col].min() != df[col].max():
-            plot.extra_y_ranges['ttl'] = Range1d(df[col].min(), df[col].max())
+        if df[col].min(skipna=True) != df[col].max(skipna=True):
+            plot.extra_y_ranges['ttl'] = Range1d(df[col].min(skipna=True), df[col].max(skipna=True))
         else:
-            plot.extra_y_ranges['ttl'] = Range1d(df[col].min() - 1, df[col].max() + 1)
+            plot.extra_y_ranges['ttl'] = Range1d(df[col].min(skipna=True) - 1, df[col].max(skipna=True) + 1)
 
         plot.line(df['index'], df[col],
                   legend='mean/total', line_width=2, line_color='red', y_range_name="ttl")
@@ -179,9 +179,9 @@ def make_aggregate_graphs(df, filename):
 
         try:
             if df[col].min() != df[col].max():
-                plot.extra_y_ranges['std'] = Range1d(min(df[col + '_std']), max(df[col + '_std']))
+                plot.extra_y_ranges['std'] = Range1d(df[col + '_std'].min(skipna=True), df[col + '_std'].max(skipna=True))
             else:
-                plot.extra_y_ranges['std'] = Range1d(min(df[col + '_std']) -1 , max(df[col + '_std']) + 1)
+                plot.extra_y_ranges['std'] = Range1d(df[col + '_std'].min(skipna=True) - 1, df[col + '_std'].max(skipna=True) + 1)
             plot.line(df['index'], df[col + '_std'],
                       legend='std', line_width=2, line_color='blue', y_range_name="std")
             plot.add_layout(LinearAxis(y_range_name="std"), 'right')
@@ -189,9 +189,9 @@ def make_aggregate_graphs(df, filename):
             pass
         try:
             if df[col].min() != df[col].max():
-                plot.extra_y_ranges['mean'] = Range1d(min(df[col + '_mean']), max(df[col + '_mean']))
+                plot.extra_y_ranges['mean'] = Range1d(df[col + '_mean'].min(skipna=True), df[col + '_mean'].max(skipna=True))
             else:
-                plot.extra_y_ranges['mean'] = Range1d(min(df[col + '_mean']) - 1 , max(df[col + '_mean']) + 1)
+                plot.extra_y_ranges['mean'] = Range1d(df[col + '_mean'].min(skipna=True) - 1 , df[col + '_mean'].max(skipna=True) + 1)
             #plot.line(range(len(df)), df[col],
             #          legend='mean', line_width=2, line_color='green', y_range_name="mean")
             plot.add_layout(LinearAxis(y_range_name="mean"), 'left')
@@ -262,9 +262,10 @@ def show_simulation():
             rounds = max(df['index'])
         if discard_initial_rounds >= rounds:
             discard_initial_rounds = 0
+            print 'kill'
         df = df.ix[discard_initial_rounds:]
-        df = df.where((pd.notnull(df)), None)
-
+        df.where((pd.notnull(df)), None, inplace=True)
+        df.dropna(1, how='all', inplace=True)
         if filename.startswith('aggregate_'):
             plots.update(make_aggregate_graphs(df, filename))
         else:
