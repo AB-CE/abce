@@ -168,19 +168,30 @@ def make_aggregate_graphs(df, filename):
                       tools="pan, wheel_zoom, box_zoom, save, crosshair, hover")
         plot.yaxis.visible = None
         plot.legend.orientation = "top_left"
-        plot.extra_y_ranges['ttl'] = Range1d(df[col].min(), df[col].max())
+        if df[col].min() != df[col].max():
+            plot.extra_y_ranges['ttl'] = Range1d(df[col].min(), df[col].max())
+        else:
+            plot.extra_y_ranges['ttl'] = Range1d(df[col].min() - 1, df[col].max() + 1)
+
         plot.line(df['index'], df[col],
                   legend='mean/total', line_width=2, line_color='red', y_range_name="ttl")
         plot.add_layout(LinearAxis(y_range_name="ttl"), 'left')
+
         try:
-            plot.extra_y_ranges['std'] = Range1d(min(df[col + '_std']), max(df[col + '_std']))
+            if df[col].min() != df[col].max():
+                plot.extra_y_ranges['std'] = Range1d(min(df[col + '_std']), max(df[col + '_std']))
+            else:
+                plot.extra_y_ranges['std'] = Range1d(min(df[col + '_std']) -1 , max(df[col + '_std']) + 1)
             plot.line(df['index'], df[col + '_std'],
                       legend='std', line_width=2, line_color='blue', y_range_name="std")
             plot.add_layout(LinearAxis(y_range_name="std"), 'right')
         except KeyError:
             pass
         try:
-            plot.extra_y_ranges['mean'] = Range1d(min(df[col + '_mean']), max(df[col + '_mean']))
+            if df[col].min() != df[col].max():
+                plot.extra_y_ranges['mean'] = Range1d(min(df[col + '_mean']), max(df[col + '_mean']))
+            else:
+                plot.extra_y_ranges['mean'] = Range1d(min(df[col + '_mean']) - 1 , max(df[col + '_mean']) + 1)
             #plot.line(range(len(df)), df[col],
             #          legend='mean', line_width=2, line_color='green', y_range_name="mean")
             plot.add_layout(LinearAxis(y_range_name="mean"), 'left')
