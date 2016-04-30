@@ -219,7 +219,7 @@ def make_panel_graphs(df, filename):
             plot.legend.orientation = "top_left"
             for i, id in enumerate(individuals):
                 series = df[col][df['id'] == id]
-                plot.line(df['round'], series, legend=str(id), line_width=2, line_color=colors[i])
+                plot.line(df['index'], series, legend=str(id), line_width=2, line_color=colors[i])
             plots[json.dumps((plot.ref['id'], title))] = plot
     return plots
 
