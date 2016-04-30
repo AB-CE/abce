@@ -217,8 +217,10 @@ def make_simple_graphs(df, filename):
 
 def make_panel_graphs(df, filename):
     print 'make_panel_graphs', filename
-    lines = min(10, max(df['id']))
-    individuals = sorted(random.sample(range(max(df['id'])), lines))
+    if  max(df['id'])> 20:
+        individuals = sorted(random.sample(range(max(df['id'])), 20))
+    else:
+        individuals = range(max(df['id']) + 1)
     df = df[df['id'].isin(individuals)]
     plots = {}
     for col in df.columns:
