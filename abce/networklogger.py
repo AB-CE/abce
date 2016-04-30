@@ -36,7 +36,7 @@ class NetworkLogger:
         """
         try:
             if self.round % self._network_drawing_frequency == 0 and self:
-                self.logger_connection.put(('node', self.round, ((self.group, self.idn), color, style, shape)))
+                self.logger_connection.put(('node', self.round, ((self.group, self.id), color, style, shape)))
         except TypeError:
             raise SystemExit("ABCE Error: simulation.network(.) needs to be called in start.py")
 
@@ -48,7 +48,7 @@ class NetworkLogger:
         Args:
             list_of_nodes:
                 list of nodes that the agent is linked to. A list of noteds must have
-                the following format: [('agent_group', agent_idn), ('agent_group', agent_idn), ...]
+                the following format: [('agent_group', agent_id), ('agent_group', agent_id), ...]
                 If your
             color:
                 integer for the color
@@ -59,6 +59,6 @@ class NetworkLogger:
         """
         try:
             if self.round % self._network_drawing_frequency == 0:
-                self.logger_connection.put(('edges', self.round, ((self.group, self.idn), list_of_nodes)))
+                self.logger_connection.put(('edges', self.round, ((self.group, self.id), list_of_nodes)))
         except TypeError:
             raise SystemExit("ABCE Error: simulation.network(.) needs to be called in start.py")

@@ -72,17 +72,17 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
 
 
     """
-    def __init__(self, idn, group, trade_logging, database, logger, random_seed):
+    def __init__(self, id, group, trade_logging, database, logger, random_seed):
         """ Do not overwrite __init__ instead use a method called init instead.
         init is called whenever the agent are build.
         """
-        self.idn = idn
-        """ self.idn returns the agents idn READ ONLY"""
-        self.name = '%s_%i:' % (group, idn)
+        self.id = id
+        """ self.id returns the agents id READ ONLY"""
+        self.name = '%s_%i:' % (group, id)
         """ self.name returns the agents name, which is the group name and the
         id seperated by '_' e.G. "household_12" READ ONLY!
         """
-        self.name_without_colon = '%s_%i' % (group, idn)
+        self.name_without_colon = '%s_%i' % (group, id)
         self.group = group
         """ self.group returns the agents group or type READ ONLY! """
         #TODO should be group_address(group), but it would not work
@@ -188,7 +188,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
                         print(offer.__repr__())
                 raise Exception('%s_%i: There are offers have been made before'
                                  'last round and not been retrieved in this'
-                                 'round get_offer(.)' % (self.group, self.idn))
+                                 'round get_offer(.)' % (self.group, self.id))
 
         # contracts
         self._contract_requests = defaultdict(list)
@@ -219,12 +219,12 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         if sum([len(offers) for offers in self._open_offers.values()]):
                 pprint(dict(self._open_offers))
                 raise SystemExit('%s_%i: There are offers an agent send that have not'
-                                 'been retrieved in this round get_offer(.)' % (self.group, self.idn))
+                                 'been retrieved in this round get_offer(.)' % (self.group, self.id))
 
         if sum([len(offers) for offers in self._msgs.values()]):
                 pprint(dict(self._msgs))
                 raise SystemExit('%s_%i: There are messages an agent send that have not'
-                                 'been retrieved in this round get_messages(.)' % (self.group, self.idn))
+                                 'been retrieved in this round get_messages(.)' % (self.group, self.id))
 
         self.round += 1
 
@@ -356,7 +356,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
             data_to_track[variable] = self.__dict__[variable]
         self.database_connection.put(["panel",
                                        data_to_track,
-                                       str(self.idn),
+                                       str(self.id),
                                        self.group,
                                        str(self.round)])
 
@@ -383,14 +383,14 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
             self.reject(offer)
 
 
-    def _send(self, receiver_group, receiver_idn, typ, msg):
+    def _send(self, receiver_group, receiver_id, typ, msg):
         """ sends a message to 'receiver_group', who can be an agent, a group or
         'all'. The agents receives it at the begin of each round in
         self.messages(typ) is 'm' for mails.
         typ =(_o,c,u,r) are
         reserved for internally processed offers.
         """
-        self._out.append((receiver_group, receiver_idn, (typ, msg)))
+        self._out.append((receiver_group, receiver_id, (typ, msg)))
 
     def _send_to_group(self, receiver_group, typ, msg):
         """ sends a message to 'receiver_group', who can be an agent, a group or

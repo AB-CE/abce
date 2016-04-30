@@ -59,10 +59,10 @@ class Quote:
          quotes = self.get_quotes()
         """
         ret = []
-        for offer_idn in self._quotes.keys():
-            if self._quotes[offer_idn]['good'] == good:
-                ret.append(self._quotes[offer_idn])
-                del self._quotes[offer_idn]
+        for offer_id in self._quotes.keys():
+            if self._quotes[offer_id]['good'] == good:
+                ret.append(self._quotes[offer_id])
+                del self._quotes[offer_id]
         ret.sort(key=lambda objects: objects['price'], reverse=descending)
         return ret
 
@@ -104,9 +104,9 @@ class Quote:
 
         """
         if quote['buysell'] == 'qs':
-            self.buy(quote['sender_group'], quote['sender_idn'], quote['good'], quote['quantity'], quote['price'])
+            self.buy(quote['sender_group'], quote['sender_id'], quote['good'], quote['quantity'], quote['price'])
         else:
-            self.sell(quote['sender_group'], quote['sender_idn'], quote['good'], quote['quantity'], quote['price'])
+            self.sell(quote['sender_group'], quote['sender_id'], quote['good'], quote['quantity'], quote['price'])
 
     def accept_quote_partial(self, quote, quantity):
         """ makes a commited buy or sell out of the counterparties quote
@@ -118,11 +118,11 @@ class Quote:
 
         """
         if quote['buysell'] == 'qs':
-            self.buy(quote['sender_group'], quote['sender_idn'], quote['good'], quantity, quote['price'])
+            self.buy(quote['sender_group'], quote['sender_id'], quote['good'], quantity, quote['price'])
         else:
-            self.sell(quote['sender_group'], quote['sender_idn'], quote['good'], quantity, quote['price'])
+            self.sell(quote['sender_group'], quote['sender_id'], quote['good'], quantity, quote['price'])
 
-    def quote_sell(self, receiver_group, receiver_idn, good=None, quantity=None, price=None):
+    def quote_sell(self, receiver_group, receiver_id, good=None, quantity=None, price=None):
         """ quotes a price to sell quantity of 'good' to a receiver. Use None,
         if you do not want to specify a value.
 
@@ -132,7 +132,7 @@ class Quote:
         Args:
             receiver_group:
                 agent group name of the agent
-            receiver_idn:
+            receiver_id:
                 the agent's id number
             'good':
                 name of the good
@@ -142,18 +142,18 @@ class Quote:
                 price per unit
         """
         offer = Quotation({'sender_group': self.group,
-                 'sender_idn': self.idn,
+                 'sender_id': self.id,
                  'receiver_group': receiver_group,
-                 'receiver_idn': receiver_idn,
+                 'receiver_id': receiver_id,
                  'good': good,
                  'quantity': quantity,
                  'price': price,
                  'buysell': 'qs',
-                 'idn': self._offer_counter()})
-        self._send(receiver_group, receiver_idn, '_q', offer)
+                 'id': self._offer_counter()})
+        self._send(receiver_group, receiver_id, '_q', offer)
         return offer
 
-    def quote_buy(self, receiver_group, receiver_idn, good=None, quantity=None, price=None):
+    def quote_buy(self, receiver_group, receiver_id, good=None, quantity=None, price=None):
         """ quotes a price to buy quantity of 'good' a receiver. Use None,
         if you do not want to specify a value.
 
@@ -163,7 +163,7 @@ class Quote:
         Args:
             receiver_group:
                 agent group name of the agent
-            receiver_idn:
+            receiver_id:
                 the agent's id number
             'good':
                 name of the good
@@ -173,13 +173,13 @@ class Quote:
                 price per unit
         """
         offer = Quotation({'sender_group': self.group,
-                 'sender_idn': self.idn,
+                 'sender_id': self.id,
                  'receiver_group': receiver_group,
-                 'receiver_idn': receiver_idn,
+                 'receiver_id': receiver_id,
                  'good': good,
                  'quantity': quantity,
                  'price': price,
                  'buysell': 'qb',
-                 'idn': self._offer_counter()})
-        self._send(receiver_group, receiver_idn, '_q', offer)
+                 'id': self._offer_counter()})
+        self._send(receiver_group, receiver_id, '_q', offer)
         return offer

@@ -9,14 +9,14 @@ class BuyExpiringCapital(abce.Agent, Firm):
         self.last_round = simulation_parameters['rounds'] - 1
 
     def one(self):
-        if self.idn == 0:
+        if self.id == 0:
             self.create('money', 10)
             self.buy('buyexpiringcapital', 1, good='xcapital', quantity=10, price=1)
             assert self.possession('xcapital') == 0
             assert self.possession('money') == 0
 
     def two(self):
-        if self.idn == 1:
+        if self.id == 1:
             self.create('xcapital', 10)
             assert self.possession('xcapital') == 10
             assert self.possession('money') == 0
@@ -27,10 +27,10 @@ class BuyExpiringCapital(abce.Agent, Firm):
             assert self.possession('money') == 10
 
     def three(self):
-        if self.idn == 0:
+        if self.id == 0:
             assert self.possession('xcapital') == 10
             self.destroy('xcapital', 10)
-        elif self.idn == 1:
+        elif self.id == 1:
             assert self.possession('money') == 10
             self.destroy('money', 10)
 
@@ -38,5 +38,5 @@ class BuyExpiringCapital(abce.Agent, Firm):
         pass
 
     def all_tests_completed(self):
-        if self.round == self.last_round and self.idn == 0:
+        if self.round == self.last_round and self.id == 0:
             print("BuyExpiringCapital \tOK")

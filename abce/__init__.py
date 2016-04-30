@@ -707,7 +707,7 @@ class Simulation:
                         agent.__dict__[key] =  value
 
         for agent in self.agents_list['all']:
-            self.agents_list[agent.group][agent.idn] = agent
+            self.agents_list[agent.group][agent.id] = agent
 
         self._messages = simulation['messages']
 

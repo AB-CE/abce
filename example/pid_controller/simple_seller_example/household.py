@@ -11,7 +11,7 @@ class Household(abce.Agent, abce.Household, abce.Quote):
         self.set_cobb_douglas_utility_function({'cookies': 1})
 
     def buying(self):
-        """ buy a cookies if it is smaller then self.idn * 10. create enough
+        """ buy a cookies if it is smaller then self.id * 10. create enough
         money to by one cookies, if its cheap enough (its a partial equlibirum
         model)
         """

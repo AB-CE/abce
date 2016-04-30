@@ -7,11 +7,11 @@ from abce import NotEnoughGoods
 class ContractBuyerStop(abce.Agent, abce.Contracting):
     def init(self, simulation_parameters, agent_parameters):
         self.last_round = simulation_parameters['rounds'] - 1
-        if self.idn == 0:
+        if self.id == 0:
             self.create('labor_endowment', 1)
 
     def request_offer(self):
-        if self.idn == 1:
+        if self.id == 1:
             if self.round % 10 == 0:
                 self.given_contract = self.request_good_contract('contractbuyerstop', 0,
                                                                  'labor',
@@ -22,7 +22,7 @@ class ContractBuyerStop(abce.Agent, abce.Contracting):
                 self.end_contract(self.given_contract)
 
     def accept_offer(self):
-        if self.idn == 0:
+        if self.id == 0:
             contracts = self.get_contract_offers('labor')
             for contract in contracts:
                 self.accepted_contract = self.accept_contract(contract)
@@ -41,7 +41,7 @@ class ContractBuyerStop(abce.Agent, abce.Contracting):
 
     def control(self):
         if self.round % 10 < 5:
-            if self.idn == 1:
+            if self.id == 1:
                 assert self.was_delivered_this_round(self.given_contract), self.given_contract
                 assert self.possession('money') == 0
                 assert self.possession('labor') == 5
@@ -51,7 +51,7 @@ class ContractBuyerStop(abce.Agent, abce.Contracting):
                 assert self.possession('money') == 50, self.possession('money')
                 self.destroy('money')
         else:
-            if self.idn == 1:
+            if self.id == 1:
                 assert self.possession('money') == 0
                 assert self.possession('labor') == 0
             else:
@@ -63,6 +63,6 @@ class ContractBuyerStop(abce.Agent, abce.Contracting):
         pass
 
     def all_tests_completed(self):
-        if self.round == self.last_round and self.idn == 0:
+        if self.round == self.last_round and self.id == 0:
             print('Test request_offer      \t\t\tOK')
             print('Test end_contract       \t\t\tOK')

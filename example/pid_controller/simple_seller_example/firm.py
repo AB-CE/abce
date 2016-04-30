@@ -17,8 +17,8 @@ class Firm(abce.Agent, abce.Firm, abce.Quote):
 
     def quote(self):
         """ make a non binding quote at self.price """
-        for idn in range(10):
-            self.quote_sell('household', idn, 'cookies', self.possession('cookies'), self.price)
+        for id in range(10):
+            self.quote_sell('household', id, 'cookies', self.possession('cookies'), self.price)
 
     def selling(self):
         """ sell to all agents that accepted the price cookies, if there are

@@ -110,7 +110,7 @@ class ProductionMultifirm(abce.Agent, abce.FirmMultiTechnologies):
         assert  nv == 860
 
     def all_tests_completed(self):
-        if self.round == self.last_round and self.idn == 0:
+        if self.round == self.last_round and self.id == 0:
             print('Test produce:                            \tOK')
             print('Test create_production_function_one_good:\tOK')
             print('Test create_cobb_douglas:                \tOK')

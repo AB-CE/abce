@@ -25,26 +25,26 @@ from random import shuffle
 
 
 class Message():
-    __slots__ = ['sender_group', 'sender_idn', 'receiver_group',
-                 'receiver_idn', 'topic','content']
-    def __init__(self, sender_group, sender_idn, receiver_group,
-                 receiver_idn, topic, content):
+    __slots__ = ['sender_group', 'sender_id', 'receiver_group',
+                 'receiver_id', 'topic','content']
+    def __init__(self, sender_group, sender_id, receiver_group,
+                 receiver_id, topic, content):
         self.sender_group=sender_group
-        self.sender_idn=sender_idn
+        self.sender_id=sender_id
         self.receiver_group=receiver_group
-        self.receiver_idn=receiver_idn
+        self.receiver_id=receiver_id
         self.topic=topic
         self.content=content
 
     def __repr__(self):
         return "sender: %s, %i; receiver: %s, %i; topic: %s; content: " % (
-                 self.sender_group, self.sender_idn, self.receiver_group,
-                 self.receiver_idn, self.topic) + str(self.content)
+                 self.sender_group, self.sender_id, self.receiver_group,
+                 self.receiver_id, self.topic) + str(self.content)
 
 
 
 class Messaging:
-    def message(self, receiver_group, receiver_idn, topic, content):
+    def message(self, receiver_group, receiver_id, topic, content):
         """ sends a message to agent. Agents receive it
         at the beginning of next round with :meth:`~abceagent.Messaging.get_messages` or
         :meth:`~abceagent.Messaging.get_messages_all`.
@@ -74,12 +74,12 @@ class Messaging:
 
         """
         msg = Message(sender_group=self.group,
-               sender_idn=self.idn,
+               sender_id=self.id,
                receiver_group=receiver_group,
-               receiver_idn=receiver_idn,
+               receiver_id=receiver_id,
                topic=topic,
                content=content)
-        self._send(receiver_group, receiver_idn, topic, msg)
+        self._send(receiver_group, receiver_id, topic, msg)
 
     def get_messages(self, topic='m'):
         """ self.messages() returns all new messages send with :meth:`~abceagent.Messaging.message`
@@ -87,7 +87,7 @@ class Messaging:
         messages with a topic.
 
         A message is a string with the message. You can also retrieve the sender
-        by `message.sender_group` and `message.sender_idn` and view the topic with
+        by `message.sender_group` and `message.sender_id` and view the topic with
         'message.topic'. (see example)
 
         If you are sending a float or an integer you need to access the message
@@ -102,7 +102,7 @@ class Messaging:
                 returns also the message content, but only as a string
             sender_group:
                 returns the group name of the sender
-            sender_idn:
+            sender_id:
                 returns the id of the sender
             topic:
                 returns the topic
@@ -118,7 +118,7 @@ class Messaging:
             print('message: ', msg)
             print('message: ', msg.content)
             print('group name: ', msg.sender_group)
-            print('sender id: ', msg.sender_idn)
+            print('sender id: ', msg.sender_id)
             print('topic: ', msg.topic)
 
         """
@@ -132,7 +132,7 @@ class Messaging:
         """ returns all messages irregardless of the topic, in a dictionary by topic
 
         A message is a string with the message. You can also retrieve the sender
-        by `message.sender_group` and `message.sender_idn` and view the topic with
+        by `message.sender_group` and `message.sender_id` and view the topic with
         'message.topic'. (see example)
 
         If you are sending a float or an integer you need to access the message

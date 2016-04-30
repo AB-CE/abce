@@ -76,7 +76,7 @@ class Database:
             data_to_write = {'%s_%s' % (action_name, key): data_to_log[key] for key in data_to_log}
         except TypeError:
             data_to_write = {action_name: data_to_log}
-        data_to_write['id'] = self.idn
+        data_to_write['id'] = self.id
         self.database_connection.put(["log", self.group, data_to_write, str(self.round)])
 
     def log_value(self, name, value):
@@ -88,14 +88,14 @@ class Database:
             value(int/float):
                 the variable = value to log
         """
-        self.database_connection.put(["log",  self.group, {'id': self.idn, name: value}, str(self.round)])
+        self.database_connection.put(["log",  self.group, {'id': self.id, name: value}, str(self.round)])
 
     def log_dict(self, action_name, data_to_log):
         """ same as the log function, only that it supports nested dictionaries
         see: :meth:`~abecagent.Database.log`.
         """
         data_to_write = flatten(data_to_log, '%s_' % action_name)
-        data_to_write['id'] = self.idn
+        data_to_write['id'] = self.id
         self.database_connection.put(["log", self.group, data_to_write, str(self.round)])
 
     def log_change(self, action_name, data_to_log):
@@ -120,7 +120,7 @@ class Database:
         except KeyError:
             for key in data_to_log:
                 data_to_write['%s_change_%s' % (action_name, key)] = data_to_log[key]
-        data_to_write['id'] = self.idn
+        data_to_write['id'] = self.id
         self.database_connection.put(["log", self.group, data_to_write, str(self.round)])
 
         self._data_to_log_1[action_name] = data_to_log
@@ -175,6 +175,6 @@ class Database:
         for key in data_to_observe:
             data_to_write['%s_delta_%s' % (action_name, key)] = \
                                             data_to_observe[key] - before[key]
-        data_to_write['id'] = self.idn
+        data_to_write['id'] = self.id
         self.database_connection.put(["log", self.group, data_to_write, str(self.round)])
 

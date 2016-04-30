@@ -7,7 +7,7 @@ class UtilityHousehold(abce.Agent, abce.Household):
     def init(self, simulation_parameters, agent_parameters):
         self.last_round = simulation_parameters['rounds'] - 1
 
-        if self.idn == 0 or self.idn == 2:
+        if self.id == 0 or self.id == 2:
             def utility(goods):
                 return max(goods['a'] ** 0.2, goods['b'] ** 0.5 * goods['c'] ** 0.3)
 
@@ -15,7 +15,7 @@ class UtilityHousehold(abce.Agent, abce.Household):
 
             self.set_utility_function(utility, use)
 
-        elif self.idn == 1 or self.idn == 3:
+        elif self.id == 1 or self.id == 3:
             self.set_cobb_douglas_utility_function({'a': 0.2, 'b': 0.5, 'c': 0.3})
 
     def one(self):
@@ -31,7 +31,7 @@ class UtilityHousehold(abce.Agent, abce.Household):
         pass
 
     def consumption(self):
-        if self.idn == 0:
+        if self.id == 0:
             self.create('a', 10)
             self.create('b', 10)
             self.create('c', 10)
@@ -44,7 +44,7 @@ class UtilityHousehold(abce.Agent, abce.Household):
             self.destroy('b')
             self.destroy('c')
 
-        elif self.idn == 1:
+        elif self.id == 1:
             self.create('a', 10)
             self.create('b', 10)
             self.create('c', 10)
@@ -61,7 +61,7 @@ class UtilityHousehold(abce.Agent, abce.Household):
             pu = self.predict_utility({'a': 5, 'b': 300, 'c': 10})
             assert pu == 5 ** 0.2 * 300 ** 0.5 * 10 ** 0.3
 
-        elif self.idn == 2:
+        elif self.id == 2:
             self.create('a', 10)
             self.create('b', 10)
             self.create('c', 10)
@@ -74,7 +74,7 @@ class UtilityHousehold(abce.Agent, abce.Household):
             self.destroy('b')
             self.destroy('c')
 
-        elif self.idn == 3:
+        elif self.id == 3:
             self.create('a', 10)
             self.create('b', 10)
             self.create('c', 10)
@@ -88,7 +88,7 @@ class UtilityHousehold(abce.Agent, abce.Household):
             assert pu == 5 ** 0.2 * 300 ** 0.5 * 10 ** 0.3
 
     def all_tests_completed(self):
-        if self.round == self.last_round and self.idn == 0:
+        if self.round == self.last_round and self.id == 0:
             print('Test consume:                             \tOK')
             print('Test set_utility_function:                \tOK')
             print('Test set_cobb_douglas_utility_function    \tOK')

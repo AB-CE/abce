@@ -11,13 +11,13 @@ class Family:
         self.group = agent_args['group']
         self.num_managers = num_managers
         for i in xrange(batch, num_agents_this_group, num_managers):
-            self.agents.append(Agent(idn=i, **agent_args))
+            self.agents.append(Agent(id=i, **agent_args))
 
     def execute(self, command, messages):
         out = defaultdict(list)
         messages = sortmessages(messages)
         for agent in self.agents:
-            for message in agent._execute(command, messages[agent.idn]):
+            for message in agent._execute(command, messages[agent.id]):
                 out[(message[0], message[1] % self.num_managers)].append(message)
         return out
 
@@ -42,7 +42,7 @@ class Family:
     def init(self, simulation_parameters, agent_parameters):
         for agent in self.agents:
             try:
-                agent.init(simulation_parameters, agent_parameters[agent.idn])
+                agent.init(simulation_parameters, agent_parameters[agent.id])
             except KeyboardInterrupt:
                 return None
             except:
@@ -71,7 +71,7 @@ class Family:
             agent._set_network_drawing_frequency(_network_drawing_frequency)
 
     def repr(self):
-        return "%s: %i - %i" % (self.group, self.agents[0].idn, self.agents[-1].idn)
+        return "%s: %i - %i" % (self.group, self.agents[0].id, self.agents[-1].id)
 
 
 

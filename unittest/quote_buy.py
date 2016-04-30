@@ -9,13 +9,13 @@ class QuoteBuy(abce.Agent):
     def init(self, simulation_parameters, own_parameters):
         self.last_round = simulation_parameters['rounds'] - 1
         self.cut_of = simulation_parameters['cut_of']
-        if self.idn == 1:
+        if self.id == 1:
             self.tests = {'accepted': False, 'not_answered': False, 'partial': False}
 
     def one(self):
         """ Acts only if he is agent 0: sends an buy quote to agent 1 quote
         """
-        if self.idn == 0:
+        if self.id == 0:
             self.create('money', random.uniform(0, 10000))
             self.money = self.possession('money')
             self.price = random.uniform(0.0001, 1)
@@ -27,7 +27,7 @@ class QuoteBuy(abce.Agent):
         """ Acts only if he is agent 1: recieves quotes and accepts;
         rejects; partially accepts and leaves quotes unanswerd.
         """
-        if self.idn == 1:
+        if self.id == 1:
             self.create('cookies', random.uniform(0, 10000))
             cookies = self.possession('cookies')
             if random.randint(0, 1) == 0:
@@ -54,7 +54,7 @@ class QuoteBuy(abce.Agent):
     def three(self):
         """
         """
-        if self.idn == 0:
+        if self.id == 0:
             offers = self.get_offers('cookies')
             for offer in offers:
                 self.accept(offer)
@@ -65,11 +65,11 @@ class QuoteBuy(abce.Agent):
     def clean_up(self):
         self.destroy_all('money')
         self.destroy_all('cookies')
-        if self.idn == 1:
+        if self.id == 1:
             self.final_money = self.possession('money')
 
     def all_tests_completed(self):
-        if self.round == self.last_round and self.idn == 1:
+        if self.round == self.last_round and self.id == 1:
             assert all(self.tests.values()), 'not all tests have been run; ABCE workes correctly, restart the unittesting to do all tests %s' % self.tests
             print('Test abce.quote_buy:\t\t\t\t\tOK')
 

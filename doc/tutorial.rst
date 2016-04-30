@@ -145,7 +145,7 @@ In this tutorial we will implement an economy that has two plants. These plants 
 
         use = {'electricity': 1, 'steam': 1}
 
-    #. ADPlant will sell everything it produces to CHPPlant. We know that the group name of chpplant is 'chpplant and its id number (idn) is 0:
+    #. ADPlant will sell everything it produces to CHPPlant. We know that the group name of chpplant is 'chpplant and its id number (id) is 0:
 
        .. code:: python
 

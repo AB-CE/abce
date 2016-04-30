@@ -8,18 +8,18 @@ from abce import NotEnoughGoods
 class GiveExpiringCapital(abce.Agent, Firm):
     def init(self, simulation_parameters, _,):
         self.last_round = simulation_parameters['rounds'] - 1
-        if self.idn == 0:
+        if self.id == 0:
             self.create('xcapital', 10)
             assert self.possession('xcapital') == 10, self.possession('xcapital')
 
     def one(self):
-        if self.idn == 0:
+        if self.id == 0:
             assert self.possession('xcapital') == 10, self.possession('xcapital')
             self.give('giveexpiringcapital', 1, 'xcapital', 10)
             assert self.possession('xcapital') == 0, self.possession('xcapital')
 
     def two(self):
-        if self.idn == 1:
+        if self.id == 1:
             assert self.possession('xcapital') == 10, self.possession('xcapital')
             self.give('giveexpiringcapital', 0, 'xcapital', 10)
             assert self.possession('xcapital') == 0, self.possession('xcapital')
@@ -31,5 +31,5 @@ class GiveExpiringCapital(abce.Agent, Firm):
         pass
 
     def all_tests_completed(self):
-        if self.round == self.last_round and self.idn == 0:
+        if self.round == self.last_round and self.id == 0:
             print("Give ExpiringCapital \tOK")

@@ -12,15 +12,15 @@ class Firm(abce.Agent, abce.Firm):
         """
         print agent_parameters
         self.price = {}
-        if self.idn % 2 == 0:
-            assert self.idn == 0
+        if self.id % 2 == 0:
+            assert self.id == 0
             self.create('money', 2)
             self.inputs = {"labor": 1}
             self.output = "intermediate_good"
             self.outquatity = 1
             self.price['intermediate_good'] = 1
-        elif self.idn % 2 == 1:
-            assert self.idn == 1
+        elif self.id % 2 == 1:
+            assert self.id == 1
             self.create('money', 1)
             self.create('intermediate_good', 1)
             self.inputs = {"labor": 1, "intermediate_good": 1}

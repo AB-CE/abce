@@ -41,5 +41,5 @@ class ExpiringCapital(abce.Agent, Firm):
         pass
 
     def all_tests_completed(self):
-        if self.round == self.last_round and self.idn == 0:
+        if self.round == self.last_round and self.id == 0:
             print("simple ExpiringCapital \tOK")

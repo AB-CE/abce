@@ -10,30 +10,30 @@ epsilon = get_epsilon()
 
 
 class Contract(object):
-    __slots__ = ['sender_group', 'sender_idn', 'deliver_good_group',
-                 'deliver_good_idn', 'pay_group', 'pay_idn', 'good', 'quantity',
-                 'price', 'end_date', 'delivered', 'paid', 'idn', 'round']
-    def __init__(self, sender_group, sender_idn, deliver_good_group,
-                 deliver_good_idn, pay_group, pay_idn, good, quantity, price,
-                 end_date, idn, round):
+    __slots__ = ['sender_group', 'sender_id', 'deliver_good_group',
+                 'deliver_good_id', 'pay_group', 'pay_id', 'good', 'quantity',
+                 'price', 'end_date', 'delivered', 'paid', 'id', 'round']
+    def __init__(self, sender_group, sender_id, deliver_good_group,
+                 deliver_good_id, pay_group, pay_id, good, quantity, price,
+                 end_date, id, round):
         self.sender_group = sender_group
-        self.sender_idn = sender_idn
+        self.sender_id = sender_id
         self.deliver_good_group = deliver_good_group
-        self.deliver_good_idn = deliver_good_idn
+        self.deliver_good_id = deliver_good_id
         self.pay_group = pay_group
-        self.pay_idn = pay_idn
+        self.pay_id = pay_id
         self.good = good
         self.quantity = quantity
         self.price = price
         self.end_date = end_date
         self.delivered = []
         self.paid = []
-        self.idn = idn
+        self.id = id
         self.round = round
     def __str__(self):
-        return str(('sender', self.sender_group, self.sender_idn, 'deliver', self.deliver_good_group,
-                 self.deliver_good_idn, self.pay_group, self.pay_idn, self.good, self.quantity, self.price,
-                 self.end_date, self.idn, self.delivered, self.paid))
+        return str(('sender', self.sender_group, self.sender_id, 'deliver', self.deliver_good_group,
+                 self.deliver_good_id, self.pay_group, self.pay_id, self.good, self.quantity, self.price,
+                 self.end_date, self.id, self.delivered, self.paid))
 
 class Contracting:
     """ This is a class, that allows you to create contracts. For example a
@@ -81,15 +81,15 @@ class Contracting:
 
                  sender_group:
 
-                 sender_idn:
+                 sender_id:
 
                  deliver_group:
 
-                 deliver_idn:
+                 deliver_id:
 
                  pay_group:
 
-                 pay_idn:
+                 pay_id:
 
                  good:
 
@@ -102,11 +102,11 @@ class Contracting:
                  makerequest:
                     'm' for make_contract_offer and 'r' for request_contract
 
-                 idn:
+                 id:
                     unique number of contract
 
     """
-    def offer_good_contract(self, receiver_group, receiver_idn, good, quantity, price, duration):
+    def offer_good_contract(self, receiver_group, receiver_id, good, quantity, price, duration):
         """This method offers a contract to provide a good or service to the
         receiver. For a given time at a given price.
 
@@ -114,7 +114,7 @@ class Contracting:
 
             receiver_group:
                 group to receive the good
-            receiver_idn:
+            receiver_id:
                 group to receive the good
             good:
                 the good or service that should be provided
@@ -137,22 +137,22 @@ class Contracting:
             end_date = duration + self.round
 
         offer = Contract(sender_group = self.group,
-                         sender_idn = self.idn,
+                         sender_id = self.id,
                          deliver_good_group = self.group,
-                         deliver_good_idn = self.idn,
+                         deliver_good_id = self.id,
                          pay_group = receiver_group,
-                         pay_idn = receiver_idn,
+                         pay_id = receiver_id,
                          good = good,
                          quantity = quantity,
                          price = price,
                          end_date = end_date,
-                         idn = self._offer_counter(),
+                         id = self._offer_counter(),
                          round = self.round)
-        self._send(receiver_group, receiver_idn, '!o', offer)
-        self._contract_offers_made[offer.idn] = offer
+        self._send(receiver_group, receiver_id, '!o', offer)
+        self._contract_offers_made[offer.id] = offer
         return offer
 
-    def request_good_contract(self, receiver_group, receiver_idn, good, quantity, price, duration):
+    def request_good_contract(self, receiver_group, receiver_id, good, quantity, price, duration):
         """This method requests a contract to provide a good or service to the
         sender. For a given time at a given price. For example a job
         advertisement.
@@ -161,7 +161,7 @@ class Contracting:
 
             receiver_group:
                 group of the receiver
-            receiver_idn:
+            receiver_id:
                 id of the receiver
             good:
                 the good or service that should be provided
@@ -180,19 +180,19 @@ class Contracting:
             end_date = duration + self.round
 
         offer = Contract(sender_group = self.group,
-                         sender_idn = self.idn,
+                         sender_id = self.id,
                          pay_group = self.group,
-                         pay_idn = self.idn,
+                         pay_id = self.id,
                          deliver_good_group = receiver_group,
-                         deliver_good_idn = receiver_idn,
+                         deliver_good_id = receiver_id,
                          good = good,
                          quantity = quantity,
                          price = price,
                          end_date = end_date,
-                         idn = self._offer_counter(),
+                         id = self._offer_counter(),
                          round = self.round)
-        self._send(receiver_group, receiver_idn, '!o', offer)
-        self._contract_offers_made[offer.idn] = offer
+        self._send(receiver_group, receiver_id, '!o', offer)
+        self._contract_offers_made[offer.id] = offer
         return offer
 
     def get_contract_offers(self, good, descending=False):
@@ -235,17 +235,17 @@ class Contracting:
         if quantity > contract.quantity:
             quantity = contract.quantity
 
-        if contract.pay_group == self.group and contract.pay_idn == self.idn:
-            self._contracts_pay[contract.good][contract.idn] = contract
-            self._send(contract.sender_group, contract.sender_idn, '_ac', contract)
+        if contract.pay_group == self.group and contract.pay_id == self.id:
+            self._contracts_pay[contract.good][contract.id] = contract
+            self._send(contract.sender_group, contract.sender_id, '_ac', contract)
         else:
-            self._contracts_deliver[contract.good][contract.idn] = contract
-            self._send(contract.sender_group, contract.sender_idn, '_ac', contract)
+            self._contracts_deliver[contract.good][contract.id] = contract
+            self._send(contract.sender_group, contract.sender_id, '_ac', contract)
         return contract
 
     def deliver_contract(self, contract):
         """ delivers on a contract """
-        assert contract.deliver_good_group == self.group and contract.deliver_good_idn == self.idn
+        assert contract.deliver_good_group == self.group and contract.deliver_good_id == self.id
         quantity = contract.quantity
         available = self._haves[contract.good]
         if quantity > available + epsilon + epsilon * max(quantity, available):
@@ -254,12 +254,12 @@ class Contracting:
             quantity = available
 
         self._haves[contract.good] -= quantity
-        self._send(contract.pay_group, contract.pay_idn, '_dp', contract)
+        self._send(contract.pay_group, contract.pay_id, '_dp', contract)
 
 
     def pay_contract(self, contract):
         """ delivers on a contract """
-        assert contract.pay_group == self.group and contract.pay_idn == self.idn
+        assert contract.pay_group == self.group and contract.pay_id == self.id
         money = contract.quantity * contract.price
         available = self._haves['money']
         if money > available + epsilon + epsilon * max(money, available):
@@ -268,7 +268,7 @@ class Contracting:
             money = available
 
         self._haves['money'] -= money
-        self._send(contract.deliver_good_group, contract.deliver_good_idn, '_dp', contract)
+        self._send(contract.deliver_good_group, contract.deliver_good_id, '_dp', contract)
 
     def contracts_to_deliver(self, good):
         return self._contracts_deliver[good].values()
@@ -289,12 +289,12 @@ class Contracting:
         return request_offer
 
     def end_contract(self, contract):
-        if contract.idn in self._contracts_deliver[contract.good]:
-            self._send(contract.pay_group, contract.pay_idn, '!d', ('r', contract.good, contract.idn))
-            del self._contracts_deliver[contract.good][contract.idn]
-        elif contract.idn in self._contracts_pay[contract.good]:
-            self._send(contract.deliver_good_group, contract.deliver_good_idn, '!d', ('d', contract.good, contract.idn))
-            del self._contracts_pay[contract.good][contract.idn]
+        if contract.id in self._contracts_deliver[contract.good]:
+            self._send(contract.pay_group, contract.pay_id, '!d', ('r', contract.good, contract.id))
+            del self._contracts_deliver[contract.good][contract.id]
+        elif contract.id in self._contracts_pay[contract.good]:
+            self._send(contract.deliver_good_group, contract.deliver_good_id, '!d', ('d', contract.good, contract.id))
+            del self._contracts_pay[contract.good][contract.id]
         else:
             raise Exception("Contract not found")
 
