@@ -20,21 +20,16 @@
       </div>
     </div>
   </div>
-  <div id="begin">
-  </div>
   {% for entry in entries %}
-  <div class="mdl-cell mdl-cell--4-col" id="{{ entry['title']|safe }}">
+  <div class="mdl-cell mdl-cell--4-col" id="{{ entry['title']|safe }}graphbox">
     <div class="mdl-card mdl-card--expand mdl-shadow--4dp">
-      <div class="mdl-card__actions mdl-card--title" style="display: none;"  id="{{ entry['title']|safe }}title" onclick="minimize('{{ entry['title']|safe }}', '{{ entry['idname']|safe }}', '{{ entry['title']|safe }}title')">>
-          {{ entry['title'] | safe }}
-      </div>
       <div class="mdl-card__actions mdl-card--border">
         <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect"
-           onclick="minimize('{{ entry['title']|safe }}', '{{ entry['idname']|safe }}', '{{ entry['title']|safe }}title')">
+           onclick="minimize('{{ entry['title']|safe }}graphbox', '{{ entry['title']|safe }}title')">
           Min
         </a>
         <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect"
-           onclick="raise_window('{{ entry['title']|safe }}', '{{ entry['idname']|safe }}')">
+           onclick="raise_window('{{ entry['title']|safe }}graphbox', '{{ entry['idname']|safe }}')">
           Zoom
         </a>
       </div>
@@ -46,10 +41,19 @@
   {% else %}
     <em>No entries have you put 'aggregate' or 'panel' into the action list?</em>
   {% endfor %}
-  <div id="before_end">
+  <div class="mdl-cell mdl-cell--12-col">
   </div>
-  <div id="end">
+  {% for entry in entries %}
+  <div class="mdl-cell mdl-cell--2-col minimized" style="display: none;" id="{{ entry['title']|safe }}title" onclick="maximize('{{ entry['title']|safe }}graphbox', '{{ entry['title']|safe }}title')">
+    <div class="mdl-card mdl-card--expand mdl-shadow--4dp minimized">
+      <div class="mdl-card__actions mdl-card--title minimized" onclick="maximize('{{ entry['title']|safe }}graphbox', '{{ entry['title']|safe }}title')">
+          {{ entry['title'] | safe }}
+      </div>
+    </div>
   </div>
+  {% else %}
+    <em>No entries have you put 'aggregate' or 'panel' into the action list?</em>
+  {% endfor %}
 
 <script type="text/javascript">
 function raise_window(idname, id_graph) {
@@ -73,41 +77,44 @@ function raise_description() {
            xDiv.style.height = '200px';}
        window.location.hash = 'description';
 }
-function minimize(id_box, id_graph, id_title) {
-       var xDiv = document.getElementById(id_box);
-       var end = document.getElementById("end");
-       var before_end = document.getElementById("before_end");
+function minimize(id_box, id_title) {
+       var box = document.getElementById(id_box);
+       var title = document.getElementById(id_title)
 
-       if (xDiv.style.width == '') {
-           xDiv.style.width = '150px';
-           xDiv.style.height = '50px';
-           xDiv.style.overflow = 'hidden';
+       title.style.display="inline";
+       box.style.display="none";
 
-           var title = document.getElementById(id_title);
-           title.style.display="inline";
+       document.cookie = id_box + "," + id_title + "=minimize; Expires=Wed, 09 Jun 2037 10:18:14 GMT";
+}
+function maximize(id_box, id_title) {
+       var box = document.getElementById(id_box);
+       var title = document.getElementById(id_title)
 
-           end.parentNode.insertBefore(xDiv, end);
-           document.cookie = id_box + "," + id_graph + "+" + id_title + "=minimize; Expires=Wed, 09 Jun 2037 10:18:14 GMT";}
-       else {
-           xDiv.style.width = '';
-           xDiv.style.height = '';
+       title.style.display="none";
+       box.style.display="inline";
 
-           var title = document.getElementById(id_title);
-           title.style.display="none";
-
-           end.parentNode.insertBefore(xDiv, before_end);
-           document.cookie = id_box + "," + id_graph + "+" + id_title +  + "=full";}
+       document.cookie = id_box + "," + id_title + "=full";
        window.location.hash = id_box;}
 
-window.onload = function getCookie() {
+window.onload = function getCookie()
+{
     var keyValuePairs = document.cookie.split(/; */);
-    for(var i = 0; i < keyValuePairs.length; i++) {
+    for(var i = 0; i < keyValuePairs.length; i++)
+    {
         var id_box = keyValuePairs[i].substring(0, keyValuePairs[i].indexOf(','));
-        var id_graph = keyValuePairs[i].substring(keyValuePairs[i].indexOf(',') + 1, keyValuePairs[i].indexOf('+'));
-        var id_title = keyValuePairs[i].substring(keyValuePairs[i].indexOf('+') + 1, keyValuePairs[i].indexOf('='));
+        var id_title = keyValuePairs[i].substring(keyValuePairs[i].indexOf(',') + 1, keyValuePairs[i].indexOf('='));
         var value = keyValuePairs[i].substring(keyValuePairs[i].indexOf('=') + 1);
-        if (value == "minimize") {
-              minimize(id_box, id_graph, id_title);}}}
+        if (value == "minimize")
+        {
+            try
+            {
+                minimize(id_box, id_title);
+            } catch(e) {
+                document.cookie = id_box + "," + id_title + "=full";
+            };
+        }
+    }
+}
 
 function change_text_field(x, text_field_name) {
     document.getElementById(text_field_name).value = x;}
