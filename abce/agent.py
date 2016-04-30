@@ -181,10 +181,10 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
 
     def _advance_round(self):
         for offer in self.given_offers.values():
-            if offer['made'] < self.round:
+            if offer.made < self.round:
                 print("in agent %s this offers have not been retrieved:" % self.name_without_colon)
                 for offer in self.given_offers.values():
-                    if offer['made'] < self.round:
+                    if offer.made < self.round:
                         print(offer.__repr__())
                 raise Exception('%s_%i: There are offers have been made before'
                                  'last round and not been retrieved in this'
@@ -377,7 +377,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         to_reject = []
         for offers in self._open_offers.values():
             for offer in offers.values():
-                if offer['open_offer_status'] == 'polled':
+                if offer.open_offer_status == 'polled':
                     to_reject.append(offer)
         for offer in to_reject:
             self.reject(offer)

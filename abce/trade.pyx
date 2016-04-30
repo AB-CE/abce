@@ -144,13 +144,6 @@ cdef class Offer:
         self.open_offer_status = open_offer_status
         self.status_round = status_round
 
-
-    def __getitem__(self, key):
-        return self.__getattribute__(key)
-
-    def __setitem__(self, key, value):
-        self.__setattr__(key, value)
-
     def pickle(self):
         return (self.sender_group, self.sender_idn, self.receiver_group,
                 self.receiver_idn, self.good, self.quantity, self.price,
@@ -244,7 +237,7 @@ class Trade:
                 if offer.price < 0.5:
                     self.accept(offer)
 
-         for offer in oo['beer']:
+         for offer in oo.beer:
             print(offer.price, offer.sender_group, offer.sender_idn)
         """
         return {good: self.get_offers(good, descending) for good in self._open_offers}
@@ -316,7 +309,7 @@ class Trade:
         for offer in self._open_offers[good].values():
             offer.open_offer_status = 'peak_only'
             ret.append(offer)
-        ret.sort(key=lambda objects: objects['price'], reverse=descending, cmp=compare_with_ties)
+        ret.sort(key=lambda objects: objects.price, reverse=descending, cmp=compare_with_ties)
         return ret
 
     def sell(self, receiver_group, receiver_idn,

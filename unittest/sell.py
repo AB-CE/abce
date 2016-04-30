@@ -41,37 +41,37 @@ class Sell(abce.Agent):
                 try:
                     if random.randrange(2) == 0:
                         self.accept(offer)
-                        assert self.possession('cookies') == offer['quantity']
-                        assert self.possession('money') == money - offer['quantity'] * offer['price']
+                        assert self.possession('cookies') == offer.quantity
+                        assert self.possession('money') == money - offer.quantity * offer.price
                         self.tests['accepted'] = True
                     else:
-                        self.accept(offer, offer['quantity'])
-                        assert self.possession('cookies') == offer['quantity']
-                        assert self.possession('money') == money - offer['quantity'] * offer['price']
+                        self.accept(offer, offer.quantity)
+                        assert self.possession('cookies') == offer.quantity
+                        assert self.possession('money') == money - offer.quantity * offer.price
                         self.tests['full_partial'] = True
 
                 except NotEnoughGoods:
-                    self.accept(offer, self.possession('money') / offer['price'])
+                    self.accept(offer, self.possession('money') / offer.price)
                     assert self.possession('money') < 0.00000001, self.possession('money')
-                    test = (self.possession('money') - money) - self.possession('cookies') / offer['price']
+                    test = (self.possession('money') - money) - self.possession('cookies') / offer.price
                     assert test < 0.00000001, test
                     self.tests['partial'] = True
 
     def three(self):
         if self.idn % 2 == 0:
             offer = self.offer
-            if offer['status'] == 'rejected':
+            if offer.status == 'rejected':
                 assert is_zero(self.cookies - self.possession('cookies'))
                 self.tests['rejected'] = True
-            elif offer['status'] == 'accepted':
-                if offer['final_quantity'] == offer['quantity']:
-                    assert self.cookies - offer['quantity'] == self.possession('cookies')
-                    assert self.possession('money') == offer['quantity'] * offer['price']
+            elif offer.status == 'accepted':
+                if offer.final_quantity == offer.quantity:
+                    assert self.cookies - offer.quantity == self.possession('cookies')
+                    assert self.possession('money') == offer.quantity * offer.price
                     self.tests['accepted'] = True
                 else:
-                    test = (self.cookies - offer['final_quantity']) - self.possession('cookies')
+                    test = (self.cookies - offer.final_quantity) - self.possession('cookies')
                     assert is_zero(test), test
-                    test = self.possession('money') - offer['final_quantity'] * offer['price']
+                    test = self.possession('money') - offer.final_quantity * offer.price
                     assert is_zero(test), test
                     self.tests['partial'] = True
                     self.tests['full_partial'] = True

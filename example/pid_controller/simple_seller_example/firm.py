@@ -32,7 +32,7 @@ class Firm(abce.Agent, abce.Firm, abce.Quote):
             except NotEnoughGoods:
                 break
 
-        total_orders = sum([order['quantity'] for order in orders])
+        total_orders = sum([order.quantity for order in orders])
         error = total_orders - 4
         self.error_cum += error
         self.price = max(0, 0.15 * error + 0.1 * self.error_cum)

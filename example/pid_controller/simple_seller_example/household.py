@@ -17,7 +17,7 @@ class Household(abce.Agent, abce.Household, abce.Quote):
         """
         quotes = self.get_quotes('cookies')
         for quote in quotes:
-            if quote['price'] <= self.idn * 10 and self.possession('cookies') == 0:
+            if quote.price <= self.id * 10 and self.possession('cookies') == 0:
                 self.create('money', quote['price'])
                 self.accept_quote_partial(quote, min(1, quote['quantity']))
 
