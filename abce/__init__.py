@@ -593,7 +593,7 @@ class Simulation:
             print(str("time only simulation %6.2f" % (time.time() - start_time)))
             self.gracefull_exit()
             print(str("time with data and network %6.2f" % (time.time() - start_time)))
-            postprocess.to_csv(os.path.abspath(self.path))
+            postprocess.to_csv(os.path.abspath(self.path), self._calendar)
             print(str("time with post processing %6.2f" % (time.time() - start_time)))
             self.messagess = messagess
 

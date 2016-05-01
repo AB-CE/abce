@@ -15,6 +15,9 @@ from bokeh.resources import INLINE
 from bokeh.models import Range1d, LinearAxis
 from bokeh.io import gridplot
 import json
+import datetime
+import time
+
 
 colors = ["red","blue","green","black","purple","pink",
           "yellow","orange","pink","Brown","Cyan","Crimson",
@@ -159,12 +162,17 @@ def make_aggregate_graphs(df, filename):
     print 'make_aggregate_graphs', filename
     columns = [col for col in df.columns if not col.endswith('_std')
                                          and not col.endswith('_mean')
-                                         and not col in ['index', 'round', 'id']]
+                                         and not col in ['index', 'round', 'id', 'date']]
     plots = {}
-
+    try:
+        index = df['date'].apply(lambda sdate: datetime.date(*[int(c) for c in sdate.split('-')]))
+        x_axis_type="datetime"
+    except KeyError:
+        index = df['round']
+        x_axis_type="linear"
     for col in columns:
         title = make_title(filename, col)
-        plot = figure(title=title, responsive=True, webgl=False,
+        plot = figure(title=title, responsive=True, webgl=False, x_axis_type=x_axis_type,
                       tools="pan, wheel_zoom, box_zoom, save, crosshair, hover")
         plot.yaxis.visible = None
         plot.legend.orientation = "top_left"
@@ -173,8 +181,8 @@ def make_aggregate_graphs(df, filename):
         else:
             plot.extra_y_ranges['ttl'] = Range1d(df[col].min(skipna=True) - 1, df[col].max(skipna=True) + 1)
 
-        plot.line(df['index'], df[col],
-                  legend='mean/total', line_width=2, line_color='red', y_range_name="ttl")
+        plot.line(index, df[col],
+                  legend='mean/total', line_width=2, line_color='blue', y_range_name="ttl")
         plot.add_layout(LinearAxis(y_range_name="ttl"), 'left')
 
         try:
@@ -182,8 +190,8 @@ def make_aggregate_graphs(df, filename):
                 plot.extra_y_ranges['std'] = Range1d(df[col + '_std'].min(skipna=True), df[col + '_std'].max(skipna=True))
             else:
                 plot.extra_y_ranges['std'] = Range1d(df[col + '_std'].min(skipna=True) - 1, df[col + '_std'].max(skipna=True) + 1)
-            plot.line(df['index'], df[col + '_std'],
-                      legend='std', line_width=2, line_color='blue', y_range_name="std")
+            plot.line(index, df[col + '_std'],
+                      legend='std', line_width=2, line_color='red', y_range_name="std")
             plot.add_layout(LinearAxis(y_range_name="std"), 'right')
         except KeyError:
             pass
@@ -192,7 +200,7 @@ def make_aggregate_graphs(df, filename):
                 plot.extra_y_ranges['mean'] = Range1d(df[col + '_mean'].min(skipna=True), df[col + '_mean'].max(skipna=True))
             else:
                 plot.extra_y_ranges['mean'] = Range1d(df[col + '_mean'].min(skipna=True) - 1 , df[col + '_mean'].max(skipna=True) + 1)
-            #plot.line(range(len(df)), df[col],
+            #plot.line(index), df[col],
             #          legend='mean', line_width=2, line_color='green', y_range_name="mean")
             plot.add_layout(LinearAxis(y_range_name="mean"), 'left')
         except KeyError:
@@ -203,14 +211,20 @@ def make_aggregate_graphs(df, filename):
 def make_simple_graphs(df, filename):
     print 'make_simple_graphs', filename
     plots = {}
+    try:
+        index = df['date'].apply(lambda sdate: datetime.date(*[int(c) for c in sdate.split('-')]))
+        x_axis_type="datetime"
+    except KeyError:
+        index = df['round']
+        x_axis_type="linear"
     for col in df.columns:
-        if col not in ['round', 'id', 'index']:
+        if col not in ['round', 'id', 'index', 'date']:
             title = make_title(filename, col)
-            plot = figure(title=title, responsive=True, webgl=False,
+            plot = figure(title=title, responsive=True, webgl=False, x_axis_type=x_axis_type,
                       tools="pan, wheel_zoom, box_zoom, save, crosshair, hover")
 
             plot.legend.orientation = "top_left"
-            plot.line(df['index'], df[col], legend=col, line_width=2, line_color='red')
+            plot.line(index, df[col], legend=col, line_width=2, line_color='blue')
             plots[json.dumps((plot.ref['id'], title))] = plot
     return plots
 
@@ -221,17 +235,23 @@ def make_panel_graphs(df, filename):
     else:
         individuals = range(max(df['id']) + 1)
     df = df[df['id'].isin(individuals)]
+    try:
+        index = df['date'].apply(lambda sdate: datetime.date(*[int(c) for c in sdate.split('-')]))
+        x_axis_type="datetime"
+    except KeyError:
+        index = df['round']
+        x_axis_type="linear"
     plots = {}
     for col in df.columns:
-        if col not in ['round', 'id', 'index']:
+        if col not in ['round', 'id', 'index', 'date']:
             title = make_title(filename, col)
-            plot = figure(title=title, responsive=True, webgl=False,
+            plot = figure(title=title, responsive=True, webgl=False, x_axis_type=x_axis_type,
                       tools="pan, wheel_zoom, box_zoom, save, crosshair, hover")
 
             plot.legend.orientation = "top_left"
             for i, id in enumerate(individuals):
                 series = df[col][df['id'] == id]
-                plot.line(df['index'], series, legend=str(id), line_width=2, line_color=colors[i])
+                plot.line(index, series, legend=str(id), line_width=2, line_color=colors[i])
             plots[json.dumps((plot.ref['id'], title + '(panel)'))] = plot
     return plots
 
@@ -263,7 +283,7 @@ def show_simulation():
             discard_initial_rounds = 0
             print 'kill'
         df = df.ix[discard_initial_rounds:]
-        df.where((pd.notnull(df)), None, inplace=True)
+        df = df.where((pd.notnull(df)), None)
         df.dropna(1, how='all', inplace=True)
         if filename.startswith('aggregate_'):
             plots.update(make_aggregate_graphs(df, filename))
