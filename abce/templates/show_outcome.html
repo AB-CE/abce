@@ -98,20 +98,24 @@ function maximize(id_box, id_title) {
 
 window.onload = function getCookie()
 {
-    var keyValuePairs = document.cookie.split(/; */);
-    for(var i = 0; i < keyValuePairs.length; i++)
-    {
-        var id_box = keyValuePairs[i].substring(0, keyValuePairs[i].indexOf(','));
-        var id_title = keyValuePairs[i].substring(keyValuePairs[i].indexOf(',') + 1, keyValuePairs[i].indexOf('='));
-        var value = keyValuePairs[i].substring(keyValuePairs[i].indexOf('=') + 1);
-        if (value == "minimize")
+    var isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+
+    if (isChrome) {  // Windows has no permanent minimizing of windows. Would be great if somebody could fix this
+        var keyValuePairs = document.cookie.split(/; */);
+        for(var i = 0; i < keyValuePairs.length; i++)
         {
-            try
+            var id_box = keyValuePairs[i].substring(0, keyValuePairs[i].indexOf(','));
+            var id_title = keyValuePairs[i].substring(keyValuePairs[i].indexOf(',') + 1, keyValuePairs[i].indexOf('='));
+            var value = keyValuePairs[i].substring(keyValuePairs[i].indexOf('=') + 1);
+            if (value == "minimize")
             {
-                minimize(id_box, id_title);
-            } catch(e) {
-                document.cookie = id_box + "," + id_title + "=full";
-            };
+                try
+                {
+                    minimize(id_box, id_title);
+                } catch(e) {
+                    document.cookie = id_box + "," + id_title + "=full";
+                };
+            }
         }
     }
 }
