@@ -154,7 +154,8 @@ class Simulation:
         self.variables_to_track_aggregate = defaultdict(list)
         self.possessins_to_track_panel = defaultdict(list)
         self.possessions_to_track_aggregate = defaultdict(list)
-        self._start_year = 0
+        self._start_round = 0
+        self._calendar = False
 
         self.rounds = rounds
 
@@ -174,7 +175,7 @@ class Simulation:
             except OSError:
                 self.path += 'I'
 
-        self.round = 0
+
         self.trade_logging_mode = trade_logging
         if self.trade_logging_mode not in ['individual', 'group', 'off']:
             SystemExit("trade_logging can be "
@@ -201,24 +202,38 @@ class Simulation:
     def add_action_list(self, action_list):
         """ add an `action_list`, which is a list of either:
 
-        - tuples of an goup_names and and action
-        - a single command string for panel_data or follow_agent
-        - [tuples of an agent name and and action, currently not unit tested!]
+        - tuples of an goup_names and and action: :code:`('firm', 'buying')`
 
+        - tuples of an agent name and and action: :code:`(('firm', household), 'buying')`
+
+        The tuples can have a condition under which they are execute. Only if this
+        condition evaluates to True the tuple is executed.
+
+        In the round mode (default), if an action is executed every 21 rounds
+        or an intervention in round 50:::
+
+            (('firm', household), 'buying', lambda round: round % 21 == 0)
+            ('firm', 'buying', lambda round: round == 500)
+
+        In the date mode::
+
+            ('agent', 'wednessday', lambda date: date.weekday() == 2),  # Monday is 0
+            ('agent', 'first', lambda date: date.day == 1),
+            ('agent', 'newyearseve', lambda date: date.month == 12 and date.day == 31),
+            ('agent', 'firstfriday', lambda date: date.day <= 7 and date.weekday() == 4),
+            ('agent', 'fiveteens', lambda date: date.month == 15),
+            ('agent', 'everythreedays', lambda date: date.toordinal() % 3 == 0),
+
+        The date works like python's
+        `date object <https://docs.python.org/2/library/datetime.html#date-objects>`_
 
         Example::
 
          action_list = [
-            repeat([
-                    ('Firm', 'sell'),
-                    ('Household', 'buy')
-                ],
-                repetitions=10
-            ),
-            ('Household_03', 'dance')
-            'panel_data_end_of_round_befor consumption',
-            ('Household', 'consume'),
-            ]
+            repeat([('firm', 'selling'),
+                    (('firm', household), 'buying')], repetitions=10),
+            ('household', 'dance'),
+            ('household', 'consume')]
          w.add_action_list(action_list)
         """
         self.action_list = action_list
@@ -317,6 +332,37 @@ class Simulation:
         """
         self.declare_round_endowment(human_or_other_resource, units, service, groups)
         self.declare_perishable(service)
+
+    def declare_calendar(self, year=None, month=1, day=1):
+        """ ABCE can run in two time model:
+
+            rounds:
+                As default ABCE runs in round mode. Agents can access the self.round
+                variable to find out what round it is. The execution condition in the
+                action_list is based on rounds.
+
+            calendar:
+                Every iteration over the action_list is a day. Agents can access
+                self.date() to find out what date it is.
+
+            Args:
+               year, month, day
+
+            Example::
+
+                simulation.declare_calendar(2000, 1, 1)
+                simulation.declare_calendar()  # starts at current date
+
+        """
+        if len(self.family_list) > 0:
+            raise SystemExit("WARNING: declare_calendar(...) must be called before the agents are build")
+        if year is None:
+            date = datetime.date.today()
+        else:
+            date = datetime.date(year, month, day)
+
+        self._start_round = date.toordinal()
+        self._calendar = True
 
     def panel(self, group, possessions=[], variables=[]):
         """ panel(.) writes a panel of variables and possessions
@@ -432,6 +478,8 @@ class Simulation:
                 for _ in range(action.repetitions):
                     processed_list.extend(nested_action_list)
             else:
+                if len(action) == 2:
+                    action = (action[0], action[1], lambda date: True)
                 if not isinstance(action[0], tuple) and not isinstance(action[0], list):
                     try:
                         action = ((action[0],), action[1], action[2])
@@ -440,7 +488,7 @@ class Simulation:
                 for group in action[0]:
                     assert group in self.family_list.keys(), \
                         '%s in (%s, %s) in the action_list is not a known agent' % (action[0], action[0], action[1])
-                processed_list.append((self.execute, action[0], action[1]))
+                processed_list.append((self.execute, action[0], action[1], action[2]))
         return processed_list
 
     def execute_parallel(self, groups, command, messages):
@@ -516,20 +564,32 @@ class Simulation:
                 self.family_names.append(family.name())
                 messagess[family.name()] = []
         try:
-            for year in xrange(self._start_year, self.rounds):
-                self.round = year
-                print("\rRound" + str("%3d" % year))
-                self.execute_internal('_produce_resource')
+            if self._calendar:
+                for round in xrange(self._start_round, self._start_round + self.rounds):
+                    print("\rRound" + str(" %3d " % round) + str(datetime.date.fromordinal(round)))
+                    self.execute_internal('_produce_resource')
 
-                for processor, group, action in self._action_list:
-                    messagess = processor(group, action, messagess)
-                self.execute_internal('_advance_round')
-                self.execute_internal('_perish')
+                    for processor, group, action, condition in self._action_list:
+                        if condition(datetime.date.fromordinal(round)):
+                            messagess = processor(group, action, messagess)
+                    self.execute_internal('_advance_round')
+                    self.execute_internal('_perish')
+            else:
+                for round in xrange(self._start_round, self._start_round + self.rounds):
+                    print("\rRound" + str(" %3d " % round))
+                    self.execute_internal('_produce_resource')
+
+                    for processor, group, action, condition in self._action_list:
+                        if condition(round):
+                            messagess = processor(group, action, messagess)
+                    self.execute_internal('_advance_round')
+                    self.execute_internal('_perish')
         except EOFError:
             pass
         except:
             raise
         finally:
+            self.round = round
             print(str("time only simulation %6.2f" % (time.time() - start_time)))
             self.gracefull_exit()
             print(str("time with data and network %6.2f" % (time.time() - start_time)))
@@ -612,7 +672,8 @@ class Simulation:
                                                 'trade_logging': self.trade_logging_mode,
                                                 'database': self.database_queue,
                                                 'logger':self.logger_queue,
-                                                'random_seed': random.random()})
+                                                'random_seed': random.random(),
+                                                'start_round': self._start_round})
 
             for good, duration in self.expiring:
                 family.declare_expiring(good, duration)
@@ -686,7 +747,7 @@ class Simulation:
         with open('%s.simulation' % name, 'rb') as jar:
             simulation = json.load(jar)
 
-        self._start_year = simulation['year']
+        self._start_round = simulation['year']
 
         all_agents_values = simulation['agents']
         for agent, agent_values in zip(self.agents_list['all'], all_agents_values):
