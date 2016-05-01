@@ -47,7 +47,7 @@ class Database(multiprocessing.Process):
         table_name = 'aggregate_' + group
         self.aggregates.append(table_name)
         self.data[table_name] = defaultdict(list)
-        self.aggregate_round[table_name] = 0
+        self.aggregate_round[table_name] = None
 
     def run(self):
         self.db = sqlite3.connect(self.directory + '/database.db')
@@ -94,6 +94,9 @@ class Database(multiprocessing.Process):
                 round = msg[3]
                 if self.aggregate_round[table_name] == round:
                     self.aggregate(table_name, data_to_write)
+                elif self.aggregate_round[table_name] is None:
+                    self.aggregate(table_name, data_to_write)
+                    self.aggregate_round[table_name] = round
                 else:
                     self.write_aggregate(table_name, self.aggregate_round[table_name])
                     self.aggregate_round[table_name] = round
