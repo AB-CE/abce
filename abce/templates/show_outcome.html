@@ -22,7 +22,7 @@
   </div>
   {% for entry in entries %}
   <div class="mdl-cell mdl-cell--4-col" id="{{ entry['title']|safe }}graphbox">
-    <div class="mdl-card mdl-card--expand mdl-shadow--4dp">
+    <div class="mdl-card mdl-card--expand mdl-shadow--4dp graph-expand--height">
       <div class="mdl-card__actions mdl-card--border">
         <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect"
            onclick="minimize('{{ entry['title']|safe }}graphbox', '{{ entry['title']|safe }}title')">
@@ -33,7 +33,7 @@
           Zoom
         </a>
       </div>
-      <div class="mdl-card__supporting-text">
+      <div class="mdl-card__supporting-text graph-expand--height">
           {{ entry['graph'] | safe }}
       </div>
     </div>
@@ -46,7 +46,7 @@
   {% for entry in entries %}
   <div class="mdl-cell mdl-cell--2-col minimized" style="display: none;" id="{{ entry['title']|safe }}title" onclick="maximize('{{ entry['title']|safe }}graphbox', '{{ entry['title']|safe }}title')">
     <div class="mdl-card mdl-card--expand mdl-shadow--4dp minimized">
-      <div class="mdl-card__actions mdl-card--title minimized" onclick="maximize('{{ entry['title']|safe }}graphbox', '{{ entry['title']|safe }}title')">
+      <div class="mdl-card__actions mdl-card--title minimized" onclick="maximize('{{ entry['title']|safe }}graphbox', '{{ entry['title']|safe }}title', '{{ entry['idname']|safe }}');">
           {{ entry['title'] | safe }}
       </div>
     </div>
@@ -86,7 +86,7 @@ function minimize(id_box, id_title) {
 
        document.cookie = id_box + "," + id_title + "=minimize; Expires=Wed, 09 Jun 2037 10:18:14 GMT";
 }
-function maximize(id_box, id_title) {
+function maximize(id_box, id_title, id_graph) {
        var box = document.getElementById(id_box);
        var title = document.getElementById(id_title)
 
@@ -94,30 +94,31 @@ function maximize(id_box, id_title) {
        box.style.display="inline";
 
        document.cookie = id_box + "," + id_title + "=full";
-       window.location.hash = id_box;}
+       window.location.hash = id_box;
+	   console.log(id_graph);
+	   var plot = Bokeh.index[id_graph];
+       plot.resize_width_height(true, true, true);
+}
 
 window.onload = function getCookie()
 {
-    var isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
-
-    if (isChrome) {  // Windows has no permanent minimizing of windows. Would be great if somebody could fix this
-        var keyValuePairs = document.cookie.split(/; */);
-        for(var i = 0; i < keyValuePairs.length; i++)
-        {
-            var id_box = keyValuePairs[i].substring(0, keyValuePairs[i].indexOf(','));
-            var id_title = keyValuePairs[i].substring(keyValuePairs[i].indexOf(',') + 1, keyValuePairs[i].indexOf('='));
-            var value = keyValuePairs[i].substring(keyValuePairs[i].indexOf('=') + 1);
-            if (value == "minimize")
-            {
-                try
-                {
-                    minimize(id_box, id_title);
-                } catch(e) {
-                    document.cookie = id_box + "," + id_title + "=full";
-                };
-            }
-        }
-    }
+	
+		var keyValuePairs = document.cookie.split(/; */);
+		for(var i = 0; i < keyValuePairs.length; i++)
+		{
+			var id_box = keyValuePairs[i].substring(0, keyValuePairs[i].indexOf(','));
+			var id_title = keyValuePairs[i].substring(keyValuePairs[i].indexOf(',') + 1, keyValuePairs[i].indexOf('='));
+			var value = keyValuePairs[i].substring(keyValuePairs[i].indexOf('=') + 1);
+			if (value == "minimize")
+			{
+				try
+				{
+					minimize(id_box, id_title);
+				} catch(e) {
+					document.cookie = id_box + "," + id_title + "=full";
+				};
+			}
+		}
 }
 
 function change_text_field(x, text_field_name) {
