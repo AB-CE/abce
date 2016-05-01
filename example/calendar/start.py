@@ -12,13 +12,17 @@ def main(simulation_parameters):
                        ('agent', 'newyearseve', lambda date: date.month == 12 and date.day == 31),
                        ('agent', 'firstfriday', lambda date: date.day <= 7 and date.weekday() == 4),
                        ('agent', 'fiveteens', lambda date: date.month == 15),
-                       ('agent', 'everythreedays', lambda date: date.toordinal() % 3 == 0)]
+                       ('agent', 'everythreedays', lambda date: date.toordinal() % 3 == 0),
+                       ('agent', 'panel'),
+                       ('agent', 'aggregate')]
         simulation.add_action_list(action_list)
         simulation.declare_calendar(2000, 1, 1)
+        simulation.panel('agent', possessions=['money'])
+        simulation.aggregate('agent', possessions=['labor'])
         simulation.build_agents(Agent, 'agent', number=1)
 
-
         simulation.run()
+        simulation.graphs()
 
 
 if __name__ == '__main__':

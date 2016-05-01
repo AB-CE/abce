@@ -13,6 +13,7 @@ class Agent(abce.Agent):
 
     def first(self):
         print 'first'
+        self.create('money', 1000)
 
     def newyearseve(self):
         print 'newyearseve'
