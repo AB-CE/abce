@@ -3,7 +3,6 @@ from flask import Flask, request, session, g, redirect, url_for, \
 import webbrowser
 import os
 import pandas as pd
-import pygal as pg
 from collections import OrderedDict
 from abce.webtext import abcedescription
 import shutil
