@@ -72,21 +72,38 @@ class MyManager(BaseManager):
     pass
 
 class Simulation:
-    """ This class in which the simulation is run. It takes
-    the simulation_parameters to set up the simulation. Actions and agents have to be
+    """ This class in which the simulation is run. Actions and agents have to be
     added. databases and resource declarations can be added. Then runs
     the simulation.
 
-    Usually the parameters are specified in a tab separated csv file. The first
-    line are column headers.
+    Args:
+        rounds:
+            how many rounds the simulation lasts
 
-    Args::
+        random_seed (optional):
+            a random seed that controls the random number of the simulation
 
-     simulation_parameters: a dictionary with all parameters. "name" and
-     "num_rounds" are mandatory.
+        trade_logging:
+            Whether trades are logged,trade_logging can be
+            'group' (fast) or 'individual' (slow) or 'off'
+
+        cores (optional):
+            The number of cores of your processor that are used for the simulation.
+            Default is all your logical cores using hyper-threading when available.
+            For easy debugging set cores to one and the simulation is executed
+            without parallelization.
+            Sometimes it is advisable to decrease the number of cores to the number
+            of physical cores on your computer.
+            'None' for all cores.
+            **For easy debugging set cores to 1, this way only one agent runs at
+            a time and only one error message is displayed**
+
+        Example::
+
+            simulation = Simulation(rounds=1000, name='sim', trade_logging='individual', cores=None)
 
 
-    Example::
+    Example for a simulation::
 
         simulation_parameters = {'num_rounds': 500}
         action_list = [
@@ -94,11 +111,12 @@ class Simulation:
         ('household', 'offer_capital'),
         ('firm', 'buy_capital'),
         ('firm', 'production'),
+        ('centralbank', 'intervention', lambda round: round == 250)
         ('household', 'buy_product')
         'after_sales_before_consumption'
         ('household', 'consume')
         ]
-        w = Simulation(simulation_parameters)
+        w = Simulation(rounds=1000, name='sim', trade_logging='individual', cores=None)
         w.add_action_list(action_list)
         w.build_agents(Firm, 'firm', 'num_firms')
         w.build_agents(Household, 'household', 'num_households')
@@ -111,34 +129,7 @@ class Simulation:
         w.run()
     """
     def __init__(self, rounds, name='abce', random_seed=None, trade_logging='off', cores=None, **chatch):
-        """ This sets up the simulation.
-
-        rounds:
-            how many rounds the simulation lasts
-
-        random_seed:
-            Not implemented in this verion
-
-        trade_logging:
-            Whether trades are logged,trade_logging can be
-            'group' (fast) or 'individual' (slow) or 'off'
-
-        cores:
-            The number of cores of your processor that are used for the simulation.
-            Default is all your logical cores using hyper-threading when available.
-            For easy debugging set cores to one and the simulation is executed
-            without parallelization.
-            Sometimes it is advisable to decrease the number of cores to the number
-            of physical cores on your computer.
-            'None' for all cores.
-
-        Example::
-
-            simulation = Simulation(rounds=1000, name='sim', trade_logging='individual', cores=None)
-
-            or
-
-            simulation = Simulation(**parameters, cores=None)
+        """
         """
         self.family_list = {}
         self._messages = {}
