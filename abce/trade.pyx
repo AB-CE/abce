@@ -60,8 +60,7 @@ cdef class Offer:
     access the offer container both at the receiver as well as at the sender,
     if you have saved the offer. (e.G. self.offer = self.sell(...))
 
-    it has the following properties
-    :
+    it has the following properties:
         sender_group:
             this is the group name of the sender
 
