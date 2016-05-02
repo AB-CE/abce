@@ -40,5 +40,5 @@ def main(simulation_parameters):
         simulation.graphs()
 
 if __name__ == '__main__':
-    main()
+    main(simulation_parameters)
 
