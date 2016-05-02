@@ -28,8 +28,11 @@ def to_csv(directory, calendar):
             table['date'] = 0
             for i in range(len(table)):
                 table.set_value(i, 'date', datetime.date.fromordinal(int(table['round'][i])))
+        if 'round' in table.columns:
+            table.to_csv(table_name + '.csv', index_label='index')
+        else:
+            table.to_csv(table_name + '.csv', index_label='round')
 
-        table.to_csv(table_name + '.csv', index_label='round')
         if u'id' in table.columns:
             del table['id']
             grouped = table.groupby('round')
@@ -50,7 +53,6 @@ def to_csv(directory, calendar):
                 result['date'] = 0
                 for ord_date in result.index:
                     result.set_value(ord_date, 'date', datetime.date.fromordinal(ord_date))
-
             result.to_csv('aggregate_' + table_name + '.csv', index_label='round')
 
     os.chdir('../..')
