@@ -26,8 +26,8 @@ def main(simulation_parameters):
         ('firm', 'my_production'),
         ('firm', 'selling'),
         ('market', 'buying'),
-        ('firm', 'adjust_price', 'serial'),
-        ('firm', 'adjust_quantity', 'serial'),
+        ('firm', 'adjust_price'),
+        ('firm', 'adjust_quantity'),
         ('market', 'consumption')
     ]
 

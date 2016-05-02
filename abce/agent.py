@@ -1,4 +1,4 @@
-# Copyright 2012 Davoud Taghawi-Nejad
+﻿# Copyright 2012 Davoud Taghawi-Nejad
 #
 # Module Author: Davoud Taghawi-Nejad
 #
@@ -46,6 +46,7 @@ from pprint import pprint
 import traceback
 import random
 from abce.notenoughgoods import NotEnoughGoods
+import datetime
 
 
 class Agent(Database, NetworkLogger, Trade, Messaging):
@@ -72,7 +73,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
 
 
     """
-    def __init__(self, id, group, trade_logging, database, logger, random_seed):
+    def __init__(self, id, group, trade_logging, database, logger, random_seed, start_round):
         """ Do not overwrite __init__ instead use a method called init instead.
         init is called whenever the agent are build.
         """
@@ -131,7 +132,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         self._data_to_observe = {}
         self._data_to_log_1 = {}
         self._quotes = {}
-        self.round = 0
+        self.round = start_round
         """ self.round returns the current round in the simulation READ ONLY!"""
         self._perishable = []
         self._resources = []
@@ -147,6 +148,26 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         :py:meth:`abce.Simulation.build_agents`
         """
         pass
+
+    def date(self):
+        """ If ABCE is run in calendar mode (via
+            :method:`abce.Simulation.declare_calendar`), date shows the current
+            date.::
+
+            self.date().day
+            self.date().month
+            self.date().year
+            self.date().weekday()  # the weekday as a number Monday being 0
+            self.date().toordinal()  #
+
+            The date works like python's
+            `date object <https://docs.python.org/2/library/datetime.html#date-objects>`_
+        """
+        try:
+            return datetime.date.fromordinal(self.round)
+        except ValueError:
+            raise ValueError("you need to run ABCE in calendar mode, use simulation.declare_calendar(2000, 1, 1)")
+
 
     def possession(self, good):
         """ returns how much of good an agent possesses.
