@@ -229,17 +229,17 @@ def make_simple_graphs(df, filename):
 
 def make_panel_graphs(df, filename):
     print 'make_panel_graphs', filename
+    try:
+        index = df['date'][df['id'] == 0].apply(lambda sdate: datetime.date(*[int(c) for c in sdate.split('-')]))
+        x_axis_type="datetime"
+    except KeyError:
+        index = df['round'][df['id'] == 0]
+        x_axis_type="linear"
     if  max(df['id'])> 20:
         individuals = sorted(random.sample(range(max(df['id'])), 20))
     else:
         individuals = range(max(df['id']) + 1)
     df = df[df['id'].isin(individuals)]
-    try:
-        index = df['date'].apply(lambda sdate: datetime.date(*[int(c) for c in sdate.split('-')]))
-        x_axis_type="datetime"
-    except KeyError:
-        index = df['round']
-        x_axis_type="linear"
     plots = {}
     for col in df.columns:
         if col not in ['round', 'id', 'index', 'date']:
