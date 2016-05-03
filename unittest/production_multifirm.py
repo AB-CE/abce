@@ -6,6 +6,7 @@ from abce import NotEnoughGoods
 
 class ProductionMultifirm(abce.Agent, abce.FirmMultiTechnologies):
     def init(self, simulation_parameters, agent_parameters):
+        #pylint: disable=W0201
         self.last_round = simulation_parameters['rounds'] - 1
 
         def mes(goods):
@@ -16,6 +17,8 @@ class ProductionMultifirm(abce.Agent, abce.FirmMultiTechnologies):
         self.cd = self.create_cobb_douglas('consumption_good', 5, {'a': 2, 'b': 1})
         self.leontief = self.create_leontief('consumption_good', {'a': 3, 'b': 1})
         self.car = self.create_leontief('car', {'wheels': 4, 'chassi': 1})
+        self.ces = self.create_ces('consumption_good', gamma=0.5, shares={'a': 0.25, 'b': 0.25, 'c': 0.5})
+        self.ces_flexible = self.create_ces('consumption_good', gamma=0.5, multiplier=2)
 
         def many_goods_pf(goods):
             output = {'soft_rubber': goods['a'] ** 0.25 * goods['b'] ** 0.5 * goods['c'] ** 0.25,
@@ -26,18 +29,6 @@ class ProductionMultifirm(abce.Agent, abce.FirmMultiTechnologies):
             use = {'a': 1, 'b': 0.1, 'c': 0}
 
         self.many_goods_pf = self.create_production_function_many_goods(many_goods_pf, use)
-
-    def one(self):
-        pass
-
-    def two(self):
-        pass
-
-    def three(self):
-        pass
-
-    def clean_up(self):
-        pass
 
     def production(self):
         self.create('a', 2)
@@ -101,13 +92,41 @@ class ProductionMultifirm(abce.Agent, abce.FirmMultiTechnologies):
         self.destroy('hard_rubber')
         self.destroy('waste')
 
-
-
         input_goods = {'wheels': 4, 'chassi': 1}
         price_vector = {'wheels': 10, 'chassi': 100, 'car':1000}
         nv = self.predict_net_value(self.car, input_goods, price_vector)
-
         assert  nv == 860
+
+
+        self.create('a', 2)
+        self.create('b', 2)
+        self.create('c', 4)
+        self.produce(self.ces, {'a': 1, 'b': 2, 'c': 4})
+
+        assert self.possession('a') == 1, self.possession('a')
+        assert self.possession('b') == 0, self.possession('b')
+        assert self.possession('c') == 0, self.possession('c')
+        expected = (0.25 * 1 ** 0.5 + 0.25 * 2 ** 0.5 + 0.5 * 4 ** 0.5) ** (1 / 0.5)
+        assert self.possession('consumption_good') == expected, (self.possession('consumption_good'), expected)
+        self.destroy('a', 1)
+        self.destroy('consumption_good', expected)
+
+        self.create('a', 2)
+        self.create('b', 2)
+        self.create('c', 2)
+        self.create('d', 2)
+        self.create('e', 2)
+        self.produce(self.ces_flexible, {'a': 1, 'b': 2, 'c': 2, 'd': 2, 'e': 2})
+
+        assert self.possession('a') == 1, self.possession('a')
+        assert self.possession('b') == 0, self.possession('b')
+        assert self.possession('c') == 0, self.possession('c')
+        assert self.possession('d') == 0, self.possession('d')
+        assert self.possession('e') == 0, self.possession('e')
+        expected = 2 * (0.2 * 1 ** 0.5 + 0.2 * 2 ** 0.5 + 0.2 * 2 ** 0.5 + 0.2 * 2 ** 0.5 + 0.2 * 2 ** 0.5) ** (1 / 0.5)
+        assert self.possession('consumption_good') == expected, (self.possession('consumption_good'), expected)
+        self.destroy('a', 1)
+        self.destroy('consumption_good', expected)
 
     def all_tests_completed(self):
         if self.round == self.last_round and self.id == 0:

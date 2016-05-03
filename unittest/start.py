@@ -27,8 +27,6 @@ def main():
            'give',
            'endowment',
            'loggertest',
-           'productionmultifirm',
-           'productionfirm',
            'utilityhousehold']
 
     contractagents = ['contractbuyer', 'contractseller',
@@ -75,7 +73,7 @@ def main():
     s.build_agents(Endowment, 'endowment', 2, parameters={'rounds': rounds})  # tests declare_round_endowment and declare_perishable
     s.build_agents(LoggerTest, 'loggertest', 1, parameters={'rounds': rounds})
     s.build_agents(ProductionMultifirm, 'productionmultifirm', 1, parameters={'rounds': rounds})
-    s.build_agents(ProductionFirm, 'productionfirm', 5, parameters={'rounds': rounds})
+    s.build_agents(ProductionFirm, 'productionfirm', 7, parameters={'rounds': rounds})
     s.build_agents(UtilityHousehold, 'utilityhousehold', 5, parameters={'rounds': rounds})
     s.build_agents(ContractSeller, 'contractseller', 2, parameters={'rounds': rounds})
     s.build_agents(ContractBuyer, 'contractbuyer', 2, parameters={'rounds': rounds})

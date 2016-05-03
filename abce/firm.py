@@ -126,7 +126,7 @@ class Firm(FirmMultiTechnologies):
         A production function is a production process that produces the
         several output  goods according to the formula to the output
         goods and uses up some or all of the input goods.
-        Production_functions are than used as an argument in produce,
+        Production_functions are than used by produce,
         predict_vector_produce and predict_output_produce.
 
         create_production_function_fast is faster but more complicated
@@ -188,6 +188,52 @@ class Firm(FirmMultiTechnologies):
 
         """
         self._production_function = self.create_cobb_douglas(output, multiplier, exponents)
+
+    def set_ces(self, output, gamma, multiplier=1, shares=None):
+        """ creates a CES production function
+
+        A production function is a production process that produces the
+        given input  goods according to the CES formula to the output
+        good:
+
+
+        :math:`Q = F \\cdot \\left[\\sum_{i=1}^n a_{i}X_{i}^{\\gamma}\\ \\right]^{\\frac{1}{\\gamma}}`
+
+
+        Production_functions are than used by in produce,
+        predict_vector_produce and predict_output_produce.
+
+        Args:
+
+            'output':
+                Name of the output good
+
+            gamma:
+                elasticity of substitution :math:`= s =\\frac{1}{1-\\gamma}`
+
+            multiplier:
+                CES multiplier :math:`F`
+
+            shares:
+                :math:`a_{i}` = Share parameter of input i, :math:`\\sum_{i=1}^n a_{i} = 1`
+                when share_parameters is not specified all inputs are weighted equally and
+                the number of inputs is flexible. Share parameters are an array with good
+                names as keys and the shares as values.
+
+        Example::
+
+            def init(self):
+                self.set_ces('stuff', gamma=0.5, multiplier=1, shares={'labor': 0.25, 'stone':0.25, 'wood':0.5})
+
+            ...
+
+
+            def producing(self):
+                self.produce({'stone' : 20, 'labor' : 1, 'wood': 12})
+
+        """
+        self._production_function = self.create_ces(output, gamma, multiplier, shares)
+
 
     def set_leontief(self, output, utilization_quantities, multiplier=1):
         """ sets the firm to use a Leontief production function.

@@ -28,6 +28,7 @@ from __future__ import division
 import numpy as np
 from abce.trade import get_epsilon
 from abce.notenoughgoods import NotEnoughGoods
+from collections import defaultdict
 save_err = np.seterr(invalid='ignore')
 epsilon = get_epsilon()
 
@@ -217,8 +218,14 @@ class FirmMultiTechnologies:
             A production_function that can be used in produce etc.
 
         Example:
-        self.plastic_production_function = self.create_cobb_douglas('plastic', {'oil' : 10, 'labor' : 1}, 0.000001)
-        self.produce(self.plastic_production_function, {'oil' : 20, 'labor' : 1})
+
+            def init(self):
+                self.plastic_production_function = self.create_cobb_douglas('plastic', {'oil' : 10, 'labor' : 1}, 0.000001)
+
+            ...
+
+            def producing(self):
+                self.produce(self.plastic_production_function, {'oil' : 20, 'labor' : 1})
 
         """
         def production_function(goods):
@@ -230,6 +237,61 @@ class FirmMultiTechnologies:
         production_function.use = {name: 1 for name in exponents.keys()}
         return production_function
 
+    def create_ces(self, output, gamma, multiplier=1, shares=None):
+        """ creates a CES production function
+
+        A production function is a production process that produces the
+        given input  goods according to the CES formula to the output
+        good:
+
+
+        :math:`Q = F \\cdot \\left[\\sum_{i=1}^n a_{i}X_{i}^{\\gamma}\\ \\right]^{\\frac{1}{\\gamma}}`
+
+
+        Production_functions are than used as an argument in produce,
+        predict_vector_produce and predict_output_produce.
+
+        Args:
+
+            'output':
+                Name of the output good
+
+            gamma:
+                elasticity of substitution :math:`= s =\\frac{1}{1-\\gamma}`
+
+            multiplier:
+                CES multiplier :math:`F`
+
+            shares:
+                :math:`a_{i}` = Share parameter of input i, :math:`\\sum_{i=1}^n a_{i} = 1`
+                when share_parameters is not specified all inputs are weighted equally and
+                the number of inputs is flexible.
+
+        Returns:
+
+            A production_function that can be used in produce etc.
+
+        Example::
+
+            self.stuff_production_function = self.create_ces('stuff', gamma=0.5, multiplier=1, shares={'labor': 0.25, 'stone':0.25, 'wood':0.5})
+            self.produce(self.stuff_production_function, {'stone' : 20, 'labor' : 1, 'wood': 12})
+
+        """
+        if shares is None:
+            def production_function(goods):
+                a = 1 / len(goods)
+                return multiplier * np.sum([a * goods[name] ** gamma
+                                           for name in goods]) ** (1 /  gamma)
+            production_function.use = {'a': 1, 'b': 1, 'c': 1, 'd': 1, 'e': 1}#defaultdict(lambda: 1)
+        else:
+            def production_function(goods):
+                return multiplier * np.sum([share * goods[name] ** gamma
+                                           for name, share in shares.iteritems()]) ** (1 /  gamma)
+            production_function.use = {name: 1 for name in shares.keys()}
+
+        dict_formula = lambda goods: {output: production_function(goods)}
+        production_function.production = dict_formula
+        return production_function
 
     def create_leontief(self, output, utilization_quantities):
         """ creates a Leontief production function
