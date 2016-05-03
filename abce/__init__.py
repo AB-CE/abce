@@ -250,7 +250,7 @@ class Simulation:
 
         """
         if len(self.family_list) > 0:
-            raise SystemExit("WARNING: declare_round_endowment(...) must be called before the agents are build")
+            raise Exception("WARNING: declare_round_endowment(...) must be called before the agents are build")
         for group in groups:
             self.resource_endowment[group].append((resource, units, product))
 
