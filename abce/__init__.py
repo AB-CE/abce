@@ -517,6 +517,7 @@ class Simulation:
             for family in group:
                 self.family_names.append(family.name())
                 messagess[family.name()] = []
+        agents_to_add = []
         try:
             for year in xrange(self._start_year, self.rounds):
                 self.round = year
@@ -526,10 +527,13 @@ class Simulation:
                 for processor, group, action in self._action_list:
                     messagess = processor(group, action, messagess)
                     if messagess[('_simulation', 0)]:
-                        self.add_agents(messagess[('_simulation', 0)])
+                        agents_to_add.extend(messagess[('_simulation', 0)])
                         del messagess[('_simulation', 0)]
                 self.execute_internal('_advance_round')
                 self.execute_internal('_perish')
+                if agents_to_add:
+                        self.add_agents(agents_to_add)
+                        agents_to_add = []
         except EOFError:
             pass
         except:
@@ -590,13 +594,14 @@ class Simulation:
                 The number of agents is the length of the list
 
             expandable:
-                if you want to add agents during the simulation, expandable must be set to true
+                if you want to add agents during the simulation with
+                self.create_agents(...), expandable must be set to true
 
         Example::
 
-         w.build_agents(Firm, number=simulation_parameters['num_firms'])
-         w.build_agents(Bank, parameters=simulation_parameters, agent_parameters=[{'name': UBS'},{'name': 'amex'},{'name': 'chase'})
-         w.build_agents(CentralBank, number=1, parameters={'rounds': num_rounds})
+         simulation.build_agents(Firm, number=simulation_parameters['num_firms'])
+         simulation.build_agents(Bank, parameters=simulation_parameters, agent_parameters=[{'name': UBS'},{'name': 'amex'},{'name': 'chase'})
+         simulation.build_agents(CentralBank, number=1, parameters={'rounds': num_rounds})
         """
         assert number is None or agent_parameters is None, 'either set number or agent_parameters in build_agents'
         if number is not None:

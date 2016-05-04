@@ -25,7 +25,6 @@ def main():
     all = ['buy',
            'sell',
            'give',
-           'endowment',
            'loggertest',
            'productionmultifirm',
            'productionfirm',
@@ -73,7 +72,7 @@ def main():
     #s.build_agents(QuoteBuy, 2)
     s.build_agents(Sell, 'sell', 1000, parameters={'rounds': rounds})
     s.build_agents(Give, 'give', 2, parameters={'rounds': rounds}, expandable=True) # tests give and messaging
-    s.build_agents(Endowment, 'endowment', 2, parameters={'rounds': rounds}, expandable=True)  # tests declare_round_endowment and declare_perishable
+    s.build_agents(Endowment, 'endowment', 2, parameters={'rounds': rounds, 'creation': 0}, expandable=True)  # tests declare_round_endowment and declare_perishable
     s.build_agents(LoggerTest, 'loggertest', 1, parameters={'rounds': rounds})
     s.build_agents(ProductionMultifirm, 'productionmultifirm', 1, parameters={'rounds': rounds})
     s.build_agents(ProductionFirm, 'productionfirm', 5, parameters={'rounds': rounds})

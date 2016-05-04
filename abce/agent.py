@@ -393,6 +393,29 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         self._out.append((receiver_group, receiver_id, (typ, msg)))
 
     def create_agent(self, AgentClass, group_name, parameters=None, agent_parameters=None):
+        """ create a new agent. When the agent group is build with simulation.build_agents(...)
+            expandable must be set to true.
+
+        Args:
+
+            AgentClass:
+                the class of agent to create. (can be the same class as the creating agent)
+
+            'group_name':
+                the name of the group the agent should belong to
+
+            parameters:
+                a dictionary of parameters
+
+            agent_parameters:
+                a dictionary of parameters
+
+        Example::
+
+            self.create_agent(BeerFirm, 'beerfirm',
+                              parameters=self.parameters,
+                              agent_parameters={'creation': self.round})
+        """
         self._out.append(('_simulation', 0, (AgentClass, group_name, parameters, agent_parameters)))
 
 

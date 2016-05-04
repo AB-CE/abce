@@ -8,6 +8,7 @@ from sell import Sell
 from give import Give
 from messageb import MessageB
 from messagea import MessageA
+from endowment import Endowment
 
 class AddAgent(Agent):
     def init(self, simulation_parameters, _,):
@@ -24,3 +25,5 @@ class AddAgent(Agent):
 
         self.create_agent(MessageA, 'messagea', parameters={'rounds': self.rounds})
         self.create_agent(MessageB, 'messageb', parameters={'rounds': self.rounds})
+
+        self.create_agent(Endowment, 'endowment', parameters={'rounds': self.rounds, 'creation': self.round})
