@@ -18,7 +18,7 @@ from buyexpiringcapital import BuyExpiringCapital
 from abce import Simulation, repeat
 from messagea import MessageA
 from messageb import MessageB
-
+from addagent import AddAgent
 
 def main():
     rounds = 30
@@ -59,7 +59,8 @@ def main():
 
         #('expiringcapital', 'go'),
 
-        (all, 'all_tests_completed')]
+        (all, 'all_tests_completed'),
+        ('addagent', 'add_agent')]
     s.add_action_list(action_list)
 
     s.declare_round_endowment(resource='labor_endowment', units=5, product='labor')
@@ -71,8 +72,8 @@ def main():
     s.build_agents(Buy, 'buy', 1000, parameters={'rounds': rounds})
     #s.build_agents(QuoteBuy, 2)
     s.build_agents(Sell, 'sell', 1000, parameters={'rounds': rounds})
-    s.build_agents(Give, 'give', 2, parameters={'rounds': rounds}) # tests give and messaging
-    s.build_agents(Endowment, 'endowment', 2, parameters={'rounds': rounds})  # tests declare_round_endowment and declare_perishable
+    s.build_agents(Give, 'give', 2, parameters={'rounds': rounds}, expandable=True) # tests give and messaging
+    s.build_agents(Endowment, 'endowment', 2, parameters={'rounds': rounds}, expandable=True)  # tests declare_round_endowment and declare_perishable
     s.build_agents(LoggerTest, 'loggertest', 1, parameters={'rounds': rounds})
     s.build_agents(ProductionMultifirm, 'productionmultifirm', 1, parameters={'rounds': rounds})
     s.build_agents(ProductionFirm, 'productionfirm', 5, parameters={'rounds': rounds})
@@ -84,8 +85,9 @@ def main():
     #s.build_agents(ExpiringCapital, 1)
     #s.build_agents(GiveExpiringCapital, 2)
     s.build_agents(BuyExpiringCapital, 'buyexpiringcapital', 2, parameters={'rounds': rounds})
-    s.build_agents(MessageA, 'messagea', 20, parameters={'rounds': rounds})
-    s.build_agents(MessageB, 'messageb', 20, parameters={'rounds': rounds})
+    s.build_agents(MessageA, 'messagea', 20, parameters={'rounds': rounds}, expandable=True)
+    s.build_agents(MessageB, 'messageb', 20, parameters={'rounds': rounds}, expandable=True)
+    s.build_agents(AddAgent, 'addagent', 1, parameters={'rounds': rounds})
 
     s.run()
 

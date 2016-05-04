@@ -72,7 +72,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
 
 
     """
-    def __init__(self, id, group, trade_logging, database, logger, random_seed):
+    def __init__(self, id, group, trade_logging, database, logger, random_seed, round=0):
         """ Do not overwrite __init__ instead use a method called init instead.
         init is called whenever the agent are build.
         """
@@ -131,7 +131,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         self._data_to_observe = {}
         self._data_to_log_1 = {}
         self._quotes = {}
-        self.round = 0
+        self.round = round
         """ self.round returns the current round in the simulation READ ONLY!"""
         self._perishable = []
         self._resources = []
@@ -392,15 +392,9 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         """
         self._out.append((receiver_group, receiver_id, (typ, msg)))
 
-    def _send_to_group(self, receiver_group, typ, msg):
-        """ sends a message to 'receiver_group', who can be an agent, a group or
-        'all'. The agents receives it at the begin of each round in
-        self.messages(typ) is 'm' for mails.
-        typ =(_o,c,u,r) are
-        reserved for internally processed offers.
-        """
-        raise NotImplementedError
-        self._out.append([receiver_group, 'all', (typ, msg)])
+    def create_agent(self, AgentClass, group_name, parameters=None, agent_parameters=None):
+        self._out.append(('_simulation', 0, (AgentClass, group_name, parameters, agent_parameters)))
+
 
 def flatten(d, parent_key=''):
     items = []

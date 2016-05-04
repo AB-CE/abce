@@ -13,6 +13,9 @@ class Family:
         for i in xrange(batch, num_agents_this_group, num_managers):
             self.agents.append(Agent(id=i, **agent_args))
 
+    def append(self, Agent, id, agent_args):
+            self.agents.append(Agent(id=id, **agent_args))
+
     def execute(self, command, messages):
         out = defaultdict(list)
         messages = sortmessages(messages)
@@ -69,6 +72,9 @@ class Family:
     def set_network_drawing_frequency(self, _network_drawing_frequency):
         for agent in self.agents:
             agent._set_network_drawing_frequency(_network_drawing_frequency)
+
+    def last_added_agent(self, command, parameters):
+        getattr(self.agents[-1], command)(*parameters)
 
     def repr(self):
         return "%s: %i - %i" % (self.group, self.agents[0].id, self.agents[-1].id)

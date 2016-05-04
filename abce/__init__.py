@@ -141,6 +141,7 @@ class Simulation:
             simulation = Simulation(**parameters, cores=None)
         """
         self.family_list = {}
+        self.num_of_agents_in_group = {}
         self._messages = {}
         self._action_list = []
         self._resource_command_group = {}
@@ -449,6 +450,7 @@ class Simulation:
         for group in groups:
             for family in self.family_list[group]:
                 messages[family.name()] = []
+        messages[('_simulation', 0)] = []
         for block in families_messages:
             for family_name, family_msgs in block.iteritems():
                 if len(family_msgs):
@@ -523,6 +525,9 @@ class Simulation:
 
                 for processor, group, action in self._action_list:
                     messagess = processor(group, action, messagess)
+                    if messagess[('_simulation', 0)]:
+                        self.add_agents(messagess[('_simulation', 0)])
+                        del messagess[('_simulation', 0)]
                 self.execute_internal('_advance_round')
                 self.execute_internal('_perish')
         except EOFError:
@@ -558,7 +563,7 @@ class Simulation:
         except AttributeError:
             pass
 
-    def build_agents(self, AgentClass, group_name, number=None, parameters={}, agent_parameters=None):
+    def build_agents(self, AgentClass, group_name, number=None, parameters={}, agent_parameters=None, expandable=False):
         """ This method creates agents.
 
         Args:
@@ -584,6 +589,9 @@ class Simulation:
                 a list of dictionaries, where each agent gets one dictionary.
                 The number of agents is the length of the list
 
+            expandable:
+                if you want to add agents during the simulation, expandable must be set to true
+
         Example::
 
          w.build_agents(Firm, number=simulation_parameters['num_firms'])
@@ -604,8 +612,11 @@ class Simulation:
         self.sim_parameters[group_name] = {key: parameter
                                            for key, parameter in parameters.iteritems()
                                            if key not in self.sim_parameters.keys() + ['trade_logging']}
-
-        for i in range(min(self.cores, num_agents_this_group)):
+        if expandable:
+            num_families = self.cores
+        else:
+            num_families = min(self.cores, num_agents_this_group)
+        for i in range(num_families):
             manager = MyManager()
             manager.start()
             family = manager.Family(AgentClass, num_agents_this_group=num_agents_this_group, batch=i, num_managers=self.cores,
@@ -625,6 +636,7 @@ class Simulation:
 
             for good in self.perishable:
                 family.register_perish(good)
+
             for resource, units, product in self.resource_endowment[group_name] + self.resource_endowment['all']:
                 family.register_resource(resource, units, product)
 
@@ -640,6 +652,44 @@ class Simulation:
                 family.set_network_drawing_frequency(None)
 
             self.family_list[group_name].append(family)
+            self.num_of_agents_in_group[group_name] = num_agents_this_group
+
+    def add_agents(self, messages):
+        for _, _, (AgentClass, group_name, parameters, agent_parameters) in messages:
+            id = self.num_of_agents_in_group[group_name]
+            self.num_of_agents_in_group[group_name] += 1
+            assert len(self.family_list[group_name]) == self.cores, "the expandable parameter in build_agents must be set to true"
+            family = self.family_list[group_name][id % self.cores]
+
+            family.append(AgentClass, id=id,
+                                    agent_args={'group': group_name,
+                                                'trade_logging': self.trade_logging_mode,
+                                                'database': self.database_queue,
+                                                'logger':self.logger_queue,
+                                                'random_seed': random.random(),
+                                                'round': self.round})
+            for good, duration in self.expiring:
+                family.last_added_agent('_declare_expiring', (good, duration))
+
+            family.last_added_agent('init', (parameters, agent_parameters))
+
+            for good in self.perishable:
+                family.last_added_agent('_register_perish', (good,))
+
+            for resource, units, product in self.resource_endowment[group_name] + self.resource_endowment['all']:
+                family.last_added_agent('_register_resource', (resource, units, product))
+
+            family.last_added_agent('_register_panel', (self.possessins_to_track_panel[group_name],
+                                                       self.variables_to_track_panel[group_name]))
+
+            family.last_added_agent('_register_aggregate', (self.possessions_to_track_aggregate[group_name],
+                                                       self.variables_to_track_aggregate[group_name]))
+
+            try:
+                family.last_added_agent('_set_network_drawing_frequency', (self._network_drawing_frequency,))
+            except AttributeError:
+                family.last_added_agent('_set_network_drawing_frequency', (None,))
+
 
     def _write_description_file(self):
         description = open(os.path.abspath(self.path + '/description.txt'), 'w')
@@ -679,7 +729,7 @@ class Simulation:
     def pickle(self, name):
         with open('%s.simulation' % name, 'wb') as jar:
             json.dump({'year': self.rounds,
-                       'agents': [agent.__dict__ for agent in self.agents_list['all']],
+                       'agents': [agent.__dict__ for agent in self.num_of_agents_in_group['all']],
                        'messages': self.messagess},
                       jar, default=handle_non_pickleable)
 
@@ -690,7 +740,7 @@ class Simulation:
         self._start_year = simulation['year']
 
         all_agents_values = simulation['agents']
-        for agent, agent_values in zip(self.agents_list['all'], all_agents_values):
+        for agent, agent_values in zip(self.num_of_agents_in_group['all'], all_agents_values):
             for key, value in agent_values.iteritems():
                 if value != "NotPickleable":
                     if key not in agent.__dict__:
@@ -707,8 +757,8 @@ class Simulation:
                     else:
                         agent.__dict__[key] =  value
 
-        for agent in self.agents_list['all']:
-            self.agents_list[agent.group][agent.id] = agent
+        for agent in self.num_of_agents_in_group['all']:
+            self.num_of_agents_in_group[agent.group][agent.id] = agent
 
         self._messages = simulation['messages']
 
