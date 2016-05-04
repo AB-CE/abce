@@ -413,15 +413,32 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         """
         self._out.append((receiver_group, receiver_id, (typ, msg)))
 
-    def _send_to_group(self, receiver_group, typ, msg):
-        """ sends a message to 'receiver_group', who can be an agent, a group or
-        'all'. The agents receives it at the begin of each round in
-        self.messages(typ) is 'm' for mails.
-        typ =(_o,c,u,r) are
-        reserved for internally processed offers.
+    def create_agent(self, AgentClass, group_name, parameters=None, agent_parameters=None):
+        """ create a new agent. When the agent group is build with simulation.build_agents(...)
+            expandable must be set to true.
+
+        Args:
+
+            AgentClass:
+                the class of agent to create. (can be the same class as the creating agent)
+
+            'group_name':
+                the name of the group the agent should belong to
+
+            parameters:
+                a dictionary of parameters
+
+            agent_parameters:
+                a dictionary of parameters
+
+        Example::
+
+            self.create_agent(BeerFirm, 'beerfirm',
+                              parameters=self.parameters,
+                              agent_parameters={'creation': self.round + 1})
         """
-        raise NotImplementedError
-        self._out.append([receiver_group, 'all', (typ, msg)])
+        self._out.append(('_simulation', 0, (AgentClass, group_name, parameters, agent_parameters)))
+
 
 def flatten(d, parent_key=''):
     items = []

@@ -132,6 +132,7 @@ class Simulation:
         """
         """
         self.family_list = {}
+        self.num_of_agents_in_group = {}
         self._messages = {}
         self._action_list = []
         self._resource_command_group = {}
@@ -256,7 +257,7 @@ class Simulation:
 
         """
         if len(self.family_list) > 0:
-            raise SystemExit("WARNING: declare_round_endowment(...) must be called before the agents are build")
+            raise Exception("WARNING: declare_round_endowment(...) must be called before the agents are build")
         for group in groups:
             self.resource_endowment[group].append((resource, units, product))
 
@@ -488,6 +489,7 @@ class Simulation:
         for group in groups:
             for family in self.family_list[group]:
                 messages[family.name()] = []
+        messages[('_simulation', 0)] = []
         for block in families_messages:
             for family_name, family_msgs in block.iteritems():
                 if len(family_msgs):
@@ -554,6 +556,7 @@ class Simulation:
             for family in group:
                 self.family_names.append(family.name())
                 messagess[family.name()] = []
+        agents_to_add = []
         try:
             if self._calendar:
                 for round in xrange(self._start_round, self._start_round + self.rounds):
@@ -563,8 +566,14 @@ class Simulation:
                     for processor, group, action, condition in self._action_list:
                         if condition(datetime.date.fromordinal(round)):
                             messagess = processor(group, action, messagess)
+                            if messagess[('_simulation', 0)]:
+                                agents_to_add.extend(messagess[('_simulation', 0)])
+                                del messagess[('_simulation', 0)]
                     self.execute_internal('_advance_round')
                     self.execute_internal('_perish')
+                    if agents_to_add:
+                        self.add_agents(agents_to_add, round)
+                        agents_to_add = []
             else:
                 for round in xrange(self._start_round, self._start_round + self.rounds):
                     print("\rRound" + str(" %3d " % round))
@@ -573,8 +582,14 @@ class Simulation:
                     for processor, group, action, condition in self._action_list:
                         if condition(round):
                             messagess = processor(group, action, messagess)
+                            if messagess[('_simulation', 0)]:
+                                agents_to_add.extend(messagess[('_simulation', 0)])
+                                del messagess[('_simulation', 0)]
                     self.execute_internal('_advance_round')
                     self.execute_internal('_perish')
+                    if agents_to_add:
+                        self.add_agents(agents_to_add, round)
+                        agents_to_add = []
         except EOFError:
             pass
         except:
@@ -584,8 +599,9 @@ class Simulation:
             print(str("time only simulation %6.2f" % (time.time() - start_time)))
             self.gracefull_exit()
             print(str("time with data and network %6.2f" % (time.time() - start_time)))
-            postprocess.to_csv(os.path.abspath(self.path), self._calendar)
-            print(str("time with post processing %6.2f" % (time.time() - start_time)))
+            if self.round > 0:
+                postprocess.to_csv(os.path.abspath(self.path), self._calendar)
+                print(str("time with post processing %6.2f" % (time.time() - start_time)))
             self.messagess = messagess
 
 
@@ -608,7 +624,7 @@ class Simulation:
         except AttributeError:
             pass
 
-    def build_agents(self, AgentClass, group_name, number=None, parameters={}, agent_parameters=None):
+    def build_agents(self, AgentClass, group_name, number=None, parameters={}, agent_parameters=None, expandable=False):
         """ This method creates agents.
 
         Args:
@@ -634,11 +650,15 @@ class Simulation:
                 a list of dictionaries, where each agent gets one dictionary.
                 The number of agents is the length of the list
 
+            expandable:
+                if you want to add agents during the simulation with
+                self.create_agents(...), expandable must be set to true
+
         Example::
 
-         w.build_agents(Firm, number=simulation_parameters['num_firms'])
-         w.build_agents(Bank, parameters=simulation_parameters, agent_parameters=[{'name': UBS'},{'name': 'amex'},{'name': 'chase'})
-         w.build_agents(CentralBank, number=1, parameters={'rounds': num_rounds})
+         simulation.build_agents(Firm, number=simulation_parameters['num_firms'])
+         simulation.build_agents(Bank, parameters=simulation_parameters, agent_parameters=[{'name': UBS'},{'name': 'amex'},{'name': 'chase'})
+         simulation.build_agents(CentralBank, number=1, parameters={'rounds': num_rounds})
         """
         assert number is None or agent_parameters is None, 'either set number or agent_parameters in build_agents'
         if number is not None:
@@ -654,8 +674,11 @@ class Simulation:
         self.sim_parameters[group_name] = {key: parameter
                                            for key, parameter in parameters.iteritems()
                                            if key not in self.sim_parameters.keys() + ['trade_logging']}
-
-        for i in range(min(self.cores, num_agents_this_group)):
+        if expandable:
+            num_families = self.cores
+        else:
+            num_families = min(self.cores, num_agents_this_group)
+        for i in range(num_families):
             manager = MyManager()
             manager.start()
             family = manager.Family(AgentClass, num_agents_this_group=num_agents_this_group, batch=i, num_managers=self.cores,
@@ -676,6 +699,7 @@ class Simulation:
 
             for good in self.perishable:
                 family.register_perish(good)
+
             for resource, units, product in self.resource_endowment[group_name] + self.resource_endowment['all']:
                 family.register_resource(resource, units, product)
 
@@ -691,6 +715,44 @@ class Simulation:
                 family.set_network_drawing_frequency(None)
 
             self.family_list[group_name].append(family)
+            self.num_of_agents_in_group[group_name] = num_agents_this_group
+
+    def add_agents(self, messages, round):
+        for _, _, (AgentClass, group_name, parameters, agent_parameters) in messages:
+            id = self.num_of_agents_in_group[group_name]
+            self.num_of_agents_in_group[group_name] += 1
+            assert len(self.family_list[group_name]) == self.cores, "the expandable parameter in build_agents must be set to true"
+            family = self.family_list[group_name][id % self.cores]
+
+            family.append(AgentClass, id=id,
+                                    agent_args={'group': group_name,
+                                                'trade_logging': self.trade_logging_mode,
+                                                'database': self.database_queue,
+                                                'logger':self.logger_queue,
+                                                'random_seed': random.random(),
+                                                'start_round': round + 1})
+            for good, duration in self.expiring:
+                family.last_added_agent('_declare_expiring', (good, duration))
+
+            family.last_added_agent('init', (parameters, agent_parameters))
+
+            for good in self.perishable:
+                family.last_added_agent('_register_perish', (good,))
+
+            for resource, units, product in self.resource_endowment[group_name] + self.resource_endowment['all']:
+                family.last_added_agent('_register_resource', (resource, units, product))
+
+            family.last_added_agent('_register_panel', (self.possessins_to_track_panel[group_name],
+                                                       self.variables_to_track_panel[group_name]))
+
+            family.last_added_agent('_register_aggregate', (self.possessions_to_track_aggregate[group_name],
+                                                       self.variables_to_track_aggregate[group_name]))
+
+            try:
+                family.last_added_agent('_set_network_drawing_frequency', (self._network_drawing_frequency,))
+            except AttributeError:
+                family.last_added_agent('_set_network_drawing_frequency', (None,))
+
 
     def _write_description_file(self):
         description = open(os.path.abspath(self.path + '/description.txt'), 'w')
@@ -730,7 +792,7 @@ class Simulation:
     def pickle(self, name):
         with open('%s.simulation' % name, 'wb') as jar:
             json.dump({'year': self.rounds,
-                       'agents': [agent.__dict__ for agent in self.agents_list['all']],
+                       'agents': [agent.__dict__ for agent in self.num_of_agents_in_group['all']],
                        'messages': self.messagess},
                       jar, default=handle_non_pickleable)
 
@@ -741,7 +803,7 @@ class Simulation:
         self._start_round = simulation['year']
 
         all_agents_values = simulation['agents']
-        for agent, agent_values in zip(self.agents_list['all'], all_agents_values):
+        for agent, agent_values in zip(self.num_of_agents_in_group['all'], all_agents_values):
             for key, value in agent_values.iteritems():
                 if value != "NotPickleable":
                     if key not in agent.__dict__:
@@ -758,8 +820,8 @@ class Simulation:
                     else:
                         agent.__dict__[key] =  value
 
-        for agent in self.agents_list['all']:
-            self.agents_list[agent.group][agent.id] = agent
+        for agent in self.num_of_agents_in_group['all']:
+            self.num_of_agents_in_group[agent.group][agent.id] = agent
 
         self._messages = simulation['messages']
 
