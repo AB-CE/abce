@@ -521,14 +521,7 @@ class Simulation:
                 family.execute_internal(command)
 
     def run(self):
-        """ This runs the simulation
-
-            Args:
-                parallel (False, True(default)):
-                    Whether the agents' utility functions are executed in parallel.
-                    For simulation that don't have hundreds of separate perishable
-                    goods or resource False is faster.
-        """
+        """ This runs the simulation """
         if self.cores > 1:
             self.pool = mp.Pool(self.cores)
             self.execute = self.execute_parallel
