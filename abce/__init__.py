@@ -480,7 +480,7 @@ class Simulation:
                 for group in action[0]:
                     assert group in self.family_list.keys(), \
                         '%s in (%s, %s) in the action_list is not a known agent' % (action[0], action[0], action[1])
-                processed_list.append((self.execute, action[0], action[1], action[2]))
+                processed_list.append((action[0], action[1], action[2]))
         return processed_list
 
     def execute_parallel(self, groups, command, messages):
@@ -560,9 +560,9 @@ class Simulation:
                     print("\rRound" + str(" %3d " % round) + str(datetime.date.fromordinal(round)))
                     self.execute_internal('_produce_resource')
 
-                    for processor, group, action, condition in self._action_list:
+                    for group, action, condition in self._action_list:
                         if condition(datetime.date.fromordinal(round)):
-                            messagess = processor(group, action, messagess)
+                            messagess = self.execute(group, action, messagess)
                             if messagess[('_simulation', 0)]:
                                 agents_to_add.extend(messagess[('_simulation', 0)])
                                 del messagess[('_simulation', 0)]
@@ -582,9 +582,9 @@ class Simulation:
                     print("\rRound" + str(" %3d " % round))
                     self.execute_internal('_produce_resource')
 
-                    for processor, group, action, condition in self._action_list:
+                    for group, action, condition in self._action_list:
                         if condition(round):
-                            messagess = processor(group, action, messagess)
+                            messagess = self.execute(group, action, messagess)
                             if messagess[('_simulation', 0)]:
                                 agents_to_add.extend(messagess[('_simulation', 0)])
                                 del messagess[('_simulation', 0)]
