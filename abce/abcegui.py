@@ -157,7 +157,7 @@ def make_title(title, col):
     return title.replace('aggregate_', '').replace('panel_', '').replace('.csv', '')  + ' ' + col
 
 
-def make_aggregate_graphs(df, filename):
+def make_aggregate_graphs(df, filename, ignore_initial_rounds):
     print 'make_aggregate_graphs', filename
     columns = [col for col in df.columns if not col.endswith('_std')
                                          and not col.endswith('_mean')
@@ -176,9 +176,9 @@ def make_aggregate_graphs(df, filename):
         plot.yaxis.visible = None
         plot.legend.orientation = "top_left"
         if df[col].min(skipna=True) != df[col].max(skipna=True):
-            plot.extra_y_ranges['ttl'] = Range1d(df[col].min(skipna=True), df[col].max(skipna=True))
+            plot.extra_y_ranges['ttl'] = Range1d(df[col].min(skipna=True), df[col].ix[ignore_initial_rounds:].max(skipna=True))
         else:
-            plot.extra_y_ranges['ttl'] = Range1d(df[col].min(skipna=True) - 1, df[col].max(skipna=True) + 1)
+            plot.extra_y_ranges['ttl'] = Range1d(df[col].min(skipna=True) - 1, df[col].ix[ignore_initial_rounds:].max(skipna=True) + 1)
 
         plot.line(index, df[col],
                   legend='mean/total', line_width=2, line_color='blue', y_range_name="ttl")
@@ -186,9 +186,9 @@ def make_aggregate_graphs(df, filename):
 
         try:
             if df[col].min() != df[col].max():
-                plot.extra_y_ranges['std'] = Range1d(df[col + '_std'].min(skipna=True), df[col + '_std'].max(skipna=True))
+                plot.extra_y_ranges['std'] = Range1d(df[col + '_std'].min(skipna=True), df[col + '_std'].ix[ignore_initial_rounds:].max(skipna=True))
             else:
-                plot.extra_y_ranges['std'] = Range1d(df[col + '_std'].min(skipna=True) - 1, df[col + '_std'].max(skipna=True) + 1)
+                plot.extra_y_ranges['std'] = Range1d(df[col + '_std'].min(skipna=True) - 1, df[col + '_std'].ix[ignore_initial_rounds:].max(skipna=True) + 1)
             plot.line(index, df[col + '_std'],
                       legend='std', line_width=2, line_color='red', y_range_name="std")
             plot.add_layout(LinearAxis(y_range_name="std"), 'right')
@@ -196,9 +196,9 @@ def make_aggregate_graphs(df, filename):
             pass
         try:
             if df[col].min() != df[col].max():
-                plot.extra_y_ranges['mean'] = Range1d(df[col + '_mean'].min(skipna=True), df[col + '_mean'].max(skipna=True))
+                plot.extra_y_ranges['mean'] = Range1d(df[col + '_mean'].min(skipna=True), df[col + '_mean'].ix[ignore_initial_rounds:].max(skipna=True))
             else:
-                plot.extra_y_ranges['mean'] = Range1d(df[col + '_mean'].min(skipna=True) - 1 , df[col + '_mean'].max(skipna=True) + 1)
+                plot.extra_y_ranges['mean'] = Range1d(df[col + '_mean'].min(skipna=True) - 1 , df[col + '_mean'].ix[ignore_initial_rounds:].max(skipna=True) + 1)
             #plot.line(index), df[col],
             #          legend='mean', line_width=2, line_color='green', y_range_name="mean")
             plot.add_layout(LinearAxis(y_range_name="mean"), 'left')
@@ -207,7 +207,7 @@ def make_aggregate_graphs(df, filename):
         plots[json.dumps((plot.ref['id'], title + ' (agg)'))] = plot
     return plots
 
-def make_simple_graphs(df, filename):
+def make_simple_graphs(df, filename, ignore_initial_rounds):
     print 'make_simple_graphs', filename
     plots = {}
     try:
@@ -221,13 +221,21 @@ def make_simple_graphs(df, filename):
             title = make_title(filename, col)
             plot = figure(title=title, responsive=True, webgl=False, x_axis_type=x_axis_type,
                       tools="pan, wheel_zoom, box_zoom, save, crosshair, hover")
+            plot.yaxis.visible = None
+            plot.legend.orientation = "top_left"
+            if df[col].min(skipna=True) != df[col].max(skipna=True):
+                plot.extra_y_ranges['ttl'] = Range1d(df[col].min(skipna=True), df[col].ix[ignore_initial_rounds:].max(skipna=True))
+            else:
+                plot.extra_y_ranges['ttl'] = Range1d(df[col].min(skipna=True) - 1, df[col].ix[ignore_initial_rounds:].max(skipna=True) + 1)
 
             plot.legend.orientation = "top_left"
-            plot.line(index, df[col], legend=col, line_width=2, line_color='blue')
+            plot.line(index, df[col], legend=col, line_width=2, line_color='blue', y_range_name="ttl")
+            plot.add_layout(LinearAxis(y_range_name="ttl"), 'left')
+
             plots[json.dumps((plot.ref['id'], title))] = plot
     return plots
 
-def make_panel_graphs(df, filename):
+def make_panel_graphs(df, filename, ignore_initial_rounds):
     print 'make_panel_graphs', filename
     if 'date' in df.columns:
         x_axis_type="datetime"
@@ -261,7 +269,7 @@ def make_panel_graphs(df, filename):
 @app.route('/show_simulation')
 def show_simulation():
 
-    discard_initial_rounds = int(session.get('discard_initial_rounds', 0))
+    ignore_initial_rounds = int(session.get('ignore_initial_rounds', 0))
     plots = {}
     filenames = []
     path = request.args.get('subdir')
@@ -282,19 +290,18 @@ def show_simulation():
             rounds = max(df['round'])
         except KeyError:
             rounds = max(df['index'])
-        if discard_initial_rounds >= rounds:
-            discard_initial_rounds = 0
+        if ignore_initial_rounds >= rounds:
+            ignore_initial_rounds = 0
             print 'kill'
-        df = df.ix[discard_initial_rounds:]
         df = df.where((pd.notnull(df)), None)
         df.dropna(1, how='all', inplace=True)
         if filename.startswith('aggregate_'):
-            plots.update(make_aggregate_graphs(df, filename))
+            plots.update(make_aggregate_graphs(df, filename, ignore_initial_rounds))
         else:
             if max(df.get('id', [0])) == 0:
-                plots.update(make_simple_graphs(df, filename))
+                plots.update(make_simple_graphs(df, filename, ignore_initial_rounds))
             else:
-                plots.update(make_panel_graphs(df, filename))
+                plots.update(make_panel_graphs(df, filename, ignore_initial_rounds))
 
     script, div = components(plots)
     output = []
@@ -425,10 +432,10 @@ def generate(new_inputs, new_simulation, names=None, title=None, text=None):
         if value is not None:
             inputs.append(element)
 
-@app.route('/discard_initial_rounds', methods=['POST'])
-def discard_initial_rounds():
+@app.route('/ignore_initial_rounds', methods=['POST'])
+def ignore_initial_rounds():
     form = request.form.to_dict()
-    session['discard_initial_rounds'] = form['discard_initial_rounds']
+    session['ignore_initial_rounds'] = form['ignore_initial_rounds']
     return redirect(url_for('show_simulation'))
 
 def setup_dialog(max_rounds):
@@ -436,21 +443,21 @@ def setup_dialog(max_rounds):
     element['step'] = 25
     element['min'] = 0
     element['max'] = max_rounds
-    element['default'] = int(session.get('discard_initial_rounds', 0))
-    element['url'] = url_for('discard_initial_rounds')
-    content = """ Discard initial rounds
+    element['default'] = int(session.get('ignore_initial_rounds', 0))
+    element['url'] = url_for('ignore_initial_rounds')
+    content = """ Ignore initial rounds, when generating the axises
                   <form  method="post"  action="{url}">
                     <div class="mdl-grid">
                         <div class="mdl-cell mdl-cell--8-col">
                             <input class="mdl-slider mdl-js-slider" type="range"
                                 min="{min}" max="{max}" value="{default}" id="sldiscard_initial_rounds"
-                                step="{step}" oninput="change_text_field(this.value, 'discard_initial_rounds')"
-                                onchange="change_text_field(this.value, 'discard_initial_rounds')">
+                                step="{step}" oninput="change_text_field(this.value, 'ignore_initial_rounds')"
+                                onchange="change_text_field(this.value, 'ignore_initial_rounds')">
                             </input>
                         </div>
                         <div class="mdl-cell mdl-cell--3-col">
                             <div class="mdl-textfield mdl-js-textfield">
-                                <input class="mdl-textfield__input" type="text" id="discard_initial_rounds" name="discard_initial_rounds"
+                                <input class="mdl-textfield__input" type="text" id="ignore_initial_rounds" name="ignore_initial_rounds"
                                     onchange="change_slider_field(this.value, 'sldiscard_initial_rounds')"
                                     value="{default}">
                                 </input>
