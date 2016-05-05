@@ -229,12 +229,12 @@ def make_simple_graphs(df, filename):
 
 def make_panel_graphs(df, filename):
     print 'make_panel_graphs', filename
-    try:
-        index = df['date'][df['id'] == 0].apply(lambda sdate: datetime.date(*[int(c) for c in sdate.split('-')]))
+    if 'date' in df.columns:
         x_axis_type="datetime"
-    except KeyError:
-        index = df['round'][df['id'] == 0]
+    else:
         x_axis_type="linear"
+
+
     if  max(df['id'])> 20:
         individuals = sorted(random.sample(range(max(df['id'])), 20))
     else:
@@ -249,6 +249,10 @@ def make_panel_graphs(df, filename):
 
             plot.legend.orientation = "top_left"
             for i, id in enumerate(individuals):
+                try:
+                    index = df['date'][df['id'] == id].apply(lambda sdate: datetime.date(*[int(c) for c in sdate.split('-')]))
+                except KeyError:
+                    index = df['round'][df['id'] == id]
                 series = df[col][df['id'] == id]
                 plot.line(index, series, legend=str(id), line_width=2, line_color=colors[i])
             plots[json.dumps((plot.ref['id'], title + '(panel)'))] = plot

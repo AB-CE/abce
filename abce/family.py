@@ -24,6 +24,9 @@ class Family:
                 out[(message[0], message[1] % self.num_managers)].append(message)
         return out
 
+    def remove(self, ids):
+        self.agents = [agent for agent in self.agents if agent.id not in ids]
+
     def name(self):
         return (self.group, self.batch)
 

@@ -439,6 +439,10 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         """
         self._out.append(('_simulation', 0, (AgentClass, group_name, parameters, agent_parameters)))
 
+    def delete_agent(self, group_name, id):
+        self._out.append(('_simulation', 1, (group_name, id)))
+
+
 
 def flatten(d, parent_key=''):
     items = []
