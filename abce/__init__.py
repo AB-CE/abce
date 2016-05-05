@@ -767,12 +767,12 @@ class Simulation:
         for _, _, (group_name, id, quite) in messages:
             dest_family[(group_name, id % self.cores, quite)].append(id)
 
-        for (group_name, family_id, quite), id in dest_family.iteritems():
+        for (group_name, family_id, quite), ids in dest_family.iteritems():
             family = self.family_list[group_name][family_id]
             if quite:
-                family.replace_with_dead(id)
+                family.replace_with_dead(ids)
             else:
-                family.remove(id)
+                family.remove(ids)
 
 
 
