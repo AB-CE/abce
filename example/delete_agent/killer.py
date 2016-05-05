@@ -11,3 +11,6 @@ class Killer(abce.Agent, abce.Household):
     def kill(self):
         print 'kill', self.round
         self.delete_agent('agent', self.round, quite=True)
+
+    def send_message(self):
+        self.message('agent', self.round - 1, 'topic', 'creepy hello')

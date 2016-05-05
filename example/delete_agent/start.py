@@ -15,6 +15,7 @@ def main(simulation_parameters):
         simulation = Simulation(rounds=simulation_parameters['rounds'])
         action_list = [('killer', 'kill'),
                        ('agent', 'am_I_dead'),
+                       ('killer', 'send_message'),
                        ('agent', 'aggregate'),
                        ('agent', 'panel')]  # this instructs ABCE to save panel data as declared below
         simulation.add_action_list(action_list)
