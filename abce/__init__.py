@@ -764,12 +764,15 @@ class Simulation:
 
     def delete_agent(self, messages):
         dest_family = defaultdict(list)
-        for _, _, (group_name, id) in messages:
-            dest_family[(group_name, id % self.cores)].append(id)
+        for _, _, (group_name, id, quite) in messages:
+            dest_family[(group_name, id % self.cores, quite)].append(id)
 
-        for (group_name, family_id), id in dest_family.iteritems():
+        for (group_name, family_id, quite), id in dest_family.iteritems():
             family = self.family_list[group_name][family_id]
-            family.remove(id)
+            if quite:
+                family.replace_with_dead(id)
+            else:
+                family.remove(id)
 
 
 
