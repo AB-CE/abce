@@ -32,7 +32,7 @@ class Family:
 
     def replace_with_dead(self, ids):
         """ replaces a deleted agent, so that all messages the agent receives
-        are deleted. The agent is inactive"
+        are deleted. The agent is inactive"""
         for i in range(len(self.agents)):
             if self.agents[i].id in ids:
                 self.agents[i] = DeadAgent()
