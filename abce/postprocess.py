@@ -41,12 +41,12 @@ def to_csv(directory, calendar):
                 meaned = grouped.mean()
                 meaned.rename(columns={col: col + '_mean' for col in meaned.columns}, inplace=True)
             except pd.core.groupby.DataError:
-                pass
+                meaned = pd.DataFrame()
             try:
                 std = grouped.std()
                 std.rename(columns={col: col + '_std' for col in std.columns}, inplace=True)
             except:
-                pass
+                std = pd.DataFrame()
 
             result = pd.concat([aggregated, meaned, std], axis=1)
             if calendar:
