@@ -1,4 +1,5 @@
 from collections import defaultdict
+from abce.deadagent import DeadAgent
 import traceback
 import time
 import random
@@ -23,6 +24,18 @@ class Family:
             for message in agent._execute(command, messages[agent.id]):
                 out[(message[0], message[1] % self.num_managers)].append(message)
         return out
+
+    def remove(self, ids):
+        """ removes a deleted agent, agents that are removed, don't read their
+        messages, if they get a message the simulation stops """
+        self.agents = [agent for agent in self.agents if agent.id not in ids]
+
+    def replace_with_dead(self, ids):
+        """ replaces a deleted agent, so that all messages the agent receives
+        are deleted. The agent is inactive"""
+        for i in range(len(self.agents)):
+            if self.agents[i].id in ids:
+                self.agents[i] = DeadAgent()
 
     def name(self):
         return (self.group, self.batch)

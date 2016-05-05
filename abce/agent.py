@@ -439,6 +439,27 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         """
         self._out.append(('_simulation', 0, (AgentClass, group_name, parameters, agent_parameters)))
 
+    def delete_agent(self, group_name, id, quite=True):
+        """ This deletes an agent, an agent can delete itself. There are two
+        ways of deleting an agent. By default, quite is set to True, all future
+        messages to this agent are deleted. If quite is set to False agents are
+        completely deleted. This makes the simulation faster, but if messages
+        are send to this agents the simulation stops.
+
+        Args:
+
+            group_name:
+                group name of the agent
+
+            id:
+                the id of the agent to be deleted
+
+            quite:
+                whether the agent deletes incomming messages.
+        """
+        self._out.append(('_simulation', 1, (group_name, id, quite)))
+
+
 
 def flatten(d, parent_key=''):
     items = []

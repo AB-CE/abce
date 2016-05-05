@@ -490,6 +490,7 @@ class Simulation:
             for family in self.family_list[group]:
                 messages[family.name()] = []
         messages[('_simulation', 0)] = []
+        messages[('_simulation', 1)] = []
         for block in families_messages:
             for family_name, family_msgs in block.iteritems():
                 if len(family_msgs):
@@ -505,6 +506,8 @@ class Simulation:
         for group in groups:
             for family in self.family_list[group]:
                 messages[family.name()] = []
+        messages[('_simulation', 0)] = []
+        messages[('_simulation', 1)] = []
         for block in families_messages:
             for family_name, family_msgs in block.iteritems():
                 if len(family_msgs):
@@ -550,6 +553,7 @@ class Simulation:
                 self.family_names.append(family.name())
                 messagess[family.name()] = []
         agents_to_add = []
+        agents_to_delete = []
         try:
             if self._calendar:
                 for round in xrange(self._start_round, self._start_round + self.rounds):
@@ -562,11 +566,17 @@ class Simulation:
                             if messagess[('_simulation', 0)]:
                                 agents_to_add.extend(messagess[('_simulation', 0)])
                                 del messagess[('_simulation', 0)]
+                            if messagess[('_simulation', 1)]:
+                                agents_to_delete.extend(messagess[('_simulation', 1)])
+                                del messagess[('_simulation', 1)]
                     self.execute_internal('_advance_round')
                     self.execute_internal('_perish')
                     if agents_to_add:
                         self.add_agents(agents_to_add, round)
                         agents_to_add = []
+                    if agents_to_delete:
+                        self.delete_agent(agents_to_delete)
+                        agents_to_delete = []
             else:
                 for round in xrange(self._start_round, self._start_round + self.rounds):
                     print("\rRound" + str(" %3d " % round))
@@ -578,11 +588,17 @@ class Simulation:
                             if messagess[('_simulation', 0)]:
                                 agents_to_add.extend(messagess[('_simulation', 0)])
                                 del messagess[('_simulation', 0)]
+                            if messagess[('_simulation', 1)]:
+                                agents_to_delete.extend(messagess[('_simulation', 1)])
+                                del messagess[('_simulation', 1)]
                     self.execute_internal('_advance_round')
                     self.execute_internal('_perish')
                     if agents_to_add:
                         self.add_agents(agents_to_add, round)
                         agents_to_add = []
+                    if agents_to_delete:
+                        self.delete_agent(agents_to_delete)
+                        agents_to_delete = []
         except EOFError:
             pass
         except:
@@ -745,6 +761,19 @@ class Simulation:
                 family.last_added_agent('_set_network_drawing_frequency', (self._network_drawing_frequency,))
             except AttributeError:
                 family.last_added_agent('_set_network_drawing_frequency', (None,))
+
+    def delete_agent(self, messages):
+        dest_family = defaultdict(list)
+        for _, _, (group_name, id, quite) in messages:
+            dest_family[(group_name, id % self.cores, quite)].append(id)
+
+        for (group_name, family_id, quite), ids in dest_family.iteritems():
+            family = self.family_list[group_name][family_id]
+            if quite:
+                family.replace_with_dead(ids)
+            else:
+                family.remove(ids)
+
 
 
     def _write_description_file(self):
