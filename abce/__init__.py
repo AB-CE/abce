@@ -128,7 +128,7 @@ class Simulation:
 
         w.run()
     """
-    def __init__(self, rounds, name='abce', random_seed=None, trade_logging='off', cores=None, **chatch):
+    def __init__(self, rounds, name='abce', random_seed=None, trade_logging='off', cores=None):
         """
         """
         self.family_list = {}
