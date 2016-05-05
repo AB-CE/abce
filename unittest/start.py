@@ -19,6 +19,9 @@ from abce import Simulation, repeat
 from messagea import MessageA
 from messageb import MessageB
 from addagent import AddAgent
+from killer import Killer
+from victim import Victim
+
 
 def main():
     rounds = 30
@@ -53,6 +56,9 @@ def main():
         (contractagents, 'deliver'),
         (contractagents, 'pay'),
         (contractagents, 'control'),
+        ('killer', 'kill'),
+        ('killer', 'send_message'),
+        ('victim', 'am_I_dead'),
 
         #('expiringcapital', 'go'),
 
@@ -85,6 +91,9 @@ def main():
     s.build_agents(MessageA, 'messagea', 20, parameters={'rounds': rounds}, expandable=True)
     s.build_agents(MessageB, 'messageb', 20, parameters={'rounds': rounds}, expandable=True)
     s.build_agents(AddAgent, 'addagent', 1, parameters={'rounds': rounds})
+    s.build_agents(Killer, 'killer', 1, parameters={'rounds': rounds})
+    s.build_agents(Victim, 'victim', rounds, parameters={'rounds': rounds})
+    s.build_agents(Victim, 'loudvictim', rounds, parameters={'rounds': rounds})
 
     s.run()
 
