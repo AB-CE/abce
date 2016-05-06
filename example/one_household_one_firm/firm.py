@@ -23,4 +23,7 @@ class Firm(abce.Agent, abce.Firm):
 
     def sell_goods(self):
         """ offers one unit of labor to firm 0, for the price of 1 "money" """
-        self.sell('household', 0, "GOOD", self.possession("GOOD"), 1)
+        self.sell('household', 0,
+                  good="GOOD",
+                  quantity=self.possession("GOOD"),
+                  price=1)

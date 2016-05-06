@@ -14,7 +14,10 @@ class Household(abce.Agent, abce.Household):
 
     def sell_labor(self):
         """ offers one unit of labor to firm 0, for the price of 1 "money" """
-        self.sell('firm', 0, "labor", 1, 1)
+        self.sell('firm', 0,
+                  good="labor",
+                  quantity=1,
+                  price=1)
 
     def buy_goods(self):
         """ receives the offers and accepts them one by one """
