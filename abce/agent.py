@@ -463,7 +463,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
             quite:
                 whether the agent deletes incomming messages.
         """
-        self._out.append(('_simulation', 1, (group_name, id, quite)))
+        self._out.append(('_simulation', 0.5, (group_name, id, quite)))
 
 
 

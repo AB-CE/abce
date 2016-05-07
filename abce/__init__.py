@@ -490,7 +490,7 @@ class Simulation:
             for family in self.family_list[group]:
                 messages[family.name()] = []
         messages[('_simulation', 0)] = []
-        messages[('_simulation', 1)] = []
+        messages[('_simulation', 0.5)] = []
         for block in families_messages:
             for family_name, family_msgs in block.iteritems():
                 if len(family_msgs):
@@ -507,7 +507,7 @@ class Simulation:
             for family in self.family_list[group]:
                 messages[family.name()] = []
         messages[('_simulation', 0)] = []
-        messages[('_simulation', 1)] = []
+        messages[('_simulation', 0.5)] = []
         for block in families_messages:
             for family_name, family_msgs in block.iteritems():
                 if len(family_msgs):
@@ -566,9 +566,9 @@ class Simulation:
                             if messagess[('_simulation', 0)]:
                                 agents_to_add.extend(messagess[('_simulation', 0)])
                                 del messagess[('_simulation', 0)]
-                            if messagess[('_simulation', 1)]:
-                                agents_to_delete.extend(messagess[('_simulation', 1)])
-                                del messagess[('_simulation', 1)]
+                            if messagess[('_simulation', 0.5)]:
+                                agents_to_delete.extend(messagess[('_simulation', 0.5)])
+                                del messagess[('_simulation', 0.5)]
                     self.execute_internal('_advance_round')
                     self.execute_internal('_perish')
                     if agents_to_add:
@@ -588,9 +588,9 @@ class Simulation:
                             if messagess[('_simulation', 0)]:
                                 agents_to_add.extend(messagess[('_simulation', 0)])
                                 del messagess[('_simulation', 0)]
-                            if messagess[('_simulation', 1)]:
-                                agents_to_delete.extend(messagess[('_simulation', 1)])
-                                del messagess[('_simulation', 1)]
+                            if messagess[('_simulation', 0.5)]:
+                                agents_to_delete.extend(messagess[('_simulation', 0.5)])
+                                del messagess[('_simulation', 0.5)]
                     self.execute_internal('_advance_round')
                     self.execute_internal('_perish')
                     if agents_to_add:
