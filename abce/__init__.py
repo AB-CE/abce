@@ -679,10 +679,12 @@ class Simulation:
         self.family_list[group_name] = []
 
         MyManager.register('Family', Family)
-
-        self.sim_parameters[group_name] = {key: parameter
-                                           for key, parameter in parameters.iteritems()
-                                           if key not in self.sim_parameters.keys() + ['trade_logging']}
+        try:
+            self.sim_parameters[group_name] = {key: parameter
+                                               for key, parameter in parameters.iteritems()
+                                               if key not in self.sim_parameters.keys() + ['trade_logging']}
+        except AttributeError:
+            self.sim_parameters[group_name] = parameters
         if expandable:
             num_families = self.cores
         else:
