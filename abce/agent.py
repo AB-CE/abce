@@ -374,7 +374,10 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
             data_to_track[possession] = self._haves[possession]
 
         for variable in self.variables_to_track_panel:
-            data_to_track[variable] = self.__dict__[variable]
+            try:
+                data_to_track[variable] = self.__dict__[variable]
+            except KeyError:
+                pass
         self.database_connection.put(["panel",
                                        data_to_track,
                                        str(self.id),
@@ -388,7 +391,10 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
             data_to_track[possession] = self._haves[possession]
 
         for variable in self.variables_to_track_aggregate:
-            data_to_track[variable] = self.__dict__[variable]
+            try:
+                data_to_track[variable] = self.__dict__[variable]
+            except KeyError:
+                pass
         self.database_connection.put(["aggregate",
                                        data_to_track,
                                        self.group,
