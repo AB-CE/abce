@@ -501,7 +501,7 @@ class Simulation:
 
     def execute_parallel(self, groups, command, messages):
         parameters = ((family, command, messages[family.name()]) for group in groups for family in self.family_list[group])
-        families_messages = self.pool.map(execute_wrapper, parameters)
+        families_messages = self.pool.map(execute_wrapper, parameters, chunksize=1)
         for group in groups:
             for family in self.family_list[group]:
                 messages[family.name()] = []
@@ -541,7 +541,7 @@ class Simulation:
 
     def execute_internal_parallel(self, command):
         parameters = ((family, command) for group in self.family_list for family in self.family_list[group])
-        families_messages = self.pool.map(execute_internal_wrapper, parameters)
+        families_messages = self.pool.map(execute_internal_wrapper, parameters, chunksize=1)
 
     def run(self):
         """ This runs the simulation """
