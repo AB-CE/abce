@@ -70,28 +70,46 @@ def main(cores, rounds):
     s.declare_perishable(good='labor')
     #s.panel('buy', variables=['price'])
     #s.declare_expiring('xcapital', 5)
-
+    print 'build Buy'
     s.build_agents(Buy, 'buy', 1000, parameters={'rounds': rounds})
+    print 'build Sell'
     #s.build_agents(QuoteBuy, 2)
     s.build_agents(Sell, 'sell', 1000, parameters={'rounds': rounds})
+    print 'build Give'
     s.build_agents(Give, 'give', 2, parameters={'rounds': rounds}, expandable=True) # tests give and messaging
+    print 'build Endowment'
     s.build_agents(Endowment, 'endowment', 2, parameters={'rounds': rounds, 'creation': 0}, expandable=True)  # tests declare_round_endowment and declare_perishable
+    print 'build LoggerTest'
     s.build_agents(LoggerTest, 'loggertest', 1, parameters={'rounds': rounds})
+    print 'build ProductionMultifirm'
     s.build_agents(ProductionMultifirm, 'productionmultifirm', 1, parameters={'rounds': rounds})
+    print 'build ProductionFirm'
     s.build_agents(ProductionFirm, 'productionfirm', 7, parameters={'rounds': rounds})
+    print 'UtilityHousehold'
     s.build_agents(UtilityHousehold, 'utilityhousehold', 5, parameters={'rounds': rounds})
+    print 'build ContractSeller'
     s.build_agents(ContractSeller, 'contractseller', 2, parameters={'rounds': rounds})
+    print 'build ContractBuyer'
     s.build_agents(ContractBuyer, 'contractbuyer', 2, parameters={'rounds': rounds})
+    print 'build ContractSellerStop'
     s.build_agents(ContractSellerStop, 'contractsellerstop', 2, parameters={'rounds': rounds})
+    print 'build ContractBuyerStop'
     s.build_agents(ContractBuyerStop, 'contractbuyerstop', 2, parameters={'rounds': rounds})
     #s.build_agents(ExpiringCapital, 1)
     #s.build_agents(GiveExpiringCapital, 2)
+    print 'build BuyExpiringCapital'
     s.build_agents(BuyExpiringCapital, 'buyexpiringcapital', 2, parameters={'rounds': rounds})
+    print 'build MessageA'
     s.build_agents(MessageA, 'messagea', 20, parameters={'rounds': rounds}, expandable=True)
+    print 'build MessageB'
     s.build_agents(MessageB, 'messageb', 20, parameters={'rounds': rounds}, expandable=True)
+    print 'build AddAgent'
     s.build_agents(AddAgent, 'addagent', 1, parameters={'rounds': rounds})
+    print 'build Killer'
     s.build_agents(Killer, 'killer', 1, parameters={'rounds': rounds})
+    print 'build Victim'
     s.build_agents(Victim, 'victim', rounds, parameters={'rounds': rounds})
+    print 'build Victim loudvictim'
     s.build_agents(Victim, 'loudvictim', rounds, parameters={'rounds': rounds})
 
     s.run()
