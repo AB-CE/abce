@@ -91,20 +91,21 @@ class Simulation:
             Whether trades are logged,trade_logging can be
             'group' (fast) or 'individual' (slow) or 'off'
 
-        cores (optional):
-            The number of cores of your processor that are used for the simulation.
-            Default is all your logical cores using hyper-threading when available.
-            For easy debugging set cores to one and the simulation is executed
+        processes (optional):
+            The number of processes that run in parallel. Each process hosts a share of
+            the agents.
+            Default is all your logical processor cores times two, using hyper-threading when available.
+            For easy debugging set processes to one and the simulation is executed
             without parallelization.
-            Sometimes it is advisable to decrease the number of cores to the number
-            of physical cores on your computer.
-            'None' for all cores.
-            **For easy debugging set cores to 1, this way only one agent runs at
+            Sometimes it is advisable to decrease the number of processes to the number
+            of logical or even physical processor cores on your computer.
+            'None' for all processor cores times 2.
+            **For easy debugging set processes to 1, this way only one agent runs at
             a time and only one error message is displayed**
 
         Example::
 
-            simulation = Simulation(rounds=1000, name='sim', trade_logging='individual', cores=None)
+            simulation = Simulation(rounds=1000, name='sim', trade_logging='individual', processes=None)
 
 
     Example for a simulation::
@@ -120,7 +121,7 @@ class Simulation:
         'after_sales_before_consumption'
         ('household', 'consume')
         ]
-        w = Simulation(rounds=1000, name='sim', trade_logging='individual', cores=None)
+        w = Simulation(rounds=1000, name='sim', trade_logging='individual', processes=None)
         w.add_action_list(action_list)
         w.build_agents(Firm, 'firm', 'num_firms')
         w.build_agents(Household, 'household', 'num_households')
@@ -132,7 +133,7 @@ class Simulation:
 
         w.run()
     """
-    def __init__(self, rounds, name='abce', random_seed=None, trade_logging='off', cores=None):
+    def __init__(self, rounds, name='abce', random_seed=None, trade_logging='off', processes=None):
         """
         """
         self.family_list = {}
@@ -187,14 +188,14 @@ class Simulation:
         self._db = abce.db.Database(self.path, self.database_queue, trade_log=self.trade_logging_mode != 'off')
         self.logger_queue = manager.Queue()
 
-        if cores is None:
-            self.cores = mp.cpu_count()
+        if processes is None:
+            self.processes = mp.cpu_count()
         else:
-            self.cores = cores
+            self.processes = processes
 
         MyManager.register('Family', Family)
         self.managers = []
-        for i in range(self.cores):
+        for i in range(self.processes):
             manager = MyManager()
             manager.start()
 
@@ -545,8 +546,8 @@ class Simulation:
 
     def run(self):
         """ This runs the simulation """
-        if self.cores > 1:
-            self.pool = mp.Pool(self.cores)
+        if self.processes > 1:
+            self.pool = mp.Pool(self.processes)
             self.execute = self.execute_parallel
         else:
             self.execute = self.execute_serial
@@ -709,7 +710,7 @@ class Simulation:
             family = manager.Family(AgentClass,
                                     num_agents_this_group=num_agents_this_group,
                                     batch=i,
-                                    num_managers=self.cores,
+                                    num_managers=self.processes,
                                     agent_args={'group': group_name,
                                                 'trade_logging': self.trade_logging_mode,
                                                 'database': self.database_queue,
@@ -749,8 +750,8 @@ class Simulation:
         for _, _, (AgentClass, group_name, parameters, agent_parameters) in messages:
             id = self.num_of_agents_in_group[group_name]
             self.num_of_agents_in_group[group_name] += 1
-            assert len(self.family_list[group_name]) == self.cores, "the expandable parameter in build_agents must be set to true"
-            family = self.family_list[group_name][id % self.cores]
+            assert len(self.family_list[group_name]) == self.processes, "the expandable parameter in build_agents must be set to true"
+            family = self.family_list[group_name][id % self.processes]
 
             family.append(AgentClass, id=id,
                                     agent_args={'group': group_name,
@@ -784,7 +785,7 @@ class Simulation:
     def delete_agent(self, messages):
         dest_family = defaultdict(list)
         for _, _, (group_name, id, quite) in messages:
-            dest_family[(group_name, id % self.cores, quite)].append(id)
+            dest_family[(group_name, id % self.processes, quite)].append(id)
 
         for (group_name, family_id, quite), ids in dest_family.iteritems():
             family = self.family_list[group_name][family_id]
