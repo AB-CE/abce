@@ -23,7 +23,7 @@ from killer import Killer
 from victim import Victim
 
 
-def main(cores, rounds):
+def main(processes, rounds):
     all = ['buy',
            'sell',
            'give',
@@ -33,7 +33,7 @@ def main(cores, rounds):
     contractagents = ['contractbuyer', 'contractseller',
                       'contractbuyerstop', 'contractsellerstop']
 
-    s = Simulation(rounds=rounds, cores=cores)
+    s = Simulation(rounds=rounds, processes=processes)
     action_list = [
         repeat([
             (all, 'one'),
@@ -115,7 +115,7 @@ def main(cores, rounds):
     s.run()
 
 if __name__ == '__main__':
-    main(cores=1, rounds=10)
+    main(processes=1, rounds=10)
     print 'Iteration with 1 core finished'
-    main(cores=None, rounds=20)
-    print 'Iteration with multiple cores finished'
+    main(processes=None, rounds=20)
+    print 'Iteration with multiple processes finished'
