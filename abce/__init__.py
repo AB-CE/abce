@@ -189,7 +189,7 @@ class Simulation:
         self.logger_queue = manager.Queue()
 
         if processes is None:
-            self.processes = mp.cpu_count() * 2
+            self.processes = mp.cpu_count()
         else:
             self.processes = processes
 
@@ -535,7 +535,7 @@ class Simulation:
                                        + str(family_name))
         return messages
 
-    def execute_internal(self, command):
+    def execute_internal_seriel(self, command):
         for group in self.family_list:
             for family in self.family_list[group]:
                 family.execute_internal(command)
@@ -549,8 +549,10 @@ class Simulation:
         if self.processes > 1:
             self.pool = mp.Pool(self.processes)
             self.execute = self.execute_parallel
+            self.execute_internal = self.execute_internal_parallel
         else:
             self.execute = self.execute_serial
+            self.execute_internal = self.execute_internal_seriel
         if not(self.family_list):
             raise SystemExit('No Agents Created')
         if not(self.action_list) and not(self._action_list):
@@ -579,7 +581,7 @@ class Simulation:
             if self._calendar:
                 for round in xrange(self._start_round, self._start_round + self.rounds):
                     print("\rRound" + str(" %3d " % round) + str(datetime.date.fromordinal(round)))
-                    self.execute_internal_parallel('_produce_resource')
+                    self.execute_internal('_produce_resource')
 
                     for group, action, condition in self._action_list:
                         if condition(datetime.date.fromordinal(round)):
@@ -590,8 +592,8 @@ class Simulation:
                             if messagess[('_simulation', 0.5)]:
                                 agents_to_delete.extend(messagess[('_simulation', 0.5)])
                                 del messagess[('_simulation', 0.5)]
-                    self.execute_internal_parallel('_advance_round')
-                    self.execute_internal_parallel('_perish')
+                    self.execute_internal('_advance_round')
+                    self.execute_internal('_perish')
                     if agents_to_add:
                         self.add_agents(agents_to_add, round)
                         agents_to_add = []
@@ -601,7 +603,7 @@ class Simulation:
             else:
                 for round in xrange(self._start_round, self._start_round + self.rounds):
                     print("\rRound" + str(" %3d " % round))
-                    self.execute_internal_parallel('_produce_resource')
+                    self.execute_internal('_produce_resource')
 
                     for group, action, condition in self._action_list:
                         if condition(round):
@@ -612,8 +614,8 @@ class Simulation:
                             if messagess[('_simulation', 0.5)]:
                                 agents_to_delete.extend(messagess[('_simulation', 0.5)])
                                 del messagess[('_simulation', 0.5)]
-                    self.execute_internal_parallel('_advance_round')
-                    self.execute_internal_parallel('_perish')
+                    self.execute_internal('_advance_round')
+                    self.execute_internal('_perish')
                     if agents_to_add:
                         self.add_agents(agents_to_add, round)
                         agents_to_add = []
