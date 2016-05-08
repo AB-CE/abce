@@ -16,7 +16,10 @@
 # the License.
 import multiprocessing
 import networkx as nx
-import matplotlib.pyplot as plt
+try:
+    import matplotlib.pyplot as plt
+except ImportError:
+    pass
 
 
 class AbceLogger(multiprocessing.Process):
@@ -82,19 +85,22 @@ class AbceLogger(multiprocessing.Process):
             nx.write_gml(network, self.directory +'/network%05d.gml' % current_round)
 
         if self.savefig:
-            if self.pos is None or self.pos_fixed == False:
-                self.pos = nx.spring_layout(network, pos=self.pos) # positions for all nodes
-            plt.figure(1, figsize=self.figsize)
-            nodeShapes = set((aShape[1]["shape"] for aShape in network.nodes(data = True)))
-            for aShape in nodeShapes:
-                nodelist = [sNode[0]
-                            for sNode in filter(lambda x: x[1]["shape"] == aShape, network.nodes(data = True))]
-                nx.draw_networkx_nodes(network,
-                                       self.pos,
-                                       node_shape=aShape,
-                                       nodelist=nodelist,
-                                       node_color=[colors[node] for node in nodelist],
-                                       alpha=self.alpha)
-            nx.draw_networkx_edges(network, self.pos)
-            plt.savefig(self.directory +'/network%05d.png' % current_round, dpi=self.dpi)
-            plt.close()
+            try:
+                if self.pos is None or self.pos_fixed == False:
+                    self.pos = nx.spring_layout(network, pos=self.pos) # positions for all nodes
+                plt.figure(1, figsize=self.figsize)
+                nodeShapes = set((aShape[1]["shape"] for aShape in network.nodes(data = True)))
+                for aShape in nodeShapes:
+                    nodelist = [sNode[0]
+                                for sNode in filter(lambda x: x[1]["shape"] == aShape, network.nodes(data = True))]
+                    nx.draw_networkx_nodes(network,
+                                           self.pos,
+                                           node_shape=aShape,
+                                           nodelist=nodelist,
+                                           node_color=[colors[node] for node in nodelist],
+                                           alpha=self.alpha)
+                nx.draw_networkx_edges(network, self.pos)
+                plt.savefig(self.directory +'/network%05d.png' % current_round, dpi=self.dpi)
+                plt.close()
+            except NameError:
+                raise NameError("matplotlib not installed: sudo apt-get install matplotlib; or pip install matplotlib")
