@@ -40,6 +40,7 @@ This is a minimal template for a start.py::
     s.run()
 """
 from __future__ import division
+import sys
 import csv
 import datetime
 import os
@@ -151,10 +152,14 @@ class Simulation:
 
         self.rounds = rounds
 
+        if sys.version_info[0] != 2 or sys.version_info[1] != 7:
+            print("**** WARNING: ABCE needs python 2.7 ****")
+
         try:
             os.makedirs(os.path.abspath('.') + '/result/')
         except OSError:
             pass
+
         self.path = (os.path.abspath('.') + '/result/' + name + '_' +
             datetime.datetime.now().strftime("%Y-%m-%d_%H-%M"))
         """ the path variable contains the path to the simulation outcomes it can be used
