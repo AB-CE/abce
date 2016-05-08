@@ -189,7 +189,7 @@ class Simulation:
         self.logger_queue = manager.Queue()
 
         if processes is None:
-            self.processes = mp.cpu_count()
+            self.processes = mp.cpu_count() * 2
         else:
             self.processes = processes
 
