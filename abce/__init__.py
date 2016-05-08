@@ -189,6 +189,14 @@ class Simulation:
         else:
             self.cores = cores
 
+        MyManager.register('Family', Family)
+        self.managers = []
+        for i in range(self.cores):
+            manager = MyManager()
+            manager.start()
+
+            self.managers.append(manager)
+
         if random_seed is None or random_seed == 0:
             random_seed = time.time()
         random.seed(random_seed)
@@ -683,21 +691,18 @@ class Simulation:
 
         self.family_list[group_name] = []
 
-        MyManager.register('Family', Family)
         try:
             self.sim_parameters[group_name] = {key: parameter
                                                for key, parameter in parameters.iteritems()
                                                if key not in self.sim_parameters.keys() + ['trade_logging']}
         except AttributeError:
             self.sim_parameters[group_name] = parameters
-        if expandable:
-            num_families = self.cores
-        else:
-            num_families = min(self.cores, num_agents_this_group)
-        for i in range(num_families):
-            manager = MyManager()
-            manager.start()
-            family = manager.Family(AgentClass, num_agents_this_group=num_agents_this_group, batch=i, num_managers=self.cores,
+
+        for i, manager in enumerate(self.managers):
+            family = manager.Family(AgentClass,
+                                    num_agents_this_group=num_agents_this_group,
+                                    batch=i,
+                                    num_managers=self.cores,
                                     agent_args={'group': group_name,
                                                 'trade_logging': self.trade_logging_mode,
                                                 'database': self.database_queue,
