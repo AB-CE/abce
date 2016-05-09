@@ -208,7 +208,7 @@ class Trade:
             elif offer.status = 'accepted':
                 self.price *= offer.final_quantity / offer.quantity
     """
-    def get_offers_all(self, descending=False):
+    def get_offers_all(self, descending=False, sorted=True):
         """ returns all offers in a dictionary, with goods as key. The in each
         goods-category the goods are ordered by price. The order can be reversed
         by setting descending=True
@@ -220,6 +220,9 @@ class Trade:
 
          descending(optional):
             is a bool. False for descending True for ascending by price
+
+         sorted(default=True):
+                Whether offers are sorted by price. Faster if False.
 
         Returns:
 
@@ -239,9 +242,9 @@ class Trade:
          for offer in oo.beer:
             print(offer.price, offer.sender_group, offer.sender_id)
         """
-        return {good: self.get_offers(good, descending) for good in self._open_offers}
+        return {good: self.get_offers(good, descending, sorted) for good in self._open_offers}
 
-    def get_offers(self, good, descending=False):
+    def get_offers(self, good, descending=False, sorted=True):
         """ returns all offers of the 'good' ordered by price.
 
         *Offers that are not accepted in the same subround (def block) are
@@ -253,8 +256,12 @@ class Trade:
         Args:
             good:
                 the good which should be retrieved
-            descending(bool,default=False):
+
+            descending(bool, default=False):
                 False for descending True for ascending by price
+
+            sorted(bool, default=True):
+                Whether offers are sorted by price. Faster if False.
 
         Returns:
             A list of :class:`abce.trade.Offer` ordered by price.
@@ -275,7 +282,10 @@ class Trade:
         for offer in self._open_offers[good].values():
             offer.open_offer_status = 'polled'
             ret.append(offer)
-        ret.sort(key=lambda objects: objects.price, reverse=descending, cmp=compare_with_ties)
+        if sorted:
+            ret.sort(key=lambda objects: objects.price, reverse=descending, cmp=compare_with_ties)
+        else:
+            random.shuffle(ret)
         return ret
 
     def peak_offers(self, good, descending=False):
