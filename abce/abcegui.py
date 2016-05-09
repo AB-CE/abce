@@ -482,11 +482,10 @@ def run(open=True, new=1):
                 webbrowser.open("http://127.0.0.1:%i/" % port, new=new, autoraise=True)
             else:
                 webbrowser.open("http://127.0.0.1:%i/show_simulation" % port, new=new, autoraise=True)
+        if inputs:
+            print "go to http://127.0.0.1:%i/" % port
         else:
-            if inputs:
-                print "go to http://127.0.0.1:%i/" % port
-            else:
-                print "go to http://127.0.0.1:%i/show_simulation" % port
+            print "go to http://127.0.0.1:%i/show_simulation" % port
         global opened
         opened = True
         app.run(use_reloader=False, host=host, port=port)
