@@ -16,7 +16,7 @@ from bokeh.io import gridplot
 import json
 import datetime
 import time
-
+from abcegui_helper import find_free_port
 
 colors = ["red","blue","green","black","purple","pink",
           "yellow","orange","pink","Brown","Cyan","Crimson",
@@ -474,20 +474,22 @@ def run(open=True, new=1):
     """ runs the web interface that starts the ABCE simulation. If open=True,
     (default) it opens a new window in the web browser if false you need to
     manually go to  http://127.0.0.1:5000/"""
+    host = "127.0.0.1"
+    port = find_free_port(host, 5000)
     if not opened:
         if open:
             if inputs:
-                webbrowser.open("http://127.0.0.1:5000/", new=new, autoraise=True)
+                webbrowser.open("http://127.0.0.1:%i/" % port, new=new, autoraise=True)
             else:
-                webbrowser.open("http://127.0.0.1:5000/show_simulation", new=new, autoraise=True)
+                webbrowser.open("http://127.0.0.1:%i/show_simulation" % port, new=new, autoraise=True)
         else:
             if inputs:
-                print "go to http://127.0.0.1:5000/"
+                print "go to http://127.0.0.1:%i/" % port
             else:
-                print "go to http://127.0.0.1:5000/show_simulation"
+                print "go to http://127.0.0.1:%i/show_simulation" % port
         global opened
         opened = True
-        app.run(use_reloader=False)
+        app.run(use_reloader=False, host=host, port=port)
 
 # slider (slider-range)
 # switch
