@@ -2,6 +2,9 @@ Walk through
 ============
 
 This walkthrough is a step by step guide to create an agent-based model with ABCE.
+We will create a simple economy of a household and one firm. The household and the
+firm trade with each other at fixed prices and quantities. You can than make the
+model more realistic by implementing price and decision rules for yourself.
 In the following two text boxes, the two concepts that make ABCE special are
 explained: The explicit modeling of trade-able goods and the optional concept
 of a physically closed economy.
