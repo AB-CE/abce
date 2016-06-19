@@ -298,10 +298,13 @@ def show_simulation():
         if filename.startswith('aggregate_'):
             plots.update(make_aggregate_graphs(df, filename, ignore_initial_rounds))
         else:
-            if max(df.get('id', [0])) == 0:
-                plots.update(make_simple_graphs(df, filename, ignore_initial_rounds))
-            else:
-                plots.update(make_panel_graphs(df, filename, ignore_initial_rounds))
+            try:
+                if max(df.get('id', [0])) == 0:
+                    plots.update(make_simple_graphs(df, filename, ignore_initial_rounds))
+                else:
+                    plots.update(make_panel_graphs(df, filename, ignore_initial_rounds))
+            except ValueError:
+                print(filename, 'not displayable: ValueError')
 
     script, div = components(plots)
     output = []
