@@ -78,12 +78,20 @@ class FirmMultiTechnologies:
             except NotEnoughGoods:
                 A.produce(bike_production_function, bike)
         """
-        for good in production_function.use.keys():
-            if self._haves[good] < input_goods[good] - epsilon:
-                raise NotEnoughGoods(self.name, good, (input_goods[good] - self._haves[good]))
+        if production_function.use == 'all':
+            for good in input_goods.keys():
+                if self._haves[good] < input_goods[good] - epsilon:
+                    raise NotEnoughGoods(self.name, good, (input_goods[good] - self._haves[good]))
 
-        for good, use in production_function.use.iteritems():
-            self._haves[good] -= input_goods[good] * use
+            for good in input_goods:
+                self._haves[good] -= input_goods[good]
+        else:
+            for good in production_function.use.keys():
+                if self._haves[good] < input_goods[good] - epsilon:
+                    raise NotEnoughGoods(self.name, good, (input_goods[good] - self._haves[good]))
+
+            for good, use in production_function.use.iteritems():
+                self._haves[good] -= input_goods[good] * use
 
         output_dict =  production_function.production(input_goods)
         for good in output_dict.keys():
@@ -282,7 +290,7 @@ class FirmMultiTechnologies:
                 a = 1 / len(goods)
                 return multiplier * np.sum([a * goods[name] ** gamma
                                            for name in goods]) ** (1 /  gamma)
-            production_function.use = {'a': 1, 'b': 1, 'c': 1, 'd': 1, 'e': 1}#defaultdict(lambda: 1)
+            production_function.use = 'all'
         else:
             def production_function(goods):
                 return multiplier * np.sum([share * goods[name] ** gamma
