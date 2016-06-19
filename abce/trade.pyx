@@ -54,7 +54,6 @@ cdef double fmax(double a, double b):
     else:
         return b
 
-
 cdef class Offer:
     """ This is an offer container that is send to the other agent. You can
     access the offer container both at the receiver as well as at the sender,
@@ -369,7 +368,7 @@ class Trade:
                     print('On diet')
         """
         cdef double available
-        assert price > - epsilon, '%.30f is smaller than 0 - epsilon (%.30f)' % (price, - epsilon)
+        assert price > - epsilon, 'price %.30f is smaller than 0 - epsilon (%.30f)' % (price, - epsilon)
         if not isfinite(price) or isnan(price):
             print ('warning infinity or nan in trade price:', price)
         if price < 0:
@@ -377,7 +376,7 @@ class Trade:
         # makes sure the quantity is between zero and maximum available, but
         # if its only a little bit above or below its set to the bounds
         available = self._haves[good]
-        assert quantity > - epsilon, '%.30f is smaller than 0 - epsilon (%.30f)' % (quantity, - epsilon)
+        assert quantity > - epsilon, 'quantity %.30f is smaller than 0 - epsilon (%.30f)' % (quantity, - epsilon)
         if not isfinite(quantity) or isnan(quantity):
             print ('warning infinity or nan in trade quantity:', quantity)
         if quantity < 0:
@@ -439,7 +438,7 @@ class Trade:
         """
         cdef double available
         cdef double money_amount
-        assert price > - epsilon, '%.30f is smaller than 0 - epsilon (%.30f)' % (price, - epsilon)
+        assert price > - epsilon, 'price %.30f is smaller than 0 - epsilon (%.30f)' % (price, - epsilon)
         if not isfinite(price) or isnan(price):
             print ('warning infinity or nan in trade price:', price)
         if price < 0:
@@ -448,7 +447,7 @@ class Trade:
         # makes sure the money_amount is between zero and maximum available, but
         # if its only a little bit above or below its set to the bounds
         available = self._haves['money']
-        assert money_amount > - epsilon, '%.30f is smaller than 0 - epsilon (%.30f)' % (money_amount, - epsilon)
+        assert money_amount > - epsilon, 'money (price * quantity) %.30f is smaller than 0 - epsilon (%.30f)' % (money_amount, - epsilon)
         if not isfinite(money_amount) or isnan(money_amount):
             print ('warning infinity or nan in trade money_amount', money_amount)
         if money_amount < 0:
@@ -519,7 +518,7 @@ class Trade:
 
         if quantity == -999:
             quantity = offer_quantity
-        assert quantity > - epsilon, '%.30f is smaller than 0 - epsilon (%.30f)' % (quantity, - epsilon)
+        assert quantity > - epsilon, 'quantity %.30f is smaller than 0 - epsilon (%.30f)' % (quantity, - epsilon)
         if not isfinite(quantity) or isnan(quantity):
             print ('warning infinity or nan in trade quantity:', quantity)
         if quantity < 0:
@@ -532,7 +531,7 @@ class Trade:
 
         money_amount = quantity * offer.price
         if offer.buysell == 115:  # ord('s')
-            assert money_amount > - epsilon, '%.30f is smaller than 0 - epsilon (%.30f)' % (money_amount, - epsilon)
+            assert money_amount > - epsilon, 'money = quantity * offer.price %.30f is smaller than 0 - epsilon (%.30f)' % (money_amount, - epsilon)
             if not isfinite(money_amount) or isnan(money_amount):
                 print ('warning infinity or nan in trade money_amount', money_amount)
             if money_amount < 0:
@@ -546,7 +545,7 @@ class Trade:
             self._haves[offer.good] += quantity
             self._haves['money'] -= quantity * offer.price
         else:
-            assert quantity > - epsilon, '%.30f is smaller than 0 - epsilon (%.30f)' % (quantity, - epsilon)
+            assert quantity > - epsilon, 'quantity %.30f is smaller than 0 - epsilon (%.30f)' % (quantity, - epsilon)
             if not isfinite(quantity) or isnan(quantity):
                 print ('warning infinity or nan in trade quantity', quantity)
             if quantity < 0:
@@ -673,7 +672,7 @@ class Trade:
 
         """
         cdef double available
-        assert quantity > - epsilon, '%.30f is smaller than 0 - epsilon (%.30f)' % (quantity, - epsilon)
+        assert quantity > - epsilon, 'quantity %.30f is smaller than 0 - epsilon (%.30f)' % (quantity, - epsilon)
         if not isfinite(quantity) or isnan(quantity):
             print ('warning infinity or nan in trade quantity', quantity)
         if quantity < 0:
