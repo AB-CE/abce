@@ -151,7 +151,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
 
     def date(self):
         """ If ABCE is run in calendar mode (via
-            :method:`abce.Simulation.declare_calendar`), date shows the current
+            :py:meth:`abce.Simulation.declare_calendar`), date shows the current
             date.::
 
             self.date().day
