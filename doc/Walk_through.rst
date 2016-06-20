@@ -629,7 +629,3 @@ In the remainder of this walkthrough we will discus a minimal agent based model 
 
 
 .. [#remainder] round % 2 == 0 means the remainder of round divided by 2 is zero.
-                'lambda round: round % 2 == 0' is equivalent to::
-
-                    def anonymous_function(round):
-                        return round % 2 == 0
