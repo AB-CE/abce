@@ -11,4 +11,4 @@ ABCE is a scheduler [1] and a set of agent classes. According to the schedule th
 The audience of ABCE are economists that want to model agent-based models of trade and production. It is especially geared towards simulations that are similar to standard economic models like general or partial equilibrium models [2]. What is more ABCE is especially designed to make writing the simulation and the execution fast. Therefore models can be developed in an interlinked process of running and rewriting the simulation.
 
 ABCE uses Python - a language that is especially beginner friendly, but also easy to learn for people who already know object oriented programming languages such as Java, C++ or even MATLAB. Python allows simple, but fully functional, programming for economists. What is more Python is readable even for non Python programmers.
-<h2> <a href="http://abce.readthedocs.org/en/latest/">Find the Documentation at readthedocs</a> </h2>"""
+<h2> <a href="http://abce.readthedocs.io/en/master/">Find the Documentation at readthedocs</a> </h2>"""
