@@ -3,7 +3,6 @@ from flask import Flask, request, session, g, redirect, url_for, \
 import webbrowser
 import os
 import pandas as pd
-from collections import OrderedDict
 from abce.webtext import abcedescription
 import shutil
 import traceback
@@ -39,7 +38,7 @@ gtitle = 'ABCE Simulation'
 gtext = abcedescription
 opened = False
 
-def gui(parameters, names=None, title=None, text=None):
+def gui(parameters, names=None, title=None, text=None, self_hosted=True):
     """ gui is a decorator that can be used to add a graphical user interface
     to your simulation.
 
@@ -78,6 +77,10 @@ def gui(parameters, names=None, title=None, text=None):
 
         text:
             a description text of the simulation. Can be html.
+
+        self_hosted:
+            If you run this on your local machine self_hosted must be True.
+            If used with an uWSGI/Nginx or different web server must be False
 
 
     Example::
@@ -121,7 +124,10 @@ def gui(parameters, names=None, title=None, text=None):
         print(text)
     def inner(func):
         generate(new_inputs=parameters, new_simulation=func, names=names, title=title, text=text)
-        return run
+        if self_hosted:
+            return run
+        else:
+            return lambda open, new: pass
     return inner  # return a function object
 
 def newest_subdirectory(directory='.'):
@@ -356,15 +362,7 @@ def generate(new_inputs, new_simulation, names=None, title=None, text=None):
 
     simulation = new_simulation
 
-    ordered_inputs = OrderedDict()
-    ordered_inputs['name'] = new_inputs.pop('name', 'name')
-    ordered_inputs['rounds'] = new_inputs.pop('rounds', '500')
-    ordered_inputs.update(new_inputs)
-    try:
-        del ordered_inputs['trade_logging']
-    except KeyError:
-        pass
-    ordered_inputs['trade_logging'] = ['off', 'individual', 'group']
+    ordered_inputs = new_inputs
 
     for parameter, value in ordered_inputs.items():
         element = {}
