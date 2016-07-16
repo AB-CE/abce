@@ -8,15 +8,17 @@ Installation Ubuntu
 
 1. If pip not installed in terminal::
 
-    sudo apt-get install python-pip
-
-2. In terminal::
-
-    sudo pip install -i https://testpypi.python.org/pypi --extra-index-url https://pypi.python.org/pypi abce
+    sudo apt-get install python-pip python-dev python-pandas
 
 #. download and unzip the
    `zip file with examples and the template <https://github.com/DavoudTaghawiNejad/abce/archive/master.zip>`_
    from: https://github.com/DavoudTaghawiNejad/abce
+
+#. In terminal::
+
+    cd abce
+    sudo python setup.py install
+
 
 Installation Mac
 ----------------
