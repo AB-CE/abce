@@ -29,7 +29,7 @@ except ImportError:
 
 
 setup(name='abce',
-      version='0.5.12b',
+      version='0.5.14b',
       author='Davoud Taghawi-Nejad',
       author_email='Davoud@Taghawi-Nejad.de',
       description='Agent-Based Complete Economy modelling platform',
@@ -41,7 +41,7 @@ setup(name='abce',
                         'pandas >= 0.17.1',
                         'networkx >= 1.9.1',
                         'flask >= 0.10.1',
-                        'bokeh >= 0.11.1'],
+                        'bokeh == 0.11.1'],
       include_package_data=True,
       ext_modules=ext_modules,
       cmdclass=cmdclass)
