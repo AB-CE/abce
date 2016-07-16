@@ -16,7 +16,7 @@ from bokeh.io import gridplot
 import json
 import datetime
 import time
-from abcegui_helper import find_free_port
+from abcegui_helper import find_free_port, load_text
 
 colors = ["red","blue","green","black","purple","pink",
           "yellow","orange","pink","Brown","Cyan","Crimson",
@@ -275,8 +275,11 @@ def show_simulation():
     path = request.args.get('subdir')
     if path is None:
         path = newest_subdirectory('./result')
-    with open(path + 'description.txt') as desc_file:
-        desc = desc_file.read()
+    try:
+        with open(path + 'description.txt') as desc_file:
+            desc = desc_file.read()
+    except IOError:
+        desc = ''
 
     plots = {}
 
