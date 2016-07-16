@@ -311,14 +311,16 @@ def show_simulation():
 
     script, div = components(plots)
     output = []
-    i = 0
+
     for idname_title, graph in div.iteritems():
         idname, title = json.loads(idname_title)
         output.append({'idname': idname,  # can not stay i otherwise the cookie minimizing does not work
                        'title': title,
                        'graph': graph})
-        i += 1
 
+    output.extend(load_text(path))
+    output.extend(load_text(path + '/../../'))
+    output = sorted(output, key=lambda x: x['title'])
     return render_template('show_outcome.html', entries=output, desc=desc, setup=setup_dialog(rounds), script=script,
                            js_resources=INLINE.render_js(), css_resources=INLINE.render_css())
 
