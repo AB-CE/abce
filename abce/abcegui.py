@@ -290,10 +290,14 @@ def make_panel_graphs(df, filename, ignore_initial_rounds):
 @app.route('/show_simulation')
 def show_simulation():
     rounds = 0
-    if gtruncate_initial_rounds == 0:
-        ignore_initial_rounds = int(session.get('ignore_initial_rounds', 50))
-    else:
-        ignore_initial_rounds = 0
+    try:
+        if gtruncate_initial_rounds == 0:
+            ignore_initial_rounds = int(session.get('ignore_initial_rounds', 50))
+        else:
+            ignore_initial_rounds = 0
+    except NameError:
+            ignore_initial_rounds = int(session.get('ignore_initial_rounds', 50))
+
 
     plots = {}
     filenames = []
