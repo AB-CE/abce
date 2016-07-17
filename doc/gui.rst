@@ -15,6 +15,6 @@ the simulation in the :code:`simulation.path` directory (where the
 text. The text can be formatted as html, the first line is separate from the
 rest.
 In the simulation results all frames are displayed in alphabetical order, the
-name of the text-file determines the position where the text frame is
-displayed.
-
+title in the first line of the text-file determines the position where the text frame is
+displayed. In order to display a text before all graphs, you have to put
+leading space (' ') in front of the title.
