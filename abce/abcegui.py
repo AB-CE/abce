@@ -38,7 +38,7 @@ gtitle = 'ABCE Simulation'
 gtext = abcedescription
 opened = False
 
-def gui(parameters, names=None, title=None, text=None, self_hosted=True):
+def gui(parameters, names=None, title=None, text=None, self_hosted=True, truncate_initial_rounds=0):
     """ gui is a decorator that can be used to add a graphical user interface
     to your simulation.
 
@@ -77,6 +77,9 @@ def gui(parameters, names=None, title=None, text=None, self_hosted=True):
 
         text:
             a description text of the simulation. Can be html.
+
+        truncate_initial_periods:
+            Does not display the initial x rounds
 
         self_hosted:
             If you run this on your local machine self_hosted must be True.
@@ -126,7 +129,7 @@ def gui(parameters, names=None, title=None, text=None, self_hosted=True):
                  restart your system """
         print(text)
     def inner(func):
-        generate(new_inputs=parameters, new_simulation=func, names=names, title=title, text=text)
+        generate(new_inputs=parameters, new_simulation=func, names=names, title=title, text=text, truncate_initial_rounds=truncate_initial_rounds)
         if self_hosted:
             return run
         else:
@@ -287,7 +290,11 @@ def make_panel_graphs(df, filename, ignore_initial_rounds):
 @app.route('/show_simulation')
 def show_simulation():
     rounds = 0
-    ignore_initial_rounds = int(session.get('ignore_initial_rounds', 50))
+    if gtruncate_initial_rounds == 0:
+        ignore_initial_rounds = int(session.get('ignore_initial_rounds', 50))
+    else:
+        ignore_initial_rounds = 0
+
     plots = {}
     filenames = []
     path = request.args.get('subdir')
@@ -306,7 +313,7 @@ def show_simulation():
             continue
         elif filename.startswith('#'):
             continue
-        df = pd.read_csv(path + filename)
+        df = pd.read_csv(path + filename).ix[gtruncate_initial_rounds:]
         try:
             rounds = max(df['round'])
         except KeyError:
@@ -360,17 +367,20 @@ def del_simulation():
         print "could not remove", path
     return redirect(url_for('older_results'))
 
-def generate(new_inputs, new_simulation, names=None, title=None, text=None):
+def generate(new_inputs, new_simulation, names=None, title=None, text=None, truncate_initial_rounds=False):
     global inputs
     global simulation
     global gtitle
     global gtext
+    global gtruncate_initial_rounds
 
     if text is not None:
         gtext = text
 
     if title is not None:
         gtitle = title
+
+    gtruncate_initial_rounds = truncate_initial_rounds
 
     simulation = new_simulation
 
