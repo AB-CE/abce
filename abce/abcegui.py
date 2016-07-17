@@ -114,6 +114,9 @@ def gui(parameters, names=None, title=None, text=None, self_hosted=True):
         if __name__ == '__main__':
             main(simulation_parameters)
     """
+    def dummy_run(open=None, new=None):
+        pass
+
     if any('SPYDER' in name for name in os.environ):
         title = "WARNING"
         text = """WARNING: You are running this Simulation in SPYDER
@@ -127,7 +130,7 @@ def gui(parameters, names=None, title=None, text=None, self_hosted=True):
         if self_hosted:
             return run
         else:
-            return lambda open, new: None
+            return dummy_run
     return inner  # return a function object
 
 def newest_subdirectory(directory='.'):
