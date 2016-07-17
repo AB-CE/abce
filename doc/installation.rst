@@ -9,6 +9,7 @@ Installation Ubuntu
 1. If pip not installed in terminal::
 
     sudo apt-get install python-pip python-dev python-pandas
+    sudo pip install --upgrade numpy
 
 #. download and unzip the
    `zip file with examples and the template <https://github.com/DavoudTaghawiNejad/abce/archive/master.zip>`_
