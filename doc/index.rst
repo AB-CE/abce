@@ -59,6 +59,7 @@ Graphical User Interface and Results
 
    gui
    files
+   deploy
 
 
 .. raw:: latex
