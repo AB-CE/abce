@@ -24,7 +24,7 @@ Installation Ubuntu
 Installation Mac
 ----------------
 
-1. If you are on OSX Yosemite, download: :code:`Command line Tools (OS X 10.10)
+1. If you are on OSX Yosemite, download and install: :code:`Command line Tools (OS X 10.10)
    for XCODE 6.4` from https://developer.apple.com/downloads/
 
 
