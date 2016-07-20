@@ -20,6 +20,8 @@ try:
     import matplotlib.pyplot as plt
 except ImportError:
     pass
+except RuntimeError:
+    pass
 
 
 class AbceLogger(multiprocessing.Process):
