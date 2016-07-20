@@ -297,6 +297,7 @@ def show_simulation():
             ignore_initial_rounds = 0
     except NameError:
             ignore_initial_rounds = int(session.get('ignore_initial_rounds', 50))
+            gtruncate_initial_rounds = 0
 
 
     plots = {}
