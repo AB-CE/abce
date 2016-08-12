@@ -1,5 +1,6 @@
 #pylint: disable=W0232, C1001, C0111, R0913, E1101, W0212
 # TODO end_contract; record all payments
+from __future__ import print_function
 from abce.notenoughgoods import NotEnoughGoods
 from random import shuffle
 from copy import deepcopy
@@ -315,7 +316,7 @@ def bound_zero(x):
     and than makes sure it is above 0, without floating point imprecission """
     assert x > - epsilon, '%.30f is smaller than 0 - epsilon (%.30f)' % (x, - epsilon)
     if not isfinite(x):
-        print 'warning infinity in trade'
+        print('warning infinity in trade')
     if x < 0:
         return 0
     else:

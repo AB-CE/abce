@@ -44,6 +44,7 @@ setup(name='abce',
                         'bokeh == 0.11.1'],
       include_package_data=True,
       ext_modules=ext_modules,
+      use_2to3=True,
       cmdclass=cmdclass)
 
 

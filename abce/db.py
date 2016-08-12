@@ -60,7 +60,7 @@ class Database(multiprocessing.Process):
         #self.database.execute('PRAGMA cache_size = -100000')
         for t in (np.int8, np.int16, np.int32, np.int64,
                                     np.uint8, np.uint16, np.uint32, np.uint64):
-            sqlite3.register_adapter(t, long)
+            sqlite3.register_adapter(t, int)
         for t in (np.float, np.float16, np.float32, np.float64):
             sqlite3.register_adapter(t, float)
         if self.trade_log:
@@ -138,10 +138,11 @@ class Database(multiprocessing.Process):
         format_strings = ','.join(['?'] * len(rows_to_write))
         try:
             self.database.execute(insert_str % format_strings, rows_to_write)
-        except sqlite3.OperationalError, msg:
-            if 'no such table' in msg.message:
+        except sqlite3.OperationalError as e:
+            errormsg = str(e)
+            if 'no such table' in errormsg:
                 raise TableMissing(table_name)
-            if not('has no column named' in msg.message):
+            if not('has no column named' in errormsg):
                 raise
             self.new_column(table_name, data_to_write)
             self.write_or_update(table_name, data_to_write)
@@ -156,10 +157,11 @@ class Database(multiprocessing.Process):
         format_strings = ','.join(['?'] * len(rows_to_write))
         try:
             self.database.execute(ex_str % format_strings, rows_to_write)
-        except sqlite3.OperationalError, msg:
-            if 'no such table' in msg.message:
+        except sqlite3.OperationalError as e:
+            errormsg = str(e)
+            if 'no such table' in errormsg:
                 raise TableMissing(table_name)
-            if not('has no column named' in msg.message):
+            if not('has no column named' in errormsg):
                 raise
             self.new_column(table_name, data_to_write)
             self.write(table_name, data_to_write)

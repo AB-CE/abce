@@ -1,4 +1,4 @@
-from __future__ import division
+from __future__ import division, print_function
 import abce
 
 
@@ -10,7 +10,7 @@ class Firm(abce.Agent, abce.Firm):
 
         there is an initial endowment to avoid bootstrapping problems
         """
-        print agent_parameters
+        print(agent_parameters)
         self.price = {}
         if self.id % 2 == 0:
             assert self.id == 0

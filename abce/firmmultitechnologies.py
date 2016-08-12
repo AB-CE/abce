@@ -90,7 +90,7 @@ class FirmMultiTechnologies:
                 if self._haves[good] < input_goods[good] - epsilon:
                     raise NotEnoughGoods(self.name, good, (input_goods[good] - self._haves[good]))
 
-            for good, use in production_function.use.iteritems():
+            for good, use in production_function.use.items():
                 self._haves[good] -= input_goods[good] * use
 
         output_dict =  production_function.production(input_goods)
@@ -238,7 +238,7 @@ class FirmMultiTechnologies:
         """
         def production_function(goods):
             return multiplier * np.prod([goods[name] ** exponent
-                                for name, exponent in exponents.iteritems()])
+                                for name, exponent in exponents.items()])
 
         dict_formula = lambda goods: {output: production_function(goods)}
         production_function.production = dict_formula
@@ -294,7 +294,7 @@ class FirmMultiTechnologies:
         else:
             def production_function(goods):
                 return multiplier * np.sum([share * goods[name] ** gamma
-                                           for name, share in shares.iteritems()]) ** (1 /  gamma)
+                                           for name, share in shares.items()]) ** (1 /  gamma)
             production_function.use = {name: 1 for name in shares.keys()}
 
         dict_formula = lambda goods: {output: production_function(goods)}
@@ -331,7 +331,7 @@ class FirmMultiTechnologies:
 
         """
         def production_function(goods):
-            return min([goods[name] * factor for name, factor in utilization_quantities.iteritems()])
+            return min([goods[name] * factor for name, factor in utilization_quantities.items()])
 
         dict_formula = lambda goods: {output: production_function(goods)}
         production_function.production = dict_formula
@@ -370,7 +370,7 @@ class FirmMultiTechnologies:
 
     def _predict_produce_input(self, production_function, input_goods):
         used_goods = {}
-        for good, use in production_function.use.iteritems():
+        for good, use in production_function.use.items():
             used_goods[good] = input_goods[good] * use
         return used_goods
 

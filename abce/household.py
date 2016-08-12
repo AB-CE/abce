@@ -19,7 +19,7 @@ The Household class extends the agent by giving him utility functions and the ab
 """
 from __future__ import division
 import numpy as np
-from trade import get_epsilon
+from abce.trade import get_epsilon
 save_err = np.seterr(invalid='ignore')
 epsilon = get_epsilon()
 
@@ -84,7 +84,7 @@ class Household:
             if self._haves[good] < input_goods[good] - epsilon:
                 raise NotEnoughGoods(self.name, good, (input_goods[good] - self._haves[good]))
 
-        for good, use in self._utility_function.use.iteritems():
+        for good, use in self._utility_function.use.items():
             self._haves[good] -= input_goods[good] * use
 
         return self._utility_function.formula(input_goods)
@@ -142,7 +142,7 @@ class Household:
         """
         def utility_function(goods):
             return  np.prod([goods[name] ** exponent
-                             for name, exponent in exponents.iteritems()])
+                             for name, exponent in exponents.items()])
 
         self._utility_function = Utility_Function()
         self._utility_function.formula = utility_function
