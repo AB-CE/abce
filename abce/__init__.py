@@ -709,15 +709,12 @@ class Simulation:
                                                 'database': self.database_queue,
                                                 'logger':self.logger_queue,
                                                 'random_seed': random.random(),
-                                                'start_round': self._start_round})
+                                                'start_round': self._start_round},
+                                    parameters=parameters,
+                                    agent_parameters=agent_parameters)
 
             for good, duration in self.expiring:
                 family.declare_expiring(good, duration)
-
-            try:
-                family.init(parameters, agent_parameters)
-            except AttributeError:
-                print("Warning: agent %s has no init function" % group_name)
 
             for good in self.perishable:
                 family.register_perish(good)
