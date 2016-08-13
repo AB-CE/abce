@@ -1,20 +1,17 @@
-from flask import Flask, request, session, g, redirect, url_for, \
-     abort, render_template, flash, Markup
+from flask import Flask, request, session, redirect, url_for, \
+     render_template
 import webbrowser
 import os
 import pandas as pd
 from abce.webtext import abcedescription
 import shutil
-import traceback
 import random
 from bokeh.plotting import figure
 from bokeh.embed import components
 from bokeh.resources import INLINE
 from bokeh.models import Range1d, LinearAxis
-from bokeh.io import gridplot
 import json
 import datetime
-import time
 from abcegui_helper import find_free_port, load_text
 
 colors = ["red","blue","green","black","purple","pink",

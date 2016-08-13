@@ -36,8 +36,8 @@ import numpy as np
 save_err = np.seterr(invalid='ignore')
 from database import Database
 from networklogger import NetworkLogger
-from trade import Trade, Offer
-from messaging import Messaging, Message
+from trade import Trade
+from messaging import Messaging
 import time
 from copy import copy
 import random

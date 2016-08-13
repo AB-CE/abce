@@ -1,7 +1,6 @@
 from __future__ import division
 import abce
 from tools import *
-from abce import NotEnoughGoods
 
 
 class ProductionMultifirm(abce.Agent, abce.FirmMultiTechnologies):
