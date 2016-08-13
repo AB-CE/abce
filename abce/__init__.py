@@ -153,6 +153,7 @@ class Simulation:
         self.possessions_to_track_aggregate = defaultdict(list)
         self._start_round = 0
         self._calendar = False
+        self._network_drawing_frequency = 1  # this is default value as declared in self.network() method
 
         self.rounds = rounds
 
@@ -728,10 +729,7 @@ class Simulation:
             family.register_aggregate(self.possessions_to_track_aggregate[group_name],
                                       self.variables_to_track_aggregate[group_name])
 
-            try:
-                family.set_network_drawing_frequency(self._network_drawing_frequency)
-            except AttributeError:
-                family.set_network_drawing_frequency(None)
+            family.set_network_drawing_frequency(self._network_drawing_frequency)
 
             self.family_list[group_name].append(family)
             self.num_of_agents_in_group[group_name] = num_agents_this_group
