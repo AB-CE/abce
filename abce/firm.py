@@ -19,8 +19,10 @@ The Firm class gives an Agent the ability to set production functions and
 produce.
 """
 from __future__ import division
+from __future__ import absolute_import
+from builtins import object
 import numpy as np
-from firmmultitechnologies import FirmMultiTechnologies
+from .firmmultitechnologies import FirmMultiTechnologies
 save_err = np.seterr(invalid='ignore')
 
 
@@ -379,6 +381,6 @@ class Firm(FirmMultiTechnologies):
         self.sufficient_goods(sufficient_goods)
 
 
-class ProductionFunction:
+class ProductionFunction(object):
     pass
 

@@ -1,3 +1,5 @@
+from builtins import range
+from builtins import object
 from collections import defaultdict
 from abce.deadagent import DeadAgent
 import traceback
@@ -5,13 +7,13 @@ import time
 import random
 
 
-class Family:
+class Family(object):
     def __init__(self, Agent, num_agents_this_group, num_managers, batch, agent_args):
         self.agents = []
         self.batch = batch
         self.group = agent_args['group']
         self.num_managers = num_managers
-        for i in xrange(batch, num_agents_this_group, num_managers):
+        for i in range(batch, num_agents_this_group, num_managers):
             self.agents.append(Agent(id=i, **agent_args))
 
     def append(self, Agent, id, agent_args):

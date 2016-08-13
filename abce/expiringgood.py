@@ -1,11 +1,16 @@
 from __future__ import division
+from past.builtins import cmp
+from builtins import str
+from builtins import zip
+from builtins import range
+from builtins import object
 from collections import deque
 from abce.notenoughgoods import NotEnoughGoods
 from abce.trade import get_epsilon
 epsilon = get_epsilon()
 
 
-class ExpiringGood:
+class ExpiringGood(object):
     """ A good that expires after X rounds """
     def __init__(self, duration):
         self.duration = duration
@@ -65,7 +70,7 @@ class ExpiringGood:
         return int(sum(self.time_structure))
 
     def __long__(self):
-        return long(sum(self.time_structure))
+        return int(sum(self.time_structure))
 
     def __float__(self):
         return float(sum(self.time_structure))

@@ -25,6 +25,7 @@ a variable. :meth:`abce.FirmMultiTechnologies.produce` and similar
 methods use this variable to produce with the according technology.
 """
 from __future__ import division
+from builtins import object
 import numpy as np
 from abce.trade import get_epsilon
 from abce.notenoughgoods import NotEnoughGoods
@@ -33,7 +34,7 @@ save_err = np.seterr(invalid='ignore')
 epsilon = get_epsilon()
 
 
-class FirmMultiTechnologies:
+class FirmMultiTechnologies(object):
     def produce_use_everything(self, production_function):
         """ Produces output goods from all input goods, used in this
         production_function, the agent owns.
@@ -79,22 +80,22 @@ class FirmMultiTechnologies:
                 A.produce(bike_production_function, bike)
         """
         if production_function.use == 'all':
-            for good in input_goods.keys():
+            for good in list(input_goods.keys()):
                 if self._haves[good] < input_goods[good] - epsilon:
                     raise NotEnoughGoods(self.name, good, (input_goods[good] - self._haves[good]))
 
             for good in input_goods:
                 self._haves[good] -= input_goods[good]
         else:
-            for good in production_function.use.keys():
+            for good in list(production_function.use.keys()):
                 if self._haves[good] < input_goods[good] - epsilon:
                     raise NotEnoughGoods(self.name, good, (input_goods[good] - self._haves[good]))
 
-            for good, use in production_function.use.iteritems():
+            for good, use in production_function.use.items():
                 self._haves[good] -= input_goods[good] * use
 
         output_dict =  production_function.production(input_goods)
-        for good in output_dict.keys():
+        for good in list(output_dict.keys()):
             self._haves[good] += output_dict[good]
 
         return output_dict
@@ -238,11 +239,11 @@ class FirmMultiTechnologies:
         """
         def production_function(goods):
             return multiplier * np.prod([goods[name] ** exponent
-                                for name, exponent in exponents.iteritems()])
+                                for name, exponent in exponents.items()])
 
         dict_formula = lambda goods: {output: production_function(goods)}
         production_function.production = dict_formula
-        production_function.use = {name: 1 for name in exponents.keys()}
+        production_function.use = {name: 1 for name in list(exponents.keys())}
         return production_function
 
     def create_ces(self, output, gamma, multiplier=1, shares=None):
@@ -294,8 +295,8 @@ class FirmMultiTechnologies:
         else:
             def production_function(goods):
                 return multiplier * np.sum([share * goods[name] ** gamma
-                                           for name, share in shares.iteritems()]) ** (1 /  gamma)
-            production_function.use = {name: 1 for name in shares.keys()}
+                                           for name, share in shares.items()]) ** (1 /  gamma)
+            production_function.use = {name: 1 for name in list(shares.keys())}
 
         dict_formula = lambda goods: {output: production_function(goods)}
         production_function.production = dict_formula
@@ -331,11 +332,11 @@ class FirmMultiTechnologies:
 
         """
         def production_function(goods):
-            return min([goods[name] * factor for name, factor in utilization_quantities.iteritems()])
+            return min([goods[name] * factor for name, factor in utilization_quantities.items()])
 
         dict_formula = lambda goods: {output: production_function(goods)}
         production_function.production = dict_formula
-        production_function.use = {name: 1 for name in utilization_quantities.keys()}
+        production_function.use = {name: 1 for name in list(utilization_quantities.keys())}
         return production_function
 
     def _predict_produce_output(self, production_function, input_goods):
@@ -370,7 +371,7 @@ class FirmMultiTechnologies:
 
     def _predict_produce_input(self, production_function, input_goods):
         used_goods = {}
-        for good, use in production_function.use.iteritems():
+        for good, use in production_function.use.items():
             used_goods[good] = input_goods[good] * use
         return used_goods
 
@@ -397,8 +398,8 @@ class FirmMultiTechnologies:
         return self._predict_produce_input(production_function, input_goods)
 
     def _net_value(self, produced_goods, used_goods, price_vector):
-        revenue = sum([price_vector[good] * quantity for good, quantity in produced_goods.items()])
-        cost = sum([price_vector[good] * quantity for good, quantity in used_goods.items()])
+        revenue = sum([price_vector[good] * quantity for good, quantity in list(produced_goods.items())])
+        cost = sum([price_vector[good] * quantity for good, quantity in list(used_goods.items())])
         return revenue - cost
 
     def net_value(self, produced_goods, used_goods, price_vector):
@@ -469,5 +470,5 @@ class FirmMultiTechnologies:
             if self._haves[good] < input_goods[good] - epsilon:
                 raise NotEnoughGoods(self.name, good, input_goods[good] - self._haves[good])
 
-class ProductionFunction:
+class ProductionFunction(object):
     pass

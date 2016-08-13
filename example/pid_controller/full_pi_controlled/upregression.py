@@ -1,3 +1,4 @@
+from builtins import object
 #pylint: disable=C0103, W0201
 from sklearn import linear_model
 

@@ -15,9 +15,10 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 from __future__ import division
+from builtins import object
 
 
-class NetworkLogger:
+class NetworkLogger(object):
     """ NetworkLogger logs a network. It has to be initialized in start.py.
         In the agents log_network has to be called. Optionally log_agent, can
         be called in order to save agent attributes.

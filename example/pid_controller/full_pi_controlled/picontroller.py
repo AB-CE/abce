@@ -1,4 +1,5 @@
-class PiController:
+from builtins import object
+class PiController(object):
     """ The PiController, learns from an error to set a certain control.
         It only produces positive signals.
 

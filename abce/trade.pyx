@@ -39,7 +39,7 @@ Messaging between agents:
 #******************************************************************************************#
 from __future__ import division
 from abce.notenoughgoods import NotEnoughGoods
-from messaging import Message
+from abce.messaging import Message
 from numpy import isfinite, isnan
 import random
 

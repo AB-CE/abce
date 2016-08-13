@@ -1,18 +1,21 @@
-import SimpleHTTPServer
-import SocketServer
+from future import standard_library
+standard_library.install_aliases()
+from builtins import range
+import http.server
+import socketserver
 import os
 
 def find_free_port(address, port):
-    Handler = SimpleHTTPServer.SimpleHTTPRequestHandler
+    Handler = http.server.SimpleHTTPRequestHandler
     for i in range(port, 9000):
         try:
-            httpd = SocketServer.TCPServer((address, port), Handler)
+            httpd = socketserver.TCPServer((address, port), Handler)
             return port
-        except SocketServer.socket.error as exc:
+        except socketserver.socket.error as exc:
             if exc.args[0] != 48:
                 raise
             port += 1
-    raise SocketServer.socket.error
+    raise socketserver.socket.error
 
 def load_text(path):
     texts = []

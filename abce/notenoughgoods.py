@@ -17,6 +17,7 @@
 # the License.
 """ This file defines the :exc:`tools.NotEnoughGoods` """
 from __future__ import division
+from builtins import str
 
 
 class NotEnoughGoods(Exception):

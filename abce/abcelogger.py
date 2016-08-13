@@ -92,7 +92,7 @@ class AbceLogger(multiprocessing.Process):
                 nodeShapes = set((aShape[1]["shape"] for aShape in network.nodes(data = True)))
                 for aShape in nodeShapes:
                     nodelist = [sNode[0]
-                                for sNode in filter(lambda x: x[1]["shape"] == aShape, network.nodes(data = True))]
+                                for sNode in [x for x in network.nodes(data = True) if x[1]["shape"] == aShape]]
                     nx.draw_networkx_nodes(network,
                                            self.pos,
                                            node_shape=aShape,

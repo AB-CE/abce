@@ -1,3 +1,9 @@
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
+from builtins import str
+from builtins import range
+from past.utils import old_div
 from flask import Flask, request, session, g, redirect, url_for, \
      abort, render_template, flash, Markup
 import webbrowser
@@ -15,7 +21,7 @@ from bokeh.io import gridplot
 import json
 import datetime
 import time
-from abcegui_helper import find_free_port, load_text
+from .abcegui_helper import find_free_port, load_text
 
 colors = ["red","blue","green","black","purple","pink",
           "yellow","orange","pink","Brown","Cyan","Crimson",
@@ -170,7 +176,7 @@ def make_title(title, col):
 
 
 def make_aggregate_graphs(df, filename, ignore_initial_rounds):
-    print 'make_aggregate_graphs', filename
+    print('make_aggregate_graphs', filename)
     columns = [col for col in df.columns if not col.endswith('_std')
                                          and not col.endswith('_mean')
                                          and not col in ['index', 'round', 'id', 'date']]
@@ -227,7 +233,7 @@ def make_aggregate_graphs(df, filename, ignore_initial_rounds):
     return plots
 
 def make_simple_graphs(df, filename, ignore_initial_rounds):
-    print 'make_simple_graphs', filename
+    print('make_simple_graphs', filename)
     plots = {}
     try:
         index = df['date'].apply(lambda sdate: datetime.date(*[int(c) for c in sdate.split('-')]))
@@ -257,7 +263,7 @@ def make_simple_graphs(df, filename, ignore_initial_rounds):
     return plots
 
 def make_panel_graphs(df, filename, ignore_initial_rounds):
-    print 'make_panel_graphs', filename
+    print('make_panel_graphs', filename)
     if 'date' in df.columns:
         x_axis_type="datetime"
     else:
@@ -265,9 +271,9 @@ def make_panel_graphs(df, filename, ignore_initial_rounds):
 
 
     if  max(df['id'])> 20:
-        individuals = sorted(random.sample(range(max(df['id'])), 20))
+        individuals = sorted(random.sample(list(range(max(df['id']))), 20))
     else:
-        individuals = range(max(df['id']) + 1)
+        individuals = list(range(max(df['id']) + 1))
     df = df[df['id'].isin(individuals)]
     plots = {}
     for col in df.columns:
@@ -324,7 +330,7 @@ def show_simulation():
             rounds = max(df['index'])
         if ignore_initial_rounds >= rounds:
             ignore_initial_rounds = 0
-            print 'kill'
+            print('kill')
         df = df.where((pd.notnull(df)), None)
         df.dropna(1, how='all', inplace=True)
         if filename.startswith('aggregate_'):
@@ -336,12 +342,12 @@ def show_simulation():
                 else:
                     plots.update(make_panel_graphs(df, filename, ignore_initial_rounds))
             except ValueError:
-                print(filename, 'not displayable: ValueError')
+                print((filename, 'not displayable: ValueError'))
 
     script, div = components(plots)
     output = []
 
-    for idname_title, graph in div.iteritems():
+    for idname_title, graph in div.items():
         idname, title = json.loads(idname_title)
         output.append({'idname': idname,  # can not stay i otherwise the cookie minimizing does not work
                        'title': title,
@@ -368,7 +374,7 @@ def del_simulation():
     try:
         shutil.rmtree(path)
     except OSError:
-        print "could not remove", path
+        print("could not remove", path)
     return redirect(url_for('older_results'))
 
 def generate(new_inputs, new_simulation, names=None, title=None, text=None, truncate_initial_rounds=False):
@@ -390,7 +396,7 @@ def generate(new_inputs, new_simulation, names=None, title=None, text=None, trun
 
     ordered_inputs = new_inputs
 
-    for parameter, value in ordered_inputs.items():
+    for parameter, value in list(ordered_inputs.items()):
         element = {}
         element['name'] = parameter
         element['value'] = value
@@ -414,7 +420,7 @@ def generate(new_inputs, new_simulation, names=None, title=None, text=None, trun
                 element['type'] = int
             else:
                 element['type'] = float
-                element['step'] = (element['max'] - element['min']) / 100
+                element['step'] = old_div((element['max'] - element['min']), 100)
 
             content = """  {title}
                             <div class="mdl-grid">
@@ -515,9 +521,9 @@ def run(open=True, new=1):
             else:
                 webbrowser.open("http://127.0.0.1:%i/show_simulation" % port, new=new, autoraise=True)
         if inputs:
-            print "go to http://127.0.0.1:%i/" % port
+            print("go to http://127.0.0.1:%i/" % port)
         else:
-            print "go to http://127.0.0.1:%i/show_simulation" % port
+            print("go to http://127.0.0.1:%i/show_simulation" % port)
         global opened
         opened = True
         app.run(use_reloader=False, host=host, port=port)

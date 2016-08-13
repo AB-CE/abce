@@ -1,4 +1,5 @@
 from __future__ import division
+from __future__ import print_function
 import abce
 from abce import NotEnoughGoods
 
@@ -9,20 +10,20 @@ class Agent(abce.Agent):
         pass
 
     def wednessday(self):
-        print 'wednessday'
+        print('wednessday')
 
     def first(self):
-        print 'first'
+        print('first')
         self.create('money', 1000)
 
     def newyearseve(self):
-        print 'newyearseve'
+        print('newyearseve')
 
     def firstfriday(self):
-        print 'drinks in museum'
+        print('drinks in museum')
 
     def fiveteens(self):
-        print 'fiveteens'
+        print('fiveteens')
 
     def everythreedays(self):
-        print('            ', self.date(), self.date().weekday())
+        print(('            ', self.date(), self.date().weekday()))
