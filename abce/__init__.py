@@ -579,50 +579,32 @@ class Simulation:
         agents_to_add = []
         agents_to_delete = []
         try:
-            if self._calendar:
-                for round in xrange(self._start_round, self._start_round + self.rounds):
-                    print("\rRound" + str(" %3d " % round) + str(datetime.date.fromordinal(round)))
-                    self.execute_internal('_produce_resource')
-
-                    for group, action, condition in self._action_list:
-                        if condition(datetime.date.fromordinal(round)):
-                            messagess = self.execute(group, action, messagess)
-                            if messagess[('_simulation', 0)]:
-                                agents_to_add.extend(messagess[('_simulation', 0)])
-                                del messagess[('_simulation', 0)]
-                            if messagess[('_simulation', 0.5)]:
-                                agents_to_delete.extend(messagess[('_simulation', 0.5)])
-                                del messagess[('_simulation', 0.5)]
-                    self.execute_internal('_advance_round')
-                    self.execute_internal('_perish')
-                    if agents_to_add:
-                        self.add_agents(agents_to_add, round)
-                        agents_to_add = []
-                    if agents_to_delete:
-                        self.delete_agent(agents_to_delete)
-                        agents_to_delete = []
-            else:
-                for round in xrange(self._start_round, self._start_round + self.rounds):
+            for round in xrange(self._start_round, self._start_round + self.rounds):
+                if self._calendar:
+                    _round = datetime.date.fromordinal(round)
+                    print("\rRound" + str(" %3d " % round) + str(_round))
+                else:
                     print("\rRound" + str(" %3d " % round))
-                    self.execute_internal('_produce_resource')
+                    _round = round
+                self.execute_internal('_produce_resource')
 
-                    for group, action, condition in self._action_list:
-                        if condition(round):
-                            messagess = self.execute(group, action, messagess)
-                            if messagess[('_simulation', 0)]:
-                                agents_to_add.extend(messagess[('_simulation', 0)])
-                                del messagess[('_simulation', 0)]
-                            if messagess[('_simulation', 0.5)]:
-                                agents_to_delete.extend(messagess[('_simulation', 0.5)])
-                                del messagess[('_simulation', 0.5)]
-                    self.execute_internal('_advance_round')
-                    self.execute_internal('_perish')
-                    if agents_to_add:
-                        self.add_agents(agents_to_add, round)
-                        agents_to_add = []
-                    if agents_to_delete:
-                        self.delete_agent(agents_to_delete)
-                        agents_to_delete = []
+                for group, action, condition in self._action_list:
+                    if condition(_round):
+                        messagess = self.execute(group, action, messagess)
+                        if messagess[('_simulation', 0)]:
+                            agents_to_add.extend(messagess[('_simulation', 0)])
+                            del messagess[('_simulation', 0)]
+                        if messagess[('_simulation', 0.5)]:
+                            agents_to_delete.extend(messagess[('_simulation', 0.5)])
+                            del messagess[('_simulation', 0.5)]
+                self.execute_internal('_advance_round')
+                self.execute_internal('_perish')
+                if agents_to_add:
+                    self.add_agents(agents_to_add, round)
+                    agents_to_add = []
+                if agents_to_delete:
+                    self.delete_agent(agents_to_delete)
+                    agents_to_delete = []
         except EOFError:
             pass
         except:
