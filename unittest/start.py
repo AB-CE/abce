@@ -76,9 +76,9 @@ def main(processes, rounds):
     #s.build_agents(QuoteBuy, 2)
     s.build_agents(Sell, 'sell', 1000, parameters={'rounds': rounds})
     print 'build Give'
-    s.build_agents(Give, 'give', 2, parameters={'rounds': rounds}, expandable=True) # tests give and messaging
+    s.build_agents(Give, 'give', 2, parameters={'rounds': rounds}) # tests give and messaging
     print 'build Endowment'
-    s.build_agents(Endowment, 'endowment', 2, parameters={'rounds': rounds, 'creation': 0}, expandable=True)  # tests declare_round_endowment and declare_perishable
+    s.build_agents(Endowment, 'endowment', 2, parameters={'rounds': rounds, 'creation': 0})  # tests declare_round_endowment and declare_perishable
     print 'build LoggerTest'
     s.build_agents(LoggerTest, 'loggertest', 1, parameters={'rounds': rounds})
     print 'build ProductionMultifirm'
@@ -100,9 +100,9 @@ def main(processes, rounds):
     print 'build BuyExpiringCapital'
     s.build_agents(BuyExpiringCapital, 'buyexpiringcapital', 2, parameters={'rounds': rounds})
     print 'build MessageA'
-    s.build_agents(MessageA, 'messagea', 20, parameters={'rounds': rounds}, expandable=True)
+    s.build_agents(MessageA, 'messagea', 20, parameters={'rounds': rounds})
     print 'build MessageB'
-    s.build_agents(MessageB, 'messageb', 20, parameters={'rounds': rounds}, expandable=True)
+    s.build_agents(MessageB, 'messageb', 20, parameters={'rounds': rounds})
     print 'build AddAgent'
     s.build_agents(AddAgent, 'addagent', 1, parameters={'rounds': rounds})
     print 'build Killer'

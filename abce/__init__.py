@@ -656,7 +656,7 @@ class Simulation:
         except AttributeError:
             pass
 
-    def build_agents(self, AgentClass, group_name, number=None, parameters={}, agent_parameters=None, expandable=False):
+    def build_agents(self, AgentClass, group_name, number=None, parameters={}, agent_parameters=None):
         """ This method creates agents.
 
         Args:
@@ -681,10 +681,6 @@ class Simulation:
             agent_parameters:
                 a list of dictionaries, where each agent gets one dictionary.
                 The number of agents is the length of the list
-
-            expandable:
-                if you want to add agents during the simulation with
-                self.create_agents(...), expandable must be set to true
 
         Example::
 

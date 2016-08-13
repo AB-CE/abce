@@ -420,8 +420,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         self._out.append((receiver_group, receiver_id, (typ, msg)))
 
     def create_agent(self, AgentClass, group_name, parameters=None, agent_parameters=None):
-        """ create a new agent. When the agent group is build with simulation.build_agents(...)
-            expandable must be set to true.
+        """ create a new agent.
 
         Args:
 
