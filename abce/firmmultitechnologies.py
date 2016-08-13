@@ -28,7 +28,6 @@ from __future__ import division
 import numpy as np
 from abce.trade import get_epsilon
 from abce.notenoughgoods import NotEnoughGoods
-from collections import defaultdict
 save_err = np.seterr(invalid='ignore')
 epsilon = get_epsilon()
 

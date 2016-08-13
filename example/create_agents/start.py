@@ -37,11 +37,11 @@ def main(simulation_parameters):
 
         simulation.build_agents(Firm, 'firm',
                        number=simulation_parameters['firms'],
-                       parameters=simulation_parameters, expandable=True)
+                       parameters=simulation_parameters)
 
         simulation.build_agents(Household, 'household',
                        number=simulation_parameters['households'],
-                       parameters=simulation_parameters, expandable=True)
+                       parameters=simulation_parameters)
 
         simulation.build_agents(Messenger, 'messenger', 1)
 

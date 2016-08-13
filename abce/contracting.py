@@ -2,7 +2,6 @@
 # TODO end_contract; record all payments
 from abce.notenoughgoods import NotEnoughGoods
 from random import shuffle
-from copy import deepcopy
 from abce.trade import get_epsilon
 from numpy import isfinite
 

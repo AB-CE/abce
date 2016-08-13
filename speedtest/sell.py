@@ -2,7 +2,7 @@ from __future__ import division
 import abce
 from abce.tools import *
 import random
-import numpy as np
+
 
 class Sell(abce.Agent):
     def init(self, simulation_parameters, agent_parameters):

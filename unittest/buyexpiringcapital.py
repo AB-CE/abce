@@ -1,7 +1,6 @@
 from __future__ import division
 import abce
 from abce.firm import Firm
-from abce import NotEnoughGoods
 
 
 class BuyExpiringCapital(abce.Agent, Firm):

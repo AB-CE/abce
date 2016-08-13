@@ -153,6 +153,7 @@ class Simulation:
         self.possessions_to_track_aggregate = defaultdict(list)
         self._start_round = 0
         self._calendar = False
+        self._network_drawing_frequency = 1  # this is default value as declared in self.network() method
 
         self.rounds = rounds
 
@@ -578,50 +579,32 @@ class Simulation:
         agents_to_add = []
         agents_to_delete = []
         try:
-            if self._calendar:
-                for round in xrange(self._start_round, self._start_round + self.rounds):
-                    print("\rRound" + str(" %3d " % round) + str(datetime.date.fromordinal(round)))
-                    self.execute_internal('_produce_resource')
-
-                    for group, action, condition in self._action_list:
-                        if condition(datetime.date.fromordinal(round)):
-                            messagess = self.execute(group, action, messagess)
-                            if messagess[('_simulation', 0)]:
-                                agents_to_add.extend(messagess[('_simulation', 0)])
-                                del messagess[('_simulation', 0)]
-                            if messagess[('_simulation', 0.5)]:
-                                agents_to_delete.extend(messagess[('_simulation', 0.5)])
-                                del messagess[('_simulation', 0.5)]
-                    self.execute_internal('_advance_round')
-                    self.execute_internal('_perish')
-                    if agents_to_add:
-                        self.add_agents(agents_to_add, round)
-                        agents_to_add = []
-                    if agents_to_delete:
-                        self.delete_agent(agents_to_delete)
-                        agents_to_delete = []
-            else:
-                for round in xrange(self._start_round, self._start_round + self.rounds):
+            for round in xrange(self._start_round, self._start_round + self.rounds):
+                if self._calendar:
+                    _round = datetime.date.fromordinal(round)
+                    print("\rRound" + str(" %3d " % round) + str(_round))
+                else:
                     print("\rRound" + str(" %3d " % round))
-                    self.execute_internal('_produce_resource')
+                    _round = round
+                self.execute_internal('_produce_resource')
 
-                    for group, action, condition in self._action_list:
-                        if condition(round):
-                            messagess = self.execute(group, action, messagess)
-                            if messagess[('_simulation', 0)]:
-                                agents_to_add.extend(messagess[('_simulation', 0)])
-                                del messagess[('_simulation', 0)]
-                            if messagess[('_simulation', 0.5)]:
-                                agents_to_delete.extend(messagess[('_simulation', 0.5)])
-                                del messagess[('_simulation', 0.5)]
-                    self.execute_internal('_advance_round')
-                    self.execute_internal('_perish')
-                    if agents_to_add:
-                        self.add_agents(agents_to_add, round)
-                        agents_to_add = []
-                    if agents_to_delete:
-                        self.delete_agent(agents_to_delete)
-                        agents_to_delete = []
+                for group, action, condition in self._action_list:
+                    if condition(_round):
+                        messagess = self.execute(group, action, messagess)
+                        if messagess[('_simulation', 0)]:
+                            agents_to_add.extend(messagess[('_simulation', 0)])
+                            del messagess[('_simulation', 0)]
+                        if messagess[('_simulation', 0.5)]:
+                            agents_to_delete.extend(messagess[('_simulation', 0.5)])
+                            del messagess[('_simulation', 0.5)]
+                self.execute_internal('_advance_round')
+                self.execute_internal('_perish')
+                if agents_to_add:
+                    self.add_agents(agents_to_add, round)
+                    agents_to_add = []
+                if agents_to_delete:
+                    self.delete_agent(agents_to_delete)
+                    agents_to_delete = []
         except EOFError:
             pass
         except:
@@ -656,7 +639,7 @@ class Simulation:
         except AttributeError:
             pass
 
-    def build_agents(self, AgentClass, group_name, number=None, parameters={}, agent_parameters=None, expandable=False):
+    def build_agents(self, AgentClass, group_name, number=None, parameters={}, agent_parameters=None):
         """ This method creates agents.
 
         Args:
@@ -681,10 +664,6 @@ class Simulation:
             agent_parameters:
                 a list of dictionaries, where each agent gets one dictionary.
                 The number of agents is the length of the list
-
-            expandable:
-                if you want to add agents during the simulation with
-                self.create_agents(...), expandable must be set to true
 
         Example::
 
@@ -713,15 +692,12 @@ class Simulation:
                                                 'database': self.database_queue,
                                                 'logger':self.logger_queue,
                                                 'random_seed': random.random(),
-                                                'start_round': self._start_round})
+                                                'start_round': self._start_round},
+                                    parameters=parameters,
+                                    agent_parameters=agent_parameters)
 
             for good, duration in self.expiring:
                 family.declare_expiring(good, duration)
-
-            try:
-                family.init(parameters, agent_parameters)
-            except AttributeError:
-                print("Warning: agent %s has no init function" % group_name)
 
             for good in self.perishable:
                 family.register_perish(good)
@@ -735,10 +711,7 @@ class Simulation:
             family.register_aggregate(self.possessions_to_track_aggregate[group_name],
                                       self.variables_to_track_aggregate[group_name])
 
-            try:
-                family.set_network_drawing_frequency(self._network_drawing_frequency)
-            except AttributeError:
-                family.set_network_drawing_frequency(None)
+            family.set_network_drawing_frequency(self._network_drawing_frequency)
 
             self.family_list[group_name].append(family)
             self.num_of_agents_in_group[group_name] = num_agents_this_group

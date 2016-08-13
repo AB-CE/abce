@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-import os
-
 try:
     from setuptools import setup
     from setuptools import Extension

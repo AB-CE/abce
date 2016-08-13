@@ -36,8 +36,8 @@ import numpy as np
 save_err = np.seterr(invalid='ignore')
 from database import Database
 from networklogger import NetworkLogger
-from trade import Trade, Offer
-from messaging import Messaging, Message
+from trade import Trade
+from messaging import Messaging
 import time
 from copy import copy
 import random
@@ -420,8 +420,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         self._out.append((receiver_group, receiver_id, (typ, msg)))
 
     def create_agent(self, AgentClass, group_name, parameters=None, agent_parameters=None):
-        """ create a new agent. When the agent group is build with simulation.build_agents(...)
-            expandable must be set to true.
+        """ create a new agent.
 
         Args:
 

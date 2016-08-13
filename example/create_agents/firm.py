@@ -1,6 +1,5 @@
 from __future__ import division
 import abce
-from abce import NotEnoughGoods
 from household import Household
 from random import random
 

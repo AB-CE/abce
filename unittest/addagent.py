@@ -1,8 +1,5 @@
 from __future__ import division
-import random
 from abce.agent import Agent
-from abce import NotEnoughGoods
-from tools import is_zero
 from buy import Buy
 from sell import Sell
 from give import Give
