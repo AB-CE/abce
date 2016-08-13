@@ -281,10 +281,9 @@ class Trade:
         for offer in self._open_offers[good].values():
             offer.open_offer_status = 'polled'
             ret.append(offer)
+        random.shuffle(ret)
         if sorted:
-            ret.sort(key=lambda objects: objects.price, reverse=descending, cmp=compare_with_ties)
-        else:
-            random.shuffle(ret)
+            ret.sort(key=lambda objects: objects.price, reverse=descending)
         return ret
 
     def peak_offers(self, good, descending=False):
@@ -317,7 +316,8 @@ class Trade:
         for offer in self._open_offers[good].values():
             offer.open_offer_status = 'peak_only'
             ret.append(offer)
-        ret.sort(key=lambda objects: objects.price, reverse=descending, cmp=compare_with_ties)
+        random.shuffle(ret)
+        ret.sort(key=lambda objects: objects.price, reverse=descending)
         return ret
 
     def sell(self, receiver_group, receiver_id,
