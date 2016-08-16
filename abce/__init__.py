@@ -49,19 +49,19 @@ import multiprocessing as mp
 from multiprocessing.managers import BaseManager
 import abce.db
 import abce.abcelogger
-import postprocess
+import abce.postprocess
 from glob import glob
-from firmmultitechnologies import *
-from household import Household
-from agent import *
+from abce.firmmultitechnologies import *
+from abce.household import Household
+from abce.agent import *
 from collections import defaultdict, OrderedDict
-from firm import Firm
-from quote import Quote
-from contracting import Contracting
+from abce.firm import Firm
+from abce.quote import Quote
+from abce.contracting import Contracting
 import json
-import abcegui
-from family import Family
-from abcegui import gui
+import abce.abcegui
+from abce.family import Family
+from abce.abcegui import gui
 import random
 from abce.notenoughgoods import NotEnoughGoods
 
@@ -510,7 +510,7 @@ class Simulation:
         messages[('_simulation', 0)] = []
         messages[('_simulation', 0.5)] = []
         for block in families_messages:
-            for family_name, family_msgs in block.iteritems():
+            for family_name, family_msgs in block.items():
                 if len(family_msgs):
                     try:
                         messages[family_name].extend(family_msgs)
@@ -527,7 +527,7 @@ class Simulation:
         messages[('_simulation', 0)] = []
         messages[('_simulation', 0.5)] = []
         for block in families_messages:
-            for family_name, family_msgs in block.iteritems():
+            for family_name, family_msgs in block.items():
                 if len(family_msgs):
                     try:
                         messages[family_name].extend(family_msgs)
@@ -757,7 +757,7 @@ class Simulation:
         for _, _, (group_name, id, quite) in messages:
             dest_family[(group_name, id % self.processes, quite)].append(id)
 
-        for (group_name, family_id, quite), ids in dest_family.iteritems():
+        for (group_name, family_id, quite), ids in dest_family.items():
             family = self.family_list[group_name][family_id]
             if quite:
                 family.replace_with_dead(ids)
@@ -816,7 +816,7 @@ class Simulation:
 
         all_agents_values = simulation['agents']
         for agent, agent_values in zip(self.num_of_agents_in_group['all'], all_agents_values):
-            for key, value in agent_values.iteritems():
+            for key, value in agent_values.items():
                 if value != "NotPickleable":
                     if key not in agent.__dict__:
                         agent.__dict__[key] =  value

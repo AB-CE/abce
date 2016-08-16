@@ -1,3 +1,4 @@
+from __future__ import print_function
 from flask import Flask, request, session, redirect, url_for, \
      render_template
 import webbrowser
@@ -10,6 +11,8 @@ from abce.make_graphs import make_aggregate_graphs, make_simple_graphs, make_pan
 import json
 from bokeh.embed import components
 from bokeh.resources import INLINE
+
+
 _ = __file__  # makes sure that the templates can be reached
 
 DEBUG = True
@@ -154,7 +157,6 @@ def submitted_simulation():
     return redirect(url_for('show_simulation'))
 
 
-
 @app.route('/show_simulation')
 def show_simulation():
     rounds = 0
@@ -193,7 +195,7 @@ def show_simulation():
             rounds = max(df['index'])
         if ignore_initial_rounds >= rounds:
             ignore_initial_rounds = 0
-            print 'kill'
+            print('kill')
         df = df.where((pd.notnull(df)), None)
         df.dropna(1, how='all', inplace=True)
         if filename.startswith('aggregate_'):
@@ -210,7 +212,7 @@ def show_simulation():
     script, div = components(plots)
     output = []
 
-    for idname_title, graph in div.iteritems():
+    for idname_title, graph in div.items():
         idname, title = json.loads(idname_title)
         output.append({'idname': idname,  # can not stay i otherwise the cookie minimizing does not work
                        'title': title,
@@ -237,7 +239,7 @@ def del_simulation():
     try:
         shutil.rmtree(path)
     except OSError:
-        print "could not remove", path
+        print("could not remove %s" %path)
     return redirect(url_for('older_results'))
 
 def generate(new_inputs, new_simulation, names=None, title=None, text=None, truncate_initial_rounds=False):
@@ -384,9 +386,9 @@ def run(open=True, new=1):
             else:
                 webbrowser.open("http://127.0.0.1:%i/show_simulation" % port, new=new, autoraise=True)
         if inputs:
-            print "go to http://127.0.0.1:%i/" % port
+            print("go to http://127.0.0.1:%i/" % port)
         else:
-            print "go to http://127.0.0.1:%i/show_simulation" % port
+            print("go to http://127.0.0.1:%i/show_simulation" % port)
         global opened
         opened = True
         app.run(use_reloader=False, host=host, port=port)

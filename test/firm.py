@@ -11,7 +11,7 @@ class Firm(abce.Agent, Firm):
     def selling(self):
         print 'selling('
         print 'money %i, corn %i' % (self.possession('money'), self.possession('corn'))
-        #for x in xrange(10000):
+        #for x in range(10000):
         #    x = x * x
         self.checkorders = self.sell('household', self.idn, 'corn', 1, 1)
         # for offer in self.given_offers:

@@ -20,7 +20,7 @@ produce.
 """
 from __future__ import division
 import numpy as np
-from firmmultitechnologies import FirmMultiTechnologies
+from abce.firmmultitechnologies import FirmMultiTechnologies
 save_err = np.seterr(invalid='ignore')
 
 
