@@ -39,7 +39,7 @@ Messaging between agents:
 #******************************************************************************************#
 from __future__ import division
 from abce.notenoughgoods import NotEnoughGoods
-from messaging import Message
+from abce.messaging import Message
 from numpy import isfinite, isnan
 import random
 
@@ -282,7 +282,7 @@ class Trade:
             offer.open_offer_status = 'polled'
             ret.append(offer)
         if sorted:
-            ret.sort(key=lambda objects: objects.price, reverse=descending, cmp=compare_with_ties)
+            ret.sort(key=lambda objects: objects.price, reverse=descending)
         else:
             random.shuffle(ret)
         return ret
@@ -317,7 +317,7 @@ class Trade:
         for offer in self._open_offers[good].values():
             offer.open_offer_status = 'peak_only'
             ret.append(offer)
-        ret.sort(key=lambda objects: objects.price, reverse=descending, cmp=compare_with_ties)
+        ret.sort(key=lambda objects: objects.price, reverse=descending)
         return ret
 
     def sell(self, receiver_group, receiver_id,

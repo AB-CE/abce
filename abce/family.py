@@ -11,7 +11,7 @@ class Family:
         self.batch = batch
         self.group = agent_args['group']
         self.num_managers = num_managers
-        for i in xrange(batch, num_agents_this_group, num_managers):
+        for i in range(batch, num_agents_this_group, num_managers):
             self.agents.append(Agent(id=i, **agent_args))
 
     def append(self, Agent, id, agent_args):
