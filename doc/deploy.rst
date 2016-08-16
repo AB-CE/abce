@@ -194,14 +194,10 @@ type in, replace the IP and directory::
         location / {
             include uwsgi_params;
             uwsgi_pass unix:/home/ubuntu/myproject/myproject.sock;
-            uwsgi_read_timeout 3000;
+
         }
     }
 
-Note the uwsgi_read_timeout 3000; is important and not part of the explenation
-tutorial I linked earlier. Simulations often take a long time. Setting the
-timeout, the server is more patient with your simulation. You can set the value
-even higher.
 
 Link the project as active::
 
