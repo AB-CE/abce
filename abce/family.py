@@ -6,13 +6,24 @@ import random
 
 
 class Family:
-    def __init__(self, Agent, num_agents_this_group, num_managers, batch, agent_args):
+    def __init__(self, Agent, num_agents_this_group, num_managers, batch, agent_args, parameters, agent_parameters):
         self.agents = []
         self.batch = batch
         self.group = agent_args['group']
         self.num_managers = num_managers
         for i in xrange(batch, num_agents_this_group, num_managers):
-            self.agents.append(Agent(id=i, **agent_args))
+            agent = Agent(id=i, **agent_args)
+            try:
+                agent.init(parameters, agent_parameters[agent.id])
+            except AttributeError:
+                print("Warning: agent %s has no init function" % agent.group)
+            except KeyboardInterrupt:
+                return None
+            except:
+                time.sleep(random.random())
+                traceback.print_exc()
+                raise SystemExit()
+            self.agents.append(agent)
 
     def append(self, Agent, id, agent_args):
             self.agents.append(Agent(id=id, **agent_args))
@@ -54,17 +65,6 @@ class Family:
     def declare_expiring(self, good, duration):
         for agent in self.agents:
             agent._declare_expiring(good, duration)
-
-    def init(self, simulation_parameters, agent_parameters):
-        for agent in self.agents:
-            try:
-                agent.init(simulation_parameters, agent_parameters[agent.id])
-            except KeyboardInterrupt:
-                return None
-            except:
-                time.sleep(random.random())
-                traceback.print_exc()
-                raise SystemExit()
 
     def register_perish(self, good):
         for agent in self.agents:

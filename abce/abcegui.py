@@ -1,18 +1,15 @@
-from flask import Flask, request, session, g, redirect, url_for, \
-     abort, render_template, flash, Markup
+from flask import Flask, request, session, redirect, url_for, \
+     render_template
 import webbrowser
 import os
 import pandas as pd
 from abce.webtext import abcedescription
 import shutil
-import traceback
 from abcegui_helper import find_free_port, load_text
 from abce.make_graphs import make_aggregate_graphs, make_simple_graphs, make_panel_graphs
 import json
 from bokeh.embed import components
 from bokeh.resources import INLINE
-
-
 _ = __file__  # makes sure that the templates can be reached
 
 DEBUG = True

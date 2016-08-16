@@ -3,7 +3,6 @@ import abce
 from tools import *
 import random
 import numpy as np
-from abce import NotEnoughGoods
 
 
 class Sell(abce.Agent):
