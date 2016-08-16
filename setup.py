@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import os
-from sys import platform as _platform
 
 try:
     from setuptools import setup
@@ -24,12 +23,6 @@ except ImportError:
         Extension("abce.trade", [ "abce/trade.c" ]),
     ]
 
-if _platform == "linux" or _platform == "linux2":
-    bokeh = 'bokeh == 0.11.1'
-else:
-    bokeh = 'bokeh >= 0.12'
-
-
 
 
 setup(name='abce',
@@ -45,7 +38,7 @@ setup(name='abce',
                         'pandas >= 0.17.1',
                         'networkx >= 1.9.1',
                         'flask >= 0.10.1',
-                        bokeh],
+                        'bokeh < 0.12.0'],
       include_package_data=True,
       ext_modules=ext_modules,
       cmdclass=cmdclass)
