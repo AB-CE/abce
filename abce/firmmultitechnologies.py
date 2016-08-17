@@ -288,12 +288,12 @@ class FirmMultiTechnologies(object):
         if shares is None:
             def production_function(goods):
                 a = 1 / len(goods)
-                return multiplier * np.sum([a * goods[name] ** gamma
+                return multiplier * sum([a * goods[name] ** gamma
                                            for name in goods]) ** (1 /  gamma)
             production_function.use = 'all'
         else:
             def production_function(goods):
-                return multiplier * np.sum([share * goods[name] ** gamma
+                return multiplier * sum([share * goods[name] ** gamma
                                            for name, share in shares.items()]) ** (1 /  gamma)
             production_function.use = {name: 1 for name in list(shares.keys())}
 
