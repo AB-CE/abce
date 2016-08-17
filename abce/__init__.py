@@ -600,7 +600,6 @@ class Simulation(object):
                             agents_to_delete.extend(messagess[('_simulation', 0.5)])
                             del messagess[('_simulation', 0.5)]
                 self.execute_internal('_advance_round')
-                self.execute_internal('_perish')
                 if agents_to_add:
                     self.add_agents(agents_to_add, round)
                     agents_to_add = []

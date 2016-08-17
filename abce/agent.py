@@ -227,6 +227,11 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         for good in self._expiring_goods:
             self._haves[good]._advance_round()
 
+        # perishing goods
+        for good in self._perishable:
+            if good in self._haves:
+                self._haves[good] = 0
+
         if self.trade_logging > 0:
             self.database_connection.put(["trade_log", self._trade_log, self.round])
 
@@ -348,11 +353,6 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
 
     def _register_perish(self, good):
         self._perishable.append(good)
-
-    def _perish(self):
-        for good in self._perishable:
-            if good in self._haves:
-                self._haves[good] = 0
 
     def _register_panel(self, possessions, variables):
         self.possessions_to_track_panel = possessions
