@@ -1,6 +1,7 @@
 from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
+from past.builtins import basestring
 from builtins import str
 from builtins import range
 from past.utils import old_div
@@ -16,7 +17,6 @@ from .make_graphs import make_aggregate_graphs, make_simple_graphs, make_panel_g
 import json
 from bokeh.embed import components
 from bokeh.resources import INLINE
-
 
 _ = __file__  # makes sure that the templates can be reached
 
@@ -323,7 +323,7 @@ def generate(new_inputs, new_simulation, names=None, title=None, text=None, trun
                             <datalist id="{name}"> """
                       + "".join(['<option value="%s">' % item for item in value])
                       + """ </datalist> """).format(**element)
-        elif type(value) is str:  # menu
+        elif isinstance(value, basestring) :  # menu
             element['type'] = str
             content = """<div>{title}</div>
                          <div class="mdl-textfield mdl-js-textfield">
