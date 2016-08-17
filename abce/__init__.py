@@ -46,7 +46,6 @@ from builtins import zip
 from builtins import str
 from builtins import range
 from builtins import object
-import sys
 import csv
 import datetime
 import os
@@ -162,9 +161,6 @@ class Simulation(object):
         self._network_drawing_frequency = 1  # this is default value as declared in self.network() method
 
         self.rounds = rounds
-
-        if sys.version_info[0] != 2 or sys.version_info[1] != 7:
-            print("**** WARNING: ABCE needs python 2.7 ****")
 
         try:
             os.makedirs(os.path.abspath('.') + '/result/')
