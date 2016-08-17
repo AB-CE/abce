@@ -3,6 +3,7 @@ standard_library.install_aliases()
 from builtins import range
 import http.server
 import socketserver
+import socket
 import os
 
 def find_free_port(address, port):
@@ -11,11 +12,11 @@ def find_free_port(address, port):
         try:
             httpd = socketserver.TCPServer((address, port), Handler)
             return port
-        except socketserver.socket.error as exc:
+        except socket.error as exc:
             if exc.args[0] != 48:
                 raise
             port += 1
-    raise socketserver.socket.error
+    raise socket.error
 
 def load_text(path):
     texts = []
