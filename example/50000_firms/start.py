@@ -10,7 +10,7 @@ def main():
     'rounds': 300
     }
 
-    s = Simulation(rounds=parameters['rounds'], cores=8)
+    s = Simulation(rounds=parameters['rounds'], processes=8)
     action_list = [#(('myagent', 'youragent'), 'compute'),
                    ('youragent', 's'),
                    ('myagent', 'g')]

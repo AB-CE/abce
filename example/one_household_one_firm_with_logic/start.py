@@ -18,7 +18,7 @@ parameters = {'name': '2x2',
 
 #@gui(parameters)
 def main(parameters):
-    simulation = Simulation(rounds=parameters['rounds'], cores=1)
+    simulation = Simulation(rounds=parameters['rounds'], processes=1)
     action_list = [
         ('household', 'sell_labor'),
         ('firm', 'buy_labor'),
