@@ -101,14 +101,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         self.database_connection = database
         self.logger_connection = logger
 
-        if trade_logging == 'individual':
-            self.trade_logging = 1
-        elif trade_logging == 'group':
-            self.trade_logging = 2
-        elif trade_logging == 'off':
-            self.trade_logging = 0
-        else:
-            SystemExit('trade_logging wrongly defined in agent.__init__' + trade_logging)
+        self.trade_logging = {'individual':1, 'group':2, 'off': 0}[trade_logging]
 
         self._haves = defaultdict(float)
 
