@@ -230,12 +230,13 @@ class Contracting(object):
             quantity (optional):
                 the quantity that is accepted. Defaults to all.
         """
-        if quantity is not None:
-            contract.quantity = min(contract.quantity, quantity)
-        else:
-            assert quantity < contract.quantity + epsilon * max(quantity, contract.quantity)
-        if quantity > contract.quantity:
+        if quantity is None:
             quantity = contract.quantity
+        else:
+            contract.quantity = min(contract.quantity, quantity)
+            assert quantity < contract.quantity + epsilon * max(quantity, contract.quantity)
+            if quantity > contract.quantity:
+                quantity = contract.quantity
 
         if contract.pay_group == self.group and contract.pay_id == self.id:
             self._contracts_pay[contract.good][contract.id] = contract
