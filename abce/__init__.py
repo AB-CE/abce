@@ -40,6 +40,12 @@ This is a minimal template for a start.py::
     s.run()
 """
 from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
+from builtins import zip
+from builtins import str
+from builtins import range
+from builtins import object
 import sys
 import csv
 import datetime
@@ -49,6 +55,7 @@ import multiprocessing as mp
 from multiprocessing.managers import BaseManager
 import abce.db
 import abce.abcelogger
+<<<<<<< HEAD
 import abce.postprocess
 from glob import glob
 from abce.firmmultitechnologies import *
@@ -62,6 +69,21 @@ import json
 import abce.abcegui
 from abce.family import Family
 from abce.abcegui import gui
+=======
+from . import postprocess
+from glob import glob
+from .firmmultitechnologies import *
+from .household import Household
+from .agent import *
+from collections import defaultdict, OrderedDict
+from .firm import Firm
+from .quote import Quote
+from .contracting import Contracting
+import json
+from . import abcegui
+from .family import Family
+from .abcegui import gui
+>>>>>>> 176337973541dd2110261221f573a8c460b77a99
 import random
 from abce.notenoughgoods import NotEnoughGoods
 
@@ -75,7 +97,7 @@ def execute_internal_wrapper(inp):
 class MyManager(BaseManager):
     pass
 
-class Simulation:
+class Simulation(object):
     """ This class in which the simulation is run. Actions and agents have to be
     added. databases and resource declarations can be added. Then runs
     the simulation.
@@ -496,7 +518,7 @@ class Simulation:
                     except IndexError:
                         action = ((action[0],), action[1])
                 for group in action[0]:
-                    assert group in self.family_list.keys(), \
+                    assert group in list(self.family_list.keys()), \
                         '%s in (%s, %s) in the action_list is not a known agent' % (action[0], action[0], action[1])
                 processed_list.append((action[0], action[1], action[2]))
         return processed_list
@@ -572,18 +594,45 @@ class Simulation:
 
         messagess = {}
         self.family_names = []
-        for group in self.family_list.values():
+        for group in list(self.family_list.values()):
             for family in group:
                 self.family_names.append(family.name())
                 messagess[family.name()] = []
         agents_to_add = []
         agents_to_delete = []
         try:
+<<<<<<< HEAD
             for round in xrange(self._start_round, self._start_round + self.rounds):
                 if self._calendar:
                     _round = datetime.date.fromordinal(round)
                     print("\rRound" + str(" %3d " % round) + str(_round))
                 else:
+=======
+            if self._calendar:
+                for round in range(self._start_round, self._start_round + self.rounds):
+                    print("\rRound" + str(" %3d " % round) + str(datetime.date.fromordinal(round)))
+                    self.execute_internal('_produce_resource')
+
+                    for group, action, condition in self._action_list:
+                        if condition(datetime.date.fromordinal(round)):
+                            messagess = self.execute(group, action, messagess)
+                            if messagess[('_simulation', 0)]:
+                                agents_to_add.extend(messagess[('_simulation', 0)])
+                                del messagess[('_simulation', 0)]
+                            if messagess[('_simulation', 0.5)]:
+                                agents_to_delete.extend(messagess[('_simulation', 0.5)])
+                                del messagess[('_simulation', 0.5)]
+                    self.execute_internal('_advance_round')
+                    self.execute_internal('_perish')
+                    if agents_to_add:
+                        self.add_agents(agents_to_add, round)
+                        agents_to_add = []
+                    if agents_to_delete:
+                        self.delete_agent(agents_to_delete)
+                        agents_to_delete = []
+            else:
+                for round in range(self._start_round, self._start_round + self.rounds):
+>>>>>>> 176337973541dd2110261221f573a8c460b77a99
                     print("\rRound" + str(" %3d " % round))
                     _round = round
                 self.execute_internal('_produce_resource')
@@ -822,7 +871,7 @@ class Simulation:
                         agent.__dict__[key] =  value
                     elif isinstance(agent.__dict__[key], defaultdict):
                         try:
-                            agent.__dict__[key] = defaultdict(type(value.values()[0]), value)
+                            agent.__dict__[key] = defaultdict(type(list(value.values())[0]), value)
                         except IndexError:
                             agent.__dict__[key] = defaultdict(float)
                     elif isinstance(agent.__dict__[key], OrderedDict):
@@ -847,7 +896,7 @@ def handle_non_pickleable(x):
 
 
 
-class repeat:
+class repeat(object):
     """ Repeats the contained list of actions several times
 
     Args:

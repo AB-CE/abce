@@ -1,4 +1,5 @@
 from __future__ import division
+from __future__ import print_function
 import abce
 
 
@@ -8,7 +9,7 @@ class Killer(abce.Agent, abce.Household):
         pass
 
     def kill(self):
-        print 'kill', self.round
+        print('kill', self.round)
         self.delete_agent('agent', self.round, quite=True)
 
     def send_message(self):

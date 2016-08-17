@@ -1,3 +1,4 @@
+from builtins import object
 # Copyright 2012 Davoud Taghawi-Nejad
 #
 # Module Author: Davoud Taghawi-Nejad
@@ -17,7 +18,7 @@
 from pyparsing import *
 
 
-class HouseholdFromGams:
+class HouseholdFromGams(object):
     """ an agent must inherit HouseholdFromGams and (optional) pass the column
     header in the world_parameters.csv file that contains the link to the gams
     file.

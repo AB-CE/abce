@@ -1,9 +1,10 @@
+from builtins import object
 
 
 def nothing(*_, **__):
     pass
 
-class DeadAgent:
+class DeadAgent(object):
     def __getattr__(self, *_, **__):
         return nothing
 

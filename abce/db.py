@@ -15,6 +15,7 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 from __future__ import division
+from __future__ import print_function
 import multiprocessing
 import sqlite3
 import numpy as np
@@ -122,7 +123,7 @@ class Database(multiprocessing.Process):
                     self.add_log(group_name)
                     self.write(table_name, data_to_write)
                 except sqlite3.InterfaceError:
-                    print(table_name, data_to_write)
+                    print((table_name, data_to_write))
                     raise SystemExit('InterfaceError: data can not be written. If nested try: self.log_nested')
             else:
                 raise SystemExit("abce_db error '%s' command unknown ~87" % msg)
@@ -130,11 +131,11 @@ class Database(multiprocessing.Process):
         self.db.close()
 
     def write_or_update(self, table_name, data_to_write):
-        insert_str = "INSERT OR IGNORE INTO " + table_name + "(" + ','.join(data_to_write.keys()) + ") VALUES (%s);"
+        insert_str = "INSERT OR IGNORE INTO " + table_name + "(" + ','.join(list(data_to_write.keys())) + ") VALUES (%s);"
         update_str = "UPDATE " + table_name + " SET %s  WHERE CHANGES()=0 and round=%s and id=%s;"
         update_str = update_str % (','.join('%s=?' % key for key in data_to_write),
             data_to_write['round'], data_to_write['id'])
-        rows_to_write = data_to_write.values()
+        rows_to_write = list(data_to_write.values())
         format_strings = ','.join(['?'] * len(rows_to_write))
         try:
             self.database.execute(insert_str % format_strings, rows_to_write)
@@ -150,10 +151,10 @@ class Database(multiprocessing.Process):
 
     def write(self, table_name, data_to_write):
         try:
-            ex_str = "INSERT INTO " + table_name + "(" + ','.join(data_to_write.keys()) + ") VALUES (%s)"
+            ex_str = "INSERT INTO " + table_name + "(" + ','.join(list(data_to_write.keys())) + ") VALUES (%s)"
         except TypeError:
-            raise TypeError("good names must be strings", data_to_write.keys())
-        rows_to_write = data_to_write.values()
+            raise TypeError("good names must be strings", list(data_to_write.keys()))
+        rows_to_write = list(data_to_write.values())
         format_strings = ','.join(['?'] * len(rows_to_write))
         try:
             self.database.execute(ex_str % format_strings, rows_to_write)
@@ -166,11 +167,11 @@ class Database(multiprocessing.Process):
             self.new_column(table_name, data_to_write)
             self.write(table_name, data_to_write)
         except sqlite3.InterfaceError:
-            print(ex_str % format_strings, rows_to_write)
+            print((ex_str % format_strings, rows_to_write))
             raise
 
     def new_column(self, table_name, data_to_write):
-        rows_to_write = data_to_write.values()
+        rows_to_write = list(data_to_write.values())
         self.database.execute("""PRAGMA table_info(""" + table_name + """)""")
         existing_columns = [row[1] for row in self.database]
         new_columns = set(data_to_write.keys()).difference(existing_columns)
