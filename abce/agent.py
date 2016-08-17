@@ -36,8 +36,6 @@ from __future__ import absolute_import
 from builtins import str
 from builtins import range
 from collections import OrderedDict, defaultdict
-import numpy as np
-save_err = np.seterr(invalid='ignore')
 from .database import Database
 from .networklogger import NetworkLogger
 from .trade import Trade, Offer

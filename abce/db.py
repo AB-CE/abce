@@ -18,7 +18,6 @@ from __future__ import division
 from __future__ import print_function
 import multiprocessing
 import sqlite3
-import numpy as np
 from collections import defaultdict
 
 class Database(multiprocessing.Process):
@@ -59,11 +58,6 @@ class Database(multiprocessing.Process):
         self.database.execute('PRAGMA temp_store=OFF')
         self.database.execute('PRAGMA default_temp_store=OFF')
         #self.database.execute('PRAGMA cache_size = -100000')
-        for t in (np.int8, np.int16, np.int32, np.int64,
-                                    np.uint8, np.uint16, np.uint32, np.uint64):
-            sqlite3.register_adapter(t, int)
-        for t in (np.float, np.float16, np.float32, np.float64):
-            sqlite3.register_adapter(t, float)
         if self.trade_log:
             trade_ex_str = self.add_trade_log()
         for table_name in self.panels:
@@ -192,10 +186,13 @@ class Database(multiprocessing.Process):
     def write_aggregate(self, table_name, round):
         data_to_write = {'round': round}
         for key in self.data[table_name]:
-            summe = sum(self.data[table_name][key])
+            l = self.data[table_name][key]
+            summe = sum(l)
+            mean = summe / len(l)
+            ss = sum((x-mean)**2 for x in l)
             data_to_write[key] = summe
-            data_to_write[key + '_std'] = np.std(self.data[table_name][key])
-            data_to_write[key + '_mean'] = summe / len(self.data[table_name][key])
+            data_to_write[key + '_std'] = (ss / len(l))**0.5
+            data_to_write[key + '_mean'] = mean
             self.data[table_name][key] = []
         self.write(table_name, data_to_write)
 

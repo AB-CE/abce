@@ -37,8 +37,6 @@ Messaging between agents:
 from __future__ import division
 from builtins import str
 from builtins import object
-import numpy as np
-save_err = np.seterr(invalid='ignore')
 
 
 class Database(object):

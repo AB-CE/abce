@@ -25,11 +25,10 @@ a variable. :meth:`abce.FirmMultiTechnologies.produce` and similar
 methods use this variable to produce with the according technology.
 """
 from __future__ import division
+import operator
 from builtins import object
-import numpy as np
 from abce.trade import get_epsilon
 from abce.notenoughgoods import NotEnoughGoods
-save_err = np.seterr(invalid='ignore')
 epsilon = get_epsilon()
 
 
@@ -237,7 +236,7 @@ class FirmMultiTechnologies(object):
 
         """
         def production_function(goods):
-            return multiplier * np.prod([goods[name] ** exponent
+            return multiplier * reduce(operator.mul, [goods[name] ** exponent
                                 for name, exponent in exponents.items()])
 
         dict_formula = lambda goods: {output: production_function(goods)}
