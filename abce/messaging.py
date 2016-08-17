@@ -21,10 +21,12 @@ with  :meth:`messaging.Messaging.get_messages_all` or messages with a specific t
 :meth:`messaging.Messaging.get_messages`.
 """
 from __future__ import division
+from builtins import str
+from builtins import object
 from random import shuffle
 
 
-class Message():
+class Message(object):
     __slots__ = ['sender_group', 'sender_id', 'receiver_group',
                  'receiver_id', 'topic','content']
     def __init__(self, sender_group, sender_id, receiver_group,
@@ -43,7 +45,7 @@ class Message():
 
 
 
-class Messaging:
+class Messaging(object):
     def message(self, receiver_group, receiver_id, topic, content):
         """ sends a message to agent. Agents receive it
         at the beginning of next round with :meth:`~abceagent.Messaging.get_messages` or
@@ -139,7 +141,7 @@ class Messaging:
         content with `message.content` instead of only `message`.
         """
         ret = {}
-        for key, messages in self._msgs.iteritems():
+        for key, messages in self._msgs.items():
             shuffle(messages)
             ret[key] = messages
         self._msgs.clear()

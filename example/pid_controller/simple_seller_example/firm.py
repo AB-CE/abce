@@ -2,6 +2,7 @@
 all it's goods can be sold.
 """
 from __future__ import division
+from builtins import range
 import abce
 from abce import NotEnoughGoods
 

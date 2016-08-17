@@ -35,11 +35,13 @@ Messaging between agents:
 .. [1] or :class:`abceagent.FirmMultiTechnologies` for simulations with complex technologies.
 """
 from __future__ import division
+from builtins import str
+from builtins import object
 import numpy as np
 save_err = np.seterr(invalid='ignore')
 
 
-class Database:
+class Database(object):
     """ The database class """
     def log(self, action_name, data_to_log):
         """ With log you can write the models data. Log can save variable states

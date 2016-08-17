@@ -18,13 +18,15 @@
 The Household class extends the agent by giving him utility functions and the ability to consume goods.
 """
 from __future__ import division
+from __future__ import absolute_import
+from builtins import object
 import numpy as np
-from abce.trade import get_epsilon
+from .trade import get_epsilon
 save_err = np.seterr(invalid='ignore')
 epsilon = get_epsilon()
 
 
-class Household:
+class Household(object):
     def get_utility_function(self):
         """ the utility function should be created with:
         set_cobb_douglas_utility_function,
@@ -49,7 +51,7 @@ class Household:
             utility = self.consume_everything()
             self.log('utility': {'u': utility})
         """
-        return self.consume({inp: self._haves[inp] for inp in self._utility_function.use.keys()})
+        return self.consume({inp: self._haves[inp] for inp in list(self._utility_function.use.keys())})
 
     def consume(self, input_goods):
         """ consumes input_goods returns utility according to the agent's
@@ -80,7 +82,7 @@ class Household:
             self.log('utility': {'u': utility})
 
         """
-        for good in self._utility_function.use.keys():
+        for good in list(self._utility_function.use.keys()):
             if self._haves[good] < input_goods[good] - epsilon:
                 raise NotEnoughGoods(self.name, good, (input_goods[good] - self._haves[good]))
 
@@ -146,7 +148,7 @@ class Household:
 
         self._utility_function = Utility_Function()
         self._utility_function.formula = utility_function
-        self._utility_function.use = {name: 1 for name in exponents.keys()}
+        self._utility_function.use = {name: 1 for name in list(exponents.keys())}
 
     def predict_utility(self, input_goods):
         """ Predicts the utility of a vecor of input goods
@@ -171,5 +173,5 @@ class Household:
         return self._utility_function.formula(input_goods)
 
 
-class Utility_Function:
+class Utility_Function(object):
     pass

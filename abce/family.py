@@ -1,3 +1,5 @@
+from builtins import range
+from builtins import object
 from collections import defaultdict
 from abce.deadagent import DeadAgent
 import traceback
@@ -5,7 +7,7 @@ import time
 import random
 
 
-class Family:
+class Family(object):
     def __init__(self, Agent, num_agents_this_group, num_managers, batch, agent_args, parameters, agent_parameters):
         self.agents = []
         self.batch = batch

@@ -1,6 +1,8 @@
 #pylint: disable=W0232, C1001, C0111, R0913, E1101, W0212
 # TODO end_contract; record all payments
 from __future__ import print_function
+from builtins import str
+from builtins import object
 from abce.notenoughgoods import NotEnoughGoods
 from random import shuffle
 from abce.trade import get_epsilon
@@ -35,7 +37,7 @@ class Contract(object):
                  self.deliver_good_id, self.pay_group, self.pay_id, self.good, self.quantity, self.price,
                  self.end_date, self.id, self.delivered, self.paid))
 
-class Contracting:
+class Contracting(object):
     """ This is a class, that allows you to create contracts. For example a
     work contract. One agent commits to deliver a good or service for a set
     amount of time.
@@ -271,21 +273,21 @@ class Contracting:
         self._send(contract.deliver_good_group, contract.deliver_good_id, '_dp', contract)
 
     def contracts_to_deliver(self, good):
-        return self._contracts_deliver[good].values()
+        return list(self._contracts_deliver[good].values())
 
     def contracts_to_receive(self, good):
-        return self._contracts_pay[good].values()
+        return list(self._contracts_pay[good].values())
 
     def contracts_to_deliver_all(self):
         ret = {}
         for good in self._contracts_deliver:
-            ret[good] = self._contracts_deliver[good].values()
+            ret[good] = list(self._contracts_deliver[good].values())
         return request_offer
 
     def contracts_to_receive_all(self):
         ret = {}
         for good in self._contracts_pay:
-            ret[good] = self._contracts_pay[good].values()
+            ret[good] = list(self._contracts_pay[good].values())
         return request_offer
 
     def end_contract(self, contract):

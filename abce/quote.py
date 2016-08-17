@@ -15,10 +15,12 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 from __future__ import division
+from builtins import str
+from builtins import object
 from collections import defaultdict
 from random import shuffle
 
-class Quotation():
+class Quotation(object):
     def __init__(self, msg):
         self.__dict__ = msg
 
@@ -35,7 +37,7 @@ class Quotation():
         return str(self.__dict__)
 
 
-class Quote:
+class Quote(object):
     """ Quotes as opposed to trades are uncommitted offers. They can be made
     even if they agent can not fullfill them. With
     :meth:`~abceagent.Trade.accept_quote` and :meth:`~abceagent.Trade.accept_quote_partial`,
@@ -59,7 +61,7 @@ class Quote:
          quotes = self.get_quotes()
         """
         ret = []
-        for offer_id in self._quotes.keys():
+        for offer_id in list(self._quotes.keys()):
             if self._quotes[offer_id]['good'] == good:
                 ret.append(self._quotes[offer_id])
                 del self._quotes[offer_id]
@@ -87,7 +89,7 @@ class Quote:
         for quote in self._quotes:
             key = self._quotes[quote]['good']
             ret[key].append(self._quotes[quote])
-        for key in ret.keys():
+        for key in list(ret.keys()):
             shuffle(ret[key])
             ret[key].sort(key=lambda objects: objects['price'],
                           reverse=descending)

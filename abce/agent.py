@@ -31,13 +31,17 @@ Messaging between agents, see :doc:`Messaging`.
 
 """
 from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
+from builtins import str
+from builtins import range
 from collections import OrderedDict, defaultdict
 import numpy as np
 save_err = np.seterr(invalid='ignore')
-from abce.database import Database
-from abce.networklogger import NetworkLogger
-from abce.trade import Trade, Offer
-from abce.messaging import Messaging, Message
+from .database import Database
+from .networklogger import NetworkLogger
+from .trade import Trade, Offer
+from .messaging import Messaging, Message
 import time
 from copy import copy
 import random
@@ -201,10 +205,10 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         return hash((self.name, self._offer_count))
 
     def _advance_round(self):
-        for offer in self.given_offers.values():
+        for offer in list(self.given_offers.values()):
             if offer.made < self.round:
                 print("in agent %s this offers have not been retrieved:" % self.name_without_colon)
-                for offer in self.given_offers.values():
+                for offer in list(self.given_offers.values()):
                     if offer.made < self.round:
                         print(offer.__repr__())
                 raise Exception('%s_%i: There are offers have been made before'
@@ -237,12 +241,12 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
 
         self._trade_log = defaultdict(int)
 
-        if sum([len(offers) for offers in self._open_offers.values()]):
+        if sum([len(offers) for offers in list(self._open_offers.values())]):
                 pprint(dict(self._open_offers))
                 raise SystemExit('%s_%i: There are offers an agent send that have not'
                                  'been retrieved in this round get_offer(.)' % (self.group, self.id))
 
-        if sum([len(offers) for offers in self._msgs.values()]):
+        if sum([len(offers) for offers in list(self._msgs.values())]):
                 pprint(dict(self._msgs))
                 raise SystemExit('%s_%i: There are messages an agent send that have not'
                                  'been retrieved in this round get_messages(.)' % (self.group, self.id))
@@ -402,8 +406,8 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
 
     def __reject_polled_but_not_accepted_offers(self):
         to_reject = []
-        for offers in self._open_offers.values():
-            for offer in offers.values():
+        for offers in list(self._open_offers.values()):
+            for offer in list(offers.values()):
                 if offer.open_offer_status == 'polled':
                     to_reject.append(offer)
         for offer in to_reject:
@@ -468,9 +472,9 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
 
 def flatten(d, parent_key=''):
     items = []
-    for k, v in d.items():
+    for k, v in list(d.items()):
         try:
-            items.extend(flatten(v, '%s%s_' % (parent_key, k)).items())
+            items.extend(list(flatten(v, '%s%s_' % (parent_key, k)).items()))
         except AttributeError:
             items.append(('%s%s' % (parent_key, k), v))
     return dict(items)

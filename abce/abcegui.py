@@ -1,13 +1,18 @@
+from __future__ import division
 from __future__ import print_function
-from flask import Flask, request, session, redirect, url_for, \
-     render_template
+from __future__ import absolute_import
+from builtins import str
+from builtins import range
+from past.utils import old_div
+from flask import Flask, request, session, g, redirect, url_for, \
+     abort, render_template, flash, Markup
 import webbrowser
 import os
 import pandas as pd
-from abce.webtext import abcedescription
+from .webtext import abcedescription
 import shutil
-from abcegui_helper import find_free_port, load_text
-from abce.make_graphs import make_aggregate_graphs, make_simple_graphs, make_panel_graphs
+from .abcegui_helper import find_free_port, load_text
+from .make_graphs import make_aggregate_graphs, make_simple_graphs, make_panel_graphs
 import json
 from bokeh.embed import components
 from bokeh.resources import INLINE
@@ -156,7 +161,6 @@ def submitted_simulation():
     simulation(parameters)
     return redirect(url_for('show_simulation'))
 
-
 @app.route('/show_simulation')
 def show_simulation():
     rounds = 0
@@ -207,7 +211,7 @@ def show_simulation():
                 else:
                     plots.update(make_panel_graphs(df, filename, ignore_initial_rounds))
             except ValueError:
-                print(filename, 'not displayable: ValueError')
+                print((filename, 'not displayable: ValueError'))
 
     script, div = components(plots)
     output = []
@@ -239,7 +243,7 @@ def del_simulation():
     try:
         shutil.rmtree(path)
     except OSError:
-        print("could not remove %s" %path)
+        print("could not remove %s" % path)
     return redirect(url_for('older_results'))
 
 def generate(new_inputs, new_simulation, names=None, title=None, text=None, truncate_initial_rounds=False):
@@ -261,7 +265,7 @@ def generate(new_inputs, new_simulation, names=None, title=None, text=None, trun
 
     ordered_inputs = new_inputs
 
-    for parameter, value in ordered_inputs.items():
+    for parameter, value in list(ordered_inputs.items()):
         element = {}
         element['name'] = parameter
         element['value'] = value
@@ -285,7 +289,7 @@ def generate(new_inputs, new_simulation, names=None, title=None, text=None, trun
                 element['type'] = int
             else:
                 element['type'] = float
-                element['step'] = (element['max'] - element['min']) / 100
+                element['step'] = old_div((element['max'] - element['min']), 100)
 
             content = """  {title}
                             <div class="mdl-grid">

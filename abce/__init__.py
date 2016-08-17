@@ -40,6 +40,12 @@ This is a minimal template for a start.py::
     s.run()
 """
 from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
+from builtins import zip
+from builtins import str
+from builtins import range
+from builtins import object
 import sys
 import csv
 import datetime
@@ -49,19 +55,19 @@ import multiprocessing as mp
 from multiprocessing.managers import BaseManager
 import abce.db
 import abce.abcelogger
-import abce.postprocess
+from . import postprocess
 from glob import glob
-from abce.firmmultitechnologies import *
-from abce.household import Household
-from abce.agent import *
+from .firmmultitechnologies import *
+from .household import Household
+from .agent import *
 from collections import defaultdict, OrderedDict
-from abce.firm import Firm
-from abce.quote import Quote
-from abce.contracting import Contracting
+from .firm import Firm
+from .quote import Quote
+from .contracting import Contracting
 import json
-import abce.abcegui
-from abce.family import Family
-from abce.abcegui import gui
+from . import abcegui
+from .family import Family
+from .abcegui import gui
 import random
 from abce.notenoughgoods import NotEnoughGoods
 
@@ -75,7 +81,7 @@ def execute_internal_wrapper(inp):
 class MyManager(BaseManager):
     pass
 
-class Simulation:
+class Simulation(object):
     """ This class in which the simulation is run. Actions and agents have to be
     added. databases and resource declarations can be added. Then runs
     the simulation.
@@ -496,7 +502,7 @@ class Simulation:
                     except IndexError:
                         action = ((action[0],), action[1])
                 for group in action[0]:
-                    assert group in self.family_list.keys(), \
+                    assert group in list(self.family_list.keys()), \
                         '%s in (%s, %s) in the action_list is not a known agent' % (action[0], action[0], action[1])
                 processed_list.append((action[0], action[1], action[2]))
         return processed_list
@@ -572,7 +578,7 @@ class Simulation:
 
         messagess = {}
         self.family_names = []
-        for group in self.family_list.values():
+        for group in list(self.family_list.values()):
             for family in group:
                 self.family_names.append(family.name())
                 messagess[family.name()] = []
@@ -822,7 +828,7 @@ class Simulation:
                         agent.__dict__[key] =  value
                     elif isinstance(agent.__dict__[key], defaultdict):
                         try:
-                            agent.__dict__[key] = defaultdict(type(value.values()[0]), value)
+                            agent.__dict__[key] = defaultdict(type(list(value.values())[0]), value)
                         except IndexError:
                             agent.__dict__[key] = defaultdict(float)
                     elif isinstance(agent.__dict__[key], OrderedDict):
@@ -847,7 +853,7 @@ def handle_non_pickleable(x):
 
 
 
-class repeat:
+class repeat(object):
     """ Repeats the contained list of actions several times
 
     Args:

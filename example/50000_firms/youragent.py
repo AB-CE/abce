@@ -1,3 +1,4 @@
+from builtins import range
 from abce.agent import Agent
 from random import shuffle
 
@@ -9,7 +10,7 @@ class YourAgent(Agent):
 
     def compute(self):
         #print('here', self.id)
-        l = range(1)
+        l = list(range(1))
         shuffle(l)
         max(l)
 

@@ -1,9 +1,10 @@
 from __future__ import division
+from __future__ import print_function
 import abce
 from tools import *
 import random
 import numpy as np
-
+from abce import NotEnoughGoods
 
 class Sell(abce.Agent):
     def init(self, simulation_parameters, agent_parameters):
