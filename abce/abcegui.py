@@ -20,7 +20,7 @@ from bokeh.resources import INLINE
 
 _ = __file__  # makes sure that the templates can be reached
 
-DEBUG = True
+DEBUG = False
 SECRET_KEY = 'development key'
 USERNAME = 'admin'
 PASSWORD = 'default'
