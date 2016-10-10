@@ -210,6 +210,13 @@ class Simulation(object):
 
         self.sim_parameters = OrderedDict({'name': name, 'rounds': rounds, 'random_seed': random_seed})
 
+        if self.processes > 1:
+            self.pool = mp.Pool(self.processes)
+            self.execute = self.execute_parallel
+            self.execute_internal = self.execute_internal_parallel
+        else:
+            self.execute = self.execute_serial
+            self.execute_internal = self.execute_internal_seriel
 
     def add_action_list(self, action_list):
         """ add an `action_list`, which is a list of either:
@@ -549,13 +556,6 @@ class Simulation(object):
 
     def run(self):
         """ This runs the simulation """
-        if self.processes > 1:
-            self.pool = mp.Pool(self.processes)
-            self.execute = self.execute_parallel
-            self.execute_internal = self.execute_internal_parallel
-        else:
-            self.execute = self.execute_serial
-            self.execute_internal = self.execute_internal_seriel
         if not(self.family_list):
             raise SystemExit('No Agents Created')
         if not(self.action_list) and not(self._action_list):
