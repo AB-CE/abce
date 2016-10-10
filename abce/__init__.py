@@ -600,12 +600,10 @@ class Simulation(object):
                             agents_to_delete.extend(messagess[('_simulation', 0.5)])
                             del messagess[('_simulation', 0.5)]
                 self.execute_internal('_advance_round')
-                if agents_to_add:
-                    self.add_agents(agents_to_add, round)
-                    agents_to_add = []
-                if agents_to_delete:
-                    self.delete_agent(agents_to_delete)
-                    agents_to_delete = []
+                self.add_agents(agents_to_add, round)
+                agents_to_add = []
+                self.delete_agent(agents_to_delete)
+                agents_to_delete = []
         except EOFError:
             pass
         except:
@@ -718,6 +716,8 @@ class Simulation(object):
             self.num_of_agents_in_group[group_name] = num_agents_this_group
 
     def add_agents(self, messages, round):
+        if len(messages) == 0:
+            return
         for _, _, (AgentClass, group_name, parameters, agent_parameters) in messages:
             id = self.num_of_agents_in_group[group_name]
             self.num_of_agents_in_group[group_name] += 1
@@ -754,6 +754,8 @@ class Simulation(object):
                 family.last_added_agent('_set_network_drawing_frequency', (None,))
 
     def delete_agent(self, messages):
+        if len(messages) == 0:
+            return
         dest_family = defaultdict(list)
         for _, _, (group_name, id, quite) in messages:
             dest_family[(group_name, id % self.processes, quite)].append(id)
