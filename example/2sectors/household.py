@@ -18,8 +18,7 @@ class Household(abce.Agent, abce.Household):
 
     def buy_intermediary_goods(self):
         """ recieves the offers and accepts them one by one """
-        oo = self.get_offers("consumption_good")
-        for offer in oo:
+        for offer in self.get_offers("consumption_good"):
             self.accept(offer)
 
     def consumption(self):

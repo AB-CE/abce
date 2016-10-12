@@ -12,6 +12,11 @@ simulation_parameters = [
          'trade_repetitions': 10
          }]
 
+simulation_parameters = {'name': 'test_sim_1_',
+                         'random_seed': None,
+                         'num_rounds': 30,
+                         'trade_logging': 'individual',
+                         'trade_repetitions': 10}
 def main():
     for params in simulation_parameters:
         s = Simulation(params)
