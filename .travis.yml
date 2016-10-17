@@ -1,0 +1,27 @@
+# dist: trusty # KVM Setup
+
+notifications:
+  email: false
+
+cache: pip
+    #directories:
+    #di- $HOME/.cache  # cython cache
+    #di- $HOME/.ccache  # compiler cache
+
+os:
+  - linux
+  - osx
+
+language: python
+
+python:
+    - "2.7"
+    - "3.4"
+
+install:
+  - "pip install cython"
+  - "pip install -e ."
+
+script:
+  - cd example/2sectors && python start.py
+    #- make $TEST_SUITE

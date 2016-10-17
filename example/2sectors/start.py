@@ -12,7 +12,7 @@ simulation_parameters = {'name': 'name',
                          'random_seed': None,
                          'rounds': 40}
 
-@gui(simulation_parameters)
+#@gui(simulation_parameters)
 def main(simulation_parameters):
     w = Simulation(rounds=simulation_parameters['rounds'])
     action_list = [
