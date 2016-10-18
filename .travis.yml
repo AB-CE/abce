@@ -1,26 +1,44 @@
 # dist: trusty # KVM Setup
+# osx build as per https://github.com/travis-ci/travis-ci/issues/2312#issuecomment-247206351
 
+language: python
 notifications:
   email: false
+
+env:
+  global:
+    - CI=true
 
 cache: pip
     #directories:
     #di- $HOME/.cache  # cython cache
     #di- $HOME/.ccache  # compiler cache
 
-os:
-  - linux
-  - osx
+matrix:
+  include:
+    - os: linux
+      python: "3.5"
+    - os: linux
+      python: "2.7"
+    - os: osx
+      sudo: required
+      language: generic
 
-language: python
+#  Manually install python on osx
+install: |
+  if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
 
-python:
-    - "2.7"
-    - "3.4"
+      brew update;
+      brew install python3;
+      python3 -m venv venv;
+      source venv/bin/activate;
+      pip install cython
+      pip install -e .
 
-install:
-  - "pip install cython"
-  - "pip install -e ."
+  else
+      pip install cython
+      pip install -e .
+  fi
 
 script:
   - cd example/2sectors && python start.py
