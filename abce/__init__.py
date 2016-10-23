@@ -558,6 +558,15 @@ class Simulation(object):
 
         self.sim_parameters.update(parameters)
 
+        agent_params_from_sim = {'expiring':self.expiring,
+                                 'perishable':self.perishable,
+                                 'resource_endowment':self.resource_endowment[group_name] + self.resource_endowment['all'],
+                                  'panel':(self.possessins_to_track_panel[group_name],
+                                         self.variables_to_track_panel[group_name]),
+                                  'aggregate':(self.possessions_to_track_aggregate[group_name],
+                                    self.variables_to_track_aggregate[group_name]),
+                                  'ndf':self._network_drawing_frequency}
+
         for i, manager in enumerate(self.managers):
             family = manager.Family(AgentClass,
                                     num_agents_this_group=num_agents_this_group,
@@ -570,25 +579,8 @@ class Simulation(object):
                                                 'random_seed': random.random(),
                                                 'start_round': self._start_round},
                                     parameters=parameters,
-                                    agent_parameters=agent_parameters)
-
-            for good, duration in self.expiring:
-                family.declare_expiring(good, duration)
-
-            for good in self.perishable:
-                family.register_perish(good)
-
-            for resource, units, product in self.resource_endowment[group_name] + self.resource_endowment['all']:
-                family.register_resource(resource, units, product)
-
-            family.register_panel(self.possessins_to_track_panel[group_name],
-                                  self.variables_to_track_panel[group_name])
-
-            family.register_aggregate(self.possessions_to_track_aggregate[group_name],
-                                      self.variables_to_track_aggregate[group_name])
-
-            family.set_network_drawing_frequency(self._network_drawing_frequency)
-
+                                    agent_parameters=agent_parameters,
+                                    agent_params_from_sim=agent_params_from_sim)
             self.family_list[group_name].append(family)
             self.num_of_agents_in_group[group_name] = num_agents_this_group
         return Group(self, [self.family_list[group_name]], group_name)
@@ -609,25 +601,8 @@ class Simulation(object):
                                                 'database': self.database_queue,
                                                 'logger':self.logger_queue,
                                                 'random_seed': random.random(),
-                                                'start_round': round + 1})
-            for good, duration in self.expiring:
-                family.last_added_agent('_declare_expiring', (good, duration))
-
-            family.last_added_agent('init', (parameters, agent_parameters))
-
-            for good in self.perishable:
-                family.last_added_agent('_register_perish', (good,))
-
-            for resource, units, product in self.resource_endowment[group_name] + self.resource_endowment['all']:
-                family.last_added_agent('_register_resource', (resource, units, product))
-
-            family.last_added_agent('_register_panel', (self.possessins_to_track_panel[group_name],
-                                                       self.variables_to_track_panel[group_name]))
-
-            family.last_added_agent('_register_aggregate', (self.possessions_to_track_aggregate[group_name],
-                                                       self.variables_to_track_aggregate[group_name]))
-
-            family.last_added_agent('_set_network_drawing_frequency', (self._network_drawing_frequency,))
+                                                'start_round': round + 1},
+                                    parameters=parameters, agent_parameters=agent_parameters)
         self._agents_to_add = []
 
     def delete_agent(self):
