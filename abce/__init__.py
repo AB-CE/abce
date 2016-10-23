@@ -335,6 +335,7 @@ class Simulation(object):
             date = datetime.date(year, month, day)
 
         self._start_round = date.toordinal()
+        self.round = int(self._start_round)
         self._calendar = True
 
     def panel(self, group, possessions=[], variables=[]):
@@ -466,15 +467,15 @@ class Simulation(object):
         self.clock = time.time()
 
     def next_round(self):
-        if self.round == self._start_round:  # the simulation has just started
+        if self.round - self._start_round == 0:  # the simulation has just started
             self._prepare()
-        while self.rounds > self.round:
+        while self.rounds > self.round - self._start_round:
             if self.round > self._start_round:
                 self._finalize_prev_round(self.round - 1)
             self._prepare_round(self.round)
             yield self.round
             self.round += 1
-        if self.round == self.rounds:
+        if self.round - self._start_round == self.rounds:
             self._finalize()
 
     def _prepare_round(self, round):
@@ -626,10 +627,7 @@ class Simulation(object):
             family.last_added_agent('_register_aggregate', (self.possessions_to_track_aggregate[group_name],
                                                        self.variables_to_track_aggregate[group_name]))
 
-            try:
-                family.last_added_agent('_set_network_drawing_frequency', (self._network_drawing_frequency,))
-            except AttributeError:
-                family.last_added_agent('_set_network_drawing_frequency', (None,))
+            family.last_added_agent('_set_network_drawing_frequency', (self._network_drawing_frequency,))
         self._agents_to_add = []
 
     def delete_agent(self):

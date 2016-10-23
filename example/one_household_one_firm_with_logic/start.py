@@ -19,19 +19,6 @@ parameters = {'name': '2x2',
 #@gui(parameters)
 def main(parameters):
     simulation = Simulation(rounds=parameters['rounds'], processes=1)
-    action_list = [
-        ('household', 'sell_labor'),
-        ('firm', 'buy_labor'),
-        ('firm', 'production'),
-        ('firm', 'panel'),
-        ('firm', 'quotes'),
-        ('household', 'buy_goods'),
-        ('firm', 'sell_goods'),
-        ('household', 'aggregate'),
-        ('household', 'consumption'),
-        ('firm', 'adjust_price')]
-    simulation.add_action_list(action_list)
-
     simulation.declare_round_endowment(resource='adult', units=1, product='labor')
     simulation.declare_perishable(good='labor')
 
@@ -40,10 +27,21 @@ def main(parameters):
     simulation.panel('firm', possessions=['money', 'GOOD'],
                     variables=['price', 'inventory'])
 
-    simulation.build_agents(Firm, 'firm', number=parameters['num_firms'])
-    simulation.build_agents(Household, 'household', number=1, parameters=parameters)
+    firms = simulation.build_agents(Firm, 'firm', number=parameters['num_firms'])
+    households = simulation.build_agents(Household, 'household', number=1, parameters=parameters)
 
-    simulation.run()
+    for r in simulation.next_round():
+        households.do('sell_labor')
+        firms.do('buy_labor')
+        firms.do('production')
+        firms.do('panel')
+        firms.do('quotes')
+        households.do('buy_goods')
+        firms.do('sell_goods')
+        households.do('aggregate')
+        households.do('consumption')
+        firms.do('adjust_price')
+
     simulation.graphs()
 
 if __name__ == '__main__':

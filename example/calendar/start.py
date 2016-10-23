@@ -7,21 +7,28 @@ simulation_parameters = {'name': 'datetimedemonstration',
 
 def main(simulation_parameters):
         simulation = Simulation(rounds=simulation_parameters['rounds'])
-        action_list = [('agent', 'wednessday', lambda date: date.weekday() == 2),
-                       ('agent', 'first', lambda date: date.day == 1),
-                       ('agent', 'newyearseve', lambda date: date.month == 12 and date.day == 31),
-                       ('agent', 'firstfriday', lambda date: date.day <= 7 and date.weekday() == 4),
-                       ('agent', 'fiveteens', lambda date: date.month == 15),
-                       ('agent', 'everythreedays', lambda date: date.toordinal() % 3 == 0),
-                       ('agent', 'panel'),
-                       ('agent', 'aggregate')]
-        simulation.add_action_list(action_list)
         simulation.declare_calendar(2000, 1, 1)
         simulation.panel('agent', possessions=['money'])
         simulation.aggregate('agent', possessions=['labor'])
-        simulation.build_agents(Agent, 'agent', number=1)
+        agents = simulation.build_agents(Agent, 'agent', number=1)
 
-        simulation.run()
+        for r in simulation.next_round():
+            date = simulation._round
+            if date.weekday() == 2:
+                agents.do('wednessday')
+            if date.day == 1:
+                agents.do('first')
+            if date.month == 12 and date.day == 31:
+                agents.do('newyearseve')
+            if date.day <= 7 and date.weekday() == 4:
+                agents.do('firstfriday')
+            if date.month == 15:
+                agents.do('fiveteens')
+            if date.toordinal() % 3 == 0:
+                agents.do('everythreedays')
+            agents.do('panel')
+            agents.do('aggregate')
+
         simulation.graphs()
 
 

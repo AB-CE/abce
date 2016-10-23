@@ -13,31 +13,28 @@ simulation_parameters = {'name': 'name',
 #@gui(simulation_parameters) # User Interface
 def main(simulation_parameters):
         simulation = Simulation(rounds=simulation_parameters['rounds'])
-        action_list = [('killer', 'kill'),
-                       ('agent', 'am_I_dead'),
-                       ('killer', 'send_message'),
-                       ('agent', 'aggregate'),
-                       ('agent', 'panel')]  # this instructs ABCE to save panel data as declared below
-        simulation.add_action_list(action_list)
-
         simulation.declare_round_endowment(resource='labor_endowment',
                                            units=1,
-                                           product='labor'
-        )
+                                           product='labor')
         simulation.declare_perishable(good='labor')
 
         simulation.aggregate('agent', possessions=[], variables=['count'])
         simulation.panel('agent', possessions=[], variables=['idn'])
 
-        simulation.build_agents(Agent, 'agent',
+        agents = simulation.build_agents(Agent, 'agent',
                        number=simulation_parameters['agents'],
                        parameters=simulation_parameters)
-        simulation.build_agents(Killer, 'killer',
+        killers = simulation.build_agents(Killer, 'killer',
                        number=1,
                        parameters=simulation_parameters)
+        for r in simulation.next_round():
+            killers.do('kill')
+            agents.do('am_I_dead')
+            killers.do('send_message')
+            agents.do('aggregate')
+            agents.do('panel')
 
 
-        simulation.run()
         simulation.graphs()
 
 if __name__ == '__main__':

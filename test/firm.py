@@ -14,7 +14,7 @@ class Firm(abce.Agent, Firm):
         print('money %i, corn %i' % (self.possession('money'), self.possession('corn')))
         #for x in xrange(10000):
         #    x = x * x
-        self.checkorders = self.sell('household', self.idn, 'corn', 1, 1)
+        self.checkorders = self.sell('household', self.id, 'corn', 1, 1)
         # for offer in self.given_offers:
         #     try:
         #         print 'out', offer, self.given_offers[offer]['status'], self.given_offers[offer]['status_round'], '.'
