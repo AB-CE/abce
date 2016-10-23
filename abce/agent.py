@@ -286,13 +286,9 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
                 an arry or number
         """
         length = len(self._haves[good].time_structure)
-        try:
-            for i in range(length):
-                self._haves[good].time_structure[i] += quantity[i]
-        except TypeError:
-            for i in range(length):
-                self._haves[good].time_structure[i] += quantity / length
-
+        for i in range(length):
+            qty = quantity[i] if type(quantity) == list else quantity / length
+            self._haves[good].time_structure[i] += qty
 
     def _declare_expiring(self, good, duration):
         """ creates a good that has a limited duration

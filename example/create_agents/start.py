@@ -40,7 +40,6 @@ def main(simulation_parameters):
         for r in simulation.next_round():
             messengers.do('messaging')
             (firms+households).do('receive_message')
-            #households.do('receive_message') # TODO: simultaneously with above
             firms.do('add_household')
             firms.do('add_firm')
             firms.do('print_id')

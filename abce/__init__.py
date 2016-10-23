@@ -329,10 +329,7 @@ class Simulation(object):
         """
         if len(self.family_list) > 0:
             raise SystemExit("WARNING: declare_calendar(...) must be called before the agents are build")
-        if year is None:
-            date = datetime.date.today()
-        else:
-            date = datetime.date(year, month, day)
+        date = datetime.date.today() if year is None else datetime.date(year, month, day)
 
         self._start_round = date.toordinal()
         self.round = int(self._start_round)
