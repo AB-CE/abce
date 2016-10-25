@@ -30,8 +30,7 @@ class Household(abce.Agent, abce.Household):
 
     def buy_consumption_goods(self):
         """ recieves the offers and accepts them one by one """
-        for offer in self.get_offers("consumption_good"):
-            self.accept(offer)
+        self.accept_offers("consumption_good")
 
     def consumption(self):
         """ consumes_everything and logs the aggregate utility. current_utiliy
@@ -49,10 +48,8 @@ class downstreamFirm(abce.Agent, abce.Firm):
         self.inputs = {"labor": 1, "intermediate_good": 1}
         self.set_cobb_douglas({'consumption_good': 2}, self.inputs)
     def buy_inputs(self):
-        for offer in self.get_offers("labor"):
-            self.accept(offer)
-        for offer in self.get_offers('intermediate_good'):
-            self.accept(offer)
+        self.accept_offers("labor")
+        self.accept_offers("intermediate_good")
     def production(self):
         self.produce(self.inputs)
     def sell_goods(self):
@@ -69,8 +66,7 @@ class upstreamFirm(abce.Agent, abce.Firm):
         self.inputs = {"labor": 1}
         self.set_cobb_douglas({'intermediate_good': 1}, self.inputs)
     def buy_inputs(self):
-        for offer in self.get_offers("labor"):
-            self.accept(offer)
+        self.accept_offers("labor")
     def production(self):
         self.produce(self.inputs)
     def sell_goods(self):

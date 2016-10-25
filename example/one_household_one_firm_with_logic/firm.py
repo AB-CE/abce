@@ -15,8 +15,7 @@ class Firm(abce.Agent, abce.Firm):
 
     def buy_labor(self):
         """ receives all labor offers and accepts them one by one """
-        oo = self.get_offers("labor")
-        for offer in oo:
+        for offer in self.get_offers("labor"):
             self.accept(offer, min(offer.quantity, self.possession('money')))
 
     def production(self):

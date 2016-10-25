@@ -16,6 +16,7 @@ class Group(object):
             for family in group:
                 families_messages.append(family.execute(command, messages[family.name()]))
                 messages[family.name()] = []
+
         messages[('_simulation', 0)] = []
         messages[('_simulation', 0.5)] = []
         for block in families_messages:
@@ -27,19 +28,22 @@ class Group(object):
 
     def execute_parallel(self, command):
         messages = self.sim.messagess
+
+        families_messages = []
         parameters = ((family, command, messages[family.name()]) for group in self.groups for family in group)
         families_messages = self.sim.pool.map(execute_wrapper, parameters, chunksize=1)
         for group in self.groups:
             for family in group:
                 messages[family.name()] = []
+
         messages[('_simulation', 0)] = []
         messages[('_simulation', 0.5)] = []
         for block in families_messages:
             for family_name, family_msgs in block.items():
                 messages[family_name].extend(family_msgs)
+
         self.sim._agents_to_add.extend(messages.pop(('_simulation', 0), []))
         self.sim._agents_to_delete.extend(messages.pop(('_simulation', 0.5), []))
-
 
 def execute_wrapper(inp):
     return inp[0].execute(inp[1], inp[2])
