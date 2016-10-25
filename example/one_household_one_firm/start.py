@@ -18,7 +18,7 @@ parameters = {'name': '2x2',
 @gui(parameters)
 def main(parameters):
     w = Simulation(rounds=parameters['rounds'])
-    w.declare_round_endowment(resource='adult', units=1, product='labor')
+    w.declare_round_endowment(resource={'adult': 1}, product='labor')
     w.declare_perishable(good='labor')
 
     w.panel('household', possessions=['money', 'GOOD'],

@@ -227,7 +227,7 @@ class FirmMultiTechnologies(object):
         Example:
 
             def init(self):
-                self.plastic_production_function = self.create_cobb_douglas('plastic', {'oil' : 10, 'labor' : 1}, 0.000001)
+                self.plastic_production_function = self.create_cobb_douglas({'plastic': 0.000001}, {'oil' : 10, 'labor' : 1})
 
             ...
 

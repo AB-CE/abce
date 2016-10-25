@@ -211,7 +211,7 @@ class Simulation(object):
         self.messagess = defaultdict(list)
 
 
-    def declare_round_endowment(self, resource, units, product, groups=['all']):
+    def declare_round_endowment(self, resource, product, groups=['all']):
         """ At the beginning of very round the agent gets 'units' units of good 'product' for
         every 'resource' he possesses.
 
@@ -239,8 +239,9 @@ class Simulation(object):
         """
         if len(self.family_list) > 0:
             raise Exception("WARNING: declare_round_endowment(...) must be called before the agents are build")
+        resource_name, units = list(resource.items())[0]
         for group in groups:
-            self.resource_endowment[group].append((resource, units, product))
+            self.resource_endowment[group].append((resource_name, units, product))
 
     def declare_perishable(self, good):
         """ This good only lasts one round and then disappears. For example
@@ -303,7 +304,7 @@ class Simulation(object):
 
             w.declare_service('adult', 8, 'work')
         """
-        self.declare_round_endowment(human_or_other_resource, units, service, groups)
+        self.declare_round_endowment({human_or_other_resource: units}, service, groups)
         self.declare_perishable(service)
 
     def declare_calendar(self, year=None, month=1, day=1):

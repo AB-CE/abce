@@ -9,7 +9,7 @@ class Firm(abce.Agent, abce.Firm):
         """
         self.create('money', 1000)
         self.mygood = "GOOD%i" % self.id  # GOOD1 if self.id == 1
-        self.set_cobb_douglas(self.mygood, 1, {"labor": 1})
+        self.set_cobb_douglas({self.mygood: 1}, {"labor": 1})
         self.price = random.random() * 2
 
 

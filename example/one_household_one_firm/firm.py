@@ -8,7 +8,7 @@ class Firm(abce.Agent, abce.Firm):
         2. create a cobb_douglas function: GOOD = 1 * labor ** 1.
         """
         self.create('money', 1)
-        self.set_cobb_douglas("GOOD", 1, {"labor": 1})
+        self.set_cobb_douglas({"GOOD": 1}, {"labor": 1})
 
     def buy_labor(self):
         """ receives all labor offers and accepts them one by one """

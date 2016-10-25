@@ -13,8 +13,7 @@ simulation_parameters = {'name': 'name',
 #@gui(simulation_parameters) # User Interface
 def main(simulation_parameters):
         simulation = Simulation(rounds=simulation_parameters['rounds'])
-        simulation.declare_round_endowment(resource='labor_endowment',
-                                           units=1,
+        simulation.declare_round_endowment(resource={'labor_endowment': 1},
                                            product='labor')
         simulation.declare_perishable(good='labor')
 
