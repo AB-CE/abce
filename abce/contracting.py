@@ -6,7 +6,6 @@ from builtins import object
 from abce.notenoughgoods import NotEnoughGoods
 from random import shuffle
 from abce.trade import get_epsilon
-from numpy import isfinite
 
 epsilon = get_epsilon()
 
@@ -317,8 +316,6 @@ def bound_zero(x):
     """ asserts that variable is above zero, where foating point imprecission is accounted for,
     and than makes sure it is above 0, without floating point imprecission """
     assert x > - epsilon, '%.30f is smaller than 0 - epsilon (%.30f)' % (x, - epsilon)
-    if not isfinite(x):
-        print('warning infinity in trade')
     if x < 0:
         return 0
     else:

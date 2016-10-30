@@ -35,7 +35,6 @@ This is a minimal template for a start.py::
     ('all', 'two'),
     ('all', 'three'),
     ]
-    s.add_action_list(action_list)
     s.build_agents(Agent, 2)
     s.run()
 """
@@ -59,6 +58,7 @@ from glob import glob
 from .firmmultitechnologies import *
 from .household import Household
 from .agent import *
+from .group import Group
 from collections import defaultdict, OrderedDict
 from .firm import Firm
 from .quote import Quote
@@ -70,9 +70,6 @@ from .abcegui import gui
 import random
 from abce.notenoughgoods import NotEnoughGoods
 
-
-def execute_wrapper(inp):
-    return inp[0].execute(inp[1], inp[2])
 
 def execute_internal_wrapper(inp):
     return inp[0].execute_internal(inp[1])
@@ -127,7 +124,6 @@ class Simulation(object):
         ('household', 'consume')
         ]
         w = Simulation(rounds=1000, name='sim', trade_logging='individual', processes=None)
-        w.add_action_list(action_list)
         w.build_agents(Firm, 'firm', 'num_firms')
         w.build_agents(Household, 'household', 'num_households')
 
@@ -144,7 +140,6 @@ class Simulation(object):
         self.family_list = {}
         self.num_of_agents_in_group = {}
         self._messages = {}
-        self._action_list = []
         self._resource_command_group = {}
         self._db_commands = {}
         self.num_agents = 0
@@ -157,6 +152,7 @@ class Simulation(object):
         self.possessins_to_track_panel = defaultdict(list)
         self.possessions_to_track_aggregate = defaultdict(list)
         self._start_round = 0
+        self.round = int(self._start_round)
         self._calendar = False
         self._network_drawing_frequency = 1  # this is default value as declared in self.network() method
 
@@ -191,10 +187,7 @@ class Simulation(object):
         self._db = abce.db.Database(self.path, self.database_queue, trade_log=self.trade_logging_mode != 'off')
         self.logger_queue = manager.Queue()
 
-        if processes is None:
-            self.processes = mp.cpu_count() * 2
-        else:
-            self.processes = processes
+        self.processes = mp.cpu_count() * 2 if processes is None else processes
 
         MyManager.register('Family', Family)
         self.managers = []
@@ -210,45 +203,13 @@ class Simulation(object):
 
         self.sim_parameters = OrderedDict({'name': name, 'rounds': rounds, 'random_seed': random_seed})
 
+        if self.processes > 1:
+            self.pool = mp.Pool(self.processes)
+        self.execute_internal = self.execute_internal_parallel if self.processes > 1 else self.execute_internal_seriel
+        self._agents_to_add = []  # container used in self.run
+        self._agents_to_delete = []  # container used in self.run
+        self.messagess = defaultdict(list)
 
-    def add_action_list(self, action_list):
-        """ add an `action_list`, which is a list of either:
-
-        - tuples of an goup_names and and action: :code:`('firm', 'buying')`
-
-        - tuples of an agent name and and action: :code:`(('firm', household), 'buying')`
-
-        The tuples can have a condition under which they are execute. Only if this
-        condition evaluates to True the tuple is executed.
-
-        In the round mode (default), if an action is executed every 21 rounds
-        or an intervention in round 50:::
-
-            (('firm', household), 'buying', lambda round: round % 21 == 0)
-            ('firm', 'buying', lambda round: round == 500)
-
-        In the date mode::
-
-            ('agent', 'wednessday', lambda date: date.weekday() == 2),  # Monday is 0
-            ('agent', 'first', lambda date: date.day == 1),
-            ('agent', 'newyearseve', lambda date: date.month == 12 and date.day == 31),
-            ('agent', 'firstfriday', lambda date: date.day <= 7 and date.weekday() == 4),
-            ('agent', 'fiveteens', lambda date: date.month == 15),
-            ('agent', 'everythreedays', lambda date: date.toordinal() % 3 == 0),
-
-        The date works like python's
-        `date object <https://docs.python.org/2/library/datetime.html#date-objects>`_
-
-        Example::
-
-         action_list = [
-            repeat([('firm', 'selling'),
-                    (('firm', household), 'buying')], repetitions=10),
-            ('household', 'dance'),
-            ('household', 'consume')]
-         w.add_action_list(action_list)
-        """
-        self.action_list = action_list
 
     def declare_round_endowment(self, resource, units, product, groups=['all']):
         """ At the beginning of very round the agent gets 'units' units of good 'product' for
@@ -368,12 +329,10 @@ class Simulation(object):
         """
         if len(self.family_list) > 0:
             raise SystemExit("WARNING: declare_calendar(...) must be called before the agents are build")
-        if year is None:
-            date = datetime.date.today()
-        else:
-            date = datetime.date(year, month, day)
+        date = datetime.date.today() if year is None else datetime.date(year, month, day)
 
         self._start_round = date.toordinal()
+        self.round = int(self._start_round)
         self._calendar = True
 
     def panel(self, group, possessions=[], variables=[]):
@@ -482,61 +441,6 @@ class Simulation(object):
                                                   alpha=alpha)
         self._logger.start()
 
-    def _process_action_list(self, action_list):
-        processed_list = []
-        for action in action_list:
-            if isinstance(action, repeat):
-                nested_action_list = self._process_action_list(action.action_list)
-                for _ in range(action.repetitions):
-                    processed_list.extend(nested_action_list)
-            else:
-                if len(action) == 2:
-                    action = (action[0], action[1], lambda date: True)
-                if not isinstance(action[0], tuple) and not isinstance(action[0], list):
-                    try:
-                        action = ((action[0],), action[1], action[2])
-                    except IndexError:
-                        action = ((action[0],), action[1])
-                for group in action[0]:
-                    assert group in list(self.family_list.keys()), \
-                        '%s in (%s, %s) in the action_list is not a known agent' % (action[0], action[0], action[1])
-                processed_list.append((action[0], action[1], action[2]))
-        return processed_list
-
-    def execute_parallel(self, groups, command, messages):
-        parameters = ((family, command, messages[family.name()]) for group in groups for family in self.family_list[group])
-        families_messages = self.pool.map(execute_wrapper, parameters, chunksize=1)
-        for group in groups:
-            for family in self.family_list[group]:
-                messages[family.name()] = []
-        messages[('_simulation', 0)] = []
-        messages[('_simulation', 0.5)] = []
-        for block in families_messages:
-            for family_name, family_msgs in block.items():
-                if len(family_msgs):
-                    try:
-                        messages[family_name].extend(family_msgs)
-                    except KeyError:
-                        raise KeyError("reciever of message, contract or similar not found "
-                                       + str(family_name))
-        return messages
-
-    def execute_serial(self, groups, command, messages):
-        families_messages = [execute_wrapper((family, command, messages[family.name()])) for group in groups for family in self.family_list[group]]
-        for group in groups:
-            for family in self.family_list[group]:
-                messages[family.name()] = []
-        messages[('_simulation', 0)] = []
-        messages[('_simulation', 0.5)] = []
-        for block in families_messages:
-            for family_name, family_msgs in block.items():
-                if len(family_msgs):
-                    try:
-                        messages[family_name].extend(family_msgs)
-                    except KeyError:
-                        raise KeyError("reciever of message, contract or similar not found "
-                                       + str(family_name))
-        return messages
 
     def execute_internal_seriel(self, command):
         for group in self.family_list:
@@ -547,80 +451,39 @@ class Simulation(object):
         parameters = ((family, command) for group in self.family_list for family in self.family_list[group])
         families_messages = self.pool.map(execute_internal_wrapper, parameters, chunksize=1)
 
-    def run(self):
+    def _prepare(self):
         """ This runs the simulation """
-        if self.processes > 1:
-            self.pool = mp.Pool(self.processes)
-            self.execute = self.execute_parallel
-            self.execute_internal = self.execute_internal_parallel
-        else:
-            self.execute = self.execute_serial
-            self.execute_internal = self.execute_internal_seriel
         if not(self.family_list):
             raise SystemExit('No Agents Created')
-        if not(self.action_list) and not(self._action_list):
-            raise SystemExit('No action_list declared')
-        if not(self._action_list):
-            self._action_list = self._process_action_list(self.action_list)
 
         self._db.start()
 
         self._write_description_file()
         self._displaydescribtion()
 
-        start_time = time.time()
+        self.clock = time.time()
 
-        messagess = defaultdict(dict)
+    def next_round(self):
+        if self.round - self._start_round == 0:  # the simulation has just started
+            self._prepare()
+        while self.rounds > self.round - self._start_round:
+            if self.round > self._start_round:
+                self._finalize_prev_round(self.round - 1)
+            self._prepare_round(self.round)
+            yield self.round
+            self.round += 1
+        if self.round - self._start_round == self.rounds:
+            self._finalize()
 
-        messagess = {}
-        self.family_names = []
-        for group in list(self.family_list.values()):
-            for family in group:
-                self.family_names.append(family.name())
-                messagess[family.name()] = []
-        agents_to_add = []
-        agents_to_delete = []
-        try:
-            for round in xrange(self._start_round, self._start_round + self.rounds):
-                if self._calendar:
-                    _round = datetime.date.fromordinal(round)
-                    print("\rRound" + str(" %3d " % round) + str(_round))
-                else:
-                    print("\rRound" + str(" %3d " % round))
-                    _round = round
-                self.execute_internal('_produce_resource')
+    def _prepare_round(self, round):
+        self._round = datetime.date.fromordinal(round) if self._calendar else round
+        print("\rRound" + str(" %3d " % round) + str(self._round))
+        self.execute_internal('_produce_resource')
 
-                for group, action, condition in self._action_list:
-                    if condition(_round):
-                        messagess = self.execute(group, action, messagess)
-                        if messagess[('_simulation', 0)]:
-                            agents_to_add.extend(messagess[('_simulation', 0)])
-                            del messagess[('_simulation', 0)]
-                        if messagess[('_simulation', 0.5)]:
-                            agents_to_delete.extend(messagess[('_simulation', 0.5)])
-                            del messagess[('_simulation', 0.5)]
-                self.execute_internal('_advance_round')
-                self.execute_internal('_perish')
-                if agents_to_add:
-                    self.add_agents(agents_to_add, round)
-                    agents_to_add = []
-                if agents_to_delete:
-                    self.delete_agent(agents_to_delete)
-                    agents_to_delete = []
-        except EOFError:
-            pass
-        except:
-            raise
-        finally:
-            self.round = round
-            print(str("time only simulation %6.2f" % (time.time() - start_time)))
-            self.gracefull_exit()
-            print(str("time with data and network %6.2f" % (time.time() - start_time)))
-            if self.round > 0:
-                postprocess.to_csv(os.path.abspath(self.path), self._calendar)
-                print(str("time with post processing %6.2f" % (time.time() - start_time)))
-            self.messagess = messagess
-
+    def _finalize_prev_round(self, round):
+        self.execute_internal('_advance_round')
+        self.add_agents(round)
+        self.delete_agent()
 
     def gracefull_exit(self):
         self.database_queue.put('close')
@@ -640,6 +503,14 @@ class Simulation(object):
             self.pool.join()
         except AttributeError:
             pass
+
+    def _finalize(self):
+        print(str("time only simulation %6.2f" % (time.time() - self.clock)))
+        self.gracefull_exit()
+        print(str("time with data and network %6.2f" % (time.time() - self.clock)))
+        if self.round > 0:
+            postprocess.to_csv(os.path.abspath(self.path), self._calendar)
+            print(str("time with post processing %6.2f" % (time.time() - self.clock)))
 
     def build_agents(self, AgentClass, group_name, number=None, parameters={}, agent_parameters=None):
         """ This method creates agents.
@@ -684,6 +555,15 @@ class Simulation(object):
 
         self.sim_parameters.update(parameters)
 
+        agent_params_from_sim = {'expiring':self.expiring,
+                                 'perishable':self.perishable,
+                                 'resource_endowment':self.resource_endowment[group_name] + self.resource_endowment['all'],
+                                  'panel':(self.possessins_to_track_panel[group_name],
+                                         self.variables_to_track_panel[group_name]),
+                                  'aggregate':(self.possessions_to_track_aggregate[group_name],
+                                    self.variables_to_track_aggregate[group_name]),
+                                  'ndf':self._network_drawing_frequency}
+
         for i, manager in enumerate(self.managers):
             family = manager.Family(AgentClass,
                                     num_agents_this_group=num_agents_this_group,
@@ -696,29 +576,16 @@ class Simulation(object):
                                                 'random_seed': random.random(),
                                                 'start_round': self._start_round},
                                     parameters=parameters,
-                                    agent_parameters=agent_parameters)
-
-            for good, duration in self.expiring:
-                family.declare_expiring(good, duration)
-
-            for good in self.perishable:
-                family.register_perish(good)
-
-            for resource, units, product in self.resource_endowment[group_name] + self.resource_endowment['all']:
-                family.register_resource(resource, units, product)
-
-            family.register_panel(self.possessins_to_track_panel[group_name],
-                                  self.variables_to_track_panel[group_name])
-
-            family.register_aggregate(self.possessions_to_track_aggregate[group_name],
-                                      self.variables_to_track_aggregate[group_name])
-
-            family.set_network_drawing_frequency(self._network_drawing_frequency)
-
+                                    agent_parameters=agent_parameters,
+                                    agent_params_from_sim=agent_params_from_sim)
             self.family_list[group_name].append(family)
             self.num_of_agents_in_group[group_name] = num_agents_this_group
+        return Group(self, [self.family_list[group_name]], group_name)
 
-    def add_agents(self, messages, round):
+    def add_agents(self, round):
+        messages = self._agents_to_add
+        if len(messages) == 0:
+            return
         for _, _, (AgentClass, group_name, parameters, agent_parameters) in messages:
             id = self.num_of_agents_in_group[group_name]
             self.num_of_agents_in_group[group_name] += 1
@@ -731,30 +598,14 @@ class Simulation(object):
                                                 'database': self.database_queue,
                                                 'logger':self.logger_queue,
                                                 'random_seed': random.random(),
-                                                'start_round': round + 1})
-            for good, duration in self.expiring:
-                family.last_added_agent('_declare_expiring', (good, duration))
+                                                'start_round': round + 1},
+                                    parameters=parameters, agent_parameters=agent_parameters)
+        self._agents_to_add = []
 
-            family.last_added_agent('init', (parameters, agent_parameters))
-
-            for good in self.perishable:
-                family.last_added_agent('_register_perish', (good,))
-
-            for resource, units, product in self.resource_endowment[group_name] + self.resource_endowment['all']:
-                family.last_added_agent('_register_resource', (resource, units, product))
-
-            family.last_added_agent('_register_panel', (self.possessins_to_track_panel[group_name],
-                                                       self.variables_to_track_panel[group_name]))
-
-            family.last_added_agent('_register_aggregate', (self.possessions_to_track_aggregate[group_name],
-                                                       self.variables_to_track_aggregate[group_name]))
-
-            try:
-                family.last_added_agent('_set_network_drawing_frequency', (self._network_drawing_frequency,))
-            except AttributeError:
-                family.last_added_agent('_set_network_drawing_frequency', (None,))
-
-    def delete_agent(self, messages):
+    def delete_agent(self):
+        messages = self._agents_to_delete
+        if len(messages) == 0:
+            return
         dest_family = defaultdict(list)
         for _, _, (group_name, id, quite) in messages:
             dest_family[(group_name, id % self.processes, quite)].append(id)
@@ -765,6 +616,7 @@ class Simulation(object):
                 family.replace_with_dead(ids)
             else:
                 family.remove(ids)
+        self._agents_to_delete = []
 
 
 
@@ -844,41 +696,6 @@ def handle_non_pickleable(x):
         return list(x)
     else:
         return "NotPickleable"
-
-
-
-
-
-class repeat(object):
-    """ Repeats the contained list of actions several times
-
-    Args:
-
-     action_list:
-        action_list that is repeated
-
-     repetitions:
-        the number of times that an actionlist is repeated
-
-    Example with number of repetitions in simulation_parameters.csv::
-
-        action_list = [
-            repeat([
-                    ('firm', 'sell'),
-                    ('household', 'buy')
-                ],
-                repetitions=parameter['number_of_trade_repetitions']
-            ),
-            ('household_03', 'dance')
-            'panel_data_end_of_round_before consumption',
-            ('household', 'consume'),
-            ]
-        s.add_action_list(action_list)
-
-    """
-    def __init__(self, action_list, repetitions):
-        self.action_list = action_list
-        self.repetitions = repetitions
 
 
 def _number_or_string(word):

@@ -20,9 +20,8 @@ The Household class extends the agent by giving him utility functions and the ab
 from __future__ import division
 from __future__ import absolute_import
 from builtins import object
-import numpy as np
+import operator
 from .trade import get_epsilon
-save_err = np.seterr(invalid='ignore')
 epsilon = get_epsilon()
 
 
@@ -143,7 +142,7 @@ class Household(object):
         self.produce(self.plastic_utility_function, {'bread' : 20, 'milk' : 1})
         """
         def utility_function(goods):
-            return  np.prod([goods[name] ** exponent
+            return  reduce(operator.mul, [goods[name] ** exponent
                              for name, exponent in exponents.items()])
 
         self._utility_function = Utility_Function()

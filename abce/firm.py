@@ -21,9 +21,7 @@ produce.
 from __future__ import division
 from __future__ import absolute_import
 from builtins import object
-import numpy as np
 from .firmmultitechnologies import FirmMultiTechnologies
-save_err = np.seterr(invalid='ignore')
 
 
 class Firm(FirmMultiTechnologies):

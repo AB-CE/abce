@@ -18,18 +18,6 @@ parameters = {'name': '2x2',
 @gui(parameters)
 def main(parameters):
     w = Simulation(rounds=parameters['rounds'])
-    action_list = [
-        ('household', 'sell_labor'),
-        ('firm', 'buy_labor'),
-        ('firm', 'production'),
-        ('firm', 'panel'),
-        ('firm', 'sell_goods'),
-        ('household', 'buy_goods'),
-        ('household', 'panel'),
-        ('household', 'consumption')
-    ]
-    w.add_action_list(action_list)
-
     w.declare_round_endowment(resource='adult', units=1, product='labor')
     w.declare_perishable(good='labor')
 
@@ -37,10 +25,17 @@ def main(parameters):
                          variables=['current_utiliy'])
     w.panel('firm', possessions=['money', 'GOOD'])
 
-    w.build_agents(Firm, 'firm', 1)
-    w.build_agents(Household, 'household', 1)
-
-    w.run()
+    firms = w.build_agents(Firm, 'firm', 1)
+    households = w.build_agents(Household, 'household', 1)
+    for r in w.next_round():
+        households.do('sell_labor')
+        firms.do('buy_labor')
+        firms.do('production')
+        firms.do('panel')
+        firms.do('sell_goods')
+        households.do('buy_goods')
+        households.do('panel')
+        households.do('consumption')
 
 if __name__ == '__main__':
     main(parameters)
