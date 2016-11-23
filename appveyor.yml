@@ -1,0 +1,23 @@
+version: "{build}"
+os: Windows Server 2012 R2
+environment:
+  matrix:
+    - PYTHON: "C:\\Python35"
+      PYTHON_VERSION: 3.5
+    - PYTHON: "C:\\Python34"
+      PYTHON_VERSION: 3.4
+
+build: none
+init:
+  - "ECHO %PYTHON%"
+  - ps: "ls C:\\Python*"
+
+install:
+  - "set PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
+  - "pip install -e ."
+
+test_script:
+  - "pip --version"
+  - ps: "cd example/2sectors"
+#- ps: "cd test"
+  - "python start.py"

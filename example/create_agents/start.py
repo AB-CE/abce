@@ -14,14 +14,6 @@ simulation_parameters = {'name': 'name',
 #@gui(simulation_parameters) # User Interface
 def main(simulation_parameters):
         simulation = Simulation(rounds=simulation_parameters['rounds'])
-        action_list = [('messenger', 'messaging'),
-                       (('firm', 'household'), 'receive_message'),
-                       ('firm', 'add_household'),
-                       ('firm', 'add_firm'),
-                       ('firm', 'print_id'),
-                       ('household', 'print_id'),
-                       (('firm', 'household'), 'aggregate')]  # this instructs ABCE to save panel data as declared below
-        simulation.add_action_list(action_list)
 
         simulation.declare_round_endowment(resource='labor_endowment',
                                            units=1,
@@ -35,18 +27,25 @@ def main(simulation_parameters):
         simulation.aggregate('firm', possessions=[],  # put a list of household possessions to track here
                                       variables=['count']) # put a list of household possessions to track here
 
-        simulation.build_agents(Firm, 'firm',
+        firms = simulation.build_agents(Firm, 'firm',
                        number=simulation_parameters['firms'],
                        parameters=simulation_parameters)
 
-        simulation.build_agents(Household, 'household',
+        households = simulation.build_agents(Household, 'household',
                        number=simulation_parameters['households'],
                        parameters=simulation_parameters)
 
-        simulation.build_agents(Messenger, 'messenger', 1)
+        messengers = simulation.build_agents(Messenger, 'messenger', 1)
 
-
-        simulation.run()
+        for r in simulation.next_round():
+            messengers.do('messaging')
+            (firms+households).do('receive_message')
+            firms.do('add_household')
+            firms.do('add_firm')
+            firms.do('print_id')
+            households.do('print_id')
+            # this instructs ABCE to save panel data as declared below
+            (firms+households).do('aggregate')
         simulation.graphs()
 
 if __name__ == '__main__':

@@ -1,14 +1,21 @@
 from __future__ import division
 from buy import Buy
 from sell import Sell
-from abce import Simulation, read_parameters, repeat
+from abce import Simulation, repeat
 
+simulation_parameters = [
+        {'name': 'round',
+         'random_seed': None,
+         'rounds': 30,
+         'trade_logging': 'individual',
+         'cut_of': 0.00000001
+            }]
 
 def main():
     all = ['buy',
            'sell']
 
-    for parameters in read_parameters('simulation_parameters.csv'):
+    for parameters in simulation_parameters:
         s = Simulation(parameters)
         action_list = [
             repeat([

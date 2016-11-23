@@ -36,8 +36,6 @@ from __future__ import absolute_import
 from builtins import str
 from builtins import range
 from collections import OrderedDict, defaultdict
-import numpy as np
-save_err = np.seterr(invalid='ignore')
 from .database import Database
 from .networklogger import NetworkLogger
 from .trade import Trade, Offer
@@ -103,14 +101,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         self.database_connection = database
         self.logger_connection = logger
 
-        if trade_logging == 'individual':
-            self.trade_logging = 1
-        elif trade_logging == 'group':
-            self.trade_logging = 2
-        elif trade_logging == 'off':
-            self.trade_logging = 0
-        else:
-            SystemExit('trade_logging wrongly defined in agent.__init__' + trade_logging)
+        self.trade_logging = {'individual':1, 'group':2, 'off': 0}[trade_logging]
 
         self._haves = defaultdict(float)
 
@@ -236,6 +227,11 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         for good in self._expiring_goods:
             self._haves[good]._advance_round()
 
+        # perishing goods
+        for good in self._perishable:
+            if good in self._haves:
+                self._haves[good] = 0
+
         if self.trade_logging > 0:
             self.database_connection.put(["trade_log", self._trade_log, self.round])
 
@@ -290,13 +286,9 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
                 an arry or number
         """
         length = len(self._haves[good].time_structure)
-        try:
-            for i in range(length):
-                self._haves[good].time_structure[i] += quantity[i]
-        except TypeError:
-            for i in range(length):
-                self._haves[good].time_structure[i] += quantity / length
-
+        for i in range(length):
+            qty = quantity[i] if type(quantity) == list else quantity / length
+            self._haves[good].time_structure[i] += qty
 
     def _declare_expiring(self, good, duration):
         """ creates a good that has a limited duration
@@ -357,11 +349,6 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
 
     def _register_perish(self, good):
         self._perishable.append(good)
-
-    def _perish(self):
-        for good in self._perishable:
-            if good in self._haves:
-                self._haves[good] = 0
 
     def _register_panel(self, possessions, variables):
         self.possessions_to_track_panel = possessions

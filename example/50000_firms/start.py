@@ -11,15 +11,13 @@ def main():
     }
 
     s = Simulation(rounds=parameters['rounds'], processes=8)
-    action_list = [#(('myagent', 'youragent'), 'compute'),
-                   ('youragent', 's'),
-                   ('myagent', 'g')]
-    s.add_action_list(action_list)
 
-    s.build_agents(MyAgent, 'myagent', 50000)
-    s.build_agents(YourAgent, 'youragent', 50000)
-
-    s.run()
+    myagents = s.build_agents(MyAgent, 'myagent', 50000)
+    youragents = s.build_agents(YourAgent, 'youragent', 50000)
+    for r in s.next_round():
+        #(myagents+youragents).do('compute')
+        youragents.do('s')
+        myagents.do('g')
 
 if __name__ == '__main__':
     main()

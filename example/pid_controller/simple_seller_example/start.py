@@ -19,26 +19,19 @@ simulation_parameters = {'name':'name',
 @gui(simulation_parameters)
 def main(simulation_parameters):
     s = Simulation(rounds=simulation_parameters['rounds'])
-    action_list = [
-
-        ('firm', 'production'),
-        ('firm', 'panel'),
-        ('firm', 'quote'),
-        ('household', 'buying'),
-        ('firm', 'selling'),
-        ('household', 'panel'),
-        ('household', 'consumption')
-    ]
-
-    s.add_action_list(action_list)
-
     s.panel('household', possessions=['cookies'])
     s.panel('firm', possessions=['cookies'])
 
-    s.build_agents(Firm, 'firm', 10)
-    s.build_agents(Household, 'household', 10)
-
-    s.run()
+    firms = s.build_agents(Firm, 'firm', 10)
+    households = s.build_agents(Household, 'household', 10)
+    for r in s.next_round():
+        firms.do('production')
+        firms.do('panel')
+        firms.do('quote')
+        households.do('buying')
+        firms.do('selling')
+        households.do('panel')
+        households.do('consumption')
 
 if __name__ == '__main__':
     main(simulation_parameters)

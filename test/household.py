@@ -1,7 +1,7 @@
 from __future__ import division
 from __future__ import print_function
 import abce
-from abce.tools import NotEnoughGoods
+from abce.notenoughgoods import NotEnoughGoods
 
 
 class Household(abce.Agent, abce.Household):

@@ -11,33 +11,27 @@ from firm import Firm
 from market import Market
 from labormarket import LaborMarket
 from abce import Simulation, gui
-import graphs
 
-simulation_parameters = {'name': 'Sticky Prices Microfoundations'}
+simulation_parameters = {'name': 'Sticky Prices Microfoundations', 'rounds': 20}
 
 @gui(simulation_parameters)
 def main(simulation_parameters):
     s = Simulation(**simulation_parameters)
-    action_list = [
-        ('firm', 'quote_hire'),
-        ('labormarket', 'accepting'),
-        ('firm', 'hire'),
-        ('firm', 'my_production'),
-        ('firm', 'selling'),
-        ('market', 'buying'),
-        ('firm', 'adjust_price'),
-        ('firm', 'adjust_quantity'),
-        ('market', 'consumption')
-    ]
-
-    s.add_action_list(action_list)
     s.declare_perishable('labor')
 
-    s.build_agents(Firm, 'firm', 1)
-    s.build_agents(Market, 'market', 1)
-    s.build_agents(LaborMarket, 'labormarket', 1)
-
-    s.run()
+    firms = s.build_agents(Firm, 'firm', 1)
+    market = s.build_agents(Market, 'market', 1)
+    labormarket = s.build_agents(LaborMarket, 'labormarket', 1)
+    for r in s.next_round():
+        firms.do('quote_hire')
+        labormarket.do('accepting')
+        firms.do('hire')
+        firms.do('my_production')
+        firms.do('selling')
+        market.do('buying')
+        firms.do('adjust_price')
+        firms.do('adjust_quantity')
+        market.do('consumption')
 
 if __name__ == '__main__':
     main(simulation_parameters)
