@@ -55,6 +55,6 @@ def to_csv(directory, calendar):
                 result['date'] = 0
                 for ord_date in result.index:
                     result.set_value(ord_date, 'date', datetime.date.fromordinal(ord_date))
-            result.to_csv('aggregate_' + table_name + '.csv', index_label='round', date_format='%Y-%m-%d')
+            result.to_csv('aggregated_' + table_name + '.csv', index_label='round', date_format='%Y-%m-%d')
 
     os.chdir('../..')
