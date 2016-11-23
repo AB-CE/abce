@@ -18,7 +18,10 @@ class Family(object):
             try:
                 agent.init(parameters, agent_parameters[agent.id])
             except AttributeError:
-                print("Warning: agent %s has no init function" % agent.group)
+                if 'init' not in dir(agent):
+                    print("Warning: agent %s has no init function" % agent.group)
+                else:
+                    raise
             except KeyboardInterrupt:
                 return None
             except:
