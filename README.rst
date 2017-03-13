@@ -12,4 +12,4 @@ ABCE's model output are compatible with R, Excel and sqlite.
 
 .. sidebar:: **The full documentation**
 
-    http://abce.readthedocs.org/en/latest/
+    http://abce.readthedocs.io
