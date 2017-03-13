@@ -8,6 +8,12 @@ class Group(object):
     def __add__(self, g):
         return Group(self.sim, self.groups + g.groups, self.name + '+' + g.name)
 
+    def __radd__(self, g):
+        if isinstance(g, Group):
+            return __add__(g)
+        else:
+            return self
+
     def execute_serial(self, command):
         messages = self.sim.messagess
 
