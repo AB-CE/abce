@@ -28,15 +28,13 @@ This is a minimal template for a start.py::
     from abce import *
 
 
-    parameters = {'name': 'name', num_rounds': 100}
-    s = Simulation(parameters)
-    action_list = [
-    ('all', 'one'),
-    ('all', 'two'),
-    ('all', 'three'),
-    ]
-    s.build_agents(Agent, 2)
-    s.run()
+    simulation = Simulation(rounds=1000, name='sim')
+    agents = simulation.build_agents(Agent, 'agent', 2)
+    for round in simulation.next_round():
+        agents.do('one')
+        agents.do('two')
+        agents.do('three')
+    simulation.graphs()
 """
 from __future__ import division
 from __future__ import print_function
@@ -112,27 +110,32 @@ class Simulation(object):
 
     Example for a simulation::
 
-        simulation_parameters = {'num_rounds': 500}
-        action_list = [
-        ('household', 'recieve_connections'),
-        ('household', 'offer_capital'),
-        ('firm', 'buy_capital'),
-        ('firm', 'production'),
-        ('centralbank', 'intervention', lambda round: round == 250)
-        ('household', 'buy_product')
-        'after_sales_before_consumption'
-        ('household', 'consume')
-        ]
+        num_firms = 5
+        num_households = 200000
+
         w = Simulation(rounds=1000, name='sim', trade_logging='individual', processes=None)
-        w.build_agents(Firm, 'firm', 'num_firms')
-        w.build_agents(Household, 'household', 'num_households')
 
         w.declare_round_endowment(resource='labor_endowment', productivity=1, product='labor')
         w.declare_round_endowment(resource='capital_endowment', productivity=1, product='capital')
 
         w.panel_data('firm', command='after_sales_before_consumption')
 
-        w.run()
+        firms = w.build_agents(Firm, 'firm', num_firms)
+        households = w.build_agents(Household, 'household', num_households)
+        
+        all = firms + households
+        for round in w.next_round():
+            households.do('recieve_connections'),
+            households.do('offer_capital'),
+            firms.do('buy_capital'),
+            firms.do('production'),
+            if round = 250:
+                centralbank.do('intervention)
+            households.do(buy_product')
+            all.do('after_sales_before_consumption')
+            households.do('consume')
+
+        w.graphs()
     """
     def __init__(self, rounds, name='abce', random_seed=None, trade_logging='off', processes=None):
         """
@@ -352,18 +355,17 @@ class Simulation(object):
 
         Example in start.py::
 
-            action_list = [('firm', produce_and_sell),
-                           ('firm', panel),
-                           ('household', 'buying')]
-
-            simulation_parameters.add_action_list(action_list)
-
             simulation_parameters.build_agents(Firm, 'firm', number=5)
 
             ...
 
             simulation.panel('firm', possessions=['money', 'input'],
                                      variables=['production_target', 'gross_revenue'])
+
+            for round in simulation.next_round():
+                firms.do('produce_and_sell)
+                firms.do('panel')
+                households.do('buying')
         """
         if len(self.family_list) > 0:
             raise SystemExit("WARNING: panel(...) must be called before the agents are build")
@@ -389,11 +391,6 @@ class Simulation(object):
 
         Example in start.py::
 
-            action_list = [('firm', produce_and_sell),
-                           ('firm', aggregate),
-                           ('household', 'buying')]
-
-            simulation_parameters.add_action_list(action_list)
 
             simulation_parameters.build_agents(Firm, 'firm', number=5)
 
@@ -401,6 +398,14 @@ class Simulation(object):
 
             simulation.aggregate('firm', possessions=['money', 'input'],
                                      variables=['production_target', 'gross_revenue'])
+
+            for round in simulation.next_round():
+                firms.do('produce_and_sell)
+                firms.do('aggregate')
+                households.do('buying')
+
+
+
         """
         if len(self.family_list) > 0:
             raise SystemExit("WARNING: aggregate(...) must be called before the agents are build")
@@ -540,9 +545,9 @@ class Simulation(object):
 
         Example::
 
-         simulation.build_agents(Firm, number=simulation_parameters['num_firms'])
-         simulation.build_agents(Bank, parameters=simulation_parameters, agent_parameters=[{'name': UBS'},{'name': 'amex'},{'name': 'chase'})
-         simulation.build_agents(CentralBank, number=1, parameters={'rounds': num_rounds})
+         firms = simulation.build_agents(Firm, 'firm', number=simulation_parameters['num_firms'])
+         banks = simulation.build_agents(Bank, 'bank', parameters=simulation_parameters, agent_parameters=[{'name': UBS'},{'name': 'amex'},{'name': 'chase'})
+         centralbanks = simulation.build_agents(CentralBank, 'centralbank', number=1, parameters={'rounds': num_rounds})
         """
         assert number is None or agent_parameters is None, 'either set number or agent_parameters in build_agents'
         if number is not None:
@@ -646,10 +651,11 @@ class Simulation(object):
 
         Example::
 
-            w = Simulation(...)
-            ...
-            w.run()
-            w.graphs()
+            simulation = Simulation(...)
+            for round in simulation.next_round():
+                ...
+
+            simulation.graphs()
         """
         if self.round > 0:
             abcegui.run(open=open, new=new)

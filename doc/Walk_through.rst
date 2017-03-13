@@ -58,16 +58,6 @@ start.py
         #@gui(parameters)
         def main(parameters):
             simulation = Simulation(rounds=parameters['rounds'])
-            action_list = [
-                ('household', 'sell_labor'),
-                ('firm', 'buy_labor'),
-                ('firm', 'production'),
-                (('household', 'firm'), 'panel'),
-                ('firm', 'sell_goods'),
-                ('household', 'buy_goods'),
-                ('household', 'consumption')
-            ]
-            simulation.add_action_list(action_list)
 
             simulation.declare_round_endowment(resource='labor_endowment', units=1, product='labor')
             simulation.declare_perishable(good='labor')
@@ -76,10 +66,18 @@ start.py
                                  variables=['current_utiliy'])
             simulation.panel('firm', possessions=['money', 'GOOD'])
 
-            simulation.build_agents(Firm, 'firm', 1)
-            simulation.build_agents(Household, 'household', 1)
+            firms = simulation.build_agents(Firm, 'firm', 1)
+            households = simulation.build_agents(Household, 'household', 1)
 
-            simulation.run()
+            for round in simulation.next_round():
+                households.do('sell_labor'),
+                firms.do('buy_labor'),
+                firms.do('production'),
+                (households + firms).do('panel'),
+                firms.do('sell_goods'),
+                households.do('buy_goods'),
+                households.do('consumption')
+
             simulation.graphs()
 
         if __name__ == '__main__':
@@ -153,48 +151,34 @@ order of actions, agents and objects are added.
 
 .. code-block:: python
 
-    action_list = [
-        ('household', 'sell_labor'),
-        ('firm', 'buy_labor'),
-        ('firm', 'production'),
-        (('household', 'firm'), 'panel'),
-        ('firm', 'sell_goods'),
-        ('household', 'buy_goods'),
-        ('household', 'consumption')
-    ]
-    simulation.add_action_list(action_list)
+    for round in simulation.next_round():
+        households.do('sell_labor')
+        firms.do('buy_labor')
+        firms.do('production')
+        (households + firms).do('panel')
+        firms.do('sell_goods')
+        households.do('buy_goods')
+        households.do('consumption')
 
 This establishes the order of the simulation. Make sure you do not overwrite
 internal abilities/properties of the agents. Such as 'sell', 'buy' or 'consume'.
 
-A more complex example could be the following:
+A more complex example could be:
 
 .. code-block:: python
 
-    action_list = [
-    repeat([
-        ('household', 'offer_capital'),
-        ('firm', 'buy_capital')], repetitions=10),
-    (('firm', 'household'), 'aggregate'))
-    ('household', 'search_work'),
-    ('firm', 'hire_labor', lambda round: round % 2 == 0),
-    ('firm', 'production'),
-    (('firm', 'household'), 'after_sales_before_consumption'),
-    ('firm', 'change_policy', lambda round: round == 100)
-    ('Household', 'consumption')
-    ]
-    simulation.add_action_list(action_list)
-
-The first tuple :code:`('household', 'offer_capital')` for example tells all household agents to execute the method "offer_capital".
-It is also possible to let several groups simultaneously execute the same action:
-:code:`(('firm', 'household'), 'after_sales_before_consumption')`.
-
-The repeat function allows repeating actions within the brackets a determinate amount of times.
-
-The :code:`('firm', 'hire_labor', lambda round: round % 2 == 0)` [#remainder]_, mean that firm - hire_labor is
-only executed when the condition on the right is true. In this particular example
-firm - hire_labor is only executed every second round. :code:`('firm', 'change_policy', lambda round: round == 100)`
-establishes that in round 100 the firm's change_policy method is called.
+    for round in simulation.next_round():
+        if round % 30 == 0:
+            households.do('sell_labor')
+            firms.do('buy_labor')
+        firms.do('production')
+        (households + firms).do('panel')
+        for i in range(10):
+            firms.do('sell_goods')
+            households.do('buy_goods')
+        households.do('consumption')
+        if round == 500:
+            government.do('policy_change')
 
 **Interactions happen between sub-rounds. An agent, sends a message in one round.
 The receiving agent, receives the message the following sub-round.**  A trade is
@@ -272,15 +256,11 @@ the Simulation, when to collect the data by adding 'panel' or 'aggregate' to the
 
 .. code-block:: python
 
-    action_list = [
-        ...
-        (('firm', 'household'), 'panel'),
-        (('firm', 'household'), 'aggregate'),
-        ...
+    (firms + households).do('panel')
+    (firms + households).do'aggregate')
 
 
-This will instruct the simulation that the firm and the household agent collect panel or aggregate data at a specific
-point in each round.
+This will instruct the simulation that the firm and the household agent collect panel or aggregate data at a specific point in each round.
 
 
 Alternative to this

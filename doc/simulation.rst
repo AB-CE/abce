@@ -8,7 +8,3 @@ The simulation in start.py
     :undoc-members:
     :show-inheritance:
 
-.. autoclass:: abce.repeat
-    :members:
-    :undoc-members:
-    :show-inheritance:
