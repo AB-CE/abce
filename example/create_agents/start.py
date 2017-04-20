@@ -15,8 +15,7 @@ simulation_parameters = {'name': 'name',
 def main(simulation_parameters):
         simulation = Simulation(rounds=simulation_parameters['rounds'])
 
-        simulation.declare_round_endowment(resource='labor_endowment',
-                                           units=1,
+        simulation.declare_round_endowment(resource={'labor_endowment': 1},
                                            product='labor')
 
         simulation.declare_perishable(good='labor')

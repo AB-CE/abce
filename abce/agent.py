@@ -455,6 +455,9 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         """
         self._out.append(('_simulation', 0.5, (group_name, id, quite)))
 
+    def accept_offers(self, good):
+        for offer in self.get_offers(good):
+            self.accept(offer)
 
 
 def flatten(d, parent_key=''):

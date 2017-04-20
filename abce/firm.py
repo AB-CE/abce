@@ -168,7 +168,7 @@ class Firm(FirmMultiTechnologies):
 
 
 
-    def set_cobb_douglas(self, output, multiplier, exponents):
+    def set_cobb_douglas(self, output, exponents):
         """  sets the firm to use a Cobb-Douglas production function.
 
         A production function is a production process that produces the
@@ -183,11 +183,12 @@ class Firm(FirmMultiTechnologies):
 
         Example::
 
-            self.set_cobb_douglas('plastic', 0.000001, {'oil' : 10, 'labor' : 1})
+            self.set_cobb_douglas({'plastic': 0.000001}, {'oil' : 10, 'labor' : 1})
             self.produce({'oil' : 20, 'labor' : 1})
 
         """
-        self._production_function = self.create_cobb_douglas(output, multiplier, exponents)
+        outname, multiplier = list(output.items())[0]
+        self._production_function = self.create_cobb_douglas(outname, multiplier, exponents)
 
     def set_ces(self, output, gamma, multiplier=1, shares=None):
         """ creates a CES production function

@@ -19,7 +19,7 @@ parameters = {'name': '2x2',
 #@gui(parameters)
 def main(parameters):
     simulation = Simulation(rounds=parameters['rounds'], processes=1)
-    simulation.declare_round_endowment(resource='adult', units=1, product='labor')
+    simulation.declare_round_endowment(resource={'adult': 1}, product='labor')
     simulation.declare_perishable(good='labor')
 
     simulation.aggregate('household', possessions=['money', 'GOOD'],

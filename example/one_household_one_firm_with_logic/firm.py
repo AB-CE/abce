@@ -9,14 +9,13 @@ class Firm(abce.Agent, abce.Firm):
         """
         self.create('money', 1000)
         self.mygood = "GOOD%i" % self.id  # GOOD1 if self.id == 1
-        self.set_cobb_douglas(self.mygood, 1, {"labor": 1})
+        self.set_cobb_douglas({self.mygood: 1}, {"labor": 1})
         self.price = random.random() * 2
 
 
     def buy_labor(self):
         """ receives all labor offers and accepts them one by one """
-        oo = self.get_offers("labor")
-        for offer in oo:
+        for offer in self.get_offers("labor"):
             self.accept(offer, min(offer.quantity, self.possession('money')))
 
     def production(self):
