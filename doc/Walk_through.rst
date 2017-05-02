@@ -527,6 +527,10 @@ when the agent offers a trade and sets the criteria to accept the trade
         offer = self.sell(buyer, 2, 'BRD', price=1, quantity=2.5)
         self.checkorders.append(offer)  # optional
 
+
+.. code-block:: python
+
+
     # Agent 2
     def buying(self):
         offers = self.get_offers('cookies')
@@ -536,6 +540,9 @@ when the agent offers a trade and sets the criteria to accept the trade
                     self.accept(offer)
                 except NotEnoughGoods:
                     self.accept(offer, self.possession('money') / offer.price)
+
+
+.. code-block:: python
 
     # Agent 1
     def check_trade(self):
