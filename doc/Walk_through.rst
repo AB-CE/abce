@@ -300,7 +300,7 @@ The Household agent
     import abce
 
 
-    class Household(abce.Agent, abce.Household):
+    class Household(abce.Agent, abce.Household, abce.Trade):
         def init(self, simulation_parameters, agent_parameters):
             """ 1. labor_endowment, which produces, because of simulation.declare_resource(...)
             in start.py one unit of labor per month
@@ -338,7 +338,7 @@ The Firm agent
     import abce
 
 
-    class Firm(abce.Agent, abce.Firm):
+    class Firm(abce.Agent, abce.Firm, abce.Trade):
         def init(self, simulation_parameters, agent_parameters):
             """ 1. Gets an initial amount of money
             2. create a cobb_douglas function: GOOD = 1 * labor ** 1.

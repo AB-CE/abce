@@ -4,7 +4,7 @@ from builtins import range
 import abce
 
 
-class Firm(abce.Agent, abce.Firm):
+class Firm(abce.Agent, abce.Firm, abce.Trade):
     def init(self, simulation_parameters, agent_parameters):
         """ there are now 2 sectors:
         - upstream produces an intermediary good

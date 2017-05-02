@@ -2,7 +2,7 @@ from __future__ import division
 import abce
 
 
-class Household(abce.Agent, abce.Household):
+class Household(abce.Agent, abce.Household, abce.Trade):
     def init(self, simulation_parameters, agent_parameters):
         """ self.employer is the _number_ of the agent that receives his
         labor offer.
