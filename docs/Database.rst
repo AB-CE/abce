@@ -48,7 +48,7 @@ Log logs dictionaries. To log your own variable::
 
  self.log('price', {'input': 0.8, 'output': 1})
 
-Further you can write the change of a varibale between a start and an end point with:
+Further you can write the change of a variable between a start and an end point with:
 :py:meth:`.observe_begin` and :py:meth:`.observe_end`.
 
 .. autoclass:: abce.Database

@@ -5,7 +5,7 @@ Prepare your simulation to be displayed on the web
 --------------------------------------------------
 
 In order for your simulation to be able to be run on the web it must be running
-in the webbrowser. For this the start.py file should be like it was in the
+in the web browser. For this the start.py file should be like it was in the
 template, and :code:`from abce.abcegui import app`  must be added after the other import statements::
 
     from __future__ import division
@@ -46,7 +46,7 @@ but not change to the result view.
 
 The easiest way to get your code to the server is via github. For this follow the
 following instructions.
-Push the simulation to github. If you are unsure what git and github is, refere to
+Push the simulation to github. If you are unsure what git and github is, refer to
 this `gitimmersion.com<http://gitimmersion.com/>`_. If your code is not yet a git
 repository change in your directory::
 
@@ -62,10 +62,10 @@ how to push an existing repository from the command line your, they will look li
    git push -u origin master
 
 
-Deploy you ABCE simulation on amazon ec2 or your own ubuntu server
+Deploy you ABCE simulation on amazon ec2 or your own Ubuntu server
 ------------------------------------------------------------------
 
-For a detailed explanation refere `here<https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-uwsgi-and-nginx-on-ubuntu-14-04>`_
+For a detailed explanation refer `here<https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-uwsgi-and-nginx-on-ubuntu-14-04>`_
 
 create an amazon ec2 instance following `Amazon's tutorial here<http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-launch-instance_linux.html>`_
 
@@ -212,7 +212,7 @@ Restart with new configuration::
 
     sudo service nginx restart
 
-Check in the browser wether it works, put :code:`54.174.70.207` or what ever
+Check in the browser whether it works, put :code:`54.174.70.207` or what ever
 your ip is into the address bar.
 
 If it says internal server error check the logs::
