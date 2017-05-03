@@ -6,19 +6,15 @@ Download and Installation
 Installation Ubuntu
 -------------------
 
-1. If pip not installed in terminal::
+1. If pip not installed in terminal [#fail]_ ::
 
+    
     sudo apt-get install python-pip python-dev python-pandas python-setuptools
     sudo pip install --upgrade numpy
 
-#. download and unzip the
-   `zip file with examples and the template <https://github.com/DavoudTaghawiNejad/abce/archive/master.zip>`_
-   from: https://github.com/DavoudTaghawiNejad/abce
-
 #. In terminal::
 
-    cd abce
-    sudo python setup.py install
+    sudo pip install -i https://testpypi.python.org/pypi --extra-index-url https://pypi.python.org/pypi abce
 
 
 Installation Mac
@@ -38,7 +34,7 @@ Installation Mac
       sudo pip install -i https://testpypi.python.org/pypi --extra-index-url https://pypi.python.org/pypi abce
 
 
-#. If you are on El Capitain, OSX will ask you to install cc - xcode "Command Line Developer Tools", click accept. [update]_
+#. If you are on El Capitain, OSX will ask you to install cc - xcode "Command Line Developer Tools", click accept. [#update]_
 
 #. If XCODE was installed type again in terminal::
 
@@ -93,7 +89,7 @@ If you have already Anachonda 3.5 installed:
     activate py27
 
 You can now switch between python 2.7 and python 3.5.
-To deactivate python2.7 :code:`deactivate` [#source]
+To deactivate python2.7 :code:`deactivate` [#source]_
 
 #. follow the windows installation instructions
 
@@ -103,10 +99,12 @@ If you have any problems with the installation
 ----------------------------------------------
 Mail to: DavoudTaghawiNejad@gmail.com
 
-.. [update] xcode 7 works only on OSX El Capitan. You need to either upgrade or if you want to
+.. [#update] xcode 7 works only on OSX El Capitan. You need to either upgrade or if you want to
             avoid updating download xcode 6.4 from here: https://developer.apple.com/downloads/
 
 .. [#source] sometimes :code:`source activate py27` and :code:`source deactivate` worksx
+
+.. [#fail] If this fails :code:`sudo apt-add-repository universe` and :code:`sudo apt-get update`
 
 
 
