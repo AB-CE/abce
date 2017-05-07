@@ -3,3 +3,9 @@ build/*
 dist/*
 **/result/*
 *.egg-info/*
+*.so
+*.pyd
+.dropbox
+abce/build/
+docs/_build/
+docs/builddir/
