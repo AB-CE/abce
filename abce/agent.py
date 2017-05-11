@@ -81,7 +81,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         """
         self.id = id
         """ self.id returns the agents id READ ONLY"""
-        self.name = '%s_%i:' % (group, id)
+        self.name = (group, id)
         """ self.name returns the agents name, which is the group name and the
         id seperated by '_' e.G. "household_12" READ ONLY!
         """
