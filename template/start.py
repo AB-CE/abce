@@ -13,11 +13,7 @@ simulation_parameters = {'name': 'name',
 #@gui(simulation_parameters) # User Interface
 def main(simulation_parameters):
         simulation = Simulation(rounds=simulation_parameters['rounds'])
-        action_list = [('firm', 'one'),
-                       ('household', 'two'),
-                       ('all', 'three')
-                       ('household', 'panel')]  # this instructs ABCE to save panel data as declared below
-        simulation.add_action_list(action_list)
+
 
         simulation.declare_round_endowment(resource='labor_endowment',
                                            units=1,
@@ -28,16 +24,24 @@ def main(simulation_parameters):
         simulation.panel('household', possessions=['good1', 'good2'],  # put a list of household possessions to track here
                                       variables=['utility']) # put a list of household possessions to track here
 
-        simulation.build_agents(Firm, 'firm',
+        firms = simulation.build_agents(Firm, 'firm',
                        number=simulation_parameters['firms'],
                        parameters=simulation_parameters)
-        simulation.build_agents(Household, 'household',
+        households = simulation.build_agents(Household, 'household',
                        number=simulation_parameters['households'],
                        parameters=simulation_parameters)
 
-
-        simulation.run()
-        simulation.graphs()
+        allagents = firms + households
+        try:  # makes sure that graphs are displayed even when the simulation fails
+            for round in simulation.next_round():
+                firms.do('one')
+                households.do('two')
+                allagents.do('three')
+                households.do('panel')
+        except:
+            pass
+        finally:
+            simulation.graphs()
 
 if __name__ == '__main__':
     main(simulation_parameters)
