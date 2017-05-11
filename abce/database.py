@@ -73,9 +73,9 @@ class Database(object):
 
         """
         try:
-            data_to_write = {'%s_%s' % (action_name, key): data_to_log[key] for key in data_to_log}
+            data_to_write = {'%s_%s' % (str(action_name), str(key)): data_to_log[key] for key in data_to_log}
         except TypeError:
-            data_to_write = {action_name: data_to_log}
+            data_to_write = {str(action_name): data_to_log}
         data_to_write['id'] = self.id
         self.database_connection.put(["log", self.group, data_to_write, str(self.round)])
 
