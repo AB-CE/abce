@@ -199,7 +199,7 @@ def show_simulation():
             rounds = max(df['index'])
         if ignore_initial_rounds >= rounds:
             ignore_initial_rounds = 0
-            print('kill')
+            print('abcegui.py ignore_initial_rounds >= rounds')
         df = df.where((pd.notnull(df)), None)
         df.dropna(1, how='all', inplace=True)
         if filename.startswith('aggregate_'):
@@ -383,6 +383,7 @@ def run(open=True, new=1):
     manually go to  http://127.0.0.1:5000/"""
     host = "127.0.0.1"
     port = find_free_port(host, 5000)
+    global opened
     if not opened:
         if open:
             if inputs:
@@ -393,7 +394,6 @@ def run(open=True, new=1):
             print("go to http://127.0.0.1:%i/" % port)
         else:
             print("go to http://127.0.0.1:%i/show_simulation" % port)
-        global opened
         opened = True
         app.run(use_reloader=False, host=host, port=port)
 
