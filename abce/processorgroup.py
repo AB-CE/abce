@@ -28,7 +28,7 @@ class ProcessorGroup(object):
         self.agents[group].append(agent)
 
     def make_an_agent(self, Agent, id, agent_args, parameters, agent_parameters):
-        agent = Agent(id=id, **agent_args)
+        agent = Agent(id=id, **agent_args, num_managers=self.num_managers)
         try:
             agent.init(parameters, agent_parameters)
         except AttributeError:
@@ -55,11 +55,17 @@ class ProcessorGroup(object):
 
 
     def execute(self, groups, command, messages):
-        out = [defaultdict(defaultdict_list) for _ in range(self.num_managers)]
-        for group in groups:
-            for agent in self.agents[group]:
-                for message in agent._execute(command, messages[group][agent.id]):
-                    out[message[1] % self.num_managers][message[0]][message[1]].append(message[2])
+        try:
+            out = defaultdict(list)
+            for group in groups:
+                group_messages = sortmessages(messages[group])
+                for i, agent in enumerate(self.agents[group]):
+                    outmessages = agent._execute(command, group_messages[i * self.num_managers + self.batch])
+                    for (pgid, group), msg in outmessages.items():
+                        out[(pgid, group)].extend(msg)
+        except:
+            traceback.print_exc()
+            raise
         return out
 
     def remove(self, group, ids):
@@ -101,7 +107,7 @@ class ProcessorGroup(object):
 def sortmessages(new_messages):
     messagess = defaultdict(list)
     for message in new_messages:
-        messagess[message[1]].append(message[2])
+        messagess[message[0]].append(message[1])
     return messagess
 
 def defaultdict_list():

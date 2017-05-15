@@ -7,13 +7,14 @@ from abce import Simulation
 def main():
     parameters = {
     'name': 'name',
-    'rounds': 300
+    'rounds': 10
     }
 
-    s = Simulation(rounds=parameters['rounds'], processes=8)
+    s = Simulation(rounds=parameters['rounds'], processes=4)
 
     myagents = s.build_agents(MyAgent, 'myagent', 50000)
     youragents = s.build_agents(YourAgent, 'youragent', 50000)
+
     for r in s.next_round():
         #(myagents+youragents).do('compute')
         youragents.do('s')

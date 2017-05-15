@@ -75,7 +75,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
 
 
     """
-    def __init__(self, id, group, trade_logging, database, logger, random_seed, start_round):
+    def __init__(self, id, group, trade_logging, database, logger, random_seed, start_round, num_managers):
         """ Do not overwrite __init__ instead use a method called init instead.
         init is called whenever the agent are build.
         """
@@ -90,7 +90,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         """ self.group returns the agents group or type READ ONLY! """
         #TODO should be group_address(group), but it would not work
         # when fired manual + ':' and manual group_address need to be removed
-        self._out = []
+        self._out = defaultdict(list)
         """ The simulation parameters and the number of agents in other groups
 
          Useful entries:
@@ -102,6 +102,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         self.logger_connection = logger
 
         self.trade_logging = {'individual':1, 'group':2, 'off': 0}[trade_logging]
+        self.num_managers = num_managers
 
         self._haves = defaultdict(float)
 
@@ -322,7 +323,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         self._network_drawing_frequency = frequency
 
     def _execute(self, command, incomming_messages):
-        self._out = []
+        self._out = defaultdict(list)
         try:
             self._clearing__end_of_subround(incomming_messages)
             getattr(self, command)()
@@ -408,7 +409,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         typ =(_o,c,u,r) are
         reserved for internally processed offers.
         """
-        self._out.append((receiver_group, receiver_id, (typ, msg)))
+        self._out[(receiver_id % self.num_managers, receiver_group)].append((receiver_id, (typ, msg)))
 
     def create_agent(self, AgentClass, group_name, parameters=None, agent_parameters=None):
         """ create a new agent.

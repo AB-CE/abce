@@ -214,7 +214,7 @@ class Simulation(object):
         self._agents_to_delete = []  # container used in self.run
 
 
-        self.messagess = [defaultdict(defaultdict_list)] * self.processes
+        self.messagess = [defaultdict(list)] * self.processes
 
 
     def declare_round_endowment(self, resource, units, product, groups=['all']):

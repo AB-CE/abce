@@ -4,6 +4,7 @@ from pprint import pprint
 class Group(object):
     def __init__(self, sim, groups):
         self.sim = sim
+        self.num_managers = sim.processes
         self._processor_groups = sim._processor_groups
         self.groups = groups
         self.do = self.execute_parallel if sim.processes > 1 else self.execute_serial
@@ -36,19 +37,20 @@ class Group(object):
         self.sim._agents_to_delete.extend(messages.pop(('_simulation', 0.5), []))
 
     def execute_parallel(self, command):
-        parameters = ((pg, self.groups, command, self.sim.messagess[pgid]) for pgid, pg in enumerate(self._processor_groups))
-        out_messages = self.sim.pool.map(execute_wrapper, parameters, chunksize=1)
-        for pg in range(len(self._processor_groups)):
+        messages = defaultdict(dict)
+        for pgid in range(len(self._processor_groups)):
             for group in self.groups:
-                self.sim.messagess[pg][group] = defaultdict(list)
+                messages[pgid][group] = self.sim.messagess[pgid][group]
+        parameters = ((pg, self.groups, command, self.sim.messagess[pgid]) for pgid, pg in enumerate(self._processor_groups))
+        out = self.sim.pool.map(execute_wrapper, parameters, chunksize=1)
+        for pgid in range(len(self._processor_groups)):
+            for group in self.groups:
+                self.sim.messagess[pgid][group].clear()
         #self.sim._agents_to_add.extend(messages.pop(('_simulation', 0), []))
         #self.sim._agents_to_delete.extend(messages.pop(('_simulation', 0.5), []))
-        for messagesss in out_messages:
-            for pg, messages_for_pg in enumerate(messagesss):
-                for group, messages_for_group in messages_for_pg.items():
-                    for id, msg in messages_for_group.items():
-                        self.sim.messagess[pg][group][id].extend(msg)
-
+        for out_messages in out:
+            for (pgid, group), messages in out_messages.items():
+                self.sim.messagess[pgid][group].extend(messages)
 
 def execute_wrapper(inp):
     # processor_group.execute(self.groups, command, messages[pgid])
