@@ -13,6 +13,7 @@ class ProcessorGroup(object):
         self.agents = {}
         self.batch = batch
         self.num_managers = num_managers
+        self.pigeonboxes = {}
 
     def add_group(self, Agent, num_agents_this_group, agent_args, parameters, agent_parameters, agent_params_from_sim):
         group = agent_args['group']
@@ -21,6 +22,8 @@ class ProcessorGroup(object):
         for i in range(self.batch, num_agents_this_group, self.num_managers):
             agent = self.make_an_agent(Agent, id=i, agent_args=agent_args, parameters=parameters, agent_parameters=agent_parameters[i])
             self.agents[group].append(agent)
+
+        self.pigeonboxes[group] = [[] for _ in range(len(self.agents[group]))]
 
     def append(self, Agent, id, agent_args, parameters, agent_parameters):
         group = agent_args['group']
@@ -56,13 +59,14 @@ class ProcessorGroup(object):
 
     def execute(self, groups, command, messages):
         try:
-            out = defaultdict(list)
+            out = [[] for _ in range(self.num_managers)]
+            self.put_messages_in_pigeonbox(messages)
             for group in groups:
-                group_messages = sortmessages(messages[group])
                 for i, agent in enumerate(self.agents[group]):
-                    outmessages = agent._execute(command, group_messages[i * self.num_managers + self.batch])
-                    for (pgid, group), msg in outmessages.items():
-                        out[(pgid, group)].extend(msg)
+                    outmessages = agent._execute(command, self.pigeonboxes[group][i])
+                    self.pigeonboxes[group][i].clear()
+                    for pgid, msg in enumerate(outmessages):
+                        out[pgid].extend(msg)
         except:
             traceback.print_exc()
             raise
@@ -95,6 +99,10 @@ class ProcessorGroup(object):
                     traceback.print_exc()
                     raise SystemExit()
 
+    def put_messages_in_pigeonbox(self, new_messages):
+        for group, id, message in new_messages:
+                self.pigeonboxes[group][id // self.num_managers].append(message)
+
     def len(self):
         return sum([len(group) for group in self.agents.values()])
 
@@ -104,11 +112,6 @@ class ProcessorGroup(object):
     def __repr__(self):
         return repr()
 
-def sortmessages(new_messages):
-    messagess = defaultdict(list)
-    for message in new_messages:
-        messagess[message[0]].append(message[1])
-    return messagess
 
 def defaultdict_list():
     return defaultdict(list)

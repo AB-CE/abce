@@ -214,7 +214,7 @@ class Simulation(object):
         self._agents_to_delete = []  # container used in self.run
 
 
-        self.messagess = [defaultdict(list)] * self.processes
+        self.messagess = [[] for _ in range(self.processes)]
 
 
     def declare_round_endowment(self, resource, units, product, groups=['all']):
@@ -456,7 +456,7 @@ class Simulation(object):
 
     def execute_internal_parallel(self, command):
         parameters = ((pg, command) for pg in self._processor_groups)
-        families_messages = self.pool.map(execute_internal_wrapper, parameters)
+        families_messages = self.pool.map(execute_internal_wrapper, parameters, chunksize=1)
 
     def _prepare(self):
         """ This runs the simulation """

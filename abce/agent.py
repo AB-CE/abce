@@ -90,7 +90,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         """ self.group returns the agents group or type READ ONLY! """
         #TODO should be group_address(group), but it would not work
         # when fired manual + ':' and manual group_address need to be removed
-        self._out = defaultdict(list)
+        self._out = [[] for _ in range(num_managers)]
         """ The simulation parameters and the number of agents in other groups
 
          Useful entries:
@@ -323,7 +323,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         self._network_drawing_frequency = frequency
 
     def _execute(self, command, incomming_messages):
-        self._out = defaultdict(list)
+        self._out = [[] for _ in range(self.num_managers)]
         try:
             self._clearing__end_of_subround(incomming_messages)
             getattr(self, command)()
@@ -409,7 +409,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         typ =(_o,c,u,r) are
         reserved for internally processed offers.
         """
-        self._out[(receiver_id % self.num_managers, receiver_group)].append((receiver_id, (typ, msg)))
+        self._out[receiver_id % self.num_managers].append((receiver_group, receiver_id, (typ, msg)))
 
     def create_agent(self, AgentClass, group_name, parameters=None, agent_parameters=None):
         """ create a new agent.
