@@ -8,6 +8,8 @@ class Group(object):
         self._processor_groups = sim._processor_groups
         self.groups = groups
         self.do = self.execute_parallel if sim.processes > 1 else self.execute_serial
+        self.messagess = [{group: self.sim.messagess[pgid][group] for group in groups}
+                          for pgid in range(len(self._processor_groups))]
 
     def __add__(self, g):
         return  Group(self.sim, self.groups + g.groups)
@@ -37,11 +39,7 @@ class Group(object):
         self.sim._agents_to_delete.extend(messages.pop(('_simulation', 0.5), []))
 
     def execute_parallel(self, command):
-        messages = defaultdict(dict)
-        for pgid in range(len(self._processor_groups)):
-            for group in self.groups:
-                messages[pgid][group] = self.sim.messagess[pgid][group]
-        parameters = ((pg, self.groups, command, self.sim.messagess[pgid]) for pgid, pg in enumerate(self._processor_groups))
+        parameters = ((pg, self.groups, command, self.messagess[pgid]) for pgid, pg in enumerate(self._processor_groups))
         out = self.sim.pool.map(execute_wrapper, parameters, chunksize=1)
         for pgid in range(len(self._processor_groups)):
             for group in self.groups:
