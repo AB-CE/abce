@@ -63,7 +63,7 @@ from .quote import Quote
 from .contracting import Contracting
 import json
 from . import abcegui
-from .family import Family
+from .processorgroup import ProcessorGroup
 from .abcegui import gui
 import random
 from abce.notenoughgoods import NotEnoughGoods
@@ -122,7 +122,7 @@ class Simulation(object):
 
         firms = w.build_agents(Firm, 'firm', num_firms)
         households = w.build_agents(Household, 'household', num_households)
-        
+
         all = firms + households
         for round in w.next_round():
             households.do('recieve_connections'),
@@ -140,7 +140,6 @@ class Simulation(object):
     def __init__(self, rounds, name='abce', random_seed=None, trade_logging='off', processes=None):
         """
         """
-        self.family_list = {}
         self.num_of_agents_in_group = {}
         self._messages = {}
         self._resource_command_group = {}
@@ -192,13 +191,15 @@ class Simulation(object):
 
         self.processes = mp.cpu_count() * 2 if processes is None else processes
 
-        MyManager.register('Family', Family)
+        MyManager.register('ProcessorGroup', ProcessorGroup)
         self.managers = []
+        self._processor_groups = []
         for i in range(self.processes):
             manager = MyManager()
             manager.start()
-
             self.managers.append(manager)
+            pg = manager.ProcessorGroup(self.processes, batch=i)
+            self._processor_groups.append(pg)
 
         if random_seed is None or random_seed == 0:
             random_seed = time.time()
@@ -211,7 +212,9 @@ class Simulation(object):
         self.execute_internal = self.execute_internal_parallel if self.processes > 1 else self.execute_internal_seriel
         self._agents_to_add = []  # container used in self.run
         self._agents_to_delete = []  # container used in self.run
-        self.messagess = defaultdict(list)
+
+
+        self.messagess = [defaultdict(defaultdict_list)] * self.processes
 
 
     def declare_round_endowment(self, resource, units, product, groups=['all']):
@@ -240,7 +243,7 @@ class Simulation(object):
 
 
         """
-        if len(self.family_list) > 0:
+        if self.num_of_agents_in_group:
             raise Exception("WARNING: declare_round_endowment(...) must be called before the agents are build")
         for group in groups:
             self.resource_endowment[group].append((resource, units, product))
@@ -265,7 +268,7 @@ class Simulation(object):
              w.declare_perishable(good='CAP')
 
         """
-        if len(self.family_list) > 0:
+        if self.num_of_agents_in_group:
             raise SystemExit("WARNING: declare_perishable(...) must be called before the agents are build")
         self.perishable.append(good)
 
@@ -281,7 +284,7 @@ class Simulation(object):
             duration:
                 the duration before the good expires
         """
-        if len(self.family_list) > 0:
+        if self.num_of_agents_in_group:
             raise SystemExit("WARNING: declare_expiring(...) must be called before the agents are build")
         self.expiring.append((good, duration))
 
@@ -330,7 +333,7 @@ class Simulation(object):
                 simulation.declare_calendar()  # starts at current date
 
         """
-        if len(self.family_list) > 0:
+        if self.num_of_agents_in_group:
             raise SystemExit("WARNING: declare_calendar(...) must be called before the agents are build")
         date = datetime.date.today() if year is None else datetime.date(year, month, day)
 
@@ -367,7 +370,7 @@ class Simulation(object):
                 firms.do('panel')
                 households.do('buying')
         """
-        if len(self.family_list) > 0:
+        if self.num_of_agents_in_group:
             raise SystemExit("WARNING: panel(...) must be called before the agents are build")
         self._db.add_panel(group)
         self.variables_to_track_panel[group] = variables
@@ -407,7 +410,7 @@ class Simulation(object):
 
 
         """
-        if len(self.family_list) > 0:
+        if self.num_of_agents_in_group:
             raise SystemExit("WARNING: aggregate(...) must be called before the agents are build")
         self._db.add_aggregate(group)
         self.variables_to_track_aggregate[group] = variables
@@ -448,17 +451,16 @@ class Simulation(object):
 
 
     def execute_internal_seriel(self, command):
-        for group in self.family_list:
-            for family in self.family_list[group]:
-                family.execute_internal(command)
+        for pg in self._processor_groups:
+            pg.execute_internal(command)
 
     def execute_internal_parallel(self, command):
-        parameters = ((family, command) for group in self.family_list for family in self.family_list[group])
-        families_messages = self.pool.map(execute_internal_wrapper, parameters, chunksize=1)
+        parameters = ((pg, command) for pg in self._processor_groups)
+        families_messages = self.pool.map(execute_internal_wrapper, parameters)
 
     def _prepare(self):
         """ This runs the simulation """
-        if not(self.family_list):
+        if not(self.num_of_agents_in_group):
             raise SystemExit('No Agents Created')
 
         self._db.start()
@@ -556,7 +558,6 @@ class Simulation(object):
         else:
             num_agents_this_group = len(agent_parameters)
 
-        self.family_list[group_name] = []
 
         self.sim_parameters.update(parameters)
 
@@ -569,23 +570,22 @@ class Simulation(object):
                                     self.variables_to_track_aggregate[group_name]),
                                   'ndf':self._network_drawing_frequency}
 
-        for i, manager in enumerate(self.managers):
-            family = manager.Family(AgentClass,
-                                    num_agents_this_group=num_agents_this_group,
-                                    batch=i,
-                                    num_managers=self.processes,
-                                    agent_args={'group': group_name,
-                                                'trade_logging': self.trade_logging_mode,
-                                                'database': self.database_queue,
-                                                'logger':self.logger_queue,
-                                                'random_seed': random.random(),
-                                                'start_round': self._start_round},
-                                    parameters=parameters,
-                                    agent_parameters=agent_parameters,
-                                    agent_params_from_sim=agent_params_from_sim)
-            self.family_list[group_name].append(family)
+
+        for pg in self._processor_groups:
+            pg.add_group(AgentClass,
+                                num_agents_this_group=num_agents_this_group,
+                                agent_args={'group': group_name,
+                                            'trade_logging': self.trade_logging_mode,
+                                            'database': self.database_queue,
+                                            'logger': self.logger_queue,
+                                            'random_seed': random.random(),
+                                            'start_round': self._start_round},
+                                parameters=parameters,
+                                agent_parameters=agent_parameters,
+                                agent_params_from_sim=agent_params_from_sim)
+
             self.num_of_agents_in_group[group_name] = num_agents_this_group
-        return Group(self, [self.family_list[group_name]], group_name)
+        return Group(self, [group_name])
 
     def add_agents(self, round):
         messages = self._agents_to_add
@@ -595,9 +595,9 @@ class Simulation(object):
             id = self.num_of_agents_in_group[group_name]
             self.num_of_agents_in_group[group_name] += 1
             assert len(self.family_list[group_name]) == self.processes, "the expandable parameter in build_agents must be set to true"
-            family = self.family_list[group_name][id % self.processes]
+            pg = self._processor_groups[id % self.processes]
 
-            family.append(AgentClass, id=id,
+            pg.append(AgentClass, id=id,
                                     agent_args={'group': group_name,
                                                 'trade_logging': self.trade_logging_mode,
                                                 'database': self.database_queue,
@@ -616,11 +616,11 @@ class Simulation(object):
             dest_family[(group_name, id % self.processes, quite)].append(id)
 
         for (group_name, family_id, quite), ids in dest_family.items():
-            family = self.family_list[group_name][family_id]
+            pg = self.family_list[group_name][family_id]
             if quite:
-                family.replace_with_dead(ids)
+                pg.replace_with_dead(group, ids)
             else:
-                family.remove(ids)
+                pg.remove(group, ids)
         self._agents_to_delete = []
 
 
@@ -714,3 +714,6 @@ def _number_or_string(word):
             return float(word)
         except ValueError:
             return word
+
+def defaultdict_list():
+    return defaultdict(list)
