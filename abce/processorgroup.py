@@ -68,12 +68,12 @@ class ProcessorGroup(object):
             for group in groups:
                 for i, agent in enumerate(self.agents[group]):
                     outmessages = agent._execute(command, self.pigeonboxes[group][i])
-                    self.pigeonboxes[group][i].clear()
                     for pgid, msg in enumerate(outmessages):
                         if pgid == self.batch:
                             self.mymessages.extend(msg)
                         else:
                             out[pgid].extend(msg)
+                self.pigeonboxes[group] = list(list() for _ in range(len(self.agents[group])))
         except:
             traceback.print_exc()
             raise
@@ -84,9 +84,9 @@ class ProcessorGroup(object):
         for group in groups:
             for i, agent in enumerate(self.agents[group]):
                 outmessages = agent._execute(command, self.pigeonboxes[group][i])
-                self.pigeonboxes[group][i].clear()
                 for msg in outmessages:
                     self.mymessages.extend(msg)
+            self.pigeonboxes[group] = list(list() for _ in range(len(self.agents[group])))
 
     def remove(self, group, ids):
         """ removes a deleted agent, agents that are removed, don't read their
