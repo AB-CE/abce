@@ -15,5 +15,6 @@ class MyAgent(Agent):
         max(l)
 
     def g(self):
-        self.accept(self.get_offers('cookie')[0])
+        for offer in self.get_offers('cookie'):
+            self.accept(offer)
         #print(self.possession('cookie'))

@@ -10,7 +10,7 @@ def main():
     'rounds': 10
     }
 
-    s = Simulation(rounds=parameters['rounds'], processes=4)
+    s = Simulation(rounds=parameters['rounds'], processes=8)
 
     myagents = s.build_agents(MyAgent, 'myagent', 50000)
     youragents = s.build_agents(YourAgent, 'youragent', 50000)
