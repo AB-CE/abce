@@ -192,15 +192,24 @@ class Simulation(object):
 
         self.processes = mp.cpu_count() * 2 if processes is None else processes
 
-        MyManager.register('ProcessorGroup', ProcessorGroup)
-        self.managers = []
-        self._processor_groups = []
-        for i in range(self.processes):
-            manager = MyManager()
-            manager.start()
-            self.managers.append(manager)
-            pg = manager.ProcessorGroup(self.processes, batch=i)
-            self._processor_groups.append(pg)
+        if processes == 1:
+            self._processor_groups = [ProcessorGroup(1, batch=0)]
+            self.execute_internal = self.execute_internal_seriel
+        else:
+            self.pool = mp.Pool(self.processes)
+
+            MyManager.register('ProcessorGroup', ProcessorGroup)
+            self.managers = []
+            self._processor_groups = []
+            for i in range(self.processes):
+                manager = MyManager()
+                manager.start()
+                self.managers.append(manager)
+                pg = manager.ProcessorGroup(self.processes, batch=i)
+                self._processor_groups.append(pg)
+
+            self.messagess = [list() for _ in range(self.processes)]
+            self.execute_internal = self.execute_internal_parallel
 
         if random_seed is None or random_seed == 0:
             random_seed = time.time()
@@ -208,14 +217,10 @@ class Simulation(object):
 
         self.sim_parameters = OrderedDict({'name': name, 'rounds': rounds, 'random_seed': random_seed})
 
-        if self.processes > 1:
-            self.pool = mp.Pool(self.processes)
-        self.execute_internal = self.execute_internal_parallel if self.processes > 1 else self.execute_internal_seriel
         self._agents_to_add = []  # container used in self.run
         self._agents_to_delete = []  # container used in self.run
 
 
-        self.messagess = [list() for _ in range(self.processes)]
 
 
     def declare_round_endowment(self, resource, units, product, groups=['all']):

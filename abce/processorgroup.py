@@ -79,6 +79,15 @@ class ProcessorGroup(object):
             raise
         return out
 
+    def execute_serial(self, groups, command):
+        self.put_messages_in_pigeonbox([])
+        for group in groups:
+            for i, agent in enumerate(self.agents[group]):
+                outmessages = agent._execute(command, self.pigeonboxes[group][i])
+                self.pigeonboxes[group][i].clear()
+                for msg in outmessages:
+                    self.mymessages.extend(msg)
+
     def remove(self, group, ids):
         """ removes a deleted agent, agents that are removed, don't read their
         messages, if they get a message the simulation stops """

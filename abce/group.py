@@ -20,7 +20,7 @@ class Group(object):
             return self
 
     def execute_serial(self, command):
-        self._processor_groups[0].execute(self.groups, command, self.sim.messagess[0])
+        self._processor_groups[0].execute_serial(self.groups, command)
         #self.sim._agents_to_add.extend(messages.pop(('_simulation', 0), []))
         #self.sim._agents_to_delete.extend(messages.pop(('_simulation', 0.5), []))
 
