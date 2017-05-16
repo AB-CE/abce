@@ -68,7 +68,6 @@ from .processorgroup import ProcessorGroup
 from .abcegui import gui
 import random
 from abce.notenoughgoods import NotEnoughGoods
-from pprint import pprint
 from abce.deadagent import SilentDeadAgent, LoudDeadAgent
 
 def execute_internal_wrapper(inp):
@@ -210,7 +209,7 @@ class Simulation(object):
 
             self.execute_internal = self.execute_internal_parallel
 
-        self.messagess = [list() for _ in range(self.processes + 2)]
+        self.messagess = [list() for _ in range(self.processes + 1)]
 
         if random_seed is None or random_seed == 0:
             random_seed = time.time()
@@ -494,8 +493,7 @@ class Simulation(object):
 
     def _finalize_prev_round(self, round):
         self.execute_internal('_advance_round')
-        self.add_agents(round)
-        self.delete_agent()
+        self.add_and_delete_agents(round)
 
     def gracefull_exit(self):
         self.database_queue.put('close')
@@ -592,33 +590,29 @@ class Simulation(object):
             self.num_of_agents_in_group[group_name] = num_agents_this_group
         return Group(self, [group_name])
 
-    def add_agents(self, round):
-        agents_to_add = self.messagess[-1]
-        for AgentClass, group_name, parameters, agent_parameters in agents_to_add:
-            id = self.num_of_agents_in_group[group_name]
-            self.num_of_agents_in_group[group_name] += 1
-            pg = self._processor_groups[id % self.processes]
-            pg.append(AgentClass, id=id,
-                                    agent_args={'group': group_name,
-                                                'trade_logging': self.trade_logging_mode,
-                                                'database': self.database_queue,
-                                                'logger':self.logger_queue,
-                                                'random_seed': random.random(),
-                                                'start_round': round + 1},
-                                    parameters=parameters, agent_parameters=agent_parameters)
+    def add_and_delete_agents(self, round):
+        for command, agent_details in self.messagess[-1]:
+            if command == 'add':
+                AgentClass, group_name, parameters, agent_parameters = agent_details
+                id = self.num_of_agents_in_group[group_name]
+                self.num_of_agents_in_group[group_name] += 1
+                pg = self._processor_groups[id % self.processes]
+                pg.append(AgentClass, id=id,
+                                        agent_args={'group': group_name,
+                                                    'trade_logging': self.trade_logging_mode,
+                                                    'database': self.database_queue,
+                                                    'logger':self.logger_queue,
+                                                    'random_seed': random.random(),
+                                                    'start_round': round + 1},
+                                        parameters=parameters, agent_parameters=agent_parameters)
+            elif command == 'delete':
+                group, id, quite = agent_details
+                pg = self._processor_groups[id % self.processes]
+                if quite:
+                    pg.replace_with_dead(group, id, SilentDeadAgent)
+                else:
+                    pg.replace_with_dead(group, id, LoudDeadAgent)
         self.messagess[-1] = []
-
-    def delete_agent(self):
-        agents_to_delete = self.messagess[-2]
-        for group, id, quite in agents_to_delete:
-            pg = self._processor_groups[id % self.processes]
-            if quite:
-                pg.replace_with_dead(group, id, SilentDeadAgent)
-            else:
-                pg.replace_with_dead(group, id, LoudDeadAgent)
-        self.messagess[-2] = []
-
-
 
     def _write_description_file(self):
         description = open(os.path.abspath(self.path + '/description.txt'), 'w')

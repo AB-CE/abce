@@ -95,7 +95,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
 
         self.trade_logging = {'individual':1, 'group':2, 'off': 0}[trade_logging]
         self.num_managers = num_managers
-        self._out = [[] for _ in range(self.num_managers + 2)]
+        self._out = [[] for _ in range(self.num_managers + 1)]
 
         self._haves = defaultdict(float)
 
@@ -317,7 +317,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         self._network_drawing_frequency = frequency
 
     def _execute(self, command, incomming_messages):
-        self._out = [[] for _ in range(self.num_managers + 2)]
+        self._out = [[] for _ in range(self.num_managers + 1)]
         try:
             self._clearing__end_of_subround(incomming_messages)
             getattr(self, command)()
@@ -428,7 +428,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
                               parameters=self.parameters,
                               agent_parameters={'creation': self.round + 1})
         """
-        self._out[-1].append((AgentClass, group_name, parameters, agent_parameters))
+        self._out[-1].append(('add', (AgentClass, group_name, parameters, agent_parameters)))
 
     def delete_agent(self, group_name, id, quite=True):
         """ This deletes an agent, an agent can delete itself. There are two
@@ -448,7 +448,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
             quite:
                 whether the agent deletes incomming messages.
         """
-        self._out[-2].append((group_name, id, quite))
+        self._out[-1].append(('delete', (group_name, id, quite)))
 
 
 
