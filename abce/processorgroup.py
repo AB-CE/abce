@@ -16,6 +16,7 @@ class ProcessorGroup(object):
         self.batch = batch
         self.num_managers = num_managers
         self.pigeonboxes = {}
+        self.mymessages = list()
 
     def add_group(self, Agent, num_agents_this_group, agent_args, parameters, agent_parameters, agent_params_from_sim):
         group = agent_args['group']
@@ -69,7 +70,10 @@ class ProcessorGroup(object):
                     outmessages = agent._execute(command, self.pigeonboxes[group][i])
                     self.pigeonboxes[group][i].clear()
                     for pgid, msg in enumerate(outmessages):
-                        out[pgid].extend(msg)
+                        if pgid == self.batch:
+                            self.mymessages.extend(msg)
+                        else:
+                            out[pgid].extend(msg)
         except:
             traceback.print_exc()
             raise
@@ -104,7 +108,11 @@ class ProcessorGroup(object):
 
     def put_messages_in_pigeonbox(self, new_messages):
         for group, id, message in new_messages:
-                self.pigeonboxes[group][id // self.num_managers].append(message)
+            self.pigeonboxes[group][id // self.num_managers].append(message)
+        for group, id, message in self.mymessages:
+            self.pigeonboxes[group][id // self.num_managers].append(message)
+        self.mymessages.clear()
+
 
     def len(self):
         return sum([len(group) for group in self.agents.values()])
