@@ -20,16 +20,14 @@ class Group(object):
             return self
 
     def execute_serial(self, command):
-        self._processor_groups[0].execute_serial(self.groups, command)
-        #self.sim._agents_to_add.extend(messages.pop(('_simulation', 0), []))
-        #self.sim._agents_to_delete.extend(messages.pop(('_simulation', 0.5), []))
+        out_messages = self._processor_groups[0].execute(self.groups, command, [])
+        for pgid, messages in enumerate(out_messages):
+            self.sim.messagess[pgid].extend(messages)
 
 
     def execute_parallel(self, command):
         parameters = ((pg, self.groups, command, self.sim.messagess[pgid]) for pgid, pg in enumerate(self._processor_groups))
         out = self.sim.pool.map(execute_wrapper, parameters, chunksize=1)
-        #self.sim._agents_to_add.extend(messages.pop(('_simulation', 0), []))
-        #self.sim._agents_to_delete.extend(messages.pop(('_simulation', 0.5), []))
         for pgid in range(self.num_managers):
             self.sim.messagess[pgid].clear()
         for out_messages in out:

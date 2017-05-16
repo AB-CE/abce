@@ -68,7 +68,8 @@ from .processorgroup import ProcessorGroup
 from .abcegui import gui
 import random
 from abce.notenoughgoods import NotEnoughGoods
-
+from pprint import pprint
+from abce.deadagent import SilentDeadAgent, LoudDeadAgent
 
 def execute_internal_wrapper(inp):
     return inp[0].execute_internal(inp[1])
@@ -197,7 +198,6 @@ class Simulation(object):
             self.execute_internal = self.execute_internal_seriel
         else:
             self.pool = mp.Pool(self.processes)
-
             MyManager.register('ProcessorGroup', ProcessorGroup)
             self.managers = []
             self._processor_groups = []
@@ -208,8 +208,9 @@ class Simulation(object):
                 pg = manager.ProcessorGroup(self.processes, batch=i)
                 self._processor_groups.append(pg)
 
-            self.messagess = [list() for _ in range(self.processes)]
             self.execute_internal = self.execute_internal_parallel
+
+        self.messagess = [list() for _ in range(self.processes + 2)]
 
         if random_seed is None or random_seed == 0:
             random_seed = time.time()
@@ -217,8 +218,6 @@ class Simulation(object):
 
         self.sim_parameters = OrderedDict({'name': name, 'rounds': rounds, 'random_seed': random_seed})
 
-        self._agents_to_add = []  # container used in self.run
-        self._agents_to_delete = []  # container used in self.run
 
 
 
@@ -594,15 +593,11 @@ class Simulation(object):
         return Group(self, [group_name])
 
     def add_agents(self, round):
-        messages = self._agents_to_add
-        if len(messages) == 0:
-            return
-        for _, _, (AgentClass, group_name, parameters, agent_parameters) in messages:
+        agents_to_add = self.messagess[-1]
+        for AgentClass, group_name, parameters, agent_parameters in agents_to_add:
             id = self.num_of_agents_in_group[group_name]
             self.num_of_agents_in_group[group_name] += 1
-            assert len(self.family_list[group_name]) == self.processes, "the expandable parameter in build_agents must be set to true"
             pg = self._processor_groups[id % self.processes]
-
             pg.append(AgentClass, id=id,
                                     agent_args={'group': group_name,
                                                 'trade_logging': self.trade_logging_mode,
@@ -611,23 +606,17 @@ class Simulation(object):
                                                 'random_seed': random.random(),
                                                 'start_round': round + 1},
                                     parameters=parameters, agent_parameters=agent_parameters)
-        self._agents_to_add = []
+        self.messagess[-1] = []
 
     def delete_agent(self):
-        messages = self._agents_to_delete
-        if len(messages) == 0:
-            return
-        dest_family = defaultdict(list)
-        for _, _, (group_name, id, quite) in messages:
-            dest_family[(group_name, id % self.processes, quite)].append(id)
-
-        for (group_name, family_id, quite), ids in dest_family.items():
-            pg = self.family_list[group_name][family_id]
+        agents_to_delete = self.messagess[-2]
+        for group, id, quite in agents_to_delete:
+            pg = self._processor_groups[id % self.processes]
             if quite:
-                pg.replace_with_dead(group, ids)
+                pg.replace_with_dead(group, id, SilentDeadAgent)
             else:
-                pg.remove(group, ids)
-        self._agents_to_delete = []
+                pg.replace_with_dead(group, id, LoudDeadAgent)
+        self.messagess[-2] = []
 
 
 

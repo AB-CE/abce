@@ -3,7 +3,6 @@ from builtins import object
 from builtins import list
 from builtins import dict
 from collections import defaultdict
-from abce.deadagent import DeadAgent
 from pprint import pprint
 import traceback
 import time
@@ -32,6 +31,7 @@ class ProcessorGroup(object):
         group = agent_args['group']
         agent = self.make_an_agent(Agent, id, agent_args, parameters, agent_parameters)
         self.agents[group].append(agent)
+        self.pigeonboxes[group].append(message)
 
     def make_an_agent(self, Agent, id, agent_args, parameters, agent_parameters):
         agent_args['num_managers'] = self.num_managers
@@ -63,7 +63,7 @@ class ProcessorGroup(object):
 
     def execute(self, groups, command, messages):
         try:
-            out = [[] for _ in range(self.num_managers)]
+            out = [[] for _ in range(self.num_managers + 2)]
             self.put_messages_in_pigeonbox(messages)
             for group in groups:
                 for i, agent in enumerate(self.agents[group]):
@@ -79,26 +79,10 @@ class ProcessorGroup(object):
             raise
         return out
 
-    def execute_serial(self, groups, command):
-        self.put_messages_in_pigeonbox([])
-        for group in groups:
-            for i, agent in enumerate(self.agents[group]):
-                outmessages = agent._execute(command, self.pigeonboxes[group][i])
-                for msg in outmessages:
-                    self.mymessages.extend(msg)
-            self.pigeonboxes[group] = list(list() for _ in range(len(self.agents[group])))
 
-    def remove(self, group, ids):
-        """ removes a deleted agent, agents that are removed, don't read their
-        messages, if they get a message the simulation stops """
-        self.agents[group] = [agent for agent in self.agents[group] if agent.id not in ids]
-
-    def replace_with_dead(self, group, ids):
-        """ replaces a deleted agent, so that all messages the agent receives
-        are deleted. The agent is inactive"""
-        for i in range(len(self.agents)):
-            if self.agents[group][i].id in ids:
-                self.agents[group][i] = DeadAgent()
+    def replace_with_dead(self, group, id, DeadAgent):
+        """ replaces a deleted agent """
+        self.agents[group][id // self.num_managers] = DeadAgent()
 
     def name(self):
         return (self.group, self.batch)

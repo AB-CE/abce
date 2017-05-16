@@ -90,19 +90,12 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         """ self.group returns the agents group or type READ ONLY! """
         #TODO should be group_address(group), but it would not work
         # when fired manual + ':' and manual group_address need to be removed
-        self._out = [[] for _ in range(num_managers)]
-        """ The simulation parameters and the number of agents in other groups
-
-         Useful entries:
-
-            'rounds':
-                 the total number of rounds in the simulation.
-        """
         self.database_connection = database
         self.logger_connection = logger
 
         self.trade_logging = {'individual':1, 'group':2, 'off': 0}[trade_logging]
         self.num_managers = num_managers
+        self._out = [[] for _ in range(self.num_managers + 2)]
 
         self._haves = defaultdict(float)
 
@@ -114,6 +107,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         self._open_offers = defaultdict(dict)
         self._offer_count = 0
         self._reject_offers_retrieved_end_subround = []
+
         self._contract_offers_made = {}
         self._contract_requests = defaultdict(list)
         self._contract_offers = defaultdict(list)
@@ -323,7 +317,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         self._network_drawing_frequency = frequency
 
     def _execute(self, command, incomming_messages):
-        self._out = [[] for _ in range(self.num_managers)]
+        self._out = [[] for _ in range(self.num_managers + 2)]
         try:
             self._clearing__end_of_subround(incomming_messages)
             getattr(self, command)()
@@ -434,7 +428,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
                               parameters=self.parameters,
                               agent_parameters={'creation': self.round + 1})
         """
-        self._out.append(('_simulation', 0, (AgentClass, group_name, parameters, agent_parameters)))
+        self._out[-1].append((AgentClass, group_name, parameters, agent_parameters))
 
     def delete_agent(self, group_name, id, quite=True):
         """ This deletes an agent, an agent can delete itself. There are two
@@ -454,7 +448,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
             quite:
                 whether the agent deletes incomming messages.
         """
-        self._out.append(('_simulation', 0.5, (group_name, id, quite)))
+        self._out[-2].append((group_name, id, quite))
 
 
 

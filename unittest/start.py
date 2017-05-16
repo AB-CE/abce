@@ -65,14 +65,14 @@ def main(processes, rounds):
     messagea = s.build_agents(MessageA, 'messagea', 20, parameters={'rounds': rounds})
     print('build MessageB')
     messageb = s.build_agents(MessageB, 'messageb', 20, parameters={'rounds': rounds})
-#    print('build AddAgent')
-#    messagec = s.build_agents(AddAgent, 'addagent', 1, parameters={'rounds': rounds})
-#    print('build Killer')
-#    killer = s.build_agents(Killer, 'killer', 1, parameters={'rounds': rounds})
-#    print('build Victim')
-#    victim = s.build_agents(Victim, 'victim', rounds, parameters={'rounds': rounds})
-#    print('build Victim loudvictim')
-#    loudvictim = s.build_agents(Victim, 'loudvictim', rounds, parameters={'rounds': rounds})
+    print('build AddAgent')
+    messagec = s.build_agents(AddAgent, 'addagent', 1, parameters={'rounds': rounds})
+    print('build Killer')
+    killer = s.build_agents(Killer, 'killer', 1, parameters={'rounds': rounds})
+    print('build Victim')
+    victim = s.build_agents(Victim, 'victim', rounds, parameters={'rounds': rounds})
+    print('build Victim loudvictim')
+    loudvictim = s.build_agents(Victim, 'loudvictim', rounds, parameters={'rounds': rounds})
 
 
     some = buy + sell + give + loggertest + utilityhousehold
@@ -80,7 +80,7 @@ def main(processes, rounds):
 #    contractagents = (contractbuyer + contractseller
 #                      + contractbuyerstop + contractsellerstop)
 
- #   addagent = s.build_agents(AddAgent, 'addagent', 0)
+    addagent = s.build_agents(AddAgent, 'addagent', 0)
     for round in s.next_round():
         for _ in range(5):
             buy.do('one')
@@ -120,18 +120,18 @@ def main(processes, rounds):
  #       contractagents.do('deliver')
  #       contractagents.do('pay')
  #       contractagents.do('control')
-  #      killer.do('kill')
-  #      killer.do('send_message')
-  #      victim.do('am_I_dead')
+        killer.do('kill')
+        killer.do('send_message')
+        victim.do('am_I_dead')
 
         #('expiringcapital', 'go'),
 
         some.do('all_tests_completed')
-  #      addagent.do('add_agent')
+        addagent.do('add_agent')
 
 
 if __name__ == '__main__':
-#    main(processes=1, rounds=5)
-#    print('Iteration with 1 core finished')
+    main(processes=1, rounds=5)
+    print('Iteration with 1 core finished')
     main(processes=4, rounds=5)
     print('Iteration with multiple processes finished')
