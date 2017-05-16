@@ -43,6 +43,7 @@ from builtins import zip
 from builtins import str
 from builtins import range
 from builtins import object
+from builtins import list
 import csv
 import datetime
 import os
@@ -214,7 +215,7 @@ class Simulation(object):
         self._agents_to_delete = []  # container used in self.run
 
 
-        self.messagess = [[] for _ in range(self.processes)]
+        self.messagess = [list() for _ in range(self.processes)]
 
 
     def declare_round_endowment(self, resource, units, product, groups=['all']):

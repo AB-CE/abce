@@ -1,3 +1,4 @@
+from builtins import list
 from collections import defaultdict
 from pprint import pprint
 

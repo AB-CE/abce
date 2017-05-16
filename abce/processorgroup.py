@@ -1,5 +1,7 @@
 from builtins import range
 from builtins import object
+from builtins import list
+from builtins import dict
 from collections import defaultdict
 from abce.deadagent import DeadAgent
 from pprint import pprint
@@ -23,7 +25,7 @@ class ProcessorGroup(object):
             agent = self.make_an_agent(Agent, id=i, agent_args=agent_args, parameters=parameters, agent_parameters=agent_parameters[i])
             self.agents[group].append(agent)
 
-        self.pigeonboxes[group] = [[] for _ in range(len(self.agents[group]))]
+        self.pigeonboxes[group] = list(list() for _ in range(len(self.agents[group])))
 
     def append(self, Agent, id, agent_args, parameters, agent_parameters):
         group = agent_args['group']
@@ -31,7 +33,8 @@ class ProcessorGroup(object):
         self.agents[group].append(agent)
 
     def make_an_agent(self, Agent, id, agent_args, parameters, agent_parameters):
-        agent = Agent(id=id, **agent_args, num_managers=self.num_managers)
+        agent_args['num_managers'] = self.num_managers
+        agent = Agent(id=id, **agent_args)
         try:
             agent.init(parameters, agent_parameters)
         except AttributeError:
