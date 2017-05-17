@@ -317,10 +317,10 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         self._network_drawing_frequency = frequency
 
     def _execute(self, command, incomming_messages):
-        self._out = [[] for _ in range(self.num_managers + 1)]
+        self._out = [[] for _ in range(self.num_managers + 2)]
         try:
             self._clearing__end_of_subround(incomming_messages)
-            getattr(self, command)()
+            self._out[-2] = (getattr(self, command)(), )
             self.__reject_polled_but_not_accepted_offers()
         except KeyboardInterrupt:
             return None

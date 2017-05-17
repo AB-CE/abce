@@ -209,7 +209,7 @@ class Simulation(object):
 
             self.execute_internal = self.execute_internal_parallel
 
-        self.messagess = [list() for _ in range(self.processes + 1)]
+        self.messagess = [list() for _ in range(self.processes + 2)]
 
         if random_seed is None or random_seed == 0:
             random_seed = time.time()

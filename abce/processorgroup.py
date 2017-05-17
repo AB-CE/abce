@@ -63,7 +63,7 @@ class ProcessorGroup(object):
 
     def execute(self, groups, command, messages):
         try:
-            out = [[] for _ in range(self.num_managers + 1)]
+            out = [[] for _ in range(self.num_managers + 2)]
             self.put_messages_in_pigeonbox(messages)
             for group in groups:
                 for i, agent in enumerate(self.agents[group]):
