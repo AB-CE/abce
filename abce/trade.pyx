@@ -518,6 +518,10 @@ class Trade:
         if quantity > offer_quantity:
             quantity = offer_quantity
 
+        if quantity == 0:
+            self.reject(offer)
+            return {offer.good: 0, 'money': 0}
+
         money_amount = quantity * offer.price
         if offer.buysell == 115:  # ord('s')
             assert money_amount > - epsilon, 'money = quantity * offer.price %.30f is smaller than 0 - epsilon (%.30f)' % (money_amount, - epsilon)
@@ -616,6 +620,7 @@ class Trade:
             self._haves['money'] += offer.quantity * offer.price
         offer.status = "rejected"
         offer.status_round = self.round
+        offer.final_quantity = 0
         del self.given_offers[offer_id]
 
     def _delete_given_offer(self, offer_id):
