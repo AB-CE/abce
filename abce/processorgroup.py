@@ -36,6 +36,15 @@ class ProcessorGroup(object):
     def make_an_agent(self, Agent, id, agent_args, parameters, agent_parameters):
         agent_args['num_managers'] = self.num_managers
         agent = Agent(id=id, **agent_args)
+        for good, duration in self.apfs['expiring']:
+            agent._declare_expiring(good, duration)
+        for good in self.apfs['perishable']:
+            agent._register_perish(good)
+        for resource, units, product in self.apfs['resource_endowment']:
+            agent._register_resource(resource, units, product)
+        agent._register_panel(*self.apfs['panel'])
+        agent._register_aggregate(*self.apfs['aggregate'])
+        agent._set_network_drawing_frequency(self.apfs['ndf'])
         try:
             agent.init(parameters, agent_parameters)
         except AttributeError:
@@ -49,15 +58,6 @@ class ProcessorGroup(object):
             time.sleep(random.random())
             traceback.print_exc()
             raise SystemExit()
-        for good, duration in self.apfs['expiring']:
-            agent._declare_expiring(good, duration)
-        for good in self.apfs['perishable']:
-            agent._register_perish(good)
-        for resource, units, product in self.apfs['resource_endowment']:
-            agent._register_resource(resource, units, product)
-        agent._register_panel(*self.apfs['panel'])
-        agent._register_aggregate(*self.apfs['aggregate'])
-        agent._set_network_drawing_frequency(self.apfs['ndf'])
         return agent
 
 
