@@ -38,8 +38,8 @@ def main(simulation_parameters):
                 households.do('two')
                 allagents.do('three')
                 households.do('panel')
-        except:
-            pass
+        except Exception as e:
+            print(e)
         finally:
             simulation.graphs()
 
