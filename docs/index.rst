@@ -50,6 +50,7 @@ Advanced
 
    Contracting
    FirmMultiTechnologies
+   MultiCurrencyTrade
    Quote
 
 Graphical User Interface and Results

@@ -12,6 +12,7 @@ except ImportError:
 setup(
   name = 'trade',
   ext_modules=[
-    Extension('trade', ['trade.pyx'])],
+    Extension('trade', ['trade.pyx']),
+    Extension('multicurrencytrade', ['multicurrencytrade.pyx'])],
   cmdclass = {'build_ext': build_ext}
 )
