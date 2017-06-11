@@ -169,7 +169,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         possession does not return a dictionary for self.log(...), you can use self.possessions([...])
         (plural) with self.log.
 
-        Example:
+        Example::
 
             if self.possession('money') < 1:
                 self.financial_crisis = True
