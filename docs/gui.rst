@@ -8,7 +8,7 @@ Graphical User Interface
 .. automethod:: abce.Simulation.graphs
 
 It is possible to add text frames between the simulation results. In order to
-add a text frame to the simulation output, simply add a textfile :code:`.txt`
+add a text frame to the simulation output, simply add a text file :code:`.txt`
 or :code:`.html` in either your source code directory or if generated during
 the simulation in the :code:`simulation.path` directory (where the
 :code:`.csv` are). The first line of the text file is the title the rest the

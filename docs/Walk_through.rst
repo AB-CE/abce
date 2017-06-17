@@ -41,8 +41,8 @@ start.py
         """ 1. declared the timeline
             2. build one Household and one Firm follow_agent
             3. For every labor_endowment an agent has he gets one trade or usable labor
-            per round. If it is not used at the end of the round it disapears.
-            4. Firms' and Households' possessions are monitored ot the points marked in
+            per round. If it is not used at the end of the round it disappears.
+            4. Firms' and Households' possessions are monitored to the points marked in
             timeline.
         """
 
@@ -63,7 +63,7 @@ start.py
             simulation.declare_perishable(good='labor')
 
             simulation.panel('household', possessions=['money', 'GOOD'],
-                                 variables=['current_utiliy'])
+                                 variables=['current_utility'])
             simulation.panel('firm', possessions=['money', 'GOOD'])
 
             firms = simulation.build_agents(Firm, 'firm', 1)
@@ -308,7 +308,7 @@ The Household agent
             """
             self.create('labor_endowment', 1)
             self.set_cobb_douglas_utility_function({"GOOD": 1})
-            self.current_utiliy = 0
+            self.current_utility = 0
 
         def sell_labor(self):
             """ offers one unit of labor to firm 0, for the price of 1 "money" """
@@ -324,10 +324,10 @@ The Household agent
                 self.accept(offer)
 
         def consumption(self):
-            """ consumes_everything and logs the aggregate utility. current_utiliy
+            """ consumes_everything and logs the aggregate utility. current_utility
             """
-            self.current_utiliy = self.consume_everything()
-            self.log_value('HH', self.current_utiliy)
+            self.current_utility = self.consume_everything()
+            self.log_value('HH', self.current_utility)
 
 The Firm agent
 ~~~~~~~~~~~~~~
@@ -375,7 +375,7 @@ At the beginning of each agent you will find
     from __future__ import division
 
 ABCE currently supports only python 2, which is still the most widely used python.
-Python 2 has an odd way of handeling divisions this instructs python to handle division always as a
+Python 2 has an odd way of handling divisions this instructs python to handle division always as a
 floating point division. Use this in all your python code. If you do not use this ``3 / 2 = 1``
 instead of ``3 / 2 = 1.5`` (floor division).
 
@@ -471,15 +471,15 @@ consume function would not work anymore.
         def init(self, simulation_parameters, agent_parameters):
             self.create('labor_endowment', 1)
             self.set_cobb_douglas_utility_function({"GOOD": 1})
-            self.current_utiliy = 0
+            self.current_utility = 0
 
         . . .
 
         def consumption(self):
-            """ consumes_everything and logs the aggregate utility. current_utiliy
+            """ consumes_everything and logs the aggregate utility. current_utility
             """
-            self.current_utiliy = self.consume_everything()
-            self.log_value('HH', self.current_utiliy)
+            self.current_utility = self.consume_everything()
+            self.log_value('HH', self.current_utility)
 
 
 
@@ -590,7 +590,7 @@ Retrieving the logged data
 ++++++++++++++++++++++++++
 
 If the GUI is switched off there must be a
-:py:meth:`abce.Simulation.graphs` afer :py:meth:`abce.Simulation.run` .
+:py:meth:`abce.Simulation.graphs` after :py:meth:`abce.Simulation.run` .
 Otherwise no graphs are displayed.
 If no browser window open you have to go manually to the
 address "http://127.0.0.1:5000/"
@@ -606,7 +606,7 @@ Have a look on the `abce/examples/` folder
 ------------------------------------------
 
 It is instructive to look at a more examples, for example the 2x2 economy '2sectors'.
-All examples can be found in the abce/example folder, wich you can
+All examples can be found in the abce/example folder, which you can
 download from https://github.com/DavoudTaghawiNejad/abce/archive/master.zip at
 https://github.com/DavoudTaghawiNejad/abce
 
