@@ -5,6 +5,7 @@ from abce.agent import Agent
 from abce import NotEnoughGoods
 from tools import is_zero
 
+
 class Buy(Agent):
     def init(self, simulation_parameters, _,):
         self.last_round = simulation_parameters['rounds'] - 1
@@ -21,8 +22,10 @@ class Buy(Agent):
             self.money = self.possession('money')
             self.price = random.uniform(0.0001, 1)
             quantity = random.uniform(0, self.money / self.price)
-            self.offer = self.buy('buy', self.id + 1, 'cookies', quantity, self.price)
-            assert self.possession('money') == self.money - quantity * self.price
+            self.offer = self.buy('buy', self.id + 1,
+                                  'cookies', quantity, self.price)
+            assert self.possession('money') == self.money - \
+                quantity * self.price
 
     def two(self):
         """ Acts only if he is agent 1: recieves offers and accepts;
@@ -45,8 +48,10 @@ class Buy(Agent):
                     break  # tests the automatic clean-up of polled offers
                 try:
                     self.accept(offer)
-                    assert self.possession('money') == offer.price * offer.quantity
-                    assert self.possession('cookies') == cookies - offer.quantity
+                    assert self.possession(
+                        'money') == offer.price * offer.quantity
+                    assert self.possession(
+                        'cookies') == cookies - offer.quantity
                     self.tests['accepted'] = True
                 except NotEnoughGoods:
                     self.accept(offer, self.possession('cookies'))
@@ -65,12 +70,14 @@ class Buy(Agent):
                 self.tests['rejected'] = True
             elif offer.status == 'accepted':
                 if offer.final_quantity == offer.quantity:
-                    assert self.money - offer.quantity * offer.price == self.possession('money')
+                    assert self.money - offer.quantity * \
+                        offer.price == self.possession('money')
 
                     assert self.possession('cookies') == offer.quantity
                     self.tests['accepted'] = True
                 else:
-                    test = (self.money - offer.final_quantity * offer.price) - self.possession('money')
+                    test = (self.money - offer.final_quantity *
+                            offer.price) - self.possession('money')
                     assert is_zero(test), test
                     test = self.possession('cookies') - offer.final_quantity
                     assert is_zero(test), test
@@ -88,7 +95,8 @@ class Buy(Agent):
 
     def all_tests_completed(self):
         if self.round == self.last_round and self.id == 0:
-            assert all(self.tests.values()), 'not all tests have been run; ABCE workes correctly, restart the unittesting to do all tests %s' % self.tests
+            assert all(self.tests.values(
+            )), 'not all tests have been run; ABCE workes correctly, restart the unittesting to do all tests %s' % self.tests
             print('Test abce.buy:\t\t\t\t\tOK')
             print('Test abce.accept\t(abce.buy):\t\tOK')
             print('Test abce.reject\t(abce.buy):\t\tOK')

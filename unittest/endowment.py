@@ -14,7 +14,8 @@ class Endowment(abce.Agent, abce.Household):
 
     def Iconsume(self):
         assert self.possession('labor') == 5, self.possession('labor')
-        assert self.possession('milk') == 10 + (self.round - self.creation) * (10 - 3), (10 + (self.round - self.creation) * (10 - 3), self.possession('milk'), self.creation)
+        assert self.possession('milk') == 10 + (self.round - self.creation) * (10 - 3), (10 + (
+            self.round - self.creation) * (10 - 3), self.possession('milk'), self.creation)
         milk = self.possession('milk')
         utility = self.consume({'milk': 3})
         assert utility == 9, utility
@@ -25,4 +26,3 @@ class Endowment(abce.Agent, abce.Household):
             print('Test declare_round_endowment:\t\t\tOK')
             print('Test s.declare_perishable:\t\t\tOK')
             # utility testnot exaustive!
-

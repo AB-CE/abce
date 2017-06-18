@@ -6,8 +6,8 @@ from abce import Simulation
 
 def main():
     parameters = {
-    'name': 'name',
-    'rounds': 10
+        'name': 'name',
+        'rounds': 10
     }
 
     s = Simulation(rounds=parameters['rounds'], processes=8)
@@ -19,6 +19,7 @@ def main():
         #(myagents+youragents).do('compute')
         youragents.do('s')
         myagents.do('g')
+
 
 if __name__ == '__main__':
     main()

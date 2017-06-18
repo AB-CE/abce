@@ -1,4 +1,6 @@
 from builtins import object
+
+
 class PiController(object):
     """ The PiController, learns from an error to set a certain control.
         It only produces positive signals.
@@ -11,11 +13,11 @@ class PiController(object):
             positive:
                 if true it truncates negative control signals to 0
     """
+
     def __init__(self, error_parameter, cumulative_error_parameter, positive=False):
         self.a = error_parameter
         self.b = cumulative_error_parameter
         self.error_cum = 0
-
 
     def _update(self, error):
         """ Add a new error to the learning and return the updated control
@@ -27,7 +29,3 @@ class PiController(object):
 
     def update(self, error):
         return max(0, self._update(error))
-
-
-
-

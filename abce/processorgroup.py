@@ -22,14 +22,17 @@ class ProcessorGroup(object):
         self.agents[group] = []
         self.apfs = agent_params_from_sim
         for i in range(self.batch, num_agents_this_group, self.num_managers):
-            agent = self.make_an_agent(Agent, id=i, agent_args=agent_args, parameters=parameters, agent_parameters=agent_parameters[i])
+            agent = self.make_an_agent(Agent, id=i, agent_args=agent_args,
+                                       parameters=parameters, agent_parameters=agent_parameters[i])
             self.agents[group].append(agent)
 
-        self.pigeonboxes[group] = list(list() for _ in range(len(self.agents[group])))
+        self.pigeonboxes[group] = list(list()
+                                       for _ in range(len(self.agents[group])))
 
     def append(self, Agent, id, agent_args, parameters, agent_parameters):
         group = agent_args['group']
-        agent = self.make_an_agent(Agent, id, agent_args, parameters, agent_parameters)
+        agent = self.make_an_agent(
+            Agent, id, agent_args, parameters, agent_parameters)
         self.agents[group].append(agent)
         self.pigeonboxes[group].append([])
 
@@ -48,10 +51,10 @@ class ProcessorGroup(object):
         try:
             agent.init(parameters, agent_parameters)
         except AttributeError:
-                if 'init' not in dir(agent):
-                    print("Warning: agent %s has no init function" % agent.group)
-                else:
-                    raise
+            if 'init' not in dir(agent):
+                print("Warning: agent %s has no init function" % agent.group)
+            else:
+                raise
         except KeyboardInterrupt:
             return None
         except:
@@ -60,25 +63,25 @@ class ProcessorGroup(object):
             raise SystemExit()
         return agent
 
-
     def execute(self, groups, command, messages):
         try:
             out = [[] for _ in range(self.num_managers + 2)]
             self.put_messages_in_pigeonbox(messages)
             for group in groups:
                 for i, agent in enumerate(self.agents[group]):
-                    outmessages = agent._execute(command, self.pigeonboxes[group][i])
+                    outmessages = agent._execute(
+                        command, self.pigeonboxes[group][i])
                     for pgid, msg in enumerate(outmessages):
                         if pgid == self.batch:
                             self.mymessages.extend(msg)
                         else:
                             out[pgid].extend(msg)
-                self.pigeonboxes[group] = list(list() for _ in range(len(self.agents[group])))
+                self.pigeonboxes[group] = list(
+                    list() for _ in range(len(self.agents[group])))
         except:
             traceback.print_exc()
             raise
         return out
-
 
     def replace_with_dead(self, group, id, DeadAgent):
         """ replaces a deleted agent """
@@ -105,7 +108,6 @@ class ProcessorGroup(object):
         for group, id, message in self.mymessages:
             self.pigeonboxes[group][id // self.num_managers].append(message)
         self.mymessages.clear()
-
 
     def len(self):
         return sum([len(group) for group in self.agents.values()])

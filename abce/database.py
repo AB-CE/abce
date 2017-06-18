@@ -41,6 +41,7 @@ from builtins import object
 
 class Database(object):
     """ The database class """
+
     def log(self, action_name, data_to_log):
         """ With log you can write the models data. Log can save variable states
         and and the working of individual functions such as production,
@@ -73,11 +74,13 @@ class Database(object):
 
         """
         try:
-            data_to_write = {'%s_%s' % (str(action_name), str(key)): data_to_log[key] for key in data_to_log}
+            data_to_write = {'%s_%s' % (str(action_name), str(
+                key)): data_to_log[key] for key in data_to_log}
         except TypeError:
             data_to_write = {str(action_name): data_to_log}
         data_to_write['id'] = self.id
-        self.database_connection.put(["log", self.group, data_to_write, str(self.round)])
+        self.database_connection.put(
+            ["log", self.group, data_to_write, str(self.round)])
 
     def log_value(self, name, value):
         """ logs a value, with a name
@@ -88,7 +91,8 @@ class Database(object):
             value(int/float):
                 the variable = value to log
         """
-        self.database_connection.put(["log",  self.group, {'id': self.id, name: value}, str(self.round)])
+        self.database_connection.put(
+            ["log",  self.group, {'id': self.id, name: value}, str(self.round)])
 
     def log_dict(self, action_name, data_to_log):
         """ same as the log function, only that it supports nested dictionaries
@@ -96,7 +100,8 @@ class Database(object):
         """
         data_to_write = flatten(data_to_log, '%s_' % action_name)
         data_to_write['id'] = self.id
-        self.database_connection.put(["log", self.group, data_to_write, str(self.round)])
+        self.database_connection.put(
+            ["log", self.group, data_to_write, str(self.round)])
 
     def log_change(self, action_name, data_to_log):
         """ This command logs the change in the variable from the round before.
@@ -116,12 +121,15 @@ class Database(object):
         data_to_write = {}
         try:
             for key in data_to_log:
-                data_to_write['%s_change_%s' % (action_name, key)] = data_to_log[key] - self._data_to_log_1[action_name][key]
+                data_to_write['%s_change_%s' % (
+                    action_name, key)] = data_to_log[key] - self._data_to_log_1[action_name][key]
         except KeyError:
             for key in data_to_log:
-                data_to_write['%s_change_%s' % (action_name, key)] = data_to_log[key]
+                data_to_write['%s_change_%s' %
+                              (action_name, key)] = data_to_log[key]
         data_to_write['id'] = self.id
-        self.database_connection.put(["log", self.group, data_to_write, str(self.round)])
+        self.database_connection.put(
+            ["log", self.group, data_to_write, str(self.round)])
 
         self._data_to_log_1[action_name] = data_to_log
 
@@ -174,7 +182,7 @@ class Database(object):
         data_to_write = {}
         for key in data_to_observe:
             data_to_write['%s_delta_%s' % (action_name, key)] = \
-                                            data_to_observe[key] - before[key]
+                data_to_observe[key] - before[key]
         data_to_write['id'] = self.id
-        self.database_connection.put(["log", self.group, data_to_write, str(self.round)])
-
+        self.database_connection.put(
+            ["log", self.group, data_to_write, str(self.round)])

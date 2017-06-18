@@ -17,8 +17,10 @@ cache: pip
 matrix:
   include:
     - os: linux
+      dist: trusty
       python: "3.5"
     - os: linux
+      dist: trusty
       python: "2.7"
     - os: osx
       sudo: required
@@ -41,7 +43,7 @@ install: |
   fi
 
 script:
-  - cd example/2sectors && python start.py
+  - cd examples/2sectors && python start.py
   - cd -
   - python unittest/start.py
     #- make $TEST_SUITE

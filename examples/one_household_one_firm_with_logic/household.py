@@ -13,7 +13,7 @@ class Household(abce.Agent, abce.Household):
         self.num_firms = parameters['num_firms']
         self.alpha = alpha = 1 / self.num_firms
         cd = {"GOOD%i" % i: alpha for i in range(self.num_firms)}
-        #creates {GOOD1: 1/3, GOOD2: 1/3, GOOD3: 1/3}
+        # creates {GOOD1: 1/3, GOOD2: 1/3, GOOD3: 1/3}
         self.set_cobb_douglas_utility_function(cd)
         self.current_utiliy = 0
 
@@ -33,7 +33,7 @@ class Household(abce.Agent, abce.Household):
             price = quote.content[1]
             self.buy('firm', quote.sender_id,
                      good=quote.content[0],
-                     quantity=self.alpha * money / price ,
+                     quantity=self.alpha * money / price,
                      price=price)
 
     def consumption(self):
@@ -41,4 +41,3 @@ class Household(abce.Agent, abce.Household):
         """
         self.current_utiliy = self.consume_everything()
         self.log_value('HH', self.current_utiliy)
-

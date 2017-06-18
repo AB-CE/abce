@@ -32,6 +32,7 @@ class NotEnoughGoods(Exception):
         alternative_statements()
 
     """
+
     def __init__(self, _agent_name, good, amount_missing):
         self.good = good
         self.amount_missing = amount_missing
@@ -40,5 +41,3 @@ class NotEnoughGoods(Exception):
 
     def __str__(self):
         return repr(str(self.name) + " " + str(self.amount_missing) + " of good '" + self.good + "' missing")
-
-

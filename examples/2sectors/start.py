@@ -13,9 +13,12 @@ simulation_parameters = {'name': 'name',
                          'rounds': 40}
 
 #@gui(simulation_parameters)
+
+
 def main(simulation_parameters):
     w = Simulation(rounds=simulation_parameters['rounds'])
-    w.declare_round_endowment(resource='labor_endowment', units=5, product='labor')
+    w.declare_round_endowment(
+        resource='labor_endowment', units=5, product='labor')
     w.declare_perishable(good='labor')
     w.panel('household', possessions=['consumption_good'])
     w.panel('firm', possessions=['consumption_good', 'intermediate_good'])

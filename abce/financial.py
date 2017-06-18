@@ -20,7 +20,6 @@ class Financial:
                                 None)
         self.message(receiver_group, receiver_id, _cr, credit_request)
 
-
     def get_credit_requests(self):
         return self.get_messages('_cr')
 
@@ -28,4 +27,3 @@ class Financial:
         credit_request.interest = interest_rate
 
     def accept_credit(self, credit_request):
-

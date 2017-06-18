@@ -18,6 +18,6 @@ install:
 
 test_script:
   - "pip --version"
-  - ps: "cd example/2sectors"
+  - ps: "cd examples/2sectors"
 #- ps: "cd test"
   - "python start.py"

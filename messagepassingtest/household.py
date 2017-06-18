@@ -17,5 +17,5 @@ class Household(abce.Agent, abce.Household):
         oo = self.get_offers('cookies')
         for offer in oo:
             self.accept(offer)
-        print(self.name, 'cookies', self.possession('cookies'), 'money', self.possession('money'))
-
+        print(self.name, 'cookies', self.possession(
+            'cookies'), 'money', self.possession('money'))
