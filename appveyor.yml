@@ -19,5 +19,6 @@ install:
 test_script:
   - "pip --version"
   - ps: "cd examples/2sectors"
-#- ps: "cd test"
   - "python start.py"
+  - ps: "cd -"
+  - "python unittest/start.py"
