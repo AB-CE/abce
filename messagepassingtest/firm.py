@@ -11,7 +11,8 @@ class Firm(abce.Agent, abce.Firm):
 
     def one(self):
         self.message('household', self.id, 'hello', 'ping %i' % self.round)
-        self.message('firm', self.num_firms - self.id - 1, 'hello', 'ping %i' % self.round)
+        self.message('firm', self.num_firms - self.id -
+                     1, 'hello', 'ping %i' % self.round)
         self.create('cookies', self.id)
         #self.sell('household', self.id, good='cookies', quantity=min(self.id, 2), price=1)
 

@@ -42,23 +42,26 @@ class ContractSellerStop(abce.Agent, abce.Contracting):
     def control(self):
         if self.round % 10 < 5:
             if self.id == 0:
-                assert self.was_paid_this_round(self.given_contract), self._contracts_payed
-                assert self.possession('labor') == 0, (self.id, self.possession('labor'))
+                assert self.was_paid_this_round(
+                    self.given_contract), self._contracts_payed
+                assert self.possession(
+                    'labor') == 0, (self.id, self.possession('labor'))
                 assert self.possession('money') == 50, self.possession('money')
                 self.destroy('money')
             else:
-                assert self.was_delivered_this_round(self.accepted_contract), self.contracts_to_receive('labor')
+                assert self.was_delivered_this_round(
+                    self.accepted_contract), self.contracts_to_receive('labor')
                 assert self.possession('labor') == 5, self.possession('labor')
                 assert self.possession('money') == 0, self.possession('money')
         else:
             if self.id == 0:
-                assert self.possession('labor') == 5, (self.id, self.possession('labor'))
+                assert self.possession(
+                    'labor') == 5, (self.id, self.possession('labor'))
                 assert self.possession('money') == 0, self.possession('money')
                 self.destroy('labor')
             else:
                 assert self.possession('labor') == 0, self.possession('labor')
                 assert self.possession('money') == 0, self.possession('money')
-
 
     def clean_up(self):
         pass
@@ -67,5 +70,3 @@ class ContractSellerStop(abce.Agent, abce.Contracting):
         if self.round == self.last_round and self.id == 0:
             print('Test make_offer         \t\t\tOK')
             print('Test end_contract       \t\t\tOK')
-
-
