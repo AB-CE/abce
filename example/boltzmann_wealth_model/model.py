@@ -31,9 +31,8 @@ class MoneyModel(abce.Simulation):  # The actual simulation must inherit from Si
                                  name='ABCE and MESA integrated',
                                  rounds=300,
                                  processes=1)
-        # initialization of the base class. Graphical representation requires
-        # single processing, but headless simulations can be run on multiple
-        # cores
+        # initialization of the base class. MESA integration requires
+        # single processing
         self.grid = MultiGrid(x_size, y_size, True)
         self.agents = self.build_agents(MoneyAgent, 'MoneyAgent', num_agents,
                                         parameters={'grid': self.grid})

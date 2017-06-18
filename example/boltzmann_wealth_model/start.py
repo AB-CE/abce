@@ -20,7 +20,7 @@ def agent_portrayal(agent):
                  "Filled": "true",
                  "r": 0.5}
 
-    if agent.wealth > 0:
+    if agent.report_wealth() > 0:
         portrayal["Color"] = "red"
         portrayal["Layer"] = 0
     else:
@@ -44,7 +44,7 @@ def main(x_size, y_size):
                            [grid, chart],
                            "ABCE and MESA integrated",
                            x_size * y_size, x_size, y_size)
-    server.port = 8532 # change this number if address is in use
+    server.port = 8534 # change this number if address is in use
     server.launch()
 
 if __name__ == '__main__':
