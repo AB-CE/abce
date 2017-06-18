@@ -1,4 +1,4 @@
-#pylint: disable=C0103
+# pylint: disable=C0103
 """ This firm uses a PID controller to set the highest possible price at which
 all it's goods can be sold.
 """
@@ -24,17 +24,18 @@ class Firm(abce.Agent, abce.Firm):
         self.L = 4
         self.L_1 = 0
 
-
     def my_production(self):
         """ produce missing cookies """
         self.create('cookies', self.L)
         self.cookies_before = self.possession('cookies')
-        self.log('cookies', {'created': self.L, 'inventory': self.possession('cookies')})
+        self.log('cookies', {'created': self.L,
+                             'inventory': self.possession('cookies')})
         self.y[self.round % 20] = (self.price)
         self.dy[self.round % 20] = (self.price - self.price_1)
 
     def selling(self):
-        self.offer = self.sell('market', 0, 'cookies', self.possession('cookies'), self.price)
+        self.offer = self.sell('market', 0, 'cookies',
+                               self.possession('cookies'), self.price)
 
     def adjust_price(self):
         self.total_orders = self.get_messages('demand')[0].content
@@ -51,8 +52,8 @@ class Firm(abce.Agent, abce.Firm):
                            'total_orders': self.total_orders})
 
     def adjust_quantity(self):
-        #uw ought to be 1 * L for monopolist, 0 for competitive
-        #up ought to be -1 * L for monopolist, 0 for competitive
+        # uw ought to be 1 * L for monopolist, 0 for competitive
+        # up ought to be -1 * L for monopolist, 0 for competitive
         if self.round % 20 == 19:
 
             # monopolist

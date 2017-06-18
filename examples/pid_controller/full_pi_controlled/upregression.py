@@ -1,5 +1,5 @@
 from builtins import object
-#pylint: disable=C0103, W0201
+# pylint: disable=C0103, W0201
 from sklearn import linear_model
 
 
@@ -12,7 +12,6 @@ class UPRegression(object):
         self.dy = []
         self.X = []
         self.y = []
-
 
     def fit(self, price, price_1, L, L_1):
         self.price = price
@@ -34,7 +33,8 @@ class UPRegression(object):
 
     def predict(self):
         B_p = self.learn_delta_price.coef_
-        error_delta_price = self.learn_delta_price.predict([1, self.L - self.L_1, self.price_1, self.L_1]) + self.price_1  - self.price
+        error_delta_price = self.learn_delta_price.predict(
+            [1, self.L - self.L_1, self.price_1, self.L_1]) + self.price_1 - self.price
         error_price = self.learn_price.predict([1, self.L]) - self.price
         self.up_delta_price = - B_p[3] / B_p[2] * self.L
         self.up_price = self.learn_price.coef_[1] * self.L

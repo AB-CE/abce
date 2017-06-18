@@ -27,4 +27,3 @@ class Market(abce.Agent, abce.Household):
     def consumption(self):
         """ consume the cookie """
         self.consume_everything()
-

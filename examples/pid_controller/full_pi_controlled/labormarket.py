@@ -22,4 +22,3 @@ class LaborMarket(abce.Agent, abce.Household, abce.Quote):
     def consumption(self):
         """ consume the cookie """
         self.consume_everything()
-

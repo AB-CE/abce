@@ -17,4 +17,4 @@ class MyAgent(Agent):
     def g(self):
         for offer in self.get_offers('cookie'):
             self.accept(offer)
-        #print(self.possession('cookie'))
+        # print(self.possession('cookie'))

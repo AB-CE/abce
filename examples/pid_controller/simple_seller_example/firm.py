@@ -19,7 +19,8 @@ class Firm(abce.Agent, abce.Firm, abce.Quote):
     def quote(self):
         """ make a non binding quote at self.price """
         for id in range(10):
-            self.quote_sell('household', id, 'cookies', self.possession('cookies'), self.price)
+            self.quote_sell('household', id, 'cookies',
+                            self.possession('cookies'), self.price)
 
     def selling(self):
         """ sell to all agents that accepted the price cookies, if there are
@@ -37,4 +38,5 @@ class Firm(abce.Agent, abce.Firm, abce.Quote):
         error = total_orders - 4
         self.error_cum += error
         self.price = max(0, 0.15 * error + 0.1 * self.error_cum)
-        self.log('', {'price': self.price, 'error_cum': self.error_cum, 'error': error})
+        self.log('', {'price': self.price,
+                      'error_cum': self.error_cum, 'error': error})

@@ -4,6 +4,7 @@ import random
 
 class MoneyAgent(abce.Agent):
     """ agents move randomly on a grid and give_money to another agent in the same cell """
+
     def init(self, parameters, agent_parameters):
         self.grid = parameters["grid"]
         """ the grid on which agents live must be imported """
