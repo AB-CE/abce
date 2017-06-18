@@ -1,4 +1,4 @@
-# dist: trusty # KVM Setup
+dist: trusty
 # osx build as per https://github.com/travis-ci/travis-ci/issues/2312#issuecomment-289140791
 
 language: python
@@ -18,9 +18,8 @@ cache:
 
 matrix:
   include:
-    - os: linux
-      dist: trusty
-      python: "3.5"
+    - python: 3.5
+    - python: pypy3
     - os: osx
       osx_image: xcode8.3
       sudo: required
