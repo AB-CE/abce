@@ -52,6 +52,7 @@ Advanced
    FirmMultiTechnologies
    MultiCurrencyTrade
    Quote
+   spatial
 
 Graphical User Interface and Results
 ====================================
