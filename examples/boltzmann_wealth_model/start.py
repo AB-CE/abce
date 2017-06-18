@@ -8,6 +8,7 @@ https://github.com/projectmesa/mesa/tree/master/examples/boltzmann_wealth_model.
 For further reading, see
 [Dragulescu, A and Yakovenko, V. Statistical Mechanics of Money, Income, and Wealth: A Short Survey. November, 2002](http://arxiv.org/pdf/cond-mat/0211175v1.pdf)
 """
+# this directory is redundant and should be delete 2018, its only keep as it is linked in a tweet
 from model import MoneyModel
 from mesa.visualization.modules import CanvasGrid
 from mesa.visualization.ModularVisualization import ModularServer

@@ -1,3 +1,4 @@
+# this directory is redundant and should be delete 2018, its only keep as it is linked in a tweet
 import abce
 import random
 

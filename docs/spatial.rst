@@ -15,13 +15,22 @@ A simple example shows how to build a spatial model in ABCE using MESA:
 
 `On github <https://github.com/DavoudTaghawiNejad/abce/tree/master/example/boltzmann_wealth_model>`_
 
-.. literalinclude :: <examples/>
-   :language: <file_language>
+A wrapper file to start the graphical representation and the simulation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. literalinclude :: ../examples/mesa_example/start.py
+   :language: python
+
+A file with the simulation itself, that can be executed also without the GUI
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. literalinclude :: ../examples/mesa_example/model.py
+   :language: python
+
+A simple agent
+~~~~~~~~~~~~~~
+
+.. literalinclude :: ../examples/mesa_example/moneyagent.py
+   :language: python
 
 
-.. literalinclude :: <path/to/file>
-   :language: <file_language>
-
-
-.. literalinclude :: <path/to/file>
-   :language: <file_language>
