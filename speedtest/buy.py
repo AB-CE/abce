@@ -4,6 +4,7 @@ import random
 from abce.agent import Agent
 from abce.notenoughgoods import NotEnoughGoods, is_zero
 
+
 class Buy(Agent):
     def init(self, simulation_parameters, _,):
         self.last_round = simulation_parameters['num_rounds'] - 1
@@ -21,7 +22,8 @@ class Buy(Agent):
             self.price = random.uniform(0.0001, 1)
             quantity = random.uniform(0, self.money / self.price)
             self.offer = self.buy('buy', 1, 'cookies', quantity, self.price)
-            assert self.possession('money') == self.money - quantity * self.price
+            assert self.possession('money') == self.money - \
+                quantity * self.price
 
     def two(self):
         """ Acts only if he is agent 1: recieves offers and accepts;
@@ -44,8 +46,10 @@ class Buy(Agent):
                     break  # tests the automatic clean-up of polled offers
                 try:
                     self.accept(offer)
-                    assert self.possession('money') == offer['price'] * offer['quantity']
-                    assert self.possession('cookies') == cookies - offer['quantity']
+                    assert self.possession(
+                        'money') == offer['price'] * offer['quantity']
+                    assert self.possession(
+                        'cookies') == cookies - offer['quantity']
                     self.tests['accepted'] = True
                 except NotEnoughGoods:
                     self.accept(offer, self.possession('cookies'))
@@ -64,12 +68,14 @@ class Buy(Agent):
                 self.tests['rejected'] = True
             elif offer['status'] == 'accepted':
                 if offer['final_quantity'] == offer['quantity']:
-                    assert self.money - offer['quantity'] * offer['price'] == self.possession('money')
+                    assert self.money - offer['quantity'] * \
+                        offer['price'] == self.possession('money')
 
                     assert self.possession('cookies') == offer['quantity']
                     self.tests['accepted'] = True
                 else:
-                    test = (self.money - offer['final_quantity'] * offer['price']) - self.possession('money')
+                    test = (self.money - offer['final_quantity']
+                            * offer['price']) - self.possession('money')
                     assert is_zero(test), test
                     test = self.possession('cookies') - offer['final_quantity']
                     assert is_zero(test), test
@@ -86,7 +92,8 @@ class Buy(Agent):
         self.destroy_all('cookies')
 
     def all_tests_completed(self):
-        assert all(self.tests.values()), 'not all tests have been run; ABCE workes correctly, restart the unittesting to do all tests %s' % self.tests
+        assert all(self.tests.values(
+        )), 'not all tests have been run; ABCE workes correctly, restart the unittesting to do all tests %s' % self.tests
         if self.round == self.last_round and self.idn == 0:
             print('Test abce.buy:\t\t\t\t\tOK')
             print('Test abce.accept\t(abce.buy):\t\tOK')
@@ -96,14 +103,13 @@ class Buy(Agent):
 
 
 if __name__ == '__main__':
-    b = Buy({'num_rounds':10}, 0, [0, "gbuy",
-    {
-        'command_addresse': "tcp://localhost:4001",
-        'ready': "tcp://localhost:5002",
-        'frontend': "tcp://localhost:5003",
-        'backend': "tcp://localhost:5004",
-        'database': "tcp://localhost:5005",
-        'logger': "tcp://localhost:5006",
-        'group_backend': "tcp://localhost:5007"
-    }, 'off'])
-
+    b = Buy({'num_rounds': 10}, 0, [0, "gbuy",
+                                    {
+                                       'command_addresse': "tcp://localhost:4001",
+                                       'ready': "tcp://localhost:5002",
+                                       'frontend': "tcp://localhost:5003",
+                                       'backend': "tcp://localhost:5004",
+                                       'database': "tcp://localhost:5005",
+                                       'logger': "tcp://localhost:5006",
+                                       'group_backend': "tcp://localhost:5007"
+                                    }, 'off'])

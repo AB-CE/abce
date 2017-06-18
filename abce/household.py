@@ -83,7 +83,8 @@ class Household(object):
         """
         for good in list(self._utility_function.use.keys()):
             if self._haves[good] < input_goods[good] - epsilon:
-                raise NotEnoughGoods(self.name, good, (input_goods[good] - self._haves[good]))
+                raise NotEnoughGoods(
+                    self.name, good, (input_goods[good] - self._haves[good]))
 
         for good, use in self._utility_function.use.items():
             self._haves[good] -= input_goods[good] * use
@@ -142,12 +143,13 @@ class Household(object):
         self.produce(self.plastic_utility_function, {'bread' : 20, 'milk' : 1})
         """
         def utility_function(goods):
-            return  reduce(operator.mul, [goods[name] ** exponent
-                             for name, exponent in exponents.items()])
+            return reduce(operator.mul, [goods[name] ** exponent
+                                         for name, exponent in exponents.items()])
 
         self._utility_function = Utility_Function()
         self._utility_function.formula = utility_function
-        self._utility_function.use = {name: 1 for name in list(exponents.keys())}
+        self._utility_function.use = {
+            name: 1 for name in list(exponents.keys())}
 
     def predict_utility(self, input_goods):
         """ Predicts the utility of a vecor of input goods

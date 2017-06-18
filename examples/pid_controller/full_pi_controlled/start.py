@@ -12,7 +12,9 @@ from market import Market
 from labormarket import LaborMarket
 from abce import Simulation, gui
 
-simulation_parameters = {'name': 'Sticky Prices Microfoundations', 'rounds': 20}
+simulation_parameters = {
+    'name': 'Sticky Prices Microfoundations', 'rounds': 20}
+
 
 @gui(simulation_parameters)
 def main(simulation_parameters):
@@ -32,6 +34,7 @@ def main(simulation_parameters):
         firms.do('adjust_price')
         firms.do('adjust_quantity')
         market.do('consumption')
+
 
 if __name__ == '__main__':
     main(simulation_parameters)

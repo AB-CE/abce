@@ -29,6 +29,3 @@ class LoggerTest(abce.Agent):
         if self.round == self.last_round:
             time.sleep(0.5)
             print('Check database whether logging succeeded')
-
-
-

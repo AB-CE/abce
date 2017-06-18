@@ -11,7 +11,8 @@ class BuyExpiringCapital(abce.Agent, Firm):
     def one(self):
         if self.id == 0:
             self.create('money', 10)
-            self.buy('buyexpiringcapital', 1, good='xcapital', quantity=10, price=1)
+            self.buy('buyexpiringcapital', 1,
+                     good='xcapital', quantity=10, price=1)
             assert self.possession('xcapital') == 0
             assert self.possession('money') == 0
 

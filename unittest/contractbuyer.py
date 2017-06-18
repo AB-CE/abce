@@ -39,11 +39,13 @@ class ContractBuyer(abce.Agent, abce.Contracting):
 
     def control(self):
         if self.id == 1:
-            assert self.was_delivered_this_round(self.given_contract), self.given_contract
+            assert self.was_delivered_this_round(
+                self.given_contract), self.given_contract
             assert self.possession('money') == 0
             assert self.possession('labor') == 5
         else:
-            assert self.was_paid_this_round(self.accepted_contract), self._contracts_payed
+            assert self.was_paid_this_round(
+                self.accepted_contract), self._contracts_payed
             assert self.possession('labor') == 0, self.possession('labor')
             assert self.possession('money') == 50, self.possession('money')
             self.destroy('money')

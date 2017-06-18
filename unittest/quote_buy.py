@@ -10,7 +10,8 @@ class QuoteBuy(abce.Agent):
         self.last_round = simulation_parameters['rounds'] - 1
         self.cut_of = simulation_parameters['cut_of']
         if self.id == 1:
-            self.tests = {'accepted': False, 'not_answered': False, 'partial': False}
+            self.tests = {'accepted': False,
+                          'not_answered': False, 'partial': False}
 
     def one(self):
         """ Acts only if he is agent 0: sends an buy quote to agent 1 quote
@@ -21,7 +22,6 @@ class QuoteBuy(abce.Agent):
             self.price = random.uniform(0.0001, 1)
             quantity = random.uniform(0, self.money / self.price)
             self.quote_buy('quotebuy', 1, 'cookies', quantity, self.price)
-
 
     def two(self):
         """ Acts only if he is agent 1: recieves quotes and accepts;
@@ -43,10 +43,12 @@ class QuoteBuy(abce.Agent):
                 if self.possession('cookies') >= quote['quantity']:
                     self.accept_quote(quote)
                     self.final_money = quote['price'] * quote['quantity']
-                    assert self.possession('cookies') == cookies - quote['quantity']
+                    assert self.possession(
+                        'cookies') == cookies - quote['quantity']
                     self.tests['accepted'] = True
                 else:
-                    self.accept_quote_partial(quote, self.possession('cookies'))
+                    self.accept_quote_partial(
+                        quote, self.possession('cookies'))
                     assert is_zero(self.possession('cookies'))
                     self.final_money = cookies * quote['price']
                     self.tests['partial'] = True
@@ -59,9 +61,6 @@ class QuoteBuy(abce.Agent):
             for offer in offers:
                 self.accept(offer)
 
-
-
-
     def clean_up(self):
         self.destroy_all('money')
         self.destroy_all('cookies')
@@ -70,6 +69,6 @@ class QuoteBuy(abce.Agent):
 
     def all_tests_completed(self):
         if self.round == self.last_round and self.id == 1:
-            assert all(self.tests.values()), 'not all tests have been run; ABCE workes correctly, restart the unittesting to do all tests %s' % self.tests
+            assert all(self.tests.values(
+            )), 'not all tests have been run; ABCE workes correctly, restart the unittesting to do all tests %s' % self.tests
             print('Test abce.quote_buy:\t\t\t\t\tOK')
-

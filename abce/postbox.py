@@ -2,6 +2,7 @@ from multiprocessing.managers import BaseManager
 from collections import defaultdict
 from copy import deepcopy
 
+
 class Postbox:
     def __init__(self):
         self.boxes = defaultdict(dict)
@@ -21,6 +22,6 @@ class Postbox:
         except KeyError:
             self.boxes[group][id] = [message]
 
+
 class PostboxManager(BaseManager):
     pass
-

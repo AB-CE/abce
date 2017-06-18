@@ -27,7 +27,8 @@ from victim import Victim
 def main(processes, rounds):
     s = Simulation(rounds=rounds, processes=processes, name='unittest')
 
-    s.declare_round_endowment(resource='labor_endowment', units=5, product='labor')
+    s.declare_round_endowment(
+        resource='labor_endowment', units=5, product='labor')
     s.declare_round_endowment(resource='cow', units=10, product='milk')
     s.declare_perishable(good='labor')
     s.panel('buy', variables=['price'])
@@ -38,17 +39,23 @@ def main(processes, rounds):
     #s.build_agents(QuoteBuy, 2)
     sell = s.build_agents(Sell, 'sell', 1000, parameters={'rounds': rounds})
     print('build Give')
-    give = s.build_agents(Give, 'give', 2, parameters={'rounds': rounds}) # tests give and messaging
+    give = s.build_agents(Give, 'give', 2, parameters={
+                          'rounds': rounds})  # tests give and messaging
     print('build Endowment')
-    endowment = s.build_agents(Endowment, 'endowment', 2, parameters={'rounds': rounds, 'creation': 0})  # tests declare_round_endowment and declare_perishable
+    endowment = s.build_agents(Endowment, 'endowment', 2, parameters={
+                               'rounds': rounds, 'creation': 0})  # tests declare_round_endowment and declare_perishable
     print('build LoggerTest')
-    loggertest = s.build_agents(LoggerTest, 'loggertest', 1, parameters={'rounds': rounds})
+    loggertest = s.build_agents(
+        LoggerTest, 'loggertest', 1, parameters={'rounds': rounds})
     print('build ProductionMultifirm')
-    productionmultifirm = s.build_agents(ProductionMultifirm, 'productionmultifirm', 1, parameters={'rounds': rounds})
+    productionmultifirm = s.build_agents(
+        ProductionMultifirm, 'productionmultifirm', 1, parameters={'rounds': rounds})
     print('build ProductionFirm')
-    productionfirm = s.build_agents(ProductionFirm, 'productionfirm', 7, parameters={'rounds': rounds})
+    productionfirm = s.build_agents(
+        ProductionFirm, 'productionfirm', 7, parameters={'rounds': rounds})
     print('build UtilityHousehold')
-    utilityhousehold = s.build_agents(UtilityHousehold, 'utilityhousehold', 5, parameters={'rounds': rounds})
+    utilityhousehold = s.build_agents(
+        UtilityHousehold, 'utilityhousehold', 5, parameters={'rounds': rounds})
 #    print('build ContractSeller')
 #    contractseller = s.build_agents(ContractSeller, 'contractseller', 2, parameters={'rounds': rounds})
 #    print('build ContractBuyer')
@@ -60,20 +67,25 @@ def main(processes, rounds):
     #s.build_agents(ExpiringCapital, 1)
     #s.build_agents(GiveExpiringCapital, 2)
     print('build BuyExpiringCapital')
-    buyexpiringcapital = s.build_agents(BuyExpiringCapital, 'buyexpiringcapital', 2, parameters={'rounds': rounds})
+    buyexpiringcapital = s.build_agents(
+        BuyExpiringCapital, 'buyexpiringcapital', 2, parameters={'rounds': rounds})
     print('build MessageA')
-    messagea = s.build_agents(MessageA, 'messagea', 20, parameters={'rounds': rounds})
+    messagea = s.build_agents(MessageA, 'messagea',
+                              20, parameters={'rounds': rounds})
     print('build MessageB')
-    messageb = s.build_agents(MessageB, 'messageb', 20, parameters={'rounds': rounds})
+    messageb = s.build_agents(MessageB, 'messageb',
+                              20, parameters={'rounds': rounds})
     print('build AddAgent')
-    messagec = s.build_agents(AddAgent, 'addagent', 1, parameters={'rounds': rounds})
+    messagec = s.build_agents(AddAgent, 'addagent', 1,
+                              parameters={'rounds': rounds})
     print('build Killer')
     killer = s.build_agents(Killer, 'killer', 1, parameters={'rounds': rounds})
     print('build Victim')
-    victim = s.build_agents(Victim, 'victim', rounds, parameters={'rounds': rounds})
+    victim = s.build_agents(Victim, 'victim', rounds,
+                            parameters={'rounds': rounds})
     print('build Victim loudvictim')
-    loudvictim = s.build_agents(Victim, 'loudvictim', rounds, parameters={'rounds': rounds})
-
+    loudvictim = s.build_agents(
+        Victim, 'loudvictim', rounds, parameters={'rounds': rounds})
 
     some = buy + sell + give + loggertest + utilityhousehold
 

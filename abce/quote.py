@@ -20,6 +20,7 @@ from builtins import object
 from collections import defaultdict
 from random import shuffle
 
+
 class Quotation(object):
     def __init__(self, msg):
         self.__dict__ = msg
@@ -43,6 +44,7 @@ class Quote(object):
     :meth:`~abceagent.Trade.accept_quote` and :meth:`~abceagent.Trade.accept_quote_partial`,
     the receiver of a quote can transform them into a trade.
     """
+
     def get_quotes(self, good, descending=False):
         """ self.get_quotes() returns all new quotes and removes them. The order
         is randomized.
@@ -106,9 +108,11 @@ class Quote(object):
 
         """
         if quote['buysell'] == 'qs':
-            self.buy(quote['sender_group'], quote['sender_id'], quote['good'], quote['quantity'], quote['price'])
+            self.buy(quote['sender_group'], quote['sender_id'],
+                     quote['good'], quote['quantity'], quote['price'])
         else:
-            self.sell(quote['sender_group'], quote['sender_id'], quote['good'], quote['quantity'], quote['price'])
+            self.sell(quote['sender_group'], quote['sender_id'],
+                      quote['good'], quote['quantity'], quote['price'])
 
     def accept_quote_partial(self, quote, quantity):
         """ makes a commited buy or sell out of the counterparties quote
@@ -120,9 +124,11 @@ class Quote(object):
 
         """
         if quote['buysell'] == 'qs':
-            self.buy(quote['sender_group'], quote['sender_id'], quote['good'], quantity, quote['price'])
+            self.buy(quote['sender_group'], quote['sender_id'],
+                     quote['good'], quantity, quote['price'])
         else:
-            self.sell(quote['sender_group'], quote['sender_id'], quote['good'], quantity, quote['price'])
+            self.sell(quote['sender_group'], quote['sender_id'],
+                      quote['good'], quantity, quote['price'])
 
     def quote_sell(self, receiver_group, receiver_id, good=None, quantity=None, price=None):
         """ quotes a price to sell quantity of 'good' to a receiver. Use None,
@@ -144,14 +150,14 @@ class Quote(object):
                 price per unit
         """
         offer = Quotation({'sender_group': self.group,
-                 'sender_id': self.id,
-                 'receiver_group': receiver_group,
-                 'receiver_id': receiver_id,
-                 'good': good,
-                 'quantity': quantity,
-                 'price': price,
-                 'buysell': 'qs',
-                 'id': self._offer_counter()})
+                           'sender_id': self.id,
+                           'receiver_group': receiver_group,
+                           'receiver_id': receiver_id,
+                           'good': good,
+                           'quantity': quantity,
+                           'price': price,
+                           'buysell': 'qs',
+                           'id': self._offer_counter()})
         self._send(receiver_group, receiver_id, '_q', offer)
         return offer
 
@@ -175,13 +181,13 @@ class Quote(object):
                 price per unit
         """
         offer = Quotation({'sender_group': self.group,
-                 'sender_id': self.id,
-                 'receiver_group': receiver_group,
-                 'receiver_id': receiver_id,
-                 'good': good,
-                 'quantity': quantity,
-                 'price': price,
-                 'buysell': 'qb',
-                 'id': self._offer_counter()})
+                           'sender_id': self.id,
+                           'receiver_group': receiver_group,
+                           'receiver_id': receiver_id,
+                           'good': good,
+                           'quantity': quantity,
+                           'price': price,
+                           'buysell': 'qb',
+                           'id': self._offer_counter()})
         self._send(receiver_group, receiver_id, '_q', offer)
         return offer

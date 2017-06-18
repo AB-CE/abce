@@ -15,6 +15,7 @@ parameters = {'name': '2x2',
               'random_seed': None,
               'rounds': 10}
 
+
 @gui(parameters)
 def main(parameters):
     w = Simulation(rounds=parameters['rounds'])
@@ -22,7 +23,7 @@ def main(parameters):
     w.declare_perishable(good='labor')
 
     w.panel('household', possessions=['money', 'GOOD'],
-                         variables=['current_utiliy'])
+            variables=['current_utiliy'])
     w.panel('firm', possessions=['money', 'GOOD'])
 
     firms = w.build_agents(Firm, 'firm', 1)
@@ -36,6 +37,7 @@ def main(parameters):
         households.do('buy_goods')
         households.do('panel')
         households.do('consumption')
+
 
 if __name__ == '__main__':
     main(parameters)
