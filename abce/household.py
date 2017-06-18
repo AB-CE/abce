@@ -21,6 +21,7 @@ from __future__ import division
 from __future__ import absolute_import
 from builtins import object
 import operator
+from functools import reduce
 from .trade import get_epsilon
 epsilon = get_epsilon()
 
