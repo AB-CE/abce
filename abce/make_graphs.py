@@ -19,11 +19,12 @@ def make_title(title, col):
 def make_aggregate_graphs(df, filename, ignore_initial_rounds):
     print('make_aggregate_graphs', filename)
     columns = [col for col in df.columns if not col.endswith('_std')
-                                         and not col.endswith('_mean')
-                                         and not col in ['index', 'round', 'id', 'date']]
+               and not col.endswith('_mean')
+               and not col in ['index', 'round', 'id', 'date']]
     plots = {}
     try:
-        index = df['date'].apply(lambda sdate: datetime.date(*[int(c) for c in sdate.split('-')]))
+        index = df['date'].apply(lambda sdate: datetime.date(
+            *[int(c) for c in sdate.split('-')]))
         x_axis_type = "datetime"
     except KeyError:
         index = df['round']
@@ -78,7 +79,8 @@ def make_simple_graphs(df, filename, ignore_initial_rounds):
     print('make_simple_graphs', filename)
     plots = {}
     try:
-        index = df['date'].apply(lambda sdate: datetime.date(*[int(c) for c in sdate.split('-')]))
+        index = df['date'].apply(lambda sdate: datetime.date(
+            *[int(c) for c in sdate.split('-')]))
         x_axis_type = "datetime"
     except KeyError:
         index = df['round']
@@ -98,7 +100,8 @@ def make_simple_graphs(df, filename, ignore_initial_rounds):
                                                      df[col].ix[ignore_initial_rounds:].max(skipna=True) + 1)
 
             plot.legend.orientation = "top_left"
-            plot.line(index, df[col], legend=col, line_width=2, line_color='blue', y_range_name="ttl")
+            plot.line(index, df[col], legend=col, line_width=2,
+                      line_color='blue', y_range_name="ttl")
             plot.add_layout(LinearAxis(y_range_name="ttl"), 'left')
 
             plots[json.dumps((plot.ref['id'], title))] = plot
@@ -127,10 +130,12 @@ def make_panel_graphs(df, filename, ignore_initial_rounds):
             plot.legend.orientation = "top_left"
             for i, id in enumerate(individuals):
                 try:
-                    index = df['date'][df['id'] == id].apply(lambda sdate: datetime.date(*[int(c) for c in sdate.split('-')]))
+                    index = df['date'][df['id'] == id].apply(
+                        lambda sdate: datetime.date(*[int(c) for c in sdate.split('-')]))
                 except KeyError:
                     index = df['round'][df['id'] == id]
                 series = df[col][df['id'] == id]
-                plot.line(index, series, legend=str(id), line_width=2, line_color=colors[i])
+                plot.line(index, series, legend=str(id),
+                          line_width=2, line_color=colors[i])
             plots[json.dumps((plot.ref['id'], title + '(panel)'))] = plot
     return plots

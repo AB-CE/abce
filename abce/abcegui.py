@@ -6,7 +6,7 @@ from builtins import str
 from builtins import range
 from past.utils import old_div
 from flask import Flask, request, session, g, redirect, url_for, \
-     abort, render_template, flash, Markup
+    abort, render_template, flash, Markup
 import webbrowser
 import os
 import pandas as pd
@@ -127,7 +127,8 @@ def gui(parameters, names=None, title=None, text=None, self_hosted=True, truncat
         print(text)
 
     def inner(func):
-        generate(new_inputs=parameters, new_simulation=func, names=names, title=title, text=text, truncate_initial_rounds=truncate_initial_rounds)
+        generate(new_inputs=parameters, new_simulation=func, names=names,
+                 title=title, text=text, truncate_initial_rounds=truncate_initial_rounds)
         if self_hosted:
             return run
         else:
@@ -160,7 +161,8 @@ def submitted_simulation():
             try:
                 parameters[name] = eval(form[name])
             except:
-                parameters[name] = form[name].replace('\n', '').replace('\r', '').lstrip().rstrip()
+                parameters[name] = form[name].replace(
+                    '\n', '').replace('\r', '').lstrip().rstrip()
         else:
             parameters[name] = element['type'](form[name])
     simulation(parameters)
@@ -172,12 +174,13 @@ def show_simulation():
     rounds = 0
     try:
         if gtruncate_initial_rounds == 0:
-            ignore_initial_rounds = int(session.get('ignore_initial_rounds', 50))
+            ignore_initial_rounds = int(
+                session.get('ignore_initial_rounds', 50))
         else:
             ignore_initial_rounds = 0
     except NameError:
-            ignore_initial_rounds = int(session.get('ignore_initial_rounds', 50))
-            gtruncate_initial_rounds = 0
+        ignore_initial_rounds = int(session.get('ignore_initial_rounds', 50))
+        gtruncate_initial_rounds = 0
 
     plots = {}
     filenames = []
@@ -208,13 +211,16 @@ def show_simulation():
         df = df.where((pd.notnull(df)), None)
         df.dropna(1, how='all', inplace=True)
         if filename.startswith('aggregate_'):
-            plots.update(make_aggregate_graphs(df, filename, ignore_initial_rounds))
+            plots.update(make_aggregate_graphs(
+                df, filename, ignore_initial_rounds))
         else:
             try:
                 if max(df.get('id', [0])) == 0:
-                    plots.update(make_simple_graphs(df, filename, ignore_initial_rounds))
+                    plots.update(make_simple_graphs(
+                        df, filename, ignore_initial_rounds))
                 else:
-                    plots.update(make_panel_graphs(df, filename, ignore_initial_rounds))
+                    plots.update(make_panel_graphs(
+                        df, filename, ignore_initial_rounds))
             except ValueError:
                 print((filename, 'not displayable: ValueError'))
 
@@ -296,7 +302,8 @@ def generate(new_inputs, new_simulation, names=None, title=None, text=None, trun
                 element['type'] = int
             else:
                 element['type'] = float
-                element['step'] = old_div((element['max'] - element['min']), 100)
+                element['step'] = old_div(
+                    (element['max'] - element['min']), 100)
 
             content = """  {title}
                             <div class="mdl-grid">
@@ -328,7 +335,8 @@ def generate(new_inputs, new_simulation, names=None, title=None, text=None, trun
             element['value0'] = value[0]
             content = ("""<div>{title}</div><br><input list="{name}" value="{value0}" name="{name}">
                             <datalist id="{name}"> """
-                       + "".join(['<option value="%s">' % item for item in value])
+                       + "".join(['<option value="%s">' %
+                                  item for item in value])
                        + """ </datalist> """).format(**element)
         elif isinstance(value, basestring):  # menu
             element['type'] = str
@@ -396,9 +404,11 @@ def run(open=True, new=1):
     if not opened:
         if open:
             if inputs:
-                webbrowser.open("http://127.0.0.1:%i/" % port, new=new, autoraise=True)
+                webbrowser.open("http://127.0.0.1:%i/" %
+                                port, new=new, autoraise=True)
             else:
-                webbrowser.open("http://127.0.0.1:%i/show_simulation" % port, new=new, autoraise=True)
+                webbrowser.open("http://127.0.0.1:%i/show_simulation" %
+                                port, new=new, autoraise=True)
         if inputs:
             print("go to http://127.0.0.1:%i/" % port)
         else:

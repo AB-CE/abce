@@ -20,6 +20,7 @@ import multiprocessing
 import sqlite3
 from collections import defaultdict
 
+
 class Database(multiprocessing.Process):
     def __init__(self, directory, in_sok, trade_log):
         multiprocessing.Process.__init__(self)
@@ -34,11 +35,12 @@ class Database(multiprocessing.Process):
     def add_trade_log(self):
         table_name = 'trade'
         self.database.execute("CREATE TABLE " + table_name +
-            "(round INT, good VARCHAR(50), seller VARCHAR(50), buyer VARCHAR(50), price FLOAT, quantity FLOAT)")
+                              "(round INT, good VARCHAR(50), seller VARCHAR(50), buyer VARCHAR(50), price FLOAT, quantity FLOAT)")
         return 'INSERT INTO trade (round, good, seller, buyer, price, quantity) VALUES (%i, "%s", "%s", "%s", "%s", %f)'
 
     def add_log(self, table_name):
-        self.database.execute("CREATE TABLE " + table_name + "(round INT, id INT, PRIMARY KEY(round, id))")
+        self.database.execute("CREATE TABLE " + table_name +
+                              "(round INT, id INT, PRIMARY KEY(round, id))")
 
     def add_panel(self, group):
         self.panels.append('panel_' + group)
@@ -61,15 +63,17 @@ class Database(multiprocessing.Process):
         if self.trade_log:
             trade_ex_str = self.add_trade_log()
         for table_name in self.panels:
-            self.database.execute("CREATE TABLE " + table_name + "(round INT, id INT, PRIMARY KEY(round, id))")
+            self.database.execute(
+                "CREATE TABLE " + table_name + "(round INT, id INT, PRIMARY KEY(round, id))")
         for table_name in self.aggregates:
-            self.database.execute("CREATE TABLE " + table_name + "(round INT, PRIMARY KEY(round))")
+            self.database.execute(
+                "CREATE TABLE " + table_name + "(round INT, PRIMARY KEY(round))")
 
         while True:
             try:
                 msg = self.in_sok.get()
             except KeyboardInterrupt:
-                    break
+                break
             except EOFError:
                 break
             if msg == "close":
@@ -93,7 +97,8 @@ class Database(multiprocessing.Process):
                     self.aggregate(table_name, data_to_write)
                     self.aggregate_round[table_name] = round
                 else:
-                    self.write_aggregate(table_name, self.aggregate_round[table_name])
+                    self.write_aggregate(
+                        table_name, self.aggregate_round[table_name])
                     self.aggregate_round[table_name] = round
                     self.aggregate(table_name, data_to_write)
 
@@ -103,12 +108,13 @@ class Database(multiprocessing.Process):
                 for key in individual_log:
                     split_key = key[:].split(',')
                     self.database.execute(trade_ex_str % (round,
-                                                        split_key[0], split_key[1], split_key[2], split_key[3],
-                                                        individual_log[key]))
+                                                          split_key[0], split_key[1], split_key[2], split_key[3],
+                                                          individual_log[key]))
             elif msg[0] == 'log':
                 group_name = msg[1]
                 data_to_write = msg[2]
-                data_to_write = {key: float(data_to_write[key]) for key in data_to_write}
+                data_to_write = {key: float(
+                    data_to_write[key]) for key in data_to_write}
                 data_to_write['round'] = msg[3]
                 table_name = group_name
                 try:
@@ -118,17 +124,21 @@ class Database(multiprocessing.Process):
                     self.write(table_name, data_to_write)
                 except sqlite3.InterfaceError:
                     print((table_name, data_to_write))
-                    raise SystemExit('InterfaceError: data can not be written. If nested try: self.log_nested')
+                    raise SystemExit(
+                        'InterfaceError: data can not be written. If nested try: self.log_nested')
             else:
-                raise SystemExit("abce_db error '%s' command unknown ~87" % msg)
+                raise SystemExit(
+                    "abce_db error '%s' command unknown ~87" % msg)
         self.db.commit()
         self.db.close()
 
     def write_or_update(self, table_name, data_to_write):
-        insert_str = "INSERT OR IGNORE INTO " + table_name + "(" + ','.join(list(data_to_write.keys())) + ") VALUES (%s);"
-        update_str = "UPDATE " + table_name + " SET %s  WHERE CHANGES()=0 and round=%s and id=%s;"
+        insert_str = "INSERT OR IGNORE INTO " + table_name + \
+            "(" + ','.join(list(data_to_write.keys())) + ") VALUES (%s);"
+        update_str = "UPDATE " + table_name + \
+            " SET %s  WHERE CHANGES()=0 and round=%s and id=%s;"
         update_str = update_str % (','.join('%s=?' % key for key in data_to_write),
-            data_to_write['round'], data_to_write['id'])
+                                   data_to_write['round'], data_to_write['id'])
         rows_to_write = list(data_to_write.values())
         format_strings = ','.join(['?'] * len(rows_to_write))
         try:
@@ -145,9 +155,11 @@ class Database(multiprocessing.Process):
 
     def write(self, table_name, data_to_write):
         try:
-            ex_str = "INSERT INTO " + table_name + "(" + ','.join(list(data_to_write.keys())) + ") VALUES (%s)"
+            ex_str = "INSERT INTO " + table_name + \
+                "(" + ','.join(list(data_to_write.keys())) + ") VALUES (%s)"
         except TypeError:
-            raise TypeError("good names must be strings", list(data_to_write.keys()))
+            raise TypeError("good names must be strings",
+                            list(data_to_write.keys()))
         rows_to_write = list(data_to_write.values())
         format_strings = ','.join(['?'] * len(rows_to_write))
         try:
@@ -172,9 +184,11 @@ class Database(multiprocessing.Process):
         for column in new_columns:
             try:
                 if is_convertable_to_float(data_to_write[column]):
-                    self.database.execute(""" ALTER TABLE """ + table_name + """ ADD """ + column + """ FLOAT;""")
+                    self.database.execute(
+                        """ ALTER TABLE """ + table_name + """ ADD """ + column + """ FLOAT;""")
                 else:
-                    self.database.execute(""" ALTER TABLE """ + table_name + """ ADD """ + column + """ VARCHAR(50);""")
+                    self.database.execute(
+                        """ ALTER TABLE """ + table_name + """ ADD """ + column + """ VARCHAR(50);""")
             except TypeError:
                 rows_to_write.remove(data_to_write[column])
                 del data_to_write[column]
@@ -189,12 +203,13 @@ class Database(multiprocessing.Process):
             l = self.data[table_name][key]
             summe = sum(l)
             mean = summe / len(l)
-            ss = sum((x-mean)**2 for x in l)
+            ss = sum((x - mean)**2 for x in l)
             data_to_write[key] = summe
             data_to_write[key + '_std'] = (ss / len(l))**0.5
             data_to_write[key + '_mean'] = mean
             self.data[table_name][key] = []
         self.write(table_name, data_to_write)
+
 
 class TableMissing(sqlite3.OperationalError):
     def __init__(self, message):
@@ -221,4 +236,3 @@ def _number_or_string(word):
             return float(word)
         except ValueError:
             return word
-

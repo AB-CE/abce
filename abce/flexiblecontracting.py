@@ -1,4 +1,4 @@
-#pylint: disable=W0232, C1001, C0111, R0913, E1101, W0212
+# pylint: disable=W0232, C1001, C0111, R0913, E1101, W0212
 # TODO end_contract; record all payments
 from __future__ import print_function
 from builtins import str
@@ -103,6 +103,7 @@ class Contract(object):
                     unique number of contract
 
     """
+
     def request_credit(self, receiver_group, receiver_id, amount, interest):
         """This method offers a contract to provide a good or service to the
         receiver. For a given time at a given price.
@@ -222,16 +223,19 @@ class Contract(object):
             quantity = contract.quantity
         else:
             contract.quantity = min(contract.quantity, quantity)
-            assert quantity < contract.quantity + epsilon * max(quantity, contract.quantity)
+            assert quantity < contract.quantity + \
+                epsilon * max(quantity, contract.quantity)
             if quantity > contract.quantity:
                 quantity = contract.quantity
 
         if contract.pay_group == self.group and contract.pay_id == self.id:
             self._contracts_pay[contract.good][contract.id] = contract
-            self._send(contract.sender_group, contract.sender_id, '_ac', contract)
+            self._send(contract.sender_group,
+                       contract.sender_id, '_ac', contract)
         else:
             self._contracts_deliver[contract.good][contract.id] = contract
-            self._send(contract.sender_group, contract.sender_id, '_ac', contract)
+            self._send(contract.sender_group,
+                       contract.sender_id, '_ac', contract)
         return contract
 
     def deliver_contract(self, contract):
@@ -240,7 +244,8 @@ class Contract(object):
         quantity = contract.quantity
         available = self._haves[contract.good]
         if quantity > available + epsilon + epsilon * max(quantity, available):
-            raise NotEnoughGoods(self.name, contract.good, quantity - available)
+            raise NotEnoughGoods(self.name, contract.good,
+                                 quantity - available)
         if quantity > available:
             quantity = available
 
@@ -258,7 +263,8 @@ class Contract(object):
             money = available
 
         self._haves['money'] -= money
-        self._send(contract.deliver_good_group, contract.deliver_good_id, '_dp', contract)
+        self._send(contract.deliver_good_group,
+                   contract.deliver_good_id, '_dp', contract)
 
     def contracts_to_deliver(self, good):
         return list(self._contracts_deliver[good].values())
@@ -280,10 +286,12 @@ class Contract(object):
 
     def end_contract(self, contract):
         if contract.id in self._contracts_deliver[contract.good]:
-            self._send(contract.pay_group, contract.pay_id, '!d', ('r', contract.good, contract.id))
+            self._send(contract.pay_group, contract.pay_id,
+                       '!d', ('r', contract.good, contract.id))
             del self._contracts_deliver[contract.good][contract.id]
         elif contract.id in self._contracts_pay[contract.good]:
-            self._send(contract.deliver_good_group, contract.deliver_good_id, '!d', ('d', contract.good, contract.id))
+            self._send(contract.deliver_good_group, contract.deliver_good_id,
+                       '!d', ('d', contract.good, contract.id))
             del self._contracts_pay[contract.good][contract.id]
         else:
             raise Exception("Contract not found")
@@ -304,7 +312,8 @@ class Contract(object):
 def bound_zero(x):
     """ asserts that variable is above zero, where foating point imprecission is accounted for,
     and than makes sure it is above 0, without floating point imprecission """
-    assert x > - epsilon, '%.30f is smaller than 0 - epsilon (%.30f)' % (x, - epsilon)
+    assert x > - \
+        epsilon, '%.30f is smaller than 0 - epsilon (%.30f)' % (x, - epsilon)
     if x < 0:
         return 0
     else:

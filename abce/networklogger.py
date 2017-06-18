@@ -25,6 +25,7 @@ class NetworkLogger(object):
 
         .. automethod:: abce.Simulation.network
     """
+
     def log_agent(self, color='blue', style='filled', shape='circle'):
         """ log_agent is optional. It can log agent attributes.
 
@@ -37,10 +38,11 @@ class NetworkLogger(object):
         """
         try:
             if self.round % self._network_drawing_frequency == 0 and self:
-                self.logger_connection.put(('node', self.round, ((self.group, self.id), color, style, shape)))
+                self.logger_connection.put(
+                    ('node', self.round, ((self.group, self.id), color, style, shape)))
         except TypeError:
-            raise SystemExit("ABCE Error: simulation.network(.) needs to be called in start.py")
-
+            raise SystemExit(
+                "ABCE Error: simulation.network(.) needs to be called in start.py")
 
     def log_network(self, list_of_nodes):
         """ loggs a network. List of nodes is a list with the numbers of all agents,
@@ -60,6 +62,8 @@ class NetworkLogger(object):
         """
         try:
             if self.round % self._network_drawing_frequency == 0:
-                self.logger_connection.put(('edges', self.round, ((self.group, self.id), list_of_nodes)))
+                self.logger_connection.put(
+                    ('edges', self.round, ((self.group, self.id), list_of_nodes)))
         except TypeError:
-            raise SystemExit("ABCE Error: simulation.network(.) needs to be called in start.py")
+            raise SystemExit(
+                "ABCE Error: simulation.network(.) needs to be called in start.py")

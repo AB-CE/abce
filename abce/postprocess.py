@@ -5,6 +5,7 @@ import sqlite3
 import pandas as pd
 import datetime
 
+
 def to_csv(directory, calendar):
     os.chdir(directory)
     db = sqlite3.connect('database.db')
@@ -29,7 +30,8 @@ def to_csv(directory, calendar):
         if calendar:
             table['date'] = 0
             for i in range(len(table)):
-                table.set_value(i, 'date', datetime.date.fromordinal(int(table['round'][i])))
+                table.set_value(i, 'date', datetime.date.fromordinal(
+                    int(table['round'][i])))
         if 'round' in table.columns:
             table.to_csv(table_name + '.csv', index_label='index')
         else:
@@ -41,12 +43,14 @@ def to_csv(directory, calendar):
             aggregated = grouped.sum()
             try:
                 meaned = grouped.mean()
-                meaned.rename(columns={col: col + '_mean' for col in meaned.columns}, inplace=True)
+                meaned.rename(
+                    columns={col: col + '_mean' for col in meaned.columns}, inplace=True)
             except pd.core.groupby.DataError:
                 meaned = pd.DataFrame()
             try:
                 std = grouped.std()
-                std.rename(columns={col: col + '_std' for col in std.columns}, inplace=True)
+                std.rename(
+                    columns={col: col + '_std' for col in std.columns}, inplace=True)
             except:
                 std = pd.DataFrame()
 
@@ -54,7 +58,9 @@ def to_csv(directory, calendar):
             if calendar:
                 result['date'] = 0
                 for ord_date in result.index:
-                    result.set_value(ord_date, 'date', datetime.date.fromordinal(ord_date))
-            result.to_csv('aggregated_' + table_name + '.csv', index_label='round', date_format='%Y-%m-%d')
+                    result.set_value(ord_date, 'date',
+                                     datetime.date.fromordinal(ord_date))
+            result.to_csv('aggregated_' + table_name + '.csv',
+                          index_label='round', date_format='%Y-%m-%d')
 
     os.chdir('../..')

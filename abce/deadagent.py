@@ -4,6 +4,7 @@ from builtins import object
 def nothing(*_, **__):
     pass
 
+
 class SilentDeadAgent(object):
     def __getattr__(self, *_, **__):
         return nothing

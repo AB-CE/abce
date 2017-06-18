@@ -1,4 +1,4 @@
-#pylint: disable=W0232, C1001, C0111, R0913, E1101, W0212
+# pylint: disable=W0232, C1001, C0111, R0913, E1101, W0212
 # TODO end_contract; record all payments
 from __future__ import print_function
 from builtins import str
@@ -13,6 +13,7 @@ epsilon = get_epsilon()
 class Credit(object):
     __slots__ = ['sender_group', 'sender_id', 'deliver_good_group',
                  'deliver_good_id', 'pay_group', 'pay_id', 'amount', 'interest']
+
     def __init__(self, sender_group, sender_id, deliver_good_group,
                  deliver_good_id, pay_group, pay_id, quantity, interest):
         self.sender_group = sender_group
@@ -28,12 +29,14 @@ class Credit(object):
 
     def __str__(self):
         return str(('sender', self.sender_group, self.sender_id, 'deliver', self.deliver_good_group,
-                 self.deliver_good_id, self.pay_group, self.pay_id, self.quantity, self.interest))
+                    self.deliver_good_id, self.pay_group, self.pay_id, self.quantity, self.interest))
+
 
 class Credit(object):
     """ This class implements a bank credit, without a due date
 
     """
+
     def request_credit(self, receiver_group, receiver_id, quantity, interest):
         """This method offers a contract to provide a good or service to the
         receiver. For a given time at a given price.
@@ -49,14 +52,14 @@ class Credit(object):
             interest:
                 period interest
         """
-        offer = Credit(sender_group = self.group,
-                         sender_id = self.id,
-                         deliver_good_group = self.group,
-                         deliver_good_id = self.id,
-                         pay_group = receiver_group,
-                         pay_id = receiver_id,
-                         quantity = quantity,
-                         interest = interest)
+        offer = Credit(sender_group=self.group,
+                       sender_id=self.id,
+                       deliver_good_group=self.group,
+                       deliver_good_id=self.id,
+                       pay_group=receiver_group,
+                       pay_id=receiver_id,
+                       quantity=quantity,
+                       interest=interest)
         self._send(receiver_group, receiver_id, '!o', offer)
         self._contract_offers_made[offer.id] = offer
         return offer
@@ -98,16 +101,19 @@ class Credit(object):
             quantity = contract.quantity
         else:
             contract.quantity = min(contract.quantity, quantity)
-            assert quantity < contract.quantity + epsilon * max(quantity, contract.quantity)
+            assert quantity < contract.quantity + \
+                epsilon * max(quantity, contract.quantity)
             if quantity > contract.quantity:
                 quantity = contract.quantity
 
         if contract.pay_group == self.group and contract.pay_id == self.id:
             self._contracts_pay[contract.good][contract.id] = contract
-            self._send(contract.sender_group, contract.sender_id, '_ac', contract)
+            self._send(contract.sender_group,
+                       contract.sender_id, '_ac', contract)
         else:
             self._contracts_deliver[contract.good][contract.id] = contract
-            self._send(contract.sender_group, contract.sender_id, '_ac', contract)
+            self._send(contract.sender_group,
+                       contract.sender_id, '_ac', contract)
         if contract is Credit:
 
         return contract
@@ -118,13 +124,13 @@ class Credit(object):
         quantity = contract.quantity
         available = self._haves[contract.good]
         if quantity > available + epsilon + epsilon * max(quantity, available):
-            raise NotEnoughGoods(self.name, contract.good, quantity - available)
+            raise NotEnoughGoods(self.name, contract.good,
+                                 quantity - available)
         if quantity > available:
             quantity = available
 
         self._haves[contract.good] -= quantity
         self._send(contract.pay_group, contract.pay_id, '_dp', contract)
-
 
     def pay_contract(self, contract):
         """ delivers on a contract """
@@ -137,7 +143,8 @@ class Credit(object):
             money = available
 
         self._haves['money'] -= money
-        self._send(contract.deliver_good_group, contract.deliver_good_id, '_dp', contract)
+        self._send(contract.deliver_good_group,
+                   contract.deliver_good_id, '_dp', contract)
 
     def contracts_to_deliver(self, good):
         return list(self._contracts_deliver[good].values())
@@ -159,10 +166,12 @@ class Credit(object):
 
     def end_contract(self, contract):
         if contract.id in self._contracts_deliver[contract.good]:
-            self._send(contract.pay_group, contract.pay_id, '!d', ('r', contract.good, contract.id))
+            self._send(contract.pay_group, contract.pay_id,
+                       '!d', ('r', contract.good, contract.id))
             del self._contracts_deliver[contract.good][contract.id]
         elif contract.id in self._contracts_pay[contract.good]:
-            self._send(contract.deliver_good_group, contract.deliver_good_id, '!d', ('d', contract.good, contract.id))
+            self._send(contract.deliver_good_group, contract.deliver_good_id,
+                       '!d', ('d', contract.good, contract.id))
             del self._contracts_pay[contract.good][contract.id]
         else:
             raise Exception("Contract not found")
@@ -179,10 +188,12 @@ class Credit(object):
     def was_delivered_last_round(self, contract):
         return self.round - 1 in contract.delivered
 
+
 def bound_zero(x):
     """ asserts that variable is above zero, where foating point imprecission is accounted for,
     and than makes sure it is above 0, without floating point imprecission """
-    assert x > - epsilon, '%.30f is smaller than 0 - epsilon (%.30f)' % (x, - epsilon)
+    assert x > - \
+        epsilon, '%.30f is smaller than 0 - epsilon (%.30f)' % (x, - epsilon)
     if x < 0:
         return 0
     else:

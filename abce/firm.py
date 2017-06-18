@@ -39,7 +39,8 @@ class Firm(FirmMultiTechnologies):
     If you want to create a firm with more than one production technology, you,
     should use the :class:`abce.FirmMultiTechnologies` class.
     """
-    #TODO Example
+    # TODO Example
+
     def produce_use_everything(self):
         """ Produces output goods from all input goods.
 
@@ -118,7 +119,8 @@ class Firm(FirmMultiTechnologies):
             def production(self):
                 self.produce({'a' : 1, 'b' : 2}
         """
-        self._production_function = self.create_production_function_one_good(formula, output, use)
+        self._production_function = self.create_production_function_one_good(
+            formula, output, use)
 
     def set_production_function_many_goods(self, formula, use):
         """ creates a production function that produces many goods
@@ -164,9 +166,8 @@ class Firm(FirmMultiTechnologies):
             def production(self):
                 self.produce({'a' : 1, 'b' : 2, 'c': 5})
         """
-        self._production_function = self.create_production_function_many_goods(formula, use)
-
-
+        self._production_function = self.create_production_function_many_goods(
+            formula, use)
 
     def set_cobb_douglas(self, output, multiplier, exponents):
         """  sets the firm to use a Cobb-Douglas production function.
@@ -187,7 +188,8 @@ class Firm(FirmMultiTechnologies):
             self.produce({'oil' : 20, 'labor' : 1})
 
         """
-        self._production_function = self.create_cobb_douglas(output, multiplier, exponents)
+        self._production_function = self.create_cobb_douglas(
+            output, multiplier, exponents)
 
     def set_ces(self, output, gamma, multiplier=1, shares=None):
         """ creates a CES production function
@@ -232,8 +234,8 @@ class Firm(FirmMultiTechnologies):
                 self.produce({'stone' : 20, 'labor' : 1, 'wood': 12})
 
         """
-        self._production_function = self.create_ces(output, gamma, multiplier, shares)
-
+        self._production_function = self.create_ces(
+            output, gamma, multiplier, shares)
 
     def set_leontief(self, output, utilization_quantities, multiplier=1):
         """ sets the firm to use a Leontief production function.
@@ -260,7 +262,8 @@ class Firm(FirmMultiTechnologies):
             two_cars = {'tire': 8, 'metal': 2000, 'plastic':  40}
             self.produce(two_cars)
         """
-        self._production_function = self.create_leontief(output, utilization_quantities)
+        self._production_function = self.create_leontief(
+            output, utilization_quantities)
 
     def predict_produce_output(self, input_goods):
         """ Predicts the output of a certain input vector and for a given
@@ -288,7 +291,6 @@ class Firm(FirmMultiTechnologies):
 
         """
         return self._predict_produce_output(self._production_function, input_goods)
-
 
     def predict_produce_input(self, input_goods):
         """ Returns a vector with input of goods
@@ -342,7 +344,6 @@ class Firm(FirmMultiTechnologies):
         """
         return self._net_value(produced_goods, used_goods, price_vector)
 
-
     def predict_net_value(self, input_goods, price_vector):
         """ Predicts the net value of a production, given a price vector
 
@@ -371,9 +372,6 @@ class Firm(FirmMultiTechnologies):
         """
         return self._predict_net_value(self._production_function, input_goods, price_vector)
 
-
-
-
     def sufficient_goods(self, input_goods):
         """ checks whether the agent has all the goods in the vector input """
         self.sufficient_goods(sufficient_goods)
@@ -381,4 +379,3 @@ class Firm(FirmMultiTechnologies):
 
 class ProductionFunction(object):
     pass
-

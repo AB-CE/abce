@@ -14,7 +14,7 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations under
 # the License.
-#pylint: disable=W0201
+# pylint: disable=W0201
 """ The FirmMultiTechnologies class allows you to set up firm agents with
 complex or several production functions. While the simple Firm automatically
 handles one technology, FirmMultiTechnologies allows you to manage several
@@ -80,24 +80,25 @@ class FirmMultiTechnologies(object):
         if production_function.use == 'all':
             for good in list(input_goods.keys()):
                 if self._haves[good] < input_goods[good] - epsilon:
-                    raise NotEnoughGoods(self.name, good, (input_goods[good] - self._haves[good]))
+                    raise NotEnoughGoods(
+                        self.name, good, (input_goods[good] - self._haves[good]))
 
             for good in input_goods:
                 self._haves[good] -= input_goods[good]
         else:
             for good in list(production_function.use.keys()):
                 if self._haves[good] < input_goods[good] - epsilon:
-                    raise NotEnoughGoods(self.name, good, (input_goods[good] - self._haves[good]))
+                    raise NotEnoughGoods(
+                        self.name, good, (input_goods[good] - self._haves[good]))
 
             for good, use in production_function.use.items():
                 self._haves[good] -= input_goods[good] * use
 
-        output_dict =  production_function.production(input_goods)
+        output_dict = production_function.production(input_goods)
         for good in list(output_dict.keys()):
             self._haves[good] += output_dict[good]
 
         return output_dict
-
 
     def create_production_function_one_good(self, formula, output, use):
         """ creates a production function, that produces one good
@@ -142,7 +143,7 @@ class FirmMultiTechnologies(object):
             def production(self):
                 self.produce(self.production_function, {'a' : 1, 'b' : 2}
         """
-        dict_formula = lambda goods: {output: formula(goods)}
+        def dict_formula(goods): return {output: formula(goods)}
         production_function = ProductionFunction()
         production_function.production = dict_formula
         production_function.use = use
@@ -237,9 +238,9 @@ class FirmMultiTechnologies(object):
         """
         def production_function(goods):
             return multiplier * reduce(operator.mul, [goods[name] ** exponent
-                                for name, exponent in exponents.items()])
+                                                      for name, exponent in exponents.items()])
 
-        dict_formula = lambda goods: {output: production_function(goods)}
+        def dict_formula(goods): return {output: production_function(goods)}
         production_function.production = dict_formula
         production_function.use = {name: 1 for name in list(exponents.keys())}
         return production_function
@@ -288,15 +289,15 @@ class FirmMultiTechnologies(object):
             def production_function(goods):
                 a = 1 / len(goods)
                 return multiplier * sum([a * goods[name] ** gamma
-                                           for name in goods]) ** (1 /  gamma)
+                                         for name in goods]) ** (1 / gamma)
             production_function.use = 'all'
         else:
             def production_function(goods):
                 return multiplier * sum([share * goods[name] ** gamma
-                                           for name, share in shares.items()]) ** (1 /  gamma)
+                                         for name, share in shares.items()]) ** (1 / gamma)
             production_function.use = {name: 1 for name in list(shares.keys())}
 
-        dict_formula = lambda goods: {output: production_function(goods)}
+        def dict_formula(goods): return {output: production_function(goods)}
         production_function.production = dict_formula
         return production_function
 
@@ -332,9 +333,10 @@ class FirmMultiTechnologies(object):
         def production_function(goods):
             return min([goods[name] * factor for name, factor in utilization_quantities.items()])
 
-        dict_formula = lambda goods: {output: production_function(goods)}
+        def dict_formula(goods): return {output: production_function(goods)}
         production_function.production = dict_formula
-        production_function.use = {name: 1 for name in list(utilization_quantities.keys())}
+        production_function.use = {
+            name: 1 for name in list(utilization_quantities.keys())}
         return production_function
 
     def _predict_produce_output(self, production_function, input_goods):
@@ -396,8 +398,10 @@ class FirmMultiTechnologies(object):
         return self._predict_produce_input(production_function, input_goods)
 
     def _net_value(self, produced_goods, used_goods, price_vector):
-        revenue = sum([price_vector[good] * quantity for good, quantity in list(produced_goods.items())])
-        cost = sum([price_vector[good] * quantity for good, quantity in list(used_goods.items())])
+        revenue = sum([price_vector[good] * quantity for good,
+                       quantity in list(produced_goods.items())])
+        cost = sum([price_vector[good] * quantity for good,
+                    quantity in list(used_goods.items())])
         return revenue - cost
 
     def net_value(self, produced_goods, used_goods, price_vector):
@@ -461,12 +465,13 @@ class FirmMultiTechnologies(object):
         """
         return self._predict_net_value(production_function, input_goods, price_vector)
 
-
     def sufficient_goods(self, input_goods):
         """ checks whether the agent has all the goods in the vector input """
         for good in input_goods:
             if self._haves[good] < input_goods[good] - epsilon:
-                raise NotEnoughGoods(self.name, good, input_goods[good] - self._haves[good])
+                raise NotEnoughGoods(
+                    self.name, good, input_goods[good] - self._haves[good])
+
 
 class ProductionFunction(object):
     pass
