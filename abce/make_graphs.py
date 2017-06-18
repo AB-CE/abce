@@ -18,7 +18,7 @@ def make_title(title, col):
 
 
 def make_aggregate_graphs(df, filename, ignore_initial_rounds):
-    print 'make_aggregate_graphs', filename
+    print('make_aggregate_graphs', filename)
     columns = [col for col in df.columns if not col.endswith('_std')
                                          and not col.endswith('_mean')
                                          and not col in ['index', 'round', 'id', 'date']]
@@ -75,7 +75,7 @@ def make_aggregate_graphs(df, filename, ignore_initial_rounds):
     return plots
 
 def make_simple_graphs(df, filename, ignore_initial_rounds):
-    print 'make_simple_graphs', filename
+    print('make_simple_graphs', filename)
     plots = {}
     try:
         index = df['date'].apply(lambda sdate: datetime.date(*[int(c) for c in sdate.split('-')]))
@@ -105,7 +105,7 @@ def make_simple_graphs(df, filename, ignore_initial_rounds):
     return plots
 
 def make_panel_graphs(df, filename, ignore_initial_rounds):
-    print 'make_panel_graphs', filename
+    print('make_panel_graphs', filename)
     if 'date' in df.columns:
         x_axis_type="datetime"
     else:

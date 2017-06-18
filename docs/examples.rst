@@ -74,7 +74,7 @@ The two respective firms production functions are:
     consumption_good = intermediate_good ^ 1 * labor ^ 1
 
 The only difference is that, when firms sell their products the
-intermedate good firm sells to the final good firm and the final
+intermediate good firm sells to the final good firm and the final
 good firm, in the same sub-round sells to the household.
 
 In start.py we can see that the firms that are build are build
@@ -126,7 +126,7 @@ Simple Seller Example
 +++++++++++++++++++++
 
 A simulation of the first Model of Ernesto Carrella's paper: Zero-Knowledge Traders,
-journal of artificial societies and social simulation, december 2013
+journal of artificial societies and social simulation, December 2013
 
 This is a partial 'equilibrium' model. A firm has a fixed production of 4 it offers
 this to a fixed population of 10 household. The household willingness to pay is

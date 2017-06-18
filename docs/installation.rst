@@ -59,7 +59,7 @@ the instructions blow.
 2. Install Visual C++ for python 2.7 from here: https://www.microsoft.com/en-us/download/details.aspx?id=44266
    (for speed much a part of ABCE are written in C/Cython)
 
-3. anachonda prompt or in the command line (cmd) type::
+3. anaconda prompt or in the command line (cmd) type::
 
     pip install -i https://testpypi.python.org/pypi --extra-index-url https://pypi.python.org/pypi abce
 
@@ -73,12 +73,12 @@ the instructions blow.
 order to avoid that, modify the 'Run Setting' and choose
 'Execute in external System Terminal'.**
 
-Installation Anachonda 3.5
+Installation Anaconda 3.5
 --------------------------
 
-If you have already Anachonda 3.5 installed:
+If you have already Anaconda 3.5 installed:
 
-1. anachonda prompt or in the command line (cmd) type::
+1. anaconda prompt or in the command line (cmd) type::
 
     conda create -n py27 python=2.7 anaconda
 

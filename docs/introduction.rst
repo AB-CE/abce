@@ -212,7 +212,7 @@ turtle
     a package for spacial representation ala NetLogo
 
 Fourth, many frameworks such as FLAME, NetLogo, StarLogo, Ascape
-and SugerScape and, in a
+and SugarScape and, in a
 more limited sense, Repast are designed with spacial representation in mind.
 For ABCE a spacial representation is possible, but not a design goal.
 However, since agents in ABCE are ordinary Python objects, they can use
