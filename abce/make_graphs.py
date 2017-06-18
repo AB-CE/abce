@@ -6,15 +6,14 @@ import datetime
 import random
 
 
-
-colors = ["red","blue","green","black","purple","pink",
-          "yellow","orange","pink","Brown","Cyan","Crimson",
-          "DarkOrange","DarkSeaGreen","DarkCyan","DarkBlue","DarkViolet","Silver",
-          "#0FCFC0","#9CDED6","#D5EAE7","#F3E1EB","#F6C4E1","#F79CD4"]
+colors = ["red", "blue", "green", "black", "purple", "pink",
+          "yellow", "orange", "pink", "Brown", "Cyan", "Crimson",
+          "DarkOrange", "DarkSeaGreen", "DarkCyan", "DarkBlue", "DarkViolet", "Silver",
+          "#0FCFC0", "#9CDED6", "#D5EAE7", "#F3E1EB", "#F6C4E1", "#F79CD4"]
 
 
 def make_title(title, col):
-    return title.replace('aggregate_', '').replace('panel_', '').replace('.csv', '')  + ' ' + col
+    return title.replace('aggregate_', '').replace('panel_', '').replace('.csv', '') + ' ' + col
 
 
 def make_aggregate_graphs(df, filename, ignore_initial_rounds):
@@ -25,10 +24,10 @@ def make_aggregate_graphs(df, filename, ignore_initial_rounds):
     plots = {}
     try:
         index = df['date'].apply(lambda sdate: datetime.date(*[int(c) for c in sdate.split('-')]))
-        x_axis_type="datetime"
+        x_axis_type = "datetime"
     except KeyError:
         index = df['round']
-        x_axis_type="linear"
+        x_axis_type = "linear"
     for col in columns:
         title = make_title(filename, col)
         plot = figure(title=title, responsive=True, webgl=False, x_axis_type=x_axis_type,
@@ -64,9 +63,9 @@ def make_aggregate_graphs(df, filename, ignore_initial_rounds):
                 plot.extra_y_ranges['mean'] = Range1d(df[col + '_mean'].ix[ignore_initial_rounds:].min(skipna=True),
                                                       df[col + '_mean'].ix[ignore_initial_rounds:].max(skipna=True))
             else:
-                plot.extra_y_ranges['mean'] = Range1d(df[col + '_mean'].ix[ignore_initial_rounds:].min(skipna=True) - 1 ,
+                plot.extra_y_ranges['mean'] = Range1d(df[col + '_mean'].ix[ignore_initial_rounds:].min(skipna=True) - 1,
                                                       df[col + '_mean'].ix[ignore_initial_rounds:].max(skipna=True) + 1)
-            #plot.line(index, df[col],
+            # plot.line(index, df[col],
             #          legend='mean', line_width=2, line_color='green', y_range_name="mean")
             plot.add_layout(LinearAxis(y_range_name="mean"), 'left')
         except KeyError:
@@ -74,20 +73,21 @@ def make_aggregate_graphs(df, filename, ignore_initial_rounds):
         plots[json.dumps((plot.ref['id'], title + ' (agg)'))] = plot
     return plots
 
+
 def make_simple_graphs(df, filename, ignore_initial_rounds):
     print('make_simple_graphs', filename)
     plots = {}
     try:
         index = df['date'].apply(lambda sdate: datetime.date(*[int(c) for c in sdate.split('-')]))
-        x_axis_type="datetime"
+        x_axis_type = "datetime"
     except KeyError:
         index = df['round']
-        x_axis_type="linear"
+        x_axis_type = "linear"
     for col in df.columns:
         if col not in ['round', 'id', 'index', 'date']:
             title = make_title(filename, col)
             plot = figure(title=title, responsive=True, webgl=False, x_axis_type=x_axis_type,
-                      tools="pan, wheel_zoom, box_zoom, save, crosshair, hover")
+                          tools="pan, wheel_zoom, box_zoom, save, crosshair, hover")
             plot.yaxis.visible = None
             plot.legend.orientation = "top_left"
             if df[col].min(skipna=True) != df[col].max(skipna=True):
@@ -104,15 +104,15 @@ def make_simple_graphs(df, filename, ignore_initial_rounds):
             plots[json.dumps((plot.ref['id'], title))] = plot
     return plots
 
+
 def make_panel_graphs(df, filename, ignore_initial_rounds):
     print('make_panel_graphs', filename)
     if 'date' in df.columns:
-        x_axis_type="datetime"
+        x_axis_type = "datetime"
     else:
-        x_axis_type="linear"
+        x_axis_type = "linear"
 
-
-    if  max(df['id'])> 20:
+    if max(df['id']) > 20:
         individuals = sorted(random.sample(range(max(df['id'])), 20))
     else:
         individuals = range(max(df['id']) + 1)
@@ -122,7 +122,7 @@ def make_panel_graphs(df, filename, ignore_initial_rounds):
         if col not in ['round', 'id', 'index', 'date']:
             title = make_title(filename, col)
             plot = figure(title=title, responsive=True, webgl=False, x_axis_type=x_axis_type,
-                      tools="pan, wheel_zoom, box_zoom, save, crosshair, hover")
+                          tools="pan, wheel_zoom, box_zoom, save, crosshair, hover")
 
             plot.legend.orientation = "top_left"
             for i, id in enumerate(individuals):

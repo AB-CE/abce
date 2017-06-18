@@ -13,8 +13,8 @@ epsilon = get_epsilon()
 class Credit(object):
     __slots__ = ['sender_group', 'sender_id', 'deliver_good_group',
                  'deliver_good_id', 'pay_group', 'pay_id', 'amount', 'interest']
-    def __init__(self, sender_group', 'sender_id', 'deliver_good_group',
-                 'deliver_good_id', 'pay_group', 'pay_id', 'quantity', 'interest'):
+    def __init__(self, sender_group, sender_id, deliver_good_group,
+                 deliver_good_id, pay_group, pay_id, quantity, interest):
         self.sender_group = sender_group
         self.sender_id = sender_id
         self.deliver_good_group = deliver_good_group
@@ -187,16 +187,3 @@ def bound_zero(x):
         return 0
     else:
         return x
-
-
-
-
-
-
-
-
-
-
-
-
-

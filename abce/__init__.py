@@ -69,12 +69,16 @@ from .abcegui import gui
 import random
 from abce.notenoughgoods import NotEnoughGoods
 from abce.deadagent import SilentDeadAgent, LoudDeadAgent
+import numpy as np
+
 
 def execute_internal_wrapper(inp):
     return inp[0].execute_internal(inp[1])
 
+
 class MyManager(BaseManager):
     pass
+
 
 class Simulation(object):
     """ This class in which the simulation is run. Actions and agents have to be
@@ -167,7 +171,7 @@ class Simulation(object):
             pass
 
         self.path = (os.path.abspath('.') + '/result/' + name + '_' +
-            datetime.datetime.now().strftime("%Y-%m-%d_%H-%M"))
+                     datetime.datetime.now().strftime("%Y-%m-%d_%H-%M"))
         """ the path variable contains the path to the simulation outcomes it can be used
         to generate your own graphs as all resulting csv files are there.
         """
@@ -177,7 +181,6 @@ class Simulation(object):
                 break
             except OSError:
                 self.path += 'I'
-
 
         self.trade_logging_mode = trade_logging
         if self.trade_logging_mode not in ['individual', 'group', 'off']:
@@ -216,10 +219,6 @@ class Simulation(object):
         random.seed(random_seed)
 
         self.sim_parameters = OrderedDict({'name': name, 'rounds': rounds, 'random_seed': random_seed})
-
-
-
-
 
     def declare_round_endowment(self, resource, units, product, groups=['all']):
         """ At the beginning of very round the agent gets 'units' units of good 'product' for
@@ -421,7 +420,7 @@ class Simulation(object):
         self.possessions_to_track_aggregate[group] = possessions
 
     def network(self, frequency=1, savefig=False, savegml=True,
-                figsize=(24,20), dpi=100, pos_fixed=False, alpha=0.8):
+                figsize=(24, 20), dpi=100, pos_fixed=False, alpha=0.8):
         """ network(.) prepares abce to write network data.
 
         Args:
@@ -453,14 +452,13 @@ class Simulation(object):
                                                   alpha=alpha)
         self._logger.start()
 
-
     def execute_internal_seriel(self, command):
         for pg in self._processor_groups:
             pg.execute_internal(command)
 
     def execute_internal_parallel(self, command):
         parameters = ((pg, command) for pg in self._processor_groups)
-        families_messages = self.pool.map(execute_internal_wrapper, parameters, chunksize=1)
+        self.pool.map(execute_internal_wrapper, parameters, chunksize=1)
 
     def _prepare(self):
         """ This runs the simulation """
@@ -561,31 +559,29 @@ class Simulation(object):
         else:
             num_agents_this_group = len(agent_parameters)
 
-
         self.sim_parameters.update(parameters)
 
-        agent_params_from_sim = {'expiring':self.expiring,
-                                 'perishable':self.perishable,
-                                 'resource_endowment':self.resource_endowment[group_name] + self.resource_endowment['all'],
-                                  'panel':(self.possessins_to_track_panel[group_name],
-                                         self.variables_to_track_panel[group_name]),
-                                  'aggregate':(self.possessions_to_track_aggregate[group_name],
-                                    self.variables_to_track_aggregate[group_name]),
-                                  'ndf':self._network_drawing_frequency}
-
+        agent_params_from_sim = {'expiring': self.expiring,
+                                 'perishable': self.perishable,
+                                 'resource_endowment': self.resource_endowment[group_name] + self.resource_endowment['all'],
+                                 'panel': (self.possessins_to_track_panel[group_name],
+                                           self.variables_to_track_panel[group_name]),
+                                 'aggregate': (self.possessions_to_track_aggregate[group_name],
+                                               self.variables_to_track_aggregate[group_name]),
+                                 'ndf': self._network_drawing_frequency}
 
         for pg in self._processor_groups:
             pg.add_group(AgentClass,
-                                num_agents_this_group=num_agents_this_group,
-                                agent_args={'group': group_name,
-                                            'trade_logging': self.trade_logging_mode,
-                                            'database': self.database_queue,
-                                            'logger': self.logger_queue,
-                                            'random_seed': random.random(),
-                                            'start_round': self._start_round},
-                                parameters=parameters,
-                                agent_parameters=agent_parameters,
-                                agent_params_from_sim=agent_params_from_sim)
+                         num_agents_this_group=num_agents_this_group,
+                         agent_args={'group': group_name,
+                                     'trade_logging': self.trade_logging_mode,
+                                     'database': self.database_queue,
+                                     'logger': self.logger_queue,
+                                     'random_seed': random.random(),
+                                     'start_round': self._start_round},
+                         parameters=parameters,
+                         agent_parameters=agent_parameters,
+                         agent_params_from_sim=agent_params_from_sim)
 
             self.num_of_agents_in_group[group_name] = num_agents_this_group
         return Group(self, [group_name])
@@ -598,13 +594,13 @@ class Simulation(object):
                 self.num_of_agents_in_group[group_name] += 1
                 pg = self._processor_groups[id % self.processes]
                 pg.append(AgentClass, id=id,
-                                        agent_args={'group': group_name,
-                                                    'trade_logging': self.trade_logging_mode,
-                                                    'database': self.database_queue,
-                                                    'logger':self.logger_queue,
-                                                    'random_seed': random.random(),
-                                                    'start_round': round + 1},
-                                        parameters=parameters, agent_parameters=agent_parameters)
+                          agent_args={'group': group_name,
+                                      'trade_logging': self.trade_logging_mode,
+                                      'database': self.database_queue,
+                                      'logger': self.logger_queue,
+                                      'random_seed': random.random(),
+                                      'start_round': round + 1},
+                          parameters=parameters, agent_parameters=agent_parameters)
             elif command == 'delete':
                 group, id, quite = agent_details
                 pg = self._processor_groups[id % self.processes]
@@ -649,7 +645,6 @@ class Simulation(object):
         if self.round > 0:
             abcegui.run(open=open, new=new)
 
-
     def pickle(self, name):
         with open('%s.simulation' % name, 'wb') as jar:
             json.dump({'year': self.rounds,
@@ -668,7 +663,7 @@ class Simulation(object):
             for key, value in agent_values.items():
                 if value != "NotPickleable":
                     if key not in agent.__dict__:
-                        agent.__dict__[key] =  value
+                        agent.__dict__[key] = value
                     elif isinstance(agent.__dict__[key], defaultdict):
                         try:
                             agent.__dict__[key] = defaultdict(type(list(value.values())[0]), value)
@@ -679,12 +674,13 @@ class Simulation(object):
                     elif isinstance(agent.__dict__[key], np.ndarray):
                         agent.__dict__[key] = np.array(value)
                     else:
-                        agent.__dict__[key] =  value
+                        agent.__dict__[key] = value
 
         for agent in self.num_of_agents_in_group['all']:
             self.num_of_agents_in_group[agent.group][agent.id] = agent
 
         self._messages = simulation['messages']
+
 
 def handle_non_pickleable(x):
     if isinstance(x, np.ndarray):
@@ -703,6 +699,7 @@ def _number_or_string(word):
             return float(word)
         except ValueError:
             return word
+
 
 def defaultdict_list():
     return defaultdict(list)

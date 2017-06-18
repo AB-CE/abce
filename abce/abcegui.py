@@ -34,6 +34,7 @@ gtitle = 'ABCE Simulation'
 gtext = abcedescription
 opened = False
 
+
 def gui(parameters, names=None, title=None, text=None, self_hosted=True, truncate_initial_rounds=0):
     """ gui is a decorator that can be used to add a graphical user interface
     to your simulation.
@@ -124,6 +125,7 @@ def gui(parameters, names=None, title=None, text=None, self_hosted=True, truncat
                  and choose 'Execute in external System Terminal' and
                  restart your system """
         print(text)
+
     def inner(func):
         generate(new_inputs=parameters, new_simulation=func, names=names, title=title, text=text, truncate_initial_rounds=truncate_initial_rounds)
         if self_hosted:
@@ -132,16 +134,19 @@ def gui(parameters, names=None, title=None, text=None, self_hosted=True, truncat
             return dummy_run
     return inner  # return a function object
 
+
 def newest_subdirectory(directory='.'):
     directory = os.path.abspath(directory)
     all_subdirs = [os.path.join(directory, name)
                    for name in os.listdir(directory)
                    if os.path.isdir(os.path.join(directory, name))]
-    return  max(all_subdirs, key=os.path.getmtime) + '/'
+    return max(all_subdirs, key=os.path.getmtime) + '/'
+
 
 @app.route('/')
 def show_entries():
     return render_template('show_entries.html', entries=inputs, title=gtitle, text=gtext)
+
 
 @app.route('/submitted_simulation', methods=['POST'])
 def submitted_simulation():
@@ -155,11 +160,12 @@ def submitted_simulation():
             try:
                 parameters[name] = eval(form[name])
             except:
-                parameters[name] = form[name].replace('\n','').replace('\r', '').lstrip().rstrip()
+                parameters[name] = form[name].replace('\n', '').replace('\r', '').lstrip().rstrip()
         else:
             parameters[name] = element['type'](form[name])
     simulation(parameters)
     return redirect(url_for('show_simulation'))
+
 
 @app.route('/show_simulation')
 def show_simulation():
@@ -172,7 +178,6 @@ def show_simulation():
     except NameError:
             ignore_initial_rounds = int(session.get('ignore_initial_rounds', 50))
             gtruncate_initial_rounds = 0
-
 
     plots = {}
     filenames = []
@@ -237,6 +242,7 @@ def older_results():
                    if os.path.isdir(os.path.join(directory, name))]
     return render_template('older_results.html', all_subdirs=all_subdirs)
 
+
 @app.route('/del_simulation')
 def del_simulation():
     path = request.args.get('subdir')
@@ -245,6 +251,7 @@ def del_simulation():
     except OSError:
         print("could not remove %s" % path)
     return redirect(url_for('older_results'))
+
 
 def generate(new_inputs, new_simulation, names=None, title=None, text=None, truncate_initial_rounds=False):
     global inputs
@@ -321,9 +328,9 @@ def generate(new_inputs, new_simulation, names=None, title=None, text=None, trun
             element['value0'] = value[0]
             content = ("""<div>{title}</div><br><input list="{name}" value="{value0}" name="{name}">
                             <datalist id="{name}"> """
-                      + "".join(['<option value="%s">' % item for item in value])
-                      + """ </datalist> """).format(**element)
-        elif isinstance(value, basestring) :  # menu
+                       + "".join(['<option value="%s">' % item for item in value])
+                       + """ </datalist> """).format(**element)
+        elif isinstance(value, basestring):  # menu
             element['type'] = str
             content = """<div>{title}</div>
                          <div class="mdl-textfield mdl-js-textfield">
@@ -339,11 +346,13 @@ def generate(new_inputs, new_simulation, names=None, title=None, text=None, trun
         if value is not None:
             inputs.append(element)
 
+
 @app.route('/ignore_initial_rounds', methods=['POST'])
 def ignore_initial_rounds():
     form = request.form.to_dict()
     session['ignore_initial_rounds'] = form['ignore_initial_rounds']
     return redirect(url_for('show_simulation'))
+
 
 def setup_dialog(max_rounds):
     element = {}
@@ -403,6 +412,7 @@ def run(open=True, new=1):
 # menu (editable) (options)
 # menu (fixed) (options)
 # text
+
 
 def assert_all_of_the_same_type(value):
     for item in value:

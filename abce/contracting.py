@@ -14,6 +14,7 @@ class Contract(object):
     __slots__ = ['sender_group', 'sender_id', 'deliver_good_group',
                  'deliver_good_id', 'pay_group', 'pay_id', 'good', 'quantity',
                  'price', 'end_date', 'delivered', 'paid', 'id', 'round']
+
     def __init__(self, sender_group, sender_id, deliver_good_group,
                  deliver_good_id, pay_group, pay_id, good, quantity, price,
                  end_date, id, round):
@@ -31,10 +32,12 @@ class Contract(object):
         self.paid = []
         self.id = id
         self.round = round
+
     def __str__(self):
         return str(('sender', self.sender_group, self.sender_id, 'deliver', self.deliver_good_group,
-                 self.deliver_good_id, self.pay_group, self.pay_id, self.good, self.quantity, self.price,
-                 self.end_date, self.id, self.delivered, self.paid))
+                    self.deliver_good_id, self.pay_group, self.pay_id, self.good, self.quantity, self.price,
+                    self.end_date, self.id, self.delivered, self.paid))
+
 
 class Contracting(object):
     """ This is a class, that allows you to create contracts. For example a
@@ -137,18 +140,18 @@ class Contracting(object):
         else:
             end_date = duration + self.round
 
-        offer = Contract(sender_group = self.group,
-                         sender_id = self.id,
-                         deliver_good_group = self.group,
-                         deliver_good_id = self.id,
-                         pay_group = receiver_group,
-                         pay_id = receiver_id,
-                         good = good,
-                         quantity = quantity,
-                         price = price,
-                         end_date = end_date,
-                         id = self._offer_counter(),
-                         round = self.round)
+        offer = Contract(sender_group=self.group,
+                         sender_id=self.id,
+                         deliver_good_group=self.group,
+                         deliver_good_id=self.id,
+                         pay_group=receiver_group,
+                         pay_id=receiver_id,
+                         good=good,
+                         quantity=quantity,
+                         price=price,
+                         end_date=end_date,
+                         id=self._offer_counter(),
+                         round=self.round)
         self._send(receiver_group, receiver_id, '!o', offer)
         self._contract_offers_made[offer.id] = offer
         return offer
@@ -180,18 +183,18 @@ class Contracting(object):
         else:
             end_date = duration + self.round
 
-        offer = Contract(sender_group = self.group,
-                         sender_id = self.id,
-                         pay_group = self.group,
-                         pay_id = self.id,
-                         deliver_good_group = receiver_group,
-                         deliver_good_id = receiver_id,
-                         good = good,
-                         quantity = quantity,
-                         price = price,
-                         end_date = end_date,
-                         id = self._offer_counter(),
-                         round = self.round)
+        offer = Contract(sender_group=self.group,
+                         sender_id=self.id,
+                         pay_group=self.group,
+                         pay_id=self.id,
+                         deliver_good_group=receiver_group,
+                         deliver_good_id=receiver_id,
+                         good=good,
+                         quantity=quantity,
+                         price=price,
+                         end_date=end_date,
+                         id=self._offer_counter(),
+                         round=self.round)
         self._send(receiver_group, receiver_id, '!o', offer)
         self._contract_offers_made[offer.id] = offer
         return offer
@@ -258,7 +261,6 @@ class Contracting(object):
         self._haves[contract.good] -= quantity
         self._send(contract.pay_group, contract.pay_id, '_dp', contract)
 
-
     def pay_contract(self, contract):
         """ delivers on a contract """
         assert contract.pay_group == self.group and contract.pay_id == self.id
@@ -312,6 +314,7 @@ class Contracting(object):
     def was_delivered_last_round(self, contract):
         return self.round - 1 in contract.delivered
 
+
 def bound_zero(x):
     """ asserts that variable is above zero, where foating point imprecission is accounted for,
     and than makes sure it is above 0, without floating point imprecission """
@@ -320,16 +323,3 @@ def bound_zero(x):
         return 0
     else:
         return x
-
-
-
-
-
-
-
-
-
-
-
-
-
