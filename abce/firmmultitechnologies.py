@@ -27,6 +27,7 @@ methods use this variable to produce with the according technology.
 from __future__ import division
 import operator
 from builtins import object
+from functools import reduce
 from abce.trade import get_epsilon
 from abce.notenoughgoods import NotEnoughGoods
 epsilon = get_epsilon()
