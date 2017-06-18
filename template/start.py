@@ -12,7 +12,7 @@ simulation_parameters = {'name': 'name',
                              # this line to run the simulation with a Graphical
 #@gui(simulation_parameters) # User Interface
 def main(simulation_parameters):
-        simulation = Simulation(rounds=simulation_parameters['rounds'])
+        simulation = Simulation(rounds=simulation_parameters['rounds'], name='ABCEsimulation_name')
 
 
         simulation.declare_round_endowment(resource='labor_endowment',
@@ -33,7 +33,7 @@ def main(simulation_parameters):
 
         allagents = firms + households
         try:  # makes sure that graphs are displayed even when the simulation fails
-            for round in simulation.next_round():
+            for round_number in simulation.next_round():
                 firms.do('one')
                 households.do('two')
                 allagents.do('three')
