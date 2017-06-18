@@ -25,7 +25,7 @@ from victim import Victim
 
 
 def main(processes, rounds):
-    s = Simulation(rounds=rounds, processes=processes)
+    s = Simulation(rounds=rounds, processes=processes, name='unittest')
 
     s.declare_round_endowment(resource='labor_endowment', units=5, product='labor')
     s.declare_round_endowment(resource='cow', units=10, product='milk')
