@@ -41,7 +41,7 @@ install: |
   fi
 
 script:
-  - cd example/2sectors && python start.py
+  - cd examples/2sectors && python start.py
   - cd -
   - python unittest/start.py
     #- make $TEST_SUITE
