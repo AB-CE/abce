@@ -14,6 +14,7 @@ from mesa.visualization.modules import CanvasGrid
 from mesa.visualization.ModularVisualization import ModularServer
 from mesa.visualization.modules import ChartModule
 
+
 def agent_portrayal(agent):
     """ This function returns a big red circle, when an agent is wealthy and a
     small gray circle when he is not """
@@ -30,6 +31,7 @@ def agent_portrayal(agent):
         portrayal["r"] = 0.2
     return portrayal
 
+
 def main(x_size, y_size):
     """ This function sets up a canvas to graphically represent the model 'MoneyModel'
     and a chart, than it runs the server and runs the model in model.py in the browser """
@@ -45,8 +47,9 @@ def main(x_size, y_size):
                            [grid, chart],
                            "ABCE and MESA integrated",
                            x_size * y_size, x_size, y_size)
-    server.port = 8534 # change this number if address is in use
+    server.port = 8534  # change this number if address is in use
     server.launch()
+
 
 if __name__ == '__main__':
     main(25, 25)

@@ -334,10 +334,10 @@ def generate(new_inputs, new_simulation, names=None, title=None, text=None, trun
             element['type'] = type(value[0])
             element['value0'] = value[0]
             content = ("""<div>{title}</div><br><input list="{name}" value="{value0}" name="{name}">
-                            <datalist id="{name}"> """
-                       + "".join(['<option value="%s">' %
-                                  item for item in value])
-                       + """ </datalist> """).format(**element)
+                            <datalist id="{name}"> """ +
+                       "".join(['<option value="%s">' %
+                                item for item in value]) +
+                       """ </datalist> """).format(**element)
         elif isinstance(value, basestring):  # menu
             element['type'] = str
             content = """<div>{title}</div>

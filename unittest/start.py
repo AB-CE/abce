@@ -1,7 +1,7 @@
 from __future__ import division
 from __future__ import print_function
 from buy import Buy
-#from quote_buy import QuoteBuy
+# from quote_buy import QuoteBuy
 from sell import Sell
 from give import Give  # tests give and messaging
 from logger_test import LoggerTest
@@ -32,11 +32,11 @@ def main(processes, rounds):
     s.declare_round_endowment(resource='cow', units=10, product='milk')
     s.declare_perishable(good='labor')
     s.panel('buy', variables=['price'])
-    #s.declare_expiring('xcapital', 5)
+    # s.declare_expiring('xcapital', 5)
     print('build Buy')
     buy = s.build_agents(Buy, 'buy', 1000, parameters={'rounds': rounds})
     print('build Sell')
-    #s.build_agents(QuoteBuy, 2)
+    # s.build_agents(QuoteBuy, 2)
     sell = s.build_agents(Sell, 'sell', 1000, parameters={'rounds': rounds})
     print('build Give')
     give = s.build_agents(Give, 'give', 2, parameters={
@@ -56,16 +56,16 @@ def main(processes, rounds):
     print('build UtilityHousehold')
     utilityhousehold = s.build_agents(
         UtilityHousehold, 'utilityhousehold', 5, parameters={'rounds': rounds})
-#    print('build ContractSeller')
-#    contractseller = s.build_agents(ContractSeller, 'contractseller', 2, parameters={'rounds': rounds})
-#    print('build ContractBuyer')
-#    contractbuyer = s.build_agents(ContractBuyer, 'contractbuyer', 2, parameters={'rounds': rounds})
-#    print('build ContractSellerStop')
-#    contractsellerstop = s.build_agents(ContractSellerStop, 'contractsellerstop', 2, parameters={'rounds': rounds})
-#    print('build ContractBuyerStop')
-#    contractbuyerstop = s.build_agents(ContractBuyerStop, 'contractbuyerstop', 2, parameters={'rounds': rounds})
-    #s.build_agents(ExpiringCapital, 1)
-    #s.build_agents(GiveExpiringCapital, 2)
+    # print('build ContractSeller')
+    # contractseller = s.build_agents(ContractSeller, 'contractseller', 2, parameters={'rounds': rounds})
+    # print('build ContractBuyer')
+    # contractbuyer = s.build_agents(ContractBuyer, 'contractbuyer', 2, parameters={'rounds': rounds})
+    # print('build ContractSellerStop')
+    # contractsellerstop = s.build_agents(ContractSellerStop, 'contractsellerstop', 2, parameters={'rounds': rounds})
+    # print('build ContractBuyerStop')
+    # contractbuyerstop = s.build_agents(ContractBuyerStop, 'contractbuyerstop', 2, parameters={'rounds': rounds})
+    # s.build_agents(ExpiringCapital, 1)
+    # s.build_agents(GiveExpiringCapital, 2)
     print('build BuyExpiringCapital')
     buyexpiringcapital = s.build_agents(
         BuyExpiringCapital, 'buyexpiringcapital', 2, parameters={'rounds': rounds})
@@ -126,17 +126,17 @@ def main(processes, rounds):
         utilityhousehold.do('consumption')
         (messagea + messageb).do('sendmsg')
         (messageb + messagea).do('recvmsg')
- #       (contractbuyer + contractbuyerstop).do('request_offer')
- #       (contractseller + contractsellerstop).do('make_offer')
- #       contractagents.do('accept_offer')
- #       contractagents.do('deliver')
- #       contractagents.do('pay')
- #       contractagents.do('control')
+        # (contractbuyer + contractbuyerstop).do('request_offer')
+        # (contractseller + contractsellerstop).do('make_offer')
+        # contractagents.do('accept_offer')
+        # contractagents.do('deliver')
+        # contractagents.do('pay')
+        # contractagents.do('control')
         killer.do('kill')
         killer.do('send_message')
         victim.do('am_I_dead')
 
-        #('expiringcapital', 'go'),
+        # ('expiringcapital', 'go'),
 
         some.do('all_tests_completed')
         addagent.do('add_agent')

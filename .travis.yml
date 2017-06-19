@@ -1,5 +1,5 @@
 # dist: trusty # KVM Setup
-# osx build as per https://github.com/travis-ci/travis-ci/issues/2312#issuecomment-247206351
+# osx build as per https://github.com/travis-ci/travis-ci/issues/2312#issuecomment-289140791
 
 language: python
 notifications:
@@ -9,8 +9,10 @@ env:
   global:
     - CI=true
 
-cache: pip
-    #directories:
+cache:
+    pip: true
+    directories:
+    - $HOME/Library/Caches/Homebrew
     #di- $HOME/.cache  # cython cache
     #di- $HOME/.ccache  # compiler cache
 
@@ -23,26 +25,23 @@ matrix:
       dist: trusty
       python: "2.7"
     - os: osx
+      osx_image: xcode8.3
       sudo: required
       language: generic
+      before_install:
+      #  Manually install python on osx
+      - brew update
+      - brew install python3
+      - virtualenv env -p python3
+      - source env/bin/activate
 
-#  Manually install python on osx
-install: |
-  if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
-
-      brew update;
-      brew install python3;
-      python3 -m venv venv;
-      source venv/bin/activate;
-      pip install -r requirements.txt
-      python setup.py install
-
-  else
-      pip install -r requirements.txt
-      python setup.py install
-  fi
+install:
+  - pip install -r requirements.txt
+  - pip install flake8
+  - pip install .
 
 script:
+  - flake8 . --ignore=F403,E501,E123,E128,F401,F405,E402,F821,F841,E721,E265,F811 --exclude=docs,build,env
   - cd examples/2sectors && python start.py
   - cd -
   - python unittest/start.py

@@ -10,13 +10,13 @@ consume. ABCE makes sure the economy is closed, that means no goods appear, disa
 or are otherwise unaccounted for. It is therefore particularly useful for macro models.
 ABCE's model output are compatible with R, Excel and sqlite.
 
-.. image:: https://travis-ci.org/DavoudTaghawiNejad/abce.svg?branch=master
+.. image:: https://travis-ci.org/ABC-E/abce.svg?branch=master
    :alt: ABCE build status on Travis CI
-   :target: https://travis-ci.org/DavoudTaghawiNejad/abce
+   :target: https://travis-ci.org/ABC-E/abce
 
-.. image:: https://img.shields.io/appveyor/ci/DavoudTaghawiNejad/abce.svg
+.. image:: https://img.shields.io/appveyor/ci/ABC-E/abce.svg
    :alt: ABCE build status on Appveyor CI
-   :target: https://ci.appveyor.com/project/DavoudTaghawiNejad/abce
+   :target: https://ci.appveyor.com/project/ABC-E/abce
 
 .. image:: https://img.shields.io/pypi/v/abce.svg
    :alt:  Pypi version

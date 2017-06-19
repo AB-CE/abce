@@ -1,18 +1,32 @@
 from builtins import list
 from collections import defaultdict
 from pprint import pprint
+from functools import partial
+
+
+def get_methods(a_class):
+    return [method for method in a_class.__dict__.keys() if
+            callable(getattr(a_class, method)) and not
+            method.startswith('_') and method != 'init']
 
 
 class Group(object):
-    def __init__(self, sim, groups):
+    def __init__(self, sim, groups, agent_class=None):
         self.sim = sim
         self.num_managers = sim.processes
         self._processor_groups = sim._processor_groups
         self.groups = groups
         self.do = self.execute_parallel if sim.processes > 1 else self.execute_serial
 
+        self.agent_class = agent_class
+        methods = get_methods(agent_class)
+        for base in agent_class.__bases__:
+            methods += get_methods(base)
+        for method in methods:
+            setattr(self, method, eval('lambda self=self, *argc, **kw: self.do("%s")' % method))
+
     def __add__(self, g):
-        return Group(self.sim, self.groups + g.groups)
+        return Group(self.sim, self.groups + g.groups, self.agent_class)
 
     def __radd__(self, g):
         if isinstance(g, Group):

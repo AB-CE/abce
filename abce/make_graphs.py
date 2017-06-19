@@ -18,9 +18,9 @@ def make_title(title, col):
 
 def make_aggregate_graphs(df, filename, ignore_initial_rounds):
     print('make_aggregate_graphs', filename)
-    columns = [col for col in df.columns if not col.endswith('_std')
-               and not col.endswith('_mean')
-               and not col in ['index', 'round', 'id', 'date']]
+    columns = [col for col in df.columns if not col.endswith('_std') and
+               not col.endswith('_mean') and
+               col not in ['index', 'round', 'id', 'date']]
     plots = {}
     try:
         index = df['date'].apply(lambda sdate: datetime.date(

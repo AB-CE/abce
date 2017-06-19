@@ -2,7 +2,7 @@ from __future__ import division
 from __future__ import print_function
 import abce
 from tools import *
-from abce.firm import Firm
+from abce.agents import Firm
 
 
 class ProductionFirm(abce.Agent, Firm):

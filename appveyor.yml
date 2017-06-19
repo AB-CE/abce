@@ -1,4 +1,6 @@
 version: "{build}"
+#image: Visual Studio 2017
+# see https://github.com/ogrisel/python-appveyor-demo/blob/master/appveyor.yml
 os: Windows Server 2012 R2
 environment:
   matrix:
@@ -14,10 +16,13 @@ init:
 
 install:
   - "set PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
-  - "pip install -e ."
+  - "pip install -r requirements.txt"
+  - "pip install ."
 
 test_script:
-  - "pip --version"
   - ps: "cd examples/2sectors"
-#- ps: "cd test"
   - "python start.py"
+    #- ps: "cd ../../unittest"
+    #- "python start.py"
+    #- "python examples/2sectors/start.py"
+    #- "python unittest/start.py"

@@ -114,7 +114,7 @@ class Credit(object):
             self._contracts_deliver[contract.good][contract.id] = contract
             self._send(contract.sender_group,
                        contract.sender_id, '_ac', contract)
-        if contract is Credit:
+        # if contract is Credit:
 
         return contract
 

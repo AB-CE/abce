@@ -59,7 +59,7 @@ class Database(multiprocessing.Process):
         self.database.execute('PRAGMA count_changes=OFF')
         self.database.execute('PRAGMA temp_store=OFF')
         self.database.execute('PRAGMA default_temp_store=OFF')
-        #self.database.execute('PRAGMA cache_size = -100000')
+        # self.database.execute('PRAGMA cache_size = -100000')
         if self.trade_log:
             trade_ex_str = self.add_trade_log()
         for table_name in self.panels:

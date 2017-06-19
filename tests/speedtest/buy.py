@@ -74,8 +74,8 @@ class Buy(Agent):
                     assert self.possession('cookies') == offer['quantity']
                     self.tests['accepted'] = True
                 else:
-                    test = (self.money - offer['final_quantity']
-                            * offer['price']) - self.possession('money')
+                    test = (self.money - offer['final_quantity'] *
+                            offer['price']) - self.possession('money')
                     assert is_zero(test), test
                     test = self.possession('cookies') - offer['final_quantity']
                     assert is_zero(test), test

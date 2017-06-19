@@ -92,7 +92,7 @@ class Database(object):
                 the variable = value to log
         """
         self.database_connection.put(
-            ["log",  self.group, {'id': self.id, name: value}, str(self.round)])
+            ["log", self.group, {'id': self.id, name: value}, str(self.round)])
 
     def log_dict(self, action_name, data_to_log):
         """ same as the log function, only that it supports nested dictionaries
