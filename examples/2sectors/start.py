@@ -28,14 +28,14 @@ def main(simulation_parameters):
     for r in w.next_round():
         # to access round, just get the value of w.round
         # to access its datetime version, use w._round # todo, better naming
-        households.do('sell_labor')
-        firms.do('buy_inputs')
-        firms.do('production')
-        firms.do('panel')
-        firms.do('sell_intermediary_goods')
-        households.do('buy_intermediary_goods')
-        households.do('panel')
-        households.do('consumption')
+        households.sell_labor()
+        firms.buy_inputs()
+        firms.production()
+        firms.panel()
+        firms.sell_intermediary_goods()
+        households.buy_intermediary_goods()
+        households.panel()
+        households.consumption()
 
 
 if __name__ == '__main__':

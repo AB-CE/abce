@@ -598,7 +598,7 @@ class Simulation(object):
                          agent_params_from_sim=agent_params_from_sim)
 
             self.num_of_agents_in_group[group_name] = num_agents_this_group
-        return Group(self, [group_name])
+        return Group(self, [group_name], AgentClass)
 
     def add_and_delete_agents(self, round):
         for command, agent_details in self.messagess[-1]:
