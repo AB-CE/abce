@@ -23,6 +23,7 @@ def compute_gini(model):
     B = sum(xi * (N - i) for i, xi in enumerate(x)) / (N * sum(x))
     return 1 + (1 / N) - 2 * B
 
+
 class MoneyModel(abce.Simulation):  # The actual simulation must inherit from Simulation
     """ The actual simulation. In order to interoperate with MESA the simulation
     needs to be encapsulated in a class. __init__ sets the simulation up. The step
@@ -57,6 +58,7 @@ class MoneyModel(abce.Simulation):  # The actual simulation must inherit from Si
         # agents report there wealth in a list self.wealth
         self.datacollector.collect(self)
         # collects the data
+
 
 if __name__ == '__main__':
     """ If you run model.py the simulation is executed without graphical

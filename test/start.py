@@ -9,6 +9,8 @@ simulation_parameters = {'name': 'test_sim_1_',
                          'num_rounds': 30,
                          'trade_logging': 'individual',
                          'trade_repetitions': 10}
+
+
 def main():
     for params in simulation_parameters:
         s = Simulation(params)
@@ -25,6 +27,7 @@ def main():
                 h.do('checking')
 
         s.run()
+
 
 if __name__ == '__main__':
     mp.freeze_support()
