@@ -144,7 +144,8 @@ class FirmMultiTechnologies(object):
             def production(self):
                 self.produce(self.production_function, {'a' : 1, 'b' : 2}
         """
-        def dict_formula(goods): return {output: formula(goods)}
+        def dict_formula(goods):
+            return {output: formula(goods)}
         production_function = ProductionFunction()
         production_function.production = dict_formula
         production_function.use = use
@@ -241,7 +242,8 @@ class FirmMultiTechnologies(object):
             return multiplier * reduce(operator.mul, [goods[name] ** exponent
                                                       for name, exponent in exponents.items()])
 
-        def dict_formula(goods): return {output: production_function(goods)}
+        def dict_formula(goods):
+            return {output: production_function(goods)}
         production_function.production = dict_formula
         production_function.use = {name: 1 for name in list(exponents.keys())}
         return production_function
@@ -298,7 +300,8 @@ class FirmMultiTechnologies(object):
                                          for name, share in shares.items()]) ** (1 / gamma)
             production_function.use = {name: 1 for name in list(shares.keys())}
 
-        def dict_formula(goods): return {output: production_function(goods)}
+        def dict_formula(goods):
+            return {output: production_function(goods)}
         production_function.production = dict_formula
         return production_function
 
@@ -334,7 +337,8 @@ class FirmMultiTechnologies(object):
         def production_function(goods):
             return min([goods[name] * factor for name, factor in utilization_quantities.items()])
 
-        def dict_formula(goods): return {output: production_function(goods)}
+        def dict_formula(goods):
+            return {output: production_function(goods)}
         production_function.production = dict_formula
         production_function.use = {
             name: 1 for name in list(utilization_quantities.keys())}

@@ -39,5 +39,4 @@ class Firm(abce.Agent, abce.Firm):
         if self.inventory < 4:
             self.price += random.random() * 0.01  # random number [0, 0.1]
         if self.inventory > 6:
-            self.price = max(0.01, self.price - random.random()
-                             * 0.01)  # random number [0, 0.1]
+            self.price = max(0.01, self.price - random.random() * 0.01)  # random number [0, 0.1]

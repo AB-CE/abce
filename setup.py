@@ -41,5 +41,3 @@ setup(name='abce',
       ext_modules=ext_modules,
       use_2to3=True,
       cmdclass=cmdclass)
-
-

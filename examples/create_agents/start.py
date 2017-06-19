@@ -5,13 +5,13 @@ from messenger import Messenger
 from abce import Simulation, gui
 
 simulation_parameters = {'name': 'name',
-                         'rounds':  10,
+                         'rounds': 10,
                          'firms': 1,
                          'households': 0}
 
 # commend out simulation.graphs() and uncomment
 # this line to run the simulation with a Graphical
-#@gui(simulation_parameters) # User Interface
+# @gui(simulation_parameters) # User Interface
 
 
 def main(simulation_parameters):

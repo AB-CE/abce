@@ -46,7 +46,6 @@ import random
 from abce.expiringgood import ExpiringGood
 from pprint import pprint
 import traceback
-import random
 from abce.notenoughgoods import NotEnoughGoods
 import datetime
 

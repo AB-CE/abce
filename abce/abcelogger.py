@@ -90,7 +90,7 @@ class AbceLogger(multiprocessing.Process):
 
         if self.savefig:
             try:
-                if self.pos is None or self.pos_fixed == False:
+                if self.pos is None or not self.pos_fixed:
                     # positions for all nodes
                     self.pos = nx.spring_layout(network, pos=self.pos)
                 plt.figure(1, figsize=self.figsize)

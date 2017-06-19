@@ -5,11 +5,11 @@ from random import shuffle
 
 class MyAgent(Agent):
     def init(self, simulation_parameters, agent_parameters):
-        #print("m", self.id)
+        # print("m", self.id)
         pass
 
     def compute(self):
-        #print('here', self.id)
+        # print('here', self.id)
         l = list(range(1))
         shuffle(l)
         max(l)

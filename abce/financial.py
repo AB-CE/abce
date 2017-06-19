@@ -1,4 +1,4 @@
-class Credit(self):
+class Credit:
     def __init__(self, lender, borrower, amount, interest, issued):
         self.lender = lender
         self.borrower = borrower
@@ -27,3 +27,4 @@ class Financial:
         credit_request.interest = interest_rate
 
     def accept_credit(self, credit_request):
+        pass

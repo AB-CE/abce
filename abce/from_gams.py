@@ -15,7 +15,8 @@ from builtins import object
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations under
 # the License.
-from pyparsing import *
+from pyparsing import (Word, Suppress, Optional, OneOrMore, ParseException,
+                       alphas, alphanums, nums)
 
 
 class HouseholdFromGams(object):
@@ -56,19 +57,22 @@ Ot = Optional
 decimalNumber = Word(nums, nums + ",") + Optional("." + OneOrMore(Word(nums)))
 
 
-def joinTokens(tokens): return "".join(tokens)
+def joinTokens(tokens):
+    return "".join(tokens)
 
 
 decimalNumber.setParseAction(joinTokens)
 
 
-def stripCommas(tokens): return tokens[0].replace(",", "")
+def stripCommas(tokens):
+    return tokens[0].replace(",", "")
 
 
 decimalNumber.addParseAction(stripCommas)
 
 
-def convertToFloat(tokens): return float(tokens[0])
+def convertToFloat(tokens):
+    return float(tokens[0])
 
 
 decimalNumber.addParseAction(convertToFloat)
