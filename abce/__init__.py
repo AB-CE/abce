@@ -62,7 +62,7 @@ from abce.notenoughgoods import NotEnoughGoods
 from abce.agents import (FirmMultiTechnologies, ProductionFunction, Firm, Household,
                          Utility_Function, SilentDeadAgent, LoudDeadAgent)
 from .quote import Quote
-from .contracting import Contracting
+from abce.contracts import Contracting
 import json
 from . import abcegui
 from .processorgroup import ProcessorGroup
