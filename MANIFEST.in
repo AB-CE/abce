@@ -1,6 +1,7 @@
 include README.rst
 include template/*
 include unittest/*
+include abce/agents/*
 recursive-include example *
 recursive-include abce/templates *
 recursive-include abce/static *
