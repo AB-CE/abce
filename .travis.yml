@@ -9,8 +9,10 @@ env:
   global:
     - CI=true
 
-cache: pip
-    #directories:
+cache:
+    pip: true
+    directories:
+    - $HOME/Library/Caches/Homebrew
     #di- $HOME/.cache  # cython cache
     #di- $HOME/.ccache  # compiler cache
 
@@ -38,7 +40,7 @@ install:
   - pip install .
 
 script:
-  - flake8 . --ignore=F403,E501,E123,E128,F401,F405,E402,F821,F841,E721,E265,F811 --exclude=docs,build
+  - flake8 . --ignore=F403,E501,E123,E128,F401,F405,E402,F821,F841,E721,E265,F811 --exclude=docs,build,env
   - cd examples/2sectors && python start.py
   - cd -
   - python unittest/start.py
