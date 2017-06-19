@@ -16,7 +16,7 @@ def main():
     youragents = s.build_agents(YourAgent, 'youragent', 50000)
 
     for r in s.next_round():
-        #(myagents+youragents).do('compute')
+        # (myagents+youragents).do('compute')
         youragents.do('s')
         myagents.do('g')
 
