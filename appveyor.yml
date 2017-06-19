@@ -1,10 +1,11 @@
 version: "{build}"
-os: Windows Server 2012 R2
+image: Visual Studio 2017
+platform: x64
 environment:
   matrix:
-    - PYTHON: "C:\\Python35"
+    - PYTHON: "C:\\Python35-x64"
       PYTHON_VERSION: 3.5
-    - PYTHON: "C:\\Python34"
+    - PYTHON: "C:\\Python34-x64"
       PYTHON_VERSION: 3.4
 
 build: none
@@ -18,7 +19,5 @@ install:
 
 test_script:
   - "pip --version"
-  - ps: "cd examples/2sectors"
-  - "python start.py"
-  - ps: "cd -"
+  - "python examples/2sectors/start.py"
   - "python unittest/start.py"
