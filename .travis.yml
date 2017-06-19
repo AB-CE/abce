@@ -25,6 +25,7 @@ matrix:
       dist: trusty
       python: "2.7"
     - os: osx
+      osx_image: xcode8.3
       sudo: required
       language: generic
       before_install:
