@@ -79,7 +79,7 @@ class Firm(FirmMultiTechnologies):
 
     def sufficient_goods(self, input_goods):
         """ checks whether the agent has all the goods in the vector input """
-        FirmMultiTechnologies.sufficient_goods(self)
+        FirmMultiTechnologies.sufficient_goods(self, input_goods)
 
     def set_production_function(self, formula, output, use):
         """  Creates the firm's production functions from a formula.
@@ -371,10 +371,6 @@ class Firm(FirmMultiTechnologies):
 
         """
         return self._predict_net_value(self._production_function, input_goods, price_vector)
-
-    def sufficient_goods(self, input_goods):
-        """ checks whether the agent has all the goods in the vector input """
-        self.sufficient_goods(sufficient_goods)
 
 
 class ProductionFunction(object):
