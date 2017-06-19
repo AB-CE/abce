@@ -61,7 +61,7 @@ from .group import Group
 from collections import defaultdict, OrderedDict
 from .firm import Firm
 from .quote import Quote
-from .contracting import Contracting
+from abce.contracts import Contracting
 import json
 from . import abcegui
 from .processorgroup import ProcessorGroup
