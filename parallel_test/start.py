@@ -4,18 +4,15 @@ from abce import Simulation
 
 
 def main():
-    parameters = {
-    'name': 'name',
-    'num_rounds': 50
-    }
+    parameters = {'name': 'name',
+                  'num_rounds': 50}
 
     s = Simulation(parameters)
-    action_list = [('myagent', 'compute')]
-    s.add_action_list(action_list)
 
-    s.build_agents(MyAgent, 10000)
+    a = s.build_agents(MyAgent, 10000)
+    for r in s.next_round():
+        a.do("compute")
 
-    s.run()
 
 if __name__ == '__main__':
     main()
