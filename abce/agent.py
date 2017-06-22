@@ -97,9 +97,11 @@ class Inventory(defaultdict):
                 raise NotEnoughGoods(self.name, good, quantity - available)
             self[good] -= quantity
 
-    def transform(self, ingredient, units, product):
-        self.create(product, float(units) * self[ingredient])
-        self.destroy(self[ingredient])
+    def transform(self, ingredient, units, product, quantity=None):
+        if quantity is None:
+            quantity = self[ingredient]
+        self.destroy(ingredient, quantity)
+        self.create(product, float(units) * quantity)
 
     def _advance_round(self):
         # expiring goods

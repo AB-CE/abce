@@ -382,7 +382,7 @@ class Trade:
             quantity = available
 
         offer_id = self._offer_counter()
-        self._haves[good] -= quantity
+        self._haves.destroy(good, quantity)
         cdef Offer offer = Offer(self.group,
                                  self.id,
                                  receiver_group,
@@ -449,7 +449,7 @@ class Trade:
             money_amount = available
 
         offer_id = self._offer_counter()
-        self._haves['money'] -= money_amount
+        self._haves.destroy('money', money_amount)
         cdef Offer offer = Offer(self.group,
                                  self.id,
                                  receiver_group,
@@ -533,8 +533,7 @@ class Trade:
                 raise NotEnoughGoods(self.name, 'money', money_amount - available)
             if money_amount > available:
                 money_amount = available
-            self._haves[offer.good] += quantity
-            self._haves['money'] -= quantity * offer.price
+            self._haves.transform('money', offer.price, offer.good, quantity)
         else:
             assert quantity > - epsilon, 'quantity %.30f is smaller than 0 - epsilon (%.30f)' % (quantity, - epsilon)
             if quantity < 0:
@@ -544,8 +543,7 @@ class Trade:
                 raise NotEnoughGoods(self.name, offer.good, quantity - available)
             if quantity > available:
                 quantity = available
-            self._haves[offer.good] -= quantity
-            self._haves['money'] += quantity * offer.price
+            self._haves.transform(offer.good, offer.price, 'money', quantity)
         offer.final_quantity = quantity
         self._send(offer.sender_group, offer.sender_id, '_p', (offer.id, quantity))
         del self._open_offers[offer.good][offer.id]
@@ -584,11 +582,11 @@ class Trade:
         cdef Offer offer = self.given_offers[offer_id_final_quantity[0]]
         offer.final_quantity = offer_id_final_quantity[1]
         if offer.buysell == 115:
-            self._haves['money'] += offer.final_quantity * offer.price
-            self._haves[offer.good] += offer.quantity - offer.final_quantity
+            self._haves.create('money', offer.final_quantity * offer.price)
+            self._haves.create(offer.good, offer.quantity - offer.final_quantity)
         else:
-            self._haves[offer.good] += offer.final_quantity
-            self._haves['money'] += (offer.quantity - offer.final_quantity) * offer.price
+            self._haves.create(offer.good, offer.final_quantity)
+            self._haves.create('money', (offer.quantity - offer.final_quantity) * offer.price)
         offer.status = "accepted"
         offer.status_round = self.round
         del self.given_offers[offer.id]
@@ -615,9 +613,9 @@ class Trade:
         """
         cdef Offer offer = self.given_offers[offer_id]
         if offer.buysell == 115:
-            self._haves[offer.good] += offer.quantity
+            self._haves.create(offer.good, offer.quantity)
         else:
-            self._haves['money'] += offer.quantity * offer.price
+            self._haves.create('money', offer.quantity * offer.price)
         offer.status = "rejected"
         offer.status_round = self.round
         offer.final_quantity = 0
@@ -626,9 +624,9 @@ class Trade:
     def _delete_given_offer(self, offer_id):
         cdef Offer offer = self.given_offers.pop(offer_id)
         if offer.buysell == 115:
-            self._haves[offer.good] += offer.quantity
+            self._haves.create(offer.good, offer.quantity)
         else:
-            self._haves['money'] += offer.quantity * offer.price
+            self._haves.create('money', offer.quantity * offer.price)
 
     def give(self, receiver_group, receiver_id, good, double quantity, double epsilon=epsilon):
         """ gives a good to another agent
@@ -670,7 +668,7 @@ class Trade:
             raise NotEnoughGoods(self.name, good, quantity - available)
         if quantity > available:
             quantity = available
-        self._haves[good] -= quantity
+        self._haves.destroy(good, quantity)
         self._send(receiver_group, receiver_id, '_g', [good, quantity])
         return {good: quantity}
 
@@ -728,7 +726,7 @@ class Trade:
             elif typ == '_r':
                 self._receive_reject(msg)
             elif typ == '_g':
-                self._haves[msg[0]] += msg[1]
+                self._haves.create(msg[0], msg[1])
             elif typ == '_q':
                 self._quotes[msg.id] = msg
             elif typ == '!o':
@@ -741,10 +739,10 @@ class Trade:
                     self._contracts_deliver[contract.good][contract.id] = contract
             elif typ == '_dp':
                 if msg.pay_group == self.group and msg.pay_id == self.id:
-                    self._haves[msg.good] += msg.quantity
+                    self._haves.create(msg.good, msg.quantity)
                     self._contracts_pay[msg.good][msg.id].delivered.append(self.round)
                 else:
-                    self._haves['money'] += msg.quantity * msg.price
+                    self._haves.create('money', msg.quantity * msg.price)
                     self._contracts_deliver[msg.good][msg.id].paid.append(self.round)
 
             elif typ == '!d':
