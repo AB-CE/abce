@@ -10,6 +10,9 @@ consume. ABCE makes sure the economy is closed, that means no goods appear, disa
 or are otherwise unaccounted for. It is therefore particularly useful for macro models.
 ABCE's model output are compatible with R, Excel and sqlite.
 
+.. image:: https://zenodo.org/badge/4157636.svg
+   :target: https://zenodo.org/badge/latestdoi/4157636
+
 .. image:: https://travis-ci.org/AB-CE/abce.svg?branch=master
    :alt: ABCE build status on Travis CI
    :target: https://travis-ci.org/AB-CE/abce
@@ -29,3 +32,32 @@ ABCE's model output are compatible with R, Excel and sqlite.
 
 **The full documentation:** https://abce.readthedocs.io
 
+--------
+Features
+--------
+
+- Built-in standard actions for economic agents: `get_offers`, `sell`/`buy`/`retract`,
+  `accept`/`reject`/`take` -- optimized in Cython
+- In the simulation, goods are ontological object instead of epistemological
+  information that lives in a ledger
+- Stock-flow consistent model
+- Discrete-time scheduler
+- Parallel execution of actions within a subround via `multiprocessing`
+- Browser-based GUI via `@gui` decorator
+
+
+------------
+Installation
+------------
+
+You can quickly install ABCE from a terminal,
+
+```
+$ pip install git+https://github.com/ABC-E/abce
+```
+
+or from this repo
+
+```
+$ pip install .
+```
