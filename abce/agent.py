@@ -56,9 +56,9 @@ class Inventory(defaultdict):
     def __init__(self, name):
         super(Inventory, self).__init__(float)
         self.name = name
+        self.contracts = set()
         self._expiring_goods = []
         self._perishable = []
-        #self.goods = defaultdict(float)
 
     def create(self, good, quantity):
         """ creates quantity of the good out of nothing
@@ -97,11 +97,11 @@ class Inventory(defaultdict):
                 raise NotEnoughGoods(self.name, good, quantity - available)
             self[good] -= quantity
 
-    def transform(self, ingredient, units, product, quantity=None):
+    def transform(self, ingredient, unit, product, quantity=None):
         if quantity is None:
             quantity = self[ingredient]
         self.destroy(ingredient, quantity)
-        self.create(product, float(units) * quantity)
+        self.create(product, float(unit) * quantity)
 
     def _advance_round(self):
         # expiring goods
@@ -112,6 +112,47 @@ class Inventory(defaultdict):
         for good in self._perishable:
             if good in self:
                 self.destroy(good)
+
+    # contracts-specific methods
+    def add_contract(self, entry):
+        assert entry not in self.contracts
+        self.contracts.add(entry)
+
+    def remove_contract(self, entry):
+        self.contracts.remove(entry)
+
+    def calculate_netvalue(self, parameters, value_functions):
+        return (sum(value_functions[entry.__class__](entry, parameters) for entry in self.contracts) +
+                sum(quantity * parameters['good_prices'][name] for name, quantity in self.items()))
+
+    def calculate_assetvalue(self, parameters, value_functions):
+        return (sum(max(value_functions[entry.__class__](entry, parameters), 0)for entry in self.contracts) +
+                sum(quantity * parameters[('price', name)]
+                    for name, quantity in self.items()
+                    if parameters[('price', name)] > 0))
+
+    def calculate_liablityvalue(self, parameters, value_functions):
+        return (sum(min(value_functions[entry.__class__](entry, parameters), 0)for entry in self.contracts) +
+                sum(quantity * parameters[('price', name)]
+                    for name, quantity in self.goods.items()
+                    if parameters[('price', name)] < 0))
+
+    def calculate_valued_assets(self, parameters, value_functions):
+        ret = {str(entry): value_functions[entry.__class__](entry, parameters)
+               for entry in self.contracts
+               if value_functions[entry.__class__](entry, parameters) >= 0}
+        ret.update({name: quantity for name, quantity in self.goods.items()
+                    if parameters[('price', name)] >= 0})
+        return ret
+
+    def calculate_valued_liablities(self, parameters, value_functions):
+        ret = {str(entry): value_functions[entry.__class__](entry, parameters)
+               for entry in self.contracts
+               if value_functions[entry.__class__](entry, parameters) < 0}
+        ret.update({name: quantity
+                    for name, quantity in self.goods.items()
+                    if parameters[('price', name)] < 0})
+        return ret
 
 
 class Agent(Database, NetworkLogger, Trade, Messaging):
