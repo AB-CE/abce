@@ -383,7 +383,7 @@ class Simulation(object):
         if self.num_of_agents_in_group:
             raise SystemExit(
                 "WARNING: panel(...) must be called before the agents are build")
-        self._db.add_panel(group)
+        self._db.add_panel(group, possessions + variables)
         self.variables_to_track_panel[group] = variables
         self.possessins_to_track_panel[group] = possessions
 

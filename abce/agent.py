@@ -360,20 +360,18 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
 
     def panel(self):
         """ use in action list to create panel data """
-        data_to_track = {}
+        data_to_send = [self.id, self.round]
         for possession in self.possessions_to_track_panel:
-            data_to_track[possession] = self._haves[possession]
+            data_to_send.append(self._haves[possession])
 
         for variable in self.variables_to_track_panel:
             try:
-                data_to_track[variable] = self.__dict__[variable]
+                data_to_send.append(self.__dict__[variable])
             except KeyError:
-                pass
+                data_to_send.append(0.0)
         self.database_connection.put(["panel",
-                                      data_to_track,
-                                      str(self.id),
                                       self.group,
-                                      str(self.round)])
+                                      data_to_send])
 
     def aggregate(self):
         """ use in action list to create data """
