@@ -25,7 +25,7 @@ class Database(multiprocessing.Process):
     def __init__(self, directory, in_sok, trade_log):
         multiprocessing.Process.__init__(self)
         self.directory = directory
-        self.panels = []
+        self.panels = {}
         self.aggregates = []
         self.in_sok = in_sok
         self.data = {}
@@ -42,8 +42,8 @@ class Database(multiprocessing.Process):
         self.database.execute("CREATE TABLE " + table_name +
                               "(round INT, id INT, PRIMARY KEY(round, id))")
 
-    def add_panel(self, group):
-        self.panels.append('panel_' + group)
+    def add_panel(self, group, column_names):
+        self.panels['panel_' + group] = ['id', 'round'] + list(column_names)
 
     def add_aggregate(self, group):
         table_name = 'aggregate_' + group
@@ -63,8 +63,9 @@ class Database(multiprocessing.Process):
         if self.trade_log:
             trade_ex_str = self.add_trade_log()
         for table_name in self.panels:
+            panel_str = ' INT,'.join(self.panels[table_name]) + ' INT,'
             self.database.execute(
-                "CREATE TABLE " + table_name + "(round INT, id INT, PRIMARY KEY(round, id))")
+                "CREATE TABLE " + table_name + "(%s PRIMARY KEY(round, id))" % panel_str)
         for table_name in self.aggregates:
             self.database.execute(
                 "CREATE TABLE " + table_name + "(round INT, PRIMARY KEY(round))")
@@ -79,13 +80,9 @@ class Database(multiprocessing.Process):
             if msg == "close":
                 break
 
-            if msg[0] == 'panel':
-                data_to_write = msg[1]
-                data_to_write['id'] = msg[2]  # int
-                group = msg[3]
-                data_to_write['round'] = msg[4]  # int
-                table_name = 'panel_' + group
-                self.write(table_name, data_to_write)
+            elif msg[0] == 'panel':
+                    table_name = 'panel_' + msg[1]
+                    self.write_panel(table_name, msg[2])
 
             elif msg[0] == 'aggregate':
                 data_to_write = msg[1]
@@ -123,7 +120,6 @@ class Database(multiprocessing.Process):
                     self.add_log(group_name)
                     self.write(table_name, data_to_write)
                 except sqlite3.InterfaceError:
-                    print((table_name, data_to_write))
                     raise SystemExit(
                         'InterfaceError: data can not be written. If nested try: self.log_nested')
             else:
@@ -152,6 +148,14 @@ class Database(multiprocessing.Process):
             self.new_column(table_name, data_to_write)
             self.write_or_update(table_name, data_to_write)
         self.database.execute(update_str, rows_to_write)
+
+    def write_panel(self, table_name, rows_to_write):
+        ex_str = "INSERT INTO " + table_name + \
+            "(" + ','.join(list(self.panels[table_name])) + ") VALUES (%s)"
+
+        format_strings = ','.join(['?'] * len(rows_to_write))
+        self.database.execute(ex_str % format_strings, rows_to_write)
+
 
     def write(self, table_name, data_to_write):
         try:
