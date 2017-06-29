@@ -158,7 +158,7 @@ cdef class Offer:
                     self.buysell, self.status, self.final_quantity, self.id,
                     self.made, self.open_offer_status, self.status_round)
 
-class Trade:
+cdef class Trade:
     """ Agents can trade with each other. The clearing of the trade is taken care
     of fully by ABCE.
     Selling a good works in the following way:
@@ -554,7 +554,18 @@ class Trade:
         else:
             return {offer.good: quantity, 'money': - money_amount}
 
-    def reject(self, Offer offer):
+
+    def _reject_polled_but_not_accepted_offers(self):
+        cdef Offer offer
+        to_reject = []
+        for offers in list(self._open_offers.values()):
+            for offer in list(offers.values()):
+                if offer.open_offer_status == 'polled':
+                    to_reject.append(offer)
+        for offer in to_reject:
+            self.reject(offer)
+
+    cpdef reject(self, Offer offer):
         """  Rejects the offer offer
 
         Args:
