@@ -19,6 +19,8 @@ from __future__ import print_function
 import multiprocessing
 import sqlite3
 from collections import defaultdict
+from .online_variance import OnlineVariance
+
 
 
 class Database(multiprocessing.Process):
@@ -26,13 +28,14 @@ class Database(multiprocessing.Process):
         multiprocessing.Process.__init__(self)
         self.directory = directory
         self.panels = {}
-        self.aggregates = []
+        self.aggregates = {}
         self.in_sok = in_sok
         self.data = {}
-        self.aggregate_round = {}
         self.trade_log = trade_log
 
         self.ex_str = {}
+        self.aggregation = {}
+        self.round = 0
 
     def add_trade_log(self):
         table_name = 'trade'
@@ -45,13 +48,14 @@ class Database(multiprocessing.Process):
                               "(round INT, id INT, PRIMARY KEY(round, id))")
 
     def add_panel(self, group, column_names):
-        self.panels['panel_' + group] = ['id', 'round'] + list(column_names)
+        self.panels['panel_' + group] = list(column_names)
 
-    def add_aggregate(self, group):
+    def add_aggregate(self, group, column_names):
         table_name = 'aggregate_' + group
-        self.aggregates.append(table_name)
-        self.data[table_name] = defaultdict(list)
-        self.aggregate_round[table_name] = None
+        self.aggregation[table_name] = OnlineVariance(len(column_names))
+        self.aggregates['aggregate_' + group] = list(column_names)
+        self.aggregates['aggregate_' + group + '_mean'] = list(column_names)
+        self.aggregates['aggregate_' + group + '_std'] = list(column_names)
 
     def run(self):
         self.db = sqlite3.connect(self.directory + '/database.db')
@@ -65,18 +69,25 @@ class Database(multiprocessing.Process):
         if self.trade_log:
             trade_ex_str = self.add_trade_log()
         for table_name in self.panels:
-            panel_str = ' INT,'.join(self.panels[table_name]) + ' INT,'
+            panel_str = ' FLOAT,'.join(self.panels[table_name]) + ' FLOAT,'
 
-            self.database.execute(
-                "CREATE TABLE " + table_name + "(%s PRIMARY KEY(round, id))" % panel_str)
+            create_str = "CREATE TABLE " + table_name + "(id INT, round INT, %s PRIMARY KEY(round, id))" % panel_str
+            self.database.execute(create_str)
 
-            format_strings = ','.join(['?'] * len(self.panels[table_name]))
+            format_strings = ','.join(['?'] * (2 + len(self.panels[table_name])))
             self.ex_str[table_name] = "INSERT INTO " + table_name + \
-            "(" + ','.join(list(self.panels[table_name])) + ") VALUES (%s)" % format_strings
+            "(id, round, " + ','.join(list(self.panels[table_name])) + ") VALUES (%s)" % format_strings
 
         for table_name in self.aggregates:
-            self.database.execute(
-                "CREATE TABLE " + table_name + "(round INT, PRIMARY KEY(round))")
+            agg_str = ' FLOAT,'.join(self.aggregates[table_name]) + ' FLOAT,'
+
+            create_str = "CREATE TABLE " + table_name + "(round INT, %s PRIMARY KEY(round))" % agg_str
+            self.database.execute(create_str)
+
+            format_strings = ','.join(['?'] * (1 + len(self.aggregates[table_name])))
+            self.ex_str[table_name] = "INSERT INTO " + table_name + \
+            "(round, " + ','.join(list(self.aggregates[table_name])) + ") VALUES (%s)" % format_strings
+
 
         while True:
             try:
@@ -90,22 +101,20 @@ class Database(multiprocessing.Process):
 
             elif msg[0] == 'panel':
                     table_name = 'panel_' + msg[1]
-                    self.write_panel(table_name, msg[2])
+                    self.write_pa(table_name, msg[2])
 
             elif msg[0] == 'aggregate':
-                data_to_write = msg[1]
+                round = msg[1]
                 table_name = 'aggregate_' + msg[2]
-                round = msg[3]
-                if self.aggregate_round[table_name] == round:
-                    self.aggregate(table_name, data_to_write)
-                elif self.aggregate_round[table_name] is None:
-                    self.aggregate(table_name, data_to_write)
-                    self.aggregate_round[table_name] = round
+                if self.round == round:
+                    self.aggregation[table_name].update(msg[3])
                 else:
-                    self.write_aggregate(
-                        table_name, self.aggregate_round[table_name])
-                    self.aggregate_round[table_name] = round
-                    self.aggregate(table_name, data_to_write)
+                    self.write_pa(table_name, [self.round] + self.aggregation[table_name].sum())
+                    self.write_pa(table_name + '_mean', [self.round] + self.aggregation[table_name].mean())
+                    self.write_pa(table_name + '_std', [self.round] + self.aggregation[table_name].variance())
+                    self.aggregation[table_name].clear()
+                    self.round = round
+                    self.aggregation[table_name].update(msg[3])
 
             elif msg[0] == 'trade_log':
                 individual_log = msg[1]
@@ -157,8 +166,7 @@ class Database(multiprocessing.Process):
             self.write_or_update(table_name, data_to_write)
         self.database.execute(update_str, rows_to_write)
 
-    def write_panel(self, table_name, rows_to_write):
-
+    def write_pa(self, table_name, rows_to_write):
         self.database.execute(self.ex_str[table_name], rows_to_write)
 
 

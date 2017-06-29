@@ -424,7 +424,7 @@ class Simulation(object):
         if self.num_of_agents_in_group:
             raise SystemExit(
                 "WARNING: aggregate(...) must be called before the agents are build")
-        self._db.add_aggregate(group)
+        self._db.add_aggregate(group, possessions + variables)
         self.variables_to_track_aggregate[group] = variables
         self.possessions_to_track_aggregate[group] = possessions
 

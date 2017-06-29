@@ -14,11 +14,15 @@ try:
     from Cython.Distutils import build_ext
     ext_modules += [
         Extension("abce.trade", ["abce/trade.pyx"]),
+        Extension("abce.multicurrencytrade", ["abce/multicurrencytrade.pyx"]),
+        Extension("abce.online_variance", ["abce/online_variance.pyx"]),
     ]
     cmdclass.update({'build_ext': build_ext})
 except ImportError:
     ext_modules += [
         Extension("abce.trade", ["abce/trade.c"]),
+        Extension("abce.multicurrencytrade", ["abce/multicurrencytrade.c"]),
+        Extension("abce.online_variance", ["abce/online_variance.c"]),
     ]
 
 
