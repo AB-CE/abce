@@ -106,6 +106,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
 
         self.given_offers = OrderedDict()
         self._open_offers = defaultdict(dict)
+        self._polled_offers = {}
         self._offer_count = 0
         self._reject_offers_retrieved_end_subround = []
 
