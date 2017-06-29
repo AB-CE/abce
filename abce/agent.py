@@ -324,7 +324,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         try:
             self._clearing__end_of_subround(incomming_messages)
             self._out[-2] = (getattr(self, command)(), )
-            self.__reject_polled_but_not_accepted_offers()
+            self._reject_polled_but_not_accepted_offers()
         except KeyboardInterrupt:
             return None
         except:
@@ -390,14 +390,6 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
                                       self.group,
                                       self.round])
 
-    def __reject_polled_but_not_accepted_offers(self):
-        to_reject = []
-        for offers in list(self._open_offers.values()):
-            for offer in list(offers.values()):
-                if offer.open_offer_status == 'polled':
-                    to_reject.append(offer)
-        for offer in to_reject:
-            self.reject(offer)
 
     def _send(self, receiver_group, receiver_id, typ, msg):
         """ sends a message to 'receiver_group', who can be an agent, a group or
