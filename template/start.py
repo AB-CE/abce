@@ -8,6 +8,7 @@ simulation_parameters = {'name': 'name',
                          'firms': 5,
                          'households': 5}
 
+
 # commend out simulation.graphs() and uncomment
 # this line to run the simulation with a Graphical
 #@gui(simulation_parameters) # User Interface
@@ -42,6 +43,7 @@ def main(simulation_parameters):
         print(e)
     finally:
         simulation.graphs()
+
 
 if __name__ == '__main__':
     main(simulation_parameters)
