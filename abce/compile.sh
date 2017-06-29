@@ -1,2 +1,2 @@
 rm *.c
-python compile.py build_ext --inplace
+python3 compile.py build_ext --inplace
