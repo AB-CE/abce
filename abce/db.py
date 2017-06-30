@@ -22,7 +22,6 @@ from collections import defaultdict
 from .online_variance import OnlineVariance
 
 
-
 class Database(multiprocessing.Process):
     def __init__(self, directory, in_sok, trade_log):
         multiprocessing.Process.__init__(self)
@@ -76,7 +75,7 @@ class Database(multiprocessing.Process):
 
             format_strings = ','.join(['?'] * (2 + len(self.panels[table_name])))
             self.ex_str[table_name] = "INSERT INTO " + table_name + \
-            "(id, round, " + ','.join(list(self.panels[table_name])) + ") VALUES (%s)" % format_strings
+                "(id, round, " + ','.join(list(self.panels[table_name])) + ") VALUES (%s)" % format_strings
 
         for table_name in self.aggregates:
             agg_str = ' FLOAT,'.join(self.aggregates[table_name]) + ' FLOAT,'
@@ -86,8 +85,7 @@ class Database(multiprocessing.Process):
 
             format_strings = ','.join(['?'] * (1 + len(self.aggregates[table_name])))
             self.ex_str[table_name] = "INSERT INTO " + table_name + \
-            "(round, " + ','.join(list(self.aggregates[table_name])) + ") VALUES (%s)" % format_strings
-
+                "(round, " + ','.join(list(self.aggregates[table_name])) + ") VALUES (%s)" % format_strings
 
         while True:
             try:
@@ -169,7 +167,6 @@ class Database(multiprocessing.Process):
     def write_pa(self, table_name, rows_to_write):
         self.database.execute(self.ex_str[table_name], rows_to_write)
 
-
     def write(self, table_name, data_to_write):
         try:
             ex_str = "INSERT INTO " + table_name + \
@@ -213,6 +210,7 @@ class Database(multiprocessing.Process):
     def aggregate(self, table_name, data):
         for key in data:
             self.data[table_name][key].append(data[key])
+
 
 class TableMissing(sqlite3.OperationalError):
     def __init__(self, message):
