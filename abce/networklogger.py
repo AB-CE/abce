@@ -41,7 +41,7 @@ class NetworkLogger(object):
                 self.logger_connection.put(
                     ('node', self.round, ((self.group, self.id), color, style, shape)))
         except TypeError:
-            raise SystemExit(
+            raise Exception(
                 "ABCE Error: simulation.network(.) needs to be called in start.py")
 
     def log_network(self, list_of_nodes):
@@ -65,5 +65,5 @@ class NetworkLogger(object):
                 self.logger_connection.put(
                     ('edges', self.round, ((self.group, self.id), list_of_nodes)))
         except TypeError:
-            raise SystemExit(
+            raise Exception(
                 "ABCE Error: simulation.network(.) needs to be called in start.py")

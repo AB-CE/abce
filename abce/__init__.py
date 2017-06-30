@@ -184,7 +184,7 @@ class Simulation(object):
 
         self.trade_logging_mode = trade_logging
         if self.trade_logging_mode not in ['individual', 'group', 'off']:
-            SystemExit("trade_logging can be "
+            Exception("trade_logging can be "
                        "'group' (fast) or 'individual' (slow) or 'off'"
                        ">" + self.trade_logging_mode + "< not accepted")
 
@@ -275,7 +275,7 @@ class Simulation(object):
 
         """
         if self.num_of_agents_in_group:
-            raise SystemExit(
+            raise ExceptIon(
                 "WARNING: declare_perishable(...) must be called before the agents are build")
         self.perishable.append(good)
 
@@ -292,7 +292,7 @@ class Simulation(object):
                 the duration before the good expires
         """
         if self.num_of_agents_in_group:
-            raise SystemExit(
+            raise Exception(
                 "WARNING: declare_expiring(...) must be called before the agents are build")
         self.expiring.append((good, duration))
 
@@ -343,7 +343,7 @@ class Simulation(object):
 
         """
         if self.num_of_agents_in_group:
-            raise SystemExit(
+            raise Exception(
                 "WARNING: declare_calendar(...) must be called before the agents are build")
         date = datetime.date.today() if year is None else datetime.date(year, month, day)
 
@@ -381,7 +381,7 @@ class Simulation(object):
                 households.do('buying')
         """
         if self.num_of_agents_in_group:
-            raise SystemExit(
+            raise Exception(
                 "WARNING: panel(...) must be called before the agents are build")
         self._db.add_panel(group, possessions + variables)
         self.variables_to_track_panel[group] = variables
@@ -422,7 +422,7 @@ class Simulation(object):
 
         """
         if self.num_of_agents_in_group:
-            raise SystemExit(
+            raise Exception(
                 "WARNING: aggregate(...) must be called before the agents are build")
         self._db.add_aggregate(group, possessions + variables)
         self.variables_to_track_aggregate[group] = variables
@@ -472,7 +472,7 @@ class Simulation(object):
     def _prepare(self):
         """ This runs the simulation """
         if not(self.num_of_agents_in_group):
-            raise SystemExit('No Agents Created')
+            raise Exception('No Agents Created')
 
         self._db.start()
 
