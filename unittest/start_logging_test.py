@@ -19,14 +19,18 @@ class Agent(abce.Agent):
 def compare(to_compare, path, message):
     should_be_full = pd.read_csv(to_compare).sort_index(axis=1)
     really_is_full = pd.read_csv(path + '/' + to_compare).sort_index(axis=1)
+    if 'id' in should_be_full.columns:
+        should_be_full = should_be_full.sort_values(by=['id', 'round'], axis=0).reset_index(drop=True)
+        really_is_full = really_is_full.sort_values(by=['id', 'round'], axis=0).reset_index(drop=True)
+        del should_be_full['index']
+        del really_is_full['index']
     assert(should_be_full.shape == really_is_full.shape)
     if not np.isclose(should_be_full, really_is_full).all():
         # finds all lines which are different
         should_be = should_be_full[np.logical_not(np.min(np.isclose(should_be_full, really_is_full), axis=1))]
         really_is = really_is_full[np.logical_not(np.min(np.isclose(should_be_full, really_is_full), axis=1))]
 
-        print(really_is.shape)
-        print(really_is)
+        print(to_compare)
         raise Exception(pd.concat([should_be, really_is], axis=1))
     else:
         print(to_compare + ' ' + message + '\tOK')
@@ -56,4 +60,5 @@ def main(processes):
     compare('panel_agent.csv', simulation.path, 'panel logging test\t\t\t')
 
 if __name__ == '__main__':
-    main(1)
+    main(processes=1)
+    main(processes=4)
