@@ -238,12 +238,12 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         if sum([len(offers) for offers in list(self._open_offers.values())]):
             pprint(dict(self._open_offers))
             raise Exception('%s_%i: There are offers an agent send that have not'
-                             'been retrieved in this round get_offer(.)' % (self.group, self.id))
+                            'been retrieved in this round get_offer(.)' % (self.group, self.id))
 
         if sum([len(offers) for offers in list(self._msgs.values())]):
             pprint(dict(self._msgs))
             raise Exception('%s_%i: There are messages an agent send that have not'
-                             'been retrieved in this round get_messages(.)' % (self.group, self.id))
+                            'been retrieved in this round get_messages(.)' % (self.group, self.id))
 
         self.round += 1
 
