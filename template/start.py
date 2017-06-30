@@ -12,8 +12,6 @@ simulation_parameters = {'name': 'name',
 # commend out simulation.graphs() and uncomment
 # this line to run the simulation with a Graphical
 #@gui(simulation_parameters) # User Interface
-
-
 def main(simulation_parameters):
     simulation = Simulation(
         rounds=simulation_parameters['rounds'], name='ABCEsimulation_name')
