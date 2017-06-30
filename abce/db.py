@@ -135,10 +135,10 @@ class Database(multiprocessing.Process):
                     self.add_log(group_name)
                     self.write(table_name, data_to_write)
                 except sqlite3.InterfaceError:
-                    raise SystemExit(
+                    raise Exception(
                         'InterfaceError: data can not be written. If nested try: self.log_nested')
             else:
-                raise SystemExit(
+                raise Exception(
                     "abce_db error '%s' command unknown ~87" % msg)
         self.db.commit()
         self.db.close()

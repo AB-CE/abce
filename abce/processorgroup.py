@@ -60,7 +60,7 @@ class ProcessorGroup(object):
         except:
             time.sleep(random.random())
             traceback.print_exc()
-            raise SystemExit()
+            raise Exception()
         return agent
 
     def execute(self, groups, command, messages):
@@ -100,7 +100,7 @@ class ProcessorGroup(object):
                 except:
                     time.sleep(random.random())
                     traceback.print_exc()
-                    raise SystemExit()
+                    raise Exception()
 
     def put_messages_in_pigeonbox(self, new_messages):
         for group, id, message in new_messages:
