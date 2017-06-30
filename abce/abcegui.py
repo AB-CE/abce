@@ -349,7 +349,7 @@ def generate(new_inputs, new_simulation, names=None, title=None, text=None, trun
         elif value is None:
             content = parameter
         else:  # field
-            raise SystemExit(str(value) + "not recognized")
+            raise Exception(str(value) + "not recognized")
         element['content'] = content
         if value is not None:
             inputs.append(element)

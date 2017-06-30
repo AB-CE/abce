@@ -74,7 +74,7 @@ class AbceLogger(multiprocessing.Process):
                 break
 
             else:
-                SystemExit("command not recognized", command, rnd, msg)
+                Exception("command not recognized", command, rnd, msg)
 
     def _write_graph(self, nodes, edges, colors, current_round):
         network = nx.Graph(strict=True, directed=True)
