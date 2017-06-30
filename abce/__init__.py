@@ -185,8 +185,8 @@ class Simulation(object):
         self.trade_logging_mode = trade_logging
         if self.trade_logging_mode not in ['individual', 'group', 'off']:
             Exception("trade_logging can be "
-                       "'group' (fast) or 'individual' (slow) or 'off'"
-                       ">" + self.trade_logging_mode + "< not accepted")
+                      "'group' (fast) or 'individual' (slow) or 'off'"
+                      ">" + self.trade_logging_mode + "< not accepted")
 
         manager = mp.Manager()
         self.database_queue = manager.Queue()
