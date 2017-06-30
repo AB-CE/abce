@@ -6,7 +6,7 @@ cdef class OnlineVariance:
 
     cpdef clear(self)
     cpdef update(self, list x)
-    cpdef variance(self)
+    cpdef std(self)
     cpdef sum(self)
     cpdef mean(self)
     cpdef clear(self)
