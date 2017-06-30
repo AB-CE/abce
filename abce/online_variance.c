@@ -657,7 +657,7 @@ struct __pyx_obj_4abce_15online_variance_OnlineVariance {
 struct __pyx_vtabstruct_4abce_15online_variance_OnlineVariance {
   PyObject *(*clear)(struct __pyx_obj_4abce_15online_variance_OnlineVariance *, int __pyx_skip_dispatch);
   PyObject *(*update)(struct __pyx_obj_4abce_15online_variance_OnlineVariance *, PyObject *, int __pyx_skip_dispatch);
-  PyObject *(*variance)(struct __pyx_obj_4abce_15online_variance_OnlineVariance *, int __pyx_skip_dispatch);
+  PyObject *(*std)(struct __pyx_obj_4abce_15online_variance_OnlineVariance *, int __pyx_skip_dispatch);
   PyObject *(*sum)(struct __pyx_obj_4abce_15online_variance_OnlineVariance *, int __pyx_skip_dispatch);
   PyObject *(*mean)(struct __pyx_obj_4abce_15online_variance_OnlineVariance *, int __pyx_skip_dispatch);
 };
@@ -886,7 +886,7 @@ static int __Pyx_InitStrings(__Pyx_StringTabEntry *t);
 
 static PyObject *__pyx_f_4abce_15online_variance_14OnlineVariance_clear(struct __pyx_obj_4abce_15online_variance_OnlineVariance *__pyx_v_self, int __pyx_skip_dispatch); /* proto*/
 static PyObject *__pyx_f_4abce_15online_variance_14OnlineVariance_update(struct __pyx_obj_4abce_15online_variance_OnlineVariance *__pyx_v_self, PyObject *__pyx_v_x, int __pyx_skip_dispatch); /* proto*/
-static PyObject *__pyx_f_4abce_15online_variance_14OnlineVariance_variance(struct __pyx_obj_4abce_15online_variance_OnlineVariance *__pyx_v_self, int __pyx_skip_dispatch); /* proto*/
+static PyObject *__pyx_f_4abce_15online_variance_14OnlineVariance_std(struct __pyx_obj_4abce_15online_variance_OnlineVariance *__pyx_v_self, int __pyx_skip_dispatch); /* proto*/
 static PyObject *__pyx_f_4abce_15online_variance_14OnlineVariance_mean(struct __pyx_obj_4abce_15online_variance_OnlineVariance *__pyx_v_self, int __pyx_skip_dispatch); /* proto*/
 static PyObject *__pyx_f_4abce_15online_variance_14OnlineVariance_sum(struct __pyx_obj_4abce_15online_variance_OnlineVariance *__pyx_v_self, int __pyx_skip_dispatch); /* proto*/
 
@@ -901,6 +901,7 @@ int __pyx_module_is_main_abce__online_variance = 0;
 
 /* Implementation of 'abce.online_variance' */
 static PyObject *__pyx_builtin_range;
+static const char __pyx_k_std[] = "std";
 static const char __pyx_k_sum[] = "sum";
 static const char __pyx_k_main[] = "__main__";
 static const char __pyx_k_mean[] = "mean";
@@ -909,7 +910,6 @@ static const char __pyx_k_clear[] = "clear";
 static const char __pyx_k_range[] = "range";
 static const char __pyx_k_length[] = "length";
 static const char __pyx_k_update[] = "update";
-static const char __pyx_k_variance[] = "variance";
 static const char __pyx_k_pyx_vtable[] = "__pyx_vtable__";
 static PyObject *__pyx_n_s_clear;
 static PyObject *__pyx_n_s_length;
@@ -917,14 +917,14 @@ static PyObject *__pyx_n_s_main;
 static PyObject *__pyx_n_s_mean;
 static PyObject *__pyx_n_s_pyx_vtable;
 static PyObject *__pyx_n_s_range;
+static PyObject *__pyx_n_s_std;
 static PyObject *__pyx_n_s_sum;
 static PyObject *__pyx_n_s_test;
 static PyObject *__pyx_n_s_update;
-static PyObject *__pyx_n_s_variance;
 static int __pyx_pf_4abce_15online_variance_14OnlineVariance___cinit__(struct __pyx_obj_4abce_15online_variance_OnlineVariance *__pyx_v_self, size_t __pyx_v_length); /* proto */
 static PyObject *__pyx_pf_4abce_15online_variance_14OnlineVariance_2clear(struct __pyx_obj_4abce_15online_variance_OnlineVariance *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_4abce_15online_variance_14OnlineVariance_4update(struct __pyx_obj_4abce_15online_variance_OnlineVariance *__pyx_v_self, PyObject *__pyx_v_x); /* proto */
-static PyObject *__pyx_pf_4abce_15online_variance_14OnlineVariance_6variance(struct __pyx_obj_4abce_15online_variance_OnlineVariance *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_4abce_15online_variance_14OnlineVariance_6std(struct __pyx_obj_4abce_15online_variance_OnlineVariance *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_4abce_15online_variance_14OnlineVariance_8mean(struct __pyx_obj_4abce_15online_variance_OnlineVariance *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_4abce_15online_variance_14OnlineVariance_10sum(struct __pyx_obj_4abce_15online_variance_OnlineVariance *__pyx_v_self); /* proto */
 static void __pyx_pf_4abce_15online_variance_14OnlineVariance_12__dealloc__(struct __pyx_obj_4abce_15online_variance_OnlineVariance *__pyx_v_self); /* proto */
@@ -1414,7 +1414,7 @@ static PyObject *__pyx_f_4abce_15online_variance_14OnlineVariance_update(struct 
  *         PyMem_Free(delta)
  *         PyMem_Free(delta2)             # <<<<<<<<<<<<<<
  * 
- *     cpdef variance(self):
+ *     cpdef std(self):
  */
   PyMem_Free(__pyx_v_delta2);
 
@@ -1487,13 +1487,13 @@ static PyObject *__pyx_pf_4abce_15online_variance_14OnlineVariance_4update(struc
 /* "abce/online_variance.pyx":36
  *         PyMem_Free(delta2)
  * 
- *     cpdef variance(self):             # <<<<<<<<<<<<<<
+ *     cpdef std(self):             # <<<<<<<<<<<<<<
  *         cdef int _
  *         if self.n < 2:
  */
 
-static PyObject *__pyx_pw_4abce_15online_variance_14OnlineVariance_7variance(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static PyObject *__pyx_f_4abce_15online_variance_14OnlineVariance_variance(struct __pyx_obj_4abce_15online_variance_OnlineVariance *__pyx_v_self, int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_4abce_15online_variance_14OnlineVariance_7std(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static PyObject *__pyx_f_4abce_15online_variance_14OnlineVariance_std(struct __pyx_obj_4abce_15online_variance_OnlineVariance *__pyx_v_self, int __pyx_skip_dispatch) {
   CYTHON_UNUSED int __pyx_v__;
   size_t __pyx_v_i;
   PyObject *__pyx_r = NULL;
@@ -1507,14 +1507,14 @@ static PyObject *__pyx_f_4abce_15online_variance_14OnlineVariance_variance(struc
   int __pyx_t_7;
   size_t __pyx_t_8;
   long __pyx_t_9;
-  __Pyx_RefNannySetupContext("variance", 0);
+  __Pyx_RefNannySetupContext("std", 0);
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
   else if (unlikely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0)) {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_variance); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 36, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_std); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 36, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)__pyx_pw_4abce_15online_variance_14OnlineVariance_7variance)) {
+    if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)__pyx_pw_4abce_15online_variance_14OnlineVariance_7std)) {
       __Pyx_XDECREF(__pyx_r);
       __Pyx_INCREF(__pyx_t_1);
       __pyx_t_3 = __pyx_t_1; __pyx_t_4 = NULL;
@@ -1544,7 +1544,7 @@ static PyObject *__pyx_f_4abce_15online_variance_14OnlineVariance_variance(struc
   }
 
   /* "abce/online_variance.pyx":38
- *     cpdef variance(self):
+ *     cpdef std(self):
  *         cdef int _
  *         if self.n < 2:             # <<<<<<<<<<<<<<
  *             return [0.0 for _ in range(self.length)]
@@ -1558,7 +1558,7 @@ static PyObject *__pyx_f_4abce_15online_variance_14OnlineVariance_variance(struc
  *         if self.n < 2:
  *             return [0.0 for _ in range(self.length)]             # <<<<<<<<<<<<<<
  *         else:
- *             return [self.M2[i] / (self.n - 1)  for i in range(self.length)]
+ *             return [(self.M2[i] / (self.n - 1)) ** 0.5  for i in range(self.length)]
  */
     __Pyx_XDECREF(__pyx_r);
     __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 39, __pyx_L1_error)
@@ -1573,7 +1573,7 @@ static PyObject *__pyx_f_4abce_15online_variance_14OnlineVariance_variance(struc
     goto __pyx_L0;
 
     /* "abce/online_variance.pyx":38
- *     cpdef variance(self):
+ *     cpdef std(self):
  *         cdef int _
  *         if self.n < 2:             # <<<<<<<<<<<<<<
  *             return [0.0 for _ in range(self.length)]
@@ -1584,7 +1584,7 @@ static PyObject *__pyx_f_4abce_15online_variance_14OnlineVariance_variance(struc
   /* "abce/online_variance.pyx":41
  *             return [0.0 for _ in range(self.length)]
  *         else:
- *             return [self.M2[i] / (self.n - 1)  for i in range(self.length)]             # <<<<<<<<<<<<<<
+ *             return [(self.M2[i] / (self.n - 1)) ** 0.5  for i in range(self.length)]             # <<<<<<<<<<<<<<
  * 
  *     cpdef mean(self):
  */
@@ -1600,7 +1600,7 @@ static PyObject *__pyx_f_4abce_15online_variance_14OnlineVariance_variance(struc
         PyErr_SetString(PyExc_ZeroDivisionError, "float division");
         __PYX_ERR(0, 41, __pyx_L1_error)
       }
-      __pyx_t_2 = PyFloat_FromDouble(((__pyx_v_self->M2[__pyx_v_i]) / __pyx_t_9)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 41, __pyx_L1_error)
+      __pyx_t_2 = PyFloat_FromDouble(pow(((__pyx_v_self->M2[__pyx_v_i]) / __pyx_t_9), 0.5)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 41, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
       if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_t_2))) __PYX_ERR(0, 41, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -1613,7 +1613,7 @@ static PyObject *__pyx_f_4abce_15online_variance_14OnlineVariance_variance(struc
   /* "abce/online_variance.pyx":36
  *         PyMem_Free(delta2)
  * 
- *     cpdef variance(self):             # <<<<<<<<<<<<<<
+ *     cpdef std(self):             # <<<<<<<<<<<<<<
  *         cdef int _
  *         if self.n < 2:
  */
@@ -1624,7 +1624,7 @@ static PyObject *__pyx_f_4abce_15online_variance_14OnlineVariance_variance(struc
   __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_4);
-  __Pyx_AddTraceback("abce.online_variance.OnlineVariance.variance", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("abce.online_variance.OnlineVariance.std", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -1633,25 +1633,25 @@ static PyObject *__pyx_f_4abce_15online_variance_14OnlineVariance_variance(struc
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_4abce_15online_variance_14OnlineVariance_7variance(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static PyObject *__pyx_pw_4abce_15online_variance_14OnlineVariance_7variance(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused) {
+static PyObject *__pyx_pw_4abce_15online_variance_14OnlineVariance_7std(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static PyObject *__pyx_pw_4abce_15online_variance_14OnlineVariance_7std(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("variance (wrapper)", 0);
-  __pyx_r = __pyx_pf_4abce_15online_variance_14OnlineVariance_6variance(((struct __pyx_obj_4abce_15online_variance_OnlineVariance *)__pyx_v_self));
+  __Pyx_RefNannySetupContext("std (wrapper)", 0);
+  __pyx_r = __pyx_pf_4abce_15online_variance_14OnlineVariance_6std(((struct __pyx_obj_4abce_15online_variance_OnlineVariance *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_4abce_15online_variance_14OnlineVariance_6variance(struct __pyx_obj_4abce_15online_variance_OnlineVariance *__pyx_v_self) {
+static PyObject *__pyx_pf_4abce_15online_variance_14OnlineVariance_6std(struct __pyx_obj_4abce_15online_variance_OnlineVariance *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
-  __Pyx_RefNannySetupContext("variance", 0);
+  __Pyx_RefNannySetupContext("std", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_4abce_15online_variance_14OnlineVariance_variance(__pyx_v_self, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 36, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_4abce_15online_variance_14OnlineVariance_std(__pyx_v_self, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 36, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -1660,7 +1660,7 @@ static PyObject *__pyx_pf_4abce_15online_variance_14OnlineVariance_6variance(str
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("abce.online_variance.OnlineVariance.variance", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("abce.online_variance.OnlineVariance.std", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -1669,7 +1669,7 @@ static PyObject *__pyx_pf_4abce_15online_variance_14OnlineVariance_6variance(str
 }
 
 /* "abce/online_variance.pyx":43
- *             return [self.M2[i] / (self.n - 1)  for i in range(self.length)]
+ *             return [(self.M2[i] / (self.n - 1)) ** 0.5  for i in range(self.length)]
  * 
  *     cpdef mean(self):             # <<<<<<<<<<<<<<
  *         cdef int i
@@ -1746,7 +1746,7 @@ static PyObject *__pyx_f_4abce_15online_variance_14OnlineVariance_mean(struct __
   goto __pyx_L0;
 
   /* "abce/online_variance.pyx":43
- *             return [self.M2[i] / (self.n - 1)  for i in range(self.length)]
+ *             return [(self.M2[i] / (self.n - 1)) ** 0.5  for i in range(self.length)]
  * 
  *     cpdef mean(self):             # <<<<<<<<<<<<<<
  *         cdef int i
@@ -2030,7 +2030,7 @@ static void __pyx_tp_dealloc_4abce_15online_variance_OnlineVariance(PyObject *o)
 static PyMethodDef __pyx_methods_4abce_15online_variance_OnlineVariance[] = {
   {"clear", (PyCFunction)__pyx_pw_4abce_15online_variance_14OnlineVariance_3clear, METH_NOARGS, 0},
   {"update", (PyCFunction)__pyx_pw_4abce_15online_variance_14OnlineVariance_5update, METH_O, 0},
-  {"variance", (PyCFunction)__pyx_pw_4abce_15online_variance_14OnlineVariance_7variance, METH_NOARGS, 0},
+  {"std", (PyCFunction)__pyx_pw_4abce_15online_variance_14OnlineVariance_7std, METH_NOARGS, 0},
   {"mean", (PyCFunction)__pyx_pw_4abce_15online_variance_14OnlineVariance_9mean, METH_NOARGS, 0},
   {"sum", (PyCFunction)__pyx_pw_4abce_15online_variance_14OnlineVariance_11sum, METH_NOARGS, 0},
   {0, 0, 0, 0}
@@ -2123,10 +2123,10 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_mean, __pyx_k_mean, sizeof(__pyx_k_mean), 0, 0, 1, 1},
   {&__pyx_n_s_pyx_vtable, __pyx_k_pyx_vtable, sizeof(__pyx_k_pyx_vtable), 0, 0, 1, 1},
   {&__pyx_n_s_range, __pyx_k_range, sizeof(__pyx_k_range), 0, 0, 1, 1},
+  {&__pyx_n_s_std, __pyx_k_std, sizeof(__pyx_k_std), 0, 0, 1, 1},
   {&__pyx_n_s_sum, __pyx_k_sum, sizeof(__pyx_k_sum), 0, 0, 1, 1},
   {&__pyx_n_s_test, __pyx_k_test, sizeof(__pyx_k_test), 0, 0, 1, 1},
   {&__pyx_n_s_update, __pyx_k_update, sizeof(__pyx_k_update), 0, 0, 1, 1},
-  {&__pyx_n_s_variance, __pyx_k_variance, sizeof(__pyx_k_variance), 0, 0, 1, 1},
   {0, 0, 0, 0, 0, 0, 0}
 };
 static int __Pyx_InitCachedBuiltins(void) {
@@ -2238,7 +2238,7 @@ PyMODINIT_FUNC PyInit_online_variance(void)
   __pyx_vtabptr_4abce_15online_variance_OnlineVariance = &__pyx_vtable_4abce_15online_variance_OnlineVariance;
   __pyx_vtable_4abce_15online_variance_OnlineVariance.clear = (PyObject *(*)(struct __pyx_obj_4abce_15online_variance_OnlineVariance *, int __pyx_skip_dispatch))__pyx_f_4abce_15online_variance_14OnlineVariance_clear;
   __pyx_vtable_4abce_15online_variance_OnlineVariance.update = (PyObject *(*)(struct __pyx_obj_4abce_15online_variance_OnlineVariance *, PyObject *, int __pyx_skip_dispatch))__pyx_f_4abce_15online_variance_14OnlineVariance_update;
-  __pyx_vtable_4abce_15online_variance_OnlineVariance.variance = (PyObject *(*)(struct __pyx_obj_4abce_15online_variance_OnlineVariance *, int __pyx_skip_dispatch))__pyx_f_4abce_15online_variance_14OnlineVariance_variance;
+  __pyx_vtable_4abce_15online_variance_OnlineVariance.std = (PyObject *(*)(struct __pyx_obj_4abce_15online_variance_OnlineVariance *, int __pyx_skip_dispatch))__pyx_f_4abce_15online_variance_14OnlineVariance_std;
   __pyx_vtable_4abce_15online_variance_OnlineVariance.sum = (PyObject *(*)(struct __pyx_obj_4abce_15online_variance_OnlineVariance *, int __pyx_skip_dispatch))__pyx_f_4abce_15online_variance_14OnlineVariance_sum;
   __pyx_vtable_4abce_15online_variance_OnlineVariance.mean = (PyObject *(*)(struct __pyx_obj_4abce_15online_variance_OnlineVariance *, int __pyx_skip_dispatch))__pyx_f_4abce_15online_variance_14OnlineVariance_mean;
   if (PyType_Ready(&__pyx_type_4abce_15online_variance_OnlineVariance) < 0) __PYX_ERR(0, 4, __pyx_L1_error)

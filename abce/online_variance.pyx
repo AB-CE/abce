@@ -33,12 +33,12 @@ cdef class OnlineVariance:
         PyMem_Free(delta)
         PyMem_Free(delta2)
 
-    cpdef variance(self):
+    cpdef std(self):
         cdef int _
         if self.n < 2:
             return [0.0 for _ in range(self.length)]
         else:
-            return [self.M2[i] / (self.n - 1)  for i in range(self.length)]
+            return [(self.M2[i] / (self.n - 1)) ** 0.5  for i in range(self.length)]
 
     cpdef mean(self):
         cdef int i
