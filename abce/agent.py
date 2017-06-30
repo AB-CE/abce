@@ -46,7 +46,6 @@ import random
 from abce.expiringgood import ExpiringGood
 from pprint import pprint
 import traceback
-import random
 from abce.notenoughgoods import NotEnoughGoods
 import datetime
 
@@ -75,44 +74,42 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
 
 
     """
-    def __init__(self, id, group, trade_logging, database, logger, random_seed, start_round):
+
+    def __init__(self, id, group, trade_logging, database, logger, random_seed, start_round, num_managers):
         """ Do not overwrite __init__ instead use a method called init instead.
         init is called whenever the agent are build.
         """
         self.id = id
         """ self.id returns the agents id READ ONLY"""
-        self.name = '%s_%i:' % (group, id)
+        self.name = (group, id)
         """ self.name returns the agents name, which is the group name and the
         id seperated by '_' e.G. "household_12" READ ONLY!
         """
         self.name_without_colon = '%s_%i' % (group, id)
         self.group = group
         """ self.group returns the agents group or type READ ONLY! """
-        #TODO should be group_address(group), but it would not work
+        # TODO should be group_address(group), but it would not work
         # when fired manual + ':' and manual group_address need to be removed
-        self._out = []
-        """ The simulation parameters and the number of agents in other groups
-
-         Useful entries:
-
-            'rounds':
-                 the total number of rounds in the simulation.
-        """
         self.database_connection = database
         self.logger_connection = logger
 
-        self.trade_logging = {'individual':1, 'group':2, 'off': 0}[trade_logging]
+        self.trade_logging = {'individual': 1,
+                              'group': 2, 'off': 0}[trade_logging]
+        self.num_managers = num_managers
+        self._out = [[] for _ in range(self.num_managers + 1)]
 
         self._haves = defaultdict(float)
 
-        #TODO make defaultdict; delete all key errors regarding self._haves as defaultdict, does not have missing keys
+        # TODO make defaultdict; delete all key errors regarding self._haves as defaultdict, does not have missing keys
         self._haves['money'] = 0
         self._msgs = {}
 
         self.given_offers = OrderedDict()
         self._open_offers = defaultdict(dict)
+        self._polled_offers = {}
         self._offer_count = 0
         self._reject_offers_retrieved_end_subround = []
+
         self._contract_offers_made = {}
         self._contract_requests = defaultdict(list)
         self._contract_offers = defaultdict(list)
@@ -161,8 +158,8 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         try:
             return datetime.date.fromordinal(self.round)
         except ValueError:
-            raise ValueError("you need to run ABCE in calendar mode, use simulation.declare_calendar(2000, 1, 1)")
-
+            raise ValueError(
+                "you need to run ABCE in calendar mode, use simulation.declare_calendar(2000, 1, 1)")
 
     def possession(self, good):
         """ returns how much of good an agent possesses.
@@ -173,7 +170,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         possession does not return a dictionary for self.log(...), you can use self.possessions([...])
         (plural) with self.log.
 
-        Example:
+        Example::
 
             if self.possession('money') < 1:
                 self.financial_crisis = True
@@ -183,7 +180,6 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
 
         """
         return float(self._haves[good])
-
 
     def possessions(self):
         """ returns all possessions """
@@ -198,13 +194,14 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
     def _advance_round(self):
         for offer in list(self.given_offers.values()):
             if offer.made < self.round:
-                print("in agent %s this offers have not been retrieved:" % self.name_without_colon)
+                print("in agent %s this offers have not been retrieved:" %
+                      self.name_without_colon)
                 for offer in list(self.given_offers.values()):
                     if offer.made < self.round:
                         print(offer.__repr__())
                 raise Exception('%s_%i: There are offers have been made before'
-                                 'last round and not been retrieved in this'
-                                 'round get_offer(.)' % (self.group, self.id))
+                                'last round and not been retrieved in this'
+                                'round get_offer(.)' % (self.group, self.id))
 
         # contracts
         self._contract_requests = defaultdict(list)
@@ -233,19 +230,20 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
                 self._haves[good] = 0
 
         if self.trade_logging > 0:
-            self.database_connection.put(["trade_log", self._trade_log, self.round])
+            self.database_connection.put(
+                ["trade_log", self._trade_log, self.round])
 
         self._trade_log = defaultdict(int)
 
         if sum([len(offers) for offers in list(self._open_offers.values())]):
-                pprint(dict(self._open_offers))
-                raise SystemExit('%s_%i: There are offers an agent send that have not'
-                                 'been retrieved in this round get_offer(.)' % (self.group, self.id))
+            pprint(dict(self._open_offers))
+            raise Exception('%s_%i: There are offers an agent send that have not'
+                            'been retrieved in this round get_offer(.)' % (self.group, self.id))
 
         if sum([len(offers) for offers in list(self._msgs.values())]):
-                pprint(dict(self._msgs))
-                raise SystemExit('%s_%i: There are messages an agent send that have not'
-                                 'been retrieved in this round get_messages(.)' % (self.group, self.id))
+            pprint(dict(self._msgs))
+            raise Exception('%s_%i: There are messages an agent send that have not'
+                            'been retrieved in this round get_messages(.)' % (self.group, self.id))
 
         self.round += 1
 
@@ -316,23 +314,24 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
             self._haves[good] -= quantity
             if self._haves[good] < 0:
                 self._haves[good] = 0
-                raise NotEnoughGoods(self.name, good, quantity - self._haves[good])
+                raise NotEnoughGoods(
+                    self.name, good, quantity - self._haves[good])
 
     def _set_network_drawing_frequency(self, frequency):
         self._network_drawing_frequency = frequency
 
     def _execute(self, command, incomming_messages):
-        self._out = []
+        self._out = [[] for _ in range(self.num_managers + 2)]
         try:
             self._clearing__end_of_subround(incomming_messages)
-            getattr(self, command)()
-            self.__reject_polled_but_not_accepted_offers()
+            self._out[-2] = (getattr(self, command)(), )
+            self._reject_polled_but_not_accepted_offers()
         except KeyboardInterrupt:
             return None
         except:
             time.sleep(random.random())
             traceback.print_exc()
-            raise SystemExit()
+            raise Exception()
 
         return self._out
 
@@ -343,7 +342,8 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         for resource, units, product in self._resources:
             if resource in self._haves:
                 try:
-                    self._haves[product] += float(units) * self._haves[resource]
+                    self._haves[product] += float(units) * \
+                        self._haves[resource]
                 except KeyError:
                     self._haves[product] = float(units) * self._haves[resource]
 
@@ -360,46 +360,34 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
 
     def panel(self):
         """ use in action list to create panel data """
-        data_to_track = {}
+        data_to_send = [self.id, self.round]
         for possession in self.possessions_to_track_panel:
-            data_to_track[possession] = self._haves[possession]
+            data_to_send.append(self._haves[possession])
 
         for variable in self.variables_to_track_panel:
             try:
-                data_to_track[variable] = self.__dict__[variable]
+                data_to_send.append(self.__dict__[variable])
             except KeyError:
-                pass
+                data_to_send.append(0.0)
         self.database_connection.put(["panel",
-                                       data_to_track,
-                                       str(self.id),
-                                       self.group,
-                                       str(self.round)])
+                                      self.group,
+                                      data_to_send])
 
     def aggregate(self):
         """ use in action list to create data """
-        data_to_track = {}
+        data_to_send = [self.round]
         for possession in self.possessions_to_track_aggregate:
-            data_to_track[possession] = self._haves[possession]
+            data_to_send.append(self._haves[possession])
 
         for variable in self.variables_to_track_aggregate:
             try:
-                data_to_track[variable] = self.__dict__[variable]
+                data_to_send.append(self.__dict__[variable])
             except KeyError:
-                pass
+                data_to_send.append(0.0)
         self.database_connection.put(["aggregate",
-                                       data_to_track,
-                                       self.group,
-                                       self.round])
-
-    def __reject_polled_but_not_accepted_offers(self):
-        to_reject = []
-        for offers in list(self._open_offers.values()):
-            for offer in list(offers.values()):
-                if offer.open_offer_status == 'polled':
-                    to_reject.append(offer)
-        for offer in to_reject:
-            self.reject(offer)
-
+                                      self.round,
+                                      self.group,
+                                      data_to_send])
 
     def _send(self, receiver_group, receiver_id, typ, msg):
         """ sends a message to 'receiver_group', who can be an agent, a group or
@@ -408,7 +396,8 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         typ =(_o,c,u,r) are
         reserved for internally processed offers.
         """
-        self._out.append((receiver_group, receiver_id, (typ, msg)))
+        self._out[receiver_id % self.num_managers].append(
+            (receiver_group, receiver_id, (typ, msg)))
 
     def create_agent(self, AgentClass, group_name, parameters=None, agent_parameters=None):
         """ create a new agent.
@@ -433,7 +422,8 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
                               parameters=self.parameters,
                               agent_parameters={'creation': self.round + 1})
         """
-        self._out.append(('_simulation', 0, (AgentClass, group_name, parameters, agent_parameters)))
+        self._out[-1].append(('add', (AgentClass, group_name,
+                                      parameters, agent_parameters)))
 
     def delete_agent(self, group_name, id, quite=True):
         """ This deletes an agent, an agent can delete itself. There are two
@@ -453,8 +443,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
             quite:
                 whether the agent deletes incomming messages.
         """
-        self._out.append(('_simulation', 0.5, (group_name, id, quite)))
-
+        self._out[-1].append(('delete', (group_name, id, quite)))
 
 
 def flatten(d, parent_key=''):
@@ -465,4 +454,3 @@ def flatten(d, parent_key=''):
         except AttributeError:
             items.append(('%s%s' % (parent_key, k), v))
     return dict(items)
-

@@ -14,7 +14,7 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations under
 # the License.
-#pylint: disable=W0212, C0111
+# pylint: disable=W0212, C0111
 """ The best way to start creating a simulation is by copying the start.py file
 and other files from 'abce/template'.
 
@@ -43,37 +43,40 @@ from builtins import zip
 from builtins import str
 from builtins import range
 from builtins import object
+from builtins import list
 import csv
 import datetime
 import os
 import time
+import random
 import multiprocessing as mp
 from multiprocessing.managers import BaseManager
 import abce.db
 import abce.abcelogger
 from . import postprocess
 from glob import glob
-from .firmmultitechnologies import *
-from .household import Household
 from .agent import *
 from .group import Group
 from collections import defaultdict, OrderedDict
-from .firm import Firm
+from abce.notenoughgoods import NotEnoughGoods
+from abce.agents import (FirmMultiTechnologies, ProductionFunction, Firm, Household,
+                         Utility_Function, SilentDeadAgent, LoudDeadAgent)
 from .quote import Quote
-from .contracting import Contracting
+from abce.contracts import Contracting
 import json
 from . import abcegui
-from .family import Family
+from .processorgroup import ProcessorGroup
 from .abcegui import gui
-import random
-from abce.notenoughgoods import NotEnoughGoods
+import numpy as np
 
 
 def execute_internal_wrapper(inp):
     return inp[0].execute_internal(inp[1])
 
+
 class MyManager(BaseManager):
     pass
+
 
 class Simulation(object):
     """ This class in which the simulation is run. Actions and agents have to be
@@ -122,7 +125,7 @@ class Simulation(object):
 
         firms = w.build_agents(Firm, 'firm', num_firms)
         households = w.build_agents(Household, 'household', num_households)
-        
+
         all = firms + households
         for round in w.next_round():
             households.do('recieve_connections'),
@@ -137,10 +140,10 @@ class Simulation(object):
 
         w.graphs()
     """
+
     def __init__(self, rounds, name='abce', random_seed=None, trade_logging='off', processes=None):
         """
         """
-        self.family_list = {}
         self.num_of_agents_in_group = {}
         self._messages = {}
         self._resource_command_group = {}
@@ -157,7 +160,8 @@ class Simulation(object):
         self._start_round = 0
         self.round = int(self._start_round)
         self._calendar = False
-        self._network_drawing_frequency = 1  # this is default value as declared in self.network() method
+        # this is default value as declared in self.network() method
+        self._network_drawing_frequency = 1
 
         self.rounds = rounds
 
@@ -167,7 +171,7 @@ class Simulation(object):
             pass
 
         self.path = (os.path.abspath('.') + '/result/' + name + '_' +
-            datetime.datetime.now().strftime("%Y-%m-%d_%H-%M"))
+                     datetime.datetime.now().strftime("%Y-%m-%d_%H-%M"))
         """ the path variable contains the path to the simulation outcomes it can be used
         to generate your own graphs as all resulting csv files are there.
         """
@@ -178,41 +182,45 @@ class Simulation(object):
             except OSError:
                 self.path += 'I'
 
-
         self.trade_logging_mode = trade_logging
         if self.trade_logging_mode not in ['individual', 'group', 'off']:
-            SystemExit("trade_logging can be "
-                       "'group' (fast) or 'individual' (slow) or 'off'"
-                       ">" + self.trade_logging_mode + "< not accepted")
+            Exception("trade_logging can be "
+                      "'group' (fast) or 'individual' (slow) or 'off'"
+                      ">" + self.trade_logging_mode + "< not accepted")
 
         manager = mp.Manager()
         self.database_queue = manager.Queue()
-        self._db = abce.db.Database(self.path, self.database_queue, trade_log=self.trade_logging_mode != 'off')
+        self._db = abce.db.Database(
+            self.path, self.database_queue, trade_log=self.trade_logging_mode != 'off')
         self.logger_queue = manager.Queue()
 
         self.processes = mp.cpu_count() * 2 if processes is None else processes
 
-        MyManager.register('Family', Family)
-        self.managers = []
-        for i in range(self.processes):
-            manager = MyManager()
-            manager.start()
+        if processes == 1:
+            self._processor_groups = [ProcessorGroup(1, batch=0)]
+            self.execute_internal = self.execute_internal_seriel
+        else:
+            self.pool = mp.Pool(self.processes)
+            MyManager.register('ProcessorGroup', ProcessorGroup)
+            self.managers = []
+            self._processor_groups = []
+            for i in range(self.processes):
+                manager = MyManager()
+                manager.start()
+                self.managers.append(manager)
+                pg = manager.ProcessorGroup(self.processes, batch=i)
+                self._processor_groups.append(pg)
 
-            self.managers.append(manager)
+            self.execute_internal = self.execute_internal_parallel
+
+        self.messagess = [list() for _ in range(self.processes + 2)]
 
         if random_seed is None or random_seed == 0:
             random_seed = time.time()
         random.seed(random_seed)
 
-        self.sim_parameters = OrderedDict({'name': name, 'rounds': rounds, 'random_seed': random_seed})
-
-        if self.processes > 1:
-            self.pool = mp.Pool(self.processes)
-        self.execute_internal = self.execute_internal_parallel if self.processes > 1 else self.execute_internal_seriel
-        self._agents_to_add = []  # container used in self.run
-        self._agents_to_delete = []  # container used in self.run
-        self.messagess = defaultdict(list)
-
+        self.sim_parameters = OrderedDict(
+            {'name': name, 'rounds': rounds, 'random_seed': random_seed})
 
     def declare_round_endowment(self, resource, units, product, groups=['all']):
         """ At the beginning of very round the agent gets 'units' units of good 'product' for
@@ -240,8 +248,9 @@ class Simulation(object):
 
 
         """
-        if len(self.family_list) > 0:
-            raise Exception("WARNING: declare_round_endowment(...) must be called before the agents are build")
+        if self.num_of_agents_in_group:
+            raise Exception(
+                "WARNING: declare_round_endowment(...) must be called before the agents are build")
         for group in groups:
             self.resource_endowment[group].append((resource, units, product))
 
@@ -265,8 +274,9 @@ class Simulation(object):
              w.declare_perishable(good='CAP')
 
         """
-        if len(self.family_list) > 0:
-            raise SystemExit("WARNING: declare_perishable(...) must be called before the agents are build")
+        if self.num_of_agents_in_group:
+            raise ExceptIon(
+                "WARNING: declare_perishable(...) must be called before the agents are build")
         self.perishable.append(good)
 
     def declare_expiring(self, good, duration):
@@ -281,8 +291,9 @@ class Simulation(object):
             duration:
                 the duration before the good expires
         """
-        if len(self.family_list) > 0:
-            raise SystemExit("WARNING: declare_expiring(...) must be called before the agents are build")
+        if self.num_of_agents_in_group:
+            raise Exception(
+                "WARNING: declare_expiring(...) must be called before the agents are build")
         self.expiring.append((good, duration))
 
     def declare_service(self, human_or_other_resource, units, service, groups=['all']):
@@ -306,7 +317,8 @@ class Simulation(object):
 
             w.declare_service('adult', 8, 'work')
         """
-        self.declare_round_endowment(human_or_other_resource, units, service, groups)
+        self.declare_round_endowment(
+            human_or_other_resource, units, service, groups)
         self.declare_perishable(service)
 
     def declare_calendar(self, year=None, month=1, day=1):
@@ -330,8 +342,9 @@ class Simulation(object):
                 simulation.declare_calendar()  # starts at current date
 
         """
-        if len(self.family_list) > 0:
-            raise SystemExit("WARNING: declare_calendar(...) must be called before the agents are build")
+        if self.num_of_agents_in_group:
+            raise Exception(
+                "WARNING: declare_calendar(...) must be called before the agents are build")
         date = datetime.date.today() if year is None else datetime.date(year, month, day)
 
         self._start_round = date.toordinal()
@@ -367,9 +380,10 @@ class Simulation(object):
                 firms.do('panel')
                 households.do('buying')
         """
-        if len(self.family_list) > 0:
-            raise SystemExit("WARNING: panel(...) must be called before the agents are build")
-        self._db.add_panel(group)
+        if self.num_of_agents_in_group:
+            raise Exception(
+                "WARNING: panel(...) must be called before the agents are build")
+        self._db.add_panel(group, possessions + variables)
         self.variables_to_track_panel[group] = variables
         self.possessins_to_track_panel[group] = possessions
 
@@ -407,14 +421,15 @@ class Simulation(object):
 
 
         """
-        if len(self.family_list) > 0:
-            raise SystemExit("WARNING: aggregate(...) must be called before the agents are build")
-        self._db.add_aggregate(group)
+        if self.num_of_agents_in_group:
+            raise Exception(
+                "WARNING: aggregate(...) must be called before the agents are build")
+        self._db.add_aggregate(group, possessions + variables)
         self.variables_to_track_aggregate[group] = variables
         self.possessions_to_track_aggregate[group] = possessions
 
     def network(self, frequency=1, savefig=False, savegml=True,
-                figsize=(24,20), dpi=100, pos_fixed=False, alpha=0.8):
+                figsize=(24, 20), dpi=100, pos_fixed=False, alpha=0.8):
         """ network(.) prepares abce to write network data.
 
         Args:
@@ -446,20 +461,18 @@ class Simulation(object):
                                                   alpha=alpha)
         self._logger.start()
 
-
     def execute_internal_seriel(self, command):
-        for group in self.family_list:
-            for family in self.family_list[group]:
-                family.execute_internal(command)
+        for pg in self._processor_groups:
+            pg.execute_internal(command)
 
     def execute_internal_parallel(self, command):
-        parameters = ((family, command) for group in self.family_list for family in self.family_list[group])
-        families_messages = self.pool.map(execute_internal_wrapper, parameters, chunksize=1)
+        parameters = ((pg, command) for pg in self._processor_groups)
+        self.pool.map(execute_internal_wrapper, parameters, chunksize=1)
 
     def _prepare(self):
         """ This runs the simulation """
-        if not(self.family_list):
-            raise SystemExit('No Agents Created')
+        if not(self.num_of_agents_in_group):
+            raise Exception('No Agents Created')
 
         self._db.start()
 
@@ -481,14 +494,14 @@ class Simulation(object):
             self._finalize()
 
     def _prepare_round(self, round):
-        self._round = datetime.date.fromordinal(round) if self._calendar else round
+        self._round = datetime.date.fromordinal(
+            round) if self._calendar else round
         print("\rRound" + str(" %3d " % round) + str(self._round))
         self.execute_internal('_produce_resource')
 
     def _finalize_prev_round(self, round):
         self.execute_internal('_advance_round')
-        self.add_agents(round)
-        self.delete_agent()
+        self.add_and_delete_agents(round)
 
     def gracefull_exit(self):
         self.database_queue.put('close')
@@ -512,10 +525,12 @@ class Simulation(object):
     def _finalize(self):
         print(str("time only simulation %6.2f" % (time.time() - self.clock)))
         self.gracefull_exit()
-        print(str("time with data and network %6.2f" % (time.time() - self.clock)))
+        print(str("time with data and network %6.2f" %
+                  (time.time() - self.clock)))
         if self.round > 0:
             postprocess.to_csv(os.path.abspath(self.path), self._calendar)
-            print(str("time with post processing %6.2f" % (time.time() - self.clock)))
+            print(str("time with post processing %6.2f" %
+                      (time.time() - self.clock)))
 
     def build_agents(self, AgentClass, group_name, number=None, parameters={}, agent_parameters=None):
         """ This method creates agents.
@@ -556,78 +571,62 @@ class Simulation(object):
         else:
             num_agents_this_group = len(agent_parameters)
 
-        self.family_list[group_name] = []
-
         self.sim_parameters.update(parameters)
 
-        agent_params_from_sim = {'expiring':self.expiring,
-                                 'perishable':self.perishable,
-                                 'resource_endowment':self.resource_endowment[group_name] + self.resource_endowment['all'],
-                                  'panel':(self.possessins_to_track_panel[group_name],
-                                         self.variables_to_track_panel[group_name]),
-                                  'aggregate':(self.possessions_to_track_aggregate[group_name],
-                                    self.variables_to_track_aggregate[group_name]),
-                                  'ndf':self._network_drawing_frequency}
+        agent_params_from_sim = {'expiring': self.expiring,
+                                 'perishable': self.perishable,
+                                 'resource_endowment': self.resource_endowment[group_name] + self.resource_endowment['all'],
+                                 'panel': (self.possessins_to_track_panel[group_name],
+                                           self.variables_to_track_panel[group_name]),
+                                 'aggregate': (self.possessions_to_track_aggregate[group_name],
+                                               self.variables_to_track_aggregate[group_name]),
+                                 'ndf': self._network_drawing_frequency}
 
-        for i, manager in enumerate(self.managers):
-            family = manager.Family(AgentClass,
-                                    num_agents_this_group=num_agents_this_group,
-                                    batch=i,
-                                    num_managers=self.processes,
-                                    agent_args={'group': group_name,
-                                                'trade_logging': self.trade_logging_mode,
-                                                'database': self.database_queue,
-                                                'logger':self.logger_queue,
-                                                'random_seed': random.random(),
-                                                'start_round': self._start_round},
-                                    parameters=parameters,
-                                    agent_parameters=agent_parameters,
-                                    agent_params_from_sim=agent_params_from_sim)
-            self.family_list[group_name].append(family)
+        for pg in self._processor_groups:
+            pg.add_group(AgentClass,
+                         num_agents_this_group=num_agents_this_group,
+                         agent_args={'group': group_name,
+                                     'trade_logging': self.trade_logging_mode,
+                                     'database': self.database_queue,
+                                     'logger': self.logger_queue,
+                                     'random_seed': random.random(),
+                                     'start_round': self._start_round},
+                         parameters=parameters,
+                         agent_parameters=agent_parameters,
+                         agent_params_from_sim=agent_params_from_sim)
+
             self.num_of_agents_in_group[group_name] = num_agents_this_group
-        return Group(self, [self.family_list[group_name]], group_name)
+        return Group(self, [group_name], AgentClass)
 
-    def add_agents(self, round):
-        messages = self._agents_to_add
-        if len(messages) == 0:
-            return
-        for _, _, (AgentClass, group_name, parameters, agent_parameters) in messages:
-            id = self.num_of_agents_in_group[group_name]
-            self.num_of_agents_in_group[group_name] += 1
-            assert len(self.family_list[group_name]) == self.processes, "the expandable parameter in build_agents must be set to true"
-            family = self.family_list[group_name][id % self.processes]
-
-            family.append(AgentClass, id=id,
-                                    agent_args={'group': group_name,
-                                                'trade_logging': self.trade_logging_mode,
-                                                'database': self.database_queue,
-                                                'logger':self.logger_queue,
-                                                'random_seed': random.random(),
-                                                'start_round': round + 1},
-                                    parameters=parameters, agent_parameters=agent_parameters)
-        self._agents_to_add = []
-
-    def delete_agent(self):
-        messages = self._agents_to_delete
-        if len(messages) == 0:
-            return
-        dest_family = defaultdict(list)
-        for _, _, (group_name, id, quite) in messages:
-            dest_family[(group_name, id % self.processes, quite)].append(id)
-
-        for (group_name, family_id, quite), ids in dest_family.items():
-            family = self.family_list[group_name][family_id]
-            if quite:
-                family.replace_with_dead(ids)
-            else:
-                family.remove(ids)
-        self._agents_to_delete = []
-
-
+    def add_and_delete_agents(self, round):
+        for command, agent_details in self.messagess[-1]:
+            if command == 'add':
+                AgentClass, group_name, parameters, agent_parameters = agent_details
+                id = self.num_of_agents_in_group[group_name]
+                self.num_of_agents_in_group[group_name] += 1
+                pg = self._processor_groups[id % self.processes]
+                pg.append(AgentClass, id=id,
+                          agent_args={'group': group_name,
+                                      'trade_logging': self.trade_logging_mode,
+                                      'database': self.database_queue,
+                                      'logger': self.logger_queue,
+                                      'random_seed': random.random(),
+                                      'start_round': round + 1},
+                          parameters=parameters, agent_parameters=agent_parameters)
+            elif command == 'delete':
+                group, id, quite = agent_details
+                pg = self._processor_groups[id % self.processes]
+                if quite:
+                    pg.replace_with_dead(group, id, SilentDeadAgent)
+                else:
+                    pg.replace_with_dead(group, id, LoudDeadAgent)
+        self.messagess[-1] = []
 
     def _write_description_file(self):
-        description = open(os.path.abspath(self.path + '/description.txt'), 'w')
-        description.write(json.dumps(self.sim_parameters, indent=4, skipkeys=True, default=lambda x: 'not_serializeable'))
+        description = open(os.path.abspath(
+            self.path + '/description.txt'), 'w')
+        description.write(json.dumps(self.sim_parameters, indent=4,
+                                     skipkeys=True, default=lambda x: 'not_serializeable'))
 
     def _displaydescribtion(self):
         description = open(self.path + '/description.txt', 'r')
@@ -660,7 +659,6 @@ class Simulation(object):
         if self.round > 0:
             abcegui.run(open=open, new=new)
 
-
     def pickle(self, name):
         with open('%s.simulation' % name, 'wb') as jar:
             json.dump({'year': self.rounds,
@@ -679,10 +677,11 @@ class Simulation(object):
             for key, value in agent_values.items():
                 if value != "NotPickleable":
                     if key not in agent.__dict__:
-                        agent.__dict__[key] =  value
+                        agent.__dict__[key] = value
                     elif isinstance(agent.__dict__[key], defaultdict):
                         try:
-                            agent.__dict__[key] = defaultdict(type(list(value.values())[0]), value)
+                            agent.__dict__[key] = defaultdict(
+                                type(list(value.values())[0]), value)
                         except IndexError:
                             agent.__dict__[key] = defaultdict(float)
                     elif isinstance(agent.__dict__[key], OrderedDict):
@@ -690,12 +689,13 @@ class Simulation(object):
                     elif isinstance(agent.__dict__[key], np.ndarray):
                         agent.__dict__[key] = np.array(value)
                     else:
-                        agent.__dict__[key] =  value
+                        agent.__dict__[key] = value
 
         for agent in self.num_of_agents_in_group['all']:
             self.num_of_agents_in_group[agent.group][agent.id] = agent
 
         self._messages = simulation['messages']
+
 
 def handle_non_pickleable(x):
     if isinstance(x, np.ndarray):
@@ -714,3 +714,7 @@ def _number_or_string(word):
             return float(word)
         except ValueError:
             return word
+
+
+def defaultdict_list():
+    return defaultdict(list)

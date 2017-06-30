@@ -17,7 +17,8 @@ class UtilityHousehold(abce.Agent, abce.Household):
             self.set_utility_function(utility, use)
 
         elif self.id == 1 or self.id == 3:
-            self.set_cobb_douglas_utility_function({'a': 0.2, 'b': 0.5, 'c': 0.3})
+            self.set_cobb_douglas_utility_function(
+                {'a': 0.2, 'b': 0.5, 'c': 0.3})
 
     def one(self):
         pass
@@ -67,7 +68,8 @@ class UtilityHousehold(abce.Agent, abce.Household):
             self.create('b', 10)
             self.create('c', 10)
             utility = self.consume_everything()
-            assert is_zero(utility - max(10 ** 0.2, 10 ** 0.5 * 10 ** 0.3)), (utility, max(10 ** 0.2, 10 ** 0.5 * 10 ** 0.3))
+            assert is_zero(utility - max(10 ** 0.2, 10 ** 0.5 * 10 ** 0.3)
+                           ), (utility, max(10 ** 0.2, 10 ** 0.5 * 10 ** 0.3))
             assert self.possession('a') == 0
             assert self.possession('b') == 9
             assert self.possession('c') == 10
@@ -80,7 +82,8 @@ class UtilityHousehold(abce.Agent, abce.Household):
             self.create('b', 10)
             self.create('c', 10)
             utility = self.consume_everything()
-            assert is_zero(utility - 10 ** 0.2 * 10 ** 0.5 * 10 ** 0.3), (utility, 10 ** 0.2 * 10 ** 0.5 * 10 ** 0.3)
+            assert is_zero(utility - 10 ** 0.2 * 10 ** 0.5 * 10 **
+                           0.3), (utility, 10 ** 0.2 * 10 ** 0.5 * 10 ** 0.3)
             assert self.possession('a') == 0
             assert self.possession('b') == 0
             assert self.possession('c') == 0

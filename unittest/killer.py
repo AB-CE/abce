@@ -12,4 +12,5 @@ class Killer(abce.Agent, abce.Household):
         self.delete_agent('loudvictim', self.round, quite=False)
 
     def send_message(self):
-        self.message('victim', self.round - 1, 'topic', 'creepy hello')
+        if self.round > 0:
+            self.message('victim', self.round - 1, 'topic', 'creepy hello')

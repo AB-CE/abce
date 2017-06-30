@@ -12,6 +12,7 @@ epsilon = get_epsilon()
 
 class ExpiringGood(object):
     """ A good that expires after X rounds """
+
     def __init__(self, duration):
         self.duration = duration
         self.time_structure = deque([0 for _ in range(duration)])  # old to new
@@ -20,10 +21,10 @@ class ExpiringGood(object):
         del self.time_structure[0]
         self.time_structure.append(0)
 
-
     def __add__(self, other):
         if isinstance(other, ExpiringGood):
-            self.time_structure = [s + o for s, o in zip(self.time_structure, other.time_structure)]
+            self.time_structure = [
+                s + o for s, o in zip(self.time_structure, other.time_structure)]
         else:
             self.time_structure[-1] += other
         return self
@@ -83,7 +84,3 @@ class ExpiringGood(object):
 
     def __abs__(self):
         return abs(self.__float__())
-
-
-
-

@@ -2,7 +2,7 @@ from __future__ import division
 from __future__ import print_function
 import abce
 from tools import *
-from abce.firm import Firm
+from abce.agents import Firm
 
 
 class ProductionFirm(abce.Agent, Firm):
@@ -20,7 +20,8 @@ class ProductionFirm(abce.Agent, Firm):
             self.set_cobb_douglas('consumption_good', 5, {'a': 2, 'b': 1})
 
         elif self.id == 2:
-            self.leontief = self.set_leontief('consumption_good', {'a': 3, 'b': 1})
+            self.leontief = self.set_leontief(
+                'consumption_good', {'a': 3, 'b': 1})
 
         elif self.id == 3:
 
@@ -38,7 +39,8 @@ class ProductionFirm(abce.Agent, Firm):
             self.set_leontief('car', {'wheels': 4, 'chassi': 1})
 
         elif self.id == 5:
-            self.set_ces('consumption_good', gamma=0.5, shares={'a': 0.25, 'b': 0.25, 'c': 0.5})
+            self.set_ces('consumption_good', gamma=0.5, shares={
+                         'a': 0.25, 'b': 0.25, 'c': 0.5})
 
         elif self.id == 6:
             self.set_ces('consumption_good', gamma=0.5, multiplier=2)
@@ -51,7 +53,8 @@ class ProductionFirm(abce.Agent, Firm):
 
             assert self.possession('a') == 1, self.possession('a')
             assert self.possession('b') == 1.8, self.possession('b')
-            assert self.possession('consumption_good') == 1 ** 0.5 * 2, self.possession('consumption_good')
+            assert self.possession(
+                'consumption_good') == 1 ** 0.5 * 2, self.possession('consumption_good')
             self.destroy('a', 1)
             self.destroy('b', 1.8)
             self.destroy('consumption_good', 1 ** 0.5 * 2)
@@ -63,7 +66,8 @@ class ProductionFirm(abce.Agent, Firm):
             assert input['a'] == 10, input['a']
             assert input['b'] == 1, input['b']
 
-            nv = self.net_value(output, input, {'consumption_good': 10, 'a': 1, 'b': 2})
+            nv = self.net_value(
+                output, input, {'consumption_good': 10, 'a': 1, 'b': 2})
             assert nv == 100 * 10 - (10 * 1 + 1 * 2), nv
 
         elif self.id == 1:
@@ -73,7 +77,8 @@ class ProductionFirm(abce.Agent, Firm):
 
             assert self.possession('a') == 1, self.possession('a')
             assert self.possession('b') == 0, self.possession('b')
-            assert self.possession('consumption_good') == 5 * 1 ** 2 * 2 ** 1, self.possession('consumption_good')
+            assert self.possession('consumption_good') == 5 * \
+                1 ** 2 * 2 ** 1, self.possession('consumption_good')
             self.destroy('a', 1)
             self.destroy('consumption_good', 5 * 1 ** 2 * 2 ** 1)
 
@@ -84,7 +89,8 @@ class ProductionFirm(abce.Agent, Firm):
 
             assert self.possession('a') == 1, self.possession('a')
             assert self.possession('b') == 0, self.possession('b')
-            assert self.possession('consumption_good') == min(1 * 3, 2 * 1), self.possession('consumption_good')
+            assert self.possession('consumption_good') == min(
+                1 * 3, 2 * 1), self.possession('consumption_good')
             self.destroy('a', 1)
             self.destroy('consumption_good', min(1 * 3, 2 * 1))
 
@@ -97,8 +103,10 @@ class ProductionFirm(abce.Agent, Firm):
             assert self.possession('a') == 9, self.possession('a')
             assert self.possession('b') == 9.8, self.possession('b')
             assert self.possession('c') == 10, self.possession('c')
-            assert self.possession('soft_rubber') == 1 ** 0.25 * 2 ** 0.5 * 5 ** 0.25
-            assert self.possession('hard_rubber') == 1 ** 0.1 * 2 ** 0.2 * 5 ** 0.01
+            assert self.possession(
+                'soft_rubber') == 1 ** 0.25 * 2 ** 0.5 * 5 ** 0.25
+            assert self.possession(
+                'hard_rubber') == 1 ** 0.1 * 2 ** 0.2 * 5 ** 0.01
             assert self.possession('waste') == 2 / 2, self.possession('waste')
             self.destroy('a')
             self.destroy('b')
@@ -122,8 +130,10 @@ class ProductionFirm(abce.Agent, Firm):
             assert self.possession('a') == 1, self.possession('a')
             assert self.possession('b') == 0, self.possession('b')
             assert self.possession('c') == 0, self.possession('c')
-            expected = (0.25 * 1 ** 0.5 + 0.25 * 2 ** 0.5 + 0.5 * 4 ** 0.5) ** (1 / 0.5)
-            assert self.possession('consumption_good') == expected, (self.possession('consumption_good'), expected)
+            expected = (0.25 * 1 ** 0.5 + 0.25 * 2 **
+                        0.5 + 0.5 * 4 ** 0.5) ** (1 / 0.5)
+            assert self.possession('consumption_good') == expected, (self.possession(
+                'consumption_good'), expected)
             self.destroy('a', 1)
             self.destroy('consumption_good', expected)
 
@@ -140,8 +150,10 @@ class ProductionFirm(abce.Agent, Firm):
             assert self.possession('c') == 0, self.possession('c')
             assert self.possession('d') == 0, self.possession('d')
             assert self.possession('e') == 0, self.possession('e')
-            expected = 2 * (0.2 * 1 ** 0.5 + 0.2 * 2 ** 0.5 + 0.2 * 2 ** 0.5 + 0.2 * 2 ** 0.5 + 0.2 * 2 ** 0.5) ** (1 / 0.5)
-            assert self.possession('consumption_good') == expected, (self.possession('consumption_good'), expected)
+            expected = 2 * (0.2 * 1 ** 0.5 + 0.2 * 2 ** 0.5 + 0.2 *
+                            2 ** 0.5 + 0.2 * 2 ** 0.5 + 0.2 * 2 ** 0.5) ** (1 / 0.5)
+            assert self.possession('consumption_good') == expected, (self.possession(
+                'consumption_good'), expected)
             self.destroy('a', 1)
             self.destroy('consumption_good', expected)
 

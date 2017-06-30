@@ -1,8 +1,7 @@
 from __future__ import division
 from __future__ import print_function
 import abce
-from abce.firm import Firm
-
+from abce.agents import Firm
 
 
 class ExpiringCapital(abce.Agent, Firm):

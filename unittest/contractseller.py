@@ -39,12 +39,15 @@ class ContractSeller(abce.Agent, abce.Contracting):
 
     def control(self):
         if self.id == 0:
-            assert self.was_paid_this_round(self.given_contract), self._contracts_payed
-            assert self.possession('labor') == 0, (self.id, self.possession('labor'))
+            assert self.was_paid_this_round(
+                self.given_contract), self._contracts_payed
+            assert self.possession(
+                'labor') == 0, (self.id, self.possession('labor'))
             assert self.possession('money') == 50, self.possession('money')
             self.destroy('money')
         else:
-            assert self.was_delivered_this_round(self.accepted_contract), self.contracts_to_receive('labor')
+            assert self.was_delivered_this_round(
+                self.accepted_contract), self.contracts_to_receive('labor')
             assert self.possession('labor') == 5, self.possession('labor')
             assert self.possession('money') == 0, self.possession('money')
 
@@ -54,4 +57,3 @@ class ContractSeller(abce.Agent, abce.Contracting):
     def all_tests_completed(self):
         if self.round == self.last_round and self.id == 0:
             print('Test make_offer         \t\t\tOK')
-
