@@ -28,21 +28,21 @@ from random import shuffle
 
 class Message(object):
     __slots__ = ['sender_group', 'sender_id', 'receiver_group',
-                 'receiver_id', 'topic','content']
+                 'receiver_id', 'topic', 'content']
+
     def __init__(self, sender_group, sender_id, receiver_group,
                  receiver_id, topic, content):
-        self.sender_group=sender_group
-        self.sender_id=sender_id
-        self.receiver_group=receiver_group
-        self.receiver_id=receiver_id
-        self.topic=topic
-        self.content=content
+        self.sender_group = sender_group
+        self.sender_id = sender_id
+        self.receiver_group = receiver_group
+        self.receiver_id = receiver_id
+        self.topic = topic
+        self.content = content
 
     def __repr__(self):
-        return "sender: %s, %i; receiver: %s, %i; topic: %s; content: " % (
-                 self.sender_group, self.sender_id, self.receiver_group,
-                 self.receiver_id, self.topic) + str(self.content)
-
+        return "<{sender: %s, %i; receiver: %s, %i; topic: %s; content: %s}>" % (
+            self.sender_group, self.sender_id, self.receiver_group,
+            self.receiver_id, self.topic, str(self.content))
 
 
 class Messaging(object):
@@ -76,11 +76,11 @@ class Messaging(object):
 
         """
         msg = Message(sender_group=self.group,
-               sender_id=self.id,
-               receiver_group=receiver_group,
-               receiver_id=receiver_id,
-               topic=topic,
-               content=content)
+                      sender_id=self.id,
+                      receiver_group=receiver_group,
+                      receiver_id=receiver_id,
+                      topic=topic,
+                      content=content)
         self._send(receiver_group, receiver_id, topic, msg)
 
     def get_messages(self, topic='m'):
@@ -146,4 +146,3 @@ class Messaging(object):
             ret[key] = messages
         self._msgs.clear()
         return ret
-

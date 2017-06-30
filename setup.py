@@ -7,24 +7,27 @@ except ImportError:
     from distutils.extension import Extension
 
 
-cmdclass = { }
-ext_modules = [ ]
+cmdclass = {}
+ext_modules = []
 
 try:
     from Cython.Distutils import build_ext
     ext_modules += [
-        Extension("abce.trade", [ "abce/trade.pyx" ]),
+        Extension("abce.trade", ["abce/trade.pyx"]),
+        Extension("abce.multicurrencytrade", ["abce/multicurrencytrade.pyx"]),
+        Extension("abce.online_variance", ["abce/online_variance.pyx"]),
     ]
-    cmdclass.update({ 'build_ext': build_ext })
+    cmdclass.update({'build_ext': build_ext})
 except ImportError:
     ext_modules += [
-        Extension("abce.trade", [ "abce/trade.c" ]),
+        Extension("abce.trade", ["abce/trade.c"]),
+        Extension("abce.multicurrencytrade", ["abce/multicurrencytrade.c"]),
+        Extension("abce.online_variance", ["abce/online_variance.c"]),
     ]
-
 
 
 setup(name='abce',
-      version='0.5.18b',
+      version='0.6.0a0',
       author='Davoud Taghawi-Nejad',
       author_email='Davoud@Taghawi-Nejad.de',
       description='Agent-Based Complete Economy modelling platform',
@@ -42,5 +45,3 @@ setup(name='abce',
       ext_modules=ext_modules,
       use_2to3=True,
       cmdclass=cmdclass)
-
-
