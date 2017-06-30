@@ -1,7 +1,6 @@
 from __future__ import division
 from __future__ import print_function
 import abce
-from tools import *
 
 
 class ProductionMultifirm(abce.Agent, abce.FirmMultiTechnologies):
@@ -26,12 +25,19 @@ class ProductionMultifirm(abce.Agent, abce.FirmMultiTechnologies):
             'consumption_good', gamma=0.5, multiplier=2)
 
         def many_goods_pf(goods):
-            output = {'soft_rubber': goods['a'] ** 0.25 * goods['b'] ** 0.5 * goods['c'] ** 0.25,
-                      'hard_rubber': goods['a'] ** 0.1 * goods['b'] ** 0.2 * goods['c'] ** 0.01,
-                      'waste': goods['b'] / 2}
+            output = {'soft_rubber':
+                      goods['a'] ** 0.25
+                      * goods['b'] ** 0.5
+                      * goods['c'] ** 0.25,
+                      'hard_rubber':
+                      goods['a'] ** 0.1
+                      * goods['b'] ** 0.2
+                      * goods['c'] ** 0.01,
+                      'waste':
+                      goods['b'] / 2}
             return output
 
-            use = {'a': 1, 'b': 0.1, 'c': 0}
+        use = {'a': 1, 'b': 0.1, 'c': 0}
 
         self.many_goods_pf = self.create_production_function_many_goods(
             many_goods_pf, use)
@@ -118,8 +124,8 @@ class ProductionMultifirm(abce.Agent, abce.FirmMultiTechnologies):
         assert self.possession('c') == 0, self.possession('c')
         expected = (0.25 * 1 ** 0.5 + 0.25 * 2 **
                     0.5 + 0.5 * 4 ** 0.5) ** (1 / 0.5)
-        assert self.possession('consumption_good') == expected, (self.possession(
-            'consumption_good'), expected)
+        assert self.possession('consumption_good') == expected, (
+            self.possession('consumption_good'), expected)
         self.destroy('a', 1)
         self.destroy('consumption_good', expected)
 
@@ -136,11 +142,11 @@ class ProductionMultifirm(abce.Agent, abce.FirmMultiTechnologies):
         assert self.possession('c') == 0, self.possession('c')
         assert self.possession('d') == 0, self.possession('d')
         assert self.possession('e') == 0, self.possession('e')
-        expected = 2 * (0.2 * 1 ** 0.5 + 0.2 * 2 ** 0.5 + 0.2 *
-                        2 ** 0.5 + 0.2 * 2 ** 0.5 + 0.2 * 2 ** 0.5) ** (1 / 0.5)
-        assert is_zero(self.possession('consumption_good') - expected), (self.possession(
-            'consumption_good'), expected)
-        # this is exactly zero on my computer, but not on travis
+        expected = (2 * (0.2 * 1 ** 0.5 + 0.2 * 2 ** 0.5 + 0.2 *
+                    2 ** 0.5 + 0.2 * 2 ** 0.5 + 0.2 * 2 ** 0.5)
+                    ** (1 / 0.5))
+        assert self.possession('consumption_good') == expected, (
+            self.possession('consumption_good'), expected)
         self.destroy('a', 1)
         self.destroy('consumption_good', expected)
 
