@@ -15,7 +15,6 @@ class Agent(abce.Agent):
         self.log('l', {'i': self.i, 'r': self.r})
 
 
-
 def compare(to_compare, path, message):
     should_be_full = pd.read_csv(to_compare).sort_index(axis=1)
     really_is_full = pd.read_csv(path + '/' + to_compare).sort_index(axis=1)
@@ -35,6 +34,7 @@ def compare(to_compare, path, message):
     else:
         print(to_compare + ' ' + message + '\tOK')
 
+
 def main(processes):
     simulation = abce.Simulation(rounds=100, processes=processes)
 
@@ -48,7 +48,6 @@ def main(processes):
         agents.aggregate()
         agents.panel()
 
-
     compare('aggregate_agent.csv', simulation.path, 'aggregate logging test\t\t')
     compare('aggregate_agent_mean.csv', simulation.path, 'aggregate logging test mean\t')
     compare('aggregate_agent_std.csv', simulation.path, 'aggregate logging test std\t')
@@ -58,6 +57,7 @@ def main(processes):
 
     compare('aggregate_panel_agent.csv', simulation.path, 'aggregated panel logging test\t')
     compare('panel_agent.csv', simulation.path, 'panel logging test\t\t\t')
+
 
 if __name__ == '__main__':
     main(processes=1)
