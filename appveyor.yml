@@ -22,7 +22,6 @@ install:
 test_script:
   - ps: "cd examples/2sectors"
   - "python start.py"
-    #- ps: "cd ../../unittest"
-    #- "python start.py"
-    #- "python examples/2sectors/start.py"
-    #- "python unittest/start.py"
+  - ps: "cd ../../unittest"
+  - "python start.py"
+
