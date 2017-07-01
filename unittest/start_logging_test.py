@@ -43,13 +43,12 @@ def main(processes):
 
     agents = simulation.build_agents(Agent, 'agent', 10, parameters='')
 
-    simulation._prepare()
-    for r in range(100):
-        simulation.time(r)
-        agents.do('go')
-        agents.aggregate()
-        agents.panel()
-    simulation.gracefull_exit()
+    with simulation:
+        for r in range(100):
+            simulation.time(r)
+            agents.do('go')
+            agents.aggregate()
+            agents.panel()
 
     compare('aggregate_agent.csv', simulation.path, 'aggregate logging test\t\t')
     compare('aggregate_agent_mean.csv', simulation.path, 'aggregate logging test mean\t')
