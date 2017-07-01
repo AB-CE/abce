@@ -6,6 +6,8 @@ from builtins import object
 from abce.notenoughgoods import NotEnoughGoods
 from random import shuffle
 from abce.trade import get_epsilon
+from .contracts import Contracts
+from .contract import Contract
 
 epsilon = get_epsilon()
 
@@ -32,7 +34,7 @@ class Credit(object):
                     self.deliver_good_id, self.pay_group, self.pay_id, self.amount, self.interest))
 
 
-class Contract(object):
+class FlexibleContracting(object):
     """ This is a class, that allows you to create contracts. For example a
     work contract. One agent commits to deliver a good or service for a set
     amount of time.
@@ -104,7 +106,11 @@ class Contract(object):
 
     """
 
-    def request_credit(self, receiver_group, receiver_id, amount, interest):
+    def _add_contracts_list(self):
+        self.contracts = Contracts(self.name)
+
+    def request_credit(self, receiver_group, receiver_id,
+                       amount, interest, end_date):
         """This method offers a contract to provide a good or service to the
         receiver. For a given time at a given price.
 
@@ -127,18 +133,18 @@ class Contract(object):
 
             self.given_contract = self.make_contract_offer('firm', 1, 'labor', quantity=8, price=10, duration=10 - 1)
         """
-        offer = Contract(sender_group=self.group,
-                         sender_id=self.id,
-                         deliver_good_group=self.group,
-                         deliver_good_id=self.id,
-                         pay_group=receiver_group,
-                         pay_id=receiver_id,
-                         good=good,
-                         quantity=quantity,
-                         price=price,
-                         end_date=end_date,
-                         id=self._offer_counter(),
-                         round=self.round)
+        offer = Credit(sender_group=self.group,
+                       sender_id=self.id,
+                       deliver_good_group=self.group,
+                       deliver_good_id=self.id,
+                       pay_group=receiver_group,
+                       pay_id=receiver_id,
+                       good='money',
+                       quantity=amount,
+                       price=interest,
+                       end_date=end_date,
+                       id=self._offer_counter(),
+                       round=self.round)
         self._send(receiver_group, receiver_id, '!o', offer)
         self._contract_offers_made[offer.id] = offer
         return offer
@@ -276,13 +282,13 @@ class Contract(object):
         ret = {}
         for good in self._contracts_deliver:
             ret[good] = list(self._contracts_deliver[good].values())
-        return request_offer
+        return ret
 
     def contracts_to_receive_all(self):
         ret = {}
         for good in self._contracts_pay:
             ret[good] = list(self._contracts_pay[good].values())
-        return request_offer
+        return ret
 
     def end_contract(self, contract):
         if contract.id in self._contracts_deliver[contract.good]:
@@ -308,12 +314,46 @@ class Contract(object):
     def was_delivered_last_round(self, contract):
         return self.round - 1 in contract.delivered
 
+    def calculate_netvalue(self, prices={},
+                           parameters={},
+                           value_functions={}):
+        return (self._haves.calculate_netvalue(prices) +
+                self.contracts.calculate_netvalue(parameters, value_functions))
+
+    def calculate_assetvalue(self, prices={},
+                             parameters={},
+                             value_functions={}):
+        return (self._haves.calculate_assetvalue(prices) +
+                self.contracts.calculate_assetvalue(parameters,
+                                                    value_functions))
+
+    def calculate_liablityvalue(self, prices={},
+                                parameters={},
+                                value_functions={}):
+        return (self._haves.calculate_liablityvalue(prices) +
+                self.contracts.calculate_liablityvalue(parameters,
+                                                       value_functions))
+
+    def calculate_valued_assets(self, prices={},
+                                parameters={},
+                                value_functions={}):
+        return (self._haves.calculate_valued_assets(prices) +
+                self.contracts.calculate_valued_assets(parameters,
+                                                       value_functions))
+
+    def calculate_valued_liablities(self, prices={},
+                                    parameters={},
+                                    value_functions={}):
+        return (self._haves.calculate_valued_liablities(prices) +
+                self.contracts.calculate_valued_liablities(parameters,
+                                                           value_functions))
+
 
 def bound_zero(x):
     """ asserts that variable is above zero, where foating point imprecission is accounted for,
     and than makes sure it is above 0, without floating point imprecission """
-    assert x > - \
-        epsilon, '%.30f is smaller than 0 - epsilon (%.30f)' % (x, - epsilon)
+    assert x > - epsilon, \
+        '%.30f is smaller than 0 - epsilon (%.30f)' % (x, - epsilon)
     if x < 0:
         return 0
     else:

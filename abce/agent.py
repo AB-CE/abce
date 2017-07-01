@@ -34,13 +34,17 @@ from .networklogger import NetworkLogger
 from .trade import Trade
 from .messaging import Messaging
 import time
-from copy import copy
 import random
 from abce.expiringgood import ExpiringGood
 from pprint import pprint
 import traceback
-from abce.notenoughgoods import NotEnoughGoods
 import datetime
+from .inventory import Inventory
+
+
+class DummyContracts:
+    def _advance_round(self, round):
+        pass
 
 
 class Agent(Database, NetworkLogger, Trade, Messaging):
@@ -92,7 +96,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         self.num_managers = num_managers
         self._out = [[] for _ in range(self.num_managers + 1)]
 
-        self._haves = defaultdict(float)
+        self._haves = Inventory(self.name)
 
         # TODO make defaultdict; delete all key errors regarding self._haves as
         # defaultdict, does not have missing keys
@@ -105,28 +109,22 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         self._offer_count = 0
         self._reject_offers_retrieved_end_subround = []
 
-        self._contract_offers_made = {}
-        self._contract_requests = defaultdict(list)
-        self._contract_offers = defaultdict(list)
-        self._contracts_pay = defaultdict(dict)
-        self._contracts_deliver = defaultdict(dict)
-        self._contracts_payed = []
-        self._contracts_delivered = []
-
-        self._expiring_goods = []
-
         self._trade_log = defaultdict(int)
         self._data_to_observe = {}
         self._data_to_log_1 = {}
         self._quotes = {}
         self.round = start_round
         """ self.round returns the current round in the simulation READ ONLY!"""
-        self._perishable = []
         self._resources = []
         self.variables_to_track_panel = []
         self.variables_to_track_aggregate = []
 
         random.seed(random_seed)
+
+        try:
+            self._add_contracts_list()
+        except AttributeError:
+            self.contracts = DummyContracts()
 
     def init(self, parameters, agent_parameters):
         """ This method is called when the agents are build.
@@ -176,11 +174,11 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
                 self.bancrupcy = True
 
         """
-        return float(self._haves[good])
+        return self._haves.possession(good)
 
     def possessions(self):
         """ returns all possessions """
-        return copy(self._haves)
+        return self._haves.possessions()
 
     def _offer_counter(self):
         """ returns a unique number for an offer (containing the agent's name)
@@ -200,31 +198,8 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
                                 'last round and not been retrieved in this'
                                 'round get_offer(.)' % (self.group, self.id))
 
-        # contracts
-        self._contract_requests = defaultdict(list)
-        self._contract_offers = defaultdict(list)
-        self._contracts_payed = []
-        self._contracts_delivered = []
-
-        # delete all expired contracts
-        for good in self._contracts_deliver:
-            for contract in copy(self._contracts_deliver[good]):
-                if self._contracts_deliver[good][contract].end_date == self.round:
-                    del self._contracts_deliver[good][contract]
-
-        for good in self._contracts_pay:
-            for contract in copy(self._contracts_pay[good]):
-                if self._contracts_pay[good][contract].end_date == self.round:
-                    del self._contracts_pay[good][contract]
-
-        # expiring goods
-        for good in self._expiring_goods:
-            self._haves[good]._advance_round()
-
-        # perishing goods
-        for good in self._perishable:
-            if good in self._haves:
-                self._haves[good] = 0
+        self._haves._advance_round()
+        self.contracts._advance_round(self.round)
 
         if self.trade_logging > 0:
             self.database_connection.put(
@@ -256,7 +231,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
             'good': is the name of the good
             quantity: number
         """
-        self._haves[good] += quantity
+        self._haves.create(good, quantity)
 
     def create_timestructured(self, good, quantity):
         """ creates quantity of the time structured good out of nothing.
@@ -282,16 +257,13 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
             quantity:
                 an arry or number
         """
-        length = len(self._haves[good].time_structure)
-        for i in range(length):
-            qty = quantity[i] if type(quantity) == list else quantity / length
-            self._haves[good].time_structure[i] += qty
+        self._haves.create_timestructured(good, quantity)
 
     def _declare_expiring(self, good, duration):
         """ creates a good that has a limited duration
         """
         self._haves[good] = ExpiringGood(duration)
-        self._expiring_goods.append(good)
+        self._haves._expiring_goods.append(good)
 
     def destroy(self, good, quantity=None):
         """ destroys quantity of the good. If quantity is omitted destroys all
@@ -307,14 +279,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
 
             NotEnoughGoods: when goods are insufficient
         """
-        if quantity is None:
-            self._haves[good] = 0
-        else:
-            self._haves[good] -= quantity
-            if self._haves[good] < 0:
-                self._haves[good] = 0
-                raise NotEnoughGoods(
-                    self.name, good, quantity - self._haves[good])
+        self._haves.destroy(good, quantity)
 
     def _set_network_drawing_frequency(self, frequency):
         self._network_drawing_frequency = frequency
@@ -338,16 +303,11 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         self._resources.append((resource, units, product))
 
     def _produce_resource(self):
-        for resource, units, product in self._resources:
-            if resource in self._haves:
-                try:
-                    self._haves[product] += float(units) * \
-                        self._haves[resource]
-                except KeyError:
-                    self._haves[product] = float(units) * self._haves[resource]
+        for ingredient, units, product in self._resources:
+            self._haves.create(product, self.possession(ingredient) * units)
 
     def _register_perish(self, good):
-        self._perishable.append(good)
+        self._haves._perishable.append(good)
 
     def _register_panel(self, possessions, variables):
         self.possessions_to_track_panel = possessions

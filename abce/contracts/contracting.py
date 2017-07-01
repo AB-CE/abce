@@ -6,6 +6,8 @@ from builtins import object
 from abce.notenoughgoods import NotEnoughGoods
 from random import shuffle
 from abce.trade import get_epsilon
+from .contracts import Contracts
+
 
 epsilon = get_epsilon()
 
@@ -110,6 +112,8 @@ class Contracting(object):
                     unique number of contract
 
     """
+    def _add_contracts_list(self):
+        self.contracts = Contracts(self.name)
 
     def offer_good_contract(self, receiver_group, receiver_id, good, quantity, price, duration):
         """This method offers a contract to provide a good or service to the
@@ -221,7 +225,7 @@ class Contracting(object):
         return ret
 
     def accept_contract(self, contract, quantity=None):
-        """ Accepts the contract. The contract is completely aceppted, when
+        """ Accepts the contract. The contract is completely accepted, when
         the quantity is not given. Or partially when quantity is set.
 
         Args:
@@ -243,11 +247,11 @@ class Contracting(object):
                 quantity = contract.quantity
 
         if contract.pay_group == self.group and contract.pay_id == self.id:
-            self._contracts_pay[contract.good][contract.id] = contract
+            self.contracts._contracts_pay[contract.good][contract.id] = contract
             self._send(contract.sender_group,
                        contract.sender_id, '_ac', contract)
         else:
-            self._contracts_deliver[contract.good][contract.id] = contract
+            self.contracts._contracts_deliver[contract.good][contract.id] = contract
             self._send(contract.sender_group,
                        contract.sender_id, '_ac', contract)
         return contract
@@ -281,32 +285,32 @@ class Contracting(object):
                    contract.deliver_good_id, '_dp', contract)
 
     def contracts_to_deliver(self, good):
-        return list(self._contracts_deliver[good].values())
+        return list(self.contracts._contracts_deliver[good].values())
 
     def contracts_to_receive(self, good):
-        return list(self._contracts_pay[good].values())
+        return list(self.contracts._contracts_pay[good].values())
 
     def contracts_to_deliver_all(self):
         ret = {}
-        for good in self._contracts_deliver:
-            ret[good] = list(self._contracts_deliver[good].values())
-        return request_offer
+        for good in self.contracts._contracts_deliver:
+            ret[good] = list(self.contracts._contracts_deliver[good].values())
+        return ret
 
     def contracts_to_receive_all(self):
         ret = {}
-        for good in self._contracts_pay:
-            ret[good] = list(self._contracts_pay[good].values())
-        return request_offer
+        for good in self.contracts._contracts_pay:
+            ret[good] = list(self.contracts._contracts_pay[good].values())
+        return ret
 
     def end_contract(self, contract):
-        if contract.id in self._contracts_deliver[contract.good]:
+        if contract.id in self.contracts._contracts_deliver[contract.good]:
             self._send(contract.pay_group, contract.pay_id,
                        '!d', ('r', contract.good, contract.id))
-            del self._contracts_deliver[contract.good][contract.id]
-        elif contract.id in self._contracts_pay[contract.good]:
+            del self.contracts._contracts_deliver[contract.good][contract.id]
+        elif contract.id in self.contracts._contracts_pay[contract.good]:
             self._send(contract.deliver_good_group, contract.deliver_good_id,
                        '!d', ('d', contract.good, contract.id))
-            del self._contracts_pay[contract.good][contract.id]
+            del self.contracts._contracts_pay[contract.good][contract.id]
         else:
             raise Exception("Contract not found")
 
@@ -322,12 +326,46 @@ class Contracting(object):
     def was_delivered_last_round(self, contract):
         return self.round - 1 in contract.delivered
 
+    def calculate_netvalue(self, prices={},
+                           parameters={},
+                           value_functions={}):
+        return (self._haves.calculate_netvalue(prices) +
+                self.contracts.calculate_netvalue(parameters, value_functions))
+
+    def calculate_assetvalue(self, prices={},
+                             parameters={},
+                             value_functions={}):
+        return (self._haves.calculate_assetvalue(prices) +
+                self.contracts.calculate_assetvalue(parameters,
+                                                    value_functions))
+
+    def calculate_liablityvalue(self, prices={},
+                                parameters={},
+                                value_functions={}):
+        return (self._haves.calculate_liablityvalue(prices) +
+                self.contracts.calculate_liablityvalue(parameters,
+                                                       value_functions))
+
+    def calculate_valued_assets(self, prices={},
+                                parameters={},
+                                value_functions={}):
+        return (self._haves.calculate_valued_assets(prices) +
+                self.contracts.calculate_valued_assets(parameters,
+                                                       value_functions))
+
+    def calculate_valued_liablities(self, prices={},
+                                    parameters={},
+                                    value_functions={}):
+        return (self._haves.calculate_valued_liablities(prices) +
+                self.contracts.calculate_valued_liablities(parameters,
+                                                           value_functions))
+
 
 def bound_zero(x):
     """ asserts that variable is above zero, where foating point imprecission is accounted for,
     and than makes sure it is above 0, without floating point imprecission """
-    assert x > - \
-        epsilon, '%.30f is smaller than 0 - epsilon (%.30f)' % (x, - epsilon)
+    assert x > - epsilon, \
+        '%.30f is smaller than 0 - epsilon (%.30f)' % (x, - epsilon)
     if x < 0:
         return 0
     else:
