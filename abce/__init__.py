@@ -55,7 +55,7 @@ import abce.db
 import abce.abcelogger
 from . import postprocess
 from glob import glob
-from .agent import Agent
+from .agent import Agent, Trade
 from .group import Group
 from collections import defaultdict, OrderedDict
 from abce.notenoughgoods import NotEnoughGoods
