@@ -6,7 +6,7 @@ import pandas as pd
 import datetime
 
 
-def to_csv(directory, calendar):
+def to_csv(directory):
     os.chdir(directory)
     db = sqlite3.connect('database.db')
     cursor = db.cursor()
@@ -27,11 +27,6 @@ def to_csv(directory, calendar):
             print()
             print("If you keep having problems email davoudtaghawinejad@gmail.com")
             raise
-        if calendar:
-            table['date'] = 0
-            for i in range(len(table)):
-                table.set_value(i, 'date', datetime.date.fromordinal(
-                    int(table['round'][i])))
         if 'round' in table.columns:
             table.to_csv(table_name + '.csv', index_label='index')
         else:
@@ -55,11 +50,6 @@ def to_csv(directory, calendar):
                 std = pd.DataFrame()
 
             result = pd.concat([aggregated, meaned, std], axis=1)
-            if calendar:
-                result['date'] = 0
-                for ord_date in result.index:
-                    result.set_value(ord_date, 'date',
-                                     datetime.date.fromordinal(ord_date))
             result.to_csv('aggregate_' + table_name + '.csv',
                           index_label='round', date_format='%Y-%m-%d')
 
