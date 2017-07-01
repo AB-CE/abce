@@ -1,3 +1,4 @@
+import platform
 import abce
 import filecmp as fc
 import difflib as dl
@@ -17,7 +18,10 @@ class Agent(abce.Agent):
 
 def compare(to_compare, path, message):
     should_be_full = pd.read_csv(to_compare).sort_index(axis=1)
-    really_is_full = pd.read_csv(path + '/' + to_compare).sort_index(axis=1)
+    the_path = (path + '/' + to_compare)
+    if platform.system() == 'Windows':  # windows compatibility
+        the_path = the_path[the_path.find('/') + 1:]
+    really_is_full = pd.read_csv(the_path).sort_index(axis=1)
     if 'id' in should_be_full.columns:
         should_be_full = should_be_full.sort_values(by=['id', 'round'], axis=0).reset_index(drop=True)
         really_is_full = really_is_full.sort_values(by=['id', 'round'], axis=0).reset_index(drop=True)
@@ -47,6 +51,9 @@ def main(processes):
         agents.do('go')
         agents.aggregate()
         agents.panel()
+
+    if platform.system() == 'Windows':
+        simulation.path = simulation.path.replace('/', '\\')
 
     compare('aggregate_agent.csv', simulation.path, 'aggregate logging test\t\t')
     compare('aggregate_agent_mean.csv', simulation.path, 'aggregate logging test mean\t')
