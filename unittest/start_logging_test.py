@@ -47,9 +47,9 @@ def main(processes):
 
     agents = simulation.build_agents(Agent, 'agent', 10, parameters='')
 
-    with simulation:
+    with simulation.database:
         for r in range(100):
-            simulation.time(r)
+            simulation.advance_time(r)
             agents.do('go')
             agents.aggregate()
             agents.panel()

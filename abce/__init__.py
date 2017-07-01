@@ -216,6 +216,7 @@ class Simulation(object):
         self.sim_parameters = OrderedDict(
             {'name': name, 'random_seed': random_seed})
         self.clock = time.time()
+        self.database = self
 
     def declare_round_endowment(self, resource, units, product, groups=['all']):
         """ At the beginning of very round the agent gets 'units' units of good 'product' for
@@ -434,7 +435,7 @@ class Simulation(object):
         parameters = ((pg, time) for pg in self._processor_groups)
         self.pool.map(execute_advance_round_wrapper, parameters, chunksize=1)
 
-    def time(self, time):
+    def advance_time(self, time):
         print("\rRound" + str(time))
         self.execute_advance_round(time)
         self.add_and_delete_agents(time)
@@ -596,7 +597,6 @@ class Simulation(object):
 
     def __enter__(self):
         self._db.start()
-        return self
 
     def __exit__(self, a, b, trackback):
         self.gracefull_exit()
