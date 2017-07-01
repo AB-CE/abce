@@ -48,6 +48,111 @@ from pprint import pprint
 import traceback
 from abce.notenoughgoods import NotEnoughGoods
 import datetime
+from abce.trade import get_epsilon
+epsilon = get_epsilon()
+
+
+class Inventory(defaultdict):
+    def __init__(self, name):
+        super(Inventory, self).__init__(float)
+        self.name = name
+        self.contracts = set()
+        self._expiring_goods = []
+        self._perishable = []
+
+    def create(self, good, quantity):
+        """ creates quantity of the good out of nothing
+
+        Use with care. As long as you use it only for labor and
+        natural resources your model is macro-economically complete.
+
+        Args:
+            'good': is the name of the good
+            quantity: number
+        """
+        self[good] += quantity
+
+    def destroy(self, good, quantity=None):
+        """ destroys quantity of the good. If quantity is omitted destroys all
+
+        Use with care.
+
+        Args::
+
+            'good':
+                is the name of the good
+            quantity (optional):
+                number
+
+        Raises::
+
+            NotEnoughGoods: when goods are insufficient
+        """
+        if quantity is None:
+            self[good] = 0
+        else:
+            available = self[good]
+            if available < quantity - epsilon:
+                self[good] = 0
+                raise NotEnoughGoods(self.name, good, quantity - available)
+            self[good] -= quantity
+
+    def transform(self, ingredient, unit, product, quantity=None):
+        if quantity is None:
+            quantity = self[ingredient]
+        self.destroy(ingredient, quantity)
+        self.create(product, float(unit) * quantity)
+
+    def _advance_round(self):
+        # expiring goods
+        for good in self._expiring_goods:
+            self[good]._advance_round()
+
+        # perishing goods
+        for good in self._perishable:
+            if good in self:
+                self.destroy(good)
+
+    # contracts-specific methods
+    def add_contract(self, entry):
+        assert entry not in self.contracts
+        self.contracts.add(entry)
+
+    def remove_contract(self, entry):
+        self.contracts.remove(entry)
+
+    def calculate_netvalue(self, parameters, value_functions):
+        return (sum(value_functions[entry.__class__](entry, parameters) for entry in self.contracts) +
+                sum(quantity * parameters['good_prices'][name] for name, quantity in self.items()))
+
+    def calculate_assetvalue(self, parameters, value_functions):
+        return (sum(max(value_functions[entry.__class__](entry, parameters), 0)for entry in self.contracts) +
+                sum(quantity * parameters[('price', name)]
+                    for name, quantity in self.items()
+                    if parameters[('price', name)] > 0))
+
+    def calculate_liablityvalue(self, parameters, value_functions):
+        return (sum(min(value_functions[entry.__class__](entry, parameters), 0)for entry in self.contracts) +
+                sum(quantity * parameters[('price', name)]
+                    for name, quantity in self.goods.items()
+                    if parameters[('price', name)] < 0))
+
+    def calculate_valued_assets(self, parameters, value_functions):
+        ret = {str(entry): value_functions[entry.__class__](entry, parameters)
+               for entry in self.contracts
+               if value_functions[entry.__class__](entry, parameters) >= 0}
+        ret.update({name: quantity for name, quantity in self.goods.items()
+                    if parameters[('price', name)] >= 0})
+        return ret
+
+    def calculate_valued_liablities(self, parameters, value_functions):
+        ret = {str(entry): value_functions[entry.__class__](entry, parameters)
+               for entry in self.contracts
+               if value_functions[entry.__class__](entry, parameters) < 0}
+        ret.update({name: quantity
+                    for name, quantity in self.goods.items()
+                    if parameters[('price', name)] < 0})
+        return ret
 
 
 class Agent(Database, NetworkLogger, Trade, Messaging):
@@ -98,7 +203,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         self.num_managers = num_managers
         self._out = [[] for _ in range(self.num_managers + 1)]
 
-        self._haves = defaultdict(float)
+        self._haves = Inventory(self.name)
 
         # TODO make defaultdict; delete all key errors regarding self._haves as defaultdict, does not have missing keys
         self._haves['money'] = 0
@@ -118,15 +223,12 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         self._contracts_payed = []
         self._contracts_delivered = []
 
-        self._expiring_goods = []
-
         self._trade_log = defaultdict(int)
         self._data_to_observe = {}
         self._data_to_log_1 = {}
         self._quotes = {}
         self.round = start_round
         """ self.round returns the current round in the simulation READ ONLY!"""
-        self._perishable = []
         self._resources = []
         self.variables_to_track_panel = []
         self.variables_to_track_aggregate = []
@@ -160,6 +262,12 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         except ValueError:
             raise ValueError(
                 "you need to run ABCE in calendar mode, use simulation.declare_calendar(2000, 1, 1)")
+
+    def create(self, good, quantity):
+        return self._haves.create(good, quantity)
+
+    def destroy(self, good, quantity=None):
+        return self._haves.destroy(good, quantity)
 
     def possession(self, good):
         """ returns how much of good an agent possesses.
@@ -220,14 +328,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
                 if self._contracts_pay[good][contract].end_date == self.round:
                     del self._contracts_pay[good][contract]
 
-        # expiring goods
-        for good in self._expiring_goods:
-            self._haves[good]._advance_round()
-
-        # perishing goods
-        for good in self._perishable:
-            if good in self._haves:
-                self._haves[good] = 0
+        self._haves._advance_round()
 
         if self.trade_logging > 0:
             self.database_connection.put(
@@ -246,18 +347,6 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
                             'been retrieved in this round get_messages(.)' % (self.group, self.id))
 
         self.round += 1
-
-    def create(self, good, quantity):
-        """ creates quantity of the good out of nothing
-
-        Use create with care, as long as you use it only for labor and
-        natural resources your model is macro-economically complete.
-
-        Args:
-            'good': is the name of the good
-            quantity: number
-        """
-        self._haves[good] += quantity
 
     def create_timestructured(self, good, quantity):
         """ creates quantity of the time structured good out of nothing.
@@ -292,30 +381,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         """ creates a good that has a limited duration
         """
         self._haves[good] = ExpiringGood(duration)
-        self._expiring_goods.append(good)
-
-    def destroy(self, good, quantity=None):
-        """ destroys quantity of the good. If quantity is omitted destroys all
-
-        Args::
-
-            'good':
-                is the name of the good
-            quantity (optional):
-                number
-
-        Raises::
-
-            NotEnoughGoods: when goods are insufficient
-        """
-        if quantity is None:
-            self._haves[good] = 0
-        else:
-            self._haves[good] -= quantity
-            if self._haves[good] < 0:
-                self._haves[good] = 0
-                raise NotEnoughGoods(
-                    self.name, good, quantity - self._haves[good])
+        self._haves._expiring_goods.append(good)
 
     def _set_network_drawing_frequency(self, frequency):
         self._network_drawing_frequency = frequency
@@ -339,16 +405,12 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         self._resources.append((resource, units, product))
 
     def _produce_resource(self):
-        for resource, units, product in self._resources:
-            if resource in self._haves:
-                try:
-                    self._haves[product] += float(units) * \
-                        self._haves[resource]
-                except KeyError:
-                    self._haves[product] = float(units) * self._haves[resource]
+        for ingredient, units, product in self._resources:
+            self._haves.transform(ingredient, units, product)
+            self._haves.create(ingredient, units)
 
     def _register_perish(self, good):
-        self._perishable.append(good)
+        self._haves._perishable.append(good)
 
     def _register_panel(self, possessions, variables):
         self.possessions_to_track_panel = possessions

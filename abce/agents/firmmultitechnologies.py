@@ -79,13 +79,14 @@ class FirmMultiTechnologies(object):
                 A.produce(bike_production_function, bike)
         """
         if production_function.use == 'all':
-            for good in list(input_goods.keys()):
-                if self._haves[good] < input_goods[good] - epsilon:
+            for good, quantity in input_goods.items():
+                available = self._haves[good]
+                if available < quantity - epsilon:
                     raise NotEnoughGoods(
-                        self.name, good, (input_goods[good] - self._haves[good]))
+                        self.name, good, (quantity - available))
 
-            for good in input_goods:
-                self._haves[good] -= input_goods[good]
+            for good, quantity in input_goods.items():
+                self._haves[good] -= quantity
         else:
             for good in list(production_function.use.keys()):
                 if self._haves[good] < input_goods[good] - epsilon:
@@ -97,7 +98,7 @@ class FirmMultiTechnologies(object):
 
         output_dict = production_function.production(input_goods)
         for good in list(output_dict.keys()):
-            self._haves[good] += output_dict[good]
+            self.create(good, output_dict[good])
 
         return output_dict
 
