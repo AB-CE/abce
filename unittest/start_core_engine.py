@@ -90,9 +90,9 @@ def main(processes, rounds):
 
     print('build AddAgent')
     addagent = s.build_agents(AddAgent, 'addagent', 0)
-    with s:
+    with s.database:
         for r in range(rounds):
-            s.time(r)
+            s.advance_time(r)
             for _ in range(5):
                 buy.do('one')
                 buy.do('two')
