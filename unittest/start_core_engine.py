@@ -26,7 +26,6 @@ from victim import Victim
 
 def main(processes, rounds):
     s = Simulation(processes=processes, name='unittest')
-
     s.declare_round_endowment(
         resource='labor_endowment', units=5, product='labor')
     s.declare_round_endowment(resource='cow', units=10, product='milk')
@@ -91,53 +90,52 @@ def main(processes, rounds):
 
     print('build AddAgent')
     addagent = s.build_agents(AddAgent, 'addagent', 0)
-    s._prepare()
-    for r in range(rounds):
-        s.time(r)
-        for _ in range(5):
-            buy.do('one')
-            buy.do('two')
-            buy.do('three')
-            buy.do('clean_up')
-        buy.do('panel')
-        for _ in range(5):
-            sell.do('one')
-            sell.do('two')
-            sell.do('three')
-            sell.do('clean_up')
-        for _ in range(5):
-            give.do('one')
-            give.do('two')
-            give.do('three')
-            give.do('clean_up')
-        for _ in range(5):
-            loggertest.do('one')
-            loggertest.do('two')
-            loggertest.do('three')
-            loggertest.do('clean_up')
-        for _ in range(5):
-            utilityhousehold.do('one')
-            utilityhousehold.do('two')
-            utilityhousehold.do('three')
-            utilityhousehold.do('clean_up')
-        endowment.do('Iconsume')
-        productionmultifirm.do('production')
-        productionfirm.do('production')
-        utilityhousehold.do('consumption')
-        (messagea + messageb).do('sendmsg')
-        (messageb + messagea).do('recvmsg')
-        # (contractbuyer + contractbuyerstop).do('request_offer')
-        # (contractseller + contractsellerstop).do('make_offer')
-        # contractagents.do('accept_offer')
-        # contractagents.do('deliver')
-        # contractagents.do('pay')
-        # contractagents.do('control')
-        killer.do('kill')
-        killer.do('send_message')
-        victim.do('am_I_dead')
-        some.do('all_tests_completed')
-        addagent.do('add_agent')
-    s.gracefull_exit()
+    with s:
+        for r in range(rounds):
+            s.time(r)
+            for _ in range(5):
+                buy.do('one')
+                buy.do('two')
+                buy.do('three')
+                buy.do('clean_up')
+            buy.do('panel')
+            for _ in range(5):
+                sell.do('one')
+                sell.do('two')
+                sell.do('three')
+                sell.do('clean_up')
+            for _ in range(5):
+                give.do('one')
+                give.do('two')
+                give.do('three')
+                give.do('clean_up')
+            for _ in range(5):
+                loggertest.do('one')
+                loggertest.do('two')
+                loggertest.do('three')
+                loggertest.do('clean_up')
+            for _ in range(5):
+                utilityhousehold.do('one')
+                utilityhousehold.do('two')
+                utilityhousehold.do('three')
+                utilityhousehold.do('clean_up')
+            endowment.do('Iconsume')
+            productionmultifirm.do('production')
+            productionfirm.do('production')
+            utilityhousehold.do('consumption')
+            (messagea + messageb).do('sendmsg')
+            (messageb + messagea).do('recvmsg')
+            # (contractbuyer + contractbuyerstop).do('request_offer')
+            # (contractseller + contractsellerstop).do('make_offer')
+            # contractagents.do('accept_offer')
+            # contractagents.do('deliver')
+            # contractagents.do('pay')
+            # contractagents.do('control')
+            killer.do('kill')
+            killer.do('send_message')
+            victim.do('am_I_dead')
+            some.do('all_tests_completed')
+            addagent.do('add_agent')
 
 
 if __name__ == '__main__':

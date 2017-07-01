@@ -434,13 +434,6 @@ class Simulation(object):
         parameters = ((pg, time) for pg in self._processor_groups)
         self.pool.map(execute_advance_round_wrapper, parameters, chunksize=1)
 
-    def _prepare(self):
-        """ This runs the simulation """
-        if not(self.num_of_agents_in_group):
-            raise Exception('No Agents Created')
-
-        self._db.start()
-
     def time(self, time):
         print("\rRound" + str(time))
         self.execute_advance_round(time)
@@ -600,6 +593,13 @@ class Simulation(object):
         """
         if self.round > 0:
             abcegui.run(open=open, new=new)
+
+    def __enter__(self):
+        self._db.start()
+        return self
+
+    def __exit__(self, a, b, trackback):
+        self.gracefull_exit()
 
 
 def _number_or_string(word):
