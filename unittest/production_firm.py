@@ -1,7 +1,7 @@
 from __future__ import division
 from __future__ import print_function
 import abce
-from tools import *
+from tools import is_zero
 from abce.agents import Firm
 
 
@@ -152,7 +152,7 @@ class ProductionFirm(abce.Agent, Firm):
             assert self.possession('e') == 0, self.possession('e')
             expected = 2 * (0.2 * 1 ** 0.5 + 0.2 * 2 ** 0.5 + 0.2 *
                             2 ** 0.5 + 0.2 * 2 ** 0.5 + 0.2 * 2 ** 0.5) ** (1 / 0.5)
-            assert self.possession('consumption_good') == expected, (self.possession(
+            assert is_zero(self.possession('consumption_good') - expected), (self.possession(
                 'consumption_good'), expected)
             self.destroy('a', 1)
             self.destroy('consumption_good', expected)
