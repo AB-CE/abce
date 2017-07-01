@@ -46,7 +46,7 @@ def to_csv(directory):
                 std = grouped.std()
                 std.rename(
                     columns={col: col + '_std' for col in std.columns}, inplace=True)
-            except:
+            except pd.core.groupby.DataError:
                 std = pd.DataFrame()
 
             result = pd.concat([aggregated, meaned, std], axis=1)
