@@ -15,9 +15,10 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 """
-The :py:class:`abce.Agent` class is the basic class for creating your agents. It automatically handles the
-possession of goods of an agent. In order to produce/transforme goods you also need to subclass
-the :py:class:`abce.Firm` or to create a consumer the :py:class:`abce.Household`.
+The :py:class:`abce.Agent` class is the basic class for creating your agents.
+It automatically handles the possession of goods of an agent. In order to
+produce/transforme goods you also need to subclass the :py:class:`abce.Firm` or
+to create a consumer the :py:class:`abce.Household`.
 
 For detailed documentation on:
 
@@ -26,20 +27,12 @@ Trading, see :doc:`Trade`
 Logging and data creation, see :doc:`Database`.
 
 Messaging between agents, see :doc:`Messaging`.
-
-
-
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import absolute_import
-from builtins import str
-from builtins import range
 from collections import OrderedDict, defaultdict
 from .database import Database
 from .networklogger import NetworkLogger
-from .trade import Trade, Offer
-from .messaging import Messaging, Message
+from .trade import Trade
+from .messaging import Messaging
 import time
 from copy import copy
 import random
@@ -51,11 +44,11 @@ import datetime
 
 
 class Agent(Database, NetworkLogger, Trade, Messaging):
-    """ Every agent has to inherit this class. It connects the agent to the simulation
-    and to other agent. The :class:`abce.Trade`, :class:`abce.Database` and
-    :class:`abce.Messaging` classes are included. You can enhance an agent, by also
-    inheriting from :class:`abce.Firm`. :class:`abce.FirmMultiTechnologies`
-    or :class:`abce.Household`.
+    """ Every agent has to inherit this class. It connects the agent to the
+    simulation and to other agent. The :class:`abce.Trade`,
+    :class:`abce.Database` and :class:`abce.Messaging` classes are included. You
+    can enhance an agent, by also inheriting from :class:`abce.Firm`.
+    :class:`abce.FirmMultiTechnologies` or :class:`abce.Household`.
 
     For example::
 
@@ -75,7 +68,8 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
 
     """
 
-    def __init__(self, id, group, trade_logging, database, logger, random_seed, start_round, num_managers):
+    def __init__(self, id, group, trade_logging, database, logger, random_seed,
+                 start_round, num_managers):
         """ Do not overwrite __init__ instead use a method called init instead.
         init is called whenever the agent are build.
         """
@@ -100,7 +94,8 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
 
         self._haves = defaultdict(float)
 
-        # TODO make defaultdict; delete all key errors regarding self._haves as defaultdict, does not have missing keys
+        # TODO make defaultdict; delete all key errors regarding self._haves as
+        # defaultdict, does not have missing keys
         self._haves['money'] = 0
         self._msgs = {}
 
@@ -143,23 +138,25 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
 
     def date(self):
         """ If ABCE is run in calendar mode (via
-            :py:meth:`abce.Simulation.declare_calendar`), date shows the current
-            date.::
+        :py:meth:`abce.Simulation.declare_calendar`), date shows the current
+        date.::
 
-            self.date().day
-            self.date().month
-            self.date().year
-            self.date().weekday()  # the weekday as a number Monday being 0
-            self.date().toordinal()  #
+        self.date().day
+        self.date().month
+        self.date().year
+        self.date().weekday()  # the weekday as a number Monday being 0
+        self.date().toordinal()  #
 
-            The date works like python's
-            `date object <https://docs.python.org/2/library/datetime.html#date-objects>`_
+        The date works like python's
+        `date object
+        <https://docs.python.org/2/library/datetime.html#date-objects>`_
         """
         try:
             return datetime.date.fromordinal(self.round)
         except ValueError:
             raise ValueError(
-                "you need to run ABCE in calendar mode, use simulation.declare_calendar(2000, 1, 1)")
+                "you need to run ABCE in calendar mode, use "
+                "simulation.declare_calendar(2000, 1, 1)")
 
     def possession(self, good):
         """ returns how much of good an agent possesses.
@@ -167,8 +164,8 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         Returns:
             A number.
 
-        possession does not return a dictionary for self.log(...), you can use self.possessions([...])
-        (plural) with self.log.
+        possession does not return a dictionary for self.log(...), you can use
+        self.possessions([...]) (plural) with self.log.
 
         Example::
 
@@ -237,13 +234,15 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
 
         if sum([len(offers) for offers in list(self._open_offers.values())]):
             pprint(dict(self._open_offers))
-            raise Exception('%s_%i: There are offers an agent send that have not'
-                            'been retrieved in this round get_offer(.)' % (self.group, self.id))
+            raise Exception('%s_%i: There are offers an agent send that have '
+                            'not been retrieved in this round get_offer(.)' %
+                            (self.group, self.id))
 
         if sum([len(offers) for offers in list(self._msgs.values())]):
             pprint(dict(self._msgs))
-            raise Exception('%s_%i: There are messages an agent send that have not'
-                            'been retrieved in this round get_messages(.)' % (self.group, self.id))
+            raise Exception('%s_%i: There are messages an agent send that have '
+                            'not been retrieved in this round get_messages(.)' %
+                            (self.group, self.id))
 
         self.round += 1
 
@@ -271,7 +270,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         It can alse be used with a quantity instead of an array. In this
         case the amount is equally split on the years.::
 
-            self.creat_timestructured('capital', 60)
+            self.create_timestructured('capital', 60)
 
         In this case 20 units are 2 years old 20 units are 1 year old
         and 20 units are new.
@@ -399,13 +398,15 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         self._out[receiver_id % self.num_managers].append(
             (receiver_group, receiver_id, (typ, msg)))
 
-    def create_agent(self, AgentClass, group_name, parameters=None, agent_parameters=None):
+    def create_agent(self, AgentClass, group_name,
+                     parameters=None, agent_parameters=None):
         """ create a new agent.
 
         Args:
 
             AgentClass:
-                the class of agent to create. (can be the same class as the creating agent)
+                the class of agent to create.
+                (can be the same class as the creating agent)
 
             'group_name':
                 the name of the group the agent should belong to
