@@ -90,11 +90,11 @@ class ProcessorGroup(object):
     def name(self):
         return (self.group, self.batch)
 
-    def execute_internal(self, command):
+    def execute_advance_round(self, time):
         for group in self.agents.values():
             for agent in group:
                 try:
-                    getattr(agent, command)()
+                    agent._advance_round(time)
                 except KeyboardInterrupt:
                     return None
                 except:

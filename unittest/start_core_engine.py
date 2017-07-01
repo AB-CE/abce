@@ -25,7 +25,7 @@ from victim import Victim
 
 
 def main(processes, rounds):
-    s = Simulation(rounds=rounds, processes=processes, name='unittest')
+    s = Simulation(processes=processes, name='unittest')
 
     s.declare_round_endowment(
         resource='labor_endowment', units=5, product='labor')
@@ -67,7 +67,7 @@ def main(processes, rounds):
     # s.build_agents(ExpiringCapital, 1)
     # s.build_agents(GiveExpiringCapital, 2)
     print('build BuyExpiringCapital')
-    buyexpiringcapital = s.build_agents(
+    _ = s.build_agents(
         BuyExpiringCapital, 'buyexpiringcapital', 2, parameters={'rounds': rounds})
     print('build MessageA')
     messagea = s.build_agents(MessageA, 'messagea',
@@ -75,16 +75,13 @@ def main(processes, rounds):
     print('build MessageB')
     messageb = s.build_agents(MessageB, 'messageb',
                               20, parameters={'rounds': rounds})
-    print('build AddAgent')
-    messagec = s.build_agents(AddAgent, 'addagent', 1,
-                              parameters={'rounds': rounds})
     print('build Killer')
     killer = s.build_agents(Killer, 'killer', 1, parameters={'rounds': rounds})
     print('build Victim')
     victim = s.build_agents(Victim, 'victim', rounds,
                             parameters={'rounds': rounds})
     print('build Victim loudvictim')
-    loudvictim = s.build_agents(
+    _ = s.build_agents(
         Victim, 'loudvictim', rounds, parameters={'rounds': rounds})
 
     some = buy + sell + give + loggertest + utilityhousehold
@@ -92,8 +89,11 @@ def main(processes, rounds):
 #    contractagents = (contractbuyer + contractseller
 #                      + contractbuyerstop + contractsellerstop)
 
+    print('build AddAgent')
     addagent = s.build_agents(AddAgent, 'addagent', 0)
-    for round in s.next_round():
+    s._prepare()
+    for r in range(rounds):
+        s.time(r)
         for _ in range(5):
             buy.do('one')
             buy.do('two')
@@ -135,11 +135,9 @@ def main(processes, rounds):
         killer.do('kill')
         killer.do('send_message')
         victim.do('am_I_dead')
-
-        # ('expiringcapital', 'go'),
-
         some.do('all_tests_completed')
         addagent.do('add_agent')
+    s.gracefull_exit()
 
 
 if __name__ == '__main__':

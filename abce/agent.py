@@ -72,8 +72,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
 
     """
 
-    def __init__(self, id, group, trade_logging, database, logger, random_seed,
-                 start_round, num_managers):
+    def __init__(self, id, group, trade_logging, database, logger, random_seed, num_managers):
         """ Do not overwrite __init__ instead use a method called init instead.
         init is called whenever the agent are build.
         """
@@ -113,8 +112,10 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         self._data_to_observe = {}
         self._data_to_log_1 = {}
         self._quotes = {}
-        self.round = start_round
-        """ self.round returns the current round in the simulation READ ONLY!"""
+        self.round = None
+        """ self.round is depreciated"""
+        self.time = None
+        """ self.time, contains the time set with simulation.time(time) """
         self._resources = []
         self.variables_to_track_panel = []
         self.variables_to_track_aggregate = []
@@ -186,7 +187,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         self._offer_count += 1
         return hash((self.name, self._offer_count))
 
-    def _advance_round(self):
+    def _advance_round(self, time):
         for offer in list(self.given_offers.values()):
             if offer.made < self.round:
                 print("in agent %s this offers have not been retrieved:" %
@@ -219,7 +220,11 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
                             'not been retrieved in this round get_messages(.)' %
                             (self.group, self.id))
 
-        self.round += 1
+        for ingredient, units, product in self._resources:
+            self._haves.create(product, self.possession(ingredient) * units)
+
+        self.round = time
+        self.time = time
 
     def create(self, good, quantity):
         """ creates quantity of the good out of nothing
@@ -301,10 +306,6 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
 
     def _register_resource(self, resource, units, product):
         self._resources.append((resource, units, product))
-
-    def _produce_resource(self):
-        for ingredient, units, product in self._resources:
-            self._haves.create(product, self.possession(ingredient) * units)
 
     def _register_perish(self, good):
         self._haves._perishable.append(good)

@@ -36,17 +36,20 @@ def compare(to_compare, path, message):
 
 
 def main(processes):
-    simulation = abce.Simulation(rounds=100, processes=processes)
+    simulation = abce.Simulation(processes=processes)
 
     simulation.aggregate('agent', variables=['i', 'r'], possessions=['money'])
     simulation.panel('agent', variables=['i', 'r'], possessions=['money'])
 
     agents = simulation.build_agents(Agent, 'agent', 10, parameters='')
 
-    for r in simulation.next_round():
+    simulation._prepare()
+    for r in range(100):
+        simulation.time(r)
         agents.do('go')
         agents.aggregate()
         agents.panel()
+    simulation.gracefull_exit()
 
     compare('aggregate_agent.csv', simulation.path, 'aggregate logging test\t\t')
     compare('aggregate_agent_mean.csv', simulation.path, 'aggregate logging test mean\t')
