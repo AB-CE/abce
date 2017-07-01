@@ -50,8 +50,8 @@ class ProductionMultifirm(abce.Agent, abce.FirmMultiTechnologies):
 
         assert self.possession('a') == 1, self.possession('a')
         assert self.possession('b') == 1.8, self.possession('b')
-        assert self.possession('consumption_good') == 1 ** 0.5 * \
-            2, self.possession('consumption_good')
+        assert is_zero(self.possession('consumption_good') - 1. ** 0.5 * 2), \
+            self.possession('consumption_good')
         self.destroy('a')
         self.destroy('b')
         self.destroy('consumption_good')
