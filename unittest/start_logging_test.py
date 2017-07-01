@@ -47,13 +47,12 @@ def main(processes):
 
     agents = simulation.build_agents(Agent, 'agent', 10, parameters='')
 
-    simulation._prepare()
-    for r in range(100):
-        simulation.time(r)
-        agents.do('go')
-        agents.aggregate()
-        agents.panel()
-    simulation.gracefull_exit()
+    with simulation:
+        for r in range(100):
+            simulation.time(r)
+            agents.do('go')
+            agents.aggregate()
+            agents.panel()
 
     if platform.system() == 'Windows':
         simulation.path = simulation.path.replace('/', '\\')
