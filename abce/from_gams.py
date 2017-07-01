@@ -15,7 +15,8 @@ from builtins import object
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations under
 # the License.
-from pyparsing import *
+from pyparsing import (Word, Suppress, Optional, OneOrMore, ParseException,
+                       alphas, alphanums, nums)
 
 
 class HouseholdFromGams(object):
@@ -40,11 +41,13 @@ class HouseholdFromGams(object):
 
 
     """
+
     def __init__(self, cal_file='calibration.cal'):
         self.cal_file = cal_file
 
     def set_cobb_douglas_utility_function_from_gams(self):
-        self.set_cobb_douglas_utility_function(read_list('share parameter in utility func.'))
+        self.set_cobb_douglas_utility_function(
+            read_list('share parameter in utility func.'))
 
 
 gams_identifier = Word(alphas, alphanums + '_')
@@ -52,11 +55,26 @@ S = Suppress
 Ot = Optional
 
 decimalNumber = Word(nums, nums + ",") + Optional("." + OneOrMore(Word(nums)))
-joinTokens = lambda tokens: "".join(tokens)
+
+
+def joinTokens(tokens):
+    return "".join(tokens)
+
+
 decimalNumber.setParseAction(joinTokens)
-stripCommas = lambda tokens: tokens[0].replace(",", "")
+
+
+def stripCommas(tokens):
+    return tokens[0].replace(",", "")
+
+
 decimalNumber.addParseAction(stripCommas)
-convertToFloat = lambda tokens: float(tokens[0])
+
+
+def convertToFloat(tokens):
+    return float(tokens[0])
+
+
 decimalNumber.addParseAction(convertToFloat)
 
 

@@ -19,35 +19,42 @@ from __future__ import print_function
 import multiprocessing
 import sqlite3
 from collections import defaultdict
+from .online_variance import OnlineVariance
+
 
 class Database(multiprocessing.Process):
     def __init__(self, directory, in_sok, trade_log):
         multiprocessing.Process.__init__(self)
         self.directory = directory
-        self.panels = []
-        self.aggregates = []
+        self.panels = {}
+        self.aggregates = {}
         self.in_sok = in_sok
         self.data = {}
-        self.aggregate_round = {}
         self.trade_log = trade_log
+
+        self.ex_str = {}
+        self.aggregation = {}
+        self.round = 0
 
     def add_trade_log(self):
         table_name = 'trade'
         self.database.execute("CREATE TABLE " + table_name +
-            "(round INT, good VARCHAR(50), seller VARCHAR(50), buyer VARCHAR(50), price FLOAT, quantity FLOAT)")
+                              "(round INT, good VARCHAR(50), seller VARCHAR(50), buyer VARCHAR(50), price FLOAT, quantity FLOAT)")
         return 'INSERT INTO trade (round, good, seller, buyer, price, quantity) VALUES (%i, "%s", "%s", "%s", "%s", %f)'
 
     def add_log(self, table_name):
-        self.database.execute("CREATE TABLE " + table_name + "(round INT, id INT, PRIMARY KEY(round, id))")
+        self.database.execute("CREATE TABLE log_" + table_name +
+                              "(round INT, id INT, PRIMARY KEY(round, id))")
 
-    def add_panel(self, group):
-        self.panels.append('panel_' + group)
+    def add_panel(self, group, column_names):
+        self.panels['panel_' + group] = list(column_names)
 
-    def add_aggregate(self, group):
+    def add_aggregate(self, group, column_names):
         table_name = 'aggregate_' + group
-        self.aggregates.append(table_name)
-        self.data[table_name] = defaultdict(list)
-        self.aggregate_round[table_name] = None
+        self.aggregation[table_name] = OnlineVariance(len(column_names))
+        self.aggregates['aggregate_' + group] = list(column_names)
+        self.aggregates['aggregate_' + group + '_mean'] = list(column_names)
+        self.aggregates['aggregate_' + group + '_std'] = list(column_names)
 
     def run(self):
         self.db = sqlite3.connect(self.directory + '/database.db')
@@ -57,45 +64,55 @@ class Database(multiprocessing.Process):
         self.database.execute('PRAGMA count_changes=OFF')
         self.database.execute('PRAGMA temp_store=OFF')
         self.database.execute('PRAGMA default_temp_store=OFF')
-        #self.database.execute('PRAGMA cache_size = -100000')
+        # self.database.execute('PRAGMA cache_size = -100000')
         if self.trade_log:
             trade_ex_str = self.add_trade_log()
         for table_name in self.panels:
-            self.database.execute("CREATE TABLE " + table_name + "(round INT, id INT, PRIMARY KEY(round, id))")
+            panel_str = ' FLOAT,'.join(self.panels[table_name]) + ' FLOAT,'
+
+            create_str = "CREATE TABLE " + table_name + "(id INT, round INT, %s PRIMARY KEY(round, id))" % panel_str
+            self.database.execute(create_str)
+
+            format_strings = ','.join(['?'] * (2 + len(self.panels[table_name])))
+            self.ex_str[table_name] = "INSERT INTO " + table_name + \
+                "(id, round, " + ','.join(list(self.panels[table_name])) + ") VALUES (%s)" % format_strings
+
         for table_name in self.aggregates:
-            self.database.execute("CREATE TABLE " + table_name + "(round INT, PRIMARY KEY(round))")
+            agg_str = ' FLOAT,'.join(self.aggregates[table_name]) + ' FLOAT,'
+
+            create_str = "CREATE TABLE " + table_name + "(round INT, %s PRIMARY KEY(round))" % agg_str
+            self.database.execute(create_str)
+
+            format_strings = ','.join(['?'] * (1 + len(self.aggregates[table_name])))
+            self.ex_str[table_name] = "INSERT INTO " + table_name + \
+                "(round, " + ','.join(list(self.aggregates[table_name])) + ") VALUES (%s)" % format_strings
 
         while True:
             try:
                 msg = self.in_sok.get()
             except KeyboardInterrupt:
-                    break
+                break
             except EOFError:
                 break
             if msg == "close":
                 break
 
-            if msg[0] == 'panel':
-                data_to_write = msg[1]
-                data_to_write['id'] = msg[2]  # int
-                group = msg[3]
-                data_to_write['round'] = msg[4]  # int
-                table_name = 'panel_' + group
-                self.write(table_name, data_to_write)
+            elif msg[0] == 'panel':
+                    table_name = 'panel_' + msg[1]
+                    self.write_pa(table_name, msg[2])
 
             elif msg[0] == 'aggregate':
-                data_to_write = msg[1]
+                round = msg[1]
                 table_name = 'aggregate_' + msg[2]
-                round = msg[3]
-                if self.aggregate_round[table_name] == round:
-                    self.aggregate(table_name, data_to_write)
-                elif self.aggregate_round[table_name] is None:
-                    self.aggregate(table_name, data_to_write)
-                    self.aggregate_round[table_name] = round
+                if self.round == round:
+                    self.aggregation[table_name].update(msg[3])
                 else:
-                    self.write_aggregate(table_name, self.aggregate_round[table_name])
-                    self.aggregate_round[table_name] = round
-                    self.aggregate(table_name, data_to_write)
+                    self.write_pa(table_name, [self.round] + self.aggregation[table_name].sum())
+                    self.write_pa(table_name + '_mean', [self.round] + self.aggregation[table_name].mean())
+                    self.write_pa(table_name + '_std', [self.round] + self.aggregation[table_name].std())
+                    self.aggregation[table_name].clear()
+                    self.round = round
+                    self.aggregation[table_name].update(msg[3])
 
             elif msg[0] == 'trade_log':
                 individual_log = msg[1]
@@ -103,32 +120,36 @@ class Database(multiprocessing.Process):
                 for key in individual_log:
                     split_key = key[:].split(',')
                     self.database.execute(trade_ex_str % (round,
-                                                        split_key[0], split_key[1], split_key[2], split_key[3],
-                                                        individual_log[key]))
+                                                          split_key[0], split_key[1], split_key[2], split_key[3],
+                                                          individual_log[key]))
             elif msg[0] == 'log':
                 group_name = msg[1]
                 data_to_write = msg[2]
-                data_to_write = {key: float(data_to_write[key]) for key in data_to_write}
+                data_to_write = {key: float(
+                    data_to_write[key]) for key in data_to_write}
                 data_to_write['round'] = msg[3]
-                table_name = group_name
+                table_name = 'log_' + group_name
                 try:
                     self.write_or_update(table_name, data_to_write)
                 except TableMissing:
                     self.add_log(group_name)
                     self.write(table_name, data_to_write)
                 except sqlite3.InterfaceError:
-                    print((table_name, data_to_write))
-                    raise SystemExit('InterfaceError: data can not be written. If nested try: self.log_nested')
+                    raise Exception(
+                        'InterfaceError: data can not be written. If nested try: self.log_nested')
             else:
-                raise SystemExit("abce_db error '%s' command unknown ~87" % msg)
+                raise Exception(
+                    "abce_db error '%s' command unknown ~87" % msg)
         self.db.commit()
         self.db.close()
 
     def write_or_update(self, table_name, data_to_write):
-        insert_str = "INSERT OR IGNORE INTO " + table_name + "(" + ','.join(list(data_to_write.keys())) + ") VALUES (%s);"
-        update_str = "UPDATE " + table_name + " SET %s  WHERE CHANGES()=0 and round=%s and id=%s;"
+        insert_str = "INSERT OR IGNORE INTO " + table_name + \
+            "(" + ','.join(list(data_to_write.keys())) + ") VALUES (%s);"
+        update_str = "UPDATE " + table_name + \
+            " SET %s  WHERE CHANGES()=0 and round=%s and id=%s;"
         update_str = update_str % (','.join('%s=?' % key for key in data_to_write),
-            data_to_write['round'], data_to_write['id'])
+                                   data_to_write['round'], data_to_write['id'])
         rows_to_write = list(data_to_write.values())
         format_strings = ','.join(['?'] * len(rows_to_write))
         try:
@@ -143,11 +164,16 @@ class Database(multiprocessing.Process):
             self.write_or_update(table_name, data_to_write)
         self.database.execute(update_str, rows_to_write)
 
+    def write_pa(self, table_name, rows_to_write):
+        self.database.execute(self.ex_str[table_name], rows_to_write)
+
     def write(self, table_name, data_to_write):
         try:
-            ex_str = "INSERT INTO " + table_name + "(" + ','.join(list(data_to_write.keys())) + ") VALUES (%s)"
+            ex_str = "INSERT INTO " + table_name + \
+                "(" + ','.join(list(data_to_write.keys())) + ") VALUES (%s)"
         except TypeError:
-            raise TypeError("good names must be strings", list(data_to_write.keys()))
+            raise TypeError("good names must be strings",
+                            list(data_to_write.keys()))
         rows_to_write = list(data_to_write.values())
         format_strings = ','.join(['?'] * len(rows_to_write))
         try:
@@ -172,9 +198,11 @@ class Database(multiprocessing.Process):
         for column in new_columns:
             try:
                 if is_convertable_to_float(data_to_write[column]):
-                    self.database.execute(""" ALTER TABLE """ + table_name + """ ADD """ + column + """ FLOAT;""")
+                    self.database.execute(
+                        """ ALTER TABLE """ + table_name + """ ADD """ + column + """ FLOAT;""")
                 else:
-                    self.database.execute(""" ALTER TABLE """ + table_name + """ ADD """ + column + """ VARCHAR(50);""")
+                    self.database.execute(
+                        """ ALTER TABLE """ + table_name + """ ADD """ + column + """ VARCHAR(50);""")
             except TypeError:
                 rows_to_write.remove(data_to_write[column])
                 del data_to_write[column]
@@ -183,18 +211,6 @@ class Database(multiprocessing.Process):
         for key in data:
             self.data[table_name][key].append(data[key])
 
-    def write_aggregate(self, table_name, round):
-        data_to_write = {'round': round}
-        for key in self.data[table_name]:
-            l = self.data[table_name][key]
-            summe = sum(l)
-            mean = summe / len(l)
-            ss = sum((x-mean)**2 for x in l)
-            data_to_write[key] = summe
-            data_to_write[key + '_std'] = (ss / len(l))**0.5
-            data_to_write[key + '_mean'] = mean
-            self.data[table_name][key] = []
-        self.write(table_name, data_to_write)
 
 class TableMissing(sqlite3.OperationalError):
     def __init__(self, message):
@@ -221,4 +237,3 @@ def _number_or_string(word):
             return float(word)
         except ValueError:
             return word
-
