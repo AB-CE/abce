@@ -125,8 +125,13 @@ class Database(multiprocessing.Process):
             elif msg[0] == 'log':
                 group_name = msg[1]
                 data_to_write = msg[2]
-                data_to_write = {key: float(
-                    data_to_write[key]) for key in data_to_write}
+                try:
+                    data_to_write = {key: float(
+                        data_to_write[key]) for key in data_to_write}
+                except TypeError:
+                    print(data_to_write)
+                    raise
+
                 data_to_write['round'] = msg[3]
                 table_name = 'log_' + group_name
                 try:
