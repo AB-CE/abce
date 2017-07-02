@@ -190,7 +190,7 @@ class Simulation(object):
             self.path,
             self.database_queue,
             trade_log=self.trade_logging_mode != 'off')
-        self.db_started = False
+        self._db_started = False
         self.logger_queue = manager.Queue()
 
         self.processes = mp.cpu_count() * 2 if processes is None else processes
@@ -457,9 +457,9 @@ class Simulation(object):
         self.pool.map(execute_advance_round_wrapper, parameters, chunksize=1)
 
     def advance_round(self, time):
-        if not self.db_started:
+        if not self._db_started:
             self._db.start()
-            self.db_started = True
+            self._db_started = True
         print("\rRound" + str(time))
         self.execute_advance_round(time)
         self.add_and_delete_agents(time)
@@ -468,8 +468,8 @@ class Simulation(object):
         self.finalize()
 
     def finalize(self):
-        if self.db_started:
-            self.db_started = False
+        if self._db_started:
+            self._db_started = False
             print('')
             print(str("time only simulation %6.2f" %
                   (time.time() - self.clock)))
@@ -639,7 +639,7 @@ class Simulation(object):
 
             simulation.graphs()
         """
-        if self.db_started:
+        if self._db_started:
             self.finalize()
         abcegui.run(open=open, new=new)
 
