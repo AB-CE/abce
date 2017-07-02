@@ -160,13 +160,13 @@ class Simulation(object):
         # this is default value as declared in self.network() method
         self._network_drawing_frequency = 1
 
-        try:
-            os.makedirs(os.path.abspath('.') + '/result/')
-        except OSError:
-            pass
-
-        self.path = (os.path.abspath('.') + '/result/' + name + '_' +
-                     datetime.datetime.now().strftime("%Y-%m-%d_%H-%M"))
+        current_directory = os.getcwd()
+        result = os.path.join(current_directory, r'result')
+        if not os.path.exists(result):
+            os.makedirs(result)
+        self.path = os.path.join(result, name + '_' +
+                                 datetime.datetime.now()
+                                 .strftime("%Y-%m-%d_%H-%M"))
         """ the path variable contains the path to the simulation outcomes
         it can be used to generate your own graphs as all resulting
         csv files are there.
