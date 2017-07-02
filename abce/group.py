@@ -16,14 +16,18 @@ class Group(object):
         self.num_managers = sim.processes
         self._processor_groups = sim._processor_groups
         self.groups = groups
-        self.do = self.execute_parallel if sim.processes > 1 else self.execute_serial
+        self.do = (self.execute_parallel
+                   if sim.processes > 1
+                   else self.execute_serial)
 
         self.agent_class = agent_class
         methods = get_methods(agent_class)
         for base in agent_class.__bases__:
             methods += get_methods(base)
         for method in methods:
-            setattr(self, method, eval('lambda self=self, *argc, **kw: self.do("%s")' % method))
+            if method not in ['panel', 'aggregate']:
+                setattr(self, method,
+                    eval('lambda self=self, *argc, **kw: self.do("%s")' % method))
 
     def __add__(self, g):
         return Group(self.sim, self.groups + g.groups, self.agent_class)
@@ -44,7 +48,8 @@ class Group(object):
 
     def execute_parallel(self, command):
         self.sim.messagess[-2].clear()
-        parameters = ((pg, self.groups, command, self.sim.messagess[pgid]) for pgid, pg in enumerate(
+        parameters = ((pg, self.groups, command, self.sim.messagess[pgid])
+                      for pgid, pg in enumerate(
             self._processor_groups))
         out = self.sim.pool.map(execute_wrapper, parameters, chunksize=1)
         for pgid in range(self.num_managers):
@@ -53,6 +58,18 @@ class Group(object):
             for pgid, messages in enumerate(out_messages):
                 self.sim.messagess[pgid].extend(messages)
         return self.sim.messagess[-2]
+
+    def panel(self):
+        if not self.sim._db_started:
+            self.sim._db_started = True
+            self.sim._db.start()
+        self.do('panel')
+
+    def aggregate(self):
+        if not self.sim._db_started:
+            self.sim._db_started = True
+            self.sim._db.start()
+        self.do('aggregate')
 
 
 def execute_wrapper(inp):
