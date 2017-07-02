@@ -1,3 +1,4 @@
+import os
 import abce
 import filecmp as fc
 import difflib as dl
@@ -17,7 +18,8 @@ class Agent(abce.Agent):
 
 def compare(to_compare, path, message):
     should_be_full = pd.read_csv(to_compare).sort_index(axis=1)
-    really_is_full = pd.read_csv(path + '/' + to_compare).sort_index(axis=1)
+    really_is_full = (pd.read_csv(os.path.join(path, to_compare))
+                      .sort_index(axis=1))
     if 'id' in should_be_full.columns:
         should_be_full = (should_be_full
                           .sort_values(by=['id', 'round'], axis=0)
