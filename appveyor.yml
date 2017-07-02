@@ -20,8 +20,6 @@ install:
   - "pip install ."
 
 test_script:
-  - ps: "cd examples/2sectors"
-  - "python start.py"
-  - ps: "cd ../../unittest"
+  - ps: "cd unittest"
   - "python start.py"
 
