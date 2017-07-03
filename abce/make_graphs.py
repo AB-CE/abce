@@ -1,3 +1,4 @@
+import pandas as pd
 from bokeh.plotting import figure
 from bokeh.models import Range1d, LinearAxis
 from bokeh.io import gridplot
@@ -17,6 +18,10 @@ def make_title(title, col):
 
 
 def make_aggregate_graphs(df, filename, ignore_initial_rounds):
+    # clean nan
+    df = df.where((pd.notnull(df)), None)
+    df.dropna(1, how='all', inplace=True)
+
     print('make_aggregate_graphs', filename)
     columns = [col for col in df.columns if not col.endswith('_std') and
                not col.endswith('_mean') and
@@ -76,6 +81,10 @@ def make_aggregate_graphs(df, filename, ignore_initial_rounds):
 
 
 def make_simple_graphs(df, filename, ignore_initial_rounds):
+    # clean nan
+    df = df.where((pd.notnull(df)), None)
+    df.dropna(1, how='all', inplace=True)
+
     print('make_simple_graphs', filename)
     plots = {}
     try:
@@ -109,6 +118,10 @@ def make_simple_graphs(df, filename, ignore_initial_rounds):
 
 
 def make_panel_graphs(df, filename, ignore_initial_rounds):
+    # clean nan
+    df = df.where((pd.notnull(df)), None)
+    df.dropna(1, how='all', inplace=True)
+
     print('make_panel_graphs', filename)
     if 'date' in df.columns:
         x_axis_type = "datetime"
