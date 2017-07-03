@@ -284,20 +284,24 @@ def generate(new_inputs, new_simulation, names=None, title=None, text=None, trun
             element['title'] = names[parameter]
         except (TypeError, KeyError):
             element['title'] = parameter
-        if type(value) == tuple:
+        if isinstance(value, tuple):
             lvalue = sorted(value)
             element['min'] = lvalue[0]
             element['default'] = lvalue[1]
             element['max'] = lvalue[2]
-        elif type(value) is float or type(value) is int:
+        elif isinstance(value, (int, float)):
             element['min'] = 0
             element['default'] = value
             element['max'] = value * 2
 
-        if type(value) == tuple or type(value) is float or type(value) is int:
-            if type(element['default']) is int and type(element['max']) is int:
+        if isinstance(value, (int, float, tuple)):
+            if isinstance(element['default'], int) and isinstance(element['max'], int):
                 element['step'] = 1
                 element['type'] = int
+                # if default is float, type is float
+                if isinstance(element['default'], float):
+                    element['step'] = 1.
+                    element['type'] = float
             else:
                 element['type'] = float
                 element['step'] = old_div(
@@ -321,13 +325,13 @@ def generate(new_inputs, new_simulation, names=None, title=None, text=None, trun
                                     </div>
                                 </div>
                             </div>""".format(**element)
-        elif type(value) is bool:
+        elif isinstance(value, bool):
             element['type'] = bool
             content = """<div>{title}</div><br> <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="{name}">
                           <input type="checkbox" id="{name}" class="mdl-switch__input" name={name} checked>
                           <span class="mdl-switch__label"></span>
                         </label>""".format(**element)
-        elif type(value) is list:  # menu
+        elif isinstance(value, list):  # menu
             assert_all_of_the_same_type(value)
             element['type'] = type(value[0])
             element['value0'] = value[0]
