@@ -62,12 +62,12 @@ start.py
             simulation.declare_round_endowment(resource='labor_endowment', units=1, product='labor')
             simulation.declare_perishable(good='labor')
 
-            simulation.panel('household', possessions=['money', 'GOOD'],
+            simulation.panel('Household', possessions=['money', 'GOOD'],
                                  variables=['current_utility'])
-            simulation.panel('firm', possessions=['money', 'GOOD'])
+            simulation.panel('Firm', possessions=['money', 'GOOD'])
 
-            firms = simulation.build_agents(Firm, 'firm', 1)
-            households = simulation.build_agents(Household, 'household', 1)
+            firms = simulation.build_agents(Firm, 1)
+            households = simulation.build_agents(Household, 1)
 
             for round in simulation.next_round():
                 households.do('sell_labor'),
@@ -239,10 +239,10 @@ In this way the economy is physically closed.
 
 .. code-block:: python
 
-        simulation.panel('household', possessions=['good1', 'good2'],  # a list of household possessions to track here
+        simulation.panel('Household', possessions=['good1', 'good2'],  # a list of household possessions to track here
                                       variables=['utility']) #  a list of household variables to track here
 
-        simulation.aggregate('household', possessions=['good1', 'good2'],
+        simulation.aggregate('Household', possessions=['good1', 'good2'],
                               variables=['utility'])
 
 The possessions good1 and good2 are tracked, the agent's variable :code:`self.utility` is tracked.
@@ -270,8 +270,8 @@ Having established special goods and logging, we create the agents:
 
 .. code-block:: python
 
-        simulation.build_agents(Firm, 'firm', number=simulation_parameters['number_of_firms'], parameters=simulation_parameters)
-        simulation.build_agents(Household, 'household', number=10, parameters=simulation_parameters)
+        simulation.build_agents(Firm, number=simulation_parameters['number_of_firms'], parameters=simulation_parameters)
+        simulation.build_agents(Household, number=10, parameters=simulation_parameters)
 
 - Firm is the class of the agent, that you have imported
 - 'firm' is the group_name of the agent
@@ -281,7 +281,7 @@ Having established special goods and logging, we create the agents:
 
 .. code-block:: python
 
-        simulation.build_agents(Plant, 'plant', parameters=simulation_parameters, agent_parameters=[{'type':'coal' 'watt': 20000},
+        simulation.build_agents(Plant, parameters=simulation_parameters, agent_parameters=[{'type':'coal' 'watt': 20000},
                                                                                                     {'type':'electric' 'watt': 99}
                                                                                                     {'type':'water' 'watt': 100234}])
 

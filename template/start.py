@@ -22,13 +22,13 @@ def main(simulation_parameters):
                                        )
     simulation.declare_perishable(good='labor')
 
-    simulation.panel('household', possessions=['good1', 'good2'],  # put a list of household possessions to track here
+    simulation.panel('Household', possessions=['good1', 'good2'],  # put a list of household possessions to track here
                      variables=['utility'])  # put a list of household possessions to track here
 
-    firms = simulation.build_agents(Firm, 'firm',
+    firms = simulation.build_agents(Firm,
                                     number=simulation_parameters['firms'],
                                     parameters=simulation_parameters)
-    households = simulation.build_agents(Household, 'household',
+    households = simulation.build_agents(Household,
                                          number=simulation_parameters['households'],
                                          parameters=simulation_parameters)
 

@@ -8,9 +8,9 @@ class Killer(abce.Agent, abce.Household):
         pass
 
     def kill(self):
-        self.delete_agent('victim', self.round, quite=True)
-        self.delete_agent('loudvictim', self.round, quite=False)
+        self.delete_agent('Victim', self.round, quite=True)
+        self.delete_agent('Loudvictim', self.round, quite=False)
 
     def send_message(self):
         if self.round > 0:
-            self.message('victim', self.round - 1, 'topic', 'creepy hello')
+            self.message('Victim', self.round - 1, 'topic', 'creepy hello')

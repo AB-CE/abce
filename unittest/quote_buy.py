@@ -21,7 +21,7 @@ class QuoteBuy(abce.Agent):
             self.money = self.possession('money')
             self.price = random.uniform(0.0001, 1)
             quantity = random.uniform(0, self.money / self.price)
-            self.quote_buy('quotebuy', 1, 'cookies', quantity, self.price)
+            self.quote_buy('Quotebuy', 1, 'cookies', quantity, self.price)
 
     def two(self):
         """ Acts only if he is agent 1: recieves quotes and accepts;

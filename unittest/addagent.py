@@ -13,18 +13,18 @@ class AddAgent(Agent):
         self.rounds = simulation_parameters['rounds']
 
     def add_agent(self):
-        self.create_agent(Buy, 'buy', parameters={'rounds': self.rounds})
-        self.create_agent(Buy, 'buy', parameters={'rounds': self.rounds})
+        self.create_agent(Buy, parameters={'rounds': self.rounds})
+        self.create_agent(Buy, parameters={'rounds': self.rounds})
 
-        self.create_agent(Sell, 'sell', parameters={'rounds': self.rounds})
-        self.create_agent(Sell, 'sell', parameters={'rounds': self.rounds})
+        self.create_agent(Sell, parameters={'rounds': self.rounds})
+        self.create_agent(Sell, parameters={'rounds': self.rounds})
 
-        self.create_agent(Give, 'give', parameters={'rounds': self.rounds})
+        self.create_agent(Give, parameters={'rounds': self.rounds})
 
-        self.create_agent(MessageA, 'messagea', parameters={
+        self.create_agent(MessageA, parameters={
                           'rounds': self.rounds})
-        self.create_agent(MessageB, 'messageb', parameters={
+        self.create_agent(MessageB, parameters={
                           'rounds': self.rounds})
 
-        self.create_agent(Endowment, 'endowment', parameters={
+        self.create_agent(Endowment, parameters={
                           'rounds': self.rounds, 'creation': self.round + 1})
