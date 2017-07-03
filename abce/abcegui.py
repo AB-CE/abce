@@ -208,8 +208,6 @@ def show_simulation():
         if ignore_initial_rounds >= rounds:
             ignore_initial_rounds = 0
             print('abcegui.py ignore_initial_rounds >= rounds')
-        df = df.where((pd.notnull(df)), None)
-        df.dropna(1, how='all', inplace=True)
         if filename.startswith('aggregate_'):
             plots.update(make_aggregate_graphs(
                 df, filename, ignore_initial_rounds))
