@@ -33,6 +33,26 @@ class Group(object):
         else:
             return self
 
+    def __getitem__(self, key):
+        if self.sim.processes == 1:
+            name = self.groups[0]
+            agent = self._processor_groups[0].agents[name][key]
+            pigeonbox = self._processor_groups[0].pigeonboxes[name][key]
+            agent.pigeonbox = pigeonbox  # define a new var in Agent class
+            return agent
+        else:
+            raise NotImplementedError
+
+    def __iter__(self):
+        if self.sim.processes == 1:
+            name = self.groups[0]
+            agents = self._processor_groups[0].agents[name]
+            for i in range(len(agents)):
+                yield self[i]
+        else:
+            raise NotImplementedError
+
+
     def execute_serial(self, command, *args, **kwargs):
         self.last_action = command
         self.sim.messagess[-1].clear()
