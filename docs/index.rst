@@ -8,12 +8,12 @@ Welcome to ABCE's documentation!
 
 ABCE is a Python Agent-Based Computational Economy Platform, written by Davoud Taghawi-Nejad.
 The impatient reader can jump directly to the 'walk through', which explains how to
-set up a simulation. In the walk through you learn
-how to set up an agent and how to trade with other agents. The households and firms
-classes allow you to produce with different production functions and consume with according
+set up a simulation. In the walk through you will learn how to set up an agent
+and how to trade with other agents. The Household and Firm classes allow you to
+produce with different production functions and consume with according
 production functions.
 
-ABCE runs an Mac, Windows and Linux.
+ABCE runs on macOS, Windows, and Linux.
 
 
 Introduction
