@@ -93,7 +93,7 @@ to parallelize the code and gain significant speed advantage over
 single-threaded code, that does not make use of the speed advantage of
 multi-core or multi-processor computers.
 
-ABCE 0.5 supports Python 2.7, Python 3 support is planned.
+ABCE 0.6 supports Python 3.
 
 .. [#interpreter] Python is often falsely believe to be an interpreted language
 
