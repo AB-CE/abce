@@ -24,6 +24,7 @@ class Inventory(defaultdict):
             'good': is the name of the good
             quantity: number
         """
+        assert quantity >= 0.0
         self[good] += quantity
 
     def create_timestructured(self, good, quantity):
@@ -71,14 +72,14 @@ class Inventory(defaultdict):
 
             NotEnoughGoods: when goods are insufficient
         """
-        if good in self:
-            if quantity is None:
-                self[good] = 0
-            else:
-                available = self[good]
-                if available < quantity - epsilon:
-                    raise NotEnoughGoods(self.name, good, quantity - available)
-                self[good] -= quantity
+        if quantity is None:
+            self[good] = 0
+        else:
+            assert quantity >= 0.0
+            available = self[good]
+            if available < quantity - epsilon:
+                raise NotEnoughGoods(self.name, good, quantity - available)
+            self[good] -= quantity
 
     def transform(self, ingredient, unit, product, quantity=None):
         if quantity is None:
