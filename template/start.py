@@ -4,7 +4,6 @@ from household import Household
 from abce import Simulation, gui
 
 simulation_parameters = {'name': 'name',
-                         'rounds': 50,
                          'firms': 5,
                          'households': 5}
 
@@ -13,8 +12,7 @@ simulation_parameters = {'name': 'name',
 # this line to run the simulation with a Graphical
 #@gui(simulation_parameters) # User Interface
 def main(simulation_parameters):
-    simulation = Simulation(
-        rounds=simulation_parameters['rounds'], name='ABCEsimulation_name')
+    simulation = Simulation(name='ABCEsimulation_name')
 
     simulation.declare_round_endowment(resource='labor_endowment',
                                        units=1,
@@ -34,7 +32,8 @@ def main(simulation_parameters):
 
     allagents = firms + households
     try:  # makes sure that graphs are displayed even when the simulation fails
-        for round_number in simulation.next_round():
+        for r in range(50):
+            simulation.advance_round(r)
             firms.do('one')
             households.do('two')
             allagents.do('three')
