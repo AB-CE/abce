@@ -4,14 +4,13 @@ from abce import Simulation
 
 
 def main():
-    parameters = {'name': 'name',
-                  'num_rounds': 50}
+    s = Simulation()
 
-    s = Simulation(parameters)
-
-    a = s.build_agents(MyAgent, 10000)
-    for r in s.next_round():
+    a = s.build_agents(MyAgent, 'myagent', 10000)
+    for r in range(50):
+        s.advance_round(r)
         a.do("compute")
+    s.finalize()
 
 
 if __name__ == '__main__':

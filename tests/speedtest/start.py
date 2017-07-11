@@ -1,45 +1,33 @@
 from __future__ import division
 from buy import Buy
 from sell import Sell
-from abce import Simulation, repeat
+from abce import Simulation
 
-simulation_parameters = [
-    {'name': 'round',
-     'random_seed': None,
-     'rounds': 30,
-     'trade_logging': 'individual',
-     'cut_of': 0.00000001
-     }]
+simulation_parameters = {'name': 'round',
+                         'random_seed': None,
+                         'num_rounds': 30,
+                         'trade_logging': 'individual',
+                         'cut_of': 0.00000001}
 
 
 def main():
-    all = ['buy',
-           'sell']
+    s = Simulation()
+    buy = s.build_agents(Buy, group_name='buy', number=2,
+                         parameters=simulation_parameters)
+    sell = s.build_agents(Sell, group_name='sell', number=2,
+                          parameters=simulation_parameters)
 
-    for parameters in simulation_parameters:
-        s = Simulation(parameters)
-        action_list = [
-            repeat([
-                (all, 'one'),
-                (all, 'two'),
-                (all, 'three'),
-                (all, 'clean_up')
-            ], 20000),
+    all = buy + sell
 
-            ('all', 'all_tests_completed')]
-        s.add_action_list(action_list)
+    for r in range(simulation_parameters['num_rounds']):
+        s.advance_round(r)
+        for r in range(20000):
+            all.one()
+            all.two()
+            all.three()
+            all.clean_up()
 
-        s.declare_round_endowment(
-            resource='labor_endowment', units=5, product='labor')
-        s.declare_round_endowment(resource='cow', units=10, product='milk')
-        s.declare_perishable(good='labor')
-        #s.panel('buy', variables=['price'])
-        #s.declare_expiring('xcapital', 5)
-
-        s.build_agents(Buy, 2)
-        s.build_agents(Sell, 2)
-
-        s.run()
+        all.all_tests_completed()
 
 
 if __name__ == '__main__':
