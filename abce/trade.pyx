@@ -53,6 +53,7 @@ cdef double fmax(double a, double b):
     else:
         return b
 
+
 cdef class Offer:
     """ This is an offer container that is send to the other agent. You can
     access the offer container both at the receiver as well as at the sender,
@@ -139,11 +140,11 @@ cdef class Offer:
         self.made = made
         self.status_round = status_round
 
-    def pickle(self):
-        return (self.sender_group, self.sender_id, self.receiver_group,
+    def __reduce__(self):
+        return (rebuild_offer, (self.sender_group, self.sender_id, self.receiver_group,
                 self.receiver_id, self.good, self.quantity, self.price,
                 self.buysell, self.status, self.final_quantity, self.id,
-                self.made, self.status_round)
+                self.made, self.status_round))
 
     def __repr__(self):
         return """<{sender: %s, %i, receiver_group: %s,
@@ -155,6 +156,15 @@ cdef class Offer:
                     self.receiver_id, self.good, self.quantity, self.price,
                     self.buysell, self.status, self.final_quantity, self.id,
                     self.made, self.status_round)
+
+def rebuild_offer(str sender_group, int sender_id, str receiver_group,
+                  int receiver_id, object good, double quantity, double price,
+                  char buysell, str status, double final_quantity, long id,
+                  int made, int status_round):
+    return Offer(sender_group, sender_id, receiver_group,
+                receiver_id, good, quantity, price,
+                buysell, status, final_quantity, id,
+                made, status_round)
 
 cdef class Trade:
     """ Agents can trade with each other. The clearing of the trade is taken care
@@ -399,7 +409,7 @@ cdef class Trade:
                                  self.round,
                                  -2)
         self.given_offers[offer_id] = offer
-        self._send(receiver_group, receiver_id, '_o', offer.pickle())
+        self._send(receiver_group, receiver_id, '_o', offer)
         return offer
 
     def buy(self, receiver_group, receiver_id, good,
@@ -464,7 +474,7 @@ cdef class Trade:
                                  offer_id,
                                  self.round,
                                  -1)
-        self._send(receiver_group, receiver_id, '_o', offer.pickle())
+        self._send(receiver_group, receiver_id, '_o', offer)
         self.given_offers[offer_id] = offer
         return offer
 
@@ -732,8 +742,7 @@ cdef class Trade:
         cdef Offer offer
         for typ, msg in incomming_messages:
             if typ == '_o':
-                offer = Offer(*msg)
-                self._open_offers[offer.good][offer.id] = offer
+                self._open_offers[msg.good][msg.id] = msg
             elif typ == '_d':
                 del self._open_offers[msg.good][msg.id]
             elif typ == '_p':
