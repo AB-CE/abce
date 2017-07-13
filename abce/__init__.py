@@ -41,6 +41,7 @@ import time
 import random
 import multiprocessing as mp
 from multiprocessing.managers import BaseManager
+import queue
 import abce.db
 import abce.abcelogger
 from . import postprocess
@@ -184,22 +185,20 @@ class Simulation(object):
                       "'group' (fast) or 'individual' (slow) or 'off'"
                       ">" + self.trade_logging_mode + "< not accepted")
 
-        manager = mp.Manager()
-        self.database_queue = manager.Queue()
-        self._db = abce.db.Database(
-            self.path,
-            self.database_queue,
-            trade_log=self.trade_logging_mode != 'off')
-        self._db_started = False
-        self.logger_queue = manager.Queue()
-
         self.processes = mp.cpu_count() * 2 if processes is None else processes
 
         if processes == 1:
+            self.database_queue = queue.Queue()
+            self.logger_queue = queue.Queue()
             self._processor_groups = [ProcessorGroup(1, batch=0)]
             self.execute_advance_round = self.execute_advance_round_seriel
         else:
+
+            manager = mp.Manager()
+            self.database_queue = manager.Queue()
+            self.logger_queue = manager.Queue()
             self.pool = mp.Pool(self.processes)
+
             MyManager.register('ProcessorGroup', ProcessorGroup)
             self.managers = []
             self._processor_groups = []
@@ -213,6 +212,12 @@ class Simulation(object):
             self.execute_advance_round = self.execute_advance_round_parallel
 
         self.messagess = [list() for _ in range(self.processes + 2)]
+
+        self._db = abce.db.Database(
+            self.path,
+            self.database_queue,
+            trade_log=self.trade_logging_mode != 'off')
+        self._db_started = False
 
         if random_seed is None or random_seed == 0:
             random_seed = time.time()
