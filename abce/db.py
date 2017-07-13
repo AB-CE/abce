@@ -16,15 +16,15 @@
 # the License.
 from __future__ import division
 from __future__ import print_function
-import multiprocessing
+import threading
 import sqlite3
 from collections import defaultdict
 from .online_variance import OnlineVariance
 
 
-class Database(multiprocessing.Process):
+class Database(threading.Thread):
     def __init__(self, directory, in_sok, trade_log):
-        multiprocessing.Process.__init__(self)
+        threading.Thread.__init__(self)
         self.directory = directory
         self.panels = {}
         self.aggregates = {}
