@@ -565,9 +565,7 @@ class Simulation(object):
             pg.add_group(AgentClass,
                          num_agents_this_group=num_agents_this_group,
                          agent_args={'group': group_name,
-                                     'trade_logging': self.trade_logging_mode,
-                                     'database': self.database_queue,
-                                     'logger': self.logger_queue,
+                                     'simulation': self,
                                      'random_seed': random.random()},
                          parameters=parameters,
                          agent_parameters=agent_parameters,
@@ -586,10 +584,7 @@ class Simulation(object):
                 pg = self._processor_groups[id % self.processes]
                 pg.append(AgentClass, id=id,
                           agent_args={'group': group_name,
-                                      'trade_logging':
-                                      self.trade_logging_mode,
-                                      'database': self.database_queue,
-                                      'logger': self.logger_queue,
+                                      'simulation': self,
                                       'random_seed': random.random(),
                                       'start_round': round + 1},
                           parameters=parameters,

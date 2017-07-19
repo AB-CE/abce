@@ -72,7 +72,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
 
     """
 
-    def __init__(self, id, group, trade_logging, database, logger, random_seed, num_managers):
+    def __init__(self, id, group, simulation, random_seed, num_managers):
         """ Do not overwrite __init__ instead use a method called init instead.
         init is called whenever the agent are build.
         """
@@ -87,11 +87,11 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         """ self.group returns the agents group or type READ ONLY! """
         # TODO should be group_address(group), but it would not work
         # when fired manual + ':' and manual group_address need to be removed
-        self.database_connection = database
-        self.logger_connection = logger
+        self.database_connection = simulation.database_queue
+        self.logger_connection = simulation.logger_queue
 
         self.trade_logging = {'individual': 1,
-                              'group': 2, 'off': 0}[trade_logging]
+                              'group': 2, 'off': 0}[simulation.trade_logging_mode]
         self.num_managers = num_managers
         self._out = [[] for _ in range(self.num_managers + 1)]
 
