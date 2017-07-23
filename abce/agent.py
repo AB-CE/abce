@@ -225,6 +225,8 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
 
         self.round = time
         self.time = time
+        self._clearing__end_of_subround(self.inbox)
+        self.inbox.clear()
 
     def create(self, good, quantity):
         """ creates quantity of the good out of nothing
@@ -292,7 +294,6 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
     def _execute(self, command):
         self._out = [[] for _ in range(self.num_managers + 2)]
         try:
-            self._clearing__end_of_subround(list(self.inbox))
             self._out[-2] = (getattr(self, command)(), )
             self._reject_polled_but_not_accepted_offers()
         except KeyboardInterrupt:
@@ -302,7 +303,6 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
             traceback.print_exc()
             raise Exception()
 
-        self.inbox.clear()
         return self._out
 
     def _register_resource(self, resource, units, product):
