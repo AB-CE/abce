@@ -6,25 +6,29 @@ def nothing(*_, **__):
 
 
 class SilentDeadAgent(object):
+    inbox = []
+
     def __getattr__(self, *_, **__):
         return nothing
 
     def __setattr__(self, *_, **__):
         return nothing
 
-    def _execute(self, command, incomming_messages):
+    def _execute(self, command):
         return []
 
 
 class LoudDeadAgent(object):
+    inbox = []
+
     def __getattr__(self, *_, **__):
         return nothing
 
     def __setattr__(self, *_, **__):
         return nothing
 
-    def _execute(self, command, incomming_messages):
-        if incomming_messages:
-            print(incomming_messages)
+    def _execute(self, command):
+        if self.inbox:
+            print(self.inbox)
             raise Exception("Message to dead agent")
         return []
