@@ -14,7 +14,6 @@ class ProcessorGroup(object):
         self.agents = {}
         self.batch = batch
         self.num_managers = num_managers
-        self.pigeonboxes = {}
         self.mymessages = list()
 
     def add_group(self, Agent, num_agents_this_group, agent_args, parameters, agent_parameters, agent_params_from_sim):
@@ -26,15 +25,11 @@ class ProcessorGroup(object):
                                        parameters=parameters, agent_parameters=agent_parameters[i])
             self.agents[group].append(agent)
 
-        self.pigeonboxes[group] = list(list()
-                                       for _ in range(len(self.agents[group])))
-
     def append(self, Agent, id, agent_args, parameters, agent_parameters):
         group = agent_args['group']
         agent = self.make_an_agent(
             Agent, id, agent_args, parameters, agent_parameters)
         self.agents[group].append(agent)
-        self.pigeonboxes[group].append([])
 
     def make_an_agent(self, Agent, id, agent_args, parameters, agent_parameters):
         agent_args['num_managers'] = self.num_managers
@@ -68,16 +63,13 @@ class ProcessorGroup(object):
             out = [[] for _ in range(self.num_managers + 2)]
             self.put_messages_in_pigeonbox(messages)
             for group in groups:
-                for i, agent in enumerate(self.agents[group]):
-                    outmessages = agent._execute(
-                        command, self.pigeonboxes[group][i])
+                for agent in self.agents[group]:
+                    outmessages = agent._execute(command)
                     for pgid, msg in enumerate(outmessages):
                         if pgid == self.batch:
                             self.mymessages.extend(msg)
                         else:
                             out[pgid].extend(msg)
-                self.pigeonboxes[group] = list(
-                    list() for _ in range(len(self.agents[group])))
         except:
             traceback.print_exc()
             raise
@@ -104,9 +96,9 @@ class ProcessorGroup(object):
 
     def put_messages_in_pigeonbox(self, new_messages):
         for group, id, message in new_messages:
-            self.pigeonboxes[group][id // self.num_managers].append(message)
+            self.agents[group][id // self.num_managers].inbox.append(message)
         for group, id, message in self.mymessages:
-            self.pigeonboxes[group][id // self.num_managers].append(message)
+            self.agents[group][id // self.num_managers].inbox.append(message)
         self.mymessages.clear()
 
     def len(self):
