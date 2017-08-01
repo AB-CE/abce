@@ -77,13 +77,13 @@ In this tutorial we will implement an economy that has two plants. These plants 
 
     c. delete :py:`simulation.declare_round_endowment(...)`
        delete :py:`simulation.declare_perishable(...)`
-       delete :py:`simulation.build_agents(Household, 'household',...)`
+       delete :py:`simulation.build_agents(Household, ...)`
 
-    d. change :py:`simulation.build_agents(Firm, 'firm',...)` to
+    d. change :py:`simulation.build_agents(Firm, ...)` to
 
        .. code:: python
 
-           simulation.build_agents(CHPPlant, 'chpplant ', number=1)
+           simulation.build_agents(CHPPlant, number=1)
 
        With this we create 1 agent of type CHPPLANT, it's group name will be :py:`chpplant` and its number :py:`0`.
 
@@ -216,15 +216,15 @@ In this tutorial we will implement an economy that has two plants. These plants 
 
        .. code:: python
 
-          simulation.build_agents(ADPlant, 'adplant', number=1)
+          simulation.build_agents(ADPlant, number=1)
 
     c. change the action list to:
 
        .. code:: python
 
-           action_list = [(('chpplant', 'adplant'), 'production'),
-                          (('chpplant', 'adplant'), 'selling'),
-                          (('chpplant', 'adplant'), 'buying'),
-                          ('chpplant', 'panel')]
+           action_list = [(('CHPPlant', 'ADPlant'), 'production'),
+                          (('CHPPlant', 'ADPlant'), 'selling'),
+                          (('CHPPlant', 'ADPlant'), 'buying'),
+                          ('CHPPlant', 'panel')]
 
 9. now it should run again.

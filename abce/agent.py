@@ -360,7 +360,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         self._out[receiver_id % self.num_managers].append(
             (receiver_group, receiver_id, (typ, msg)))
 
-    def create_agent(self, AgentClass, group_name,
+    def create_agent(self, AgentClass, group_name='',
                      parameters=None, agent_parameters=None):
         """ create a new agent.
 
@@ -385,6 +385,8 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
                               parameters=self.parameters,
                               agent_parameters={'creation': self.round + 1})
         """
+        if not group_name:
+            group_name = AgentClass.__name__
         self._out[-1].append(('add', (AgentClass, group_name,
                                       parameters, agent_parameters)))
 

@@ -28,7 +28,7 @@ This is a minimal template for a start.py::
 
 
     simulation = Simulation(name='ABCE')
-    agents = simulation.build_agents(Agent, 'agent', 2)
+    agents = simulation.build_agents(Agent, 2)
     for round in simulation.next_round():
         agents.do('one')
         agents.do('two')
@@ -118,8 +118,8 @@ class Simulation(object):
 
         w.panel_data('firm', command='after_sales_before_consumption')
 
-        firms = w.build_agents(Firm, 'firm', num_firms)
-        households = w.build_agents(Household, 'household', num_households)
+        firms = w.build_agents(Firm, num_firms)
+        households = w.build_agents(Household, num_households)
 
         all = firms + households
         for round in range(round):
@@ -352,11 +352,11 @@ class Simulation(object):
 
         Example in start.py::
 
-            simulation_parameters.build_agents(Firm, 'firm', number=5)
+            simulation_parameters.build_agents(Firm, number=5)
 
             ...
 
-            simulation.panel('firm', possessions=['money', 'input'],
+            simulation.panel('Firm', possessions=['money', 'input'],
                              variables=['production_target', 'gross_revenue'])
 
             for round in simulation.next_round():
@@ -391,11 +391,11 @@ class Simulation(object):
         Example in start.py::
 
 
-            simulation_parameters.build_agents(Firm, 'firm', number=5)
+            simulation_parameters.build_agents(Firm, number=5)
 
             ...
 
-            simulation.aggregate('firm', possessions=['money', 'input'],
+            simulation.aggregate('Firm', possessions=['money', 'input'],
                                  variables=['production_target',
                                             'gross_revenue'])
 
@@ -499,7 +499,7 @@ class Simulation(object):
             print(str("time with post processing %6.2f" %
                       (time.time() - self.clock)))
 
-    def build_agents(self, AgentClass, group_name, number=None,
+    def build_agents(self, AgentClass, number=None, group_name='',
                      parameters={}, agent_parameters=None):
         """ This method creates agents.
 
@@ -509,9 +509,8 @@ class Simulation(object):
                 is the name of the AgentClass that you imported
 
             group_name:
-                the name of the group, as it will be used in the action list
-                and transactions. Should generally be lowercase of the
-                AgentClass.
+                the name of the group, as it will be used in the transactions.
+                Defaults to the class name of AgentClass.
 
             number:
                 number of agents to be created.
@@ -529,13 +528,13 @@ class Simulation(object):
 
         Example::
 
-         firms = simulation.build_agents(Firm, 'firm',
+         firms = simulation.build_agents(Firm,
              number=simulation_parameters['num_firms'])
-         banks = simulation.build_agents(Bank, 'bank',
+         banks = simulation.build_agents(Bank,
                                          parameters=simulation_parameters,
                                          agent_parameters=[{'name': UBS'},
                                          {'name': 'amex'},{'name': 'chase'})
-         centralbanks = simulation.build_agents(CentralBank, 'centralbank',
+         centralbanks = simulation.build_agents(CentralBank,
                                                 number=1,
                                                 parameters={'rounds':
                                                              num_rounds})
@@ -547,6 +546,8 @@ class Simulation(object):
             agent_parameters = [None] * num_agents_this_group
         else:
             num_agents_this_group = len(agent_parameters)
+        if not group_name:
+            group_name = AgentClass.__name__
 
         self.sim_parameters.update(parameters)
 

@@ -18,8 +18,8 @@ def main():
         s.declare_round_endowment('field', 60, 'corn')
         s.declare_round_endowment('shares', 60, 'money')
 
-        f = s.build_agents(Firm, 'firm', 1)
-        h = s.build_agents(Household, 'household', 1)
+        f = s.build_agents(Firm, 1)
+        h = s.build_agents(Household, 1)
         for r in s.next_round():
             for i in range(60):
                 f.do('selling')

@@ -18,10 +18,10 @@ def main(simulation_parameters):
     simulation = Simulation(
         rounds=simulation_parameters['rounds'], processes=2)
 
-    firms = simulation.build_agents(Firm, 'firm',
+    firms = simulation.build_agents(Firm,
                                     number=simulation_parameters['firms'],
                                     parameters=simulation_parameters)
-    households = simulation.build_agents(Household, 'household',
+    households = simulation.build_agents(Household,
                                          number=simulation_parameters['households'],
                                          parameters=simulation_parameters)
 

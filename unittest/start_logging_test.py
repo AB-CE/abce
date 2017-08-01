@@ -21,6 +21,8 @@ def compare(to_compare, path, message):
     the_path = (path + '/' + to_compare)
     if platform.system() == 'Windows':  # windows compatibility
         the_path = the_path[the_path.find('/') + 1:]
+    else:
+        the_path = the_path[the_path.find('unittest'):]
     really_is_full = pd.read_csv(the_path).sort_index(axis=1)
     if 'id' in should_be_full.columns:
         should_be_full = (should_be_full
@@ -52,10 +54,10 @@ def compare(to_compare, path, message):
 def main(processes):
     simulation = abce.Simulation(processes=processes)
 
-    simulation.aggregate('agent', variables=['i', 'r'], possessions=['money'])
-    simulation.panel('agent', variables=['i', 'r'], possessions=['money'])
+    simulation.aggregate('Agent', variables=['i', 'r'], possessions=['money'])
+    simulation.panel('Agent', variables=['i', 'r'], possessions=['money'])
 
-    agents = simulation.build_agents(Agent, 'agent', 10, parameters='')
+    agents = simulation.build_agents(Agent, 10, parameters='')
 
     for r in range(100):
         simulation.advance_round(r)
