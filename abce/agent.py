@@ -71,7 +71,6 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
 
 
     """
-
     def __init__(self, id, group, trade_logging, database, logger, random_seed, num_managers):
         """ Do not overwrite __init__ instead use a method called init instead.
         init is called whenever the agent are build.
@@ -119,6 +118,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         self._resources = []
         self.variables_to_track_panel = []
         self.variables_to_track_aggregate = []
+        self.inbox = []
 
         random.seed(random_seed)
 
@@ -289,10 +289,10 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
     def _set_network_drawing_frequency(self, frequency):
         self._network_drawing_frequency = frequency
 
-    def _execute(self, command, incomming_messages):
+    def _execute(self, command):
         self._out = [[] for _ in range(self.num_managers + 2)]
         try:
-            self._clearing__end_of_subround(incomming_messages)
+            self._clearing__end_of_subround(list(self.inbox))
             self._out[-2] = (getattr(self, command)(), )
             self._reject_polled_but_not_accepted_offers()
         except KeyboardInterrupt:
@@ -302,6 +302,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
             traceback.print_exc()
             raise Exception()
 
+        self.inbox.clear()
         return self._out
 
     def _register_resource(self, resource, units, product):
