@@ -1,9 +1,9 @@
 Household and consumption
 =========================
 
-.. automodule:: abce.household
+.. automodule:: abce.agents.household
 
-.. autoclass:: abce.Household
+.. autoclass:: abce.agents.Household
     :members:
     :undoc-members:
     :show-inheritance:

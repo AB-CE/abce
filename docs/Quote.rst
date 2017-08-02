@@ -2,11 +2,11 @@ Quote
 =====
 
 
-.. default-domain::abce.Quote
+.. default-domain::abce.quote.Quote
 
-.. autoclass:: abce.Quote
+.. autoclass:: abce.quote.Quote
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. autofunction:: abce.Offer
+.. autofunction:: abce.quote.Quotation

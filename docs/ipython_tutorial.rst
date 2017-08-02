@@ -319,6 +319,7 @@ Lets capture data
 There are three ways of capturing data. ``aggregate`` and ``panel``
 collect data from a specified group at a specified point of time. This
 has the advantage that there is no logging code in the agent class.
+`self.log('name', value)` saves a value under a certain name.
 
 .. code:: ipython3
 
@@ -333,6 +334,7 @@ has the advantage that there is no logging code in the agent class.
             self.count += 1
             self.curve = sin(self.count / 100)
             self.create('money', self.curve * self.id)
+            #self.log('count', self.count)
 
 
 

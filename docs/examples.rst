@@ -1,9 +1,7 @@
 Examples
 --------
 
-ABCE comes with two example projects 'one_household_one_firm', describes
-a one sector economy with one representative firm and household, '2sectors',
-describes a two sector economy with one representative household
+ABCE's examples can be downloaded from here: https://github.com/AB-CE/examples
 
 One sector model
 ================

@@ -71,7 +71,7 @@ create an amazon ec2 instance following `Amazon's tutorial here<http://docs.aws.
 
 make sure that in step 7b, configure the security groups, such that you have a HTTP access. This setting allows access to port 80 (HTTP) from anywhere, and ssh access only from your IP address.
 
-.. image:: aws_security_group.jpeg
+.. image:: aws_security_group.png
    :scale: 100 %
    :align: right
 
@@ -123,7 +123,7 @@ Create and wsgi entry point:
 
     nano ~/myproject/wsgi.py
 
-In the editor type this:
+In the editor type this::
 
     from start import app as application
 
