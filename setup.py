@@ -27,7 +27,7 @@ except ImportError:
 
 
 setup(name='abce',
-      version='0.6.0a0',
+      version='0.7.0a0',
       author='Davoud Taghawi-Nejad',
       author_email='Davoud@Taghawi-Nejad.de',
       description='Agent-Based Complete Economy modelling platform',
