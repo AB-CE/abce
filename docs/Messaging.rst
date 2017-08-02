@@ -3,7 +3,7 @@ Messaging
 
 .. automodule:: abce.messaging
 
-.. autoclass:: abce.Messaging
+.. autoclass:: abce.messaging.Messaging
     :members:
     :undoc-members:
     :show-inheritance:

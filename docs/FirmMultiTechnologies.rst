@@ -1,9 +1,9 @@
 FirmMultiTechnologies
 =====================
 
-.. automodule:: firmmultitechnologies
+.. automodule:: agents.firmmultitechnologies
 
-.. autoclass:: abce.FirmMultiTechnologies
+.. autoclass:: abce.agents.FirmMultiTechnologies
     :members:
     :show-inheritance:
 

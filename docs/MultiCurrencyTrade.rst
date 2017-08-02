@@ -2,11 +2,11 @@ MultiCurrencyTrade
 ==================
 
 
-.. default-domain::abce.MultiCurrencyTrade
+.. default-domain::abce.multicurrencytrade.MultiCurrencyTrade
 
-.. autoclass:: abce.MultiCurrncyTrade
+.. autoclass:: abce.multicurrencytrade.MultiCurrencyTrade
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. autofunction:: abce.multicurrencyTradetrade.Offer
+.. autofunction:: abce.multicurrencytrade.Offer
