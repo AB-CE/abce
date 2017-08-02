@@ -3,7 +3,7 @@ Walk through
 
 In order to learn using ABCE we will now dissect and explain a simple ABCE model.
 Additional to this walk through you should also have a look on the examples in
-the `abce/examples/` folder,
+ <https://github.com/AB-CE/examples>(https://github.com/AB-CE/examples),
 
 
 .. sidebar:: Objects the other ontological object of agent-based models.
@@ -46,18 +46,13 @@ start.py
             timeline.
         """
 
-        from __future__ import division
         from abce import Simulation, gui
         from firm import Firm
         from household import Household
 
-        parameters = {'name': '2x2',
-                      'random_seed': None,
-                      'rounds': 10}
 
-        #@gui(parameters)
-        def main(parameters):
-            simulation = Simulation(rounds=parameters['rounds'])
+        def main():
+            simulation = Simulation()
 
             simulation.declare_round_endowment(resource='labor_endowment', units=1, product='labor')
             simulation.declare_perishable(good='labor')
@@ -69,19 +64,20 @@ start.py
             firms = simulation.build_agents(Firm, 'firm', 1)
             households = simulation.build_agents(Household, 'household', 1)
 
-            for round in simulation.next_round():
-                households.do('sell_labor'),
-                firms.do('buy_labor'),
-                firms.do('production'),
-                (households + firms).do('panel'),
-                firms.do('sell_goods'),
-                households.do('buy_goods'),
-                households.do('consumption')
+            for r in range(100):
+                simulation.advance_round(r)
+                households.sell_labor(),
+                firms.buy_labor()
+                firms.production()
+                (households + firms).panel()
+                firms.sell_goods()
+                households.buy_goods()
+                households.consumption()
 
             simulation.graphs()
 
         if __name__ == '__main__':
-            main(parameters)
+            main()
 
 
 Overview
@@ -152,13 +148,13 @@ order of actions, agents and objects are added.
 .. code-block:: python
 
     for round in simulation.next_round():
-        households.do('sell_labor')
-        firms.do('buy_labor')
-        firms.do('production')
-        (households + firms).do('panel')
-        firms.do('sell_goods')
-        households.do('buy_goods')
-        households.do('consumption')
+        households.sell_labor()
+        firms.buy_labor()
+        firms.production()
+        (households + firms).panel()
+        firms.sell_goods()
+        households.buy_goods()
+        households.consumption()
 
 This establishes the order of the simulation. Make sure you do not overwrite
 internal abilities/properties of the agents. Such as 'sell', 'buy' or 'consume'.
@@ -167,18 +163,20 @@ A more complex example could be:
 
 .. code-block:: python
 
-    for round in simulation.next_round():
-        if round % 30 == 0:
-            households.do('sell_labor')
-            firms.do('buy_labor')
-        firms.do('production')
-        (households + firms).do('panel')
+    for week in range(52):
+        for day in ['mo', 'tu', 'we', 'th', 'fr']:
+        simulation.advance_round((week, day))
+        if day = 'mo':
+            households.sell_labor()
+            firms.buy_labor()
+        firms.production()
+        (households + firms).panel()
         for i in range(10):
-            firms.do('sell_goods')
-            households.do('buy_goods')
-        households.do('consumption')
-        if round == 500:
-            government.do('policy_change')
+            firms.sell_goods()
+            households.buy_goods()
+        households.consumption()
+        if week == 26:
+            government.policy_change()
 
 **Interactions happen between sub-rounds. An agent, sends a message in one round.
 The receiving agent, receives the message the following sub-round.**  A trade is
@@ -256,8 +254,8 @@ the Simulation, when to collect the data by adding 'panel' or 'aggregate' to the
 
 .. code-block:: python
 
-    (firms + households).do('panel')
-    (firms + households).do'aggregate')
+    (firms + households).panel()
+    (firms + households).aggregate()
 
 
 This will instruct the simulation that the firm and the household agent collect panel or aggregate data at a specific point in each round.
@@ -281,9 +279,11 @@ Having established special goods and logging, we create the agents:
 
 .. code-block:: python
 
-        simulation.build_agents(Plant, 'plant', parameters=simulation_parameters, agent_parameters=[{'type':'coal' 'watt': 20000},
-                                                                                                    {'type':'electric' 'watt': 99}
-                                                                                                    {'type':'water' 'watt': 100234}])
+        simulation.build_agents(Plant, 'plant',
+                                parameters=simulation_parameters,
+                                agent_parameters=[{'type':'coal' 'watt': 20000},
+                                                  {'type':'electric' 'watt': 99}
+                                                  {'type':'water' 'watt': 100234}])
 
 This builds three Plant agents. The first plant gets the first dictionary as a agent_parameter {'type':'coal' 'watt': 20000}.
 The second agent, gets the second dictionary and so on.
@@ -296,7 +296,6 @@ The Household agent
 
 .. code-block:: python
 
-    from __future__ import division  # makes division work correctly
     import abce
 
 
@@ -327,14 +326,13 @@ The Household agent
             """ consumes_everything and logs the aggregate utility. current_utility
             """
             self.current_utility = self.consume_everything()
-            self.log_value('HH', self.current_utility)
+            self.log('HH', self.current_utility)
 
 The Firm agent
 ~~~~~~~~~~~~~~
 
 .. code-block:: python
 
-    from __future__ import division  # makes division work correctly
     import abce
 
 
@@ -369,15 +367,6 @@ Agents are modeled in a separate file. In the template directory, you will find
 two agents: :code:`firm.py` and :code:`household.py`.
 
 At the beginning of each agent you will find
-
-.. code-block:: python
-
-    from __future__ import division
-
-ABCE currently supports only python 2, which is still the most widely used python.
-Python 2 has an odd way of handling divisions this instructs python to handle division always as a
-floating point division. Use this in all your python code. If you do not use this ``3 / 2 = 1``
-instead of ``3 / 2 = 1.5`` (floor division).
 
 An agent has to import the `abce` module and the :py:class:`abce.NotEnoughGoods` exception
 
@@ -461,7 +450,7 @@ called from the action_list in the Simulation in start.py.
 
 For example when in the action list `('household', 'consumption')` is called the consumption method
 is executed of each household agent is executed. **It is important not to
-overwrite abce's methods with the agents method. For example if one would
+overwrite abce's methods with the agents methods.** For example if one would
 call the :code:`consumption(self)` method below :code:`consume(self)`, abce's
 consume function would not work anymore.
 
@@ -479,7 +468,7 @@ consume function would not work anymore.
             """ consumes_everything and logs the aggregate utility. current_utility
             """
             self.current_utility = self.consume_everything()
-            self.log_value('HH', self.current_utility)
+            self.log('HH', self.current_utility)
 
 
 

@@ -1,7 +1,7 @@
 Observing agents
 ================
 
-.. default-domain::abce.Database
+.. default-domain::abce.database.Database
 
 
 There are different ways of observing your agents:
@@ -51,7 +51,7 @@ Log logs dictionaries. To log your own variable::
 Further you can write the change of a variable between a start and an end point with:
 :py:meth:`.observe_begin` and :py:meth:`.observe_end`.
 
-.. autoclass:: abce.Database
+.. autoclass:: abce.database.Database
     :members:
     :show-inheritance:
 

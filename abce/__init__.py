@@ -15,11 +15,13 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 # pylint: disable=W0212, C0111
-""" The best way to start creating a simulation is by copying the start.py
-file and other files from 'abce/template'.
 
-To see how to create a simulation read :doc:`Walk_through`. In this module you
-will find the explanation for the command.
+
+""" The best way to start creating a simulation is by copying the start.py
+file and other files from 'abce/template' in https://github.com/AB-CE/examples.
+
+To see how to create a simulation read :doc:`ipython_tutorial`.
+
 
 This is a minimal template for a start.py::
 
@@ -29,10 +31,11 @@ This is a minimal template for a start.py::
 
     simulation = Simulation(name='ABCE')
     agents = simulation.build_agents(Agent, 'agent', 2)
-    for round in simulation.next_round():
-        agents.do('one')
-        agents.do('two')
-        agents.do('three')
+    for r in range(100):
+        simulation.advance_round(r)
+        agents.one()
+        agents.two()
+        agents.three()
     simulation.graphs()
 """
 import datetime
@@ -45,19 +48,20 @@ import queue
 import abce.db
 import abce.abcelogger
 from . import postprocess
-from .agent import Agent, Trade
+from .agent import Agent, Trade  # noqa: F401
 from .group import Group
 from collections import defaultdict, OrderedDict
-from abce.notenoughgoods import NotEnoughGoods
-from abce.agents import (FirmMultiTechnologies, ProductionFunction, Firm,
-                         Household, Utility_Function, SilentDeadAgent,
-                         LoudDeadAgent)
-from .quote import Quote
-from abce.contracts import Contracting
+from abce.notenoughgoods import NotEnoughGoods  # noqa: F401
+from abce.agents import (FirmMultiTechnologies, Firm,  # noqa: F401
+                        Household, Utility_Function,
+                        ProductionFunction, SilentDeadAgent,  # noqa: F401
+                        LoudDeadAgent)  # noqa: F401
+from .quote import Quote  # noqa: F401
+from abce.contracts import Contracting  # noqa: F401
 import json
 from . import abcegui
 from .processorgroup import ProcessorGroup
-from .abcegui import gui
+from .abcegui import gui  # noqa: F401
 
 
 def execute_advance_round_wrapper(inp):
@@ -107,7 +111,7 @@ class Simulation(object):
     Example for a simulation::
 
         num_firms = 5
-        num_households = 200000
+        num_households = 2000
 
         w = Simulation(name='ABCE',
                        trade_logging='individual',
@@ -117,19 +121,20 @@ class Simulation(object):
                                   productivity=1,
                                   product='labor')
 
-        w.panel_data('firm', command='after_sales_before_consumption')
+        w.panel('firm', command='after_sales_before_consumption')
 
         firms = w.build_agents(Firm, 'firm', num_firms)
         households = w.build_agents(Household, 'household', num_households)
 
         all = firms + households
-        for round in range(round):
-            self.advance_round(round)
+
+        for r in range(100):
+            self.advance_round(r)
             households.recieve_connections()
             households.offer_capital()
             firms.buy_capital()
             firms.production()
-            if round == 250:
+            if r == 250:
                 centralbank.intervention()
             households.buy_product()
             all.after_sales_before_consumption()
@@ -405,9 +410,9 @@ class Simulation(object):
                                             'gross_revenue'])
 
             for round in simulation.next_round():
-                firms.do('produce_and_sell)
-                firms.do('aggregate')
-                households.do('buying')
+                firms.produce_and_sell()
+                firms.aggregate()
+                households.buying()
 
 
 
@@ -473,6 +478,20 @@ class Simulation(object):
         self.finalize()
 
     def finalize(self):
+        """ simulation.finalize() must be run after each simulation. It will
+        write all data to disk
+
+        Example::
+
+            simulation = Simulation(...)
+            ...
+            for r in range(100):
+                simulation.advance_round(r)
+                agents.do_something()
+                ...
+
+            simulation.finalize()
+        """
         if self._db_started:
             self._db_started = False
             print('')
@@ -521,10 +540,6 @@ class Simulation(object):
             number:
                 number of agents to be created.
 
-             group_name (optional):
-                to give the group a different name than the lowercase
-                class_name.
-
             parameters:
                 a dictionary of parameters
 
@@ -540,6 +555,7 @@ class Simulation(object):
                                          parameters=simulation_parameters,
                                          agent_parameters=[{'name': UBS'},
                                          {'name': 'amex'},{'name': 'chase'})
+
          centralbanks = simulation.build_agents(CentralBank, 'centralbank',
                                                 number=1,
                                                 parameters={'rounds':
@@ -621,7 +637,7 @@ class Simulation(object):
         print(description.read())
 
     def graphs(self, open=True, new=1):
-        """ after the simulatio is run, graphs() shows graphs of all data
+        """ after the simulation is run, graphs() shows graphs of all data
         collected in the simulation. Shows the same output as the @gui
         decorator shows.
 
@@ -639,7 +655,9 @@ class Simulation(object):
         Example::
 
             simulation = Simulation(...)
-            for round in simulation.next_round():
+            for r in range(100):
+                simulation.advance_round(r)
+                agents.do_something()
                 ...
 
             simulation.graphs()

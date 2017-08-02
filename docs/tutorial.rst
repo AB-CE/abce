@@ -2,13 +2,13 @@
     :language: python
 
 
-Tutorial for plant modeling
+Tutorial for Plant Modeling
 ===========================
 
 In this tutorial we will implement an economy that has two plants. These plants have products and by products, products and by products are traded.
 
 1. Prepare the template
-    a. Copy start.py household.py and firm.py from the template directory of abce to a new directory (ZIP can be downloaded from here https://github.com/DavoudTaghawiNejad/abce).
+    a. Copy start.py household.py and firm.py from the template directory of abce to a new directory (ZIP can be downloaded from here https://github.com/AB-CE/examples).
 
     b. rename firm.py to chpplant.py
 
@@ -65,21 +65,13 @@ In this tutorial we will implement an economy that has two plants. These plants 
 
     a. replace :py:`from firm import Firm` and :py:`household import Household` with :py:`from chpplant import CHPPLant`. This imports your agent in start.py.
 
-    b. change the :py:`action_list = [...]`. against an action list with only one entry.
 
-       .. code:: python
 
-           action_list = [('chpplant', 'production'),
-                          ('chpplant', 'refill'),
-                          ('chpplant', 'panel')].
-
-       This will tell the simulation that in every round, the firms execute the :py:`production` method we specified in CHPPLant. Then it refills the input goods. Lastly, it creates a snapshot of the possessions of chpplant as will be specified in (e).
-
-    c. delete :py:`simulation.declare_round_endowment(...)`
+    b. delete :py:`simulation.declare_round_endowment(...)`
        delete :py:`simulation.declare_perishable(...)`
        delete :py:`simulation.build_agents(Household, 'household',...)`
 
-    d. change :py:`simulation.build_agents(Firm, 'firm',...)` to
+    c. change :py:`simulation.build_agents(Firm, 'firm',...)` to
 
        .. code:: python
 
@@ -87,7 +79,7 @@ In this tutorial we will implement an economy that has two plants. These plants 
 
        With this we create 1 agent of type CHPPLANT, it's group name will be :py:`chpplant` and its number :py:`0`.
 
-    e. change:
+    d. change:
 
        .. code:: python
 
@@ -102,12 +94,25 @@ In this tutorial we will implement an economy that has two plants. These plants 
 
        panel and all other declarations must be before the agents are build.
 
+     e. change:
+
+        .. code:: python
+
+            for r in range(100):
+                simulation.advance_round(r)
+                chpplant.production()
+                chpplant.refill()
+                chpplant.panel()
+
+
+       This will tell the simulation that in every round, the firms execute the :py:`production` method we specified in CHPPLant. Then it refills the input goods. Lastly, it creates a snapshot of the possessions of chpplant as will be specified in (e).
+
  4. To run your simulation, the best is to use the terminal and in the directory of your simulation type :code:`python start.py`. In SPYDER make sure that BEFORE you run the simulation for the first time you modify the ‘Run Setting’ and choose ‘Execute in external System Terminal’. If you the simulation in the IDE without making this changes the GUI might block.
 
 5. Lets modify the agent so he is ready for trade
 
 
-    a. now delete the refill function in CHPPlant, both in the agent and in the actionlist delete :py:`('chpplant', 'refill'),`
+    a. now delete the refill function in CHPPlant, both in the agent and in the actionlist delete :py:`chpplant.refill()`
 
     #. let's simplify the production method in CHPPlant to
 
@@ -222,9 +227,12 @@ In this tutorial we will implement an economy that has two plants. These plants 
 
        .. code:: python
 
-           action_list = [(('chpplant', 'adplant'), 'production'),
-                          (('chpplant', 'adplant'), 'selling'),
-                          (('chpplant', 'adplant'), 'buying'),
-                          ('chpplant', 'panel')]
+
+           for r in range(100):
+               simulation.advance_round(r)
+               (chpplant + adplant).production()
+               (chpplant + adplant).selling()
+               (chpplant + adplant).buying()
+               chpplant.panel()
 
 9. now it should run again.
