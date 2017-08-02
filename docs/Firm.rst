@@ -1,9 +1,9 @@
 Firm and production
 ===================
 
-.. automodule:: firm
+.. automodule:: agents.firm
 
-.. autoclass:: abce.Firm
+.. autoclass:: abce.agents.Firm
     :members:
     :undoc-members:
     :show-inheritance:
