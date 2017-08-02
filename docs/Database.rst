@@ -1,5 +1,5 @@
-Observing agents
-================
+Observing agents and logging
+============================
 
 .. default-domain::abce.database.Database
 
