@@ -38,7 +38,6 @@ import random
 from abce.expiringgood import ExpiringGood
 from pprint import pprint
 import traceback
-import datetime
 from .inventory import Inventory
 
 
@@ -50,9 +49,11 @@ class DummyContracts:
 class Agent(Database, NetworkLogger, Trade, Messaging):
     """ Every agent has to inherit this class. It connects the agent to the
     simulation and to other agent. The :class:`abce.Trade`,
-    :class:`abce.Database` and :class:`abce.Messaging` classes are included. You
-    can enhance an agent, by also inheriting from :class:`abce.Firm`.
-    :class:`abce.FirmMultiTechnologies` or :class:`abce.Household`.
+    :class:`abce.Database` and :class:`abce.Messaging` classes are included.
+    An agent can also inheriting from :class:`abce.Firm`,
+    :class:`abce.FirmMultiTechnologies` or :class:`abce.Household` classes.
+
+    Every method can return parameters to the simulation.
 
     For example::
 
@@ -67,11 +68,27 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
                     self.sell('firm', i, 'good', quantity=1, price=1)
 
             ...
+            def return_quantity_of_good(self):
+                return possession('good')
+
+
+        ...
+
+        simulation = Simulation()
+        households = Simulation.build_agents(household, 'household',
+                                             parameters={...},
+                                             agent_parameters=[{'type': 'a'},
+                                                               {'type': 'b'}])
+        for r in range(10):
+            simulation.advance_round(r)
+            households.selling()
+            print(households.return_quantity_of_good())
 
 
 
     """
-    def __init__(self, id, group, trade_logging, database, logger, random_seed, num_managers):
+    def __init__(self, id, group, trade_logging,
+                 database, logger, random_seed, num_managers):
         """ Do not overwrite __init__ instead use a method called init instead.
         init is called whenever the agent are build.
         """
@@ -79,7 +96,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         """ self.id returns the agents id READ ONLY"""
         self.name = (group, id)
         """ self.name returns the agents name, which is the group name and the
-        id seperated by '_' e.G. "household_12" READ ONLY!
+        id
         """
         self.name_without_colon = '%s_%i' % (group, id)
         self.group = group
@@ -114,7 +131,9 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         self.round = None
         """ self.round is depreciated"""
         self.time = None
-        """ self.time, contains the time set with simulation.time(time) """
+        """ self.time, contains the time set with simulation.advance_round(time)
+            you can set time to anything you want an integer or
+            (12, 30, 21, 09, 1979) or 'monday' """
         self._resources = []
         self.variables_to_track_panel = []
         self.variables_to_track_aggregate = []
@@ -134,28 +153,6 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         :py:meth:`abce.Simulation.build_agents`
         """
         pass
-
-    def date(self):
-        """ If ABCE is run in calendar mode (via
-        :py:meth:`abce.Simulation.declare_calendar`), date shows the current
-        date.::
-
-        self.date().day
-        self.date().month
-        self.date().year
-        self.date().weekday()  # the weekday as a number Monday being 0
-        self.date().toordinal()  #
-
-        The date works like python's
-        `date object
-        <https://docs.python.org/2/library/datetime.html#date-objects>`_
-        """
-        try:
-            return datetime.date.fromordinal(self.round)
-        except ValueError:
-            raise ValueError(
-                "you need to run ABCE in calendar mode, use "
-                "simulation.declare_calendar(2000, 1, 1)")
 
     def possession(self, good):
         """ returns how much of good an agent possesses.
@@ -216,9 +213,9 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
 
         if sum([len(offers) for offers in list(self._msgs.values())]):
             pprint(dict(self._msgs))
-            raise Exception('%s_%i: There are messages an agent send that have '
-                            'not been retrieved in this round get_messages(.)' %
-                            (self.group, self.id))
+            raise Exception('(%s, %i): There are messages an agent send that '
+                            'have not been retrieved in this round '
+                            'get_messages(.)' % (self.group, self.id))
 
         for ingredient, units, product in self._resources:
             self._haves.create(product, self.possession(ingredient) * units)
