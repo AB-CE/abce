@@ -14,13 +14,11 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations under
 # the License.
-from __future__ import division
-from __future__ import print_function
 import threading
 import sqlite3
 from collections import defaultdict
 from .online_variance import OnlineVariance
-
+from postprocess import to_csv
 
 class Database(threading.Thread):
     def __init__(self, directory, in_sok, trade_log):
@@ -57,7 +55,7 @@ class Database(threading.Thread):
         self.aggregates['aggregate_' + group + '_std'] = list(column_names)
 
     def run(self):
-        self.db = sqlite3.connect(self.directory + '/database.db')
+        self.db = sqlite3.connect(':memory:')
         self.database = self.db.cursor()
         self.database.execute('PRAGMA synchronous=OFF')
         self.database.execute('PRAGMA journal_mode=OFF')
@@ -91,10 +89,13 @@ class Database(threading.Thread):
             try:
                 msg = self.in_sok.get()
             except KeyboardInterrupt:
+                to_csv(self.directory, self.db)
                 break
             except EOFError:
+                to_csv(self.directory, self.db)
                 break
             if msg == "close":
+                to_csv(self.directory, self.db)
                 break
 
             elif msg[0] == 'panel':
@@ -141,7 +142,8 @@ class Database(threading.Thread):
                     self.write(table_name, data_to_write)
                 except sqlite3.InterfaceError:
                     raise Exception(
-                        'InterfaceError: data can not be written. If nested try: self.log_nested')
+                        'InterfaceError: data can not be written. '
+                        'If nested try: self.log_nested')
             else:
                 raise Exception(
                     "abce_db error '%s' command unknown ~87" % msg)
@@ -153,8 +155,10 @@ class Database(threading.Thread):
             "(" + ','.join(list(data_to_write.keys())) + ") VALUES (%s);"
         update_str = "UPDATE " + table_name + \
             " SET %s  WHERE CHANGES()=0 and round=%s and id=%s;"
-        update_str = update_str % (','.join('%s=?' % key for key in data_to_write),
-                                   data_to_write['round'], data_to_write['id'])
+        update_str = update_str % (','.join('%s=?' % key
+                                   for key in data_to_write),
+                                   data_to_write['round'],
+                                   data_to_write['id'])
         rows_to_write = list(data_to_write.values())
         format_strings = ','.join(['?'] * len(rows_to_write))
         try:
@@ -197,17 +201,18 @@ class Database(threading.Thread):
 
     def new_column(self, table_name, data_to_write):
         rows_to_write = list(data_to_write.values())
-        self.database.execute("""PRAGMA table_info(""" + table_name + """)""")
+        self.database.execute("PRAGMA table_info(%s)" % table_name)
         existing_columns = [row[1] for row in self.database]
         new_columns = set(data_to_write.keys()).difference(existing_columns)
         for column in new_columns:
             try:
                 if is_convertable_to_float(data_to_write[column]):
-                    self.database.execute(
-                        """ ALTER TABLE """ + table_name + """ ADD """ + column + """ FLOAT;""")
+                    self.database.execute(" ALTER TABLE %s ADD %s FLOAT;"
+                                          % (table_name, column))
                 else:
                     self.database.execute(
-                        """ ALTER TABLE """ + table_name + """ ADD """ + column + """ VARCHAR(50);""")
+                        " ALTER TABLE %s ADD %s VARCHAR(50);"
+                        % (table_name, column))
             except TypeError:
                 rows_to_write.remove(data_to_write[column])
                 del data_to_write[column]

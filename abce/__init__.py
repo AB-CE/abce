@@ -519,9 +519,6 @@ class Simulation(object):
                       (time.time() - self.clock)))
             self._write_description_file()
             self._displaydescribtion()
-            postprocess.to_csv(os.path.abspath(self.path))
-            print(str("time with post processing %6.2f" %
-                      (time.time() - self.clock)))
 
     def build_agents(self, AgentClass, group_name, number=None,
                      parameters={}, agent_parameters=None):
