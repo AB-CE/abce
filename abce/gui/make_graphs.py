@@ -1,20 +1,24 @@
 import pandas as pd
 from bokeh.plotting import figure
 from bokeh.models import Range1d, LinearAxis
-from bokeh.io import gridplot
-import json
 import datetime
 import random
 
 
-colors = ["red", "blue", "green", "black", "purple", "pink",
-          "yellow", "orange", "pink", "Brown", "Cyan", "Crimson",
-          "DarkOrange", "DarkSeaGreen", "DarkCyan", "DarkBlue", "DarkViolet", "Silver",
+COLORS = ["red", "blue", "green", "black", "purple", "pink", "yellow",
+          "orange", "pink", "Brown", "Cyan", "Crimson", "DarkOrange",
+          "DarkSeaGreen", "DarkCyan", "DarkBlue", "DarkViolet", "Silver",
           "#0FCFC0", "#9CDED6", "#D5EAE7", "#F3E1EB", "#F6C4E1", "#F79CD4"]
+
+TOOLS = "reset, pan, wheel_zoom, box_zoom, save, crosshair, hover, resize"
 
 
 def make_title(title, col):
-    return title.replace('aggregate_', '').replace('panel_', '').replace('.csv', '') + ' ' + col
+    return (title.replace('aggregate_', '')
+                 .replace('panel_', '')
+                 .replace('.csv', '')
+            + ' '
+            + col)
 
 
 def make_aggregate_graphs(df, filename, ignore_initial_rounds):
@@ -26,7 +30,6 @@ def make_aggregate_graphs(df, filename, ignore_initial_rounds):
     columns = [col for col in df.columns if not col.endswith('_std') and
                not col.endswith('_mean') and
                col not in ['index', 'round', 'id', 'date']]
-    plots = {}
     try:
         index = df['date'].apply(lambda sdate: datetime.date(
             *[int(c) for c in sdate.split('-')]))
@@ -36,8 +39,9 @@ def make_aggregate_graphs(df, filename, ignore_initial_rounds):
         x_axis_type = "linear"
     for col in columns:
         title = make_title(filename, col)
-        plot = figure(title=title, responsive=True, webgl=False, x_axis_type=x_axis_type,
-                      tools="pan, wheel_zoom, box_zoom, save, crosshair, hover")
+        plot = figure(title=title, sizing_mode='stretch_both',
+                      x_axis_type=x_axis_type, output_backend='webgl',
+                      toolbar_location='above', tools=TOOLS)
         plot.yaxis.visible = None
         plot.legend.orientation = "top_left"
 
@@ -76,8 +80,7 @@ def make_aggregate_graphs(df, filename, ignore_initial_rounds):
             plot.add_layout(LinearAxis(y_range_name="mean"), 'left')
         except KeyError:
             pass
-        plots[json.dumps((plot.ref['id'], title + ' (agg)'))] = plot
-    return plots
+    return title + ' (agg)', plot
 
 
 def make_simple_graphs(df, filename, ignore_initial_rounds):
@@ -86,7 +89,6 @@ def make_simple_graphs(df, filename, ignore_initial_rounds):
     df.dropna(1, how='all', inplace=True)
 
     print('make_simple_graphs', filename)
-    plots = {}
     try:
         index = df['date'].apply(lambda sdate: datetime.date(
             *[int(c) for c in sdate.split('-')]))
@@ -97,8 +99,9 @@ def make_simple_graphs(df, filename, ignore_initial_rounds):
     for col in df.columns:
         if col not in ['round', 'id', 'index', 'date']:
             title = make_title(filename, col)
-            plot = figure(title=title, responsive=True, webgl=False, x_axis_type=x_axis_type,
-                          tools="pan, wheel_zoom, box_zoom, save, crosshair, hover")
+            plot = figure(title=title, sizing_mode='stretch_both',
+                          x_axis_type=x_axis_type, output_backend='webgl',
+                          toolbar_location='above', tools=TOOLS)
             plot.yaxis.visible = None
             plot.legend.orientation = "top_left"
             if df[col].min(skipna=True) != df[col].max(skipna=True):
@@ -113,8 +116,7 @@ def make_simple_graphs(df, filename, ignore_initial_rounds):
                       line_color='blue', y_range_name="ttl")
             plot.add_layout(LinearAxis(y_range_name="ttl"), 'left')
 
-            plots[json.dumps((plot.ref['id'], title))] = plot
-    return plots
+    return title, plot
 
 
 def make_panel_graphs(df, filename, ignore_initial_rounds):
@@ -133,12 +135,12 @@ def make_panel_graphs(df, filename, ignore_initial_rounds):
     else:
         individuals = range(max(df['id']) + 1)
     df = df[df['id'].isin(individuals)]
-    plots = {}
     for col in df.columns:
         if col not in ['round', 'id', 'index', 'date']:
             title = make_title(filename, col)
-            plot = figure(title=title, responsive=True, webgl=False, x_axis_type=x_axis_type,
-                          tools="pan, wheel_zoom, box_zoom, save, crosshair, hover")
+            plot = figure(title=title, sizing_mode='stretch_both',
+                          x_axis_type=x_axis_type, output_backend='webgl',
+                          toolbar_location='above', tools=TOOLS)
 
             plot.legend.orientation = "top_left"
             for i, id in enumerate(individuals):
@@ -149,6 +151,5 @@ def make_panel_graphs(df, filename, ignore_initial_rounds):
                     index = df['round'][df['id'] == id]
                 series = df[col][df['id'] == id]
                 plot.line(index, series, legend=str(id),
-                          line_width=2, line_color=colors[i])
-            plots[json.dumps((plot.ref['id'], title + '(panel)'))] = plot
-    return plots
+                          line_width=2, line_color=COLORS[i])
+    return title + '(panel)', plot

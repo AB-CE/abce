@@ -61,7 +61,7 @@ from abce.contracts import Contracting  # noqa: F401
 import json
 from . import abcegui
 from .processorgroup import ProcessorGroup
-from .abcegui import gui  # noqa: F401
+from abce.gui import gui  # noqa: F401
 
 
 def execute_advance_round_wrapper(inp):
