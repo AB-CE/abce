@@ -89,10 +89,8 @@ def form(parameters, names):
                 for value, checkbox in group.items():
                     if checkbox.checked:
                         parameter[parameter] = value
-            print('1')
             self.emit('run_simulation',
                       {'simulation_parameter': parameter})
-            print('2')
 
         class Both:
 
