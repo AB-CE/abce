@@ -1,5 +1,5 @@
 import os
-from flexx import app
+from flexx import app, ui
 from .basiclayout import basiclayout
 from .form import form
 
@@ -117,3 +117,22 @@ def gui(parameter_mask={}, names={}, top_bar=None, story={},
             app.run()
         return lambda _: None
     return inner
+
+
+def display_graphs(parameter):
+    text = ""
+    for key, value in parameter.items():
+        text = "%s%s: %s<br>" % (text, key, str(value))
+
+    class Form(ui.Widget):
+        def init(self):
+            ui.Label(text=text)
+            self.btn = ui.Button(text="display")
+
+            @self.connect('btn.mouse_click')
+            def wdg(self, *event):
+                self.emit('display_results', {})
+
+    app.launch(basiclayout(Form, None, parameter['name'], None, 0),
+               runtime='browser-X')
+    app.run()
