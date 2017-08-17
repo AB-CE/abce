@@ -1,8 +1,7 @@
+import random
 import pandas as pd
 from bokeh.plotting import figure
 from bokeh.models import Range1d, LinearAxis
-import datetime
-import random
 
 
 COLORS = ["red", "blue", "green", "black", "purple", "pink", "yellow",
@@ -10,73 +9,54 @@ COLORS = ["red", "blue", "green", "black", "purple", "pink", "yellow",
           "DarkSeaGreen", "DarkCyan", "DarkBlue", "DarkViolet", "Silver",
           "#0FCFC0", "#9CDED6", "#D5EAE7", "#F3E1EB", "#F6C4E1", "#F79CD4"]
 
-TOOLS = "reset, pan, wheel_zoom, box_zoom, save, crosshair, hover, resize"
+TOOLS = "reset, pan, zoom_in, zoom_out, box_zoom, save, crosshair, hover"
 
 
 def make_title(title, col):
     return (title.replace('aggregate_', '')
                  .replace('panel_', '')
                  .replace('.csv', '')
+                 .replace('_log_', '')
+                 .replace('log_', '')
             + ' '
             + col)
 
 
 def make_aggregate_graphs(df, filename, ignore_initial_rounds):
-    # clean nan
-    df = df.where((pd.notnull(df)), None)
-    df.dropna(1, how='all', inplace=True)
-
+    df = clean_nans(df)
     print('make_aggregate_graphs', filename)
-    columns = [col for col in df.columns if not col.endswith('_std') and
-               not col.endswith('_mean') and
-               col not in ['index', 'round', 'id', 'date']]
-    try:
-        index = df['date'].apply(lambda sdate: datetime.date(
-            *[int(c) for c in sdate.split('-')]))
-        x_axis_type = "datetime"
-    except KeyError:
-        index = df['round']
-        x_axis_type = "linear"
+    # all columns exist 3 times, with _ttl, _mean and _std suffix
+    # columns contains each type only once:
+    columns = [col.replace('_ttl', '')
+               for col in df.columns if col.endswith('_ttl')]
+    index = df['round']
     for col in columns:
         title = make_title(filename, col)
         plot = figure(title=title, sizing_mode='stretch_both',
-                      x_axis_type=x_axis_type, output_backend='webgl',
-                      toolbar_location='above', tools=TOOLS)
+                      output_backend='webgl',
+                      toolbar_location='below', tools=TOOLS)
         plot.yaxis.visible = None
         plot.legend.orientation = "top_left"
 
         try:
-            if df[col + '_std'].min() != df[col + '_std'].max():
-                plot.extra_y_ranges['std'] = Range1d(df[col + '_std'].ix[ignore_initial_rounds:].min(skipna=True),
-                                                     df[col + '_std'].ix[ignore_initial_rounds:].max(skipna=True))
-            else:
-                plot.extra_y_ranges['std'] = Range1d(df[col + '_std'].ix[ignore_initial_rounds:].min(skipna=True) - 1,
-                                                     df[col + '_std'].ix[ignore_initial_rounds:].max(skipna=True) + 1)
-            plot.line(index, df[col + '_std'],
-                      legend='std', line_width=2, line_color='red', y_range_name="std")
+            plot.extra_y_ranges['std'] = y_range(col, 'std', df,
+                                                 ignore_initial_rounds)
+
+            plot.line(index, df[col + '_std'], legend='std', line_width=2,
+                      line_color='red', y_range_name="std")
             plot.add_layout(LinearAxis(y_range_name="std"), 'right')
         except KeyError:
             pass
 
-        if df[col].min(skipna=True) != df[col].max(skipna=True):
-            plot.extra_y_ranges['ttl'] = Range1d(df[col].ix[ignore_initial_rounds:].min(skipna=True),
-                                                 df[col].ix[ignore_initial_rounds:].max(skipna=True))
-        else:
-            plot.extra_y_ranges['ttl'] = Range1d(df[col].ix[ignore_initial_rounds:].min(skipna=True) - 1,
-                                                 df[col].ix[ignore_initial_rounds:].max(skipna=True) + 1)
+        plot.extra_y_ranges['ttl'] = y_range(col, 'ttl', df,
+                                             ignore_initial_rounds)
 
-        plot.line(index, df[col],
-                  legend='mean/total', line_width=2, line_color='blue', y_range_name="ttl")
+        plot.line(index, df[col + '_ttl'], legend='mean/total', line_width=2,
+                  line_color='blue', y_range_name="ttl")
         plot.add_layout(LinearAxis(y_range_name="ttl"), 'left')
         try:
-            if df[col + '_mean'].min() != df[col + '_mean'].max():
-                plot.extra_y_ranges['mean'] = Range1d(df[col + '_mean'].ix[ignore_initial_rounds:].min(skipna=True),
-                                                      df[col + '_mean'].ix[ignore_initial_rounds:].max(skipna=True))
-            else:
-                plot.extra_y_ranges['mean'] = Range1d(df[col + '_mean'].ix[ignore_initial_rounds:].min(skipna=True) - 1,
-                                                      df[col + '_mean'].ix[ignore_initial_rounds:].max(skipna=True) + 1)
-            # plot.line(index, df[col],
-            #          legend='mean', line_width=2, line_color='green', y_range_name="mean")
+            plot.extra_y_ranges['mean'] = y_range(col, 'mean', df,
+                                                  ignore_initial_rounds)
             plot.add_layout(LinearAxis(y_range_name="mean"), 'left')
         except KeyError:
             pass
@@ -84,32 +64,19 @@ def make_aggregate_graphs(df, filename, ignore_initial_rounds):
 
 
 def make_simple_graphs(df, filename, ignore_initial_rounds):
-    # clean nan
-    df = df.where((pd.notnull(df)), None)
-    df.dropna(1, how='all', inplace=True)
-
+    df = clean_nans(df)
     print('make_simple_graphs', filename)
-    try:
-        index = df['date'].apply(lambda sdate: datetime.date(
-            *[int(c) for c in sdate.split('-')]))
-        x_axis_type = "datetime"
-    except KeyError:
-        index = df['round']
-        x_axis_type = "linear"
+    index = df['round']
     for col in df.columns:
-        if col not in ['round', 'id', 'index', 'date']:
+        if col not in ['round', 'id', 'index']:
             title = make_title(filename, col)
             plot = figure(title=title, sizing_mode='stretch_both',
-                          x_axis_type=x_axis_type, output_backend='webgl',
-                          toolbar_location='above', tools=TOOLS)
+                          output_backend='webgl',
+                          toolbar_location='below', tools=TOOLS)
             plot.yaxis.visible = None
             plot.legend.orientation = "top_left"
-            if df[col].min(skipna=True) != df[col].max(skipna=True):
-                plot.extra_y_ranges['ttl'] = Range1d(df[col].ix[ignore_initial_rounds:].min(skipna=True),
-                                                     df[col].ix[ignore_initial_rounds:].max(skipna=True))
-            else:
-                plot.extra_y_ranges['ttl'] = Range1d(df[col].ix[ignore_initial_rounds:].min(skipna=True) - 1,
-                                                     df[col].ix[ignore_initial_rounds:].max(skipna=True) + 1)
+            plot.extra_y_ranges['ttl'] = y_range(col, '', df,
+                                                 ignore_initial_rounds)
 
             plot.legend.orientation = "top_left"
             plot.line(index, df[col], legend=col, line_width=2,
@@ -121,14 +88,9 @@ def make_simple_graphs(df, filename, ignore_initial_rounds):
 
 def make_panel_graphs(df, filename, ignore_initial_rounds):
     # clean nan
-    df = df.where((pd.notnull(df)), None)
-    df.dropna(1, how='all', inplace=True)
+    df = clean_nans(df)
 
     print('make_panel_graphs', filename)
-    if 'date' in df.columns:
-        x_axis_type = "datetime"
-    else:
-        x_axis_type = "linear"
 
     if max(df['id']) > 20:
         individuals = sorted(random.sample(range(max(df['id'])), 20))
@@ -136,20 +98,38 @@ def make_panel_graphs(df, filename, ignore_initial_rounds):
         individuals = range(max(df['id']) + 1)
     df = df[df['id'].isin(individuals)]
     for col in df.columns:
-        if col not in ['round', 'id', 'index', 'date']:
+        if col not in ['round', 'id', 'index']:
             title = make_title(filename, col)
             plot = figure(title=title, sizing_mode='stretch_both',
-                          x_axis_type=x_axis_type, output_backend='webgl',
-                          toolbar_location='above', tools=TOOLS)
+                          output_backend='webgl',
+                          toolbar_location='below', tools=TOOLS)
 
             plot.legend.orientation = "top_left"
             for i, id in enumerate(individuals):
-                try:
-                    index = df['date'][df['id'] == id].apply(
-                        lambda sdate: datetime.date(*[int(c) for c in sdate.split('-')]))
-                except KeyError:
-                    index = df['round'][df['id'] == id]
+                index = df['round'][df['id'] == id]
                 series = df[col][df['id'] == id]
                 plot.line(index, series, legend=str(id),
                           line_width=2, line_color=COLORS[i])
-    return title + '(panel)', plot
+    return title + ' (panel)', plot
+
+
+def clean_nans(df):
+    df = df.where((pd.notnull(df)), None)
+    df.dropna(1, how='all', inplace=True)
+    return df
+
+
+def y_range(column, suffix, df, ignore_initial_rounds):
+    """ returns a range that includes min and max y
+    for values where x is above ignore_initial_rounds
+    """
+    if suffix != "":
+        column = column + '_' + suffix
+
+    relevant_subset = df[column].ix[ignore_initial_rounds:]
+    if relevant_subset.min() != relevant_subset.max():
+        return Range1d(relevant_subset.min(skipna=True),
+                       relevant_subset.max(skipna=True))
+    else:
+        return Range1d(relevant_subset.min(skipna=True) - 1,
+                       relevant_subset.max(skipna=True) + 1)
