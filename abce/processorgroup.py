@@ -1,11 +1,6 @@
-from builtins import range
-from builtins import object
-from builtins import list
-from builtins import dict
 from collections import defaultdict
-from pprint import pprint
 import traceback
-import time
+from time import sleep
 import random
 
 
@@ -16,13 +11,15 @@ class ProcessorGroup(object):
         self.num_managers = num_managers
         self.mymessages = list()
 
-    def add_group(self, Agent, num_agents_this_group, agent_args, parameters, agent_parameters, agent_params_from_sim):
+    def add_group(self, Agent, num_agents_this_group, agent_args, parameters,
+                  agent_parameters, agent_params_from_sim):
         group = agent_args['group']
         self.agents[group] = []
         self.apfs = agent_params_from_sim
         for i in range(self.batch, num_agents_this_group, self.num_managers):
             agent = self.make_an_agent(Agent, id=i, agent_args=agent_args,
-                                       parameters=parameters, agent_parameters=agent_parameters[i])
+                                       parameters=parameters,
+                                       agent_parameters=agent_parameters[i])
             self.agents[group].append(agent)
 
     def append(self, Agent, id, agent_args, parameters, agent_parameters):
@@ -31,7 +28,8 @@ class ProcessorGroup(object):
             Agent, id, agent_args, parameters, agent_parameters)
         self.agents[group].append(agent)
 
-    def make_an_agent(self, Agent, id, agent_args, parameters, agent_parameters):
+    def make_an_agent(self, Agent, id, agent_args, parameters,
+                      agent_parameters):
         agent_args['num_managers'] = self.num_managers
         agent = Agent(id=id, **agent_args)
         for good, duration in self.apfs['expiring']:
@@ -53,7 +51,7 @@ class ProcessorGroup(object):
         except KeyboardInterrupt:
             return None
         except:
-            time.sleep(random.random())
+            sleep(random.random())
             traceback.print_exc()
             raise Exception()
         return agent
@@ -90,7 +88,7 @@ class ProcessorGroup(object):
                 except KeyboardInterrupt:
                     return None
                 except:
-                    time.sleep(random.random())
+                    sleep(random.random())
                     traceback.print_exc()
                     raise Exception()
 
