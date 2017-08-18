@@ -3,6 +3,7 @@ from flexx import app, ui
 from .basiclayout import basiclayout
 from .form import form
 from abce.gui.webtext import abcedescription
+import flexx
 
 
 def gui(parameter_mask={}, names={}, top_bar=None, story={},
@@ -106,6 +107,8 @@ def gui(parameter_mask={}, names={}, top_bar=None, story={},
     def inner(simulation):
         Form = form(parameter_mask, names)
         if serve:
+            flexx.config.hostname = '35.176.189.179'
+            flexx.config.port = '80'
             app.serve(basiclayout(Form, simulation, title, top_bar,
                                   truncate_rounds, covertext=covertext,
                                   texts=texts, pages=pages))
