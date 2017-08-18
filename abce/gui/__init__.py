@@ -9,7 +9,7 @@ import flexx
 def gui(parameter_mask={}, names={}, top_bar=None, story={},
         title="Agent-Based Computational Economics",
         serve=False, runtime='browser-X', truncate_rounds=0,
-        covertext=abcedescription, texts=[], pages=[]):
+        texts=[abcedescription], pages=[]):
     """ gui is a decorator that can be used to add a graphical user interface
     to your simulation.
 
@@ -110,12 +110,12 @@ def gui(parameter_mask={}, names={}, top_bar=None, story={},
             flexx.config.hostname = '0.0.0.0'
             flexx.config.port = 80
             app.serve(basiclayout(Form, simulation, title, top_bar,
-                                  truncate_rounds, covertext=covertext,
+                                  truncate_rounds,
                                   texts=texts, pages=pages))
             app.start()
         else:
             app.launch(basiclayout(Form, simulation, title, top_bar,
-                                   truncate_rounds, covertext=covertext,
+                                   truncate_rounds,
                                    texts=texts, pages=pages),
                        windowmode='maximized', runtime=runtime)
             app.run()
