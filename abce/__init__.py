@@ -60,7 +60,7 @@ from .quote import Quote  # noqa: F401
 from abce.contracts import Contracting  # noqa: F401
 import json
 from .processorgroup import ProcessorGroup
-from abce.gui import gui, display_graphs  # noqa: F401
+from abce.gui import gui, display_graphs, app  # noqa: F401
 
 
 def execute_advance_round_wrapper(inp):
