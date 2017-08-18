@@ -49,7 +49,7 @@ def form(parameters, names):
                         else:
                             step = (max_value - min_value) / 100
                         with ui.Widget():
-                            ui.Label(text=title)
+                            ui.Label(text=title, wrap=True)
                             s = ui.Slider(min=min_value, max=max_value,
                                           value=default, step=step)
                             f = ui.LineEdit(title=title, text=default)
@@ -65,13 +65,14 @@ def form(parameters, names):
 
                     elif isinstance(value, str):
                         with ui.Widget():
+                            ui.Label(text=title, wrap=True)
                             self.fields[parameter] = \
                                 ui.LineEdit(title=title,
                                             text=value,
                                             style='width: 95%;')
                         self.result_property[parameter] = 'text'
                     elif value is None:
-                        ui.Label(text=title)
+                        ui.Label(text=title, wrap=True)
                     else:  # field
                         raise Exception(str(value) + "not recognized")
 
