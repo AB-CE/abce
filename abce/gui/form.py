@@ -12,71 +12,74 @@ def form(parameters, names):
             self.int_sliders = set()
             self.sliders = []
 
-            for parameter, value in list(parameters.items()):
-                try:
-                    title = names[parameter]
-                except KeyError:
-                    title = parameter
 
-                if isinstance(value, bool):
-                    self.fields[parameter] = ui.CheckBox(text=title)
-                    self.result_property[parameter] = 'checked'
+            with ui.GroupWidget(title="Simulation parameter"):
+                ui.Label(text="scroll down to start",  style="float: right; color: blue", wrap=True)
+                for parameter, value in list(parameters.items()):
+                    try:
+                        title = names[parameter]
+                    except KeyError:
+                        title = parameter
 
-                elif isinstance(value, list):
-                    self.radio_buttons[parameter] = {}
-                    with ui.GroupWidget(title=title,
-                                        style="width:fit-content;"):
-                        for option in value:
-                            self.radio_buttons[parameter][option] = \
-                                ui.RadioButton(text=option)
-                    self.radio_buttons[parameter][value[0]].checked = True
+                    if isinstance(value, bool):
+                        self.fields[parameter] = ui.CheckBox(text=title)
+                        self.result_property[parameter] = 'checked'
 
-                else:
-                    if isinstance(value, tuple):
-                        min_value, default, max_value = sorted(value)
-                    elif isinstance(value, (int, float)):
-                        min_value, default, max_value = 0, value, value * 2
+                    elif isinstance(value, list):
+                        self.radio_buttons[parameter] = {}
+                        with ui.GroupWidget(title=title,
+                                            style="width:fit-content;"):
+                            for option in value:
+                                self.radio_buttons[parameter][option] = \
+                                    ui.RadioButton(text=option)
+                        self.radio_buttons[parameter][value[0]].checked = True
 
-                    is_integer = False
-                    if isinstance(value, (int, float, tuple)):
-                        if (isinstance(default, int)
-                                and isinstance(max_value, int)):
-                            step = 1
-                            is_integer = True
-                            # if default is float, type is float
-                            if isinstance(default, float):
-                                step = 1.
-                        else:
-                            step = (max_value - min_value) / 100
-                        with ui.Widget():
+                    else:
+                        if isinstance(value, tuple):
+                            min_value, default, max_value = sorted(value)
+                        elif isinstance(value, (int, float)):
+                            min_value, default, max_value = 0, value, value * 2
+
+                        is_integer = False
+                        if isinstance(value, (int, float, tuple)):
+                            if (isinstance(default, int)
+                                    and isinstance(max_value, int)):
+                                step = 1
+                                is_integer = True
+                                # if default is float, type is float
+                                if isinstance(default, float):
+                                    step = 1.
+                            else:
+                                step = (max_value - min_value) / 100
+                            with ui.Widget():
+                                ui.Label(text=title, wrap=True)
+                                s = ui.Slider(min=min_value, max=max_value,
+                                              value=default, step=step)
+                                f = ui.LineEdit(title=title, text=default)
+                                self.sliders.append((s, f))
+                            self.fields[parameter] = s
+                            self.result_property[parameter] = 'value'
+                            s.connect('value', self.stt)
+                            f.connect('submit', self.tts)
+                            self.slider_to_textfield[s] = f
+                            self.textfield_to_slider[f] = s
+                            if is_integer:
+                                self.int_sliders.add(s)
+
+                        elif isinstance(value, str):
+                            with ui.Widget():
+                                ui.Label(text=title, wrap=True, style="width: 80%")
+                                self.fields[parameter] = \
+                                    ui.LineEdit(title=title,
+                                                text=value,
+                                                style='width: 95%;')
+                            self.result_property[parameter] = 'text'
+                        elif value is None:
                             ui.Label(text=title, wrap=True)
-                            s = ui.Slider(min=min_value, max=max_value,
-                                          value=default, step=step)
-                            f = ui.LineEdit(title=title, text=default)
-                            self.sliders.append((s, f))
-                        self.fields[parameter] = s
-                        self.result_property[parameter] = 'value'
-                        s.connect('value', self.stt)
-                        f.connect('submit', self.tts)
-                        self.slider_to_textfield[s] = f
-                        self.textfield_to_slider[f] = s
-                        if is_integer:
-                            self.int_sliders.add(s)
+                        else:  # field
+                            raise Exception(str(value) + "not recognized")
+                self.btn = ui.Button(text="start simulation",  style="float: right;")
 
-                    elif isinstance(value, str):
-                        with ui.Widget():
-                            ui.Label(text=title, wrap=True, style="width: 80%")
-                            self.fields[parameter] = \
-                                ui.LineEdit(title=title,
-                                            text=value,
-                                            style='width: 95%;')
-                        self.result_property[parameter] = 'text'
-                    elif value is None:
-                        ui.Label(text=title, wrap=True)
-                    else:  # field
-                        raise Exception(str(value) + "not recognized")
-
-            self.btn = ui.Button(text="start")
 
         @event.connect('btn.mouse_click')
         def wdg(self, *event):
