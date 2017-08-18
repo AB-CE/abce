@@ -109,7 +109,6 @@ def gui(parameter_mask={}, names={}, top_bar=None, story={},
             app.serve(basiclayout(Form, simulation, title, top_bar,
                                   truncate_rounds, covertext=covertext,
                                   texts=texts, pages=pages))
-            app.start()
         else:
             app.launch(basiclayout(Form, simulation, title, top_bar,
                                    truncate_rounds, covertext=covertext,
