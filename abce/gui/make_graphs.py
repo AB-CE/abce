@@ -30,6 +30,8 @@ def make_aggregate_graphs(df, filename, ignore_initial_rounds):
     columns = [col.replace('_ttl', '')
                for col in df.columns if col.endswith('_ttl')]
     index = df['round']
+    titles = []
+    plots = []
     for col in columns:
         title = make_title(filename, col)
         plot = figure(title=title, sizing_mode='stretch_both',
@@ -60,13 +62,17 @@ def make_aggregate_graphs(df, filename, ignore_initial_rounds):
             plot.add_layout(LinearAxis(y_range_name="mean"), 'left')
         except KeyError:
             pass
-    return title + ' (agg)', plot
+        titles.append(title + ' (agg)')
+        plots.append(plot)
+    return titles, plots
 
 
 def make_simple_graphs(df, filename, ignore_initial_rounds):
     df = clean_nans(df)
     print('make_simple_graphs', filename)
     index = df['round']
+    titles = []
+    plots = []
     for col in df.columns:
         if col not in ['round', 'id', 'index']:
             title = make_title(filename, col)
@@ -82,8 +88,10 @@ def make_simple_graphs(df, filename, ignore_initial_rounds):
             plot.line(index, df[col], legend=col, line_width=2,
                       line_color='blue', y_range_name="ttl")
             plot.add_layout(LinearAxis(y_range_name="ttl"), 'left')
+        titles.append(title)
+        plots.append(plot)
 
-    return title, plot
+    return titles, plots
 
 
 def make_panel_graphs(df, filename, ignore_initial_rounds):
@@ -97,6 +105,8 @@ def make_panel_graphs(df, filename, ignore_initial_rounds):
     else:
         individuals = range(max(df['id']) + 1)
     df = df[df['id'].isin(individuals)]
+    titles = []
+    plots = []
     for col in df.columns:
         if col not in ['round', 'id', 'index']:
             title = make_title(filename, col)
@@ -110,7 +120,9 @@ def make_panel_graphs(df, filename, ignore_initial_rounds):
                 series = df[col][df['id'] == id]
                 plot.line(index, series, legend=str(id),
                           line_width=2, line_color=COLORS[i])
-    return title + ' (panel)', plot
+            titles.append(title + ' (panel)')
+            plots.append(plot)
+    return titles, plots
 
 
 def clean_nans(df):
