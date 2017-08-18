@@ -1,5 +1,6 @@
 from flexx.pyscript import window
 from flexx.ui import Layout
+from flexx import event
 
 
 class DockPanel(Layout):
@@ -26,7 +27,7 @@ class DockPanel(Layout):
         border: 1px solid #ccc;
         width: 20% !important;
         height: 100% !important;
-        overflow: scroll;
+        overflow-y: scroll;
         border-color: blue !important;
     }
 
@@ -83,7 +84,10 @@ class DockPanel(Layout):
         left: 20% !important;
         height: 100% !important;
     }
-"""
+    """
+
+    def selectWidget(self, widget):
+        self.emit('myselectWidget', {'widget': widget})
 
     class Both:
 
@@ -93,6 +97,9 @@ class DockPanel(Layout):
             self.relative = widget.phosphor
 
     class JS:
+        @event.connect('myselectWidget')
+        def myselectWidget(self, event):
+            self.phosphor.selectWidget(event['widget'].phosphor)
 
         def _init_phosphor_and_node(self):
             self.phosphor = window.phosphor.dockpanel.DockPanel()

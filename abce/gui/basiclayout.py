@@ -9,25 +9,36 @@ from .bokehwidget import BokehWidget
 from abce.gui.webtext import abcedescription
 
 
-def basiclayout(Form, simulation, title, top_bar=None, story={}, texts=[],
-                pages=[], covertext=abcedescription, truncate_rounds=0):
+def basiclayout(Form, simulation, title, top_bar=None, story={},
+                texts=[abcedescription], pages=[], truncate_rounds=0):
     class Rex(ui.Widget):
         CSS = """
         h1, a {
-            color: white;
             -webkit-margin-before: 0.20em;
             -webkit-margin-after: 0.0em;
             -webkit-margin-start: 1em;
             -webkit-margin-end: 1em;
             text-decoration: none;
-        } """
+        }
+        ::-webkit-scrollbar {
+          -webkit-appearance: none;
+          width: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+          border-radius: 5px;
+          background-color: rgba(0,0,0,.5);
+          -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
+        }
+
+         """
 
         def init(self):
             self.first = True
             with ui.BoxLayout(orientation='v',
                               style="background-color: blue;"):
                 with ui.HBox(flex=0):
-                    ui.Label(text='<h1>%s</h1>' % title,
+                    ui.Label(text='<h1 style="color: white">%s</h1>' % title,
                              flex=1,
                              style="background-color: blue;")
                 if top_bar is not None:
@@ -35,26 +46,37 @@ def basiclayout(Form, simulation, title, top_bar=None, story={}, texts=[],
                              flex=0,
                              style="background-color: blue;")
                 with DockPanel(flex=1) as self.dp:
-                    form = Form(title='start',
-                                style="location: W; overflow: scroll;")
-                    for i in range(1, len(texts)):
+                    form = Form(title='Simulation',
+                                style="location: N; overflow: scroll;")
+                    for i in range(len(texts)):
                         ui.Label(title=texts[i].splitlines()[0],
                                  text='\n'.join(texts[i].splitlines()[1:]),
-                                 style="location: A; overflow: scroll;",
+                                 style="location: R; overflow: scroll;",
                                  wrap=True)
                     for pagetitle, page in pages:
                         ui.IFrame(url=page,
                                   title=pagetitle,
                                   style="location: A; overflow: scroll;",)
-                    ui.Label(title=covertext.splitlines()[0],
-                             text='\n'.join(covertext.splitlines()[1:]),
-                             style="location: R; overflow: scroll;",
-                             wrap=True)
+                    self.progress_label = ui.Label(title=' ',
+                        text='Click tab, move tabs by dragging tabs, resize windows',
+                        style="location: S; overflow: scroll;",
+                        wrap=True)
 
             @form.connect("run_simulation")
             def run_simulation(events):
+
+                self.progress_label.title = 'Running...'
+                self.progress_label.text = 'Simulation in progress'
+
                 simulation(events['simulation_parameter'])
+
+                self.progress_label.title = 'Success'
+
                 self.display_results(events)
+                self.progress_label.text = 'Simulation succeeded, generating graphs'
+
+                self.progress_label.title = 'Results:'
+                self.progress_label.text = 'Click left'
 
         def display_results(self, events):
             try:
@@ -106,8 +128,10 @@ def basiclayout(Form, simulation, title, top_bar=None, story={}, texts=[],
                 else:
                     for plot in plots:
                         self.plot_widgets[i].plot = plot
-                i += 1
+                        i += 1
 
+            if self.first:
+                self.dp.selectWidget(self.plot_widgets[0])
             self.first = False
     return Rex
 
