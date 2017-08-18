@@ -65,7 +65,7 @@ def form(parameters, names):
 
                     elif isinstance(value, str):
                         with ui.Widget():
-                            ui.Label(text=title, wrap=True)
+                            ui.Label(text=title, wrap=True, style="width: 80%")
                             self.fields[parameter] = \
                                 ui.LineEdit(title=title,
                                             text=value,
