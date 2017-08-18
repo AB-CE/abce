@@ -107,8 +107,8 @@ def gui(parameter_mask={}, names={}, top_bar=None, story={},
     def inner(simulation):
         Form = form(parameter_mask, names)
         if serve:
-            flexx.config.hostname = '35.176.189.179'
-            flexx.config.port = '80'
+            flexx.config.hostname = '0.0.0.0'
+            flexx.config.port = 80
             app.serve(basiclayout(Form, simulation, title, top_bar,
                                   truncate_rounds, covertext=covertext,
                                   texts=texts, pages=pages))
