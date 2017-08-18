@@ -2,11 +2,13 @@ import os
 from flexx import app, ui
 from .basiclayout import basiclayout
 from .form import form
+from abce.gui.webtext import abcedescription
 
 
 def gui(parameter_mask={}, names={}, top_bar=None, story={},
         title="Agent-Based Computational Economics",
-        serve=False, runtime='browser-X', truncate_rounds=0):
+        serve=False, runtime='browser-X', truncate_rounds=0,
+        covertext=abcedescription, texts=[], pages=[]):
     """ gui is a decorator that can be used to add a graphical user interface
     to your simulation.
 
@@ -33,9 +35,6 @@ def gui(parameter_mask={}, names={}, top_bar=None, story={},
 
                 - a string:
                     {'name': '2x2'}
-
-                - everything else that can be evaluated as a string, see
-                  (eval)[https://docs.python.org/2/library/functions.html#eval]
 
         names (optional):
             a dictionary with the parameter name as key and an alternative
@@ -108,11 +107,13 @@ def gui(parameter_mask={}, names={}, top_bar=None, story={},
         Form = form(parameter_mask, names)
         if serve:
             app.serve(basiclayout(Form, simulation, title, top_bar,
-                      truncate_rounds))
+                                  truncate_rounds, covertext=covertext,
+                                  texts=texts, pages=pages))
             app.start()
         else:
             app.launch(basiclayout(Form, simulation, title, top_bar,
-                                   truncate_rounds),
+                                   truncate_rounds, covertext=covertext,
+                                   texts=texts, pages=pages),
                        windowmode='maximized', runtime=runtime)
             app.run()
         return lambda _: None

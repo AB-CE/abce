@@ -6,10 +6,11 @@ from .make_graphs import (make_panel_graphs,
                           make_simple_graphs,
                           make_aggregate_graphs)
 from .bokehwidget import BokehWidget
+from abce.gui.webtext import abcedescription
 
 
-def basiclayout(Form, simulation, title, top_bar=None, story={},
-                truncate_rounds=0):
+def basiclayout(Form, simulation, title, top_bar=None, story={}, texts=[],
+                pages=[], covertext=abcedescription, truncate_rounds=0):
     class Rex(ui.Widget):
         CSS = """
         h1, a {
@@ -31,13 +32,24 @@ def basiclayout(Form, simulation, title, top_bar=None, story={},
                              style="background-color: blue;")
                 if top_bar is not None:
                     ui.Label(text=top_bar,
-                             flex=1,
+                             flex=0,
                              style="background-color: blue;")
                 with DockPanel(flex=1) as self.dp:
                     form = Form(title='start',
                                 style="location: W; overflow: scroll;")
-                    self.right_panel = ui.Widget(title="Widget",
-                                                 style="location: R")
+                    for i in range(1, len(texts)):
+                        ui.Label(title=texts[i].splitlines()[0],
+                                 text='\n'.join(texts[i].splitlines()[1:]),
+                                 style="location: A; overflow: scroll;",
+                                 wrap=True)
+                    for pagetitle, page in pages:
+                        ui.IFrame(url=page,
+                                  title=pagetitle,
+                                  style="location: A; overflow: scroll;",)
+                    ui.Label(title=covertext.splitlines()[0],
+                             text='\n'.join(covertext.splitlines()[1:]),
+                             style="location: R; overflow: scroll;",
+                             wrap=True)
 
             @form.connect("run_simulation")
             def run_simulation(events):
