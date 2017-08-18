@@ -61,7 +61,7 @@ def basiclayout(Form, simulation, title, top_bar=None, story={}, texts=[],
                 ignore_initial_rounds = int(events['ignore_initial_rounds'])
             except KeyError:
                 ignore_initial_rounds = 100
-            self.plots = []
+
             if self.first:
                 self.plot_widgets = []
             try:
@@ -83,31 +83,30 @@ def basiclayout(Form, simulation, title, top_bar=None, story={}, texts=[],
                     ignore_initial_rounds = 0
                     print('abcegui.py ignore_initial_rounds >= rounds')
                 if filename.startswith('aggregate_'):
-                    title, plot = make_aggregate_graphs(
+                    titles, plots = make_aggregate_graphs(
                         df, filename, ignore_initial_rounds)
-                    self.plots.append(plot)
                 else:
                     try:
                         if max(df.get('id', [0])) == 0:
-                            title, plot = make_simple_graphs(
+                            titles, plots = make_simple_graphs(
                                 df, filename, ignore_initial_rounds)
-                            self.plots.append(plot)
                         else:
-                            title, plot = make_panel_graphs(
+                            titles, plots = make_panel_graphs(
                                 df, filename, ignore_initial_rounds)
-                            self.plots.append(plot)
                     except ValueError:
                         print((filename, 'not displayable: ValueError'))
 
                 if self.first:
                     with self.dp:
-                        pw = BokehWidget(plot=plot,
-                                         style="location: A",
-                                         title=title)
-                        self.plot_widgets.append(pw)
+                        for plottitle, plot in zip(titles, plots):
+                            pw = BokehWidget(plot=plot,
+                                             style="location: A",
+                                             title=plottitle)
+                            self.plot_widgets.append(pw)
                 else:
-                    self.plot_widgets[i].plot = plot
-                    i += 1
+                    for plot in plots:
+                        self.plot_widgets[i].plot = plot
+                i += 1
 
             self.first = False
     return Rex
