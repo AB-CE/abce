@@ -66,6 +66,9 @@ class Group(object):
             self.sim._db.start()
         self.do('aggregate')
 
+    def panel_log(self, vars, possessions, func, len):
+        self.do('panel_log', vars, possessions, func, len)
+
 
 def execute_wrapper(inp):
     # processor_group.execute(self.groups, command, messages[pgid])

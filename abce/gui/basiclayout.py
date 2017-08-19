@@ -7,6 +7,7 @@ from .make_graphs import (make_panel_graphs,
                           make_aggregate_graphs)
 from .bokehwidget import BokehWidget
 from abce.gui.webtext import abcedescription
+from collections import defaultdict
 
 
 def basiclayout(Form, simulation, title, top_bar=None, story={},
@@ -34,7 +35,8 @@ def basiclayout(Form, simulation, title, top_bar=None, story={},
          """
 
         def init(self):
-            self.first = True
+            self.graphs = defaultdict(pd.DataFrame)
+            self.first = self.first_repeat = True
             with ui.BoxLayout(orientation='v',
                               style="background-color: blue;"):
                 with ui.HBox(flex=0):
@@ -46,8 +48,8 @@ def basiclayout(Form, simulation, title, top_bar=None, story={},
                              flex=0,
                              style="background-color: blue;")
                 with DockPanel(flex=1) as self.dp:
-                    form = Form(title='Simulation',
-                                style="location: N; overflow: scroll;")
+                    self.form = Form(title='Simulation',
+                                     style="location: N; overflow: scroll;")
                     for i in range(len(texts)):
                         ui.Label(title=texts[i].splitlines()[0],
                                  text='\n'.join(texts[i].splitlines()[1:]),
@@ -62,7 +64,7 @@ def basiclayout(Form, simulation, title, top_bar=None, story={},
                         style="location: S; overflow: scroll;",
                         wrap=True)
 
-            @form.connect("run_simulation")
+            @self.form.connect("run_simulation")
             def run_simulation(events):
 
                 self.progress_label.title = 'Running...'
@@ -78,14 +80,33 @@ def basiclayout(Form, simulation, title, top_bar=None, story={},
                 self.progress_label.title = 'Results:'
                 self.progress_label.text = 'Click left'
 
+            @self.form.connect("repeatexecution")
+            def _repeatexecution(events):
+                print('xx')
+                parameters = events['simulation_parameter']
+                parameters['random_seed'] = None
+                parameters['name'] = 'repeatexecution'
+                simulation(parameters)
+                path = newest_subdirectory('./result')
+                for filename in os.listdir(path):
+                    if filename.startswith('aggregate_'):
+                        final_values = pd.read_csv(path + filename).iloc[-1:]
+                        print('*****')
+                        print(final_values)
+                        print('*****')
+                        self.graphs[filename[10:]] = self.graphs[filename[10:]].append(final_values).reset_index(drop=True)
+                self.display_repeat_execution(self.graphs)
+                self.form.repeat_execution()
+
         def display_results(self, events):
+            if self.first:
+                self.plot_widgets = []
             try:
                 ignore_initial_rounds = int(events['ignore_initial_rounds'])
             except KeyError:
                 ignore_initial_rounds = 100
 
-            if self.first:
-                self.plot_widgets = []
+
             try:
                 path = events['subdir']
             except KeyError:
@@ -132,6 +153,30 @@ def basiclayout(Form, simulation, title, top_bar=None, story={},
                         i += 1
 
             self.first = False
+
+        def display_repeat_execution(self, graphs):
+            if self.first_repeat:
+                self.repeat_plot_widgets = []
+            i = 0
+            for fn, g in graphs.items():
+                print(g)
+
+                titles, plots = make_simple_graphs(g, fn, 0, index=True)
+
+                if self.first_repeat:
+                    with self.dp:
+                        for plottitle, plot in zip(titles, plots):
+                            pw = BokehWidget(plot=plot,
+                                             style="location: A",
+                                             title=plottitle)
+                            self.repeat_plot_widgets.append(pw)
+                        self.dp.selectWidget(self.repeat_plot_widgets[0])
+                else:
+                    for plot in plots:
+                        self.repeat_plot_widgets[i].plot = plot
+                        i += 1
+            self.first_repeat = False
+
     return Rex
 
 

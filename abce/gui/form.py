@@ -79,10 +79,10 @@ def form(parameters, names):
                         else:  # field
                             raise Exception(str(value) + "not recognized")
                 self.btn = ui.Button(text="start simulation")
+                self.repeat_execution_checker = ui.CheckBox(text='repeat execution')
 
 
-        @event.connect('btn.mouse_click')
-        def wdg(self, *event):
+        def parse_parameter(self):
             parameter = {}
             for key, element in self.fields.items():
                 parameter[key] = getattr(element,
@@ -93,8 +93,20 @@ def form(parameters, names):
                 for value, checkbox in group.items():
                     if checkbox.checked:
                         parameter[parameter] = value
+            return parameter
+
+        @event.connect('btn.mouse_click')
+        def wdg(self, *event):
+            parameter = self.parse_parameter()
             self.emit('run_simulation',
                       {'simulation_parameter': parameter})
+
+        @event.connect('repeat_execution_checker.mouse_click')
+        def repeat_execution(self, *event):
+            parameter = self.parse_parameter()
+            if self.repeat_execution_checker.checked:
+                self.emit('repeatexecution', {'simulation_parameter': parameter})
+
 
         class Both:
 
