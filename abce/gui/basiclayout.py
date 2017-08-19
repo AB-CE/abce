@@ -125,13 +125,12 @@ def basiclayout(Form, simulation, title, top_bar=None, story={},
                                              style="location: A",
                                              title=plottitle)
                             self.plot_widgets.append(pw)
+                        self.dp.selectWidget(self.plot_widgets[0])
                 else:
                     for plot in plots:
                         self.plot_widgets[i].plot = plot
                         i += 1
 
-            if self.first:
-                self.dp.selectWidget(self.plot_widgets[0])
             self.first = False
     return Rex
 
