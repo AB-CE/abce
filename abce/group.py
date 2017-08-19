@@ -69,6 +69,8 @@ class Group(object):
     def panel_log(self, vars, possessions, func, len):
         self.do('panel_log', vars, possessions, func, len)
 
+    def agg_log(self, vars, possessions, func, len):
+        self.do('agg_log', vars, possessions, func, len)
 
 def execute_wrapper(inp):
     # processor_group.execute(self.groups, command, messages[pgid])

@@ -14,13 +14,11 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations under
 # the License.
-from __future__ import division
-from __future__ import print_function
 import threading
 import sqlite3
 from collections import defaultdict
 from .online_variance import OnlineVariance
-
+import dataset
 
 class Database(threading.Thread):
     def __init__(self, directory, in_sok, trade_log):
@@ -57,6 +55,8 @@ class Database(threading.Thread):
         self.aggregates['aggregate_' + group + '_std'] = list(column_names)
 
     def run(self):
+        dataset_db = dataset.connect('sqlite:///' + self.directory + '/dataset.db')
+        sn_panel = dataset_db['sn_panel']
         self.db = sqlite3.connect(self.directory + '/database.db')
         self.database = self.db.cursor()
         self.database.execute('PRAGMA synchronous=OFF')
@@ -142,11 +142,17 @@ class Database(threading.Thread):
                 except sqlite3.InterfaceError:
                     raise Exception(
                         'InterfaceError: data can not be written. If nested try: self.log_nested')
+
+            elif msg[0] == 'snapshot_panel':
+                _, round, group, id, data_to_write = msg
+                sn_panel.insert(data_to_write)
+
             else:
                 raise Exception(
                     "abce_db error '%s' command unknown ~87" % msg)
         self.db.commit()
         self.db.close()
+        self.dataset_db.close()
 
     def write_or_update(self, table_name, data_to_write):
         insert_str = "INSERT OR IGNORE INTO " + table_name + \
