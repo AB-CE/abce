@@ -88,8 +88,8 @@ def make_simple_graphs(df, filename, ignore_initial_rounds):
             plot.line(index, df[col], legend=col, line_width=2,
                       line_color='blue', y_range_name="ttl")
             plot.add_layout(LinearAxis(y_range_name="ttl"), 'left')
-        titles.append(title)
-        plots.append(plot)
+            titles.append(title)
+            plots.append(plot)
 
     return titles, plots
 
