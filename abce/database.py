@@ -15,9 +15,11 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 """
-The :class:`abceagent.Agent` class is the basic class for creating your agent. It automatically handles the
-possession of goods of an agent. In order to produce/transforme goods you need to also subclass
-the :class:`abceagent.Firm` [1]_ or to create a consumer the :class:`abceagent.Household`.
+The :class:`abceagent.Agent` class is the basic class for creating your agent.
+It automatically handles the possession of goods of an agent. In order to
+produce/transforme goods you need to also subclass
+the :class:`abceagent.Firm` [1]_ or to create a consumer the
+:class:`abceagent.Household`.
 
 For detailed documentation on:
 
@@ -32,19 +34,17 @@ Messaging between agents:
 
 .. autoexception:: abce.NotEnoughGoods
 
-.. [1] or :class:`abceagent.FirmMultiTechnologies` for simulations with complex technologies.
+.. [1] or :class:`abceagent.FirmMultiTechnologies` for simulations with
+complex technologies.
 """
-from __future__ import division
-from builtins import str
-from builtins import object
 
 
 class Database(object):
     """ The database class """
 
     def log(self, action_name, data_to_log):
-        """ With log you can write the models data. Log can save variable states
-        and and the working of individual functions such as production,
+        """ With log you can write the models data. Log can save variable
+        states and and the working of individual functions such as production,
         consumption, give, but not trade(as its handled automatically).
 
         Args:
@@ -52,14 +52,17 @@ class Database(object):
                 the name of the current action/method the agent executes
 
             data_to_log:
-                a variable or a dictionary with data to log in the the database
+                a variable or a dictionary with data to log in the the
+                database
 
         Example::
 
             self.log('profit', profit)
 
-            self.log('employment_and_rent', {'employment': self.possession('LAB'),
-                                             'rent': self.possession('CAP'), 'composite': self.composite})
+            self.log('employment_and_rent',
+                     {'employment': self.possession('LAB'),
+                      'rent': self.possession('CAP'),
+                      'composite': self.composite})
 
             self.log(self.produce_use_everything())
 
@@ -92,20 +95,13 @@ class Database(object):
                 the variable = value to log
         """
         self.database_connection.put(
-            ["log", self.group, {'id': self.id, name: value}, str(self.round)])
-
-    def log_dict(self, action_name, data_to_log):
-        """ same as the log function, only that it supports nested dictionaries
-        see: :meth:`~abecagent.Database.log`.
-        """
-        data_to_write = flatten(data_to_log, '%s_' % action_name)
-        data_to_write['id'] = self.id
-        self.database_connection.put(
-            ["log", self.group, data_to_write, str(self.round)])
+            ["log",
+             self.group,
+             {'id': self.id, name: value}, str(self.round)])
 
     def log_change(self, action_name, data_to_log):
-        """ This command logs the change in the variable from the round before.
-        Important, use only once with the same action_name.
+        """ This command logs the change in the variable from the round
+        before. Important, use only once with the same action_name.
 
         Args:
             'name'(string):
@@ -116,13 +112,16 @@ class Database(object):
         Examples::
 
             self.log_change('profit', {'money': self.possession('money')]})
-            self.log_change('inputs', {'money': self.possessions(['money', 'gold', 'CAP', 'LAB')]})
+            self.log_change('inputs', {'money': self.possessions(['money',
+                                                                  'gold',
+                                                                  'CAP',
+                                                                  'LAB')]})
         """
         data_to_write = {}
         try:
             for key in data_to_log:
-                data_to_write['%s_change_%s' % (
-                    action_name, key)] = data_to_log[key] - self._data_to_log_1[action_name][key]
+                data_to_write['%s_change_%s' % (action_name, key)] = (
+                    data_to_log[key] - self._data_to_log_1[action_name][key])
         except KeyError:
             for key in data_to_log:
                 data_to_write['%s_change_%s' %
@@ -148,13 +147,15 @@ class Database(object):
 
         Example::
 
-            self.log('production', {'composite': self.composite,
-                                    self.sector: self.final_product[self.sector]})
+            self.log('production',
+                     {'composite': self.composite,
+                      self.sector: self.final_product[self.sector]})
 
             ... different method ...
 
-            self.log('employment_and_rent', {'employment': self.possession('LAB'),
-                                            'rent': self.possession('CAP')})
+            self.log('employment_and_rent',
+                     {'employment': self.possession('LAB'),
+                     'rent': self.possession('CAP')})
         """
         self._data_to_observe[action_name] = data_to_observe
 
@@ -170,13 +171,15 @@ class Database(object):
 
         Example::
 
-            self.log('production', {'composite': self.composite,
-                                    self.sector: self.final_product[self.sector]})
+            self.log('production',
+                     {'composite': self.composite,
+                     self.sector: self.final_product[self.sector]})
 
             ... different method ...
 
-            self.log('employment_and_rent', {'employment': self.possession('LAB'),
-                                            'rent':self.possession('CAP')})
+            self.log('employment_and_rent',
+                     {'employment': self.possession('LAB'),
+                      'rent':self.possession('CAP')})
         """
         before = self._data_to_observe.pop(action_name)
         data_to_write = {}
