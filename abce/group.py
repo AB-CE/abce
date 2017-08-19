@@ -1,9 +1,3 @@
-from builtins import list
-from collections import defaultdict
-from pprint import pprint
-from functools import partial
-
-
 def get_methods(a_class):
     return [method for method in a_class.__dict__.keys() if
             callable(getattr(a_class, method)) and not
@@ -27,21 +21,22 @@ class Group(object):
         for method in methods:
             if method not in ['panel', 'aggregate']:
                 setattr(self, method,
-                    eval('lambda self=self, *argc, **kw: self.do("%s")' % method))
+                        eval('lambda self=self, *argc, **kw: self.do("%s")' %
+                             method))
 
     def __add__(self, g):
         return Group(self.sim, self.groups + g.groups, self.agent_class)
 
     def __radd__(self, g):
         if isinstance(g, Group):
-            return __add__(g)
+            return self.__add__(g)
         else:
             return self
 
-    def execute_serial(self, command):
+    def execute_serial(self, command, *args, **kwargs):
         self.sim.messagess[-2].clear()
         out_messages = self._processor_groups[0].execute(
-            self.groups, command, [])
+            self.groups, command, [], args, kwargs)
         for pgid, messages in enumerate(out_messages):
             self.sim.messagess[pgid].extend(messages)
         return self.sim.messagess[-2]
