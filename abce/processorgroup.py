@@ -56,13 +56,13 @@ class ProcessorGroup(object):
             raise Exception()
         return agent
 
-    def execute(self, groups, command, messages):
+    def execute(self, groups, command, messages, args, kwargs):
         try:
             out = [[] for _ in range(self.num_managers + 2)]
             self.put_messages_in_pigeonbox(messages)
             for group in groups:
                 for agent in self.agents[group]:
-                    outmessages = agent._execute(command)
+                    outmessages = agent._execute(command, args, kwargs)
                     for pgid, msg in enumerate(outmessages):
                         if pgid == self.batch:
                             self.mymessages.extend(msg)
