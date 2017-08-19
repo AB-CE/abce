@@ -78,7 +78,7 @@ def form(parameters, names):
                             ui.Label(text=title, wrap=True)
                         else:  # field
                             raise Exception(str(value) + "not recognized")
-                self.btn = ui.Button(text="start simulation",  style="float: right;")
+                self.btn = ui.Button(text="start simulation")
 
 
         @event.connect('btn.mouse_click')
