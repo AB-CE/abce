@@ -189,3 +189,22 @@ class Database(object):
         data_to_write['id'] = self.id
         self.database_connection.put(
             ["log", self.group, data_to_write, str(self.round)])
+
+    def _common_log(self, vars, possessions, functions, lengths):
+        ret = {'round': self.round, 'group': self.group, 'id': self.id}
+        for var in vars:
+            ret[var] = self.__dict__[var]
+        for pos in possessions:
+            ret[pos] = self._haves[pos]
+        for name, func in functions.items():
+            ret[name] = func(self)
+        for length in lengths:
+            ret['len_' + length] = len(self.__dict__[length])
+        return ret
+    def panel_log(self, vars=[], possessions=[], functions={}, lengths=[]):
+        data_to_write = self._common_log(vars, possessions, functions, lengths)
+        self.database_connection.put(["snapshot_panel",
+                                      str(self.round),
+                                      self.group,
+                                      self.id,
+                                      data_to_write])
