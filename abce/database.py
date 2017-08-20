@@ -37,7 +37,7 @@ Messaging between agents:
 .. [1] or :class:`abceagent.FirmMultiTechnologies` for simulations with
 complex technologies.
 """
-
+from collections import OrderedDict
 
 class Database(object):
     """ The database class """
@@ -64,12 +64,9 @@ class Database(object):
                       'rent': self.possession('CAP'),
                       'composite': self.composite})
 
-            self.log(self.produce_use_everything())
+            self.log('production', self.produce_use_everything())
 
         See also:
-            :meth:`~abecagent.Database.log_nested`:
-                handles nested dictianaries
-
             :meth:`~abecagent.Database.log_change`:
                 loges the change from last round
 
@@ -81,118 +78,15 @@ class Database(object):
                 key)): data_to_log[key] for key in data_to_log}
         except TypeError:
             data_to_write = {str(action_name): data_to_log}
-        data_to_write['id'] = self.id
-        self.database_connection.put(
-            ["log", self.group, data_to_write, str(self.round)])
+        self.database_connection.put(["snapshot_panel",
+                                      str(self.round),
+                                      self.group,
+                                      self.id,
+                                      data_to_write])
 
-    def log_value(self, name, value):
-        """ logs a value, with a name
-
-        Args:
-            'name'(string):
-                the name of the value/variable
-            value(int/float):
-                the variable = value to log
-        """
-        self.database_connection.put(
-            ["log",
-             self.group,
-             {'id': self.id, name: value}, str(self.round)])
-
-    def log_change(self, action_name, data_to_log):
-        """ This command logs the change in the variable from the round
-        before. Important, use only once with the same action_name.
-
-        Args:
-            'name'(string):
-                the name of the current action/method the agent executes
-            data_to_log:
-                a dictianary with data for the database
-
-        Examples::
-
-            self.log_change('profit', {'money': self.possession('money')]})
-            self.log_change('inputs', {'money': self.possessions(['money',
-                                                                  'gold',
-                                                                  'CAP',
-                                                                  'LAB')]})
-        """
-        data_to_write = {}
-        try:
-            for key in data_to_log:
-                data_to_write['%s_change_%s' % (action_name, key)] = (
-                    data_to_log[key] - self._data_to_log_1[action_name][key])
-        except KeyError:
-            for key in data_to_log:
-                data_to_write['%s_change_%s' %
-                              (action_name, key)] = data_to_log[key]
-        data_to_write['id'] = self.id
-        self.database_connection.put(
-            ["log", self.group, data_to_write, str(self.round)])
-
-        self._data_to_log_1[action_name] = data_to_log
-
-    def observe_begin(self, action_name, data_to_observe):
-        """ observe_begin and observe_end, observe the change of a variable.
-        observe_begin(...), takes a list of variables to be observed.
-        observe_end(...) writes the change in this variables into the log file
-
-        you can use nested observe_begin / observe_end combinations
-
-        Args:
-            'name'(string):
-                the name of the current action/method the agent executes
-            data_to_log:
-                a dictianary with data for the database
-
-        Example::
-
-            self.log('production',
-                     {'composite': self.composite,
-                      self.sector: self.final_product[self.sector]})
-
-            ... different method ...
-
-            self.log('employment_and_rent',
-                     {'employment': self.possession('LAB'),
-                     'rent': self.possession('CAP')})
-        """
-        self._data_to_observe[action_name] = data_to_observe
-
-    def observe_end(self, action_name, data_to_observe):
-        """ This command puts in a database called log, whatever values you
-        want values need to be delivered as a dictionary:
-
-        Args:
-            'name'(string):
-                the name of the current action/method the agent executes
-            data_to_log:
-                a dictianary with data for the database
-
-        Example::
-
-            self.log('production',
-                     {'composite': self.composite,
-                     self.sector: self.final_product[self.sector]})
-
-            ... different method ...
-
-            self.log('employment_and_rent',
-                     {'employment': self.possession('LAB'),
-                      'rent':self.possession('CAP')})
-        """
-        before = self._data_to_observe.pop(action_name)
-        data_to_write = {}
-        for key in data_to_observe:
-            data_to_write['%s_delta_%s' % (action_name, key)] = \
-                data_to_observe[key] - before[key]
-        data_to_write['id'] = self.id
-        self.database_connection.put(
-            ["log", self.group, data_to_write, str(self.round)])
-
-    def _common_log(self, vars, possessions, functions, lengths):
-        ret = {'round': self.round, 'group': self.group, 'id': self.id}
-        for var in vars:
+    def _common_log(self, variables, possessions, functions, lengths):
+        ret = OrderedDict()
+        for var in variables:
             ret[var] = self.__dict__[var]
         for pos in possessions:
             ret[pos] = self._haves[pos]
@@ -201,10 +95,21 @@ class Database(object):
         for length in lengths:
             ret['len_' + length] = len(self.__dict__[length])
         return ret
-    def panel_log(self, vars=[], possessions=[], functions={}, lengths=[]):
-        data_to_write = self._common_log(vars, possessions, functions, lengths)
+
+
+    def _agg_log(self, variables, possessions, functions, lengths):
+        data_to_write = self._common_log(variables, possessions, functions, lengths)
+        self.database_connection.put(["snapshot_agg",
+                                      str(self.round),
+                                      self.group,
+                                      data_to_write])
+
+
+    def _panel_log(self, variables, possessions, functions, lengths):
+        data_to_write = self._common_log(variables, possessions, functions, lengths)
         self.database_connection.put(["snapshot_panel",
                                       str(self.round),
                                       self.group,
                                       self.id,
                                       data_to_write])
+
