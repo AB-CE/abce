@@ -101,7 +101,7 @@ class Database(threading.Thread):
 
             elif msg[0] == 'trade_log':
                 individual_log = msg[1]
-                round = msg[2]  # int
+                round = msg[2]
                 for key in individual_log:
                     split_key = key[:].split(',')
                     self.database.execute(trade_ex_str % (round,
@@ -109,7 +109,7 @@ class Database(threading.Thread):
                                                           individual_log[key]))
             elif msg[0] == 'log':
                 _, group, id, round, data_to_write, log_in_subround_or_serial = msg
-                table_name = '%s_%s' % (group, log_in_subround_or_serial)
+                table_name = 'panel___%s___%s' % (group, log_in_subround_or_serial)
                 data_to_write['round'] = round
                 data_to_write['id'] = id
                 try:

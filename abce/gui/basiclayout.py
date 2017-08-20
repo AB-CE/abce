@@ -125,7 +125,7 @@ def basiclayout(Form, simulation, title, top_bar=None, story={},
                 if ignore_initial_rounds >= rounds:
                     ignore_initial_rounds = 0
                     print('abcegui.py ignore_initial_rounds >= rounds')
-                if filename.startswith('aggregate_'):
+                if filename.startswith('aggregate_') or filename.startswith('aggregated_'):
                     titles, plots = make_aggregate_graphs(
                         df, filename, ignore_initial_rounds)
                 else:
