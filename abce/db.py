@@ -48,6 +48,7 @@ class Database(threading.Thread):
         self.dataset_db.query('PRAGMA default_temp_store=OFF')
         table_panel = {}
         table_log = {}
+        current_log = defaultdict(list)
         self.table_aggregates = {}
         self.db = sqlite3.connect(self.directory + '/database.db')
         self.database = self.db.cursor()
@@ -93,11 +94,13 @@ class Database(threading.Thread):
                 table_name = 'panel___%s___%s' % (group, log_in_subround_or_serial)
                 data_to_write['round'] = round
                 data_to_write['id'] = id
-                try:
-                    table_log[table_name].insert(data_to_write)
-                except KeyError:
-                    table_log[table_name] = self.dataset_db.create_table(table_name, primary_id='index')
-                    table_log[table_name].insert(data_to_write)
+                current_log[table_name].append(data_to_write)
+                if len(current_log[table_name]) == 1000:
+                    if table_name not in table_log:
+                        table_log[table_name] = self.dataset_db.create_table(table_name, primary_id='index')
+                    table_log[table_name].insert_many(current_log[table_name])
+                    current_log[table_name] = []
+
 
             elif msg == "close":
                 break
@@ -108,6 +111,11 @@ class Database(threading.Thread):
 
         self.db.commit()
         self.db.close()
+        for name, data in current_log.items():
+            if not name in self.dataset_db:
+                table_log[name] = self.dataset_db.create_table(name, primary_id='index')
+            table_log[name].insert_many(data)
+
         self.dataset_db.commit()
 
     def make_aggregation_and_write(self):
