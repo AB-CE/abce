@@ -49,6 +49,7 @@ class Database(threading.Thread):
     def run(self):
         self.dataset_db = dataset.connect('sqlite:///' + self.directory + '/dataset.db')
         table_panel = {}
+        table_log = {}
         self.table_aggregates = {}
         self.db = sqlite3.connect(self.directory + '/database.db')
         self.database = self.db.cursor()
@@ -102,24 +103,16 @@ class Database(threading.Thread):
                                                           split_key[0], split_key[1], split_key[2], split_key[3],
                                                           individual_log[key]))
             elif msg[0] == 'log':
-                group_name = msg[1]
-                data_to_write = msg[2]
+                _, group, id, round, data_to_write, log_in_subround_serial = msg
+                table_name = '%s_%02i' % (group, log_in_subround_serial)
+                data_to_write['round'] = round
+                data_to_write['id'] = id
                 try:
-                    data_to_write = {key: float(
-                        data_to_write[key]) for key in data_to_write}
-                except TypeError:
-                    raise
+                    table_log[table_name].insert(data_to_write)
+                except KeyError:
+                    table_log[table_name] = self.dataset_db.create_table(table_name, primary_id='index')
+                    table_log[table_name].insert(data_to_write)
 
-                data_to_write['round'] = msg[3]
-                table_name = 'log_' + group_name
-                try:
-                    self.write_or_update(table_name, data_to_write)
-                except TableMissing:
-                    self.add_log(group_name)
-                    self.write(table_name, data_to_write)
-                except sqlite3.InterfaceError:
-                    raise Exception(
-                        'InterfaceError: data can not be written. If nested try: self.log_nested')
 
             elif msg[0] == 'snapshot_panel':
                 _, round, group, id, data_to_write = msg
