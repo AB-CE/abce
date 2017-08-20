@@ -633,33 +633,30 @@ struct __pyx_obj_4abce_15online_variance_OnlineVariance;
 /* "abce/online_variance.pxd":1
  * cdef class OnlineVariance:             # <<<<<<<<<<<<<<
  *     cdef long n
- *     cdef double* _mean
+ *     cdef double _mean
  */
 struct __pyx_obj_4abce_15online_variance_OnlineVariance {
   PyObject_HEAD
   struct __pyx_vtabstruct_4abce_15online_variance_OnlineVariance *__pyx_vtab;
   long n;
-  double *_mean;
-  double *M2;
-  size_t length;
+  double _mean;
+  double M2;
 };
 
 
 
-/* "abce/online_variance.pyx":4
- * import cython
- * 
+/* "abce/online_variance.pyx":1
  * cdef class OnlineVariance:             # <<<<<<<<<<<<<<
- * 
- * 
+ *     def __cinit__(self):
+ *         self.clear()
  */
 
 struct __pyx_vtabstruct_4abce_15online_variance_OnlineVariance {
   PyObject *(*clear)(struct __pyx_obj_4abce_15online_variance_OnlineVariance *, int __pyx_skip_dispatch);
-  PyObject *(*update)(struct __pyx_obj_4abce_15online_variance_OnlineVariance *, PyObject *, int __pyx_skip_dispatch);
-  PyObject *(*std)(struct __pyx_obj_4abce_15online_variance_OnlineVariance *, int __pyx_skip_dispatch);
-  PyObject *(*sum)(struct __pyx_obj_4abce_15online_variance_OnlineVariance *, int __pyx_skip_dispatch);
-  PyObject *(*mean)(struct __pyx_obj_4abce_15online_variance_OnlineVariance *, int __pyx_skip_dispatch);
+  PyObject *(*update)(struct __pyx_obj_4abce_15online_variance_OnlineVariance *, double, int __pyx_skip_dispatch);
+  double (*std)(struct __pyx_obj_4abce_15online_variance_OnlineVariance *, int __pyx_skip_dispatch);
+  double (*sum)(struct __pyx_obj_4abce_15online_variance_OnlineVariance *, int __pyx_skip_dispatch);
+  double (*mean)(struct __pyx_obj_4abce_15online_variance_OnlineVariance *, int __pyx_skip_dispatch);
 };
 static struct __pyx_vtabstruct_4abce_15online_variance_OnlineVariance *__pyx_vtabptr_4abce_15online_variance_OnlineVariance;
 
@@ -727,6 +724,13 @@ static struct __pyx_vtabstruct_4abce_15online_variance_OnlineVariance *__pyx_vta
 #define __Pyx_CLEAR(r)    do { PyObject* tmp = ((PyObject*)(r)); r = NULL; __Pyx_DECREF(tmp);} while(0)
 #define __Pyx_XCLEAR(r)   do { if((r) != NULL) {PyObject* tmp = ((PyObject*)(r)); r = NULL; __Pyx_DECREF(tmp);}} while(0)
 
+/* RaiseArgTupleInvalid.proto */
+static void __Pyx_RaiseArgtupleInvalid(const char* func_name, int exact,
+    Py_ssize_t num_min, Py_ssize_t num_max, Py_ssize_t num_found);
+
+/* KeywordStringCheck.proto */
+static CYTHON_INLINE int __Pyx_CheckKeywordStrings(PyObject *kwdict, const char* function_name, int kw_allowed);
+
 /* PyObjectGetAttrStr.proto */
 #if CYTHON_USE_TYPE_SLOTS
 static CYTHON_INLINE PyObject* __Pyx_PyObject_GetAttrStr(PyObject* obj, PyObject* attr_name) {
@@ -742,21 +746,6 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_GetAttrStr(PyObject* obj, PyObject
 #else
 #define __Pyx_PyObject_GetAttrStr(o,n) PyObject_GetAttr(o,n)
 #endif
-
-/* GetBuiltinName.proto */
-static PyObject *__Pyx_GetBuiltinName(PyObject *name);
-
-/* RaiseDoubleKeywords.proto */
-static void __Pyx_RaiseDoubleKeywordsError(const char* func_name, PyObject* kw_name);
-
-/* ParseKeywords.proto */
-static int __Pyx_ParseOptionalKeywords(PyObject *kwds, PyObject **argnames[],\
-    PyObject *kwds2, PyObject *values[], Py_ssize_t num_pos_args,\
-    const char* function_name);
-
-/* RaiseArgTupleInvalid.proto */
-static void __Pyx_RaiseArgtupleInvalid(const char* func_name, int exact,
-    Py_ssize_t num_min, Py_ssize_t num_max, Py_ssize_t num_found);
 
 /* PyCFunctionFastCall.proto */
 #if CYTHON_FAST_PYCCALL
@@ -798,48 +787,34 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_CallNoArg(PyObject *func);
 #define __Pyx_PyObject_CallNoArg(func) __Pyx_PyObject_Call(func, __pyx_empty_tuple, NULL)
 #endif
 
-/* GetItemInt.proto */
-#define __Pyx_GetItemInt(o, i, type, is_signed, to_py_func, is_list, wraparound, boundscheck)\
-    (__Pyx_fits_Py_ssize_t(i, type, is_signed) ?\
-    __Pyx_GetItemInt_Fast(o, (Py_ssize_t)i, is_list, wraparound, boundscheck) :\
-    (is_list ? (PyErr_SetString(PyExc_IndexError, "list index out of range"), (PyObject*)NULL) :\
-               __Pyx_GetItemInt_Generic(o, to_py_func(i))))
-#define __Pyx_GetItemInt_List(o, i, type, is_signed, to_py_func, is_list, wraparound, boundscheck)\
-    (__Pyx_fits_Py_ssize_t(i, type, is_signed) ?\
-    __Pyx_GetItemInt_List_Fast(o, (Py_ssize_t)i, wraparound, boundscheck) :\
-    (PyErr_SetString(PyExc_IndexError, "list index out of range"), (PyObject*)NULL))
-static CYTHON_INLINE PyObject *__Pyx_GetItemInt_List_Fast(PyObject *o, Py_ssize_t i,
-                                                              int wraparound, int boundscheck);
-#define __Pyx_GetItemInt_Tuple(o, i, type, is_signed, to_py_func, is_list, wraparound, boundscheck)\
-    (__Pyx_fits_Py_ssize_t(i, type, is_signed) ?\
-    __Pyx_GetItemInt_Tuple_Fast(o, (Py_ssize_t)i, wraparound, boundscheck) :\
-    (PyErr_SetString(PyExc_IndexError, "tuple index out of range"), (PyObject*)NULL))
-static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Tuple_Fast(PyObject *o, Py_ssize_t i,
-                                                              int wraparound, int boundscheck);
-static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Generic(PyObject *o, PyObject* j);
-static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Fast(PyObject *o, Py_ssize_t i,
-                                                     int is_list, int wraparound, int boundscheck);
-
-/* ArgTypeTest.proto */
-static CYTHON_INLINE int __Pyx_ArgTypeTest(PyObject *obj, PyTypeObject *type, int none_allowed,
-    const char *name, int exact);
-
-/* ListCompAppend.proto */
-#if CYTHON_USE_PYLIST_INTERNALS && CYTHON_ASSUME_SAFE_MACROS
-static CYTHON_INLINE int __Pyx_ListComp_Append(PyObject* list, PyObject* x) {
-    PyListObject* L = (PyListObject*) list;
-    Py_ssize_t len = Py_SIZE(list);
-    if (likely(L->allocated > len)) {
-        Py_INCREF(x);
-        PyList_SET_ITEM(list, len, x);
-        Py_SIZE(list) = len+1;
-        return 0;
-    }
-    return PyList_Append(list, x);
-}
+/* PyThreadStateGet.proto */
+#if CYTHON_FAST_THREAD_STATE
+#define __Pyx_PyThreadState_declare  PyThreadState *__pyx_tstate;
+#define __Pyx_PyThreadState_assign  __pyx_tstate = PyThreadState_GET();
 #else
-#define __Pyx_ListComp_Append(L,x) PyList_Append(L,x)
+#define __Pyx_PyThreadState_declare
+#define __Pyx_PyThreadState_assign
 #endif
+
+/* PyErrFetchRestore.proto */
+#if CYTHON_FAST_THREAD_STATE
+#define __Pyx_ErrRestoreWithState(type, value, tb)  __Pyx_ErrRestoreInState(PyThreadState_GET(), type, value, tb)
+#define __Pyx_ErrFetchWithState(type, value, tb)    __Pyx_ErrFetchInState(PyThreadState_GET(), type, value, tb)
+#define __Pyx_ErrRestore(type, value, tb)  __Pyx_ErrRestoreInState(__pyx_tstate, type, value, tb)
+#define __Pyx_ErrFetch(type, value, tb)    __Pyx_ErrFetchInState(__pyx_tstate, type, value, tb)
+static CYTHON_INLINE void __Pyx_ErrRestoreInState(PyThreadState *tstate, PyObject *type, PyObject *value, PyObject *tb);
+static CYTHON_INLINE void __Pyx_ErrFetchInState(PyThreadState *tstate, PyObject **type, PyObject **value, PyObject **tb);
+#else
+#define __Pyx_ErrRestoreWithState(type, value, tb)  PyErr_Restore(type, value, tb)
+#define __Pyx_ErrFetchWithState(type, value, tb)  PyErr_Fetch(type, value, tb)
+#define __Pyx_ErrRestore(type, value, tb)  PyErr_Restore(type, value, tb)
+#define __Pyx_ErrFetch(type, value, tb)  PyErr_Fetch(type, value, tb)
+#endif
+
+/* WriteUnraisableException.proto */
+static void __Pyx_WriteUnraisable(const char *name, int clineno,
+                                  int lineno, const char *filename,
+                                  int full_traceback, int nogil);
 
 /* SetVTable.proto */
 static int __Pyx_SetVtable(PyObject *dict, void *vtable);
@@ -864,19 +839,13 @@ static void __Pyx_AddTraceback(const char *funcname, int c_line,
                                int py_line, const char *filename);
 
 /* CIntToPy.proto */
-static CYTHON_INLINE PyObject* __Pyx_PyInt_From_int(int value);
-
-/* CIntFromPy.proto */
-static CYTHON_INLINE size_t __Pyx_PyInt_As_size_t(PyObject *);
-
-/* CIntFromPy.proto */
-static CYTHON_INLINE int __Pyx_PyInt_As_int(PyObject *);
-
-/* CIntToPy.proto */
 static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value);
 
 /* CIntFromPy.proto */
 static CYTHON_INLINE long __Pyx_PyInt_As_long(PyObject *);
+
+/* CIntFromPy.proto */
+static CYTHON_INLINE int __Pyx_PyInt_As_int(PyObject *);
 
 /* CheckBinaryVersion.proto */
 static int __Pyx_check_binary_version(void);
@@ -885,14 +854,10 @@ static int __Pyx_check_binary_version(void);
 static int __Pyx_InitStrings(__Pyx_StringTabEntry *t);
 
 static PyObject *__pyx_f_4abce_15online_variance_14OnlineVariance_clear(struct __pyx_obj_4abce_15online_variance_OnlineVariance *__pyx_v_self, int __pyx_skip_dispatch); /* proto*/
-static PyObject *__pyx_f_4abce_15online_variance_14OnlineVariance_update(struct __pyx_obj_4abce_15online_variance_OnlineVariance *__pyx_v_self, PyObject *__pyx_v_x, int __pyx_skip_dispatch); /* proto*/
-static PyObject *__pyx_f_4abce_15online_variance_14OnlineVariance_std(struct __pyx_obj_4abce_15online_variance_OnlineVariance *__pyx_v_self, int __pyx_skip_dispatch); /* proto*/
-static PyObject *__pyx_f_4abce_15online_variance_14OnlineVariance_mean(struct __pyx_obj_4abce_15online_variance_OnlineVariance *__pyx_v_self, int __pyx_skip_dispatch); /* proto*/
-static PyObject *__pyx_f_4abce_15online_variance_14OnlineVariance_sum(struct __pyx_obj_4abce_15online_variance_OnlineVariance *__pyx_v_self, int __pyx_skip_dispatch); /* proto*/
-
-/* Module declarations from 'cpython.mem' */
-
-/* Module declarations from 'cython' */
+static PyObject *__pyx_f_4abce_15online_variance_14OnlineVariance_update(struct __pyx_obj_4abce_15online_variance_OnlineVariance *__pyx_v_self, double __pyx_v_x, int __pyx_skip_dispatch); /* proto*/
+static double __pyx_f_4abce_15online_variance_14OnlineVariance_std(struct __pyx_obj_4abce_15online_variance_OnlineVariance *__pyx_v_self, int __pyx_skip_dispatch); /* proto*/
+static double __pyx_f_4abce_15online_variance_14OnlineVariance_mean(struct __pyx_obj_4abce_15online_variance_OnlineVariance *__pyx_v_self, int __pyx_skip_dispatch); /* proto*/
+static double __pyx_f_4abce_15online_variance_14OnlineVariance_sum(struct __pyx_obj_4abce_15online_variance_OnlineVariance *__pyx_v_self, int __pyx_skip_dispatch); /* proto*/
 
 /* Module declarations from 'abce.online_variance' */
 static PyTypeObject *__pyx_ptype_4abce_15online_variance_OnlineVariance = 0;
@@ -900,144 +865,75 @@ static PyTypeObject *__pyx_ptype_4abce_15online_variance_OnlineVariance = 0;
 int __pyx_module_is_main_abce__online_variance = 0;
 
 /* Implementation of 'abce.online_variance' */
-static PyObject *__pyx_builtin_range;
 static const char __pyx_k_std[] = "std";
 static const char __pyx_k_sum[] = "sum";
 static const char __pyx_k_main[] = "__main__";
 static const char __pyx_k_mean[] = "mean";
 static const char __pyx_k_test[] = "__test__";
 static const char __pyx_k_clear[] = "clear";
-static const char __pyx_k_range[] = "range";
-static const char __pyx_k_length[] = "length";
 static const char __pyx_k_update[] = "update";
 static const char __pyx_k_pyx_vtable[] = "__pyx_vtable__";
 static PyObject *__pyx_n_s_clear;
-static PyObject *__pyx_n_s_length;
 static PyObject *__pyx_n_s_main;
 static PyObject *__pyx_n_s_mean;
 static PyObject *__pyx_n_s_pyx_vtable;
-static PyObject *__pyx_n_s_range;
 static PyObject *__pyx_n_s_std;
 static PyObject *__pyx_n_s_sum;
 static PyObject *__pyx_n_s_test;
 static PyObject *__pyx_n_s_update;
-static int __pyx_pf_4abce_15online_variance_14OnlineVariance___cinit__(struct __pyx_obj_4abce_15online_variance_OnlineVariance *__pyx_v_self, size_t __pyx_v_length); /* proto */
+static int __pyx_pf_4abce_15online_variance_14OnlineVariance___cinit__(struct __pyx_obj_4abce_15online_variance_OnlineVariance *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_4abce_15online_variance_14OnlineVariance_2clear(struct __pyx_obj_4abce_15online_variance_OnlineVariance *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_4abce_15online_variance_14OnlineVariance_4update(struct __pyx_obj_4abce_15online_variance_OnlineVariance *__pyx_v_self, PyObject *__pyx_v_x); /* proto */
+static PyObject *__pyx_pf_4abce_15online_variance_14OnlineVariance_4update(struct __pyx_obj_4abce_15online_variance_OnlineVariance *__pyx_v_self, double __pyx_v_x); /* proto */
 static PyObject *__pyx_pf_4abce_15online_variance_14OnlineVariance_6std(struct __pyx_obj_4abce_15online_variance_OnlineVariance *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_4abce_15online_variance_14OnlineVariance_8mean(struct __pyx_obj_4abce_15online_variance_OnlineVariance *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_4abce_15online_variance_14OnlineVariance_10sum(struct __pyx_obj_4abce_15online_variance_OnlineVariance *__pyx_v_self); /* proto */
-static void __pyx_pf_4abce_15online_variance_14OnlineVariance_12__dealloc__(struct __pyx_obj_4abce_15online_variance_OnlineVariance *__pyx_v_self); /* proto */
 static PyObject *__pyx_tp_new_4abce_15online_variance_OnlineVariance(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
-static PyObject *__pyx_float_0_0;
 
-/* "abce/online_variance.pyx":7
+/* "abce/online_variance.pyx":2
+ * cdef class OnlineVariance:
+ *     def __cinit__(self):             # <<<<<<<<<<<<<<
+ *         self.clear()
  * 
- * 
- *     def __cinit__(self, size_t length):             # <<<<<<<<<<<<<<
- *         self.M2 = <double*> PyMem_Malloc(length * sizeof(double))
- *         self._mean = <double*> PyMem_Malloc(length * sizeof(double))
  */
 
 /* Python wrapper */
 static int __pyx_pw_4abce_15online_variance_14OnlineVariance_1__cinit__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
 static int __pyx_pw_4abce_15online_variance_14OnlineVariance_1__cinit__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
-  size_t __pyx_v_length;
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__cinit__ (wrapper)", 0);
-  {
-    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_length,0};
-    PyObject* values[1] = {0};
-    if (unlikely(__pyx_kwds)) {
-      Py_ssize_t kw_args;
-      const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
-      switch (pos_args) {
-        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
-        case  0: break;
-        default: goto __pyx_L5_argtuple_error;
-      }
-      kw_args = PyDict_Size(__pyx_kwds);
-      switch (pos_args) {
-        case  0:
-        if (likely((values[0] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_length)) != 0)) kw_args--;
-        else goto __pyx_L5_argtuple_error;
-      }
-      if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__cinit__") < 0)) __PYX_ERR(0, 7, __pyx_L3_error)
-      }
-    } else if (PyTuple_GET_SIZE(__pyx_args) != 1) {
-      goto __pyx_L5_argtuple_error;
-    } else {
-      values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
-    }
-    __pyx_v_length = __Pyx_PyInt_As_size_t(values[0]); if (unlikely((__pyx_v_length == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 7, __pyx_L3_error)
-  }
-  goto __pyx_L4_argument_unpacking_done;
-  __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 1, 1, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 7, __pyx_L3_error)
-  __pyx_L3_error:;
-  __Pyx_AddTraceback("abce.online_variance.OnlineVariance.__cinit__", __pyx_clineno, __pyx_lineno, __pyx_filename);
-  __Pyx_RefNannyFinishContext();
-  return -1;
-  __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_4abce_15online_variance_14OnlineVariance___cinit__(((struct __pyx_obj_4abce_15online_variance_OnlineVariance *)__pyx_v_self), __pyx_v_length);
+  if (unlikely(PyTuple_GET_SIZE(__pyx_args) > 0)) {
+    __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 0, 0, PyTuple_GET_SIZE(__pyx_args)); return -1;}
+  if (unlikely(__pyx_kwds) && unlikely(PyDict_Size(__pyx_kwds) > 0) && unlikely(!__Pyx_CheckKeywordStrings(__pyx_kwds, "__cinit__", 0))) return -1;
+  __pyx_r = __pyx_pf_4abce_15online_variance_14OnlineVariance___cinit__(((struct __pyx_obj_4abce_15online_variance_OnlineVariance *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static int __pyx_pf_4abce_15online_variance_14OnlineVariance___cinit__(struct __pyx_obj_4abce_15online_variance_OnlineVariance *__pyx_v_self, size_t __pyx_v_length) {
+static int __pyx_pf_4abce_15online_variance_14OnlineVariance___cinit__(struct __pyx_obj_4abce_15online_variance_OnlineVariance *__pyx_v_self) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("__cinit__", 0);
 
-  /* "abce/online_variance.pyx":8
- * 
- *     def __cinit__(self, size_t length):
- *         self.M2 = <double*> PyMem_Malloc(length * sizeof(double))             # <<<<<<<<<<<<<<
- *         self._mean = <double*> PyMem_Malloc(length * sizeof(double))
- *         self.length = length
- */
-  __pyx_v_self->M2 = ((double *)PyMem_Malloc((__pyx_v_length * (sizeof(double)))));
-
-  /* "abce/online_variance.pyx":9
- *     def __cinit__(self, size_t length):
- *         self.M2 = <double*> PyMem_Malloc(length * sizeof(double))
- *         self._mean = <double*> PyMem_Malloc(length * sizeof(double))             # <<<<<<<<<<<<<<
- *         self.length = length
- *         self.clear()
- */
-  __pyx_v_self->_mean = ((double *)PyMem_Malloc((__pyx_v_length * (sizeof(double)))));
-
-  /* "abce/online_variance.pyx":10
- *         self.M2 = <double*> PyMem_Malloc(length * sizeof(double))
- *         self._mean = <double*> PyMem_Malloc(length * sizeof(double))
- *         self.length = length             # <<<<<<<<<<<<<<
- *         self.clear()
- * 
- */
-  __pyx_v_self->length = __pyx_v_length;
-
-  /* "abce/online_variance.pyx":11
- *         self._mean = <double*> PyMem_Malloc(length * sizeof(double))
- *         self.length = length
+  /* "abce/online_variance.pyx":3
+ * cdef class OnlineVariance:
+ *     def __cinit__(self):
  *         self.clear()             # <<<<<<<<<<<<<<
  * 
  *     cpdef clear(self):
  */
-  __pyx_t_1 = ((struct __pyx_vtabstruct_4abce_15online_variance_OnlineVariance *)__pyx_v_self->__pyx_vtab)->clear(__pyx_v_self, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 11, __pyx_L1_error)
+  __pyx_t_1 = ((struct __pyx_vtabstruct_4abce_15online_variance_OnlineVariance *)__pyx_v_self->__pyx_vtab)->clear(__pyx_v_self, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 3, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "abce/online_variance.pyx":7
+  /* "abce/online_variance.pyx":2
+ * cdef class OnlineVariance:
+ *     def __cinit__(self):             # <<<<<<<<<<<<<<
+ *         self.clear()
  * 
- * 
- *     def __cinit__(self, size_t length):             # <<<<<<<<<<<<<<
- *         self.M2 = <double*> PyMem_Malloc(length * sizeof(double))
- *         self._mean = <double*> PyMem_Malloc(length * sizeof(double))
  */
 
   /* function exit code */
@@ -1052,31 +948,28 @@ static int __pyx_pf_4abce_15online_variance_14OnlineVariance___cinit__(struct __
   return __pyx_r;
 }
 
-/* "abce/online_variance.pyx":13
+/* "abce/online_variance.pyx":5
  *         self.clear()
  * 
  *     cpdef clear(self):             # <<<<<<<<<<<<<<
- *         cdef int i
- *         for i in range(self.length):
+ *         self.n = 0
+ *         self.M2 = 0.0
  */
 
 static PyObject *__pyx_pw_4abce_15online_variance_14OnlineVariance_3clear(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
 static PyObject *__pyx_f_4abce_15online_variance_14OnlineVariance_clear(struct __pyx_obj_4abce_15online_variance_OnlineVariance *__pyx_v_self, int __pyx_skip_dispatch) {
-  int __pyx_v_i;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
   PyObject *__pyx_t_3 = NULL;
   PyObject *__pyx_t_4 = NULL;
-  size_t __pyx_t_5;
-  int __pyx_t_6;
   __Pyx_RefNannySetupContext("clear", 0);
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
   else if (unlikely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0)) {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_clear); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 13, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_clear); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 5, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)__pyx_pw_4abce_15online_variance_14OnlineVariance_3clear)) {
       __Pyx_XDECREF(__pyx_r);
@@ -1092,10 +985,10 @@ static PyObject *__pyx_f_4abce_15online_variance_14OnlineVariance_clear(struct _
         }
       }
       if (__pyx_t_4) {
-        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 13, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 5, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       } else {
-        __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 13, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 5, __pyx_L1_error)
       }
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -1107,51 +1000,39 @@ static PyObject *__pyx_f_4abce_15online_variance_14OnlineVariance_clear(struct _
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "abce/online_variance.pyx":15
+  /* "abce/online_variance.pyx":6
+ * 
  *     cpdef clear(self):
- *         cdef int i
- *         for i in range(self.length):             # <<<<<<<<<<<<<<
- *             self.n = 0
- *             self.M2[i] = 0.0
+ *         self.n = 0             # <<<<<<<<<<<<<<
+ *         self.M2 = 0.0
+ *         self._mean = 0.0
  */
-  __pyx_t_5 = __pyx_v_self->length;
-  for (__pyx_t_6 = 0; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
-    __pyx_v_i = __pyx_t_6;
+  __pyx_v_self->n = 0;
 
-    /* "abce/online_variance.pyx":16
- *         cdef int i
- *         for i in range(self.length):
- *             self.n = 0             # <<<<<<<<<<<<<<
- *             self.M2[i] = 0.0
- *             self._mean[i] = 0.0
- */
-    __pyx_v_self->n = 0;
-
-    /* "abce/online_variance.pyx":17
- *         for i in range(self.length):
- *             self.n = 0
- *             self.M2[i] = 0.0             # <<<<<<<<<<<<<<
- *             self._mean[i] = 0.0
+  /* "abce/online_variance.pyx":7
+ *     cpdef clear(self):
+ *         self.n = 0
+ *         self.M2 = 0.0             # <<<<<<<<<<<<<<
+ *         self._mean = 0.0
  * 
  */
-    (__pyx_v_self->M2[__pyx_v_i]) = 0.0;
+  __pyx_v_self->M2 = 0.0;
 
-    /* "abce/online_variance.pyx":18
- *             self.n = 0
- *             self.M2[i] = 0.0
- *             self._mean[i] = 0.0             # <<<<<<<<<<<<<<
+  /* "abce/online_variance.pyx":8
+ *         self.n = 0
+ *         self.M2 = 0.0
+ *         self._mean = 0.0             # <<<<<<<<<<<<<<
  * 
- *     cpdef update(self, list x):
+ *     cpdef update(self, double x):
  */
-    (__pyx_v_self->_mean[__pyx_v_i]) = 0.0;
-  }
+  __pyx_v_self->_mean = 0.0;
 
-  /* "abce/online_variance.pyx":13
+  /* "abce/online_variance.pyx":5
  *         self.clear()
  * 
  *     cpdef clear(self):             # <<<<<<<<<<<<<<
- *         cdef int i
- *         for i in range(self.length):
+ *         self.n = 0
+ *         self.M2 = 0.0
  */
 
   /* function exit code */
@@ -1189,7 +1070,7 @@ static PyObject *__pyx_pf_4abce_15online_variance_14OnlineVariance_2clear(struct
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("clear", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_4abce_15online_variance_14OnlineVariance_clear(__pyx_v_self, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 13, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_4abce_15online_variance_14OnlineVariance_clear(__pyx_v_self, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 5, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -1206,19 +1087,18 @@ static PyObject *__pyx_pf_4abce_15online_variance_14OnlineVariance_2clear(struct
   return __pyx_r;
 }
 
-/* "abce/online_variance.pyx":20
- *             self._mean[i] = 0.0
+/* "abce/online_variance.pyx":10
+ *         self._mean = 0.0
  * 
- *     cpdef update(self, list x):             # <<<<<<<<<<<<<<
- *         cdef double* delta = <double*> PyMem_Malloc(self.length * sizeof(double))
- *         cdef double* delta2 = <double*> PyMem_Malloc(self.length * sizeof(double))
+ *     cpdef update(self, double x):             # <<<<<<<<<<<<<<
+ *         cdef double delta
+ *         cdef double delta2
  */
 
-static PyObject *__pyx_pw_4abce_15online_variance_14OnlineVariance_5update(PyObject *__pyx_v_self, PyObject *__pyx_v_x); /*proto*/
-static PyObject *__pyx_f_4abce_15online_variance_14OnlineVariance_update(struct __pyx_obj_4abce_15online_variance_OnlineVariance *__pyx_v_self, PyObject *__pyx_v_x, int __pyx_skip_dispatch) {
-  double *__pyx_v_delta;
-  double *__pyx_v_delta2;
-  int __pyx_v_i;
+static PyObject *__pyx_pw_4abce_15online_variance_14OnlineVariance_5update(PyObject *__pyx_v_self, PyObject *__pyx_arg_x); /*proto*/
+static PyObject *__pyx_f_4abce_15online_variance_14OnlineVariance_update(struct __pyx_obj_4abce_15online_variance_OnlineVariance *__pyx_v_self, double __pyx_v_x, int __pyx_skip_dispatch) {
+  double __pyx_v_delta;
+  double __pyx_v_delta2;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -1226,63 +1106,65 @@ static PyObject *__pyx_f_4abce_15online_variance_14OnlineVariance_update(struct 
   PyObject *__pyx_t_3 = NULL;
   PyObject *__pyx_t_4 = NULL;
   PyObject *__pyx_t_5 = NULL;
-  size_t __pyx_t_6;
-  int __pyx_t_7;
-  double __pyx_t_8;
-  int __pyx_t_9;
+  PyObject *__pyx_t_6 = NULL;
   __Pyx_RefNannySetupContext("update", 0);
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
   else if (unlikely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0)) {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_update); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 20, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_update); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 10, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)__pyx_pw_4abce_15online_variance_14OnlineVariance_5update)) {
       __Pyx_XDECREF(__pyx_r);
+      __pyx_t_3 = PyFloat_FromDouble(__pyx_v_x); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 10, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_3);
       __Pyx_INCREF(__pyx_t_1);
-      __pyx_t_3 = __pyx_t_1; __pyx_t_4 = NULL;
-      if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
-        __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_3);
-        if (likely(__pyx_t_4)) {
-          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
-          __Pyx_INCREF(__pyx_t_4);
+      __pyx_t_4 = __pyx_t_1; __pyx_t_5 = NULL;
+      if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_4))) {
+        __pyx_t_5 = PyMethod_GET_SELF(__pyx_t_4);
+        if (likely(__pyx_t_5)) {
+          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_4);
+          __Pyx_INCREF(__pyx_t_5);
           __Pyx_INCREF(function);
-          __Pyx_DECREF_SET(__pyx_t_3, function);
+          __Pyx_DECREF_SET(__pyx_t_4, function);
         }
       }
-      if (!__pyx_t_4) {
-        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_v_x); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 20, __pyx_L1_error)
+      if (!__pyx_t_5) {
+        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 10, __pyx_L1_error)
+        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
         __Pyx_GOTREF(__pyx_t_2);
       } else {
         #if CYTHON_FAST_PYCALL
-        if (PyFunction_Check(__pyx_t_3)) {
-          PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_v_x};
-          __pyx_t_2 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 20, __pyx_L1_error)
-          __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+        if (PyFunction_Check(__pyx_t_4)) {
+          PyObject *__pyx_temp[2] = {__pyx_t_5, __pyx_t_3};
+          __pyx_t_2 = __Pyx_PyFunction_FastCall(__pyx_t_4, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 10, __pyx_L1_error)
+          __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
           __Pyx_GOTREF(__pyx_t_2);
+          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
         } else
         #endif
         #if CYTHON_FAST_PYCCALL
-        if (__Pyx_PyFastCFunction_Check(__pyx_t_3)) {
-          PyObject *__pyx_temp[2] = {__pyx_t_4, __pyx_v_x};
-          __pyx_t_2 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 20, __pyx_L1_error)
-          __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+        if (__Pyx_PyFastCFunction_Check(__pyx_t_4)) {
+          PyObject *__pyx_temp[2] = {__pyx_t_5, __pyx_t_3};
+          __pyx_t_2 = __Pyx_PyCFunction_FastCall(__pyx_t_4, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 10, __pyx_L1_error)
+          __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
           __Pyx_GOTREF(__pyx_t_2);
+          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
         } else
         #endif
         {
-          __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 20, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_5);
-          __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_4); __pyx_t_4 = NULL;
-          __Pyx_INCREF(__pyx_v_x);
-          __Pyx_GIVEREF(__pyx_v_x);
-          PyTuple_SET_ITEM(__pyx_t_5, 0+1, __pyx_v_x);
-          __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 20, __pyx_L1_error)
+          __pyx_t_6 = PyTuple_New(1+1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 10, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_6);
+          __Pyx_GIVEREF(__pyx_t_5); PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_5); __pyx_t_5 = NULL;
+          __Pyx_GIVEREF(__pyx_t_3);
+          PyTuple_SET_ITEM(__pyx_t_6, 0+1, __pyx_t_3);
+          __pyx_t_3 = 0;
+          __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_6, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 10, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
-          __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+          __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
         }
       }
-      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       __pyx_r = __pyx_t_2;
       __pyx_t_2 = 0;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -1291,139 +1173,61 @@ static PyObject *__pyx_f_4abce_15online_variance_14OnlineVariance_update(struct 
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "abce/online_variance.pyx":21
- * 
- *     cpdef update(self, list x):
- *         cdef double* delta = <double*> PyMem_Malloc(self.length * sizeof(double))             # <<<<<<<<<<<<<<
- *         cdef double* delta2 = <double*> PyMem_Malloc(self.length * sizeof(double))
- *         cdef int i
- */
-  __pyx_v_delta = ((double *)PyMem_Malloc((__pyx_v_self->length * (sizeof(double)))));
-
-  /* "abce/online_variance.pyx":22
- *     cpdef update(self, list x):
- *         cdef double* delta = <double*> PyMem_Malloc(self.length * sizeof(double))
- *         cdef double* delta2 = <double*> PyMem_Malloc(self.length * sizeof(double))             # <<<<<<<<<<<<<<
- *         cdef int i
- * 
- */
-  __pyx_v_delta2 = ((double *)PyMem_Malloc((__pyx_v_self->length * (sizeof(double)))));
-
-  /* "abce/online_variance.pyx":25
+  /* "abce/online_variance.pyx":15
  *         cdef int i
  * 
  *         self.n += 1             # <<<<<<<<<<<<<<
  * 
- *         for i in range(self.length):
+ *         delta = x - self._mean
  */
   __pyx_v_self->n = (__pyx_v_self->n + 1);
 
-  /* "abce/online_variance.pyx":27
+  /* "abce/online_variance.pyx":17
  *         self.n += 1
  * 
- *         for i in range(self.length):             # <<<<<<<<<<<<<<
- *             delta[i] = x[i] - self._mean[i]
- *             self._mean[i] += delta[i] / self.n
+ *         delta = x - self._mean             # <<<<<<<<<<<<<<
+ *         self._mean += delta / self.n
+ *         delta2 = x - self._mean
  */
-  __pyx_t_6 = __pyx_v_self->length;
-  for (__pyx_t_7 = 0; __pyx_t_7 < __pyx_t_6; __pyx_t_7+=1) {
-    __pyx_v_i = __pyx_t_7;
+  __pyx_v_delta = (__pyx_v_x - __pyx_v_self->_mean);
 
-    /* "abce/online_variance.pyx":28
+  /* "abce/online_variance.pyx":18
  * 
- *         for i in range(self.length):
- *             delta[i] = x[i] - self._mean[i]             # <<<<<<<<<<<<<<
- *             self._mean[i] += delta[i] / self.n
- *             delta2[i] = x[i] - self._mean[i]
+ *         delta = x - self._mean
+ *         self._mean += delta / self.n             # <<<<<<<<<<<<<<
+ *         delta2 = x - self._mean
+ *         self.M2 += delta * delta2
  */
-    if (unlikely(__pyx_v_x == Py_None)) {
-      PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 28, __pyx_L1_error)
-    }
-    __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_x, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 28, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_2 = PyFloat_FromDouble((__pyx_v_self->_mean[__pyx_v_i])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 28, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_3 = PyNumber_Subtract(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 28, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_8 = __pyx_PyFloat_AsDouble(__pyx_t_3); if (unlikely((__pyx_t_8 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 28, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    (__pyx_v_delta[__pyx_v_i]) = __pyx_t_8;
-
-    /* "abce/online_variance.pyx":29
- *         for i in range(self.length):
- *             delta[i] = x[i] - self._mean[i]
- *             self._mean[i] += delta[i] / self.n             # <<<<<<<<<<<<<<
- *             delta2[i] = x[i] - self._mean[i]
- *             self.M2[i] += delta[i] * delta2[i]
- */
-    __pyx_t_9 = __pyx_v_i;
-    if (unlikely(__pyx_v_self->n == 0)) {
-      PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-      __PYX_ERR(0, 29, __pyx_L1_error)
-    }
-    (__pyx_v_self->_mean[__pyx_t_9]) = ((__pyx_v_self->_mean[__pyx_t_9]) + ((__pyx_v_delta[__pyx_v_i]) / __pyx_v_self->n));
-
-    /* "abce/online_variance.pyx":30
- *             delta[i] = x[i] - self._mean[i]
- *             self._mean[i] += delta[i] / self.n
- *             delta2[i] = x[i] - self._mean[i]             # <<<<<<<<<<<<<<
- *             self.M2[i] += delta[i] * delta2[i]
- * 
- */
-    if (unlikely(__pyx_v_x == Py_None)) {
-      PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 30, __pyx_L1_error)
-    }
-    __pyx_t_3 = __Pyx_GetItemInt_List(__pyx_v_x, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 30, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_2 = PyFloat_FromDouble((__pyx_v_self->_mean[__pyx_v_i])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 30, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_1 = PyNumber_Subtract(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 30, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_1);
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_8 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_8 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 30, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    (__pyx_v_delta2[__pyx_v_i]) = __pyx_t_8;
-
-    /* "abce/online_variance.pyx":31
- *             self._mean[i] += delta[i] / self.n
- *             delta2[i] = x[i] - self._mean[i]
- *             self.M2[i] += delta[i] * delta2[i]             # <<<<<<<<<<<<<<
- * 
- *         PyMem_Free(delta)
- */
-    __pyx_t_9 = __pyx_v_i;
-    (__pyx_v_self->M2[__pyx_t_9]) = ((__pyx_v_self->M2[__pyx_t_9]) + ((__pyx_v_delta[__pyx_v_i]) * (__pyx_v_delta2[__pyx_v_i])));
+  if (unlikely(__pyx_v_self->n == 0)) {
+    PyErr_SetString(PyExc_ZeroDivisionError, "float division");
+    __PYX_ERR(0, 18, __pyx_L1_error)
   }
+  __pyx_v_self->_mean = (__pyx_v_self->_mean + (__pyx_v_delta / __pyx_v_self->n));
 
-  /* "abce/online_variance.pyx":33
- *             self.M2[i] += delta[i] * delta2[i]
- * 
- *         PyMem_Free(delta)             # <<<<<<<<<<<<<<
- *         PyMem_Free(delta2)
+  /* "abce/online_variance.pyx":19
+ *         delta = x - self._mean
+ *         self._mean += delta / self.n
+ *         delta2 = x - self._mean             # <<<<<<<<<<<<<<
+ *         self.M2 += delta * delta2
  * 
  */
-  PyMem_Free(__pyx_v_delta);
-
-  /* "abce/online_variance.pyx":34
- * 
- *         PyMem_Free(delta)
- *         PyMem_Free(delta2)             # <<<<<<<<<<<<<<
- * 
- *     cpdef std(self):
- */
-  PyMem_Free(__pyx_v_delta2);
+  __pyx_v_delta2 = (__pyx_v_x - __pyx_v_self->_mean);
 
   /* "abce/online_variance.pyx":20
- *             self._mean[i] = 0.0
+ *         self._mean += delta / self.n
+ *         delta2 = x - self._mean
+ *         self.M2 += delta * delta2             # <<<<<<<<<<<<<<
  * 
- *     cpdef update(self, list x):             # <<<<<<<<<<<<<<
- *         cdef double* delta = <double*> PyMem_Malloc(self.length * sizeof(double))
- *         cdef double* delta2 = <double*> PyMem_Malloc(self.length * sizeof(double))
+ *     cpdef double std(self):
+ */
+  __pyx_v_self->M2 = (__pyx_v_self->M2 + (__pyx_v_delta * __pyx_v_delta2));
+
+  /* "abce/online_variance.pyx":10
+ *         self._mean = 0.0
+ * 
+ *     cpdef update(self, double x):             # <<<<<<<<<<<<<<
+ *         cdef double delta
+ *         cdef double delta2
  */
 
   /* function exit code */
@@ -1435,6 +1239,7 @@ static PyObject *__pyx_f_4abce_15online_variance_14OnlineVariance_update(struct 
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_5);
+  __Pyx_XDECREF(__pyx_t_6);
   __Pyx_AddTraceback("abce.online_variance.OnlineVariance.update", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
@@ -1444,30 +1249,35 @@ static PyObject *__pyx_f_4abce_15online_variance_14OnlineVariance_update(struct 
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_4abce_15online_variance_14OnlineVariance_5update(PyObject *__pyx_v_self, PyObject *__pyx_v_x); /*proto*/
-static PyObject *__pyx_pw_4abce_15online_variance_14OnlineVariance_5update(PyObject *__pyx_v_self, PyObject *__pyx_v_x) {
+static PyObject *__pyx_pw_4abce_15online_variance_14OnlineVariance_5update(PyObject *__pyx_v_self, PyObject *__pyx_arg_x); /*proto*/
+static PyObject *__pyx_pw_4abce_15online_variance_14OnlineVariance_5update(PyObject *__pyx_v_self, PyObject *__pyx_arg_x) {
+  double __pyx_v_x;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("update (wrapper)", 0);
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_x), (&PyList_Type), 1, "x", 1))) __PYX_ERR(0, 20, __pyx_L1_error)
-  __pyx_r = __pyx_pf_4abce_15online_variance_14OnlineVariance_4update(((struct __pyx_obj_4abce_15online_variance_OnlineVariance *)__pyx_v_self), ((PyObject*)__pyx_v_x));
+  assert(__pyx_arg_x); {
+    __pyx_v_x = __pyx_PyFloat_AsDouble(__pyx_arg_x); if (unlikely((__pyx_v_x == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 10, __pyx_L3_error)
+  }
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L3_error:;
+  __Pyx_AddTraceback("abce.online_variance.OnlineVariance.update", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_4abce_15online_variance_14OnlineVariance_4update(((struct __pyx_obj_4abce_15online_variance_OnlineVariance *)__pyx_v_self), ((double)__pyx_v_x));
 
   /* function exit code */
-  goto __pyx_L0;
-  __pyx_L1_error:;
-  __pyx_r = NULL;
-  __pyx_L0:;
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_4abce_15online_variance_14OnlineVariance_4update(struct __pyx_obj_4abce_15online_variance_OnlineVariance *__pyx_v_self, PyObject *__pyx_v_x) {
+static PyObject *__pyx_pf_4abce_15online_variance_14OnlineVariance_4update(struct __pyx_obj_4abce_15online_variance_OnlineVariance *__pyx_v_self, double __pyx_v_x) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("update", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_4abce_15online_variance_14OnlineVariance_update(__pyx_v_self, __pyx_v_x, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 20, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_4abce_15online_variance_14OnlineVariance_update(__pyx_v_self, __pyx_v_x, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 10, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -1484,38 +1294,33 @@ static PyObject *__pyx_pf_4abce_15online_variance_14OnlineVariance_4update(struc
   return __pyx_r;
 }
 
-/* "abce/online_variance.pyx":36
- *         PyMem_Free(delta2)
+/* "abce/online_variance.pyx":22
+ *         self.M2 += delta * delta2
  * 
- *     cpdef std(self):             # <<<<<<<<<<<<<<
+ *     cpdef double std(self):             # <<<<<<<<<<<<<<
  *         cdef int _
  *         if self.n < 2:
  */
 
 static PyObject *__pyx_pw_4abce_15online_variance_14OnlineVariance_7std(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static PyObject *__pyx_f_4abce_15online_variance_14OnlineVariance_std(struct __pyx_obj_4abce_15online_variance_OnlineVariance *__pyx_v_self, int __pyx_skip_dispatch) {
-  CYTHON_UNUSED int __pyx_v__;
-  size_t __pyx_v_i;
-  PyObject *__pyx_r = NULL;
+static double __pyx_f_4abce_15online_variance_14OnlineVariance_std(struct __pyx_obj_4abce_15online_variance_OnlineVariance *__pyx_v_self, int __pyx_skip_dispatch) {
+  double __pyx_r;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
   PyObject *__pyx_t_3 = NULL;
   PyObject *__pyx_t_4 = NULL;
-  int __pyx_t_5;
-  size_t __pyx_t_6;
-  int __pyx_t_7;
-  size_t __pyx_t_8;
-  long __pyx_t_9;
+  double __pyx_t_5;
+  int __pyx_t_6;
+  long __pyx_t_7;
   __Pyx_RefNannySetupContext("std", 0);
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
   else if (unlikely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0)) {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_std); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 36, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_std); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 22, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)__pyx_pw_4abce_15online_variance_14OnlineVariance_7std)) {
-      __Pyx_XDECREF(__pyx_r);
       __Pyx_INCREF(__pyx_t_1);
       __pyx_t_3 = __pyx_t_1; __pyx_t_4 = NULL;
       if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
@@ -1528,92 +1333,72 @@ static PyObject *__pyx_f_4abce_15online_variance_14OnlineVariance_std(struct __p
         }
       }
       if (__pyx_t_4) {
-        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 36, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 22, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       } else {
-        __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 36, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 22, __pyx_L1_error)
       }
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      __pyx_r = __pyx_t_2;
-      __pyx_t_2 = 0;
+      __pyx_t_5 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_5 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 22, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+      __pyx_r = __pyx_t_5;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       goto __pyx_L0;
     }
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "abce/online_variance.pyx":38
- *     cpdef std(self):
+  /* "abce/online_variance.pyx":24
+ *     cpdef double std(self):
  *         cdef int _
  *         if self.n < 2:             # <<<<<<<<<<<<<<
- *             return [0.0 for _ in range(self.length)]
+ *             return 0.0
  *         else:
  */
-  __pyx_t_5 = ((__pyx_v_self->n < 2) != 0);
-  if (__pyx_t_5) {
+  __pyx_t_6 = ((__pyx_v_self->n < 2) != 0);
+  if (__pyx_t_6) {
 
-    /* "abce/online_variance.pyx":39
+    /* "abce/online_variance.pyx":25
  *         cdef int _
  *         if self.n < 2:
- *             return [0.0 for _ in range(self.length)]             # <<<<<<<<<<<<<<
+ *             return 0.0             # <<<<<<<<<<<<<<
  *         else:
- *             return [(self.M2[i] / (self.n - 1)) ** 0.5  for i in range(self.length)]
+ *             return (self.M2 / (self.n - 1)) ** 0.5
  */
-    __Pyx_XDECREF(__pyx_r);
-    __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 39, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_6 = __pyx_v_self->length;
-    for (__pyx_t_7 = 0; __pyx_t_7 < __pyx_t_6; __pyx_t_7+=1) {
-      __pyx_v__ = __pyx_t_7;
-      if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_float_0_0))) __PYX_ERR(0, 39, __pyx_L1_error)
-    }
-    __pyx_r = __pyx_t_1;
-    __pyx_t_1 = 0;
+    __pyx_r = 0.0;
     goto __pyx_L0;
 
-    /* "abce/online_variance.pyx":38
- *     cpdef std(self):
+    /* "abce/online_variance.pyx":24
+ *     cpdef double std(self):
  *         cdef int _
  *         if self.n < 2:             # <<<<<<<<<<<<<<
- *             return [0.0 for _ in range(self.length)]
+ *             return 0.0
  *         else:
  */
   }
 
-  /* "abce/online_variance.pyx":41
- *             return [0.0 for _ in range(self.length)]
+  /* "abce/online_variance.pyx":27
+ *             return 0.0
  *         else:
- *             return [(self.M2[i] / (self.n - 1)) ** 0.5  for i in range(self.length)]             # <<<<<<<<<<<<<<
+ *             return (self.M2 / (self.n - 1)) ** 0.5             # <<<<<<<<<<<<<<
  * 
- *     cpdef mean(self):
+ *     cpdef double mean(self):
  */
   /*else*/ {
-    __Pyx_XDECREF(__pyx_r);
-    __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 41, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_6 = __pyx_v_self->length;
-    for (__pyx_t_8 = 0; __pyx_t_8 < __pyx_t_6; __pyx_t_8+=1) {
-      __pyx_v_i = __pyx_t_8;
-      __pyx_t_9 = (__pyx_v_self->n - 1);
-      if (unlikely(__pyx_t_9 == 0)) {
-        PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-        __PYX_ERR(0, 41, __pyx_L1_error)
-      }
-      __pyx_t_2 = PyFloat_FromDouble(pow(((__pyx_v_self->M2[__pyx_v_i]) / __pyx_t_9), 0.5)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 41, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_2);
-      if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_t_2))) __PYX_ERR(0, 41, __pyx_L1_error)
-      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __pyx_t_7 = (__pyx_v_self->n - 1);
+    if (unlikely(__pyx_t_7 == 0)) {
+      PyErr_SetString(PyExc_ZeroDivisionError, "float division");
+      __PYX_ERR(0, 27, __pyx_L1_error)
     }
-    __pyx_r = __pyx_t_1;
-    __pyx_t_1 = 0;
+    __pyx_r = pow((__pyx_v_self->M2 / __pyx_t_7), 0.5);
     goto __pyx_L0;
   }
 
-  /* "abce/online_variance.pyx":36
- *         PyMem_Free(delta2)
+  /* "abce/online_variance.pyx":22
+ *         self.M2 += delta * delta2
  * 
- *     cpdef std(self):             # <<<<<<<<<<<<<<
+ *     cpdef double std(self):             # <<<<<<<<<<<<<<
  *         cdef int _
  *         if self.n < 2:
  */
@@ -1624,10 +1409,9 @@ static PyObject *__pyx_f_4abce_15online_variance_14OnlineVariance_std(struct __p
   __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_4);
-  __Pyx_AddTraceback("abce.online_variance.OnlineVariance.std", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_WriteUnraisable("abce.online_variance.OnlineVariance.std", __pyx_clineno, __pyx_lineno, __pyx_filename, 0, 0);
   __pyx_r = 0;
   __pyx_L0:;
-  __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -1651,7 +1435,7 @@ static PyObject *__pyx_pf_4abce_15online_variance_14OnlineVariance_6std(struct _
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("std", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_4abce_15online_variance_14OnlineVariance_std(__pyx_v_self, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 36, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_4abce_15online_variance_14OnlineVariance_std(__pyx_v_self, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 22, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -1668,34 +1452,31 @@ static PyObject *__pyx_pf_4abce_15online_variance_14OnlineVariance_6std(struct _
   return __pyx_r;
 }
 
-/* "abce/online_variance.pyx":43
- *             return [(self.M2[i] / (self.n - 1)) ** 0.5  for i in range(self.length)]
+/* "abce/online_variance.pyx":29
+ *             return (self.M2 / (self.n - 1)) ** 0.5
  * 
- *     cpdef mean(self):             # <<<<<<<<<<<<<<
+ *     cpdef double mean(self):             # <<<<<<<<<<<<<<
  *         cdef int i
- *         return [self._mean[i] for i in range(self.length)]
+ *         return self._mean
  */
 
 static PyObject *__pyx_pw_4abce_15online_variance_14OnlineVariance_9mean(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static PyObject *__pyx_f_4abce_15online_variance_14OnlineVariance_mean(struct __pyx_obj_4abce_15online_variance_OnlineVariance *__pyx_v_self, int __pyx_skip_dispatch) {
-  int __pyx_v_i;
-  PyObject *__pyx_r = NULL;
+static double __pyx_f_4abce_15online_variance_14OnlineVariance_mean(struct __pyx_obj_4abce_15online_variance_OnlineVariance *__pyx_v_self, int __pyx_skip_dispatch) {
+  double __pyx_r;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
   PyObject *__pyx_t_3 = NULL;
   PyObject *__pyx_t_4 = NULL;
-  size_t __pyx_t_5;
-  int __pyx_t_6;
+  double __pyx_t_5;
   __Pyx_RefNannySetupContext("mean", 0);
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
   else if (unlikely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0)) {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_mean); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 43, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_mean); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 29, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)__pyx_pw_4abce_15online_variance_14OnlineVariance_9mean)) {
-      __Pyx_XDECREF(__pyx_r);
       __Pyx_INCREF(__pyx_t_1);
       __pyx_t_3 = __pyx_t_1; __pyx_t_4 = NULL;
       if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
@@ -1708,49 +1489,38 @@ static PyObject *__pyx_f_4abce_15online_variance_14OnlineVariance_mean(struct __
         }
       }
       if (__pyx_t_4) {
-        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 43, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 29, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       } else {
-        __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 43, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 29, __pyx_L1_error)
       }
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      __pyx_r = __pyx_t_2;
-      __pyx_t_2 = 0;
+      __pyx_t_5 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_5 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 29, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+      __pyx_r = __pyx_t_5;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       goto __pyx_L0;
     }
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "abce/online_variance.pyx":45
- *     cpdef mean(self):
+  /* "abce/online_variance.pyx":31
+ *     cpdef double mean(self):
  *         cdef int i
- *         return [self._mean[i] for i in range(self.length)]             # <<<<<<<<<<<<<<
+ *         return self._mean             # <<<<<<<<<<<<<<
  * 
- *     cpdef sum(self):
+ *     cpdef double sum(self):
  */
-  __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 45, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_5 = __pyx_v_self->length;
-  for (__pyx_t_6 = 0; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
-    __pyx_v_i = __pyx_t_6;
-    __pyx_t_2 = PyFloat_FromDouble((__pyx_v_self->_mean[__pyx_v_i])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 45, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_t_2))) __PYX_ERR(0, 45, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  }
-  __pyx_r = __pyx_t_1;
-  __pyx_t_1 = 0;
+  __pyx_r = __pyx_v_self->_mean;
   goto __pyx_L0;
 
-  /* "abce/online_variance.pyx":43
- *             return [(self.M2[i] / (self.n - 1)) ** 0.5  for i in range(self.length)]
+  /* "abce/online_variance.pyx":29
+ *             return (self.M2 / (self.n - 1)) ** 0.5
  * 
- *     cpdef mean(self):             # <<<<<<<<<<<<<<
+ *     cpdef double mean(self):             # <<<<<<<<<<<<<<
  *         cdef int i
- *         return [self._mean[i] for i in range(self.length)]
+ *         return self._mean
  */
 
   /* function exit code */
@@ -1759,10 +1529,9 @@ static PyObject *__pyx_f_4abce_15online_variance_14OnlineVariance_mean(struct __
   __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_4);
-  __Pyx_AddTraceback("abce.online_variance.OnlineVariance.mean", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_WriteUnraisable("abce.online_variance.OnlineVariance.mean", __pyx_clineno, __pyx_lineno, __pyx_filename, 0, 0);
   __pyx_r = 0;
   __pyx_L0:;
-  __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -1786,7 +1555,7 @@ static PyObject *__pyx_pf_4abce_15online_variance_14OnlineVariance_8mean(struct 
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("mean", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_4abce_15online_variance_14OnlineVariance_mean(__pyx_v_self, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 43, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_4abce_15online_variance_14OnlineVariance_mean(__pyx_v_self, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 29, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -1803,34 +1572,31 @@ static PyObject *__pyx_pf_4abce_15online_variance_14OnlineVariance_8mean(struct 
   return __pyx_r;
 }
 
-/* "abce/online_variance.pyx":47
- *         return [self._mean[i] for i in range(self.length)]
+/* "abce/online_variance.pyx":33
+ *         return self._mean
  * 
- *     cpdef sum(self):             # <<<<<<<<<<<<<<
+ *     cpdef double sum(self):             # <<<<<<<<<<<<<<
  *         cdef int i
- *         return [self._mean[i] * self.n for i in range(self.length)]
+ *         return self._mean * self.n
  */
 
 static PyObject *__pyx_pw_4abce_15online_variance_14OnlineVariance_11sum(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static PyObject *__pyx_f_4abce_15online_variance_14OnlineVariance_sum(struct __pyx_obj_4abce_15online_variance_OnlineVariance *__pyx_v_self, int __pyx_skip_dispatch) {
-  int __pyx_v_i;
-  PyObject *__pyx_r = NULL;
+static double __pyx_f_4abce_15online_variance_14OnlineVariance_sum(struct __pyx_obj_4abce_15online_variance_OnlineVariance *__pyx_v_self, int __pyx_skip_dispatch) {
+  double __pyx_r;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
   PyObject *__pyx_t_3 = NULL;
   PyObject *__pyx_t_4 = NULL;
-  size_t __pyx_t_5;
-  int __pyx_t_6;
+  double __pyx_t_5;
   __Pyx_RefNannySetupContext("sum", 0);
   /* Check if called by wrapper */
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
   else if (unlikely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0)) {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_sum); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 47, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_sum); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 33, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)__pyx_pw_4abce_15online_variance_14OnlineVariance_11sum)) {
-      __Pyx_XDECREF(__pyx_r);
       __Pyx_INCREF(__pyx_t_1);
       __pyx_t_3 = __pyx_t_1; __pyx_t_4 = NULL;
       if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
@@ -1843,49 +1609,36 @@ static PyObject *__pyx_f_4abce_15online_variance_14OnlineVariance_sum(struct __p
         }
       }
       if (__pyx_t_4) {
-        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 47, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 33, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       } else {
-        __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 47, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 33, __pyx_L1_error)
       }
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      __pyx_r = __pyx_t_2;
-      __pyx_t_2 = 0;
+      __pyx_t_5 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_5 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 33, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+      __pyx_r = __pyx_t_5;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       goto __pyx_L0;
     }
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "abce/online_variance.pyx":49
- *     cpdef sum(self):
+  /* "abce/online_variance.pyx":35
+ *     cpdef double sum(self):
  *         cdef int i
- *         return [self._mean[i] * self.n for i in range(self.length)]             # <<<<<<<<<<<<<<
- * 
- * 
+ *         return self._mean * self.n             # <<<<<<<<<<<<<<
  */
-  __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 49, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_5 = __pyx_v_self->length;
-  for (__pyx_t_6 = 0; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
-    __pyx_v_i = __pyx_t_6;
-    __pyx_t_2 = PyFloat_FromDouble(((__pyx_v_self->_mean[__pyx_v_i]) * __pyx_v_self->n)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 49, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_t_2))) __PYX_ERR(0, 49, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  }
-  __pyx_r = __pyx_t_1;
-  __pyx_t_1 = 0;
+  __pyx_r = (__pyx_v_self->_mean * __pyx_v_self->n);
   goto __pyx_L0;
 
-  /* "abce/online_variance.pyx":47
- *         return [self._mean[i] for i in range(self.length)]
+  /* "abce/online_variance.pyx":33
+ *         return self._mean
  * 
- *     cpdef sum(self):             # <<<<<<<<<<<<<<
+ *     cpdef double sum(self):             # <<<<<<<<<<<<<<
  *         cdef int i
- *         return [self._mean[i] * self.n for i in range(self.length)]
+ *         return self._mean * self.n
  */
 
   /* function exit code */
@@ -1894,10 +1647,9 @@ static PyObject *__pyx_f_4abce_15online_variance_14OnlineVariance_sum(struct __p
   __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_4);
-  __Pyx_AddTraceback("abce.online_variance.OnlineVariance.sum", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_WriteUnraisable("abce.online_variance.OnlineVariance.sum", __pyx_clineno, __pyx_lineno, __pyx_filename, 0, 0);
   __pyx_r = 0;
   __pyx_L0:;
-  __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -1921,7 +1673,7 @@ static PyObject *__pyx_pf_4abce_15online_variance_14OnlineVariance_10sum(struct 
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("sum", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_4abce_15online_variance_14OnlineVariance_sum(__pyx_v_self, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 47, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_4abce_15online_variance_14OnlineVariance_sum(__pyx_v_self, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 33, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -1937,62 +1689,9 @@ static PyObject *__pyx_pf_4abce_15online_variance_14OnlineVariance_10sum(struct 
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
-
-/* "abce/online_variance.pyx":52
- * 
- * 
- *     def __dealloc__(self):             # <<<<<<<<<<<<<<
- *         PyMem_Free(self.M2)
- *         PyMem_Free(self._mean)
- */
-
-/* Python wrapper */
-static void __pyx_pw_4abce_15online_variance_14OnlineVariance_13__dealloc__(PyObject *__pyx_v_self); /*proto*/
-static void __pyx_pw_4abce_15online_variance_14OnlineVariance_13__dealloc__(PyObject *__pyx_v_self) {
-  __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("__dealloc__ (wrapper)", 0);
-  __pyx_pf_4abce_15online_variance_14OnlineVariance_12__dealloc__(((struct __pyx_obj_4abce_15online_variance_OnlineVariance *)__pyx_v_self));
-
-  /* function exit code */
-  __Pyx_RefNannyFinishContext();
-}
-
-static void __pyx_pf_4abce_15online_variance_14OnlineVariance_12__dealloc__(struct __pyx_obj_4abce_15online_variance_OnlineVariance *__pyx_v_self) {
-  __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("__dealloc__", 0);
-
-  /* "abce/online_variance.pyx":53
- * 
- *     def __dealloc__(self):
- *         PyMem_Free(self.M2)             # <<<<<<<<<<<<<<
- *         PyMem_Free(self._mean)
- * 
- */
-  PyMem_Free(__pyx_v_self->M2);
-
-  /* "abce/online_variance.pyx":54
- *     def __dealloc__(self):
- *         PyMem_Free(self.M2)
- *         PyMem_Free(self._mean)             # <<<<<<<<<<<<<<
- * 
- * 
- */
-  PyMem_Free(__pyx_v_self->_mean);
-
-  /* "abce/online_variance.pyx":52
- * 
- * 
- *     def __dealloc__(self):             # <<<<<<<<<<<<<<
- *         PyMem_Free(self.M2)
- *         PyMem_Free(self._mean)
- */
-
-  /* function exit code */
-  __Pyx_RefNannyFinishContext();
-}
 static struct __pyx_vtabstruct_4abce_15online_variance_OnlineVariance __pyx_vtable_4abce_15online_variance_OnlineVariance;
 
-static PyObject *__pyx_tp_new_4abce_15online_variance_OnlineVariance(PyTypeObject *t, PyObject *a, PyObject *k) {
+static PyObject *__pyx_tp_new_4abce_15online_variance_OnlineVariance(PyTypeObject *t, CYTHON_UNUSED PyObject *a, CYTHON_UNUSED PyObject *k) {
   struct __pyx_obj_4abce_15online_variance_OnlineVariance *p;
   PyObject *o;
   if (likely((t->tp_flags & Py_TPFLAGS_IS_ABSTRACT) == 0)) {
@@ -2003,7 +1702,7 @@ static PyObject *__pyx_tp_new_4abce_15online_variance_OnlineVariance(PyTypeObjec
   if (unlikely(!o)) return 0;
   p = ((struct __pyx_obj_4abce_15online_variance_OnlineVariance *)o);
   p->__pyx_vtab = __pyx_vtabptr_4abce_15online_variance_OnlineVariance;
-  if (unlikely(__pyx_pw_4abce_15online_variance_14OnlineVariance_1__cinit__(o, a, k) < 0)) goto bad;
+  if (unlikely(__pyx_pw_4abce_15online_variance_14OnlineVariance_1__cinit__(o, __pyx_empty_tuple, NULL) < 0)) goto bad;
   return o;
   bad:
   Py_DECREF(o); o = 0;
@@ -2016,14 +1715,6 @@ static void __pyx_tp_dealloc_4abce_15online_variance_OnlineVariance(PyObject *o)
     if (PyObject_CallFinalizerFromDealloc(o)) return;
   }
   #endif
-  {
-    PyObject *etype, *eval, *etb;
-    PyErr_Fetch(&etype, &eval, &etb);
-    ++Py_REFCNT(o);
-    __pyx_pw_4abce_15online_variance_14OnlineVariance_13__dealloc__(o);
-    --Py_REFCNT(o);
-    PyErr_Restore(etype, eval, etb);
-  }
   (*Py_TYPE(o)->tp_free)(o);
 }
 
@@ -2118,11 +1809,9 @@ static struct PyModuleDef __pyx_moduledef = {
 
 static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_clear, __pyx_k_clear, sizeof(__pyx_k_clear), 0, 0, 1, 1},
-  {&__pyx_n_s_length, __pyx_k_length, sizeof(__pyx_k_length), 0, 0, 1, 1},
   {&__pyx_n_s_main, __pyx_k_main, sizeof(__pyx_k_main), 0, 0, 1, 1},
   {&__pyx_n_s_mean, __pyx_k_mean, sizeof(__pyx_k_mean), 0, 0, 1, 1},
   {&__pyx_n_s_pyx_vtable, __pyx_k_pyx_vtable, sizeof(__pyx_k_pyx_vtable), 0, 0, 1, 1},
-  {&__pyx_n_s_range, __pyx_k_range, sizeof(__pyx_k_range), 0, 0, 1, 1},
   {&__pyx_n_s_std, __pyx_k_std, sizeof(__pyx_k_std), 0, 0, 1, 1},
   {&__pyx_n_s_sum, __pyx_k_sum, sizeof(__pyx_k_sum), 0, 0, 1, 1},
   {&__pyx_n_s_test, __pyx_k_test, sizeof(__pyx_k_test), 0, 0, 1, 1},
@@ -2130,10 +1819,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {0, 0, 0, 0, 0, 0, 0}
 };
 static int __Pyx_InitCachedBuiltins(void) {
-  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 15, __pyx_L1_error)
   return 0;
-  __pyx_L1_error:;
-  return -1;
 }
 
 static int __Pyx_InitCachedConstants(void) {
@@ -2145,7 +1831,6 @@ static int __Pyx_InitCachedConstants(void) {
 
 static int __Pyx_InitGlobals(void) {
   if (__Pyx_InitStrings(__pyx_string_tab) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
-  __pyx_float_0_0 = PyFloat_FromDouble(0.0); if (unlikely(!__pyx_float_0_0)) __PYX_ERR(0, 1, __pyx_L1_error)
   return 0;
   __pyx_L1_error:;
   return -1;
@@ -2237,14 +1922,14 @@ PyMODINIT_FUNC PyInit_online_variance(void)
   /*--- Type init code ---*/
   __pyx_vtabptr_4abce_15online_variance_OnlineVariance = &__pyx_vtable_4abce_15online_variance_OnlineVariance;
   __pyx_vtable_4abce_15online_variance_OnlineVariance.clear = (PyObject *(*)(struct __pyx_obj_4abce_15online_variance_OnlineVariance *, int __pyx_skip_dispatch))__pyx_f_4abce_15online_variance_14OnlineVariance_clear;
-  __pyx_vtable_4abce_15online_variance_OnlineVariance.update = (PyObject *(*)(struct __pyx_obj_4abce_15online_variance_OnlineVariance *, PyObject *, int __pyx_skip_dispatch))__pyx_f_4abce_15online_variance_14OnlineVariance_update;
-  __pyx_vtable_4abce_15online_variance_OnlineVariance.std = (PyObject *(*)(struct __pyx_obj_4abce_15online_variance_OnlineVariance *, int __pyx_skip_dispatch))__pyx_f_4abce_15online_variance_14OnlineVariance_std;
-  __pyx_vtable_4abce_15online_variance_OnlineVariance.sum = (PyObject *(*)(struct __pyx_obj_4abce_15online_variance_OnlineVariance *, int __pyx_skip_dispatch))__pyx_f_4abce_15online_variance_14OnlineVariance_sum;
-  __pyx_vtable_4abce_15online_variance_OnlineVariance.mean = (PyObject *(*)(struct __pyx_obj_4abce_15online_variance_OnlineVariance *, int __pyx_skip_dispatch))__pyx_f_4abce_15online_variance_14OnlineVariance_mean;
-  if (PyType_Ready(&__pyx_type_4abce_15online_variance_OnlineVariance) < 0) __PYX_ERR(0, 4, __pyx_L1_error)
+  __pyx_vtable_4abce_15online_variance_OnlineVariance.update = (PyObject *(*)(struct __pyx_obj_4abce_15online_variance_OnlineVariance *, double, int __pyx_skip_dispatch))__pyx_f_4abce_15online_variance_14OnlineVariance_update;
+  __pyx_vtable_4abce_15online_variance_OnlineVariance.std = (double (*)(struct __pyx_obj_4abce_15online_variance_OnlineVariance *, int __pyx_skip_dispatch))__pyx_f_4abce_15online_variance_14OnlineVariance_std;
+  __pyx_vtable_4abce_15online_variance_OnlineVariance.sum = (double (*)(struct __pyx_obj_4abce_15online_variance_OnlineVariance *, int __pyx_skip_dispatch))__pyx_f_4abce_15online_variance_14OnlineVariance_sum;
+  __pyx_vtable_4abce_15online_variance_OnlineVariance.mean = (double (*)(struct __pyx_obj_4abce_15online_variance_OnlineVariance *, int __pyx_skip_dispatch))__pyx_f_4abce_15online_variance_14OnlineVariance_mean;
+  if (PyType_Ready(&__pyx_type_4abce_15online_variance_OnlineVariance) < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_type_4abce_15online_variance_OnlineVariance.tp_print = 0;
-  if (__Pyx_SetVtable(__pyx_type_4abce_15online_variance_OnlineVariance.tp_dict, __pyx_vtabptr_4abce_15online_variance_OnlineVariance) < 0) __PYX_ERR(0, 4, __pyx_L1_error)
-  if (PyObject_SetAttrString(__pyx_m, "OnlineVariance", (PyObject *)&__pyx_type_4abce_15online_variance_OnlineVariance) < 0) __PYX_ERR(0, 4, __pyx_L1_error)
+  if (__Pyx_SetVtable(__pyx_type_4abce_15online_variance_OnlineVariance.tp_dict, __pyx_vtabptr_4abce_15online_variance_OnlineVariance) < 0) __PYX_ERR(0, 1, __pyx_L1_error)
+  if (PyObject_SetAttrString(__pyx_m, "OnlineVariance", (PyObject *)&__pyx_type_4abce_15online_variance_OnlineVariance) < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_ptype_4abce_15online_variance_OnlineVariance = &__pyx_type_4abce_15online_variance_OnlineVariance;
   /*--- Type import code ---*/
   /*--- Variable import code ---*/
@@ -2255,9 +1940,9 @@ PyMODINIT_FUNC PyInit_online_variance(void)
   #endif
 
   /* "abce/online_variance.pyx":1
- * from cpython.mem cimport PyMem_Malloc, PyMem_Realloc, PyMem_Free             # <<<<<<<<<<<<<<
- * import cython
- * 
+ * cdef class OnlineVariance:             # <<<<<<<<<<<<<<
+ *     def __cinit__(self):
+ *         self.clear()
  */
   __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -2304,136 +1989,6 @@ end:
 }
 #endif
 
-/* GetBuiltinName */
-static PyObject *__Pyx_GetBuiltinName(PyObject *name) {
-    PyObject* result = __Pyx_PyObject_GetAttrStr(__pyx_b, name);
-    if (unlikely(!result)) {
-        PyErr_Format(PyExc_NameError,
-#if PY_MAJOR_VERSION >= 3
-            "name '%U' is not defined", name);
-#else
-            "name '%.200s' is not defined", PyString_AS_STRING(name));
-#endif
-    }
-    return result;
-}
-
-/* RaiseDoubleKeywords */
-static void __Pyx_RaiseDoubleKeywordsError(
-    const char* func_name,
-    PyObject* kw_name)
-{
-    PyErr_Format(PyExc_TypeError,
-        #if PY_MAJOR_VERSION >= 3
-        "%s() got multiple values for keyword argument '%U'", func_name, kw_name);
-        #else
-        "%s() got multiple values for keyword argument '%s'", func_name,
-        PyString_AsString(kw_name));
-        #endif
-}
-
-/* ParseKeywords */
-static int __Pyx_ParseOptionalKeywords(
-    PyObject *kwds,
-    PyObject **argnames[],
-    PyObject *kwds2,
-    PyObject *values[],
-    Py_ssize_t num_pos_args,
-    const char* function_name)
-{
-    PyObject *key = 0, *value = 0;
-    Py_ssize_t pos = 0;
-    PyObject*** name;
-    PyObject*** first_kw_arg = argnames + num_pos_args;
-    while (PyDict_Next(kwds, &pos, &key, &value)) {
-        name = first_kw_arg;
-        while (*name && (**name != key)) name++;
-        if (*name) {
-            values[name-argnames] = value;
-            continue;
-        }
-        name = first_kw_arg;
-        #if PY_MAJOR_VERSION < 3
-        if (likely(PyString_CheckExact(key)) || likely(PyString_Check(key))) {
-            while (*name) {
-                if ((CYTHON_COMPILING_IN_PYPY || PyString_GET_SIZE(**name) == PyString_GET_SIZE(key))
-                        && _PyString_Eq(**name, key)) {
-                    values[name-argnames] = value;
-                    break;
-                }
-                name++;
-            }
-            if (*name) continue;
-            else {
-                PyObject*** argname = argnames;
-                while (argname != first_kw_arg) {
-                    if ((**argname == key) || (
-                            (CYTHON_COMPILING_IN_PYPY || PyString_GET_SIZE(**argname) == PyString_GET_SIZE(key))
-                             && _PyString_Eq(**argname, key))) {
-                        goto arg_passed_twice;
-                    }
-                    argname++;
-                }
-            }
-        } else
-        #endif
-        if (likely(PyUnicode_Check(key))) {
-            while (*name) {
-                int cmp = (**name == key) ? 0 :
-                #if !CYTHON_COMPILING_IN_PYPY && PY_MAJOR_VERSION >= 3
-                    (PyUnicode_GET_SIZE(**name) != PyUnicode_GET_SIZE(key)) ? 1 :
-                #endif
-                    PyUnicode_Compare(**name, key);
-                if (cmp < 0 && unlikely(PyErr_Occurred())) goto bad;
-                if (cmp == 0) {
-                    values[name-argnames] = value;
-                    break;
-                }
-                name++;
-            }
-            if (*name) continue;
-            else {
-                PyObject*** argname = argnames;
-                while (argname != first_kw_arg) {
-                    int cmp = (**argname == key) ? 0 :
-                    #if !CYTHON_COMPILING_IN_PYPY && PY_MAJOR_VERSION >= 3
-                        (PyUnicode_GET_SIZE(**argname) != PyUnicode_GET_SIZE(key)) ? 1 :
-                    #endif
-                        PyUnicode_Compare(**argname, key);
-                    if (cmp < 0 && unlikely(PyErr_Occurred())) goto bad;
-                    if (cmp == 0) goto arg_passed_twice;
-                    argname++;
-                }
-            }
-        } else
-            goto invalid_keyword_type;
-        if (kwds2) {
-            if (unlikely(PyDict_SetItem(kwds2, key, value))) goto bad;
-        } else {
-            goto invalid_keyword;
-        }
-    }
-    return 0;
-arg_passed_twice:
-    __Pyx_RaiseDoubleKeywordsError(function_name, key);
-    goto bad;
-invalid_keyword_type:
-    PyErr_Format(PyExc_TypeError,
-        "%.200s() keywords must be strings", function_name);
-    goto bad;
-invalid_keyword:
-    PyErr_Format(PyExc_TypeError,
-    #if PY_MAJOR_VERSION < 3
-        "%.200s() got an unexpected keyword argument '%.200s'",
-        function_name, PyString_AsString(key));
-    #else
-        "%s() got an unexpected keyword argument '%U'",
-        function_name, key);
-    #endif
-bad:
-    return -1;
-}
-
 /* RaiseArgTupleInvalid */
 static void __Pyx_RaiseArgtupleInvalid(
     const char* func_name,
@@ -2458,6 +2013,46 @@ static void __Pyx_RaiseArgtupleInvalid(
                  "%.200s() takes %.8s %" CYTHON_FORMAT_SSIZE_T "d positional argument%.1s (%" CYTHON_FORMAT_SSIZE_T "d given)",
                  func_name, more_or_less, num_expected,
                  (num_expected == 1) ? "" : "s", num_found);
+}
+
+/* KeywordStringCheck */
+static CYTHON_INLINE int __Pyx_CheckKeywordStrings(
+    PyObject *kwdict,
+    const char* function_name,
+    int kw_allowed)
+{
+    PyObject* key = 0;
+    Py_ssize_t pos = 0;
+#if CYTHON_COMPILING_IN_PYPY
+    if (!kw_allowed && PyDict_Next(kwdict, &pos, &key, 0))
+        goto invalid_keyword;
+    return 1;
+#else
+    while (PyDict_Next(kwdict, &pos, &key, 0)) {
+        #if PY_MAJOR_VERSION < 3
+        if (unlikely(!PyString_CheckExact(key)) && unlikely(!PyString_Check(key)))
+        #endif
+            if (unlikely(!PyUnicode_Check(key)))
+                goto invalid_keyword_type;
+    }
+    if ((!kw_allowed) && unlikely(key))
+        goto invalid_keyword;
+    return 1;
+invalid_keyword_type:
+    PyErr_Format(PyExc_TypeError,
+        "%.200s() keywords must be strings", function_name);
+    return 0;
+#endif
+invalid_keyword:
+    PyErr_Format(PyExc_TypeError,
+    #if PY_MAJOR_VERSION < 3
+        "%.200s() got an unexpected keyword argument '%.200s'",
+        function_name, PyString_AsString(key));
+    #else
+        "%s() got an unexpected keyword argument '%U'",
+        function_name, key);
+    #endif
+    return 0;
 }
 
 /* PyCFunctionFastCall */
@@ -2703,112 +2298,70 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_CallNoArg(PyObject *func) {
 }
 #endif
 
-/* GetItemInt */
-    static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Generic(PyObject *o, PyObject* j) {
-    PyObject *r;
-    if (!j) return NULL;
-    r = PyObject_GetItem(o, j);
-    Py_DECREF(j);
-    return r;
+/* PyErrFetchRestore */
+    #if CYTHON_FAST_THREAD_STATE
+static CYTHON_INLINE void __Pyx_ErrRestoreInState(PyThreadState *tstate, PyObject *type, PyObject *value, PyObject *tb) {
+    PyObject *tmp_type, *tmp_value, *tmp_tb;
+    tmp_type = tstate->curexc_type;
+    tmp_value = tstate->curexc_value;
+    tmp_tb = tstate->curexc_traceback;
+    tstate->curexc_type = type;
+    tstate->curexc_value = value;
+    tstate->curexc_traceback = tb;
+    Py_XDECREF(tmp_type);
+    Py_XDECREF(tmp_value);
+    Py_XDECREF(tmp_tb);
 }
-static CYTHON_INLINE PyObject *__Pyx_GetItemInt_List_Fast(PyObject *o, Py_ssize_t i,
-                                                              CYTHON_NCP_UNUSED int wraparound,
-                                                              CYTHON_NCP_UNUSED int boundscheck) {
-#if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-    if (wraparound & unlikely(i < 0)) i += PyList_GET_SIZE(o);
-    if ((!boundscheck) || likely((0 <= i) & (i < PyList_GET_SIZE(o)))) {
-        PyObject *r = PyList_GET_ITEM(o, i);
-        Py_INCREF(r);
-        return r;
-    }
-    return __Pyx_GetItemInt_Generic(o, PyInt_FromSsize_t(i));
-#else
-    return PySequence_GetItem(o, i);
+static CYTHON_INLINE void __Pyx_ErrFetchInState(PyThreadState *tstate, PyObject **type, PyObject **value, PyObject **tb) {
+    *type = tstate->curexc_type;
+    *value = tstate->curexc_value;
+    *tb = tstate->curexc_traceback;
+    tstate->curexc_type = 0;
+    tstate->curexc_value = 0;
+    tstate->curexc_traceback = 0;
+}
 #endif
-}
-static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Tuple_Fast(PyObject *o, Py_ssize_t i,
-                                                              CYTHON_NCP_UNUSED int wraparound,
-                                                              CYTHON_NCP_UNUSED int boundscheck) {
-#if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-    if (wraparound & unlikely(i < 0)) i += PyTuple_GET_SIZE(o);
-    if ((!boundscheck) || likely((0 <= i) & (i < PyTuple_GET_SIZE(o)))) {
-        PyObject *r = PyTuple_GET_ITEM(o, i);
-        Py_INCREF(r);
-        return r;
-    }
-    return __Pyx_GetItemInt_Generic(o, PyInt_FromSsize_t(i));
-#else
-    return PySequence_GetItem(o, i);
-#endif
-}
-static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Fast(PyObject *o, Py_ssize_t i, int is_list,
-                                                     CYTHON_NCP_UNUSED int wraparound,
-                                                     CYTHON_NCP_UNUSED int boundscheck) {
-#if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS && CYTHON_USE_TYPE_SLOTS
-    if (is_list || PyList_CheckExact(o)) {
-        Py_ssize_t n = ((!wraparound) | likely(i >= 0)) ? i : i + PyList_GET_SIZE(o);
-        if ((!boundscheck) || (likely((n >= 0) & (n < PyList_GET_SIZE(o))))) {
-            PyObject *r = PyList_GET_ITEM(o, n);
-            Py_INCREF(r);
-            return r;
-        }
-    }
-    else if (PyTuple_CheckExact(o)) {
-        Py_ssize_t n = ((!wraparound) | likely(i >= 0)) ? i : i + PyTuple_GET_SIZE(o);
-        if ((!boundscheck) || likely((n >= 0) & (n < PyTuple_GET_SIZE(o)))) {
-            PyObject *r = PyTuple_GET_ITEM(o, n);
-            Py_INCREF(r);
-            return r;
-        }
-    } else {
-        PySequenceMethods *m = Py_TYPE(o)->tp_as_sequence;
-        if (likely(m && m->sq_item)) {
-            if (wraparound && unlikely(i < 0) && likely(m->sq_length)) {
-                Py_ssize_t l = m->sq_length(o);
-                if (likely(l >= 0)) {
-                    i += l;
-                } else {
-                    if (!PyErr_ExceptionMatches(PyExc_OverflowError))
-                        return NULL;
-                    PyErr_Clear();
-                }
-            }
-            return m->sq_item(o, i);
-        }
-    }
-#else
-    if (is_list || PySequence_Check(o)) {
-        return PySequence_GetItem(o, i);
-    }
-#endif
-    return __Pyx_GetItemInt_Generic(o, PyInt_FromSsize_t(i));
-}
 
-/* ArgTypeTest */
-    static void __Pyx_RaiseArgumentTypeInvalid(const char* name, PyObject *obj, PyTypeObject *type) {
-    PyErr_Format(PyExc_TypeError,
-        "Argument '%.200s' has incorrect type (expected %.200s, got %.200s)",
-        name, type->tp_name, Py_TYPE(obj)->tp_name);
-}
-static CYTHON_INLINE int __Pyx_ArgTypeTest(PyObject *obj, PyTypeObject *type, int none_allowed,
-    const char *name, int exact)
-{
-    if (unlikely(!type)) {
-        PyErr_SetString(PyExc_SystemError, "Missing type object");
-        return 0;
+/* WriteUnraisableException */
+    static void __Pyx_WriteUnraisable(const char *name, CYTHON_UNUSED int clineno,
+                                  CYTHON_UNUSED int lineno, CYTHON_UNUSED const char *filename,
+                                  int full_traceback, CYTHON_UNUSED int nogil) {
+    PyObject *old_exc, *old_val, *old_tb;
+    PyObject *ctx;
+    __Pyx_PyThreadState_declare
+#ifdef WITH_THREAD
+    PyGILState_STATE state;
+    if (nogil)
+        state = PyGILState_Ensure();
+#ifdef _MSC_VER
+    else state = (PyGILState_STATE)-1;
+#endif
+#endif
+    __Pyx_PyThreadState_assign
+    __Pyx_ErrFetch(&old_exc, &old_val, &old_tb);
+    if (full_traceback) {
+        Py_XINCREF(old_exc);
+        Py_XINCREF(old_val);
+        Py_XINCREF(old_tb);
+        __Pyx_ErrRestore(old_exc, old_val, old_tb);
+        PyErr_PrintEx(1);
     }
-    if (none_allowed && obj == Py_None) return 1;
-    else if (exact) {
-        if (likely(Py_TYPE(obj) == type)) return 1;
-        #if PY_MAJOR_VERSION == 2
-        else if ((type == &PyBaseString_Type) && likely(__Pyx_PyBaseString_CheckExact(obj))) return 1;
-        #endif
+    #if PY_MAJOR_VERSION < 3
+    ctx = PyString_FromString(name);
+    #else
+    ctx = PyUnicode_FromString(name);
+    #endif
+    __Pyx_ErrRestore(old_exc, old_val, old_tb);
+    if (!ctx) {
+        PyErr_WriteUnraisable(Py_None);
+    } else {
+        PyErr_WriteUnraisable(ctx);
+        Py_DECREF(ctx);
     }
-    else {
-        if (likely(PyObject_TypeCheck(obj, type))) return 1;
-    }
-    __Pyx_RaiseArgumentTypeInvalid(name, obj, type);
-    return 0;
+#ifdef WITH_THREAD
+    if (nogil)
+        PyGILState_Release(state);
+#endif
 }
 
 /* SetVTable */
@@ -2990,6 +2543,37 @@ bad:
     Py_XDECREF(py_frame);
 }
 
+/* CIntToPy */
+    static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value) {
+    const long neg_one = (long) -1, const_zero = (long) 0;
+    const int is_unsigned = neg_one > const_zero;
+    if (is_unsigned) {
+        if (sizeof(long) < sizeof(long)) {
+            return PyInt_FromLong((long) value);
+        } else if (sizeof(long) <= sizeof(unsigned long)) {
+            return PyLong_FromUnsignedLong((unsigned long) value);
+#ifdef HAVE_LONG_LONG
+        } else if (sizeof(long) <= sizeof(unsigned PY_LONG_LONG)) {
+            return PyLong_FromUnsignedLongLong((unsigned PY_LONG_LONG) value);
+#endif
+        }
+    } else {
+        if (sizeof(long) <= sizeof(long)) {
+            return PyInt_FromLong((long) value);
+#ifdef HAVE_LONG_LONG
+        } else if (sizeof(long) <= sizeof(PY_LONG_LONG)) {
+            return PyLong_FromLongLong((PY_LONG_LONG) value);
+#endif
+        }
+    }
+    {
+        int one = 1; int little = (int)*(unsigned char *)&one;
+        unsigned char *bytes = (unsigned char *)&value;
+        return _PyLong_FromByteArray(bytes, sizeof(long),
+                                     little, !is_unsigned);
+    }
+}
+
 /* CIntFromPyVerify */
     #define __PYX_VERIFY_RETURN_INT(target_type, func_type, func_value)\
     __PYX__VERIFY_RETURN_INT(target_type, func_type, func_value, 0)
@@ -3012,51 +2596,20 @@ bad:
         return (target_type) value;\
     }
 
-/* CIntToPy */
-    static CYTHON_INLINE PyObject* __Pyx_PyInt_From_int(int value) {
-    const int neg_one = (int) -1, const_zero = (int) 0;
-    const int is_unsigned = neg_one > const_zero;
-    if (is_unsigned) {
-        if (sizeof(int) < sizeof(long)) {
-            return PyInt_FromLong((long) value);
-        } else if (sizeof(int) <= sizeof(unsigned long)) {
-            return PyLong_FromUnsignedLong((unsigned long) value);
-#ifdef HAVE_LONG_LONG
-        } else if (sizeof(int) <= sizeof(unsigned PY_LONG_LONG)) {
-            return PyLong_FromUnsignedLongLong((unsigned PY_LONG_LONG) value);
-#endif
-        }
-    } else {
-        if (sizeof(int) <= sizeof(long)) {
-            return PyInt_FromLong((long) value);
-#ifdef HAVE_LONG_LONG
-        } else if (sizeof(int) <= sizeof(PY_LONG_LONG)) {
-            return PyLong_FromLongLong((PY_LONG_LONG) value);
-#endif
-        }
-    }
-    {
-        int one = 1; int little = (int)*(unsigned char *)&one;
-        unsigned char *bytes = (unsigned char *)&value;
-        return _PyLong_FromByteArray(bytes, sizeof(int),
-                                     little, !is_unsigned);
-    }
-}
-
 /* CIntFromPy */
-    static CYTHON_INLINE size_t __Pyx_PyInt_As_size_t(PyObject *x) {
-    const size_t neg_one = (size_t) -1, const_zero = (size_t) 0;
+    static CYTHON_INLINE long __Pyx_PyInt_As_long(PyObject *x) {
+    const long neg_one = (long) -1, const_zero = (long) 0;
     const int is_unsigned = neg_one > const_zero;
 #if PY_MAJOR_VERSION < 3
     if (likely(PyInt_Check(x))) {
-        if (sizeof(size_t) < sizeof(long)) {
-            __PYX_VERIFY_RETURN_INT(size_t, long, PyInt_AS_LONG(x))
+        if (sizeof(long) < sizeof(long)) {
+            __PYX_VERIFY_RETURN_INT(long, long, PyInt_AS_LONG(x))
         } else {
             long val = PyInt_AS_LONG(x);
             if (is_unsigned && unlikely(val < 0)) {
                 goto raise_neg_overflow;
             }
-            return (size_t) val;
+            return (long) val;
         }
     } else
 #endif
@@ -3065,32 +2618,32 @@ bad:
 #if CYTHON_USE_PYLONG_INTERNALS
             const digit* digits = ((PyLongObject*)x)->ob_digit;
             switch (Py_SIZE(x)) {
-                case  0: return (size_t) 0;
-                case  1: __PYX_VERIFY_RETURN_INT(size_t, digit, digits[0])
+                case  0: return (long) 0;
+                case  1: __PYX_VERIFY_RETURN_INT(long, digit, digits[0])
                 case 2:
-                    if (8 * sizeof(size_t) > 1 * PyLong_SHIFT) {
+                    if (8 * sizeof(long) > 1 * PyLong_SHIFT) {
                         if (8 * sizeof(unsigned long) > 2 * PyLong_SHIFT) {
-                            __PYX_VERIFY_RETURN_INT(size_t, unsigned long, (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
-                        } else if (8 * sizeof(size_t) >= 2 * PyLong_SHIFT) {
-                            return (size_t) (((((size_t)digits[1]) << PyLong_SHIFT) | (size_t)digits[0]));
+                            __PYX_VERIFY_RETURN_INT(long, unsigned long, (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(long) >= 2 * PyLong_SHIFT) {
+                            return (long) (((((long)digits[1]) << PyLong_SHIFT) | (long)digits[0]));
                         }
                     }
                     break;
                 case 3:
-                    if (8 * sizeof(size_t) > 2 * PyLong_SHIFT) {
+                    if (8 * sizeof(long) > 2 * PyLong_SHIFT) {
                         if (8 * sizeof(unsigned long) > 3 * PyLong_SHIFT) {
-                            __PYX_VERIFY_RETURN_INT(size_t, unsigned long, (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
-                        } else if (8 * sizeof(size_t) >= 3 * PyLong_SHIFT) {
-                            return (size_t) (((((((size_t)digits[2]) << PyLong_SHIFT) | (size_t)digits[1]) << PyLong_SHIFT) | (size_t)digits[0]));
+                            __PYX_VERIFY_RETURN_INT(long, unsigned long, (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(long) >= 3 * PyLong_SHIFT) {
+                            return (long) (((((((long)digits[2]) << PyLong_SHIFT) | (long)digits[1]) << PyLong_SHIFT) | (long)digits[0]));
                         }
                     }
                     break;
                 case 4:
-                    if (8 * sizeof(size_t) > 3 * PyLong_SHIFT) {
+                    if (8 * sizeof(long) > 3 * PyLong_SHIFT) {
                         if (8 * sizeof(unsigned long) > 4 * PyLong_SHIFT) {
-                            __PYX_VERIFY_RETURN_INT(size_t, unsigned long, (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
-                        } else if (8 * sizeof(size_t) >= 4 * PyLong_SHIFT) {
-                            return (size_t) (((((((((size_t)digits[3]) << PyLong_SHIFT) | (size_t)digits[2]) << PyLong_SHIFT) | (size_t)digits[1]) << PyLong_SHIFT) | (size_t)digits[0]));
+                            __PYX_VERIFY_RETURN_INT(long, unsigned long, (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(long) >= 4 * PyLong_SHIFT) {
+                            return (long) (((((((((long)digits[3]) << PyLong_SHIFT) | (long)digits[2]) << PyLong_SHIFT) | (long)digits[1]) << PyLong_SHIFT) | (long)digits[0]));
                         }
                     }
                     break;
@@ -3104,86 +2657,86 @@ bad:
             {
                 int result = PyObject_RichCompareBool(x, Py_False, Py_LT);
                 if (unlikely(result < 0))
-                    return (size_t) -1;
+                    return (long) -1;
                 if (unlikely(result == 1))
                     goto raise_neg_overflow;
             }
 #endif
-            if (sizeof(size_t) <= sizeof(unsigned long)) {
-                __PYX_VERIFY_RETURN_INT_EXC(size_t, unsigned long, PyLong_AsUnsignedLong(x))
+            if (sizeof(long) <= sizeof(unsigned long)) {
+                __PYX_VERIFY_RETURN_INT_EXC(long, unsigned long, PyLong_AsUnsignedLong(x))
 #ifdef HAVE_LONG_LONG
-            } else if (sizeof(size_t) <= sizeof(unsigned PY_LONG_LONG)) {
-                __PYX_VERIFY_RETURN_INT_EXC(size_t, unsigned PY_LONG_LONG, PyLong_AsUnsignedLongLong(x))
+            } else if (sizeof(long) <= sizeof(unsigned PY_LONG_LONG)) {
+                __PYX_VERIFY_RETURN_INT_EXC(long, unsigned PY_LONG_LONG, PyLong_AsUnsignedLongLong(x))
 #endif
             }
         } else {
 #if CYTHON_USE_PYLONG_INTERNALS
             const digit* digits = ((PyLongObject*)x)->ob_digit;
             switch (Py_SIZE(x)) {
-                case  0: return (size_t) 0;
-                case -1: __PYX_VERIFY_RETURN_INT(size_t, sdigit, (sdigit) (-(sdigit)digits[0]))
-                case  1: __PYX_VERIFY_RETURN_INT(size_t,  digit, +digits[0])
+                case  0: return (long) 0;
+                case -1: __PYX_VERIFY_RETURN_INT(long, sdigit, (sdigit) (-(sdigit)digits[0]))
+                case  1: __PYX_VERIFY_RETURN_INT(long,  digit, +digits[0])
                 case -2:
-                    if (8 * sizeof(size_t) - 1 > 1 * PyLong_SHIFT) {
+                    if (8 * sizeof(long) - 1 > 1 * PyLong_SHIFT) {
                         if (8 * sizeof(unsigned long) > 2 * PyLong_SHIFT) {
-                            __PYX_VERIFY_RETURN_INT(size_t, long, -(long) (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
-                        } else if (8 * sizeof(size_t) - 1 > 2 * PyLong_SHIFT) {
-                            return (size_t) (((size_t)-1)*(((((size_t)digits[1]) << PyLong_SHIFT) | (size_t)digits[0])));
+                            __PYX_VERIFY_RETURN_INT(long, long, -(long) (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(long) - 1 > 2 * PyLong_SHIFT) {
+                            return (long) (((long)-1)*(((((long)digits[1]) << PyLong_SHIFT) | (long)digits[0])));
                         }
                     }
                     break;
                 case 2:
-                    if (8 * sizeof(size_t) > 1 * PyLong_SHIFT) {
+                    if (8 * sizeof(long) > 1 * PyLong_SHIFT) {
                         if (8 * sizeof(unsigned long) > 2 * PyLong_SHIFT) {
-                            __PYX_VERIFY_RETURN_INT(size_t, unsigned long, (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
-                        } else if (8 * sizeof(size_t) - 1 > 2 * PyLong_SHIFT) {
-                            return (size_t) ((((((size_t)digits[1]) << PyLong_SHIFT) | (size_t)digits[0])));
+                            __PYX_VERIFY_RETURN_INT(long, unsigned long, (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(long) - 1 > 2 * PyLong_SHIFT) {
+                            return (long) ((((((long)digits[1]) << PyLong_SHIFT) | (long)digits[0])));
                         }
                     }
                     break;
                 case -3:
-                    if (8 * sizeof(size_t) - 1 > 2 * PyLong_SHIFT) {
+                    if (8 * sizeof(long) - 1 > 2 * PyLong_SHIFT) {
                         if (8 * sizeof(unsigned long) > 3 * PyLong_SHIFT) {
-                            __PYX_VERIFY_RETURN_INT(size_t, long, -(long) (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
-                        } else if (8 * sizeof(size_t) - 1 > 3 * PyLong_SHIFT) {
-                            return (size_t) (((size_t)-1)*(((((((size_t)digits[2]) << PyLong_SHIFT) | (size_t)digits[1]) << PyLong_SHIFT) | (size_t)digits[0])));
+                            __PYX_VERIFY_RETURN_INT(long, long, -(long) (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(long) - 1 > 3 * PyLong_SHIFT) {
+                            return (long) (((long)-1)*(((((((long)digits[2]) << PyLong_SHIFT) | (long)digits[1]) << PyLong_SHIFT) | (long)digits[0])));
                         }
                     }
                     break;
                 case 3:
-                    if (8 * sizeof(size_t) > 2 * PyLong_SHIFT) {
+                    if (8 * sizeof(long) > 2 * PyLong_SHIFT) {
                         if (8 * sizeof(unsigned long) > 3 * PyLong_SHIFT) {
-                            __PYX_VERIFY_RETURN_INT(size_t, unsigned long, (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
-                        } else if (8 * sizeof(size_t) - 1 > 3 * PyLong_SHIFT) {
-                            return (size_t) ((((((((size_t)digits[2]) << PyLong_SHIFT) | (size_t)digits[1]) << PyLong_SHIFT) | (size_t)digits[0])));
+                            __PYX_VERIFY_RETURN_INT(long, unsigned long, (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(long) - 1 > 3 * PyLong_SHIFT) {
+                            return (long) ((((((((long)digits[2]) << PyLong_SHIFT) | (long)digits[1]) << PyLong_SHIFT) | (long)digits[0])));
                         }
                     }
                     break;
                 case -4:
-                    if (8 * sizeof(size_t) - 1 > 3 * PyLong_SHIFT) {
+                    if (8 * sizeof(long) - 1 > 3 * PyLong_SHIFT) {
                         if (8 * sizeof(unsigned long) > 4 * PyLong_SHIFT) {
-                            __PYX_VERIFY_RETURN_INT(size_t, long, -(long) (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
-                        } else if (8 * sizeof(size_t) - 1 > 4 * PyLong_SHIFT) {
-                            return (size_t) (((size_t)-1)*(((((((((size_t)digits[3]) << PyLong_SHIFT) | (size_t)digits[2]) << PyLong_SHIFT) | (size_t)digits[1]) << PyLong_SHIFT) | (size_t)digits[0])));
+                            __PYX_VERIFY_RETURN_INT(long, long, -(long) (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(long) - 1 > 4 * PyLong_SHIFT) {
+                            return (long) (((long)-1)*(((((((((long)digits[3]) << PyLong_SHIFT) | (long)digits[2]) << PyLong_SHIFT) | (long)digits[1]) << PyLong_SHIFT) | (long)digits[0])));
                         }
                     }
                     break;
                 case 4:
-                    if (8 * sizeof(size_t) > 3 * PyLong_SHIFT) {
+                    if (8 * sizeof(long) > 3 * PyLong_SHIFT) {
                         if (8 * sizeof(unsigned long) > 4 * PyLong_SHIFT) {
-                            __PYX_VERIFY_RETURN_INT(size_t, unsigned long, (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
-                        } else if (8 * sizeof(size_t) - 1 > 4 * PyLong_SHIFT) {
-                            return (size_t) ((((((((((size_t)digits[3]) << PyLong_SHIFT) | (size_t)digits[2]) << PyLong_SHIFT) | (size_t)digits[1]) << PyLong_SHIFT) | (size_t)digits[0])));
+                            __PYX_VERIFY_RETURN_INT(long, unsigned long, (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
+                        } else if (8 * sizeof(long) - 1 > 4 * PyLong_SHIFT) {
+                            return (long) ((((((((((long)digits[3]) << PyLong_SHIFT) | (long)digits[2]) << PyLong_SHIFT) | (long)digits[1]) << PyLong_SHIFT) | (long)digits[0])));
                         }
                     }
                     break;
             }
 #endif
-            if (sizeof(size_t) <= sizeof(long)) {
-                __PYX_VERIFY_RETURN_INT_EXC(size_t, long, PyLong_AsLong(x))
+            if (sizeof(long) <= sizeof(long)) {
+                __PYX_VERIFY_RETURN_INT_EXC(long, long, PyLong_AsLong(x))
 #ifdef HAVE_LONG_LONG
-            } else if (sizeof(size_t) <= sizeof(PY_LONG_LONG)) {
-                __PYX_VERIFY_RETURN_INT_EXC(size_t, PY_LONG_LONG, PyLong_AsLongLong(x))
+            } else if (sizeof(long) <= sizeof(PY_LONG_LONG)) {
+                __PYX_VERIFY_RETURN_INT_EXC(long, PY_LONG_LONG, PyLong_AsLongLong(x))
 #endif
             }
         }
@@ -3192,7 +2745,7 @@ bad:
             PyErr_SetString(PyExc_RuntimeError,
                             "_PyLong_AsByteArray() not available in PyPy, cannot convert large numbers");
 #else
-            size_t val;
+            long val;
             PyObject *v = __Pyx_PyNumber_IntOrLong(x);
  #if PY_MAJOR_VERSION < 3
             if (likely(v) && !PyLong_Check(v)) {
@@ -3212,24 +2765,24 @@ bad:
                     return val;
             }
 #endif
-            return (size_t) -1;
+            return (long) -1;
         }
     } else {
-        size_t val;
+        long val;
         PyObject *tmp = __Pyx_PyNumber_IntOrLong(x);
-        if (!tmp) return (size_t) -1;
-        val = __Pyx_PyInt_As_size_t(tmp);
+        if (!tmp) return (long) -1;
+        val = __Pyx_PyInt_As_long(tmp);
         Py_DECREF(tmp);
         return val;
     }
 raise_overflow:
     PyErr_SetString(PyExc_OverflowError,
-        "value too large to convert to size_t");
-    return (size_t) -1;
+        "value too large to convert to long");
+    return (long) -1;
 raise_neg_overflow:
     PyErr_SetString(PyExc_OverflowError,
-        "can't convert negative value to size_t");
-    return (size_t) -1;
+        "can't convert negative value to long");
+    return (long) -1;
 }
 
 /* CIntFromPy */
@@ -3419,226 +2972,6 @@ raise_neg_overflow:
     PyErr_SetString(PyExc_OverflowError,
         "can't convert negative value to int");
     return (int) -1;
-}
-
-/* CIntToPy */
-    static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value) {
-    const long neg_one = (long) -1, const_zero = (long) 0;
-    const int is_unsigned = neg_one > const_zero;
-    if (is_unsigned) {
-        if (sizeof(long) < sizeof(long)) {
-            return PyInt_FromLong((long) value);
-        } else if (sizeof(long) <= sizeof(unsigned long)) {
-            return PyLong_FromUnsignedLong((unsigned long) value);
-#ifdef HAVE_LONG_LONG
-        } else if (sizeof(long) <= sizeof(unsigned PY_LONG_LONG)) {
-            return PyLong_FromUnsignedLongLong((unsigned PY_LONG_LONG) value);
-#endif
-        }
-    } else {
-        if (sizeof(long) <= sizeof(long)) {
-            return PyInt_FromLong((long) value);
-#ifdef HAVE_LONG_LONG
-        } else if (sizeof(long) <= sizeof(PY_LONG_LONG)) {
-            return PyLong_FromLongLong((PY_LONG_LONG) value);
-#endif
-        }
-    }
-    {
-        int one = 1; int little = (int)*(unsigned char *)&one;
-        unsigned char *bytes = (unsigned char *)&value;
-        return _PyLong_FromByteArray(bytes, sizeof(long),
-                                     little, !is_unsigned);
-    }
-}
-
-/* CIntFromPy */
-    static CYTHON_INLINE long __Pyx_PyInt_As_long(PyObject *x) {
-    const long neg_one = (long) -1, const_zero = (long) 0;
-    const int is_unsigned = neg_one > const_zero;
-#if PY_MAJOR_VERSION < 3
-    if (likely(PyInt_Check(x))) {
-        if (sizeof(long) < sizeof(long)) {
-            __PYX_VERIFY_RETURN_INT(long, long, PyInt_AS_LONG(x))
-        } else {
-            long val = PyInt_AS_LONG(x);
-            if (is_unsigned && unlikely(val < 0)) {
-                goto raise_neg_overflow;
-            }
-            return (long) val;
-        }
-    } else
-#endif
-    if (likely(PyLong_Check(x))) {
-        if (is_unsigned) {
-#if CYTHON_USE_PYLONG_INTERNALS
-            const digit* digits = ((PyLongObject*)x)->ob_digit;
-            switch (Py_SIZE(x)) {
-                case  0: return (long) 0;
-                case  1: __PYX_VERIFY_RETURN_INT(long, digit, digits[0])
-                case 2:
-                    if (8 * sizeof(long) > 1 * PyLong_SHIFT) {
-                        if (8 * sizeof(unsigned long) > 2 * PyLong_SHIFT) {
-                            __PYX_VERIFY_RETURN_INT(long, unsigned long, (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
-                        } else if (8 * sizeof(long) >= 2 * PyLong_SHIFT) {
-                            return (long) (((((long)digits[1]) << PyLong_SHIFT) | (long)digits[0]));
-                        }
-                    }
-                    break;
-                case 3:
-                    if (8 * sizeof(long) > 2 * PyLong_SHIFT) {
-                        if (8 * sizeof(unsigned long) > 3 * PyLong_SHIFT) {
-                            __PYX_VERIFY_RETURN_INT(long, unsigned long, (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
-                        } else if (8 * sizeof(long) >= 3 * PyLong_SHIFT) {
-                            return (long) (((((((long)digits[2]) << PyLong_SHIFT) | (long)digits[1]) << PyLong_SHIFT) | (long)digits[0]));
-                        }
-                    }
-                    break;
-                case 4:
-                    if (8 * sizeof(long) > 3 * PyLong_SHIFT) {
-                        if (8 * sizeof(unsigned long) > 4 * PyLong_SHIFT) {
-                            __PYX_VERIFY_RETURN_INT(long, unsigned long, (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
-                        } else if (8 * sizeof(long) >= 4 * PyLong_SHIFT) {
-                            return (long) (((((((((long)digits[3]) << PyLong_SHIFT) | (long)digits[2]) << PyLong_SHIFT) | (long)digits[1]) << PyLong_SHIFT) | (long)digits[0]));
-                        }
-                    }
-                    break;
-            }
-#endif
-#if CYTHON_COMPILING_IN_CPYTHON
-            if (unlikely(Py_SIZE(x) < 0)) {
-                goto raise_neg_overflow;
-            }
-#else
-            {
-                int result = PyObject_RichCompareBool(x, Py_False, Py_LT);
-                if (unlikely(result < 0))
-                    return (long) -1;
-                if (unlikely(result == 1))
-                    goto raise_neg_overflow;
-            }
-#endif
-            if (sizeof(long) <= sizeof(unsigned long)) {
-                __PYX_VERIFY_RETURN_INT_EXC(long, unsigned long, PyLong_AsUnsignedLong(x))
-#ifdef HAVE_LONG_LONG
-            } else if (sizeof(long) <= sizeof(unsigned PY_LONG_LONG)) {
-                __PYX_VERIFY_RETURN_INT_EXC(long, unsigned PY_LONG_LONG, PyLong_AsUnsignedLongLong(x))
-#endif
-            }
-        } else {
-#if CYTHON_USE_PYLONG_INTERNALS
-            const digit* digits = ((PyLongObject*)x)->ob_digit;
-            switch (Py_SIZE(x)) {
-                case  0: return (long) 0;
-                case -1: __PYX_VERIFY_RETURN_INT(long, sdigit, (sdigit) (-(sdigit)digits[0]))
-                case  1: __PYX_VERIFY_RETURN_INT(long,  digit, +digits[0])
-                case -2:
-                    if (8 * sizeof(long) - 1 > 1 * PyLong_SHIFT) {
-                        if (8 * sizeof(unsigned long) > 2 * PyLong_SHIFT) {
-                            __PYX_VERIFY_RETURN_INT(long, long, -(long) (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
-                        } else if (8 * sizeof(long) - 1 > 2 * PyLong_SHIFT) {
-                            return (long) (((long)-1)*(((((long)digits[1]) << PyLong_SHIFT) | (long)digits[0])));
-                        }
-                    }
-                    break;
-                case 2:
-                    if (8 * sizeof(long) > 1 * PyLong_SHIFT) {
-                        if (8 * sizeof(unsigned long) > 2 * PyLong_SHIFT) {
-                            __PYX_VERIFY_RETURN_INT(long, unsigned long, (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
-                        } else if (8 * sizeof(long) - 1 > 2 * PyLong_SHIFT) {
-                            return (long) ((((((long)digits[1]) << PyLong_SHIFT) | (long)digits[0])));
-                        }
-                    }
-                    break;
-                case -3:
-                    if (8 * sizeof(long) - 1 > 2 * PyLong_SHIFT) {
-                        if (8 * sizeof(unsigned long) > 3 * PyLong_SHIFT) {
-                            __PYX_VERIFY_RETURN_INT(long, long, -(long) (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
-                        } else if (8 * sizeof(long) - 1 > 3 * PyLong_SHIFT) {
-                            return (long) (((long)-1)*(((((((long)digits[2]) << PyLong_SHIFT) | (long)digits[1]) << PyLong_SHIFT) | (long)digits[0])));
-                        }
-                    }
-                    break;
-                case 3:
-                    if (8 * sizeof(long) > 2 * PyLong_SHIFT) {
-                        if (8 * sizeof(unsigned long) > 3 * PyLong_SHIFT) {
-                            __PYX_VERIFY_RETURN_INT(long, unsigned long, (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
-                        } else if (8 * sizeof(long) - 1 > 3 * PyLong_SHIFT) {
-                            return (long) ((((((((long)digits[2]) << PyLong_SHIFT) | (long)digits[1]) << PyLong_SHIFT) | (long)digits[0])));
-                        }
-                    }
-                    break;
-                case -4:
-                    if (8 * sizeof(long) - 1 > 3 * PyLong_SHIFT) {
-                        if (8 * sizeof(unsigned long) > 4 * PyLong_SHIFT) {
-                            __PYX_VERIFY_RETURN_INT(long, long, -(long) (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
-                        } else if (8 * sizeof(long) - 1 > 4 * PyLong_SHIFT) {
-                            return (long) (((long)-1)*(((((((((long)digits[3]) << PyLong_SHIFT) | (long)digits[2]) << PyLong_SHIFT) | (long)digits[1]) << PyLong_SHIFT) | (long)digits[0])));
-                        }
-                    }
-                    break;
-                case 4:
-                    if (8 * sizeof(long) > 3 * PyLong_SHIFT) {
-                        if (8 * sizeof(unsigned long) > 4 * PyLong_SHIFT) {
-                            __PYX_VERIFY_RETURN_INT(long, unsigned long, (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0])))
-                        } else if (8 * sizeof(long) - 1 > 4 * PyLong_SHIFT) {
-                            return (long) ((((((((((long)digits[3]) << PyLong_SHIFT) | (long)digits[2]) << PyLong_SHIFT) | (long)digits[1]) << PyLong_SHIFT) | (long)digits[0])));
-                        }
-                    }
-                    break;
-            }
-#endif
-            if (sizeof(long) <= sizeof(long)) {
-                __PYX_VERIFY_RETURN_INT_EXC(long, long, PyLong_AsLong(x))
-#ifdef HAVE_LONG_LONG
-            } else if (sizeof(long) <= sizeof(PY_LONG_LONG)) {
-                __PYX_VERIFY_RETURN_INT_EXC(long, PY_LONG_LONG, PyLong_AsLongLong(x))
-#endif
-            }
-        }
-        {
-#if CYTHON_COMPILING_IN_PYPY && !defined(_PyLong_AsByteArray)
-            PyErr_SetString(PyExc_RuntimeError,
-                            "_PyLong_AsByteArray() not available in PyPy, cannot convert large numbers");
-#else
-            long val;
-            PyObject *v = __Pyx_PyNumber_IntOrLong(x);
- #if PY_MAJOR_VERSION < 3
-            if (likely(v) && !PyLong_Check(v)) {
-                PyObject *tmp = v;
-                v = PyNumber_Long(tmp);
-                Py_DECREF(tmp);
-            }
- #endif
-            if (likely(v)) {
-                int one = 1; int is_little = (int)*(unsigned char *)&one;
-                unsigned char *bytes = (unsigned char *)&val;
-                int ret = _PyLong_AsByteArray((PyLongObject *)v,
-                                              bytes, sizeof(val),
-                                              is_little, !is_unsigned);
-                Py_DECREF(v);
-                if (likely(!ret))
-                    return val;
-            }
-#endif
-            return (long) -1;
-        }
-    } else {
-        long val;
-        PyObject *tmp = __Pyx_PyNumber_IntOrLong(x);
-        if (!tmp) return (long) -1;
-        val = __Pyx_PyInt_As_long(tmp);
-        Py_DECREF(tmp);
-        return val;
-    }
-raise_overflow:
-    PyErr_SetString(PyExc_OverflowError,
-        "value too large to convert to long");
-    return (long) -1;
-raise_neg_overflow:
-    PyErr_SetString(PyExc_OverflowError,
-        "can't convert negative value to long");
-    return (long) -1;
 }
 
 /* CheckBinaryVersion */

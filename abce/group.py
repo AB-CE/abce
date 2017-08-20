@@ -54,23 +54,11 @@ class Group(object):
                 self.sim.messagess[pgid].extend(messages)
         return self.sim.messagess[-2]
 
-    def panel(self):
-        if not self.sim._db_started:
-            self.sim._db_started = True
-            self.sim._db.start()
-        self.do('panel')
+    def panel_log(self, variables=[], possessions=[], func={}, len=[]):
+        self.do('_panel_log', variables, possessions, func, len)
 
-    def aggregate(self):
-        if not self.sim._db_started:
-            self.sim._db_started = True
-            self.sim._db.start()
-        self.do('aggregate')
-
-    def panel_log(self, vars, possessions, func, len):
-        self.do('panel_log', vars, possessions, func, len)
-
-    def agg_log(self, vars, possessions, func, len):
-        self.do('agg_log', vars, possessions, func, len)
+    def agg_log(self, variables=[], possessions=[], func={}, len=[]):
+        self.do('_agg_log', variables, possessions, func, len)
 
 def execute_wrapper(inp):
     # processor_group.execute(self.groups, command, messages[pgid])
