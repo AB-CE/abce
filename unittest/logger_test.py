@@ -13,7 +13,7 @@ class LoggerTest(abce.Agent):
 
     def one(self):
         self.log('possessions', self.possessions())
-        self.log_value('round_log', self.round)
+        self.log('round_log', self.round)
         pass
 
     def two(self):
