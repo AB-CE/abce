@@ -77,7 +77,7 @@ class Database(object):
             data_to_write = {str(action_name): data_to_log}
 
         self.database_connection.put(
-            ["log", self.group, self.id, self.round, data_to_write, self.log_in_subround_serial])
+            ["log", self.group, self.id, self.round, data_to_write, str(self.log_in_subround_serial)])
         self.log_in_subround_serial += 1
 
     def log_value(self, name, value):
@@ -205,10 +205,11 @@ class Database(object):
                                       data_to_write])
 
 
-    def _panel_log(self, variables, possessions, functions, lengths):
+    def _panel_log(self, variables, possessions, functions, lengths, serial):
         data_to_write = self._common_log(variables, possessions, functions, lengths)
-        self.database_connection.put(["snapshot_panel",
-                                      str(self.round),
+        self.database_connection.put(["log",
                                       self.group,
                                       self.id,
-                                      data_to_write])
+                                      str(self.round),
+                                      data_to_write,
+                                      serial])

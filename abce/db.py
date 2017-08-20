@@ -108,8 +108,8 @@ class Database(threading.Thread):
                                                           split_key[0], split_key[1], split_key[2], split_key[3],
                                                           individual_log[key]))
             elif msg[0] == 'log':
-                _, group, id, round, data_to_write, log_in_subround_serial = msg
-                table_name = '%s_%02i' % (group, log_in_subround_serial)
+                _, group, id, round, data_to_write, log_in_subround_or_serial = msg
+                table_name = '%s_%s' % (group, log_in_subround_or_serial)
                 data_to_write['round'] = round
                 data_to_write['id'] = id
                 try:
@@ -117,17 +117,6 @@ class Database(threading.Thread):
                 except KeyError:
                     table_log[table_name] = self.dataset_db.create_table(table_name, primary_id='index')
                     table_log[table_name].insert(data_to_write)
-
-
-            elif msg[0] == 'snapshot_panel':
-                _, round, group, id, data_to_write = msg
-                data_to_write['round'] = round
-                data_to_write['id'] = id
-                try:
-                    table_panel[group].upsert(data_to_write, ensure=True, keys=['id', 'round'])
-                except KeyError:
-                    table_panel[group] = self.dataset_db.create_table(group, primary_id='index')
-                    table_panel[group].upsert(data_to_write, ensure=True, keys=['id', 'round'])
 
             elif msg == "close":
                 break

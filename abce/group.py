@@ -24,6 +24,8 @@ class Group(object):
                         eval('lambda self=self, *argc, **kw: self.do("%s")' %
                              method))
 
+        self.panel_serial = 0
+
     def __add__(self, g):
         return Group(self.sim, self.groups + g.groups, self.agent_class)
 
@@ -34,6 +36,7 @@ class Group(object):
             return self
 
     def execute_serial(self, command, *args, **kwargs):
+        self.last_action = command
         self.sim.messagess[-2].clear()
         out_messages = self._processor_groups[0].execute(
             self.groups, command, [], args, kwargs)
@@ -42,6 +45,7 @@ class Group(object):
         return self.sim.messagess[-2]
 
     def execute_parallel(self, command, *args, **kwargs):
+        self.last_action = command
         self.sim.messagess[-2].clear()
         parameters = ((pg, self.groups, command, self.sim.messagess[pgid], args, kwargs)
                       for pgid, pg in enumerate(
@@ -55,7 +59,7 @@ class Group(object):
         return self.sim.messagess[-2]
 
     def panel_log(self, variables=[], possessions=[], func={}, len=[]):
-        self.do('_panel_log', variables, possessions, func, len)
+        self.do('_panel_log', variables, possessions, func, len, self.last_action)
 
     def agg_log(self, variables=[], possessions=[], func={}, len=[]):
         self.do('_agg_log', variables, possessions, func, len)
