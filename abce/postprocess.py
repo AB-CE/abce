@@ -5,7 +5,7 @@ import pandas as pd
 
 def to_csv(directory):
     os.chdir(directory)
-    db = sqlite3.connect('database.db')
+    db = sqlite3.connect('dataset.db')
     cursor = db.cursor()
     cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
     tables = cursor.fetchall()
@@ -18,10 +18,7 @@ def to_csv(directory):
             print("If you keep having problems email ")
             print("davoudtaghawinejad@gmail.com")
             raise
-        if 'round' in table.columns:
-            table.to_csv(table_name + '.csv', index_label='index')
-        else:
-            table.to_csv(table_name + '.csv', index_label='round')
+        table.to_csv(table_name + '.csv', index=False)
 
         if u'id' in table.columns:
             del table['id']
