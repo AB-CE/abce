@@ -41,9 +41,9 @@ class Group(object):
             self.sim.messagess[pgid].extend(messages)
         return self.sim.messagess[-2]
 
-    def execute_parallel(self, command):
+    def execute_parallel(self, command, *args, **kwargs):
         self.sim.messagess[-2].clear()
-        parameters = ((pg, self.groups, command, self.sim.messagess[pgid])
+        parameters = ((pg, self.groups, command, self.sim.messagess[pgid], args, kwargs)
                       for pgid, pg in enumerate(
             self._processor_groups))
         out = self.sim.pool.map(execute_wrapper, parameters, chunksize=1)
@@ -74,4 +74,4 @@ class Group(object):
 
 def execute_wrapper(inp):
     # processor_group.execute(self.groups, command, messages[pgid])
-    return inp[0].execute(inp[1], inp[2], inp[3])
+    return inp[0].execute(inp[1], inp[2], inp[3], inp[4], inp[5])

@@ -25,13 +25,12 @@ class Database(threading.Thread):
         threading.Thread.__init__(self)
         self.directory = directory
         self.panels = {}
-        self.aggregates = {}
         self.in_sok = in_sok
         self.data = {}
         self.trade_log = trade_log
 
         self.ex_str = {}
-        self.aggregation = {}
+        self.aggregation = defaultdict(lambda : defaultdict(OnlineVariance))
         self.round = 0
 
     def add_trade_log(self):
@@ -47,16 +46,10 @@ class Database(threading.Thread):
     def add_panel(self, group, column_names):
         self.panels['panel_' + group] = list(column_names)
 
-    def add_aggregate(self, group, column_names):
-        table_name = 'aggregate_' + group
-        self.aggregation[table_name] = OnlineVariance(len(column_names))
-        self.aggregates['aggregate_' + group] = list(column_names)
-        self.aggregates['aggregate_' + group + '_mean'] = list(column_names)
-        self.aggregates['aggregate_' + group + '_std'] = list(column_names)
-
     def run(self):
-        dataset_db = dataset.connect('sqlite:///' + self.directory + '/dataset.db')
-        sn_panel = dataset_db['sn_panel']
+        self.dataset_db = dataset.connect('sqlite:///' + self.directory + '/dataset.db')
+        table_panel = {}
+        self.table_aggregates = {}
         self.db = sqlite3.connect(self.directory + '/database.db')
         self.database = self.db.cursor()
         self.database.execute('PRAGMA synchronous=OFF')
@@ -65,6 +58,7 @@ class Database(threading.Thread):
         self.database.execute('PRAGMA temp_store=OFF')
         self.database.execute('PRAGMA default_temp_store=OFF')
         # self.database.execute('PRAGMA cache_size = -100000')
+
         if self.trade_log:
             trade_ex_str = self.add_trade_log()
         for table_name in self.panels:
@@ -77,15 +71,8 @@ class Database(threading.Thread):
             self.ex_str[table_name] = "INSERT INTO " + table_name + \
                 "(id, round, " + ','.join(list(self.panels[table_name])) + ") VALUES (%s)" % format_strings
 
-        for table_name in self.aggregates:
-            agg_str = ' FLOAT,'.join(self.aggregates[table_name]) + ' FLOAT,'
-
             create_str = "CREATE TABLE " + table_name + "(round INT, %s PRIMARY KEY(round))" % agg_str
             self.database.execute(create_str)
-
-            format_strings = ','.join(['?'] * (1 + len(self.aggregates[table_name])))
-            self.ex_str[table_name] = "INSERT INTO " + table_name + \
-                "(round, " + ','.join(list(self.aggregates[table_name])) + ") VALUES (%s)" % format_strings
 
         while True:
             try:
@@ -94,25 +81,17 @@ class Database(threading.Thread):
                 break
             except EOFError:
                 break
-            if msg == "close":
-                break
 
-            elif msg[0] == 'panel':
-                    table_name = 'panel_' + msg[1]
-                    self.write_pa(table_name, msg[2])
-
-            elif msg[0] == 'aggregate':
-                round = msg[1]
-                table_name = 'aggregate_' + msg[2]
+            if msg[0] == 'snapshot_agg':
+                _, round, group, data_to_write = msg
                 if self.round == round:
-                    self.aggregation[table_name].update(msg[3])
+                    for key, value in data_to_write.items():
+                        self.aggregation[group][key].update(value)
                 else:
-                    self.write_pa(table_name, [self.round] + self.aggregation[table_name].sum())
-                    self.write_pa(table_name + '_mean', [self.round] + self.aggregation[table_name].mean())
-                    self.write_pa(table_name + '_std', [self.round] + self.aggregation[table_name].std())
-                    self.aggregation[table_name].clear()
+                    self.make_aggregation_and_write()
                     self.round = round
-                    self.aggregation[table_name].update(msg[3])
+                    for key, value in data_to_write.items():
+                        self.aggregation[group][key].update(value)
 
             elif msg[0] == 'trade_log':
                 individual_log = msg[1]
@@ -129,7 +108,6 @@ class Database(threading.Thread):
                     data_to_write = {key: float(
                         data_to_write[key]) for key in data_to_write}
                 except TypeError:
-                    print(data_to_write)
                     raise
 
                 data_to_write['round'] = msg[3]
@@ -145,14 +123,39 @@ class Database(threading.Thread):
 
             elif msg[0] == 'snapshot_panel':
                 _, round, group, id, data_to_write = msg
-                sn_panel.insert(data_to_write)
+                data_to_write['round'] = round
+                data_to_write['id'] = id
+                try:
+                    table_panel[group].upsert(data_to_write, ensure=True, keys=['id', 'round'])
+                except KeyError:
+                    table_panel[group] = self.dataset_db.create_table(group, primary_id='index')
+                    table_panel[group].upsert(data_to_write, ensure=True, keys=['id', 'round'])
+
+            elif msg == "close":
+                break
 
             else:
                 raise Exception(
                     "abce_db error '%s' command unknown ~87" % msg)
+
         self.db.commit()
         self.db.close()
-        self.dataset_db.close()
+        self.dataset_db.commit()
+
+    def make_aggregation_and_write(self):
+        for group, table in self.aggregation.items():
+            result = {'round': self.round}
+            for key, data in table.items():
+                result[key + '_ttl'] = data.sum()
+                result[key + '_mean'] = data.mean()
+                result[key + '_std'] = data.std()
+            try:
+                self.table_aggregates[group].upsert(result, keys=['round'])
+            except KeyError:
+                self.table_aggregates[group] = self.dataset_db.create_table(
+                    'aggregate_' + group, primary_id='index')
+                self.table_aggregates[group].upsert(result, keys=['round'])
+            self.aggregation[group].clear()
 
     def write_or_update(self, table_name, data_to_write):
         insert_str = "INSERT OR IGNORE INTO " + table_name + \
