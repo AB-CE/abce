@@ -75,9 +75,10 @@ class Database(object):
                 key)): data_to_log[key] for key in data_to_log}
         except TypeError:
             data_to_write = {str(action_name): data_to_log}
-        data_to_write['id'] = self.id
+
         self.database_connection.put(
-            ["log", self.group, data_to_write, str(self.round)])
+            ["log", self.group, self.id, self.round, data_to_write, self.log_in_subround_serial])
+        self.log_in_subround_serial += 1
 
     def log_value(self, name, value):
         """ logs a value, with a name

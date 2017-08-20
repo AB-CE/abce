@@ -223,6 +223,8 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         self.round = time
         self.time = time
 
+        self.log_in_subround_serial = 0
+
     def create(self, good, quantity):
         """ creates quantity of the good out of nothing
 
