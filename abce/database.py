@@ -15,11 +15,9 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 """
-The :class:`abceagent.Agent` class is the basic class for creating your agent.
-It automatically handles the possession of goods of an agent. In order to
-produce/transforme goods you need to also subclass
-the :class:`abceagent.Firm` [1]_ or to create a consumer the
-:class:`abceagent.Household`.
+The :class:`abceagent.Agent` class is the basic class for creating your agent. It automatically handles the
+possession of goods of an agent. In order to produce/transforme goods you need to also subclass
+the :class:`abceagent.Firm` [1]_ or to create a consumer the :class:`abceagent.Household`.
 
 For detailed documentation on:
 
@@ -34,8 +32,7 @@ Messaging between agents:
 
 .. autoexception:: abce.NotEnoughGoods
 
-.. [1] or :class:`abceagent.FirmMultiTechnologies` for simulations with
-complex technologies.
+.. [1] or :class:`abceagent.FirmMultiTechnologies` for simulations with complex technologies.
 """
 from collections import OrderedDict
 
@@ -43,8 +40,8 @@ class Database(object):
     """ The database class """
 
     def log(self, action_name, data_to_log):
-        """ With log you can write the models data. Log can save variable
-        states and and the working of individual functions such as production,
+        """ With log you can write the models data. Log can save variable states
+        and and the working of individual functions such as production,
         consumption, give, but not trade(as its handled automatically).
 
         Args:
@@ -52,21 +49,21 @@ class Database(object):
                 the name of the current action/method the agent executes
 
             data_to_log:
-                a variable or a dictionary with data to log in the the
-                database
+                a variable or a dictionary with data to log in the the database
 
         Example::
 
             self.log('profit', profit)
 
-            self.log('employment_and_rent',
-                     {'employment': self.possession('LAB'),
-                      'rent': self.possession('CAP'),
-                      'composite': self.composite})
+            self.log('employment_and_rent', {'employment': self.possession('LAB'),
+                                             'rent': self.possession('CAP'), 'composite': self.composite})
 
-            self.log('production', self.produce_use_everything())
+            self.log(self.produce_use_everything())
 
         See also:
+            :meth:`~abecagent.Database.log_nested`:
+                handles nested dictianaries
+
             :meth:`~abecagent.Database.log_change`:
                 loges the change from last round
 
@@ -78,11 +75,114 @@ class Database(object):
                 key)): data_to_log[key] for key in data_to_log}
         except TypeError:
             data_to_write = {str(action_name): data_to_log}
-        self.database_connection.put(["snapshot_panel",
-                                      str(self.round),
-                                      self.group,
-                                      self.id,
-                                      data_to_write])
+        data_to_write['id'] = self.id
+        self.database_connection.put(
+            ["log", self.group, data_to_write, str(self.round)])
+
+    def log_value(self, name, value):
+        """ logs a value, with a name
+
+        Args:
+            'name'(string):
+                the name of the value/variable
+            value(int/float):
+                the variable = value to log
+        """
+        self.database_connection.put(
+            ["log", self.group, {'id': self.id, name: value}, str(self.round)])
+
+    def log_dict(self, action_name, data_to_log):
+        """ same as the log function, only that it supports nested dictionaries
+        see: :meth:`~abecagent.Database.log`.
+        """
+        data_to_write = flatten(data_to_log, '%s_' % action_name)
+        data_to_write['id'] = self.id
+        self.database_connection.put(
+            ["log", self.group, data_to_write, str(self.round)])
+
+    def log_change(self, action_name, data_to_log):
+        """ This command logs the change in the variable from the round before.
+        Important, use only once with the same action_name.
+
+        Args:
+            'name'(string):
+                the name of the current action/method the agent executes
+            data_to_log:
+                a dictianary with data for the database
+
+        Examples::
+
+            self.log_change('profit', {'money': self.possession('money')]})
+            self.log_change('inputs', {'money': self.possessions(['money', 'gold', 'CAP', 'LAB')]})
+        """
+        data_to_write = {}
+        try:
+            for key in data_to_log:
+                data_to_write['%s_change_%s' % (
+                    action_name, key)] = data_to_log[key] - self._data_to_log_1[action_name][key]
+        except KeyError:
+            for key in data_to_log:
+                data_to_write['%s_change_%s' %
+                              (action_name, key)] = data_to_log[key]
+        data_to_write['id'] = self.id
+        self.database_connection.put(
+            ["log", self.group, data_to_write, str(self.round)])
+
+        self._data_to_log_1[action_name] = data_to_log
+
+    def observe_begin(self, action_name, data_to_observe):
+        """ observe_begin and observe_end, observe the change of a variable.
+        observe_begin(...), takes a list of variables to be observed.
+        observe_end(...) writes the change in this variables into the log file
+
+        you can use nested observe_begin / observe_end combinations
+
+        Args:
+            'name'(string):
+                the name of the current action/method the agent executes
+            data_to_log:
+                a dictianary with data for the database
+
+        Example::
+
+            self.log('production', {'composite': self.composite,
+                                    self.sector: self.final_product[self.sector]})
+
+            ... different method ...
+
+            self.log('employment_and_rent', {'employment': self.possession('LAB'),
+                                            'rent': self.possession('CAP')})
+        """
+        self._data_to_observe[action_name] = data_to_observe
+
+    def observe_end(self, action_name, data_to_observe):
+        """ This command puts in a database called log, whatever values you
+        want values need to be delivered as a dictionary:
+
+        Args:
+            'name'(string):
+                the name of the current action/method the agent executes
+            data_to_log:
+                a dictianary with data for the database
+
+        Example::
+
+            self.log('production', {'composite': self.composite,
+                                    self.sector: self.final_product[self.sector]})
+
+            ... different method ...
+
+            self.log('employment_and_rent', {'employment': self.possession('LAB'),
+                                            'rent':self.possession('CAP')})
+        """
+        before = self._data_to_observe.pop(action_name)
+        data_to_write = {}
+        for key in data_to_observe:
+            data_to_write['%s_delta_%s' % (action_name, key)] = \
+                data_to_observe[key] - before[key]
+        data_to_write['id'] = self.id
+        self.database_connection.put(
+            ["log", self.group, data_to_write, str(self.round)])
 
     def _common_log(self, variables, possessions, functions, lengths):
         ret = OrderedDict()
@@ -95,7 +195,6 @@ class Database(object):
         for length in lengths:
             ret['len_' + length] = len(self.__dict__[length])
         return ret
-
 
     def _agg_log(self, variables, possessions, functions, lengths):
         data_to_write = self._common_log(variables, possessions, functions, lengths)
@@ -112,4 +211,3 @@ class Database(object):
                                       self.group,
                                       self.id,
                                       data_to_write])
-
