@@ -48,6 +48,11 @@ class Database(threading.Thread):
 
     def run(self):
         self.dataset_db = dataset.connect('sqlite:///' + self.directory + '/dataset.db')
+        self.dataset_db.query('PRAGMA synchronous=OFF')
+        self.dataset_db.query('PRAGMA journal_mode=OFF')
+        self.dataset_db.query('PRAGMA count_changes=OFF')
+        self.dataset_db.query('PRAGMA temp_store=OFF')
+        self.dataset_db.query('PRAGMA default_temp_store=OFF')
         table_panel = {}
         table_log = {}
         self.table_aggregates = {}
