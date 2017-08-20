@@ -52,16 +52,14 @@ def compare(to_compare, path, message):
 def main(processes):
     simulation = abce.Simulation(processes=processes)
 
-    simulation.aggregate('agent', variables=['i', 'r'], possessions=['money'])
-    simulation.panel('agent', variables=['i', 'r'], possessions=['money'])
 
     agents = simulation.build_agents(Agent, 'agent', 10, parameters='')
 
     for r in range(100):
         simulation.advance_round(r)
-        agents.do('go')
-        agents.aggregate()
-        agents.panel()
+        agents.go()
+        agents.agg_log(variables=['i', 'r'], possessions=['money'])
+        agents.panel_log(variables=['i', 'r'], possessions=['money'])
     simulation.finalize()
 
     if platform.system() == 'Windows':
@@ -69,18 +67,8 @@ def main(processes):
 
     compare('aggregate_agent.csv',
             simulation.path, 'aggregate logging test\t\t')
-    compare('aggregate_agent_mean.csv',
+    compare('agent.csv',
             simulation.path, 'aggregate logging test mean\t')
-    compare('aggregate_agent_std.csv',
-            simulation.path, 'aggregate logging test std\t')
-
-    compare('aggregate_log_agent.csv',
-            simulation.path, 'self.log test \t\t\t')
-    compare('log_agent.csv', simulation.path, 'self.log test\t\t\t\t')
-
-    compare('aggregate_panel_agent.csv',
-            simulation.path, 'aggregated panel logging test\t')
-    compare('panel_agent.csv', simulation.path, 'panel logging test\t\t\t')
 
 
 if __name__ == '__main__':

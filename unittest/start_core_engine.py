@@ -31,7 +31,7 @@ def main(processes, rounds):
     s.declare_round_endowment(resource='cow', units=10,
                               product='milk', groups=['all'])
     s.declare_perishable(good='labor')
-    s.panel('buy', variables=['price'])
+
     # s.declare_expiring('xcapital', 5)
     print('build Buy')
     buy = s.build_agents(Buy, 'buy', 1000, parameters={'rounds': rounds})
@@ -106,7 +106,7 @@ def main(processes, rounds):
             buy.do('two')
             buy.do('three')
             buy.do('clean_up')
-        buy.do('panel')
+        buy.panel_log(variables=['price'])
         for _ in range(5):
             sell.do('one')
             sell.do('two')
