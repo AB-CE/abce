@@ -59,9 +59,8 @@ from abce.agents import (FirmMultiTechnologies, Firm,  # noqa: F401
 from .quote import Quote  # noqa: F401
 from abce.contracts import Contracting  # noqa: F401
 import json
-from . import abcegui
 from .processorgroup import ProcessorGroup
-from .abcegui import gui  # noqa: F401
+from abce.gui import gui, display_graphs  # noqa: F401
 
 
 def execute_advance_round_wrapper(inp):
@@ -641,16 +640,6 @@ class Simulation(object):
         collected in the simulation. Shows the same output as the @gui
         decorator shows.
 
-        Args:
-
-            open (True/False):
-                whether to open a new window
-
-            new:
-                If new is 0, the url is opened in the same browser window if
-                possible. If new is 1, a new browser window is opened if
-                possible. If new is 2, a new browser page (tab) is opened
-                if possible.
 
         Example::
 
@@ -664,7 +653,7 @@ class Simulation(object):
         """
         if self._db_started:
             self.finalize()
-        abcegui.run(open=open, new=new)
+        display_graphs(self.sim_parameters)
 
 
 def _number_or_string(word):
