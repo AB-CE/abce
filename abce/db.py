@@ -137,11 +137,11 @@ class Database(threading.Thread):
                 result[key + '_mean'] = data.mean()
                 result[key + '_std'] = data.std()
             try:
-                self.table_aggregates[group].upsert(result, keys=['round'])
+                self.table_aggregates[group].insert(result)
             except KeyError:
                 self.table_aggregates[group] = self.dataset_db.create_table(
-                    'aggregate_' + group, primary_id='index')
-                self.table_aggregates[group].upsert(result, keys=['round'])
+                    'aggregate___%s' % group, primary_id='index')
+                self.table_aggregates[group].insert(result)
             self.aggregation[group].clear()
 
     def write_or_update(self, table_name, data_to_write):
