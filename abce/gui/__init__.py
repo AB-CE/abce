@@ -9,7 +9,7 @@ import flexx
 def gui(parameter_mask={}, names={}, top_bar=None, story={},
         title="Agent-Based Computational Economics",
         serve=False, runtime='browser-X', truncate_rounds=0,
-        texts=[abcedescription], pages=[]):
+        texts=[abcedescription], pages=[], histograms=None):
     """ gui is a decorator that can be used to add a graphical user interface
     to your simulation.
 
@@ -63,6 +63,11 @@ def gui(parameter_mask={}, names={}, top_bar=None, story={},
             webbrowser to start the simulation in, can be 'xui' or python's
             webbrowser module's webrowser string.
 
+        histograms:
+            specifies in which round histograms are generated. If it is
+            not specified rounds from the menu is used. If this is not
+            specified, make 'histogram' slider.
+
     Example::
 
         parameter_mask = {'name': 'name',
@@ -111,12 +116,14 @@ def gui(parameter_mask={}, names={}, top_bar=None, story={},
             flexx.config.port = 80
             app.serve(basiclayout(Form, simulation, title, top_bar,
                                   truncate_rounds,
-                                  texts=texts, pages=pages))
+                                  texts=texts, pages=pages,
+                                  histograms=histograms))
             app.start()
         else:
             app.launch(basiclayout(Form, simulation, title, top_bar,
                                    truncate_rounds,
-                                   texts=texts, pages=pages),
+                                   texts=texts, pages=pages,
+                                   histograms=histograms),
                        windowmode='maximized', runtime=runtime)
             app.run()
         return lambda _: None

@@ -1,8 +1,9 @@
 import random
 import pandas as pd
+import numpy as np
 from bokeh.plotting import figure
 from bokeh.models import Range1d, LinearAxis
-
+from bokeh.charts import Histogram
 
 COLORS = ["red", "blue", "green", "black", "purple", "pink", "yellow",
           "orange", "pink", "Brown", "Cyan", "Crimson", "DarkOrange",
@@ -91,6 +92,21 @@ def make_simple_graphs(df, filename, ignore_initial_rounds):
             titles.append(title)
             plots.append(plot)
 
+    return titles, plots
+
+
+def make_histograms(df, filename, ignore_initial_rounds):
+    df = clean_nans(df)
+    print('make_simple_graphs', filename)
+    index = df['round']
+    titles = []
+    plots = []
+    for col in df.columns:
+        if col not in ['round', 'id', 'index']:
+            title = make_title(filename, col)
+            plot = Histogram(df[col])
+            titles.append(title + ' (hist)')
+            plots.append(plot)
     return titles, plots
 
 
