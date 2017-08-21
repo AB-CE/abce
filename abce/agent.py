@@ -39,7 +39,7 @@ from abce.expiringgood import ExpiringGood
 from pprint import pprint
 import traceback
 from .inventory import Inventory
-
+import abce
 
 class DummyContracts:
     def _advance_round(self, round):
@@ -146,6 +146,14 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         except AttributeError:
             self.contracts = DummyContracts()
 
+        if hasattr(abce, 'conditional_logging'):
+            self.conditional_logging = True
+            self.log_rounds = abce.conditional_logging
+        else:
+            self.conditional_logging = False
+
+        self.log_this_round = True
+
     def init(self, parameters, agent_parameters):
         """ This method is called when the agents are build.
         It can be overwritten by the user, to initialize the agents.
@@ -224,6 +232,13 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         self.time = time
 
         self.log_in_subround_serial = 0
+
+        if self.conditional_logging:
+            if self.round in self.log_rounds:
+                print("***", self.round)
+                self.log_this_round = True
+            else:
+                self.log_this_round = False
 
     def create(self, good, quantity):
         """ creates quantity of the good out of nothing
