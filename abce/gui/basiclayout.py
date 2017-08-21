@@ -100,12 +100,7 @@ def basiclayout(Form, simulation, title, top_bar=None, story={},
                 path = newest_subdirectory('./result')
                 for filename in os.listdir(path):
                     if filename is not 'trade.csv' and filename.endswith('.csv'):
-                        try:
-                            final_values = pd.read_csv(path + filename).iloc[-1:]
-                        except pd.errors.EmptyDataError:
-                            pass
-                        else:
-                            self.graphs[filename[10:]] = self.graphs[filename[10:]].append(final_values).reset_index(drop=True)
+                        self.graphs[filename] = self.graphs[filename].append(pd.read_csv(path + filename)).reset_index(drop=True)
                 self.display_repeat_execution(self.graphs)
                 self.form.repeat_execution()
 
