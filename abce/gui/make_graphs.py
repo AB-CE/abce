@@ -1,9 +1,10 @@
 import random
 import pandas as pd
-import numpy as np
 from bokeh.plotting import figure
 from bokeh.models import Range1d, LinearAxis
 from bokeh.charts import Histogram
+from bokeh.layouts import row
+
 
 COLORS = ["red", "blue", "green", "black", "purple", "pink", "yellow",
           "orange", "pink", "Brown", "Cyan", "Crimson", "DarkOrange",
@@ -75,6 +76,7 @@ def make_simple_graphs(df, filename, ignore_initial_rounds):
     titles = []
     plots = []
     for col in df.columns:
+
         if col not in ['round', 'id', 'index']:
             title = make_title(filename, col)
             plot = figure(title=title, sizing_mode='stretch_both',
@@ -97,16 +99,29 @@ def make_simple_graphs(df, filename, ignore_initial_rounds):
 
 def make_histograms(df, filename, ignore_initial_rounds):
     df = clean_nans(df)
-    print('make_simple_graphs', filename)
-    index = df['round']
+    print('make_histograms', filename)
     titles = []
     plots = []
+    num_graphs = 1
+    if 'id' in df.columns:
+        num_graphs = min(len(set(df['id'])), 6)
+    else:
+        df['id'] = 0
     for col in df.columns:
-        if col not in ['round', 'id', 'index']:
+        if (col not in ['round', 'id', 'index']
+                and not col.endswith('_mean')
+                and not col.endswith('_std')):
             title = make_title(filename, col)
-            plot = Histogram(df[col])
+            tplot = []
+            for i in range(num_graphs):
+                # TODO number of bins = (max - min) / binwidth
+                # TODO same binwidth = 2 * IQR(x) / length(x)^(1/3)
+                # IQR = Q1 - Q3
+                plot = Histogram(df[df['id'] == i][col],
+                                 sizing_mode='stretch_both')
+                tplot.append(plot)
             titles.append(title + ' (hist)')
-            plots.append(plot)
+            plots.append(row(tplot, sizing_mode='stretch_both'))
     return titles, plots
 
 

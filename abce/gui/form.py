@@ -102,11 +102,9 @@ def form(parameters, names):
                       {'simulation_parameter': parameter})
 
         @event.connect('repeat_execution_checker.mouse_click')
-        def repeat_execution(self, *event):
+        def repeat_execution(self, event):
             parameter = self.parse_parameter()
-            if self.repeat_execution_checker.checked:
-                self.emit('repeatexecution', {'simulation_parameter': parameter})
-
+            self.emit('_repeat_execution', {'simulation_parameter': parameter})
 
         class Both:
 
@@ -132,6 +130,12 @@ def form(parameters, names):
                 if new_value < slider.min:
                     slider.min = new_value
                 slider.value = new_value
+
+        class JS:
+             @event.connect('_repeat_execution')
+             def _repeat_execution(self, event):
+                if self.repeat_execution_checker.checked:
+                    self.emit('repeatexecution', event)
     return Form
 
 

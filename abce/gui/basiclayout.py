@@ -102,7 +102,7 @@ def basiclayout(Form, simulation, title, top_bar=None, story={},
                     if filename is not 'trade.csv' and filename.endswith('.csv'):
                         self.graphs[filename] = self.graphs[filename].append(pd.read_csv(path + filename)).reset_index(drop=True)
                 self.display_repeat_execution(self.graphs)
-                self.form.repeat_execution()
+                self.form.emit('_repeat_execution', events)
 
             @self.form.connect('display_results')
             def display_results(events):
