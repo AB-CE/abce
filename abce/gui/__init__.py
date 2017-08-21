@@ -1,5 +1,5 @@
 import os
-from flexx import app, ui
+from flexx import app, ui, event
 from .basiclayout import basiclayout
 from .form import form
 from abce.gui.webtext import abcedescription
@@ -133,9 +133,10 @@ def display_graphs(parameter):
             ui.Label(text=text)
             self.btn = ui.Button(text="display")
 
-            @self.connect('btn.mouse_click')
-            def wdg(self, *event):
-                self.emit('display_results', {})
+        @event.connect('btn.mouse_click')
+        def wdg(self, *event):
+            print('__init__')
+            self.emit('display_results', {})
 
     app.launch(basiclayout(Form, None, parameter['name'], None, 0),
                runtime='browser-X')
