@@ -1,6 +1,6 @@
 import os
 import pandas as pd
-from flexx import ui
+from flexx import ui, event
 from .dockpanel import DockPanel
 from .make_graphs import (make_panel_graphs,
                           make_simple_graphs,
@@ -97,6 +97,10 @@ def basiclayout(Form, simulation, title, top_bar=None, story={},
                         self.graphs[filename[10:]] = self.graphs[filename[10:]].append(final_values).reset_index(drop=True)
                 self.display_repeat_execution(self.graphs)
                 self.form.repeat_execution()
+
+            @self.form.connect('display_results')
+            def display_results(events):
+                self.display_results(events)
 
         def display_results(self, events):
             if self.first:
