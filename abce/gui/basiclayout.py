@@ -4,14 +4,16 @@ from flexx import ui, event
 from .dockpanel import DockPanel
 from .make_graphs import (make_panel_graphs,
                           make_simple_graphs,
-                          make_aggregate_graphs)
+                          make_aggregate_graphs,
+                          make_histograms)
 from .bokehwidget import BokehWidget
 from abce.gui.webtext import abcedescription
 from collections import defaultdict
+import abce
 
 
 def basiclayout(Form, simulation, title, top_bar=None, story={},
-                texts=[abcedescription], pages=[], truncate_rounds=0):
+                texts=[abcedescription], pages=[], truncate_rounds=0, histograms=None):
     class Rex(ui.Widget):
         CSS = """
         h1, a {
@@ -82,19 +84,28 @@ def basiclayout(Form, simulation, title, top_bar=None, story={},
 
             @self.form.connect("repeatexecution")
             def _repeatexecution(events):
-                print('xx')
                 parameters = events['simulation_parameter']
                 parameters['random_seed'] = None
                 parameters['name'] = 'repeatexecution'
+                if histograms is not None:
+                    abce.conditional_logging = histograms
+                elif 'rounds' in parameters:
+                    abce.conditional_logging = [parameters['rounds'] - 1]
+                elif 'histogram' in parameters:
+                    abce.conditional_logging = [parameters['histogram']]
+                else:
+                    raise Exception("In @gui specify when histograms should be produced")
                 simulation(parameters)
+                del abce.conditional_logging
                 path = newest_subdirectory('./result')
                 for filename in os.listdir(path):
-                    if filename.startswith('aggregate_'):
-                        final_values = pd.read_csv(path + filename).iloc[-1:]
-                        print('*****')
-                        print(final_values)
-                        print('*****')
-                        self.graphs[filename[10:]] = self.graphs[filename[10:]].append(final_values).reset_index(drop=True)
+                    if filename is not 'trade.csv' and filename.endswith('.csv'):
+                        try:
+                            final_values = pd.read_csv(path + filename).iloc[-1:]
+                        except pd.errors.EmptyDataError:
+                            pass
+                        else:
+                            self.graphs[filename[10:]] = self.graphs[filename[10:]].append(final_values).reset_index(drop=True)
                 self.display_repeat_execution(self.graphs)
                 self.form.repeat_execution()
 
@@ -162,10 +173,8 @@ def basiclayout(Form, simulation, title, top_bar=None, story={},
             if self.first_repeat:
                 self.repeat_plot_widgets = []
             i = 0
-            for fn, g in graphs.items():
-                print(g)
-
-                titles, plots = make_simple_graphs(g, fn, 0, index=True)
+            for filename, data in graphs.items():
+                titles, plots = make_histograms(data, filename, 0)
 
                 if self.first_repeat:
                     with self.dp:
