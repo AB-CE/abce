@@ -121,7 +121,7 @@ class Database(threading.Thread):
             if not name in self.dataset_db:
                 table_log[name] = self.dataset_db.create_table(name, primary_id='index')
             table_log[name].insert_many(data)
-
+        self.make_aggregation_and_write()
         self.dataset_db.commit()
 
     def make_aggregation_and_write(self):

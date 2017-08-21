@@ -70,15 +70,16 @@ class Database(object):
             :meth:`~abecagent.Database.observe_begin`:
 
         """
-        try:
-            data_to_write = {'%s_%s' % (str(action_name), str(
-                key)): data_to_log[key] for key in data_to_log}
-        except TypeError:
-            data_to_write = {str(action_name): data_to_log}
+        if self.log_this_round:
+            try:
+                data_to_write = {'%s_%s' % (str(action_name), str(
+                    key)): data_to_log[key] for key in data_to_log}
+            except TypeError:
+                data_to_write = {str(action_name): data_to_log}
 
-        self.database_connection.put(
-            ["log", self.group, self.id, self.round, data_to_write, str(self.log_in_subround_serial)])
-        self.log_in_subround_serial += 1
+            self.database_connection.put(
+                ["log", self.group, self.id, self.round, data_to_write, str(self.log_in_subround_serial)])
+            self.log_in_subround_serial += 1
 
     def log_value(self, name, value):
         """ logs a value, with a name
@@ -89,17 +90,9 @@ class Database(object):
             value(int/float):
                 the variable = value to log
         """
-        self.database_connection.put(
-            ["log", self.group, {'id': self.id, name: value}, str(self.round)])
-
-    def log_dict(self, action_name, data_to_log):
-        """ same as the log function, only that it supports nested dictionaries
-        see: :meth:`~abecagent.Database.log`.
-        """
-        data_to_write = flatten(data_to_log, '%s_' % action_name)
-        data_to_write['id'] = self.id
-        self.database_connection.put(
-            ["log", self.group, data_to_write, str(self.round)])
+        if self.log_this_round:
+            self.database_connection.put(
+                ["log", self.group, {'id': self.id, name: value}, str(self.round)])
 
     def log_change(self, action_name, data_to_log):
         """ This command logs the change in the variable from the round before.
@@ -116,20 +109,21 @@ class Database(object):
             self.log_change('profit', {'money': self.possession('money')]})
             self.log_change('inputs', {'money': self.possessions(['money', 'gold', 'CAP', 'LAB')]})
         """
-        data_to_write = {}
-        try:
-            for key in data_to_log:
-                data_to_write['%s_change_%s' % (
-                    action_name, key)] = data_to_log[key] - self._data_to_log_1[action_name][key]
-        except KeyError:
-            for key in data_to_log:
-                data_to_write['%s_change_%s' %
-                              (action_name, key)] = data_to_log[key]
-        data_to_write['id'] = self.id
-        self.database_connection.put(
-            ["log", self.group, data_to_write, str(self.round)])
+        if self.log_this_round:
+            data_to_write = {}
+            try:
+                for key in data_to_log:
+                    data_to_write['%s_change_%s' % (
+                        action_name, key)] = data_to_log[key] - self._data_to_log_1[action_name][key]
+            except KeyError:
+                for key in data_to_log:
+                    data_to_write['%s_change_%s' %
+                                  (action_name, key)] = data_to_log[key]
+            data_to_write['id'] = self.id
+            self.database_connection.put(
+                ["log", self.group, data_to_write, str(self.round)])
 
-        self._data_to_log_1[action_name] = data_to_log
+            self._data_to_log_1[action_name] = data_to_log
 
     def observe_begin(self, action_name, data_to_observe):
         """ observe_begin and observe_end, observe the change of a variable.
@@ -154,7 +148,8 @@ class Database(object):
             self.log('employment_and_rent', {'employment': self.possession('LAB'),
                                             'rent': self.possession('CAP')})
         """
-        self._data_to_observe[action_name] = data_to_observe
+        if self.log_this_round:
+            self._data_to_observe[action_name] = data_to_observe
 
     def observe_end(self, action_name, data_to_observe):
         """ This command puts in a database called log, whatever values you
@@ -176,14 +171,15 @@ class Database(object):
             self.log('employment_and_rent', {'employment': self.possession('LAB'),
                                             'rent':self.possession('CAP')})
         """
-        before = self._data_to_observe.pop(action_name)
-        data_to_write = {}
-        for key in data_to_observe:
-            data_to_write['%s_delta_%s' % (action_name, key)] = \
-                data_to_observe[key] - before[key]
-        data_to_write['id'] = self.id
-        self.database_connection.put(
-            ["log", self.group, data_to_write, str(self.round)])
+        if self.log_this_round:
+            before = self._data_to_observe.pop(action_name)
+            data_to_write = {}
+            for key in data_to_observe:
+                data_to_write['%s_delta_%s' % (action_name, key)] = \
+                    data_to_observe[key] - before[key]
+            data_to_write['id'] = self.id
+            self.database_connection.put(
+                ["log", self.group, data_to_write, str(self.round)])
 
     def _common_log(self, variables, possessions, functions, lengths):
         ret = OrderedDict()
@@ -198,18 +194,20 @@ class Database(object):
         return ret
 
     def _agg_log(self, variables, possessions, functions, lengths):
-        data_to_write = self._common_log(variables, possessions, functions, lengths)
-        self.database_connection.put(["snapshot_agg",
-                                      str(self.round),
-                                      self.group,
-                                      data_to_write])
+        if self.log_this_round:
+            data_to_write = self._common_log(variables, possessions, functions, lengths)
+            self.database_connection.put(["snapshot_agg",
+                                          str(self.round),
+                                          self.group,
+                                          data_to_write])
 
 
     def _panel_log(self, variables, possessions, functions, lengths, serial):
-        data_to_write = self._common_log(variables, possessions, functions, lengths)
-        self.database_connection.put(["log",
-                                      self.group,
-                                      self.id,
-                                      str(self.round),
-                                      data_to_write,
-                                      serial])
+        if self.log_this_round:
+            data_to_write = self._common_log(variables, possessions, functions, lengths)
+            self.database_connection.put(["log",
+                                          self.group,
+                                          self.id,
+                                          str(self.round),
+                                          data_to_write,
+                                          serial])
