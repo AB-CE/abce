@@ -70,11 +70,6 @@ class BokehWidget(Widget):
         """ The Bokeh plot object to display. In JS, this prop
         provides the corresponding backbone model.
         """
-        from bokeh.models import Plot
-        if plot is None:
-            return None
-        if not isinstance(plot, Plot):
-            raise ValueError('Plot must be a Bokeh plot object.')
         # The sizing_mode is fixed by default, but that's silly
         if plot.sizing_mode == 'fixed':
             plot.sizing_mode = 'stretch_both'
