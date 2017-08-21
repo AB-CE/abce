@@ -49,6 +49,7 @@ class Database(threading.Thread):
         table_panel = {}
         table_log = {}
         current_log = defaultdict(list)
+        current_trade = []
         self.table_aggregates = {}
         self.db = sqlite3.connect(self.directory + '/database.db')
         self.database = self.db.cursor()
@@ -60,7 +61,7 @@ class Database(threading.Thread):
         # self.database.execute('PRAGMA cache_size = -100000')
 
         if self.trade_log:
-            trade_ex_str = self.add_trade_log()
+            trade_table = self.dataset_db.create_table('trade___trade', primary_id='index')
 
         while True:
             try:
@@ -82,13 +83,18 @@ class Database(threading.Thread):
                         self.aggregation[group][key].update(value)
 
             elif msg[0] == 'trade_log':
-                individual_log = msg[1]
-                round = msg[2]
-                for key in individual_log:
-                    split_key = key[:].split(',')
-                    self.database.execute(trade_ex_str % (round,
-                                                          split_key[0], split_key[1], split_key[2], split_key[3],
-                                                          individual_log[key]))
+                for (good, seller, buyer, price), quantity in msg[1].items():
+                    current_trade.append({'round': msg[2],
+                                          'good': good,
+                                          'seller': seller,
+                                          'buyer': buyer,
+                                          'price': price,
+                                          'quantity': quantity})
+                    if len(current_trade) == 1000:
+                        trade_table.insert_many(current_trade)
+                        current_trade = []
+
+
             elif msg[0] == 'log':
                 _, group, id, round, data_to_write, log_in_subround_or_serial = msg
                 table_name = 'panel___%s___%s' % (group, log_in_subround_or_serial)
