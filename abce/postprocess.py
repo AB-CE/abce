@@ -16,6 +16,7 @@ def to_csv(directory):
         table_name = table_name[0]
         table = pd.read_sql_query("SELECT * from %s" % table_name, db)
 
+
         typ = table_name.split('___')[0]
         group = table_name.split('___')[1]
         print(typ, group, table.columns)
@@ -23,8 +24,8 @@ def to_csv(directory):
             panel[group] = pd.concat([panel[group], table], axis=1)
         elif typ == 'aggregate':
             aggs[group] = pd.concat([aggs[group], table], axis=1)
-        else:
-            raise Exception(typ)
+        elif typ == 'trade':
+            table.to_csv('trade.csv', index=False)
 
     for group, df in aggs.items():
         df = df.loc[:, ~df.columns.duplicated()]

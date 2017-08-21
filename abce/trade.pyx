@@ -594,15 +594,15 @@ cdef class Trade:
 
     def _log_receive_accept_group(self, Offer offer):
         if offer.buysell == 115:
-            self._trade_log['%s,%s,%s,%f' % (offer.good, self.group, offer.receiver_group, offer.price)] += offer.quantity
+            self._trade_log[(offer.good, self.group, offer.receiver_group, offer.price)] += offer.quantity
         else:
-            self._trade_log['%s,%s,%s,%f' % (offer.good, offer.receiver_group, self.group, offer.price)] += offer.quantity
+            self._trade_log[(offer.good, offer.receiver_group, self.group, offer.price)] += offer.quantity
 
     def _log_receive_accept_agent(self, Offer offer):
         if offer.buysell == 115:
-            self._trade_log['%s,%s,%s,%f' % (offer.good, self.name_without_colon, '%s_%i' % (offer.receiver_group, offer.receiver_id), offer.price)] += offer.quantity
+            self._trade_log[(offer.good, self.name_without_colon, '%s_%i' % (offer.receiver_group, offer.receiver_id), offer.price)] += offer.quantity
         else:
-            self._trade_log['%s,%s,%s,%f' % (offer.good, '%s_%i' % (offer.receiver_group, offer.receiver_id), self.name_without_colon, offer.price)] += offer.quantity
+            self._trade_log[(offer.good, '%s_%i' % (offer.receiver_group, offer.receiver_id), self.name_without_colon, offer.price)] += offer.quantity
 
     def _receive_accept(self, offer_id_final_quantity):
         """ When the other party partially accepted the  money or good is
@@ -624,15 +624,15 @@ cdef class Trade:
 
     def _log_receive_accept_group(self, Offer offer):
         if offer.buysell == 115:
-            self._trade_log['%s,%s,%s,%f' % (offer.good, self.group, offer.receiver_group, offer.price)] += offer.final_quantity
+            self._trade_log[(offer.good, self.group, offer.receiver_group, offer.price)] += offer.final_quantity
         else:
-            self._trade_log['%s,%s,%s,%f' % (offer.good, offer.receiver_group, self.group, offer.price)] += offer.final_quantity
+            self._trade_log[(offer.good, offer.receiver_group, self.group, offer.price)] += offer.final_quantity
 
     def _log_receive_accept_agent(self, Offer offer):
         if offer.buysell == 115:
-            self._trade_log['%s,%s,%s,%f' % (offer.good, self.name_without_colon, '%s_%i' % (offer.receiver_group, offer.receiver_id), offer.price)] += offer.final_quantity
+            self._trade_log[(offer.good, self.name_without_colon, '%s_%i' % (offer.receiver_group, offer.receiver_id), offer.price)] += offer.final_quantity
         else:
-            self._trade_log['%s,%s,%s,%f' % (offer.good, '%s_%i' % (offer.receiver_group, offer.receiver_id), self.name_without_colon, offer.price)] += offer.final_quantity
+            self._trade_log[(offer.good, '%s_%i' % (offer.receiver_group, offer.receiver_id), self.name_without_colon, offer.price)] += offer.final_quantity
 
     def _receive_reject(self, offer_id):
         """ delets a given offer
