@@ -147,6 +147,11 @@ class Simulation(object):
                  trade_logging='off', processes=1):
         """
         """
+        try:
+            name = abce.simulation_name
+        except AttributeError:
+            pass
+
         self.num_of_agents_in_group = {}
         self._messages = {}
         self._resource_command_group = {}
