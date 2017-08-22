@@ -1,6 +1,8 @@
 import os
+from os.path import join
 import pandas as pd
-from flexx import ui, event
+import json
+from flexx import ui
 from .dockpanel import DockPanel
 from .make_graphs import (make_panel_graphs,
                           make_simple_graphs,
@@ -10,6 +12,7 @@ from .bokehwidget import BokehWidget
 from abce.gui.webtext import abcedescription
 from collections import defaultdict
 import abce
+from hashlib import sha1
 
 
 def basiclayout(Form, simulation, title, top_bar=None, story={},
@@ -37,7 +40,7 @@ def basiclayout(Form, simulation, title, top_bar=None, story={},
          """
 
         def init(self):
-            self.graphs = defaultdict(pd.DataFrame)
+            self.graphs = {}
             self.first = self.first_repeat = True
             with ui.BoxLayout(orientation='v',
                               style="background-color: blue;"):
@@ -60,11 +63,11 @@ def basiclayout(Form, simulation, title, top_bar=None, story={},
                     for pagetitle, page in pages:
                         ui.IFrame(url=page,
                                   title=pagetitle,
-                                  style="location: A; overflow: scroll;",)
+                                  style="location: A; overflow: scroll;")
                     self.progress_label = ui.Label(title=' ',
-                        text='Click tab, move tabs by dragging tabs, resize windows',
-                        style="location: S; overflow: scroll;",
-                        wrap=True)
+                                                   text='Click tab, move tabs by dragging tabs, resize windows',
+                                                   style="location: S; overflow: scroll;",
+                                                   wrap=True)
 
             @self.form.connect("run_simulation")
             def run_simulation(events):
@@ -84,24 +87,28 @@ def basiclayout(Form, simulation, title, top_bar=None, story={},
 
             @self.form.connect("repeatexecution")
             def _repeatexecution(events):
-                parameters = events['simulation_parameter']
-                parameters['random_seed'] = None
-                parameters['name'] = 'repeatexecution'
-                if histograms is not None:
-                    abce.conditional_logging = histograms
-                elif 'rounds' in parameters:
-                    abce.conditional_logging = [parameters['rounds'] - 1]
-                elif 'histogram' in parameters:
-                    abce.conditional_logging = [parameters['histogram']]
-                else:
-                    raise Exception("In @gui specify when histograms should be produced")
+                name, parameters = hash_simulation_parameters(events)
+                parameters['Name'] = name
+                print('name', name)
+                pool_path = join(os.path.abspath('./result/cache'), name)
+
+                if name not in self.graphs:
+                    self.graphs[name] = load_cached(pool_path, name)
+
+                switch_on_conditional_logging(parameters, histograms)
+                self.print_continuously_updating()
+                abce.simulation_name = name
                 simulation(parameters)
+                del abce.simulation_name
                 del abce.conditional_logging
-                path = newest_subdirectory('./result')
+                path = newest_subdirectory('./result', name)
                 for filename in os.listdir(path):
                     if filename is not 'trade.csv' and filename.endswith('.csv'):
-                        self.graphs[filename] = self.graphs[filename].append(pd.read_csv(path + filename)).reset_index(drop=True)
-                self.display_repeat_execution(self.graphs)
+                        self.graphs[name][filename] = self.graphs[name][filename].append(
+                            pd.read_csv(join(path, filename))).reset_index(drop=True)
+                        if len(self.graphs[name][filename]) % 10 == 0:
+                            self.graphs[name][filename].to_pickle(join(pool_path, filename))
+                self.display_repeat_execution(self.graphs[name])
                 self.form.emit('_repeat_execution', events)
 
             @self.form.connect('display_results')
@@ -115,7 +122,6 @@ def basiclayout(Form, simulation, title, top_bar=None, story={},
                 ignore_initial_rounds = int(events['ignore_initial_rounds'])
             except KeyError:
                 ignore_initial_rounds = 100
-
 
             try:
                 path = events['subdir']
@@ -185,12 +191,55 @@ def basiclayout(Form, simulation, title, top_bar=None, story={},
                         i += 1
             self.first_repeat = False
 
+        def print_continuously_updating(self):
+            self.progress_label.title = 'Continuously updating'
+            self.progress_label.text = 'Series of simulations in progress'
+
     return Rex
 
 
-def newest_subdirectory(directory='.'):
+def newest_subdirectory(directory='.', name=''):
     directory = os.path.abspath(directory)
     all_subdirs = [os.path.join(directory, name)
                    for name in os.listdir(directory)
                    if os.path.isdir(os.path.join(directory, name))]
-    return max(all_subdirs, key=os.path.getmtime) + '/'
+    all_subdirs = sorted(all_subdirs, key=os.path.getmtime, reverse=True)
+    for subdir in all_subdirs:
+        if name in subdir:
+            print('subdir', subdir)
+            return subdir + '/'
+    raise Exception()
+
+
+def hash_simulation_parameters(events):
+    parameters = events['simulation_parameter']
+    parameters['random_seed'] = None
+    parameters['Name'] = ''
+    print(json.dumps(parameters, sort_keys=True))
+    name = sha1(json.dumps(parameters, sort_keys=True).encode('utf-8')).hexdigest()
+    return name, parameters
+
+
+def load_cached(pool_path, name):
+    """ Loads a file and creates directory if file does not exist    """
+    graphs = defaultdict(pd.DataFrame)
+    try:
+        for filename in os.listdir(pool_path):
+            graphs[filename] = pd.read_pickle(join(pool_path, filename))
+    except FileNotFoundError:
+        os.makedirs(pool_path)
+    return graphs
+
+
+def switch_on_conditional_logging(parameters, histograms):
+    if histograms is not None:
+        abce.conditional_logging = histograms
+    elif 'rounds' in parameters:
+        abce.conditional_logging = [parameters['rounds'] - 1]
+    elif 'histogram' in parameters:
+        abce.conditional_logging = [parameters['histogram']]
+    else:
+        raise Exception("In @gui specify when histograms should be produced")
+
+
+
