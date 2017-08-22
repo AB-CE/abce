@@ -16,7 +16,8 @@ from hashlib import sha1
 
 
 def basiclayout(Form, simulation, title, top_bar=None, story={},
-                texts=[abcedescription], pages=[], truncate_rounds=0, histograms=None):
+                texts=[abcedescription], pages=[], truncate_rounds=0,
+                histograms=None):
     class Rex(ui.Widget):
         CSS = """
         h1, a {
@@ -64,10 +65,11 @@ def basiclayout(Form, simulation, title, top_bar=None, story={},
                         ui.IFrame(url=page,
                                   title=pagetitle,
                                   style="location: A; overflow: scroll;")
-                    self.progress_label = ui.Label(title=' ',
-                                                   text='Click tab, move tabs by dragging tabs, resize windows',
-                                                   style="location: S; overflow: scroll;",
-                                                   wrap=True)
+                    self.progress_label = ui.Label(
+                        title=' ',
+                        text='Move tabs by dragging tabs; resize windows',
+                        style="location: S; overflow: scroll;",
+                        wrap=True)
 
             @self.form.connect("run_simulation")
             def run_simulation(events):
@@ -80,7 +82,8 @@ def basiclayout(Form, simulation, title, top_bar=None, story={},
                 self.progress_label.title = 'Success'
 
                 self.display_results(events)
-                self.progress_label.text = 'Simulation succeeded, generating graphs'
+                self.progress_label.text = (
+                    'Simulation succeeded, generating graphs')
 
                 self.progress_label.title = 'Results:'
                 self.progress_label.text = 'Click left'
@@ -94,19 +97,23 @@ def basiclayout(Form, simulation, title, top_bar=None, story={},
                 if name not in self.graphs:
                     self.graphs[name] = load_cached(pool_path, name)
 
-                switch_on_conditional_logging(parameters, histograms)
                 self.print_continuously_updating()
                 abce.simulation_name = name
+                switch_on_conditional_logging(parameters, histograms)
                 simulation(parameters)
                 del abce.simulation_name
                 del abce.conditional_logging
                 path = newest_subdirectory('./result', name)
                 for filename in os.listdir(path):
-                    if filename is not 'trade.csv' and filename.endswith('.csv'):
-                        self.graphs[name][filename] = self.graphs[name][filename].append(
-                            pd.read_csv(join(path, filename))).reset_index(drop=True)
+                    if (filename is not 'trade.csv' and
+                            filename.endswith('.csv')):
+                        self.graphs[name][filename] = (
+                            self.graphs[name][filename]
+                            .append(pd.read_csv(join(path, filename)))
+                            .reset_index(drop=True))
                         if len(self.graphs[name][filename]) % 10 == 0:
-                            self.graphs[name][filename].to_pickle(join(pool_path, filename))
+                            self.graphs[name][filename].to_pickle(
+                                join(pool_path, filename))
                 number_obs = len(list(self.graphs[name].values())[0])
                 if number_obs < 12 or number_obs % 10 == 0:
                     self.display_repeat_execution(self.graphs[name])
@@ -142,7 +149,8 @@ def basiclayout(Form, simulation, title, top_bar=None, story={},
                 if ignore_initial_rounds >= rounds:
                     ignore_initial_rounds = 0
                     print('abcegui.py ignore_initial_rounds >= rounds')
-                if filename.startswith('aggregate_') or filename.startswith('aggregated_'):
+                if (filename.startswith('aggregate_') or
+                        filename.startswith('aggregated_')):
                     titles, plots = make_aggregate_graphs(
                         df, filename, ignore_initial_rounds)
                 else:
@@ -153,8 +161,8 @@ def basiclayout(Form, simulation, title, top_bar=None, story={},
                         else:
                             titles, plots = make_panel_graphs(
                                 df, filename, ignore_initial_rounds)
-                    except ValueError:
-                        print((filename, 'not displayable: ValueError'))
+                    except ValueError as e:
+                        print(filename, 'not displayable: ValueError', e)
 
                 if self.first:
                     with self.dp:
@@ -215,7 +223,8 @@ def hash_simulation_parameters(events):
     parameters = events['simulation_parameter']
     parameters['random_seed'] = None
     parameters['Name'] = ''
-    name = sha1(json.dumps(parameters, sort_keys=True).encode('utf-8')).hexdigest()
+    name = sha1(json.dumps(parameters, sort_keys=True)
+                .encode('utf-8')).hexdigest()
     return name, parameters
 
 
@@ -239,6 +248,3 @@ def switch_on_conditional_logging(parameters, histograms):
         abce.conditional_logging = [parameters['histogram']]
     else:
         raise Exception("In @gui specify when histograms should be produced")
-
-
-
