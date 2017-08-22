@@ -1,7 +1,7 @@
 import random
 import pandas as pd
 from bokeh.plotting import figure
-from bokeh.models import Range1d, LinearAxis
+from bokeh.models import Range1d, LinearAxis, Span, Label
 from bokeh.charts import Histogram
 from bokeh.layouts import row
 
@@ -117,6 +117,13 @@ def make_histograms(df, filename, ignore_initial_rounds):
             for i in range(num_graphs):
                 plot = Histogram(df[df['id'] == i][col],
                                  sizing_mode='stretch_both')
+                mean = df[df['id'] == i][col].mean()
+                line = Span(location=mean,
+                            dimension='height', line_color='blue',
+                            line_width=1)
+                plot.add_layout(line)
+                label = Label(x=mean, y=0, text='mean: %f' % mean)
+                plot.add_layout(label)
                 tplot.append(plot)
             titles.append(title + ' (hist)')
             plots.append(row(tplot, sizing_mode='stretch_both'))
