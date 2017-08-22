@@ -89,7 +89,6 @@ def basiclayout(Form, simulation, title, top_bar=None, story={},
             def _repeatexecution(events):
                 name, parameters = hash_simulation_parameters(events)
                 parameters['Name'] = name
-                print('name', name)
                 pool_path = join(os.path.abspath('./result/cache'), name)
 
                 if name not in self.graphs:
@@ -108,7 +107,9 @@ def basiclayout(Form, simulation, title, top_bar=None, story={},
                             pd.read_csv(join(path, filename))).reset_index(drop=True)
                         if len(self.graphs[name][filename]) % 10 == 0:
                             self.graphs[name][filename].to_pickle(join(pool_path, filename))
-                self.display_repeat_execution(self.graphs[name])
+                number_obs = len(list(self.graphs[name].values())[0])
+                if number_obs < 12 or number_obs % 10 == 0:
+                    self.display_repeat_execution(self.graphs[name])
                 self.form.emit('_repeat_execution', events)
 
             @self.form.connect('display_results')
@@ -206,7 +207,6 @@ def newest_subdirectory(directory='.', name=''):
     all_subdirs = sorted(all_subdirs, key=os.path.getmtime, reverse=True)
     for subdir in all_subdirs:
         if name in subdir:
-            print('subdir', subdir)
             return subdir + '/'
     raise Exception()
 
@@ -215,7 +215,6 @@ def hash_simulation_parameters(events):
     parameters = events['simulation_parameter']
     parameters['random_seed'] = None
     parameters['Name'] = ''
-    print(json.dumps(parameters, sort_keys=True))
     name = sha1(json.dumps(parameters, sort_keys=True).encode('utf-8')).hexdigest()
     return name, parameters
 
