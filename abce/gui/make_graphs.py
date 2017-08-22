@@ -21,7 +21,7 @@ def make_title(title, col):
                  .replace('_log_', '')
                  .replace('log_', '')
             + ' '
-            + col)
+            + col.replace('_ttl', ''))
 
 
 def make_aggregate_graphs(df, filename, ignore_initial_rounds):
@@ -35,6 +35,8 @@ def make_aggregate_graphs(df, filename, ignore_initial_rounds):
     titles = []
     plots = []
     for col in columns:
+        if col == 'index':
+            continue
         title = make_title(filename, col)
         plot = figure(title=title, sizing_mode='stretch_both',
                       output_backend='webgl',
@@ -76,9 +78,8 @@ def make_simple_graphs(df, filename, ignore_initial_rounds):
     titles = []
     plots = []
     for col in df.columns:
-
+        title = make_title(filename, col)
         if col not in ['round', 'id', 'index']:
-            title = make_title(filename, col)
             plot = figure(title=title, sizing_mode='stretch_both',
                           output_backend='webgl',
                           toolbar_location='below', tools=TOOLS)
@@ -108,15 +109,12 @@ def make_histograms(df, filename, ignore_initial_rounds):
     else:
         df['id'] = 0
     for col in df.columns:
-        if (col not in ['round', 'id', 'index']
+        if (col not in ['round', 'id', 'index', 'index_ttl']
                 and not col.endswith('_mean')
                 and not col.endswith('_std')):
             title = make_title(filename, col)
             tplot = []
             for i in range(num_graphs):
-                # TODO number of bins = (max - min) / binwidth
-                # TODO same binwidth = 2 * IQR(x) / length(x)^(1/3)
-                # IQR = Q1 - Q3
                 plot = Histogram(df[df['id'] == i][col],
                                  sizing_mode='stretch_both')
                 tplot.append(plot)
