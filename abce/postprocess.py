@@ -6,20 +6,18 @@ from collections import defaultdict
 
 def to_csv(directory):
     os.chdir(directory)
-    db = sqlite3.connect('dataset.db')
-    cursor = db.cursor()
+    database = sqlite3.connect('dataset.db')
+    cursor = database.cursor()
     cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
     tables = cursor.fetchall()
     panel = defaultdict(pd.DataFrame)
     aggs = defaultdict(pd.DataFrame)
     for table_name in tables:
         table_name = table_name[0]
-        table = pd.read_sql_query("SELECT * from %s" % table_name, db)
-
+        table = pd.read_sql_query("SELECT * from %s" % table_name, database)
 
         typ = table_name.split('___')[0]
         group = table_name.split('___')[1]
-        print(typ, group, table.columns)
         if typ == 'panel':
             panel[group] = pd.concat([panel[group], table], axis=1)
         elif typ == 'aggregate':
@@ -30,7 +28,6 @@ def to_csv(directory):
     for group, df in aggs.items():
         df = df.loc[:, ~df.columns.duplicated()]
         df.to_csv('aggregate_' + group + '.csv', index_label='round')
-
 
     for group, df in panel.items():
         df = df.loc[:, ~df.columns.duplicated()]

@@ -2,8 +2,8 @@
 #
 # Module Author: Davoud Taghawi-Nejad
 #
-# ABCE is open-source software. If you are using ABCE for your research you are
-# requested the quote the use of this software.
+# ABCE is open-source software. If you are using ABCE for your research you
+# are requested the quote the use of this software.
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License and quotation of the
@@ -12,15 +12,18 @@
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations under
-# the License.
+# License for the specific language governing permissions and limitations
+# under the License.
 import threading
 import sqlite3
 from collections import defaultdict
-from .online_variance import OnlineVariance
 import dataset
+from .online_variance import OnlineVariance
+
 
 class Database(threading.Thread):
+    """Separate thread that receives data from in_sok and saves it into a
+    database"""
     def __init__(self, directory, in_sok, trade_log):
         threading.Thread.__init__(self)
         self.directory = directory
@@ -30,29 +33,32 @@ class Database(threading.Thread):
         self.trade_log = trade_log
 
         self.ex_str = {}
-        self.aggregation = defaultdict(lambda : defaultdict(OnlineVariance))
+        self.aggregation = defaultdict(lambda: defaultdict(OnlineVariance))
         self.round = 0
 
     def add_trade_log(self):
         table_name = 'trade'
         self.database.execute("CREATE TABLE " + table_name +
-                              "(round INT, good VARCHAR(50), seller VARCHAR(50), buyer VARCHAR(50), price FLOAT, quantity FLOAT)")
-        return 'INSERT INTO trade (round, good, seller, buyer, price, quantity) VALUES (%i, "%s", "%s", "%s", "%s", %f)'
+                              "(round INT, good VARCHAR(50), "
+                              "seller VARCHAR(50), buyer VARCHAR(50), "
+                              "price FLOAT, quantity FLOAT)")
+        return ('INSERT INTO trade (round, good, seller, buyer, price, '
+                'quantity) VALUES (%i, "%s", "%s", "%s", "%s", %f)')
 
     def run(self):
-        self.dataset_db = dataset.connect('sqlite:///' + self.directory + '/dataset.db')
+        self.dataset_db = dataset.connect('sqlite:///%s/dataset.db' %
+                                          self.directory)
         self.dataset_db.query('PRAGMA synchronous=OFF')
         self.dataset_db.query('PRAGMA journal_mode=OFF')
         self.dataset_db.query('PRAGMA count_changes=OFF')
         self.dataset_db.query('PRAGMA temp_store=OFF')
         self.dataset_db.query('PRAGMA default_temp_store=OFF')
-        table_panel = {}
         table_log = {}
         current_log = defaultdict(list)
         current_trade = []
         self.table_aggregates = {}
-        self.db = sqlite3.connect(self.directory + '/database.db')
-        self.database = self.db.cursor()
+        self.db_direct = sqlite3.connect(self.directory + '/database.db')
+        self.database = self.db_direct.cursor()
         self.database.execute('PRAGMA synchronous=OFF')
         self.database.execute('PRAGMA journal_mode=OFF')
         self.database.execute('PRAGMA count_changes=OFF')
@@ -61,7 +67,8 @@ class Database(threading.Thread):
         # self.database.execute('PRAGMA cache_size = -100000')
 
         if self.trade_log:
-            trade_table = self.dataset_db.create_table('trade___trade', primary_id='index')
+            trade_table = self.dataset_db.create_table('trade___trade',
+                                                       primary_id='index')
 
         while True:
             try:
@@ -94,19 +101,18 @@ class Database(threading.Thread):
                         trade_table.insert_many(current_trade)
                         current_trade = []
 
-
             elif msg[0] == 'log':
-                _, group, id, round, data_to_write, log_in_subround_or_serial = msg
-                table_name = 'panel___%s___%s' % (group, log_in_subround_or_serial)
+                _, group, id, round, data_to_write, subround_or_serial = msg
+                table_name = 'panel___%s___%s' % (group, subround_or_serial)
                 data_to_write['round'] = round
                 data_to_write['id'] = id
                 current_log[table_name].append(data_to_write)
                 if len(current_log[table_name]) == 1000:
                     if table_name not in table_log:
-                        table_log[table_name] = self.dataset_db.create_table(table_name, primary_id='index')
+                        table_log[table_name] = self.dataset_db.create_table(
+                            table_name, primary_id='index')
                     table_log[table_name].insert_many(current_log[table_name])
                     current_log[table_name] = []
-
 
             elif msg == "close":
                 break
@@ -115,11 +121,12 @@ class Database(threading.Thread):
                 raise Exception(
                     "abce_db error '%s' command unknown ~87" % msg)
 
-        self.db.commit()
-        self.db.close()
+        self.db_direct.commit()
+        self.db_direct.close()
         for name, data in current_log.items():
-            if not name in self.dataset_db:
-                table_log[name] = self.dataset_db.create_table(name, primary_id='index')
+            if name not in self.dataset_db:
+                table_log[name] = self.dataset_db.create_table(
+                    name, primary_id='index')
             table_log[name].insert_many(data)
         self.make_aggregation_and_write()
         self.dataset_db.commit()
@@ -138,30 +145,3 @@ class Database(threading.Thread):
                     'aggregate___%s' % group, primary_id='index')
                 self.table_aggregates[group].insert(result)
             self.aggregation[group].clear()
-
-
-class TableMissing(sqlite3.OperationalError):
-    def __init__(self, message):
-        super(TableMissing, self).__init__(message)
-
-
-def is_convertable_to_float(x):
-    try:
-        float(x)
-    except TypeError:
-        if not(x):
-            raise TypeError
-        return False
-    return True
-
-
-def _number_or_string(word):
-    """ returns a int if possible otherwise a float from a string
-    """
-    try:
-        return int(word)
-    except ValueError:
-        try:
-            return float(word)
-        except ValueError:
-            return word

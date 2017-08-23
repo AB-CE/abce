@@ -28,18 +28,19 @@ Logging and data creation, see :doc:`Database`.
 
 Messaging between agents, see :doc:`Messaging`.
 """
+import time
+import random
 from collections import OrderedDict, defaultdict
+import traceback
+from pprint import pprint
+import abce
 from .database import Database
 from .networklogger import NetworkLogger
 from .trade import Trade
 from .messaging import Messaging
-import time
-import random
-from abce.expiringgood import ExpiringGood
-from pprint import pprint
-import traceback
+from .expiringgood import ExpiringGood
 from .inventory import Inventory
-import abce
+
 
 class DummyContracts:
     def _advance_round(self, round):
@@ -421,13 +422,3 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
                 whether the agent deletes incomming messages.
         """
         self._out[-1].append(('delete', (group_name, id, quite)))
-
-
-def flatten(d, parent_key=''):
-    items = []
-    for k, v in list(d.items()):
-        try:
-            items.extend(list(flatten(v, '%s%s_' % (parent_key, k)).items()))
-        except AttributeError:
-            items.append(('%s%s' % (parent_key, k), v))
-    return dict(items)
