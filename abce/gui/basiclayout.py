@@ -13,6 +13,7 @@ from abce.gui.webtext import abcedescription
 from collections import defaultdict
 import abce
 from hashlib import sha1
+from .loadform import LoadForm
 
 
 def basiclayout(Form, simulation, title, top_bar=None, story={},
@@ -56,6 +57,9 @@ def basiclayout(Form, simulation, title, top_bar=None, story={},
                 with DockPanel(flex=1) as self.dp:
                     self.form = Form(title='Simulation',
                                      style="location: N; overflow: scroll;")
+                    self.loadform = LoadForm(
+                                     title='Load',
+                                     style="location: A; overflow-y: scroll;")
                     for i in range(len(texts)):
                         ui.Label(title=texts[i].splitlines()[0],
                                  text='\n'.join(texts[i].splitlines()[1:]),
@@ -122,6 +126,15 @@ def basiclayout(Form, simulation, title, top_bar=None, story={},
             @self.form.connect('display_results')
             def display_results(events):
                 self.display_results(events)
+
+            @self.form.connect('update_parameter_database')
+            def _update_parameter_database(events):
+                self.loadform.update(events)
+
+            @self.loadform.connect("load")
+            def _load(event):
+                self.form.load_parameter(event)
+                self.dp.selectWidget(self.form)
 
         def display_results(self, events):
             if self.first:

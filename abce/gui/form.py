@@ -1,3 +1,4 @@
+import abce
 from flexx import ui, event
 
 
@@ -12,9 +13,9 @@ def form(parameters, names):
             self.int_sliders = set()
             self.sliders = []
 
-
             with ui.GroupWidget(title="Simulation parameter"):
-                ui.Label(text="scroll down to start",  style="float: right; color: blue", wrap=True)
+                ui.Label(text="scroll down to start",
+                         style="float: right; color: blue", wrap=True)
                 for parameter, value in list(parameters.items()):
                     try:
                         title = names[parameter]
@@ -68,7 +69,8 @@ def form(parameters, names):
 
                         elif isinstance(value, str):
                             with ui.Widget():
-                                ui.Label(text=title, wrap=True, style="width: 80%")
+                                ui.Label(text=title,
+                                         wrap=True, style="width: 80%")
                                 self.fields[parameter] = \
                                     ui.LineEdit(title=title,
                                                 text=value,
@@ -78,9 +80,20 @@ def form(parameters, names):
                             ui.Label(text=title, wrap=True)
                         else:  # field
                             raise Exception(str(value) + "not recognized")
-                self.btn = ui.Button(text="start simulation")
-                self.repeat_execution_checker = ui.CheckBox(text='repeat execution')
-
+                with ui.VBox():
+                    self.btn = ui.Button(text="start simulation")
+                    self.repeat_execution_checker = ui.ToggleButton(
+                        text='repeated execution')
+                with ui.GroupWidget(title="Save"):
+                    with ui.HBox():
+                        self.name = ui.LineEdit(title="Name:",
+                                                placeholder_text='name')
+                        self.save = ui.Button(text="Save Parameters")
+                    self.description = ui.LineEdit(
+                        title="Description",
+                        text='',
+                        style='width: 95%;',
+                        placeholder_text='description')
 
         def parse_parameter(self):
             parameter = {}
@@ -93,6 +106,35 @@ def form(parameters, names):
                 for value, checkbox in group.items():
                     if checkbox.checked:
                         parameter[parameter] = value
+            return parameter
+
+        @event.connect('save.mouse_click')
+        def _save(self, event):
+            parameter = self.parse_parameter()
+            parameter['name'] = self.name.text
+            parameter['description'] = self.description.text
+            abce.parameter_database.upsert(parameter, keys=['name'])
+            self.emit('update_parameter_database', parameter)
+
+        def load_parameter(self, event):
+            print(event)
+            parameter = abce.parameter_database.find_one(name=event['name'])
+
+            for key, element in self.fields.items():
+                if isinstance(element, ui.CheckBox):
+                    element.checked = parameter[key]
+                elif isinstance(element, ui.LineEdit):
+                    element.text = parameter[key]
+                elif isinstance(element, ui.Slider):
+                    element.value = parameter[key]
+                    self.slider_to_textfield[element].text = parameter[key]
+
+            for parameter, group in self.radio_buttons.items():
+                for value, checkbox in group.items():
+                    if parameter[parameter] == value:
+                        checkbox.checked = True
+                    else:
+                        checkbox.checked = False
             return parameter
 
         @event.connect('btn.mouse_click')
@@ -132,8 +174,8 @@ def form(parameters, names):
                 slider.value = new_value
 
         class JS:
-             @event.connect('_repeat_execution')
-             def _repeat_execution(self, event):
+            @event.connect('_repeat_execution')
+            def _repeat_execution(self, event):
                 if self.repeat_execution_checker.checked:
                     self.emit('repeatexecution', event)
     return Form
