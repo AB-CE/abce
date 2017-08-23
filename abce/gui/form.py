@@ -1,8 +1,10 @@
+"""Form to input parameters acording to the parameter_mask"""
 import abce
 from flexx import ui, event
 
 
-def form(parameters, names):
+def form(parameter_mask, names):
+    """Gererates Form class instance with parameter_mask and names"""
     class Form(ui.Widget):
         def init(self):
             self.fields = {}
@@ -16,7 +18,7 @@ def form(parameters, names):
             with ui.GroupWidget(title="Simulation parameter"):
                 ui.Label(text="scroll down to start",
                          style="float: right; color: blue", wrap=True)
-                for parameter, value in list(parameters.items()):
+                for parameter, value in list(parameter_mask.items()):
                     try:
                         title = names[parameter]
                     except KeyError:
@@ -54,18 +56,21 @@ def form(parameters, names):
                                 step = (max_value - min_value) / 100
                             with ui.Widget():
                                 ui.Label(text=title, wrap=True)
-                                s = ui.Slider(min=min_value, max=max_value,
-                                              value=default, step=step)
-                                f = ui.LineEdit(title=title, text=default)
-                                self.sliders.append((s, f))
-                            self.fields[parameter] = s
+                                slider = ui.Slider(min=min_value,
+                                                   max=max_value,
+                                                   value=default,
+                                                   step=step)
+                                lineeditor = ui.LineEdit(title=title,
+                                                         text=default)
+                                self.sliders.append((slider, lineeditor))
+                            self.fields[parameter] = slider
                             self.result_property[parameter] = 'value'
-                            s.connect('value', self.stt)
-                            f.connect('submit', self.tts)
-                            self.slider_to_textfield[s] = f
-                            self.textfield_to_slider[f] = s
+                            slider.connect('value', self.stt)
+                            lineeditor.connect('submit', self.tts)
+                            self.slider_to_textfield[slider] = lineeditor
+                            self.textfield_to_slider[lineeditor] = slider
                             if is_integer:
-                                self.int_sliders.add(s)
+                                self.int_sliders.add(slider)
 
                         elif isinstance(value, str):
                             with ui.Widget():
@@ -109,7 +114,7 @@ def form(parameters, names):
             return parameter
 
         @event.connect('save.mouse_click')
-        def _save(self, event):
+        def _save(self, events):
             parameter = self.parse_parameter()
             parameter['name'] = self.name.text
             parameter['description'] = self.description.text
@@ -117,7 +122,6 @@ def form(parameters, names):
             self.emit('update_parameter_database', parameter)
 
         def load_parameter(self, event):
-            print(event)
             parameter = abce.parameter_database.find_one(name=event['name'])
 
             for key, element in self.fields.items():
@@ -131,10 +135,7 @@ def form(parameters, names):
 
             for parameter, group in self.radio_buttons.items():
                 for value, checkbox in group.items():
-                    if parameter[parameter] == value:
-                        checkbox.checked = True
-                    else:
-                        checkbox.checked = False
+                    checkbox.checked = bool(parameter[parameter] == value)
             return parameter
 
         @event.connect('btn.mouse_click')
@@ -144,34 +145,32 @@ def form(parameters, names):
                       {'simulation_parameter': parameter})
 
         @event.connect('repeat_execution_checker.mouse_click')
-        def repeat_execution(self, event):
+        def repeat_execution(self, events):
             parameter = self.parse_parameter()
             self.emit('_repeat_execution', {'simulation_parameter': parameter})
 
-        class Both:
+        def stt(self, events):  # This is executed in python, but should
+                        # be executed in JS without server interaction
+            slider = events['source']
+            if slider in self.int_sliders:
+                self.slider_to_textfield[slider].text = int(
+                    events['new_value'])
+            else:
+                self.slider_to_textfield[slider].text = float(
+                    events['new_value'])
 
-            def stt(self, event):  # This is executed in python, but should
-                            # be executed in JS without server interaction
-                slider = event['source']
-                if slider in self.int_sliders:
-                    self.slider_to_textfield[slider].text = int(
-                        event['new_value'])
-                else:
-                    self.slider_to_textfield[slider].text = float(
-                        event['new_value'])
-
-            def tts(self, event):  # This is executed in python, but should
-                            # be executed in JS without serve interaction
-                slider = self.textfield_to_slider[event['source']]
-                if slider in self.int_sliders:
-                    new_value = int(event['source'].text)
-                else:
-                    new_value = float(event['source'].text)
-                if new_value > slider.max:
-                    slider.max = new_value
-                if new_value < slider.min:
-                    slider.min = new_value
-                slider.value = new_value
+        def tts(self, events):  # This is executed in python, but should
+                        # be executed in JS without serve interaction
+            slider = self.textfield_to_slider[events['source']]
+            if slider in self.int_sliders:
+                new_value = int(events['source'].text)
+            else:
+                new_value = float(events['source'].text)
+            if new_value > slider.max:
+                slider.max = new_value
+            if new_value < slider.min:
+                slider.min = new_value
+            slider.value = new_value
 
         class JS:
             @event.connect('_repeat_execution')
