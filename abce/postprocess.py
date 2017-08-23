@@ -27,7 +27,7 @@ def to_csv(directory):
 
     for group, df in aggs.items():
         df = df.loc[:, ~df.columns.duplicated()]
-        df.to_csv('aggregate_' + group + '.csv', index_label='round')
+        df.to_csv('aggregate_' + group + '.csv', index=False)
 
     for group, df in panel.items():
         df = df.loc[:, ~df.columns.duplicated()]

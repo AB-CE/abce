@@ -1,7 +1,5 @@
 import platform
 import abce
-import filecmp as fc
-import difflib as dl
 import pandas as pd
 import numpy as np
 
@@ -31,7 +29,7 @@ def compare(to_compare, path, message):
                           .reset_index(drop=True))
         del should_be_full['index']
         del really_is_full['index']
-    assert(should_be_full.shape == really_is_full.shape)
+    assert(should_be_full.shape == really_is_full.shape), to_compare
     if not np.isclose(should_be_full, really_is_full).all():
         # finds all lines which are different
         should_be = should_be_full[np.logical_not(
@@ -52,7 +50,6 @@ def compare(to_compare, path, message):
 def main(processes):
     simulation = abce.Simulation(processes=processes)
 
-
     agents = simulation.build_agents(Agent, 'agent', 10, parameters='')
 
     for r in range(100):
@@ -65,6 +62,8 @@ def main(processes):
     if platform.system() == 'Windows':
         simulation.path = simulation.path.replace('/', '\\')
 
+    compare('aggregated_agent.csv',
+            simulation.path, 'aggregated logging test\t\t')
     compare('aggregate_agent.csv',
             simulation.path, 'aggregate logging test\t\t')
     compare('agent.csv',
