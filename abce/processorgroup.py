@@ -28,8 +28,8 @@ class ProcessorGroup(object):
             Agent, id, agent_args, parameters, agent_parameters)
         self.agents[group].append(agent)
 
-    def make_an_agent(self, Agent, id, agent_args, parameters,
-                      agent_parameters):
+    def make_an_agent(self, Agent, id, agent_args,
+                      parameters, agent_parameters):
         agent_args['num_managers'] = self.num_managers
         agent = Agent(id=id, **agent_args)
         for good, duration in self.apfs['expiring']:
