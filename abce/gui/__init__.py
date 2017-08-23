@@ -1,4 +1,6 @@
 import os
+import abce
+import dataset
 from flexx import app, ui, event
 from .basiclayout import basiclayout
 from .form import form
@@ -110,6 +112,8 @@ def gui(parameter_mask={}, names={}, top_bar=None, story={},
         print(title)
 
     def inner(simulation):
+        database = dataset.connect('sqlite:///parameter.db')
+        abce.parameter_database = database['parameter']
         Form = form(parameter_mask, names)
         if serve:
             flexx.config.hostname = '0.0.0.0'
