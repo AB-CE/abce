@@ -1,3 +1,6 @@
+""" Describes ABCE on GUI, if no other text is given"""
+
+
 abcedescription = """ (drag me)
 <h1>ABCE a Python based modeling library for economic simulations.</h1>
 For simulations of trade, production and consumption, ABCE comes with stan

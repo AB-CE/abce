@@ -1,25 +1,32 @@
+""" A graphical user interface for ABCE simulations """
 import os
 from os.path import join
-import pandas as pd
 import json
+from hashlib import sha1
+from collections import defaultdict
+import pandas as pd
 from flexx import ui
+import abce
 from .dockpanel import DockPanel
 from .make_graphs import (make_panel_graphs,
                           make_simple_graphs,
                           make_aggregate_graphs,
                           make_histograms)
 from .bokehwidget import BokehWidget
-from abce.gui.webtext import abcedescription
-from collections import defaultdict
-import abce
-from hashlib import sha1
+from .webtext import abcedescription
 from .loadform import LoadForm
 
 
-def basiclayout(Form, simulation, title, top_bar=None, story={},
-                texts=[abcedescription], pages=[], truncate_rounds=0,
+def basiclayout(Form, simulation, title, top_bar=None, story=None,
+                texts=None, pages=None, truncate_rounds=0,
                 histograms=None):
-    class Rex(ui.Widget):
+    """ Generates the basic layout of the website  """
+    story = ({} if story is None else story)
+    pages = ({} if pages is None else pages)
+    texts = ([abcedescription] if texts is None else texts)
+
+    class ABCE(ui.Widget):
+        """ Basic layout of the website  """
         CSS = """
         h1, a {
             -webkit-margin-before: 0.20em;
@@ -54,15 +61,15 @@ def basiclayout(Form, simulation, title, top_bar=None, story={},
                     ui.Label(text=top_bar,
                              flex=0,
                              style="background-color: blue;")
-                with DockPanel(flex=1) as self.dp:
+                with DockPanel(flex=1) as self.dockpanel:
                     self.form = Form(title='Simulation',
                                      style="location: N; overflow: scroll;")
                     self.loadform = LoadForm(
-                                     title='Load',
-                                     style="location: A; overflow-y: scroll;")
-                    for i in range(len(texts)):
-                        ui.Label(title=texts[i].splitlines()[0],
-                                 text='\n'.join(texts[i].splitlines()[1:]),
+                        title='Load',
+                        style="location: A; overflow-y: scroll;")
+                    for text in texts:
+                        ui.Label(title=text.splitlines()[0],
+                                 text='\n'.join(text.splitlines()[1:]),
                                  style="location: R; overflow: scroll;",
                                  wrap=True)
                     for pagetitle, page in pages:
@@ -77,20 +84,13 @@ def basiclayout(Form, simulation, title, top_bar=None, story={},
 
             @self.form.connect("run_simulation")
             def run_simulation(events):
-
-                self.progress_label.title = 'Running...'
-                self.progress_label.text = 'Simulation in progress'
-
+                """ Runs simulation and shows results """
+                self.display_status('Running...', 'Simulation in progress')
                 simulation(events['simulation_parameter'])
-
-                self.progress_label.title = 'Success'
-
+                self.display_status('Success',
+                                    'Simulation succeeded, generating graphs')
                 self.display_results(events)
-                self.progress_label.text = (
-                    'Simulation succeeded, generating graphs')
-
-                self.progress_label.title = 'Results:'
-                self.progress_label.text = 'Click left'
+                self.display_status('Results:', 'Click left')
 
             @self.form.connect("repeatexecution")
             def _repeatexecution(events):
@@ -99,9 +99,10 @@ def basiclayout(Form, simulation, title, top_bar=None, story={},
                 pool_path = join(os.path.abspath('./result/cache'), name)
 
                 if name not in self.graphs:
-                    self.graphs[name] = load_cached(pool_path, name)
+                    self.graphs[name] = load_cached(pool_path)
 
-                self.print_continuously_updating()
+                self.display_status('Continuously updating',
+                                    'Series of simulations in progress')
                 abce.simulation_name = name
                 switch_on_conditional_logging(parameters, histograms)
                 simulation(parameters)
@@ -109,7 +110,7 @@ def basiclayout(Form, simulation, title, top_bar=None, story={},
                 del abce.conditional_logging
                 path = newest_subdirectory('./result', name)
                 for filename in os.listdir(path):
-                    if (filename is not 'trade.csv' and
+                    if (filename != 'trade.csv' and
                             filename.endswith('.csv')):
                         self.graphs[name][filename] = (
                             self.graphs[name][filename]
@@ -129,14 +130,24 @@ def basiclayout(Form, simulation, title, top_bar=None, story={},
 
             @self.form.connect('update_parameter_database')
             def _update_parameter_database(events):
+                """ Forwarder """
                 self.loadform.update(events)
 
             @self.loadform.connect("load")
             def _load(event):
                 self.form.load_parameter(event)
-                self.dp.selectWidget(self.form)
+                self.dockpanel.selectWidget(self.form)
+
+        def display_status(self, title, text):
+            """ displays status on bottom left
+            as first tab of results panel """
+            self.progress_label.title = title
+            self.progress_label.text = text
 
         def display_results(self, events):
+            """ Displays results of single simulation_name
+
+            """
             if self.first:
                 self.plot_widgets = []
             try:
@@ -154,37 +165,36 @@ def basiclayout(Form, simulation, title, top_bar=None, story={},
                 if not filename.endswith('.csv'):
                     continue
 
-                df = pd.read_csv(path + filename).ix[truncate_rounds:]
+                table = pd.read_csv(path + filename).ix[truncate_rounds:]
                 try:
-                    rounds = max(df['round'])
+                    rounds = max(table['round'])
                 except KeyError:
-                    rounds = max(df['index'])
+                    rounds = max(table['index'])
                 if ignore_initial_rounds >= rounds:
                     ignore_initial_rounds = 0
                     print('abcegui.py ignore_initial_rounds >= rounds')
                 if (filename.startswith('aggregate_') or
                         filename.startswith('aggregated_')):
                     titles, plots = make_aggregate_graphs(
-                        df, filename, ignore_initial_rounds)
+                        table, filename, ignore_initial_rounds)
                 else:
                     try:
-                        if max(df.get('id', [0])) == 0:
+                        if max(table.get('id', [0])) == 0:
                             titles, plots = make_simple_graphs(
-                                df, filename, ignore_initial_rounds)
+                                table, filename, ignore_initial_rounds)
                         else:
-                            titles, plots = make_panel_graphs(
-                                df, filename, ignore_initial_rounds)
-                    except ValueError as e:
-                        print(filename, 'not displayable: ValueError', e)
+                            titles, plots = make_panel_graphs(table, filename)
+                    except ValueError as error:
+                        print(filename, 'not displayable: ValueError', error)
 
                 if self.first:
-                    with self.dp:
+                    with self.dockpanel:
                         for plottitle, plot in zip(titles, plots):
-                            pw = BokehWidget(plot=plot,
-                                             style="location: A",
-                                             title=plottitle)
-                            self.plot_widgets.append(pw)
-                        self.dp.selectWidget(self.plot_widgets[0])
+                            plotwidget = BokehWidget(plot=plot,
+                                                     style="location: A",
+                                                     title=plottitle)
+                            self.plot_widgets.append(plotwidget)
+                        self.dockpanel.selectWidget(self.plot_widgets[0])
                 else:
                     for plot in plots:
                         self.plot_widgets[i].plot = plot
@@ -193,34 +203,32 @@ def basiclayout(Form, simulation, title, top_bar=None, story={},
             self.first = False
 
         def display_repeat_execution(self, graphs):
+            """ Displays histograms of repeat executions """
             if self.first_repeat:
                 self.repeat_plot_widgets = []
             i = 0
             for filename, data in graphs.items():
-                titles, plots = make_histograms(data, filename, 0)
+                titles, plots = make_histograms(data, filename)
 
                 if self.first_repeat:
-                    with self.dp:
+                    with self.dockpanel:
                         for plottitle, plot in zip(titles, plots):
-                            pw = BokehWidget(plot=plot,
-                                             style="location: A",
-                                             title=plottitle)
-                            self.repeat_plot_widgets.append(pw)
-                        self.dp.selectWidget(self.repeat_plot_widgets[0])
+                            plotwidget = BokehWidget(plot=plot,
+                                                     style="location: A",
+                                                     title=plottitle)
+                            self.repeat_plot_widgets.append(plotwidget)
+                        self.dockpanel.selectWidget(
+                            self.repeat_plot_widgets[0])
                 else:
                     for plot in plots:
                         self.repeat_plot_widgets[i].plot = plot
                         i += 1
             self.first_repeat = False
-
-        def print_continuously_updating(self):
-            self.progress_label.title = 'Continuously updating'
-            self.progress_label.text = 'Series of simulations in progress'
-
-    return Rex
+    return ABCE
 
 
 def newest_subdirectory(directory='.', name=''):
+    """ Returns the newes subdirectory in the 'directory/name' directory """
     directory = os.path.abspath(directory)
     all_subdirs = [os.path.join(directory, name)
                    for name in os.listdir(directory)
@@ -233,15 +241,15 @@ def newest_subdirectory(directory='.', name=''):
 
 
 def hash_simulation_parameters(events):
+    """ hashes simulation parameter, after setting random seed to None """
     parameters = events['simulation_parameter']
     parameters['random_seed'] = None
-    parameters['Name'] = ''
     name = sha1(json.dumps(parameters, sort_keys=True)
                 .encode('utf-8')).hexdigest()
     return name, parameters
 
 
-def load_cached(pool_path, name):
+def load_cached(pool_path):
     """ Loads a file and creates directory if file does not exist    """
     graphs = defaultdict(pd.DataFrame)
     try:
@@ -253,6 +261,8 @@ def load_cached(pool_path, name):
 
 
 def switch_on_conditional_logging(parameters, histograms):
+    """ Uses abce.conditional_logging, to instruct the simulation, to log
+    only at a specific point of time """
     if histograms is not None:
         abce.conditional_logging = histograms
     elif 'rounds' in parameters:
