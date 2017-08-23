@@ -49,7 +49,7 @@ def form(parameters, names):
                                 is_integer = True
                                 # if default is float, type is float
                                 if isinstance(default, float):
-                                    step = 1.
+                                    step = (max_value - min_value) / 100
                             else:
                                 step = (max_value - min_value) / 100
                             with ui.Widget():
