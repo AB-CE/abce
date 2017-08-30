@@ -48,11 +48,14 @@ def join_table(tables, group, indexes, type_, dataset):
             dataset.query("CREATE TEMPORARY TABLE temp0 AS "
                           "SELECT * FROM %s;" % table_name)
         else:
+            redundant_columns = (set(dataset[table_name].columns) &
+                                 set(dataset['temp%i' % (i - 1)].columns))
             dataset.query("CREATE TEMPORARY TABLE temp%i AS "
-                          "SELECT temp%i.*, %s "
+                          "SELECT temp%i.* %s "
                           "FROM temp%i LEFT JOIN %s using(%s)"
                           % (i, i - 1,
-                             get_str_columns(dataset, table_name),
+                             get_str_columns(dataset, table_name,
+                                             redundant_columns),
                              i - 1, table_name, indexes))
             dataset.query("DROP TABLE temp%i;" % (i - 1))
         dataset.query("DROP TABLE %s" % table_name)
@@ -72,10 +75,14 @@ def save_to_csv(prefix, group, dataset):
             outdict.writerow(row)
 
 
-def get_str_columns(dataset, table_name):
-    return ', '.join([' %s ' % c
+def get_str_columns(dataset, table_name, redundant_columns):
+    ret =  ', '.join([' %s ' % c
                       for c in dataset[table_name].columns
-                      if c not in ('index', 'id', 'round')])
+                      if c not in list(redundant_columns)])
+    if ret == '':
+        return ''
+    else:
+        return ', %s' % ret
 
 
 def get_columns(dataset, table_name):
