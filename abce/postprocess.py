@@ -17,62 +17,50 @@ def to_csv(directory, dataset):
             aggs[group].append(table_name)
 
     for group, tables in aggs.items():
-        for i, table_name in enumerate(tables):
-            if i == 0:
-                dataset.query("CREATE TEMPORARY TABLE temp0 AS "
-                              "SELECT * FROM %s;" % table_name)
-            else:
-                dataset.query("CREATE TEMPORARY TABLE temp%i AS "
-                              "SELECT temp%i.*, %s "
-                              "FROM temp%i LEFT JOIN %s using(round)"
-                              % (i, i - 1,
-                                 get_str_columns(dataset, table_name),
-                                 i, table_name))
-                dataset.query("DROP TABLE temp%i;" % (i - 1))
-            dataset.query("DROP TABLE %s" % table_name)
-
-        dataset.query("CREATE TABLE aggregate_%s AS "
-                      "SELECT * FROM temp%i" % (group, i))
-        dataset.update_table('panel_%s' % group)
-        dataset.query("DROP TABLE temp%i;" % i)
+        join_table(tables, group, 'round', 'aggregate', dataset)
 
     for group, tables in panels.items():
-        for i, table_name in enumerate(tables):
-            if i == 0:
-                dataset.query("CREATE TEMPORARY TABLE temp0 AS "
-                              "SELECT * FROM %s;" % table_name)
-            else:
-                dataset.query("CREATE TEMPORARY TABLE temp%i AS "
-                              "SELECT temp%i.*, %s "
-                              "FROM temp%i LEFT JOIN %s using(id, round)"
-                              % (i, i - 1,
-                                 get_str_columns(dataset, table_name),
-                                 i - 1, table_name))
-                dataset.query("DROP TABLE temp%i;" % (i - 1))
-            dataset.query("DROP TABLE %s" % table_name)
+        join_table(tables, group, 'id, round', 'panel', dataset)
+        create_aggregated_table(group, dataset)
+    dataset.commit()
 
-        dataset.query("CREATE TABLE panel_%s AS "
-                      "SELECT * FROM temp%i" % (group, i))
-        dataset.update_table('panel_%s' % group)
-        dataset.query("DROP TABLE temp%i;" % i)
+    for group in aggs:
+        save_to_csv('aggregate', group, dataset)
 
-        columns = ', '.join('AVG(%s) %s_mean, SUM(%s) %s_ttl' % (c, c, c, c)
-                            for c in get_columns(dataset, 'panel_%s' % group))
-        dataset.query("CREATE TABLE aggregated_%s AS "
-                      "SELECT round, %s FROM panel_%s GROUP BY round;"
-                      % (group, columns, group))
-        dataset.update_table('aggregated_%s' % group)
-        dataset.commit()
-
-        for group in aggs:
-            save_to_csv('aggregate', group, dataset)
-
-        for group in panels:
-            save_to_csv('panel', group, dataset)
-            save_to_csv('aggregated', group, dataset)
-            pass
-
+    for group in panels:
+        save_to_csv('panel', group, dataset)
+        save_to_csv('aggregated', group, dataset)
     os.chdir('../..')
+
+
+def create_aggregated_table(group, dataset):
+    columns = ', '.join('AVG(%s) %s_mean, SUM(%s) %s_ttl' % (c, c, c, c)
+                        for c in get_columns(dataset, 'panel_%s' % group))
+    dataset.query("CREATE TABLE aggregated_%s AS "
+                  "SELECT round, %s FROM panel_%s GROUP BY round;"
+                  % (group, columns, group))
+    dataset.update_table('aggregated_%s' % group)
+
+
+def join_table(tables, group, indexes, type_, dataset):
+    for i, table_name in enumerate(tables):
+        if i == 0:
+            dataset.query("CREATE TEMPORARY TABLE temp0 AS "
+                          "SELECT * FROM %s;" % table_name)
+        else:
+            dataset.query("CREATE TEMPORARY TABLE temp%i AS "
+                          "SELECT temp%i.*, %s "
+                          "FROM temp%i LEFT JOIN %s using(%s)"
+                          % (i, i - 1,
+                             get_str_columns(dataset, table_name),
+                             i - 1, table_name, indexes))
+            dataset.query("DROP TABLE temp%i;" % (i - 1))
+        dataset.query("DROP TABLE %s" % table_name)
+
+    dataset.query("CREATE TABLE %s_%s AS "
+                  "SELECT * FROM temp%i" % (type_, group, i))
+    dataset.update_table('panel_%s' % group)
+    dataset.query("DROP TABLE temp%i;" % i)
 
 
 def save_to_csv(prefix, group, dataset):
