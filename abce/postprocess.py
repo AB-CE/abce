@@ -1,6 +1,5 @@
 import os
 import sqlite3
-import pandas as pd
 from collections import defaultdict
 
 
@@ -10,52 +9,72 @@ def to_csv(directory):
     cursor = database.cursor()
     cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
     tables = cursor.fetchall()
-    panel = defaultdict(pd.DataFrame)
-    aggs = defaultdict(pd.DataFrame)
+    panels = defaultdict(list)
+    aggs = defaultdict(list)
     for table_name in tables:
         table_name = table_name[0]
-        table = pd.read_sql_query("SELECT * from %s" % table_name, database)
-
         typ = table_name.split('___')[0]
         group = table_name.split('___')[1]
         if typ == 'panel':
-            panel[group] = pd.concat([panel[group], table], axis=1)
+            panels[group].append(table_name)
         elif typ == 'aggregate':
-            aggs[group] = pd.concat([aggs[group], table], axis=1)
-        elif typ == 'trade':
-            table.to_csv('trade.csv', index=False)
+            aggs[group].append(table_name)
 
-    for group, df in aggs.items():
-        df = df.loc[:, ~df.columns.duplicated()]
-        df.to_csv('aggregate_' + group + '.csv', index=False)
+    for group, tables in aggs.items():
+        for i, table_name in enumerate(tables):
+            if i == 0:
+                cursor.execute("CREATE TEMPORARY TABLE temp0 AS "
+                               "SELECT * FROM %s;" % table_name)
+            else:
+                cursor.execute("CREATE TEMPORARY TABLE temp%i AS "
+                               "SELECT temp%i.*, %s "
+                               "FROM temp%i LEFT JOIN %s using(id, round)"
+                               % (i, i - 1,
+                                  get_str_columns(cursor, table_name),
+                                  i, table_name))
+                cursor.execute("DROP TABLE temp%i;" % (i - 1))
+            cursor.execute("DROP TABLE %s" % table_name)
 
-    for group, df in panel.items():
-        df = df.loc[:, ~df.columns.duplicated()]
-        df.to_csv(group + '.csv', index=False)
+        cursor.execute("CREATE TABLE aggregate_%s AS "
+                       "SELECT * FROM temp%i" % (group, i))
+        cursor.execute("DROP TABLE temp%i;" % i)
 
-        if u'id' in df:
-            del df['id']
-        grouped = df.groupby('round')
-        aggregated = grouped.sum()
-        aggregated.rename(
-            columns={col: col + '_ttl'
-                     for col in aggregated.columns}, inplace=True)
-        try:
-            meaned = grouped.mean()
-            meaned.rename(
-                columns={col: col + '_mean'
-                         for col in meaned.columns}, inplace=True)
-        except pd.core.groupby.DataError:
-            meaned = pd.DataFrame()
-        try:
-            std = grouped.std()
-            std.rename(
-                columns={col: col + '_std'
-                         for col in std.columns}, inplace=True)
-        except pd.core.groupby.DataError:
-            std = pd.DataFrame()
+    for group, tables in panels.items():
+        for i, table_name in enumerate(tables):
+            if i == 0:
+                cursor.execute("CREATE TEMPORARY TABLE temp0 AS "
+                               "SELECT * FROM %s;" % table_name)
+            else:
+                cursor.execute("CREATE TEMPORARY TABLE temp%i AS "
+                               "SELECT temp%i.*, %s "
+                               "FROM temp%i LEFT JOIN %s using(id, round)"
+                               % (i, i - 1,
+                                  get_str_columns(cursor, table_name),
+                                  i - 1, table_name))
+                cursor.execute("DROP TABLE temp%i;" % (i - 1))
+            cursor.execute("DROP TABLE %s" % table_name)
 
-        result = pd.concat([aggregated, meaned, std], axis=1)
-        result.to_csv('aggregated_' + group + '.csv',
-                      index_label='round')
+        cursor.execute("CREATE TABLE panel_%s AS "
+                       "SELECT * FROM temp%i" % (group, i))
+        cursor.execute("DROP TABLE temp%i;" % i)
+
+        columns = ', '.join('AVG(%s) %s_mean, SUM(%s) %s_ttl' % (c, c, c, c)
+                            for c in get_columns(cursor, 'panel_%s' % group))
+        cursor.execute("CREATE TABLE aggregated_%s AS "
+                       "SELECT round, %s FROM panel_%s GROUP BY round;"
+                       % (group, columns, group))
+        database.commit()
+
     os.chdir('../..')
+
+
+def get_str_columns(cursor, table_name):
+    cursor.execute("PRAGMA table_info('%s')" % table_name)
+    return ', '.join([' %s ' % c[1]
+                      for c in cursor
+                      if c[1] not in ('index', 'id', 'round')])
+
+
+def get_columns(cursor, table_name):
+    cursor.execute("PRAGMA table_info('%s')" % table_name)
+    return [c[1] for c in cursor if c[1] not in ('index', 'id', 'round')]
