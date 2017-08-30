@@ -50,7 +50,7 @@ class Database(threading.Thread):
         self.dataset_db = dataset.connect('sqlite:///%s/dataset.db' %
                                           self.directory)
         self.dataset_db.query('PRAGMA synchronous=OFF')
-        self.dataset_db.query('PRAGMA journal_mode=OFF')
+        #self.dataset_db.query('PRAGMA journal_mode=OFF')
         self.dataset_db.query('PRAGMA count_changes=OFF')
         self.dataset_db.query('PRAGMA temp_store=OFF')
         self.dataset_db.query('PRAGMA default_temp_store=OFF')
@@ -61,7 +61,7 @@ class Database(threading.Thread):
         self.db_direct = sqlite3.connect(self.directory + '/database.db')
         self.database = self.db_direct.cursor()
         self.database.execute('PRAGMA synchronous=OFF')
-        self.database.execute('PRAGMA journal_mode=OFF')
+        #self.database.execute('PRAGMA journal_mode=OFF')
         self.database.execute('PRAGMA count_changes=OFF')
         self.database.execute('PRAGMA temp_store=OFF')
         self.database.execute('PRAGMA default_temp_store=OFF')
