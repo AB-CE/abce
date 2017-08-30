@@ -31,7 +31,6 @@ Messaging between agents, see :doc:`Messaging`.
 import time
 import random
 from collections import OrderedDict, defaultdict
-import traceback
 from pprint import pprint
 import abce
 from .database import Database
@@ -314,8 +313,10 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
             return None
         except:
             time.sleep(random.random())
-            traceback.print_exc()
-            raise Exception()
+            print('command', command)
+            print('args', args)
+            print('kwargs', kwargs)
+            raise
 
         self.inbox.clear()
         return self._out
