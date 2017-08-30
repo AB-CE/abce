@@ -1,9 +1,6 @@
-from __future__ import division
-from __future__ import print_function
 import abce
 from tools import *
 import random
-import numpy as np
 from abce import NotEnoughGoods
 
 
