@@ -1,5 +1,6 @@
 import os
 from collections import defaultdict
+import csv
 
 
 def to_csv(directory, dataset):
@@ -32,6 +33,7 @@ def to_csv(directory, dataset):
 
         dataset.query("CREATE TABLE aggregate_%s AS "
                       "SELECT * FROM temp%i" % (group, i))
+        dataset.update_table('panel_%s' % group)
         dataset.query("DROP TABLE temp%i;" % i)
 
     for group, tables in panels.items():
@@ -51,6 +53,7 @@ def to_csv(directory, dataset):
 
         dataset.query("CREATE TABLE panel_%s AS "
                       "SELECT * FROM temp%i" % (group, i))
+        dataset.update_table('panel_%s' % group)
         dataset.query("DROP TABLE temp%i;" % i)
 
         columns = ', '.join('AVG(%s) %s_mean, SUM(%s) %s_ttl' % (c, c, c, c)
@@ -58,9 +61,27 @@ def to_csv(directory, dataset):
         dataset.query("CREATE TABLE aggregated_%s AS "
                       "SELECT round, %s FROM panel_%s GROUP BY round;"
                       % (group, columns, group))
+        dataset.update_table('aggregated_%s' % group)
         dataset.commit()
 
+        for group in aggs:
+            save_to_csv('aggregate', group, dataset)
+
+        for group in panels:
+            save_to_csv('panel', group, dataset)
+            save_to_csv('aggregated', group, dataset)
+            pass
+
     os.chdir('../..')
+
+
+def save_to_csv(prefix, group, dataset):
+    table = dataset['%s_%s' % (prefix, group)]
+    with open('%s_%s.csv' % (prefix, group), 'w') as outfile:
+        outdict = csv.DictWriter(outfile, fieldnames=table.columns)
+        outdict.writeheader()
+        for row in table:
+            outdict.writerow(row)
 
 
 def get_str_columns(dataset, table_name):
