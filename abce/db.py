@@ -19,6 +19,7 @@ import sqlite3
 from collections import defaultdict
 import dataset
 from .online_variance import OnlineVariance
+from .postprocess import to_csv
 
 
 class Database(threading.Thread):
@@ -130,6 +131,8 @@ class Database(threading.Thread):
             table_log[name].insert_many(data)
         self.make_aggregation_and_write()
         self.dataset_db.commit()
+        to_csv(self.directory, self.dataset_db)
+
 
     def make_aggregation_and_write(self):
         for group, table in self.aggregation.items():
