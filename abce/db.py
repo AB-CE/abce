@@ -47,8 +47,7 @@ class Database(threading.Thread):
                 'quantity) VALUES (%i, "%s", "%s", "%s", "%s", %f)')
 
     def run(self):
-        self.dataset_db = dataset.connect('sqlite:///%s/dataset.db' %
-                                          self.directory)
+        self.dataset_db = dataset.connect('sqlite://')
         self.dataset_db.query('PRAGMA synchronous=OFF')
         #self.dataset_db.query('PRAGMA journal_mode=OFF')
         self.dataset_db.query('PRAGMA count_changes=OFF')
@@ -58,7 +57,7 @@ class Database(threading.Thread):
         current_log = defaultdict(list)
         current_trade = []
         self.table_aggregates = {}
-        self.db_direct = sqlite3.connect(self.directory + '/database.db')
+        self.db_direct = sqlite3.connect(':memory:')
         self.database = self.db_direct.cursor()
         self.database.execute('PRAGMA synchronous=OFF')
         #self.database.execute('PRAGMA journal_mode=OFF')
