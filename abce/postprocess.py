@@ -24,7 +24,7 @@ def to_csv(directory, dataset):
             else:
                 dataset.query("CREATE TEMPORARY TABLE temp%i AS "
                               "SELECT temp%i.*, %s "
-                              "FROM temp%i LEFT JOIN %s using(id, round)"
+                              "FROM temp%i LEFT JOIN %s using(round)"
                               % (i, i - 1,
                                  get_str_columns(dataset, table_name),
                                  i, table_name))
