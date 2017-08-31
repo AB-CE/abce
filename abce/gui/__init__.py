@@ -1,19 +1,26 @@
 """ ABCE can be started with a gui or provide visual data output """
 import os
+import sys
+import json
+from subprocess import call
 import abce
 import dataset
 import flexx
 from flexx import app, ui, event
-from .basiclayout import basiclayout
-from .form import form
 from .webtext import abcedescription
+try:
+    from .basiclayout import basiclayout
+    from .form import form
+    IMPORTERROR = False
+except ImportError:
+    IMPORTERROR = True
 
 
 def gui(parameter_mask, names=None, header=None, story=None,
         title="Agent-Based Computational Economics",
         texts=None, pages=None, histograms=None,
         serve=False, runtime='browser-X', truncate_rounds=0,
-        hostname='0.0.0.0', port=80):
+        hostname='0.0.0.0', port=80, pypy=None):
     """ gui is a decorator that can be used to add a graphical user interface
     to your simulation.
 
@@ -81,6 +88,11 @@ def gui(parameter_mask, names=None, header=None, story=None,
         port:
             Port if serve is active, defaults to 80
 
+        pypy:
+            Name of the pypy interpreter to run ABCE super fast. e.G. 'pypy' or
+            'pypy3'. The mainfile needs to be run with cpython e.G.:
+            :code:`python3 start.py`
+
     Example::
 
         parameter_mask = {'name': 'name',
@@ -129,24 +141,36 @@ def gui(parameter_mask, names=None, header=None, story=None,
         print(title)
 
     def inner(simulation):
-        database = dataset.connect('sqlite:///parameter.db')
-        abce.parameter_database = database['parameter']
-        Form = form(parameter_mask, names)
-        if serve:
-            flexx.config.hostname = hostname
-            flexx.config.port = port
-            app.serve(basiclayout(Form, simulation, title, header,
-                                  truncate_rounds,
-                                  texts=texts, pages=pages,
-                                  histograms=histograms))
-            app.start()
+        if not IMPORTERROR:
+            if pypy is not None:
+                def simulation(parameters):
+                    print("CALLING PYPY")
+                    call([pypy,
+                          sys.argv[0],
+                          json.dumps(parameters),
+                          abce.simulation_name])
+            database = dataset.connect('sqlite:///parameter.db')
+            abce.parameter_database = database['parameter']
+            Form = form(parameter_mask, names)  # pylint: disable=C0103
+            if serve:
+                flexx.config.hostname = hostname
+                flexx.config.port = port
+                app.serve(basiclayout(Form, simulation, title, header,
+                                      truncate_rounds,
+                                      texts=texts, pages=pages,
+                                      histograms=histograms))
+                app.start()
+            else:
+                app.launch(basiclayout(Form, simulation, title, header,
+                                       truncate_rounds,
+                                       texts=texts, pages=pages,
+                                       histograms=histograms),
+                           windowmode='maximized', runtime=runtime)
+                app.run()
         else:
-            app.launch(basiclayout(Form, simulation, title, header,
-                                   truncate_rounds,
-                                   texts=texts, pages=pages,
-                                   histograms=histograms),
-                       windowmode='maximized', runtime=runtime)
-            app.run()
+            print("RUN PYPY")
+            abce.simulation_name = sys.argv[2]
+            simulation(json.loads(sys.argv[1]))
         return lambda _: None
     return inner
 
