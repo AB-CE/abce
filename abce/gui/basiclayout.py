@@ -86,11 +86,14 @@ def basiclayout(Form, simulation, title, top_bar=None, story=None,
             def run_simulation(events):
                 """ Runs simulation and shows results """
                 self.display_status('Running...', 'Simulation in progress')
-                simulation(events['simulation_parameter'])
+                abce.simulation_name, parameters = (
+                    hash_simulation_parameters(events))
+                simulation(parameters)
                 self.display_status('Success',
                                     'Simulation succeeded, generating graphs')
-                self.display_results(events)
+                self.display_results(events, abce.simulation_name)
                 self.display_status('Results:', 'Click left')
+                del abce.simulation_name
 
             @self.form.connect("repeatexecution")
             def _repeatexecution(events):
@@ -126,7 +129,8 @@ def basiclayout(Form, simulation, title, top_bar=None, story=None,
 
             @self.form.connect('display_results')
             def display_results(events):
-                self.display_results(events)
+                """ Forwarder """
+                self.display_results(events, events['simulation_name'])
 
             @self.form.connect('update_parameter_database')
             def _update_parameter_database(events):
@@ -144,7 +148,7 @@ def basiclayout(Form, simulation, title, top_bar=None, story=None,
             self.progress_label.title = title
             self.progress_label.text = text
 
-        def display_results(self, events):
+        def display_results(self, events, simulation_name):
             """ Displays results of single simulation_name
 
             """
@@ -158,7 +162,7 @@ def basiclayout(Form, simulation, title, top_bar=None, story=None,
             try:
                 path = events['subdir']
             except KeyError:
-                path = newest_subdirectory('./result')
+                path = newest_subdirectory('./result', simulation_name)
 
             i = 0
             for filename in os.listdir(path):
