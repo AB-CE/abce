@@ -47,7 +47,6 @@ from multiprocessing.managers import BaseManager
 import queue
 import abce.db
 import abce.abcelogger
-from . import postprocess
 from .agent import Agent, Trade  # noqa: F401
 from .group import Group
 from collections import defaultdict, OrderedDict
@@ -60,7 +59,7 @@ from .quote import Quote  # noqa: F401
 from abce.contracts import Contracting  # noqa: F401
 import json
 from .processorgroup import ProcessorGroup
-from abce.gui import gui, display_graphs, app  # noqa: F401
+from abce.gui import gui, graphs  # noqa: F401
 
 
 def execute_advance_round_wrapper(inp):
@@ -655,7 +654,7 @@ class Simulation(object):
         """
         if self._db_started:
             self.finalize()
-        display_graphs(self.sim_parameters)
+        graphs(self.sim_parameters)
 
 
 def _number_or_string(word):
