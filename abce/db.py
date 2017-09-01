@@ -14,11 +14,14 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations under
 # the License.
+
 import threading
 from collections import defaultdict
 import dataset
 from .online_variance import OnlineVariance
-from postprocess import to_csv
+from .postprocess import to_csv
+
+]]
 
 class Database(threading.Thread):
     """Separate thread that receives data from in_sok and saves it into a
@@ -45,28 +48,16 @@ class Database(threading.Thread):
                 'quantity) VALUES (%i, "%s", "%s", "%s", "%s", %f)')
 
     def run(self):
-        self.db = sqlite3.connect(':memory:')
-        self.database = self.db.cursor()
-        self.database.execute('PRAGMA synchronous=OFF')
-        self.database.execute('PRAGMA journal_mode=OFF')
-        self.database.execute('PRAGMA count_changes=OFF')
-        self.database.execute('PRAGMA temp_store=OFF')
-        self.database.execute('PRAGMA default_temp_store=OFF')
-        # self.database.execute('PRAGMA cache_size = -100000')
-        if self.trade_log:
-            trade_ex_str = self.add_trade_log()
-        for table_name in self.panels:
-            panel_str = ' FLOAT,'.join(self.panels[table_name]) + ' FLOAT,'
-
-            create_str = "CREATE TABLE " + table_name + "(id INT, round INT, %s PRIMARY KEY(round, id))" % panel_str
-            self.database.execute(create_str)
-
-            format_strings = ','.join(['?'] * (2 + len(self.panels[table_name])))
-            self.ex_str[table_name] = "INSERT INTO " + table_name + \
-                "(id, round, " + ','.join(list(self.panels[table_name])) + ") VALUES (%s)" % format_strings
-
-        for table_name in self.aggregates:
-            agg_str = ' FLOAT,'.join(self.aggregates[table_name]) + ' FLOAT,'
+        self.dataset_db = dataset.connect('sqlite://')
+        self.dataset_db.query('PRAGMA synchronous=OFF')
+        # self.dataset_db.query('PRAGMA journal_mode=OFF')
+        self.dataset_db.query('PRAGMA count_changes=OFF')
+        self.dataset_db.query('PRAGMA temp_store=OFF')
+        self.dataset_db.query('PRAGMA default_temp_store=OFF')
+        table_log = {}
+        current_log = defaultdict(list)
+        current_trade = []
+        self.table_aggregates = {}
 
         if self.trade_log:
             trade_table = self.dataset_db.create_table('trade___trade',
@@ -77,6 +68,7 @@ class Database(threading.Thread):
                 msg = self.in_sok.get()
             except KeyboardInterrupt:
                 to_csv(self.directory, self.db)
+
                 break
             except EOFError:
                 to_csv(self.directory, self.db)
@@ -84,10 +76,6 @@ class Database(threading.Thread):
             if msg == "close":
                 to_csv(self.directory, self.db)
                 break
-
-            elif msg[0] == 'panel':
-                    table_name = 'panel_' + msg[1]
-                    self.write_pa(table_name, msg[2])
 
             if msg[0] == 'snapshot_agg':
                 _, round, group, data_to_write = msg
@@ -124,121 +112,35 @@ class Database(threading.Thread):
                             table_name, primary_id='index')
                     table_log[table_name].insert_many(current_log[table_name])
                     current_log[table_name] = []
-
             elif msg == "close":
                 break
-
-                data_to_write['round'] = msg[3]
-                table_name = 'log_' + group_name
-                try:
-                    self.write_or_update(table_name, data_to_write)
-                except TableMissing:
-                    self.add_log(group_name)
-                    self.write(table_name, data_to_write)
-                except sqlite3.InterfaceError:
-                    raise Exception(
-                        'InterfaceError: data can not be written. '
-                        'If nested try: self.log_nested')
             else:
                 raise Exception(
                     "abce_db error '%s' command unknown ~87" % msg)
-        self.db.commit()
-        self.db.close()
 
-    def write_or_update(self, table_name, data_to_write):
-        insert_str = "INSERT OR IGNORE INTO " + table_name + \
-            "(" + ','.join(list(data_to_write.keys())) + ") VALUES (%s);"
-        update_str = "UPDATE " + table_name + \
-            " SET %s  WHERE CHANGES()=0 and round=%s and id=%s;"
-        update_str = update_str % (','.join('%s=?' % key
-                                   for key in data_to_write),
-                                   data_to_write['round'],
-                                   data_to_write['id'])
-        rows_to_write = list(data_to_write.values())
-        format_strings = ','.join(['?'] * len(rows_to_write))
-        try:
-            self.database.execute(insert_str % format_strings, rows_to_write)
-        except sqlite3.OperationalError as e:
-            errormsg = str(e)
-            if 'no such table' in errormsg:
-                raise TableMissing(table_name)
-            if not('has no column named' in errormsg):
-                raise
-            self.new_column(table_name, data_to_write)
-            self.write_or_update(table_name, data_to_write)
-        self.database.execute(update_str, rows_to_write)
+        for name, data in current_log.items():
+            if name not in self.dataset_db:
+                table_log[name] = self.dataset_db.create_table(
+                    name, primary_id='index')
+            table_log[name].insert_many(data)
+        self.make_aggregation_and_write()
+        if self.trade_log:
+            trade_table.insert_many(current_trade)
+        self.dataset_db.commit()
+        to_csv(self.directory, self.dataset_db)
 
-    def write_pa(self, table_name, rows_to_write):
-        self.database.execute(self.ex_str[table_name], rows_to_write)
-
-    def write(self, table_name, data_to_write):
-        try:
-            ex_str = "INSERT INTO " + table_name + \
-                "(" + ','.join(list(data_to_write.keys())) + ") VALUES (%s)"
-        except TypeError:
-            raise TypeError("good names must be strings",
-                            list(data_to_write.keys()))
-        rows_to_write = list(data_to_write.values())
-        format_strings = ','.join(['?'] * len(rows_to_write))
-        try:
-            self.database.execute(ex_str % format_strings, rows_to_write)
-        except sqlite3.OperationalError as e:
-            errormsg = str(e)
-            if 'no such table' in errormsg:
-                raise TableMissing(table_name)
-            if not('has no column named' in errormsg):
-                raise
-            self.new_column(table_name, data_to_write)
-            self.write(table_name, data_to_write)
-        except sqlite3.InterfaceError:
-            print((ex_str % format_strings, rows_to_write))
-            raise
-
-    def new_column(self, table_name, data_to_write):
-        rows_to_write = list(data_to_write.values())
-        self.database.execute("PRAGMA table_info(%s)" % table_name)
-        existing_columns = [row[1] for row in self.database]
-        new_columns = set(data_to_write.keys()).difference(existing_columns)
-        for column in new_columns:
+    def make_aggregation_and_write(self):
+        for group, table in self.aggregation.items():
+            result = {'round': self.round}
+            for key, data in table.items():
+                result[key + '_ttl'] = data.sum()
+                result[key + '_mean'] = data.mean()
+                result[key + '_std'] = data.std()
             try:
-                if is_convertable_to_float(data_to_write[column]):
-                    self.database.execute(" ALTER TABLE %s ADD %s FLOAT;"
-                                          % (table_name, column))
-                else:
-                    self.database.execute(
-                        " ALTER TABLE %s ADD %s VARCHAR(50);"
-                        % (table_name, column))
-            except TypeError:
-                rows_to_write.remove(data_to_write[column])
-                del data_to_write[column]
+                self.table_aggregates[group].insert(result)
+            except KeyError:
+                self.table_aggregates[group] = self.dataset_db.create_table(
+                    'aggregate___%s' % group, primary_id='index')
+                self.table_aggregates[group].insert(result)
+            self.aggregation[group].clear()
 
-    def aggregate(self, table_name, data):
-        for key in data:
-            self.data[table_name][key].append(data[key])
-
-
-class TableMissing(sqlite3.OperationalError):
-    def __init__(self, message):
-        super(TableMissing, self).__init__(message)
-
-
-def is_convertable_to_float(x):
-    try:
-        float(x)
-    except TypeError:
-        if not(x):
-            raise TypeError
-        return False
-    return True
-
-
-def _number_or_string(word):
-    """ returns a int if possible otherwise a float from a string
-    """
-    try:
-        return int(word)
-    except ValueError:
-        try:
-            return float(word)
-        except ValueError:
-            return word

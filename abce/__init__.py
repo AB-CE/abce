@@ -346,7 +346,7 @@ class Simulation(object):
 
     def panel(self, group, possessions=None, variables=None):
         print("simulation.panel removed. Use agent group's panel_log function")
-        
+
     def aggregate(self, group, possessions=None, variables=None):
         print("simulation.panel removed. Use agent group's agg_log function")
 

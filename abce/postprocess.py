@@ -3,45 +3,33 @@ from collections import defaultdict
 import csv
 
 
-def to_csv(directory, db):
+
+def to_csv(directory, dataset):
     os.chdir(directory)
-    cursor = db.cursor()
-    cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
-    tables = cursor.fetchall()
+    tables = dataset.tables
+    panels = defaultdict(list)
+    aggs = defaultdict(list)
     for table_name in tables:
-        table_name = table_name[0]
-        try:
-            table = pd.read_sql_query("SELECT * from %s" % table_name, db)
-        except:
-            raise Exception("your pip installation is not up to date.")
+        typ = table_name.split('___')[0]
+        group = table_name.split('___')[1]
+        if typ == 'panel':
+            panels[group].append(table_name)
+        elif typ == 'aggregate':
+            aggs[group].append(table_name)
+        elif typ == 'trade':
+            print([ds for ds in dataset[table_name].all()][0])
+            save_to_csv('trade_', '_trade', dataset)
 
-        if 'round' in table.columns:
-            table.to_csv(table_name + '.csv', index_label='index')
-        else:
-            table.to_csv(table_name + '.csv', index_label='round')
+    for group, tables in aggs.items():
+        join_table(tables, group, 'round', 'aggregate', dataset)
 
-        if u'id' in table.columns:
-            del table['id']
-            grouped = table.groupby('round')
-            aggregated = grouped.sum()
-            try:
-                meaned = grouped.mean()
-                meaned.rename(
-                    columns={col: col + '_mean'
-                             for col in meaned.columns}, inplace=True)
-            except pd.core.groupby.DataError:
-                meaned = pd.DataFrame()
-            try:
-                std = grouped.std()
-                std.rename(
-                    columns={col: col + '_std'
-                             for col in std.columns}, inplace=True)
-            except pd.core.groupby.DataError:
-                std = pd.DataFrame()
+    for group, tables in panels.items():
+        join_table(tables, group, 'id, round', 'panel', dataset)
+        create_aggregated_table(group, dataset)
+    dataset.commit()
 
-            result = pd.concat([aggregated, meaned, std], axis=1)
-            result.to_csv('aggregate_' + table_name + '.csv',
-                          index_label='round', date_format='%Y-%m-%d')
+    for group in aggs:
+        save_to_csv('aggregate', group, dataset)
 
     for group in panels:
         save_to_csv('panel', group, dataset)

@@ -89,7 +89,6 @@ copy or clone your ABCE simulation into the ~/myproject directory the easiest wa
     git clone https://github.com/your_name/myproject.git
 
 
-
 start simulation with nohup::
 
     cd myproject

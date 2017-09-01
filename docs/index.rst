@@ -24,7 +24,6 @@ Introduction
    introduction
    installation
    jupyter_tutorial
-
    Walk_through
    tutorial
    examples
