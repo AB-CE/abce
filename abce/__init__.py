@@ -160,10 +160,6 @@ class Simulation(object):
         self.resource_endowment = defaultdict(list)
         self.perishable = []
         self.expiring = []
-        self.variables_to_track_panel = defaultdict(list)
-        self.variables_to_track_aggregate = defaultdict(list)
-        self.possessins_to_track_panel = defaultdict(list)
-        self.possessions_to_track_aggregate = defaultdict(list)
         self._start_round = 0
         self.round = int(self._start_round)
         # this is default value as declared in self.network() method
@@ -348,85 +344,12 @@ class Simulation(object):
             human_or_other_resource, units, service, groups)
         self.declare_perishable(service)
 
-    def panel(self, group, possessions=[], variables=[]):
-        """ panel(.) writes a panel of variables and possessions
-            of a group of agents into the database, so that it is displayed
-            in the gui. Aggregate must be declared before the agents are
-            build. ('agent_group', 'panel') must be in the action_list, so
-            that the simulation knows when to make the aggregate snapshot.
-
-            Args:
-                group:
-                    can be either a group or 'all' for all agents
-                possessions (list, optional):
-                    a list of all possessions you want to track as 'strings'
-                variables (list, optional):
-                    a list of all variables you want to track as 'strings'
-
-        Example in start.py::
-
-            simulation_parameters.build_agents(Firm, 'firm', number=5)
-
-            ...
-
-            simulation.panel('firm', possessions=['money', 'input'],
-                             variables=['production_target', 'gross_revenue'])
-
-            for round in simulation.next_round():
-                firms.do('produce_and_sell)
-                firms.do('panel')
-                households.do('buying')
-        """
-        if self.num_of_agents_in_group:
-            raise Exception(
-                "WARNING: panel(...) must be called before the agents are "
-                "build")
-        self._db.add_panel(group, possessions + variables)
-        self.variables_to_track_panel[group] = variables
-        self.possessins_to_track_panel[group] = possessions
-
-    def aggregate(self, group, possessions=[], variables=[]):
-        """ aggregate(.) writes summary statistics of variables and
-        possessions of a group of agents into the database, so that it is
-        displayed in the gui. Aggregate must be declared before the agents
-        are build. ('agent_group', 'aggregate') must be in the action_list,
-        so that the simulation knows when to make the aggregate snapshot.
+    def panel(self, group, possessions=None, variables=None):
+        print("simulation.panel removed. Use agent group's panel_log function")
 
 
-            Args:
-                group:
-                    can be either a group or 'all' for all agents
-                possessions (list, optional):
-                    a list of all possessions you want to track as 'strings'
-                variables (list, optional):
-                    a list of all variables you want to track as 'strings'
-
-        Example in start.py::
-
-
-            simulation_parameters.build_agents(Firm, 'firm', number=5)
-
-            ...
-
-            simulation.aggregate('firm', possessions=['money', 'input'],
-                                 variables=['production_target',
-                                            'gross_revenue'])
-
-            for round in simulation.next_round():
-                firms.produce_and_sell()
-                firms.aggregate()
-                households.buying()
-
-
-
-        """
-        if self.num_of_agents_in_group:
-            raise Exception(
-                "WARNING: aggregate(...) must be called before the agents "
-                "are build")
-        self._db.add_aggregate(group, possessions + variables)
-        self.variables_to_track_aggregate[group] = variables
-        self.possessions_to_track_aggregate[group] = possessions
+    def aggregate(self, group, possessions=None, variables=None):
+        print("simulation.panel removed. Use agent group's agg_log function")
 
     def network(self, frequency=1, savefig=False, savegml=True,
                 figsize=(24, 20), dpi=100, pos_fixed=False, alpha=0.8):
@@ -479,6 +402,8 @@ class Simulation(object):
 
     def __del__(self):
         self.finalize()
+
+
 
     def finalize(self):
         """ simulation.finalize() must be run after each simulation. It will

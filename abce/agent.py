@@ -327,14 +327,6 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
     def _register_perish(self, good):
         self._haves._perishable.append(good)
 
-    def _register_panel(self, possessions, variables):
-        self.possessions_to_track_panel = possessions
-        self.variables_to_track_panel = variables
-
-    def _register_aggregate(self, possessions, variables):
-        self.possessions_to_track_aggregate = possessions
-        self.variables_to_track_aggregate = variables
-
     def panel(self):
         """ use in action list to create panel data """
         data_to_send = [self.id, self.round]

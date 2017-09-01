@@ -19,10 +19,9 @@ class Group(object):
         for base in agent_class.__bases__:
             methods += get_methods(base)
         for method in methods:
-            if method not in ['panel', 'aggregate']:
-                setattr(self, method,
-                        eval('lambda self=self, *argc, **kw: self.do("%s")' %
-                             method))
+            setattr(self, method,
+                    eval('lambda self=self, *argc, **kw: self.do("%s")' %
+                         method))
 
         self.panel_serial = 0
 
