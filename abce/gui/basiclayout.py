@@ -19,7 +19,7 @@ from .loadform import LoadForm
 
 def basiclayout(Form, simulation, title, top_bar=None, story=None,
                 texts=None, pages=None, truncate_rounds=0,
-                histograms=None):
+                histograms=None, graphs=False):
     """ Generates the basic layout of the website  """
     story = ({} if story is None else story)
     pages = ({} if pages is None else pages)
@@ -82,6 +82,10 @@ def basiclayout(Form, simulation, title, top_bar=None, story=None,
                         style="location: S; overflow: scroll;",
                         wrap=True)
 
+            if graphs:
+                self.display_results({'simulation_name': ''}, '')
+
+
             @self.form.connect("run_simulation")
             def run_simulation(events):
                 """ Runs simulation and shows results """
@@ -128,7 +132,7 @@ def basiclayout(Form, simulation, title, top_bar=None, story=None,
                 self.form.emit('_repeat_execution', events)
 
             @self.form.connect('display_results')
-            def display_results(events):
+            def display_results(events): # pylint: disable=W0612
                 """ Forwarder """
                 self.display_results(events, events['simulation_name'])
 
@@ -148,10 +152,8 @@ def basiclayout(Form, simulation, title, top_bar=None, story=None,
             self.progress_label.title = title
             self.progress_label.text = text
 
-        def display_results(self, events, simulation_name):
-            """ Displays results of single simulation_name
-
-            """
+        def display_results(self, events, simulation_name):  # pylint: disable=R0912
+            """ Displays results of single simulation_name """
             if self.first:
                 self.plot_widgets = []
             try:
