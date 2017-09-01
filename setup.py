@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 import platform
 
-from setuptools import setup
-from setuptools import Extension
+from distutils.core import setup
+from distutils.extension import Extension
 
 
 cmdclass = {}
@@ -38,7 +38,7 @@ except ImportError:
 
 try:
     setup(name='abce',
-          version='0.7.0a0',
+          version='0.8.0a0',
           author='Davoud Taghawi-Nejad',
           author_email='Davoud@Taghawi-Nejad.de',
           description='Agent-Based Complete Economy modelling platform',
@@ -55,7 +55,7 @@ try:
           cmdclass=cmdclass)
 except:
     setup(name='abce',
-          version='0.7.0a0',
+          version='0.8.0a0',
           author='Davoud Taghawi-Nejad',
           author_email='Davoud@Taghawi-Nejad.de',
           description='Agent-Based Complete Economy modelling platform',
