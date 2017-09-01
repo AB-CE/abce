@@ -45,8 +45,8 @@ def form(parameter_mask, names):
 
                         is_integer = False
                         if isinstance(value, (int, float, tuple)):
-                            if (isinstance(default, int)
-                                    and isinstance(max_value, int)):
+                            if (isinstance(default, int) and
+                                    isinstance(max_value, int)):
                                 step = 1
                                 is_integer = True
                                 # if default is float, type is float
@@ -184,5 +184,5 @@ def assert_all_of_the_same_type(values):
     for item in values:
         if isinstance(item, type(values[0])):
             raise ValueError("all list values must be of the same type. "
-                             "If 5.5 is used 0.0 instead of 0 must be used: "
-                             + str(values))
+                             "If 5.5 is used 0.0 instead of 0 must be used: " +
+                             str(values))

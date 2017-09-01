@@ -85,7 +85,6 @@ def basiclayout(Form, simulation, title, top_bar=None, story=None,
             if graphs:
                 self.display_results({'simulation_name': ''}, '')
 
-
             @self.form.connect("run_simulation")
             def run_simulation(events):
                 """ Runs simulation and shows results """
@@ -132,7 +131,7 @@ def basiclayout(Form, simulation, title, top_bar=None, story=None,
                 self.form.emit('_repeat_execution', events)
 
             @self.form.connect('display_results')
-            def display_results(events): # pylint: disable=W0612
+            def display_results(events):  # pylint: disable=W0612
                 """ Forwarder """
                 self.display_results(events, events['simulation_name'])
 

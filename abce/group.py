@@ -110,6 +110,7 @@ class Group(object):
         """
         self.do('_agg_log', variables, possessions, func, len)
 
+
 def execute_wrapper(inp):
     # processor_group.execute(self.groups, command, messages[pgid])
     return inp[0].execute(inp[1], inp[2], inp[3], inp[4], inp[5])

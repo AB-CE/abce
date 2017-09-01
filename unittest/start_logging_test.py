@@ -4,7 +4,6 @@ import csv
 import abce
 
 
-
 class Agent(abce.Agent):
     def go(self):
         self.create('money', 0.1)
@@ -42,10 +41,6 @@ def compare(to_compare, path, message, processes):
         for row in orginial:
             for key in orginial[row]:
                 generated[row][key] == orginial[row][key], (key, generated[row][key], orginial[row][key])
-
-
-
-
 
 
 def main(processes):
