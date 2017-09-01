@@ -6,7 +6,7 @@ from subprocess import call
 import abce
 import dataset
 import flexx
-from flexx import app, ui, event
+from flexx import app
 from .webtext import abcedescription
 try:
     from .basiclayout import basiclayout
@@ -175,7 +175,7 @@ def gui(parameter_mask, names=None, header=None, story=None,
     return inner
 
 
-def graphs(parameter_mask=None):
+def graphs(parameter_mask=None, names=None):
     """ After the simulation simulation.graphs displays all logged data,
     this can not be use in conjuncture with @gui.
 
@@ -183,24 +183,17 @@ def graphs(parameter_mask=None):
 
         parameter_mask (optional):
             simulation parameters to display
+        names (optional):
+            a dictionary with the parameter name as key and an alternative
+            text to be displayed instead.
     """
+    names = ({} if names is None else names)
     database = dataset.connect('sqlite:///parameter.db')
     abce.parameter_database = database['parameter']
     parameter_mask = ({} if parameter_mask is None else parameter_mask)
 
-    text = ''.join(["%s: %s<br>" % (key, str(value))
-                    for key, value in parameter_mask.items()])
+    Form = form(parameter_mask, names)
 
-    class Form(ui.Widget):
-        def init(self):
-            ui.Label(text=text)
-            self.btn = ui.Button(text="display")
-
-        @event.connect('btn.mouse_click')
-        def wdg(self, *events):
-            print('__init__')
-            self.emit('display_results', {})
-
-    app.launch(basiclayout(Form, None, parameter_mask['name']),
+    app.launch(basiclayout(Form, None, parameter_mask['name'], graphs=True),
                runtime='browser-X')
     app.run()

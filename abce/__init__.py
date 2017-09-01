@@ -571,8 +571,7 @@ class Simulation(object):
 
             simulation.graphs()
         """
-        if self._db_started:
-            self.finalize()
+        self.finalize()
         graphs(self.sim_parameters)
 
 
