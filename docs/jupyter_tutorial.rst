@@ -12,6 +12,7 @@ notebook cell by cell and observe ABCE at work.
 
     import abce
 
+
 .. code:: ipython3
 
     simulation = abce.Simulation(name='ipythonsimulation', processes=1)
@@ -261,7 +262,9 @@ amount of drugs and money all kids have for each of the two kids
         drug_dealer{'money': 0, 'drugs': 1.0}
         customer{'money': 100.0}
 
-    Round1
+
+    Round1time only simulation   0.15
+
     Customer offers 10 dollar:
         drug_dealer{'money': 0, 'drugs': 1.0}
         customer{'money': 90.0}
@@ -319,7 +322,7 @@ Lets capture data
 There are three ways of capturing data. ``aggregate`` and ``panel``
 collect data from a specified group at a specified point of time. This
 has the advantage that there is no logging code in the agent class.
-`self.log('name', value)` saves a value under a certain name.
+``self.log('name', value)`` saves a value under a certain name.
 
 .. code:: ipython3
 
@@ -334,7 +337,6 @@ has the advantage that there is no logging code in the agent class.
             self.count += 1
             self.curve = sin(self.count / 100)
             self.create('money', self.curve * self.id)
-            #self.log('count', self.count)
 
 
 
@@ -344,11 +346,6 @@ has the advantage that there is no logging code in the agent class.
 
 It is specified which agents group collects which variables and
 possessions.
-
-.. code:: ipython3
-
-    simulation.aggregate('datadealer', variables=['count'])
-    simulation.panel('datadealer', possessions=['money'], variables=['curve'])
 
 .. code:: ipython3
 
@@ -364,8 +361,8 @@ write the data! Otherwise the program hangs.
     for r in range(100):
         simulation.advance_round(r)
         datadealers.counting()
-        datadealers.aggregate()
-        datadealers.panel()
+        datadealers.agg_log(variables=['count'])
+        datadealers.panel_log(possessions=['money'], variables=['curve'])
     simulation.finalize()
 
 
@@ -373,7 +370,8 @@ write the data! Otherwise the program hangs.
 .. parsed-literal::
 
     Round0
-    Round1
+    Round1time with data and network   0.20
+
     Round2
     Round3
     Round4
@@ -381,7 +379,12 @@ write the data! Otherwise the program hangs.
     Round6
     Round7
     Round8
+    {
+        "name": "ipythonsimulation",
+        "random_seed": 1504186751.3476071,
+        "num_kids": 5
     Round9
+
     Round10
     Round11
     Round12
@@ -473,13 +476,12 @@ write the data! Otherwise the program hangs.
     Round98
     Round99
 
-    time only simulation   2.15
-    time with data and network   2.21
+    time only simulation   0.16
+    time with data and network   0.32
     {
         "name": "gatherdata",
-        "random_seed": 1501626537.247871
+        "random_seed": 1504186751.529168
     }
-    time with post processing   2.24
 
 
 We can find the directory of the simulation data by using the
@@ -492,7 +494,7 @@ We can find the directory of the simulation data by using the
 
 .. parsed-literal::
 
-    /Users/taghawi/Dropbox/workspace/abce_examples/result/gatherdata_2017-08-01_19-28
+    /Users/taghawi/Dropbox/workspace/abce_examples/examples/jupyter_tutorial/result/gatherdata_2017-08-31_10-39
 
 
 In that directory are the data files and a describtion.txt
@@ -508,27 +510,11 @@ In that directory are the data files and a describtion.txt
 .. parsed-literal::
 
     ['aggregate_datadealer.csv',
-     'aggregate_datadealer_mean.csv',
-     'aggregate_datadealer_std.csv',
-     'aggregate_panel_datadealer.csv',
-     'database.db',
+     'aggregated_datadealer.csv',
      'description.txt',
      'panel_datadealer.csv']
 
 
-
-abce.show.show shows the result of the last simulation. It can alse me
-called from the command line ``python -m abce.show``
-
-.. code:: ipython3
-
-    from abce.show import show
-
-.. code:: ipython3
-
-    show()
-
-**Hit the stop button to continue with the notebook**
 
 Using statistical software
 --------------------------
@@ -574,172 +560,172 @@ Using statistical software
         <tr style="text-align: right;">
           <th></th>
           <th>index</th>
-          <th>id</th>
-          <th>round</th>
-          <th>money</th>
           <th>curve</th>
+          <th>money</th>
+          <th>round</th>
+          <th>id</th>
         </tr>
       </thead>
       <tbody>
         <tr>
           <th>0</th>
-          <td>0</td>
-          <td>0</td>
-          <td>0</td>
-          <td>0.000000</td>
+          <td>1</td>
           <td>0.010000</td>
+          <td>0.000000</td>
+          <td>0</td>
+          <td>0</td>
         </tr>
         <tr>
           <th>1</th>
-          <td>1</td>
-          <td>1</td>
+          <td>2</td>
+          <td>0.010000</td>
+          <td>0.010000</td>
           <td>0</td>
-          <td>0.010000</td>
-          <td>0.010000</td>
+          <td>1</td>
         </tr>
         <tr>
           <th>2</th>
-          <td>2</td>
-          <td>2</td>
-          <td>0</td>
-          <td>0.020000</td>
+          <td>3</td>
           <td>0.010000</td>
+          <td>0.020000</td>
+          <td>0</td>
+          <td>2</td>
         </tr>
         <tr>
           <th>3</th>
-          <td>3</td>
-          <td>3</td>
-          <td>0</td>
-          <td>0.030000</td>
+          <td>4</td>
           <td>0.010000</td>
+          <td>0.030000</td>
+          <td>0</td>
+          <td>3</td>
         </tr>
         <tr>
           <th>4</th>
-          <td>4</td>
-          <td>4</td>
-          <td>0</td>
-          <td>0.039999</td>
+          <td>5</td>
           <td>0.010000</td>
+          <td>0.039999</td>
+          <td>0</td>
+          <td>4</td>
         </tr>
         <tr>
           <th>5</th>
-          <td>5</td>
-          <td>5</td>
-          <td>0</td>
-          <td>0.049999</td>
+          <td>6</td>
           <td>0.010000</td>
+          <td>0.049999</td>
+          <td>0</td>
+          <td>5</td>
         </tr>
         <tr>
           <th>6</th>
-          <td>6</td>
-          <td>6</td>
-          <td>0</td>
-          <td>0.059999</td>
+          <td>7</td>
           <td>0.010000</td>
+          <td>0.059999</td>
+          <td>0</td>
+          <td>6</td>
         </tr>
         <tr>
           <th>7</th>
-          <td>7</td>
-          <td>7</td>
-          <td>0</td>
-          <td>0.069999</td>
+          <td>8</td>
           <td>0.010000</td>
+          <td>0.069999</td>
+          <td>0</td>
+          <td>7</td>
         </tr>
         <tr>
           <th>8</th>
-          <td>8</td>
-          <td>8</td>
-          <td>0</td>
-          <td>0.079999</td>
+          <td>9</td>
           <td>0.010000</td>
+          <td>0.079999</td>
+          <td>0</td>
+          <td>8</td>
         </tr>
         <tr>
           <th>9</th>
-          <td>9</td>
-          <td>9</td>
-          <td>0</td>
-          <td>0.089999</td>
+          <td>10</td>
           <td>0.010000</td>
+          <td>0.089999</td>
+          <td>0</td>
+          <td>9</td>
         </tr>
         <tr>
           <th>10</th>
-          <td>10</td>
-          <td>0</td>
-          <td>1</td>
-          <td>0.000000</td>
+          <td>11</td>
           <td>0.019999</td>
+          <td>0.000000</td>
+          <td>1</td>
+          <td>0</td>
         </tr>
         <tr>
           <th>11</th>
-          <td>11</td>
-          <td>1</td>
-          <td>1</td>
-          <td>0.029999</td>
+          <td>12</td>
           <td>0.019999</td>
+          <td>0.029999</td>
+          <td>1</td>
+          <td>1</td>
         </tr>
         <tr>
           <th>12</th>
-          <td>12</td>
-          <td>2</td>
-          <td>1</td>
-          <td>0.059997</td>
+          <td>13</td>
           <td>0.019999</td>
+          <td>0.059997</td>
+          <td>1</td>
+          <td>2</td>
         </tr>
         <tr>
           <th>13</th>
-          <td>13</td>
-          <td>3</td>
-          <td>1</td>
-          <td>0.089996</td>
+          <td>14</td>
           <td>0.019999</td>
+          <td>0.089996</td>
+          <td>1</td>
+          <td>3</td>
         </tr>
         <tr>
           <th>14</th>
-          <td>14</td>
-          <td>4</td>
-          <td>1</td>
-          <td>0.119994</td>
+          <td>15</td>
           <td>0.019999</td>
+          <td>0.119994</td>
+          <td>1</td>
+          <td>4</td>
         </tr>
         <tr>
           <th>15</th>
-          <td>15</td>
-          <td>5</td>
-          <td>1</td>
-          <td>0.149993</td>
+          <td>16</td>
           <td>0.019999</td>
+          <td>0.149993</td>
+          <td>1</td>
+          <td>5</td>
         </tr>
         <tr>
           <th>16</th>
-          <td>16</td>
-          <td>6</td>
-          <td>1</td>
-          <td>0.179991</td>
+          <td>17</td>
           <td>0.019999</td>
+          <td>0.179991</td>
+          <td>1</td>
+          <td>6</td>
         </tr>
         <tr>
           <th>17</th>
-          <td>17</td>
-          <td>7</td>
-          <td>1</td>
-          <td>0.209990</td>
+          <td>18</td>
           <td>0.019999</td>
+          <td>0.209990</td>
+          <td>1</td>
+          <td>7</td>
         </tr>
         <tr>
           <th>18</th>
-          <td>18</td>
-          <td>8</td>
-          <td>1</td>
-          <td>0.239988</td>
+          <td>19</td>
           <td>0.019999</td>
+          <td>0.239988</td>
+          <td>1</td>
+          <td>8</td>
         </tr>
         <tr>
           <th>19</th>
-          <td>19</td>
-          <td>9</td>
-          <td>1</td>
-          <td>0.269987</td>
+          <td>20</td>
           <td>0.019999</td>
+          <td>0.269987</td>
+          <td>1</td>
+          <td>9</td>
         </tr>
       </tbody>
     </table>
@@ -757,12 +743,14 @@ Using statistical software
 
 .. parsed-literal::
 
-    <matplotlib.axes._subplots.AxesSubplot at 0x10df9ee48>
+    <matplotlib.axes._subplots.AxesSubplot at 0x10f0ee6a0>
 
 
 
 
-.. image:: output_58_1.png
+.. image:: output_53_1.png
 
 
-
+When running a simulation with python from a start.py
+simulation.graphs() displays all recorded data. You can also use the
+@gui decorator to ship abce as an interactive web-app.
