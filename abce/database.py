@@ -45,7 +45,9 @@ class Database(object):
     def log(self, action_name, data_to_log):
         """ With log you can write the models data. Log can save variable
         states and and the working of individual functions such as production,
-        consumption, give, but not trade(as its handled automatically).
+        consumption, give, but not trade(as its handled automatically). Sending
+        a dictionary instead of several using several log statements with a
+        single variable is faster.
 
         Args:
             'name'(string):
@@ -90,22 +92,6 @@ class Database(object):
                  data_to_write,
                  str(self.log_in_subround_serial)])
             self.log_in_subround_serial += 1
-
-    def log_value(self, name, value):
-        """ logs a value, with a name
-
-        Args:
-            'name'(string):
-                the name of the value/variable
-            value(int/float):
-                the variable = value to log
-        """
-        if self.log_this_round:
-            self.database_connection.put(
-                ["log",
-                 self.group,
-                 {'id': self.id, name: value},
-                 str(self.round)])
 
     def log_change(self, action_name, data_to_log):
         """ This command logs the change in the variable from the round before.
