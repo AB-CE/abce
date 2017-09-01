@@ -29,7 +29,7 @@ if platform.python_implementation() == 'CPython':
         ]
     cython_specific = ['numpy >= 1.10.2p',
                        'pandas >= 0.17.1',
-                       'bokeh == 0.12.6']
+                       'bokeh == 0.12.7']
 else:
     ext_modules = []
     cmdclass = {}
