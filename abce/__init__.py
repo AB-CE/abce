@@ -499,12 +499,7 @@ class Simulation(object):
         agent_params_from_sim = {
             'expiring': self.expiring,
             'perishable': self.perishable,
-            'resource_endowment': (self.resource_endowment[group_name] +
-                                   self.resource_endowment['all']),
-            'panel': (self.possessins_to_track_panel[group_name],
-                      self.variables_to_track_panel[group_name]),
-            'aggregate': (self.possessions_to_track_aggregate[group_name],
-                          self.variables_to_track_aggregate[group_name]),
+            'resource_endowment': self.resource_endowment,
             'ndf': self._network_drawing_frequency}
 
         for pg in self._processor_groups:
