@@ -343,6 +343,7 @@ class Simulation(object):
             human_or_other_resource, units, service)
         self.declare_perishable(service)
 
+
     def panel(self, group, possessions=None, variables=None):
         print("simulation.panel removed. Use agent group's panel_log function")
 
@@ -551,6 +552,7 @@ class Simulation(object):
     def _displaydescribtion(self):
         description = open(self.path + '/description.txt', 'r')
         print(description.read())
+
 
     def graphs(self):
         """ after the simulation is run, graphs() shows graphs of all data
