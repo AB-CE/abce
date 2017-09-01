@@ -1,6 +1,3 @@
-from builtins import object
-
-
 def nothing(*_, **__):
     pass
 
@@ -14,7 +11,7 @@ class SilentDeadAgent(object):
     def __setattr__(self, *_, **__):
         return nothing
 
-    def _execute(self, command):
+    def _execute(self, command, args, kwargs):
         return []
 
 
@@ -26,8 +23,8 @@ class LoudDeadAgent(object):
 
     def __setattr__(self, *_, **__):
         return nothing
-
-    def _execute(self, command):
+      
+    def _execute(self, command, args, kwargs):
         if self.inbox:
             print(self.inbox)
             raise Exception("Message to dead agent")

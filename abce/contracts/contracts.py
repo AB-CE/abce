@@ -1,18 +1,9 @@
-from collections import defaultdict
 from copy import copy
 
 
 class Contracts(set):
-    def __init__(self, name):
-        super(Contracts, self).__init__()
-        self.name = name
-        self._contract_offers_made = {}
-        self._contract_requests = defaultdict(list)
-        self._contract_offers = defaultdict(list)
-        self._contracts_pay = defaultdict(dict)
-        self._contracts_deliver = defaultdict(dict)
-        self._contracts_payed = []
-        self._contracts_delivered = []
+    def __init__(self, par=set()):
+        super(Contracts, self).__init__(par)
 
     def add(self, entry):
         assert entry not in self
@@ -57,18 +48,5 @@ class Contracts(set):
 
     # contracts
     def _advance_round(self, round):
-        self._contract_requests = defaultdict(list)
-        self._contract_offers = defaultdict(list)
-        self._contracts_payed = []
-        self._contracts_delivered = []
-
-        # delete all expired contracts
-        for good in self._contracts_deliver:
-            for contract in copy(self._contracts_deliver[good]):
-                if self._contracts_deliver[good][contract].end_date == round:
-                    del self._contracts_deliver[good][contract]
-
-        for good in self._contracts_pay:
-            for contract in copy(self._contracts_pay[good]):
-                if self._contracts_pay[good][contract].end_date == round:
-                    del self._contracts_pay[good][contract]
+        du = set(filter(lambda c: c.terminated, self))
+        self.difference_update(du)
