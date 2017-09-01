@@ -1,6 +1,7 @@
 """ ABCE can be started with a gui or provide visual data output """
 import os
 import sys
+import platform
 import json
 from subprocess import call
 import abce
@@ -188,12 +189,20 @@ def graphs(parameter_mask=None, names=None):
             text to be displayed instead.
     """
     names = ({} if names is None else names)
-    database = dataset.connect('sqlite:///parameter.db')
-    abce.parameter_database = database['parameter']
-    parameter_mask = ({} if parameter_mask is None else parameter_mask)
 
-    Form = form(parameter_mask, names)
+    if platform.python_implementation() == 'PyPy':
+        try:
+            call(['python3', '-mabce.show'])
+        except:
+            call(['python', '-mabce.show'])
+    else:
 
-    app.launch(basiclayout(Form, None, parameter_mask['name'], graphs=True),
-               runtime='browser-X')
-    app.run()
+        database = dataset.connect('sqlite:///parameter.db')
+        abce.parameter_database = database['parameter']
+        parameter_mask = ({} if parameter_mask is None else parameter_mask)
+
+        Form = form(parameter_mask, names)
+
+        app.launch(basiclayout(Form, None, parameter_mask['name'],
+                   graphs=True), runtime='browser-X')
+        app.run()
