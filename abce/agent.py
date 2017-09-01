@@ -415,3 +415,6 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
                 whether the agent deletes incomming messages.
         """
         self._out[-1].append(('delete', (group_name, id, quite)))
+
+    def __getitem__(self, good):
+        return self._haves[good]
