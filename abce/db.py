@@ -74,6 +74,9 @@ class Database(threading.Thread):
             try:
                 msg = self.in_sok.get()
             except KeyboardInterrupt:
+                print("ADD simulation.finalize() after the last simulation command to "
+                      "write the simulation data and AVOID BLOCKING")
+
                 break
             except EOFError:
                 break
