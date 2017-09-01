@@ -43,8 +43,10 @@ import random
 
 epsilon = 0.00000000001
 
+
 def get_epsilon():
     return epsilon
+
 
 class Offer:
     __slots__ = ('sender_group', 'sender_id', 'receiver_group',
@@ -123,15 +125,15 @@ class Offer:
         self.status_round = status_round
 
     def __repr__(self):
-        return """<{sender: %s, %i, receiver_group: %s,
+        return ("""<{sender: %s, %i, receiver_group: %s,
                 receiver_id: %i, good: %s, quantity: %f, price: %f,
                 buysell: %s, status: %s, final_quantity: % f, id: %i,
-                made: %i, status_round: %i }>""" % (
+                made: %i, status_round: %i }>""" %
+                (self.sender_group, self.sender_id, self.receiver_group,
+                 self.receiver_id, self.good, self.quantity, self.price,
+                 self.buysell, self.status, self.final_quantity, self.id,
+                 self.made, self.status_round))
 
-                    self.sender_group, self.sender_id, self.receiver_group,
-                    self.receiver_id, self.good, self.quantity, self.price,
-                    self.buysell, self.status, self.final_quantity, self.id,
-                    self.made, self.status_round)
 
 class Trade:
     """ Agents can trade with each other. The clearing of the trade is taken care
@@ -455,7 +457,6 @@ class Trade:
         self._send(offer.receiver_group, '_d', offer)
         del self.given_offers[offer.id]
 
-
     def accept(self, offer, quantity=-999, epsilon=epsilon):
         """ The buy or sell offer is accepted and cleared. If no quantity is
         given the offer is fully accepted; If a quantity is given the offer is
@@ -523,7 +524,6 @@ class Trade:
             return {offer.good: - quantity, 'money': money_amount}
         else:
             return {offer.good: quantity, 'money': - money_amount}
-
 
     def _reject_polled_but_not_accepted_offers(self):
         for offer in self._polled_offers.values():
@@ -686,7 +686,6 @@ class Trade:
         """
         self.buy(receiver_group, receiver_id, good=good, quantity=quantity, price=0, epsilon=epsilon)
 
-
     def _clearing__end_of_subround(self, incomming_messages):
         """ agent receives all messages and objects that have been send in this
         subround and deletes the offers that where retracted, but not executed.
@@ -738,6 +737,7 @@ class Trade:
             else:
                 self._msgs.setdefault(typ, []).append(msg)
 
+
 # TODO when cython supports function overloading overload this function with compare_with_ties(int x, int y)
 def compare_with_ties(x, y):
     if x < y:
@@ -746,4 +746,3 @@ def compare_with_ties(x, y):
         return 1
     else:
         return random.randint(0, 1) * 2 - 1
-

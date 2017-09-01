@@ -22,9 +22,9 @@ def make_title(table_name, col):
             .replace('panel_', '')
             .replace('.csv', '')
             .replace('_log_', '')
-            .replace('log_', '')
-            + ' '
-            + col.replace('_ttl', ''))
+            .replace('log_', '') +
+            ' ' +
+            col.replace('_ttl', ''))
 
 
 def make_aggregate_graphs(data, filename, ignore_initial_rounds):
@@ -119,9 +119,9 @@ def make_histograms(data, filename):
     else:
         data['id'] = 0
     for col in data.columns:
-        if (col not in ['round', 'id', 'index', 'index_ttl']
-                and not col.endswith('_mean')
-                and not col.endswith('_std')):
+        if (col not in ['round', 'id', 'index', 'index_ttl'] and
+                not col.endswith('_mean') and
+                not col.endswith('_std')):
             title = make_title(filename, col)
             tplot = []
             for i in range(num_graphs):
