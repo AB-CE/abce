@@ -58,9 +58,55 @@ class Group(object):
         return self.sim.messagess[-2]
 
     def panel_log(self, variables=[], possessions=[], func={}, len=[]):
+        """ panel_log(.) writes a panel of variables and possessions
+        of a group of agents into the database, so that it is displayed
+        in the gui.
+
+        Args:
+            possessions (list, optional):
+                a list of all possessions you want to track as 'strings'
+            variables (list, optional):
+                a list of all variables you want to track as 'strings'
+            func (dict, optional):
+                accepts lambda functions that execute functions. e.G.
+                :code:`func = lambda self: self.old_money - self.new_money`
+            len (list, optional):
+                records the length of the list or dictionary with that name.
+
+        Example in start.py::
+
+            for round in simulation.next_round():
+                firms.produce_and_sell()
+                firms.panel_log(possessions=['money', 'input'],
+                            variables=['production_target', 'gross_revenue'])
+                households.buying()
+        """
         self.do('_panel_log', variables, possessions, func, len, self.last_action)
 
     def agg_log(self, variables=[], possessions=[], func={}, len=[]):
+        """ agg_log(.) writes a aggregate data of variables and possessions
+        of a group of agents into the database, so that it is displayed
+        in the gui.
+
+        Args:
+            possessions (list, optional):
+                a list of all possessions you want to track as 'strings'
+            variables (list, optional):
+                a list of all variables you want to track as 'strings'
+            func (dict, optional):
+                accepts lambda functions that execute functions. e.G.
+                :code:`func = lambda self: self.old_money - self.new_money`
+            len (list, optional):
+                records the length of the list or dictionary with that name.
+
+        Example in start.py::
+
+            for round in simulation.next_round():
+                firms.produce_and_sell()
+                firms.agg_log(possessions=['money', 'input'],
+                            variables=['production_target', 'gross_revenue'])
+                households.buying()
+        """
         self.do('_agg_log', variables, possessions, func, len)
 
 def execute_wrapper(inp):
