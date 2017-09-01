@@ -9,12 +9,6 @@ from endowment import Endowment
 from production_multifirm import ProductionMultifirm
 from production_firm import ProductionFirm
 from utility_household import UtilityHousehold
-from contractseller import ContractSeller
-from contractbuyer import ContractBuyer
-from contractsellerstop import ContractSellerStop
-from contractbuyerstop import ContractBuyerStop
-from expiringcapital import ExpiringCapital
-from giveexpiringcapital import GiveExpiringCapital
 from buyexpiringcapital import BuyExpiringCapital
 from abce import Simulation
 from messagea import MessageA
@@ -27,11 +21,11 @@ from victim import Victim
 def main(processes, rounds):
     s = Simulation(processes=processes, name='unittest')
     s.declare_round_endowment(
-        resource='labor_endowment', units=5, product='labor', groups=['all'])
+        resource='labor_endowment', units=5, product='labor')
     s.declare_round_endowment(resource='cow', units=10,
-                              product='milk', groups=['all'])
+                              product='milk')
     s.declare_perishable(good='labor')
-    s.panel('buy', variables=['price'])
+
     # s.declare_expiring('xcapital', 5)
     print('build Buy')
     buy = s.build_agents(Buy, 'buy', 1000, parameters={'rounds': rounds})
@@ -106,7 +100,7 @@ def main(processes, rounds):
             buy.do('two')
             buy.do('three')
             buy.do('clean_up')
-        buy.do('panel')
+        buy.panel_log(variables=['price'])
         for _ in range(5):
             sell.do('one')
             sell.do('two')

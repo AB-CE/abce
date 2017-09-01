@@ -58,12 +58,12 @@ Further you can write the change of a variable between a start and an end point 
 Panel Data
 ~~~~~~~~~~
 
-.. automethod:: abce.Simulation.panel
+.. automethod:: abce.group.Group.panel_log
 
 Aggregate Data
 ~~~~~~~~~~~~~~
 
-.. automethod:: abce.Simulation.aggregate
+.. automethod:: abce.group.Group.agg_log
 
 Network logging
 ~~~~~~~~~~~~~~~
