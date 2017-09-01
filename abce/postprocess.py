@@ -3,6 +3,7 @@ from collections import defaultdict
 import csv
 
 
+
 def to_csv(directory, dataset):
     os.chdir(directory)
     tables = dataset.tables

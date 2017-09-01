@@ -12,14 +12,16 @@
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations
-# under the License.
+# License for the specific language governing permissions and limitations under
+# the License.
+
 import threading
 from collections import defaultdict
 import dataset
 from .online_variance import OnlineVariance
 from .postprocess import to_csv
 
+]]
 
 class Database(threading.Thread):
     """Separate thread that receives data from in_sok and saves it into a
@@ -65,11 +67,14 @@ class Database(threading.Thread):
             try:
                 msg = self.in_sok.get()
             except KeyboardInterrupt:
-                print("ADD simulation.finalize() after the simulation command"
-                      "to write the simulation data and AVOID BLOCKING")
+                to_csv(self.directory, self.db)
 
                 break
             except EOFError:
+                to_csv(self.directory, self.db)
+                break
+            if msg == "close":
+                to_csv(self.directory, self.db)
                 break
 
             if msg[0] == 'snapshot_agg':
@@ -107,10 +112,8 @@ class Database(threading.Thread):
                             table_name, primary_id='index')
                     table_log[table_name].insert_many(current_log[table_name])
                     current_log[table_name] = []
-
             elif msg == "close":
                 break
-
             else:
                 raise Exception(
                     "abce_db error '%s' command unknown ~87" % msg)
@@ -140,3 +143,4 @@ class Database(threading.Thread):
                     'aggregate___%s' % group, primary_id='index')
                 self.table_aggregates[group].insert(result)
             self.aggregation[group].clear()
+

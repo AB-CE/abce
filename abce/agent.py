@@ -83,9 +83,6 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
             simulation.advance_round(r)
             households.selling()
             print(households.return_quantity_of_good())
-
-
-
     """
     def __init__(self, id, group, trade_logging,
                  database, logger, random_seed, num_managers):
