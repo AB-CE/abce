@@ -75,6 +75,8 @@ Concepts used in examples
 Models
 ------
 
+ABCE's examples can be downloaded from here: https://github.com/AB-CE/examples
+
 One sector model
 ````````````````
 

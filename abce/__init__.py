@@ -343,9 +343,10 @@ class Simulation(object):
             human_or_other_resource, units, service)
         self.declare_perishable(service)
 
+
     def panel(self, group, possessions=None, variables=None):
         print("simulation.panel removed. Use agent group's panel_log function")
-
+        
     def aggregate(self, group, possessions=None, variables=None):
         print("simulation.panel removed. Use agent group's agg_log function")
 
