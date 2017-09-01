@@ -105,8 +105,10 @@ class BokehWidget(Widget):
             def getplot():
                 # Get plot from id in next event-loop iter
                 self.plot = Bokeh.index[ev.id]
-                self.plot.resize()
-            window.setTimeout(getplot, 10)
+                canvas = self.plot.plot_canvas_view
+                canvas.reset_dimensions()
+
+            window.setTimeout(getplot, 100)
 
         @event.connect('size')
         def __resize_plot(self, *events):
