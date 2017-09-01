@@ -1,8 +1,5 @@
 include README.rst
-include template/*
 include abce/contracts/*
 include unittest/*
 include abce/agents/*
-recursive-include example *
-recursive-include abce/templates *
-recursive-include abce/static *
+include abce/gui/*

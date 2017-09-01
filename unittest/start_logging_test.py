@@ -1,9 +1,7 @@
 import platform
+from filecmp import cmp
+import csv
 import abce
-import filecmp as fc
-import difflib as dl
-import pandas as pd
-import numpy as np
 
 
 class Agent(abce.Agent):
@@ -16,71 +14,59 @@ class Agent(abce.Agent):
         self.log('l', {'i': self.i, 'r': self.r})
 
 
-def compare(to_compare, path, message):
-    should_be_full = pd.read_csv(to_compare).sort_index(axis=1)
+def compare(to_compare, path, message, processes):
     the_path = (path + '/' + to_compare)
     if platform.system() == 'Windows':  # windows compatibility
         the_path = the_path[the_path.find('/') + 1:]
-    really_is_full = pd.read_csv(the_path).sort_index(axis=1)
-    if 'id' in should_be_full.columns:
-        should_be_full = (should_be_full
-                          .sort_values(by=['id', 'round'], axis=0)
-                          .reset_index(drop=True))
-        really_is_full = (really_is_full
-                          .sort_values(by=['id', 'round'], axis=0)
-                          .reset_index(drop=True))
-        del should_be_full['index']
-        del really_is_full['index']
-    assert(should_be_full.shape == really_is_full.shape)
-    if not np.isclose(should_be_full, really_is_full).all():
-        # finds all lines which are different
-        should_be = should_be_full[np.logical_not(
-                                   np.min(np.isclose(should_be_full,
-                                                     really_is_full),
-                                          axis=1))]
-        really_is = really_is_full[np.logical_not(
-                                   np.min(np.isclose(should_be_full,
-                                                     really_is_full),
-                                          axis=1))]
-
-        print(to_compare)
-        raise Exception(pd.concat([should_be, really_is], axis=1))
+    if processes == 1:
+        assert cmp(to_compare, the_path)
     else:
-        print(to_compare + ' ' + message + '\tOK')
+        with open(to_compare, 'r') as generatedf:
+            generated = {}
+            for row in csv.DictReader(generatedf):
+                try:
+                    generated[(row['round'], row['id'])] = row
+                except KeyError:
+                    generated[row['round']] = row
+        with open(the_path, 'r') as orginialf:
+            orginial = {}
+            for row in csv.DictReader(orginialf):
+                try:
+                    orginial[(row['round'], row['id'])] = row
+                except KeyError:
+                    orginial[row['round']] = row
+        for row in generated:
+            for key in generated[row]:
+                generated[row][key] == orginial[row][key], (key, generated[row][key], orginial[row][key])
+        for row in orginial:
+            for key in orginial[row]:
+                generated[row][key] == orginial[row][key], (key, generated[row][key], orginial[row][key])
 
 
 def main(processes):
     simulation = abce.Simulation(processes=processes)
 
-    simulation.aggregate('agent', variables=['i', 'r'], possessions=['money'])
-    simulation.panel('agent', variables=['i', 'r'], possessions=['money'])
-
     agents = simulation.build_agents(Agent, 'agent', 10, parameters='')
 
-    for r in range(100):
-        simulation.advance_round(r)
-        agents.do('go')
-        agents.aggregate()
-        agents.panel()
+    for rnd in range(100):
+        simulation.advance_round(rnd)
+        agents.go()
+        agents.agg_log(variables=['i', 'r'], possessions=['money'])
+        agents.panel_log(variables=['i', 'r'], possessions=['money'])
     simulation.finalize()
 
     if platform.system() == 'Windows':
         simulation.path = simulation.path.replace('/', '\\')
 
+    compare('aggregated_agent.csv',
+            simulation.path, 'aggregated logging test\t\t',
+            processes)
     compare('aggregate_agent.csv',
-            simulation.path, 'aggregate logging test\t\t')
-    compare('aggregate_agent_mean.csv',
-            simulation.path, 'aggregate logging test mean\t')
-    compare('aggregate_agent_std.csv',
-            simulation.path, 'aggregate logging test std\t')
-
-    compare('aggregate_log_agent.csv',
-            simulation.path, 'self.log test \t\t\t')
-    compare('log_agent.csv', simulation.path, 'self.log test\t\t\t\t')
-
-    compare('aggregate_panel_agent.csv',
-            simulation.path, 'aggregated panel logging test\t')
-    compare('panel_agent.csv', simulation.path, 'panel logging test\t\t\t')
+            simulation.path, 'aggregate logging test\t\t',
+            processes)
+    compare('panel_agent.csv',
+            simulation.path, 'aggregate logging test mean\t',
+            processes)
 
 
 if __name__ == '__main__':

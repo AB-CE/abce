@@ -28,16 +28,16 @@ Logging and data creation, see :doc:`Database`.
 
 Messaging between agents, see :doc:`Messaging`.
 """
+import time
+import random
 from collections import OrderedDict, defaultdict
+from pprint import pprint
+import abce
 from .database import Database
 from .networklogger import NetworkLogger
 from .trade import Trade
 from .messaging import Messaging
-import time
-import random
-from abce.expiringgood import ExpiringGood
-from pprint import pprint
-import traceback
+from .expiringgood import ExpiringGood
 from .inventory import Inventory
 
 
@@ -83,9 +83,6 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
             simulation.advance_round(r)
             households.selling()
             print(households.return_quantity_of_good())
-
-
-
     """
     def __init__(self, id, group, trade_logging,
                  database, logger, random_seed, num_managers):
@@ -145,6 +142,14 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
             self._add_contracts_list()
         except AttributeError:
             self.contracts = DummyContracts()
+
+        if hasattr(abce, 'conditional_logging'):
+            self.conditional_logging = True
+            self.log_rounds = abce.conditional_logging
+        else:
+            self.conditional_logging = False
+
+        self.log_this_round = True
 
     def init(self, parameters, agent_parameters):
         """ This method is called when the agents are build.
@@ -223,6 +228,15 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         self.round = time
         self.time = time
 
+        self.log_in_subround_serial = 0
+
+        if self.conditional_logging:
+            if self.round in self.log_rounds:
+                print("***", self.round)
+                self.log_this_round = True
+            else:
+                self.log_this_round = False
+
     def create(self, good, quantity):
         """ creates quantity of the good out of nothing
 
@@ -286,18 +300,20 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
     def _set_network_drawing_frequency(self, frequency):
         self._network_drawing_frequency = frequency
 
-    def _execute(self, command):
+    def _execute(self, command, args, kwargs):
         self._out = [[] for _ in range(self.num_managers + 2)]
         try:
             self._clearing__end_of_subround(list(self.inbox))
-            self._out[-2] = (getattr(self, command)(), )
+            self._out[-2] = (getattr(self, command)(*args, **kwargs), )
             self._reject_polled_but_not_accepted_offers()
         except KeyboardInterrupt:
             return None
         except:
             time.sleep(random.random())
-            traceback.print_exc()
-            raise Exception()
+            print('command', command)
+            print('args', args)
+            print('kwargs', kwargs)
+            raise
 
         self.inbox.clear()
         return self._out
@@ -307,45 +323,6 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
 
     def _register_perish(self, good):
         self._haves._perishable.append(good)
-
-    def _register_panel(self, possessions, variables):
-        self.possessions_to_track_panel = possessions
-        self.variables_to_track_panel = variables
-
-    def _register_aggregate(self, possessions, variables):
-        self.possessions_to_track_aggregate = possessions
-        self.variables_to_track_aggregate = variables
-
-    def panel(self):
-        """ use in action list to create panel data """
-        data_to_send = [self.id, self.round]
-        for possession in self.possessions_to_track_panel:
-            data_to_send.append(self._haves[possession])
-
-        for variable in self.variables_to_track_panel:
-            try:
-                data_to_send.append(self.__dict__[variable])
-            except KeyError:
-                data_to_send.append(0.0)
-        self.database_connection.put(["panel",
-                                      self.group,
-                                      data_to_send])
-
-    def aggregate(self):
-        """ use in action list to create data """
-        data_to_send = [self.round]
-        for possession in self.possessions_to_track_aggregate:
-            data_to_send.append(self._haves[possession])
-
-        for variable in self.variables_to_track_aggregate:
-            try:
-                data_to_send.append(self.__dict__[variable])
-            except KeyError:
-                data_to_send.append(0.0)
-        self.database_connection.put(["aggregate",
-                                      self.round,
-                                      self.group,
-                                      data_to_send])
 
     def _send(self, receiver_group, receiver_id, typ, msg):
         """ sends a message to 'receiver_group', who can be an agent, a group or
@@ -405,12 +382,5 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         """
         self._out[-1].append(('delete', (group_name, id, quite)))
 
-
-def flatten(d, parent_key=''):
-    items = []
-    for k, v in list(d.items()):
-        try:
-            items.extend(list(flatten(v, '%s%s_' % (parent_key, k)).items()))
-        except AttributeError:
-            items.append(('%s%s' % (parent_key, k), v))
-    return dict(items)
+    def __getitem__(self, good):
+        return self._haves[good]

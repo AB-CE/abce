@@ -47,7 +47,6 @@ from multiprocessing.managers import BaseManager
 import queue
 import abce.db
 import abce.abcelogger
-from . import postprocess
 from .agent import Agent, Trade  # noqa: F401
 from .group import Group
 from collections import defaultdict, OrderedDict
@@ -59,9 +58,8 @@ from abce.agents import (FirmMultiTechnologies, Firm,  # noqa: F401
 from .quote import Quote  # noqa: F401
 from abce.contracts import Contracting  # noqa: F401
 import json
-from . import abcegui
 from .processorgroup import ProcessorGroup
-from .abcegui import gui  # noqa: F401
+from abce.gui import gui, graphs  # noqa: F401
 
 
 def execute_advance_round_wrapper(inp):
@@ -148,19 +146,20 @@ class Simulation(object):
                  trade_logging='off', processes=1):
         """
         """
+        try:
+            name = abce.simulation_name
+        except AttributeError:
+            pass
+
         self.num_of_agents_in_group = {}
         self._messages = {}
         self._resource_command_group = {}
         self._db_commands = {}
         self.num_agents = 0
         self._build_first_run = True
-        self.resource_endowment = defaultdict(list)
+        self.resource_endowment = []
         self.perishable = []
         self.expiring = []
-        self.variables_to_track_panel = defaultdict(list)
-        self.variables_to_track_aggregate = defaultdict(list)
-        self.possessins_to_track_panel = defaultdict(list)
-        self.possessions_to_track_aggregate = defaultdict(list)
         self._start_round = 0
         self.round = int(self._start_round)
         # this is default value as declared in self.network() method
@@ -234,7 +233,7 @@ class Simulation(object):
         self.database = self
 
     def declare_round_endowment(self, resource, units,
-                                product, groups):
+                                product):
         """ At the beginning of very round the agent gets 'units' units
         of good 'product' for every 'resource' he possesses.
 
@@ -268,9 +267,8 @@ class Simulation(object):
             raise Exception(
                 "WARNING: declare_round_endowment(...)"
                 " must be called before the agents are build")
-        for group in groups:
-            self.resource_endowment[group].append(
-                (resource, units, product))
+        self.resource_endowment.append(
+            (resource, units, product))
 
     def declare_perishable(self, good):
         """ This good only lasts one round and then disappears. For example
@@ -317,7 +315,7 @@ class Simulation(object):
         self.expiring.append((good, duration))
 
     def declare_service(self, human_or_other_resource,
-                        units, service, groups=['all']):
+                        units, service):
         """ When the agent holds the human_or_other_resource,
         he gets 'units' of service every round
         the service can be used only with in this round.
@@ -342,88 +340,15 @@ class Simulation(object):
             w.declare_service('adult', 8, 'work')
         """
         self.declare_round_endowment(
-            human_or_other_resource, units, service, groups)
+            human_or_other_resource, units, service)
         self.declare_perishable(service)
 
-    def panel(self, group, possessions=[], variables=[]):
-        """ panel(.) writes a panel of variables and possessions
-            of a group of agents into the database, so that it is displayed
-            in the gui. Aggregate must be declared before the agents are
-            build. ('agent_group', 'panel') must be in the action_list, so
-            that the simulation knows when to make the aggregate snapshot.
 
-            Args:
-                group:
-                    can be either a group or 'all' for all agents
-                possessions (list, optional):
-                    a list of all possessions you want to track as 'strings'
-                variables (list, optional):
-                    a list of all variables you want to track as 'strings'
-
-        Example in start.py::
-
-            simulation_parameters.build_agents(Firm, 'firm', number=5)
-
-            ...
-
-            simulation.panel('firm', possessions=['money', 'input'],
-                             variables=['production_target', 'gross_revenue'])
-
-            for round in simulation.next_round():
-                firms.do('produce_and_sell)
-                firms.do('panel')
-                households.do('buying')
-        """
-        if self.num_of_agents_in_group:
-            raise Exception(
-                "WARNING: panel(...) must be called before the agents are "
-                "build")
-        self._db.add_panel(group, possessions + variables)
-        self.variables_to_track_panel[group] = variables
-        self.possessins_to_track_panel[group] = possessions
-
-    def aggregate(self, group, possessions=[], variables=[]):
-        """ aggregate(.) writes summary statistics of variables and
-        possessions of a group of agents into the database, so that it is
-        displayed in the gui. Aggregate must be declared before the agents
-        are build. ('agent_group', 'aggregate') must be in the action_list,
-        so that the simulation knows when to make the aggregate snapshot.
-
-
-            Args:
-                group:
-                    can be either a group or 'all' for all agents
-                possessions (list, optional):
-                    a list of all possessions you want to track as 'strings'
-                variables (list, optional):
-                    a list of all variables you want to track as 'strings'
-
-        Example in start.py::
-
-
-            simulation_parameters.build_agents(Firm, 'firm', number=5)
-
-            ...
-
-            simulation.aggregate('firm', possessions=['money', 'input'],
-                                 variables=['production_target',
-                                            'gross_revenue'])
-
-            for round in simulation.next_round():
-                firms.produce_and_sell()
-                firms.aggregate()
-                households.buying()
-
-
-
-        """
-        if self.num_of_agents_in_group:
-            raise Exception(
-                "WARNING: aggregate(...) must be called before the agents "
-                "are build")
-        self._db.add_aggregate(group, possessions + variables)
-        self.variables_to_track_aggregate[group] = variables
-        self.possessions_to_track_aggregate[group] = possessions
+    def panel(self, group, possessions=None, variables=None):
+        print("simulation.panel removed. Use agent group's panel_log function")
+        
+    def aggregate(self, group, possessions=None, variables=None):
+        print("simulation.panel removed. Use agent group's agg_log function")
 
     def network(self, frequency=1, savefig=False, savegml=True,
                 figsize=(24, 20), dpi=100, pos_fixed=False, alpha=0.8):
@@ -571,12 +496,7 @@ class Simulation(object):
         agent_params_from_sim = {
             'expiring': self.expiring,
             'perishable': self.perishable,
-            'resource_endowment': (self.resource_endowment[group_name] +
-                                   self.resource_endowment['all']),
-            'panel': (self.possessins_to_track_panel[group_name],
-                      self.variables_to_track_panel[group_name]),
-            'aggregate': (self.possessions_to_track_aggregate[group_name],
-                          self.variables_to_track_aggregate[group_name]),
+            'resource_endowment': self.resource_endowment,
             'ndf': self._network_drawing_frequency}
 
         for pg in self._processor_groups:
@@ -633,21 +553,11 @@ class Simulation(object):
         description = open(self.path + '/description.txt', 'r')
         print(description.read())
 
-    def graphs(self, open=True, new=1):
+    def graphs(self):
         """ after the simulation is run, graphs() shows graphs of all data
         collected in the simulation. Shows the same output as the @gui
         decorator shows.
 
-        Args:
-
-            open (True/False):
-                whether to open a new window
-
-            new:
-                If new is 0, the url is opened in the same browser window if
-                possible. If new is 1, a new browser window is opened if
-                possible. If new is 2, a new browser page (tab) is opened
-                if possible.
 
         Example::
 
@@ -659,9 +569,8 @@ class Simulation(object):
 
             simulation.graphs()
         """
-        if self._db_started:
-            self.finalize()
-        abcegui.run(open=open, new=new)
+        self.finalize()
+        graphs(self.sim_parameters)
 
 
 def _number_or_string(word):

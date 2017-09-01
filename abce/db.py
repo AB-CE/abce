@@ -2,8 +2,8 @@
 #
 # Module Author: Davoud Taghawi-Nejad
 #
-# ABCE is open-source software. If you are using ABCE for your research you are
-# requested the quote the use of this software.
+# ABCE is open-source software. If you are using ABCE for your research you
+# are requested the quote the use of this software.
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
 # use this file except in compliance with the License and quotation of the
@@ -15,44 +15,34 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 import threading
-import sqlite3
 from collections import defaultdict
+import dataset
 from .online_variance import OnlineVariance
 from postprocess import to_csv
 
 class Database(threading.Thread):
+    """Separate thread that receives data from in_sok and saves it into a
+    database"""
     def __init__(self, directory, in_sok, trade_log):
         threading.Thread.__init__(self)
         self.directory = directory
         self.panels = {}
-        self.aggregates = {}
         self.in_sok = in_sok
         self.data = {}
         self.trade_log = trade_log
 
         self.ex_str = {}
-        self.aggregation = {}
+        self.aggregation = defaultdict(lambda: defaultdict(OnlineVariance))
         self.round = 0
 
     def add_trade_log(self):
         table_name = 'trade'
         self.database.execute("CREATE TABLE " + table_name +
-                              "(round INT, good VARCHAR(50), seller VARCHAR(50), buyer VARCHAR(50), price FLOAT, quantity FLOAT)")
-        return 'INSERT INTO trade (round, good, seller, buyer, price, quantity) VALUES (%i, "%s", "%s", "%s", "%s", %f)'
-
-    def add_log(self, table_name):
-        self.database.execute("CREATE TABLE log_" + table_name +
-                              "(round INT, id INT, PRIMARY KEY(round, id))")
-
-    def add_panel(self, group, column_names):
-        self.panels['panel_' + group] = list(column_names)
-
-    def add_aggregate(self, group, column_names):
-        table_name = 'aggregate_' + group
-        self.aggregation[table_name] = OnlineVariance(len(column_names))
-        self.aggregates['aggregate_' + group] = list(column_names)
-        self.aggregates['aggregate_' + group + '_mean'] = list(column_names)
-        self.aggregates['aggregate_' + group + '_std'] = list(column_names)
+                              "(round INT, good VARCHAR(50), "
+                              "seller VARCHAR(50), buyer VARCHAR(50), "
+                              "price FLOAT, quantity FLOAT)")
+        return ('INSERT INTO trade (round, good, seller, buyer, price, '
+                'quantity) VALUES (%i, "%s", "%s", "%s", "%s", %f)')
 
     def run(self):
         self.db = sqlite3.connect(':memory:')
@@ -78,12 +68,9 @@ class Database(threading.Thread):
         for table_name in self.aggregates:
             agg_str = ' FLOAT,'.join(self.aggregates[table_name]) + ' FLOAT,'
 
-            create_str = "CREATE TABLE " + table_name + "(round INT, %s PRIMARY KEY(round))" % agg_str
-            self.database.execute(create_str)
-
-            format_strings = ','.join(['?'] * (1 + len(self.aggregates[table_name])))
-            self.ex_str[table_name] = "INSERT INTO " + table_name + \
-                "(round, " + ','.join(list(self.aggregates[table_name])) + ") VALUES (%s)" % format_strings
+        if self.trade_log:
+            trade_table = self.dataset_db.create_table('trade___trade',
+                                                       primary_id='index')
 
         while True:
             try:
@@ -102,36 +89,44 @@ class Database(threading.Thread):
                     table_name = 'panel_' + msg[1]
                     self.write_pa(table_name, msg[2])
 
-            elif msg[0] == 'aggregate':
-                round = msg[1]
-                table_name = 'aggregate_' + msg[2]
+            if msg[0] == 'snapshot_agg':
+                _, round, group, data_to_write = msg
                 if self.round == round:
-                    self.aggregation[table_name].update(msg[3])
+                    for key, value in data_to_write.items():
+                        self.aggregation[group][key].update(value)
                 else:
-                    self.write_pa(table_name, [self.round] + self.aggregation[table_name].sum())
-                    self.write_pa(table_name + '_mean', [self.round] + self.aggregation[table_name].mean())
-                    self.write_pa(table_name + '_std', [self.round] + self.aggregation[table_name].std())
-                    self.aggregation[table_name].clear()
+                    self.make_aggregation_and_write()
                     self.round = round
-                    self.aggregation[table_name].update(msg[3])
+                    for key, value in data_to_write.items():
+                        self.aggregation[group][key].update(value)
 
             elif msg[0] == 'trade_log':
-                individual_log = msg[1]
-                round = msg[2]  # int
-                for key in individual_log:
-                    split_key = key[:].split(',')
-                    self.database.execute(trade_ex_str % (round,
-                                                          split_key[0], split_key[1], split_key[2], split_key[3],
-                                                          individual_log[key]))
+                for (good, seller, buyer, price), quantity in msg[1].items():
+                    current_trade.append({'round': msg[2],
+                                          'good': good,
+                                          'seller': seller,
+                                          'buyer': buyer,
+                                          'price': price,
+                                          'quantity': quantity})
+                    if len(current_trade) == 1000:
+                        trade_table.insert_many(current_trade)
+                        current_trade = []
+
             elif msg[0] == 'log':
-                group_name = msg[1]
-                data_to_write = msg[2]
-                try:
-                    data_to_write = {key: float(
-                        data_to_write[key]) for key in data_to_write}
-                except TypeError:
-                    print(data_to_write)
-                    raise
+                _, group, id, round, data_to_write, subround_or_serial = msg
+                table_name = 'panel___%s___%s' % (group, subround_or_serial)
+                data_to_write['round'] = round
+                data_to_write['id'] = id
+                current_log[table_name].append(data_to_write)
+                if len(current_log[table_name]) == 1000:
+                    if table_name not in table_log:
+                        table_log[table_name] = self.dataset_db.create_table(
+                            table_name, primary_id='index')
+                    table_log[table_name].insert_many(current_log[table_name])
+                    current_log[table_name] = []
+
+            elif msg == "close":
+                break
 
                 data_to_write['round'] = msg[3]
                 table_name = 'log_' + group_name

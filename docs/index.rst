@@ -19,11 +19,12 @@ ABCE runs on macOS, Windows, and Linux.
 Introduction
 ============
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
    introduction
    installation
-   ipython_tutorial
+   jupyter_tutorial
+
    Walk_through
    tutorial
    examples

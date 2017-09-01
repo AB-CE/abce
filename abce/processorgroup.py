@@ -28,8 +28,9 @@ class ProcessorGroup(object):
             Agent, id, agent_args, parameters, agent_parameters)
         self.agents[group].append(agent)
 
-    def make_an_agent(self, Agent, id, agent_args, parameters,
-                      agent_parameters):
+
+    def make_an_agent(self, Agent, id, agent_args,
+                      parameters, agent_parameters):
         agent_args['num_managers'] = self.num_managers
         agent = Agent(id=id, **agent_args)
         for good, duration in self.apfs['expiring']:
@@ -38,8 +39,6 @@ class ProcessorGroup(object):
             agent._register_perish(good)
         for resource, units, product in self.apfs['resource_endowment']:
             agent._register_resource(resource, units, product)
-        agent._register_panel(*self.apfs['panel'])
-        agent._register_aggregate(*self.apfs['aggregate'])
         agent._set_network_drawing_frequency(self.apfs['ndf'])
         try:
             agent.init(parameters, agent_parameters)
@@ -56,13 +55,13 @@ class ProcessorGroup(object):
             raise Exception()
         return agent
 
-    def execute(self, groups, command, messages):
+    def execute(self, groups, command, messages, args, kwargs):
         try:
             out = [[] for _ in range(self.num_managers + 2)]
             self.put_messages_in_pigeonbox(messages)
             for group in groups:
                 for agent in self.agents[group]:
-                    outmessages = agent._execute(command)
+                    outmessages = agent._execute(command, args, kwargs)
                     for pgid, msg in enumerate(outmessages):
                         if pgid == self.batch:
                             self.mymessages.extend(msg)

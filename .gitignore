@@ -10,4 +10,5 @@ abce/build/
 docs/_build/
 docs/builddir/
 setup.cfg
-
+.idea/
+.ropeproject/
