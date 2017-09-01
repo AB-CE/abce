@@ -15,7 +15,6 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 import threading
-import sqlite3
 from collections import defaultdict
 import dataset
 from .online_variance import OnlineVariance
@@ -49,7 +48,7 @@ class Database(threading.Thread):
     def run(self):
         self.dataset_db = dataset.connect('sqlite://')
         self.dataset_db.query('PRAGMA synchronous=OFF')
-        #self.dataset_db.query('PRAGMA journal_mode=OFF')
+        # self.dataset_db.query('PRAGMA journal_mode=OFF')
         self.dataset_db.query('PRAGMA count_changes=OFF')
         self.dataset_db.query('PRAGMA temp_store=OFF')
         self.dataset_db.query('PRAGMA default_temp_store=OFF')
@@ -57,14 +56,6 @@ class Database(threading.Thread):
         current_log = defaultdict(list)
         current_trade = []
         self.table_aggregates = {}
-        self.db_direct = sqlite3.connect(':memory:')
-        self.database = self.db_direct.cursor()
-        self.database.execute('PRAGMA synchronous=OFF')
-        #self.database.execute('PRAGMA journal_mode=OFF')
-        self.database.execute('PRAGMA count_changes=OFF')
-        self.database.execute('PRAGMA temp_store=OFF')
-        self.database.execute('PRAGMA default_temp_store=OFF')
-        # self.database.execute('PRAGMA cache_size = -100000')
 
         if self.trade_log:
             trade_table = self.dataset_db.create_table('trade___trade',
@@ -74,8 +65,8 @@ class Database(threading.Thread):
             try:
                 msg = self.in_sok.get()
             except KeyboardInterrupt:
-                print("ADD simulation.finalize() after the last simulation command to "
-                      "write the simulation data and AVOID BLOCKING")
+                print("ADD simulation.finalize() after the simulation command"
+                      "to write the simulation data and AVOID BLOCKING")
 
                 break
             except EOFError:
@@ -124,17 +115,16 @@ class Database(threading.Thread):
                 raise Exception(
                     "abce_db error '%s' command unknown ~87" % msg)
 
-        self.db_direct.commit()
-        self.db_direct.close()
         for name, data in current_log.items():
             if name not in self.dataset_db:
                 table_log[name] = self.dataset_db.create_table(
                     name, primary_id='index')
             table_log[name].insert_many(data)
         self.make_aggregation_and_write()
+        if self.trade_log:
+            trade_table.insert_many(current_trade)
         self.dataset_db.commit()
         to_csv(self.directory, self.dataset_db)
-
 
     def make_aggregation_and_write(self):
         for group, table in self.aggregation.items():
