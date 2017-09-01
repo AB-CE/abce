@@ -346,7 +346,6 @@ class Simulation(object):
     def panel(self, group, possessions=None, variables=None):
         print("simulation.panel removed. Use agent group's panel_log function")
 
-
     def aggregate(self, group, possessions=None, variables=None):
         print("simulation.panel removed. Use agent group's agg_log function")
 
@@ -401,8 +400,6 @@ class Simulation(object):
 
     def __del__(self):
         self.finalize()
-
-
 
     def finalize(self):
         """ simulation.finalize() must be run after each simulation. It will
@@ -555,7 +552,7 @@ class Simulation(object):
         description = open(self.path + '/description.txt', 'r')
         print(description.read())
 
-    def graphs(self, open=True, new=1):
+    def graphs(self):
         """ after the simulation is run, graphs() shows graphs of all data
         collected in the simulation. Shows the same output as the @gui
         decorator shows.
