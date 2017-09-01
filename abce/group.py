@@ -24,6 +24,7 @@ class Group(object):
                          method))
 
         self.panel_serial = 0
+        self.last_action = "Begin_of_Simulation"
 
     def __add__(self, g):
         return Group(self.sim, self.groups + g.groups, self.agent_class)
