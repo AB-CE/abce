@@ -11,6 +11,7 @@ class SilentDeadAgent(object):
     def __setattr__(self, *_, **__):
         return nothing
 
+
     def _execute(self, command, args, kwargs):
         return []
 
