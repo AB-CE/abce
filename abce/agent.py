@@ -327,37 +327,6 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
     def _register_perish(self, good):
         self._haves._perishable.append(good)
 
-    def panel(self):
-        """ use in action list to create panel data """
-        data_to_send = [self.id, self.round]
-        for possession in self.possessions_to_track_panel:
-            data_to_send.append(self._haves[possession])
-
-        for variable in self.variables_to_track_panel:
-            try:
-                data_to_send.append(self.__dict__[variable])
-            except KeyError:
-                data_to_send.append(0.0)
-        self.database_connection.put(["panel",
-                                      self.group,
-                                      data_to_send])
-
-    def aggregate(self):
-        """ use in action list to create data """
-        data_to_send = [self.round]
-        for possession in self.possessions_to_track_aggregate:
-            data_to_send.append(self._haves[possession])
-
-        for variable in self.variables_to_track_aggregate:
-            try:
-                data_to_send.append(self.__dict__[variable])
-            except KeyError:
-                data_to_send.append(0.0)
-        self.database_connection.put(["aggregate",
-                                      self.round,
-                                      self.group,
-                                      data_to_send])
-
     def _send(self, receiver_group, receiver_id, typ, msg):
         """ sends a message to 'receiver_group', who can be an agent, a group or
         'all'. The agents receives it at the begin of each round in
