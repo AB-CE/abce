@@ -15,6 +15,9 @@ def to_csv(directory, dataset):
             panels[group].append(table_name)
         elif typ == 'aggregate':
             aggs[group].append(table_name)
+        elif typ == 'trade':
+            print([ds for ds in dataset[table_name].all()][0])
+            save_to_csv('trade_', '_trade', dataset)
 
     for group, tables in aggs.items():
         join_table(tables, group, 'round', 'aggregate', dataset)
@@ -76,9 +79,9 @@ def save_to_csv(prefix, group, dataset):
 
 
 def get_str_columns(dataset, table_name, redundant_columns):
-    ret =  ', '.join([' %s ' % c
-                      for c in dataset[table_name].columns
-                      if c not in list(redundant_columns)])
+    ret = ', '.join([' %s ' % c
+                     for c in dataset[table_name].columns
+                     if c not in list(redundant_columns)])
     if ret == '':
         return ''
     else:
