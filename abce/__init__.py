@@ -157,7 +157,7 @@ class Simulation(object):
         self._db_commands = {}
         self.num_agents = 0
         self._build_first_run = True
-        self.resource_endowment = defaultdict(list)
+        self.resource_endowment = []
         self.perishable = []
         self.expiring = []
         self._start_round = 0
@@ -233,7 +233,7 @@ class Simulation(object):
         self.database = self
 
     def declare_round_endowment(self, resource, units,
-                                product, groups):
+                                product):
         """ At the beginning of very round the agent gets 'units' units
         of good 'product' for every 'resource' he possesses.
 
@@ -267,9 +267,8 @@ class Simulation(object):
             raise Exception(
                 "WARNING: declare_round_endowment(...)"
                 " must be called before the agents are build")
-        for group in groups:
-            self.resource_endowment[group].append(
-                (resource, units, product))
+        self.resource_endowment.append(
+            (resource, units, product))
 
     def declare_perishable(self, good):
         """ This good only lasts one round and then disappears. For example
@@ -316,7 +315,7 @@ class Simulation(object):
         self.expiring.append((good, duration))
 
     def declare_service(self, human_or_other_resource,
-                        units, service, groups=['all']):
+                        units, service):
         """ When the agent holds the human_or_other_resource,
         he gets 'units' of service every round
         the service can be used only with in this round.
@@ -341,7 +340,7 @@ class Simulation(object):
             w.declare_service('adult', 8, 'work')
         """
         self.declare_round_endowment(
-            human_or_other_resource, units, service, groups)
+            human_or_other_resource, units, service)
         self.declare_perishable(service)
 
     def panel(self, group, possessions=None, variables=None):
