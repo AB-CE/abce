@@ -1,9 +1,9 @@
 """ :code:`python -m abce.show` shows the simulation results in ./result/*  """
-from abce import abcegui
+from .gui import graphs
 
 
-def show(open=True, new=1):
-    abcegui.run(open=open, new=new)
+def show():
+    graphs({'name': 'show'})
 
 
 if __name__ == '__main__':
