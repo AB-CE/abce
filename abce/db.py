@@ -32,18 +32,8 @@ class Database(threading.Thread):
         self.data = {}
         self.trade_log = trade_log
 
-        self.ex_str = {}
         self.aggregation = defaultdict(lambda: defaultdict(OnlineVariance))
         self.round = 0
-
-    def add_trade_log(self):
-        table_name = 'trade'
-        self.database.execute("CREATE TABLE " + table_name +
-                              "(round INT, good VARCHAR(50), "
-                              "seller VARCHAR(50), buyer VARCHAR(50), "
-                              "price FLOAT, quantity FLOAT)")
-        return ('INSERT INTO trade (round, good, seller, buyer, price, '
-                'quantity) VALUES (%i, "%s", "%s", "%s", "%s", %f)')
 
     def run(self):
         self.dataset_db = dataset.connect('sqlite://')
