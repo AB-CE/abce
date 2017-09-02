@@ -42,24 +42,24 @@ import datetime
 import os
 import time
 import random
+import json
+import queue
 import multiprocessing as mp
 from multiprocessing.managers import BaseManager
-import queue
-import abce.db
-import abce.abcelogger
+from collections import defaultdict, OrderedDict
+import db
+import abcelogger
 from .agent import Agent, Trade  # noqa: F401
 from .group import Group
-from collections import defaultdict, OrderedDict
-from abce.notenoughgoods import NotEnoughGoods  # noqa: F401
-from abce.agents import (FirmMultiTechnologies, Firm,  # noqa: F401
-                        Household, Utility_Function,
-                        ProductionFunction, SilentDeadAgent,  # noqa: F401
-                        LoudDeadAgent)  # noqa: F401
+from .notenoughgoods import NotEnoughGoods  # noqa: F401
+from .agents import (FirmMultiTechnologies, Firm,  # noqa: F401
+                     Household, Utility_Function,
+                     ProductionFunction, SilentDeadAgent,  # noqa: F401
+                     LoudDeadAgent)  # noqa: F401
 from .quote import Quote  # noqa: F401
-from abce.contracts import Contracting  # noqa: F401
-import json
+from .contracts import Contracting  # noqa: F401
 from .processorgroup import ProcessorGroup
-from abce.gui import gui, graphs  # noqa: F401
+from .gui import gui, graphs  # noqa: F401
 
 
 def execute_advance_round_wrapper(inp):
@@ -147,7 +147,7 @@ class Simulation(object):
         """
         """
         try:
-            name = abce.simulation_name
+            name = simulation_name  # noqa: F821
         except AttributeError:
             pass
 
@@ -217,7 +217,7 @@ class Simulation(object):
 
         self.messagess = [list() for _ in range(self.processes + 2)]
 
-        self._db = abce.db.Database(
+        self._db = db.Database(
             self.path,
             self.database_queue,
             trade_log=self.trade_logging_mode != 'off')
@@ -372,14 +372,14 @@ class Simulation(object):
             simulation.network(savefig=True)
         """
         self._network_drawing_frequency = frequency
-        self._logger = abce.abcelogger.AbceLogger(self.path,
-                                                  self.logger_queue,
-                                                  savefig=savefig,
-                                                  savegml=savegml,
-                                                  figsize=figsize,
-                                                  dpi=dpi,
-                                                  pos_fixed=pos_fixed,
-                                                  alpha=alpha)
+        self._logger = abcelogger.AbceLogger(self.path,
+                                             self.logger_queue,
+                                             savefig=savefig,
+                                             savegml=savegml,
+                                             figsize=figsize,
+                                             dpi=dpi,
+                                             pos_fixed=pos_fixed,
+                                             alpha=alpha)
         self._logger.start()
 
     def execute_advance_round_seriel(self, time):
