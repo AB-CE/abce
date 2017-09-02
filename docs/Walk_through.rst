@@ -38,8 +38,8 @@ start.py
 
     .. code-block:: python
 
-        """ 1. declared the timeline
-            2. build one Household and one Firm follow_agent
+        """ 1. Build a Simulation
+            2. Build one Household and one Firm follow_agent
             3. For every labor_endowment an agent has he gets one trade or usable labor
             per round. If it is not used at the end of the round it disappears.
             4. Firms' and Households' possessions are monitored to the points marked in
@@ -57,19 +57,16 @@ start.py
             simulation.declare_round_endowment(resource='labor_endowment', units=1, product='labor')
             simulation.declare_perishable(good='labor')
 
-            simulation.panel('household', possessions=['money', 'GOOD'],
-                                 variables=['current_utility'])
-            simulation.panel('firm', possessions=['money', 'GOOD'])
-
             firms = simulation.build_agents(Firm, 'firm', 1)
             households = simulation.build_agents(Household, 'household', 1)
 
             for r in range(100):
                 simulation.advance_round(r)
-                households.sell_labor(),
+                households.sell_labor()
                 firms.buy_labor()
                 firms.production()
-                (households + firms).panel()
+                (households + firms).panel_log(possessions=['money', 'GOOD'])
+                households.panel_log(variables=['current_utility'])
                 firms.sell_goods()
                 households.buy_goods()
                 households.consumption()
@@ -79,9 +76,10 @@ start.py
         if __name__ == '__main__':
             main()
 
+It is of utter most importance to end with either simulation.graphs() or simulation.finalize()
 
-Overview
-~~~~~~~~
+A simulation with GUI
+~~~~~~~~~~~~~~~~~~~~~
 
 In start.py the simulation, thus the parameters, objects, agents and time line are
 set up. Further it is declared, what is observed and written to the database.
@@ -104,21 +102,26 @@ Parameters are specified as a python dictionary
 
     parameters = {'name': '2x2',
                   'random_seed': None,
-                  'rounds': 10}
+                  'rounds': 10,
+                  'slider': 100.0,
+                  'Checkbox': True,
+                  'Textbox': 'type here',
+                  'integer_slider': 100,
+                  'limited_slider': (20, 25, 50)}
 
 
-    @gui(simulation_parameters)
-    def main(simulation_parameters):
+    @gui(parameters)
+    def main(parameters):
         . . .
 
     if __name__ == '__main__':
-        main(simulation_parameters)
+        main(parameters)
 
 The main function is generating and executing the simulation. When the main
 function is preceded with :code:`@gui(simulation_parameters)` The graphical user interface is started
 in your browser the simulation_parameters are used as default values. If no
 browser window open you have to go manually to the
-address "http://127.0.0.1:5000/". The graphical user interface starts the
+address "http://127.0.0.1:8000/". The graphical user interface starts the
 simulation.
 
 During development its often more practical run the simulation without
@@ -132,7 +135,7 @@ To set up a new model, you create a class instance a that will comprise your mod
 
 .. code-block:: python
 
-    simulation = Simulation(rounds=simulation_parameters['rounds'], name="ABCE")
+    simulation = Simulation(name="ABCE")
 
     ...
 
@@ -147,11 +150,12 @@ order of actions, agents and objects are added.
 
 .. code-block:: python
 
-    for round in simulation.next_round():
+    for round in range(1000):
+        simulation.advance_round(round)
         households.sell_labor()
         firms.buy_labor()
         firms.production()
-        (households + firms).panel()
+        (households + firms).panel_log(...)
         firms.sell_goods()
         households.buy_goods()
         households.consumption()
@@ -237,32 +241,21 @@ In this way the economy is physically closed.
 
 .. code-block:: python
 
-        simulation.panel('household', possessions=['good1', 'good2'],  # a list of household possessions to track here
-                                      variables=['utility']) #  a list of household variables to track here
+        firms.panel_log(possessions=['good1', 'good2') # a list of firm possessions to track here
 
-        simulation.aggregate('household', possessions=['good1', 'good2'],
-                              variables=['utility'])
+        households.agg_log('household', possessions=['good1', 'good2'],
+                            variables=['utility']) #  a list of household variables to track here
 
 The possessions good1 and good2 are tracked, the agent's variable :code:`self.utility` is tracked.
-There are several ways in ABCE to log data. If you declare as above that the simulation
-creates panel (:py:meth:`abce.Simulation.panel`) or aggregate (:py:meth:`abce.Simulation.aggregate`) data for the 'household', it creates and displays panel data of the evolution of variables and goods of the particular agent.
+There are several ways in ABCE to log data. Note that the variable names a strings.
 
 
-:py:meth:`abce.Simulation.panel` and :py:meth:`abec.Simulation.aggregate` only initialize the panel/aggregate data collection. You need to instruct
-the Simulation, when to collect the data by adding 'panel' or 'aggregate' to the list of actions
-
-
-.. code-block:: python
-
-    (firms + households).panel()
-    (firms + households).aggregate()
-
-
-This will instruct the simulation that the firm and the household agent collect panel or aggregate data at a specific point in each round.
 
 
 Alternative to this
 you can also log within the agents by simply using `self.log('text', variable)` (:py:meth:`abce.Database.log`)
+Or self.log('text', {'var1': var1, 'var2': var2}). Using one log command with a dictionary is faster than
+using several seperate log commands.
 
 Having established special goods and logging, we create the agents:
 
@@ -274,7 +267,7 @@ Having established special goods and logging, we create the agents:
 - Firm is the class of the agent, that you have imported
 - 'firm' is the group_name of the agent
 - number is the number of agents that are created
-- parameters is a dictionary of parameters that the agent receives in the init function
+- parameters is a dictionary of parameters that the agent receives in the :code:`init` function
   (which is discussed later)
 
 .. code-block:: python
@@ -582,26 +575,11 @@ If the GUI is switched off there must be a
 :py:meth:`abce.Simulation.graphs` after :py:meth:`abce.Simulation.run` .
 Otherwise no graphs are displayed.
 If no browser window open you have to go manually to the
-address "http://127.0.0.1:5000/"
+address "http://127.0.0.1:8000/"
 
 The results are stored in a subfolder of the ./results/ folder.
 :code:`simulation.path` gives you the path to that folder.
 
 The tables are stored as '.csv' files which can be opened with excel.
-
-
-
-Have a look on the `abce/examples/` folder
-------------------------------------------
-
-It is instructive to look at a more examples, for example the 2x2 economy '2sectors'.
-All examples can be found in the abce/example folder, which you can
-download from https://github.com/DavoudTaghawiNejad/abce/archive/master.zip at
-https://github.com/DavoudTaghawiNejad/abce
-
-Then you can make a working copy of the template or a copy of an example.
-
-In the remainder of this walkthrough we will discus a minimal agent based model in ABCE
-
 
 .. [#remainder] round % 2 == 0 means the remainder of round divided by 2 is zero.
