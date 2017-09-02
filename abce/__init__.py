@@ -153,7 +153,7 @@ class Simulation(object):
         """
         try:
             name = simulation_name  # noqa: F821
-        except AttributeError:
+        except NameError:
             pass
 
         self.num_of_agents_in_group = {}
