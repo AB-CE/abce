@@ -31,13 +31,15 @@ if platform.python_implementation() == 'CPython':
                         'bokeh == 0.12.7',
                         'networkx >= 1.9.1',
                         'flexx >= 0.4.1',
-                        'future']
+                        'future',
+                        'datase']
 else:
     install_requires = [
                         'flexx >= 0.4.1',
-                        'future']
+                        'future',
+                        'dataset']
 
-version = '0.8.1a6'
+version = '0.8.1a7'
 try:
     setup(name='abce',
           version=version,
