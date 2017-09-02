@@ -17,7 +17,7 @@ ABCE's model output are compatible with R, Excel and sqlite.
    :alt: ABCE build status on Travis CI
    :target: https://travis-ci.org/AB-CE/abce
 
-.. image:: https://img.shields.io/appveyor/ci/AB-CE/abce.svg
+.. image:: [![Build status](https://ci.appveyor.com/api/projects/status/c2w73u9im2b87reb?svg=true)](https://ci.appveyor.com/project/DavoudTaghawiNejad/abce-2378r)
    :alt: ABCE build status on Appveyor CI
    :target: https://ci.appveyor.com/project/AB-CE/abce
 
