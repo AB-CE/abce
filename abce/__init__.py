@@ -37,6 +37,11 @@ This is a minimal template for a start.py::
         agents.two()
         agents.three()
     simulation.graphs()
+
+Note two things are important: there must be either a
+:code:`simulation.graphs()` or a :code:`simulation.finalize()` at the end
+and every round needs to be announced using simulation.advance_round(r).
+Where r is any representation of time.
 """
 import datetime
 import os
@@ -47,8 +52,8 @@ import queue
 import multiprocessing as mp
 from multiprocessing.managers import BaseManager
 from collections import defaultdict, OrderedDict
-import db
-import abcelogger
+from .db import Database
+from .abcelogger import AbceLogger
 from .agent import Agent, Trade  # noqa: F401
 from .group import Group
 from .notenoughgoods import NotEnoughGoods  # noqa: F401
@@ -217,7 +222,7 @@ class Simulation(object):
 
         self.messagess = [list() for _ in range(self.processes + 2)]
 
-        self._db = db.Database(
+        self._db = Database(
             self.path,
             self.database_queue,
             trade_log=self.trade_logging_mode != 'off')
@@ -372,7 +377,7 @@ class Simulation(object):
             simulation.network(savefig=True)
         """
         self._network_drawing_frequency = frequency
-        self._logger = abcelogger.AbceLogger(self.path,
+        self._logger = AbceLogger(self.path,
                                              self.logger_queue,
                                              savefig=savefig,
                                              savegml=savegml,

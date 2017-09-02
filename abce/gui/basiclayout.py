@@ -101,6 +101,7 @@ def basiclayout(Form, simulation, title, top_bar=None, story=None,
             @self.form.connect("repeatexecution")
             def _repeatexecution(events):
                 name, parameters = hash_simulation_parameters(events)
+                print("parameters:", parameters)
                 parameters['Name'] = name
                 pool_path = join(os.path.abspath('./result/cache'), name)
 
@@ -249,6 +250,8 @@ def hash_simulation_parameters(events):
     """ hashes simulation parameter, after setting random seed to None """
     parameters = events['simulation_parameter']
     parameters['random_seed'] = None
+    parameters['name'] = None
+    parameters['Name'] = None
     name = sha1(json.dumps(parameters, sort_keys=True)
                 .encode('utf-8')).hexdigest()
     return name, parameters
