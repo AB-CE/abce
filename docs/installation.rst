@@ -10,8 +10,7 @@ Installation Ubuntu
 1. If python3 and pip not installed in terminal [#fail]_ ::
 
     sudo apt-get install python3
-    sudo apt-get install python3-pip python-dev python-pandas
-    sudo pip install --upgrade numpy
+    sudo apt-get install python3-pip
 
 #. In terminal::
 
