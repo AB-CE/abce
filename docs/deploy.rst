@@ -93,8 +93,10 @@ start simulation with nohup::
 
     cd myproject
 
-    nohup python3 start.py &
+    nohup sudo python3 start.py &
     tail -f nohup.out
 
 The last line displays the logging messages.
+
+If something does not work delete all files and directories that have root as user. (find them with :code:`ll`)
 
