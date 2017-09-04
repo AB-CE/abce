@@ -12,13 +12,12 @@ notebook cell by cell and observe ABCE at work.
 
     import abce
 
-
 .. code:: ipython3
 
     simulation = abce.Simulation(name='ipythonsimulation', processes=1)
 
 Creating the Agent
-------------------
+==================
 
 We create a simple agent and intialize it. An agent is an object that
 has propeties and does things. In python that is a class. We create an
@@ -45,14 +44,14 @@ From the abstract agent, we create four concrete agents.
 
 .. code:: ipython3
 
-    agents = simulation.build_agents(Agent, 'agent',
-                                    parameters={"world_size": 10},
+    agents = simulation.build_agents(Agent, 'agent', 
+                                    parameters={"world_size": 10}, 
                                     agent_parameters=['fred', 'astaire', 'altair', 'deurich'])
 
 ``agents`` allows you to call each agents in the agents group. Each
 agent in this group has a group name, which is 'agent' and an id.
-Further we give each of the agents a parameter a family\_name. Run the
-simulation and let all agents say their name:
+Further we give each of the agents a parameter a family\_name. We can
+now run the simulation and let all agents say their name:
 
 .. code:: ipython3
 
@@ -90,15 +89,14 @@ simulation and let all agents say their name:
     hello I am deurich my id 3 and my group is 'agent', it is the 4 round
 
 
-It is necessary to tell the simulation when a new round starts and what time it is
-simulation.advance_round(r) does that. The parameter can be any representation of
-time.
+It is necessary to tell the simulation when a new round starts. The
+parameter can be any representation of time.
 
 Giving a Good
--------------
+=============
 
 ABCE provide goods. Goods are things that can be given, sold or
-transformed. We create 5 agents, the first one has a ball the agents
+transformed. We create 5 agents, the first one has a balls the agents
 pass the ball around.
 
 .. code:: ipython3
@@ -108,20 +106,20 @@ pass the ball around.
             self.num_kids = parameters['num_kids']
             if self.id == 0:
                 self.create('ball', 1)
-
+            
         def whether_I_have_the_ball(self):
-            if self.possession('ball') > 0:
+            if self['ball'] > 0:
                 print('*', end="", flush=True)
             else:
                 print('.', end="", flush=True)
-
+                
         def give_the_ball_to_the_next_kid(self):
             next_kid = (self.id + 1) % self.num_kids  # the id of the next kid, if I am the last the first kid
-            if self.possession('ball') >= 1:
-                self.give('kid', next_kid, good='ball', quantity=1)
-
-
-
+            if self['ball'] >= 1:
+                self.give(('kid', next_kid), good='ball', quantity=1)
+                
+        
+            
 
 self.create, creates an object. self.possession, checks how much of one
 object an agent has. self.give, gives an object to another agent,
@@ -138,8 +136,8 @@ specied by its group name and its id.
 .. code:: ipython3
 
     kids = simulation.build_agents(Kid, 'kid', number=num_kids,
-                                    parameters={"num_kids": num_kids})
-
+                                    parameters={"num_kids": num_kids}) 
+                                
 
 When agent\_parameters is not specified the numer of agents to be
 created needs to be spezified
@@ -172,7 +170,7 @@ created needs to be spezified
 
 
 Trade
------
+=====
 
 .. code:: ipython3
 
@@ -186,15 +184,15 @@ Well in every school yard we have a drug dealer.
         def init(self, parameters, agent_parameters):
             self.num_dealers = parameters['num_dealers']
             self.create('money', 100)  # don't we all wish you'd this function in real live?
-
+            
         def buy_drugs(self):
             drug_dealer_id = randrange(self.num_dealers)
-            self.buy('drug_dealer', drug_dealer_id, good='drugs', quantity=1, price=10)
-
+            self.buy(('drug_dealer', drug_dealer_id), good='drugs', quantity=1, price=10)
+        
         def print_possessions(self):
             print('    ' + self.group + str(dict(self.possessions())))
-
-
+            
+        
 
 The new kids, approach a random drug dealer and offer him 10 bucks.
 
@@ -203,12 +201,12 @@ The new kids, approach a random drug dealer and offer him 10 bucks.
     class DrugDealer(abce.Agent):
         def init(self, parameters, agent_parameters):
             self.create('drugs', 1)
-
+            
         def sell_to_customers(self):
             for offer in self.get_offers('drugs'):
-                if offer.price >= 10 and self.possession('drugs') > 1:
+                if offer.price >= 10 and self['drugs'] > 1:
                     self.accept(offer)
-
+        
         def print_possessions(self):
             print('    ' + self.group + str(dict(self.possessions())))
 
@@ -262,17 +260,15 @@ amount of drugs and money all kids have for each of the two kids
     Drug Dealer accepts or rejects the offer:
         drug_dealer{'money': 0, 'drugs': 1.0}
         customer{'money': 100.0}
-
-
-    Round1time only simulation   0.15
-
+    
+    Round1
     Customer offers 10 dollar:
         drug_dealer{'money': 0, 'drugs': 1.0}
         customer{'money': 90.0}
     Drug Dealer accepts or rejects the offer:
         drug_dealer{'money': 0, 'drugs': 1.0}
         customer{'money': 100.0}
-
+    
 
 
 When looking at round one one can see that after the customer offered 10
@@ -284,41 +280,8 @@ drugs to the customer.
 In round 1, where the drug dealer runs out of drugs the 10 dollars go
 back to the customer.
 
-.. code:: ipython3
-
-    for r in range(simulation_parameters['rounds']):
-        simulation.advance_round(r)
-        print('Customer offers 10 dollar:')
-        customers.buy_drugs()
-        kids.print_possessions()
-        print('Drug Dealer accepts or rejects the offer:')
-        drug_dealers.sell_to_customers()
-        kids.print_possessions()
-        print()
-
-
-.. parsed-literal::
-
-    Round0
-    Customer offers 10 dollar:
-        drug_dealer{'money': 0, 'drugs': 1.0}
-        customer{'money': 90.0}
-    Drug Dealer accepts or rejects the offer:
-        drug_dealer{'money': 0, 'drugs': 1.0}
-        customer{'money': 100.0}
-
-    Round1
-    Customer offers 10 dollar:
-        drug_dealer{'money': 0, 'drugs': 1.0}
-        customer{'money': 90.0}
-    Drug Dealer accepts or rejects the offer:
-        drug_dealer{'money': 0, 'drugs': 1.0}
-        customer{'money': 100.0}
-
-
-
 Lets capture data
------------------
+=================
 
 There are three ways of capturing data. ``aggregate`` and ``panel``
 collect data from a specified group at a specified point of time. This
@@ -328,18 +291,18 @@ has the advantage that there is no logging code in the agent class.
 .. code:: ipython3
 
     from math import sin
-
+    
     class DataDealer(abce.Agent):
         def init(self, simulation_parameters, agent_parameters):
             self.count = 0
             self.create('money', 0)
-
+    
         def counting(self):
             self.count += 1
             self.curve = sin(self.count / 100)
             self.create('money', self.curve * self.id)
-
-
+            
+            
 
 .. code:: ipython3
 
@@ -354,26 +317,24 @@ possessions.
 
 Every round the groups need to be instructed to collect the according
 data. **simulation.finalize()** must be called after the simulation, to
-write the data! Otherwise the program hangs. Never forget to put
-**simulation.finalize()** otherwise the program will just block()
+write the data! Otherwise the program hangs.
 
 .. code:: ipython3
 
-
+    
     for r in range(100):
         simulation.advance_round(r)
         datadealers.counting()
         datadealers.agg_log(variables=['count'])
         datadealers.panel_log(possessions=['money'], variables=['curve'])
-    simulation.finalize()
-
+    simulation.finalize()    
+            
 
 
 .. parsed-literal::
 
     Round0
-    Round1time with data and network   0.20
-
+    Round1
     Round2
     Round3
     Round4
@@ -381,12 +342,7 @@ write the data! Otherwise the program hangs. Never forget to put
     Round6
     Round7
     Round8
-    {
-        "name": "ipythonsimulation",
-        "random_seed": 1504186751.3476071,
-        "num_kids": 5
     Round9
-
     Round10
     Round11
     Round12
@@ -399,7 +355,9 @@ write the data! Otherwise the program hangs. Never forget to put
     Round19
     Round20
     Round21
-    Round22
+    
+    Round22time only simulation  94.36
+    
     Round23
     Round24
     Round25
@@ -477,12 +435,18 @@ write the data! Otherwise the program hangs. Never forget to put
     Round97
     Round98
     Round99
-
-    time only simulation   0.16
-    time with data and network   0.32
+    
+    time only simulation   1.72
+    time with data and network  94.42
+    {
+        "name": "ipythonsimulation",
+        "random_seed": 1504536068.345761,
+        "num_kids": 5
+    }
+    time with data and network   2.09
     {
         "name": "gatherdata",
-        "random_seed": 1504186751.529168
+        "random_seed": 1504536161.0385568
     }
 
 
@@ -496,7 +460,7 @@ We can find the directory of the simulation data by using the
 
 .. parsed-literal::
 
-    /Users/taghawi/Dropbox/workspace/abce_examples/examples/jupyter_tutorial/result/gatherdata_2017-08-31_10-39
+    /Users/taghawi/Dropbox/workspace/abce_examples/examples/jupyter_tutorial/result/gatherdata_2017-09-04_11-42
 
 
 In that directory are the data files and a describtion.txt
@@ -519,7 +483,7 @@ In that directory are the data files and a describtion.txt
 
 
 Using statistical software
---------------------------
+==========================
 
 .. code:: ipython3
 
@@ -548,11 +512,11 @@ Using statistical software
         .dataframe thead tr:only-child th {
             text-align: right;
         }
-
+    
         .dataframe thead th {
             text-align: left;
         }
-
+    
         .dataframe tbody tr th {
             vertical-align: top;
         }
@@ -745,12 +709,12 @@ Using statistical software
 
 .. parsed-literal::
 
-    <matplotlib.axes._subplots.AxesSubplot at 0x10f0ee6a0>
+    <matplotlib.axes._subplots.AxesSubplot at 0x1104a5710>
 
 
 
 
-.. image:: output_53_1.png
+.. image:: output_52_1.png
 
 
 When running a simulation with python from a start.py
