@@ -144,7 +144,7 @@ class Quote(object):
             self.sell(quote.sender_group, quote.sender_id,
                       quote.good, quantity, quote.price)
 
-    def quote_sell(self, receiver_group, receiver_id,
+    def quote_sell(self, receiver,
                    good=None, quantity=None, price=None):
         """ quotes a price to sell quantity of 'good' to a receiver. Use None,
         if you do not want to specify a value.
@@ -166,17 +166,17 @@ class Quote(object):
         """
         offer = Quotation(sender_group=self.group,
                           sender_id=self.id,
-                          receiver_group=receiver_group,
-                          receiver_id=receiver_id,
+                          receiver_group=receiver[0],
+                          receiver_id=receiver[1],
                           good=good,
                           quantity=quantity,
                           price=price,
                           buysell='qs',
                           id=self._offer_counter())
-        self._send(receiver_group, receiver_id, '_q', offer)
+        self._send(receiver[0], receiver[1], '_q', offer)
         return offer
 
-    def quote_buy(self, receiver_group, receiver_id,
+    def quote_buy(self, receiver,
                   good=None, quantity=None, price=None):
         """ quotes a price to buy quantity of 'good' a receiver. Use None,
         if you do not want to specify a value.
@@ -198,12 +198,12 @@ class Quote(object):
         """
         offer = Quotation(sender_group=self.group,
                           sender_id=self.id,
-                          receiver_group=receiver_group,
-                          receiver_id=receiver_id,
+                          receiver_group=receiver[0],
+                          receiver_id=receiver[1],
                           good=good,
                           quantity=quantity,
                           price=price,
                           buysell='qb',
                           id=self._offer_counter())
-        self._send(receiver_group, receiver_id, '_q', offer)
+        self._send(receiver[0], receiver[1], '_q', offer)
         return offer

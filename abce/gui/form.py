@@ -84,7 +84,7 @@ def form(parameter_mask, names):
                         elif value is None:
                             ui.Label(text=title, wrap=True)
                         else:  # field
-                            raise Exception(str(value) + "not recognized")
+                            print(str(value) + "not recognized")
                 with ui.VBox():
                     self.btn = ui.Button(text="start simulation")
                     self.repeat_execution_checker = ui.ToggleButton(

@@ -20,45 +20,44 @@ either be sent to an individual with :meth:`messaging.Messaging.message` or to a
 with  :meth:`messaging.Messaging.get_messages_all` or messages with a specific topic with
 :meth:`messaging.Messaging.get_messages`.
 """
-from __future__ import division
-from builtins import str
-from builtins import object
 from random import shuffle
 
 
 class Message(object):
-    __slots__ = ['sender_group', 'sender_id', 'receiver_group',
-                 'receiver_id', 'topic', 'content']
+    __slots__ = ['sender', 'receiver', 'topic', 'content']
 
-    def __init__(self, sender_group, sender_id, receiver_group,
-                 receiver_id, topic, content):
-        self.sender_group = sender_group
-        self.sender_id = sender_id
-        self.receiver_group = receiver_group
-        self.receiver_id = receiver_id
+    def __init__(self, sender, receiver, topic, content):
+        self.sender = sender
+        self.receiver = receiver
         self.topic = topic
         self.content = content
 
     def __repr__(self):
-        return "<{sender: %s, %i; receiver: %s, %i; topic: %s; content: %s}>" % (
-            self.sender_group, self.sender_id, self.receiver_group,
-            self.receiver_id, self.topic, str(self.content))
+        return "<{sender: %s; receiver: %s; topic: %s; content: %s}>" % (
+            str(self.sender), str(self.receiver), self.topic, str(self.content))
 
 
 class Messaging(object):
     def message(self, receiver_group, receiver_id, topic, content):
+        print("message is depreciated please use send")
+        self.send((receiver_group, receiver_id), topic, content)
+
+    def send(self, receiver, topic, content):
         """ sends a message to agent. Agents receive it
         at the beginning of next round with :meth:`~abceagent.Messaging.get_messages` or
         :meth:`~abceagent.Messaging.get_messages_all`.
 
-        See:
-            message_to_group for messages to multiple agents
-
         Args::
 
-         receiver_group: agent, agent_group or 'all'
-         topic: string, with which this message can be received
-         content: string, dictionary or class, that is send.
+            receiver:
+                The name of the receiving agent a tuple (group, id).
+                e.G. ('firm', 15)
+
+            topic:
+                string, with which this message can be received
+
+            content:
+                string, dictionary or class, that is send.
 
         Example::
 
@@ -75,13 +74,11 @@ class Messaging(object):
          self.message('firm', 01, 'm', "hello my message")
 
         """
-        msg = Message(sender_group=self.group,
-                      sender_id=self.id,
-                      receiver_group=receiver_group,
-                      receiver_id=receiver_id,
+        msg = Message(sender=self.name,
+                      receiver=receiver,
                       topic=topic,
                       content=content)
-        self._send(receiver_group, receiver_id, topic, msg)
+        self._send(receiver[0], receiver[1], topic, msg)
 
     def get_messages(self, topic='m'):
         """ self.messages() returns all new messages send with :meth:`~abceagent.Messaging.message`

@@ -27,8 +27,7 @@ class TXEntension(build_ext):
             build_ext.build_extension(self, ext)
         except (CCompilerError, DistutilsExecError, DistutilsPlatformError):
             pass  # raise BuildFailed()
-
-
+          
 cmdclass = {}
 ext_modules = []
 
@@ -36,14 +35,12 @@ ext_modules = []
 try:
     ext_modules += [
         Extension("abce.trade", ["abce/trade.pyx"]),
-        Extension("abce.multicurrencytrade", ["abce/multicurrencytrade.pyx"]),
         Extension("abce.online_variance", ["abce/online_variance.pyx"]),
     ]
     cmdclass.update({'build_ext': TXEntension})
 except ImportError:
     ext_modules += [
         Extension("abce.trade", ["abce/trade.c"]),
-        Extension("abce.multicurrencytrade", ["abce/multicurrencytrade.c"]),
         Extension("abce.online_variance", ["abce/online_variance.c"]),
     ]
 install_requires = ['numpy >= 1.10.2p;platform_python_implementation=="CPython"',
@@ -53,6 +50,9 @@ install_requires = ['numpy >= 1.10.2p;platform_python_implementation=="CPython"'
                     'flexx >= 0.4.1',
                     'future',
                     'dataset']
+
+version = '0.8.1a22'
+
 
 version = '0.8.1a16'
 setup(name='abce',

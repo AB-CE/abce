@@ -1,0 +1,7 @@
+numpy >= 1.10.2p
+pandas >= 0.17.1
+networkx >= 1.9.1
+flask >= 0.10.1
+bokeh == 0.12.7
+flexx == 0.4.1
+dataset
