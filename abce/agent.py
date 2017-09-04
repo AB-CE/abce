@@ -88,7 +88,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
 
     """
     def __init__(self, id, group, trade_logging,
-                 database, logger, random_seed, num_managers):
+                 database, logger, random_seed, num_managers, start_round=None):
         """ Do not overwrite __init__ instead use a method called init instead.
         init is called whenever the agent are build.
         """
@@ -128,9 +128,9 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         self._data_to_observe = {}
         self._data_to_log_1 = {}
         self._quotes = {}
-        self.round = None
+        self.round = start_round
         """ self.round is depreciated"""
-        self.time = None
+        self.time = start_round
         """ self.time, contains the time set with simulation.advance_round(time)
             you can set time to anything you want an integer or
             (12, 30, 21, 09, 1979) or 'monday' """
