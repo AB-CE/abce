@@ -34,7 +34,6 @@ from collections import OrderedDict, defaultdict
 from pprint import pprint
 import abce
 from .database import Database
-from .networklogger import NetworkLogger
 from .trade import Trade
 from .messaging import Messaging
 from .expiringgood import ExpiringGood
@@ -46,7 +45,7 @@ class DummyContracts:
         pass
 
 
-class Agent(Database, NetworkLogger, Trade, Messaging):
+class Agent(Database, Trade, Messaging):
     """ Every agent has to inherit this class. It connects the agent to the
     simulation and to other agent. The :class:`abce.Trade`,
     :class:`abce.Database` and :class:`abce.Messaging` classes are included.
@@ -88,7 +87,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
 
     """
     def __init__(self, id, group, trade_logging,
-                 database, logger, random_seed, num_managers, start_round=None):
+                 database, random_seed, num_managers, start_round=None):
         """ Do not overwrite __init__ instead use a method called init instead.
         init is called whenever the agent are build.
         """
@@ -104,7 +103,6 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         # TODO should be group_address(group), but it would not work
         # when fired manual + ':' and manual group_address need to be removed
         self.database_connection = database
-        self.logger_connection = logger
 
         self.trade_logging = {'individual': 1,
                               'group': 2, 'off': 0}[trade_logging]
@@ -299,9 +297,6 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
             NotEnoughGoods: when goods are insufficient
         """
         self._haves.destroy(good, quantity)
-
-    def _set_network_drawing_frequency(self, frequency):
-        self._network_drawing_frequency = frequency
 
     def _execute(self, command, args, kwargs):
         self._out = [[] for _ in range(self.num_managers + 2)]

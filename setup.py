@@ -1,4 +1,5 @@
-#!/usr/bin/env python
+
+import os
 try:
     from setuptools import setup
     from setuptools import Extension
@@ -11,7 +12,6 @@ except ImportError:
     from distutils.command.build_ext import build_ext
 from distutils.errors import CCompilerError, DistutilsExecError, \
     DistutilsPlatformError
-
 
 class TXEntension(build_ext):
     # This class allows C extension building to fail.
@@ -31,30 +31,36 @@ class TXEntension(build_ext):
 cmdclass = {}
 ext_modules = []
 
-
-try:
-    ext_modules += [
-        Extension("abce.trade", ["abce/trade.pyx"]),
-        Extension("abce.online_variance", ["abce/online_variance.pyx"]),
-    ]
-    cmdclass.update({'build_ext': TXEntension})
-except ImportError:
-    ext_modules += [
-        Extension("abce.trade", ["abce/trade.c"]),
-        Extension("abce.online_variance", ["abce/online_variance.c"]),
-    ]
-install_requires = ['numpy >= 1.10.2p;platform_python_implementation=="CPython"',
-                    'pandas >= 0.17.1;platform_python_implementation=="CPython"',
-                    'bokeh == 0.12.7;platform_python_implementation=="CPython"',
-                    'networkx >= 1.9.1',
-                    'flexx >= 0.4.1',
-                    'future',
-                    'dataset']
-
-version = '0.8.1a22'
+install_requires = ['networkx >= 1.9.1',
+                        'flexx >= 0.4.1',
+                        'future',
+                        'dataset']
 
 
-version = '0.8.1a16'
+readthedocs = os.environ.get('READTHEDOCS') == 'True'
+
+if not readthedocs:
+    try:
+        ext_modules += [
+            Extension("abce.trade", ["abce/trade.pyx"]),
+            Extension("abce.online_variance", ["abce/online_variance.pyx"]),
+        ]
+        cmdclass.update({'build_ext': TXEntension})
+    except ImportError:
+        ext_modules += [
+            Extension("abce.trade", ["abce/trade.c"]),
+            Extension("abce.online_variance", ["abce/online_variance.c"]),
+        ]
+
+
+    install_requires += ['numpy >= 1.10.2p;platform_python_implementation=="CPython"',
+                        'pandas >= 0.17.1;platform_python_implementation=="CPython"',
+                        'bokeh == 0.12.7;platform_python_implementation=="CPython"']
+
+
+version = '0.8.1a23'
+
+
 setup(name='abce',
       version=version,
       author='Davoud Taghawi-Nejad',
