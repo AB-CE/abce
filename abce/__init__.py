@@ -53,7 +53,6 @@ import multiprocessing as mp
 from multiprocessing.managers import BaseManager
 from collections import defaultdict, OrderedDict
 from .db import Database
-from .abcelogger import AbceLogger
 from .agent import Agent, Trade  # noqa: F401
 from .group import Group
 from .notenoughgoods import NotEnoughGoods  # noqa: F401
@@ -198,14 +197,12 @@ class Simulation(object):
 
         if processes == 1:
             self.database_queue = queue.Queue()
-            self.logger_queue = queue.Queue()
             self._processor_groups = [ProcessorGroup(1, batch=0)]
             self.execute_advance_round = self._execute_advance_round_seriel
         else:
 
             manager = mp.Manager()
             self.database_queue = manager.Queue()
-            self.logger_queue = manager.Queue()
             self.pool = mp.Pool(self.processes)
 
             MyManager.register('ProcessorGroup', ProcessorGroup)
@@ -350,45 +347,6 @@ class Simulation(object):
             human_or_other_resource, units, service)
         self.declare_perishable(service)
 
-    def panel(self, group, possessions=None, variables=None):
-        print("simulation.panel removed. Use agent group's panel_log function")
-
-    def aggregate(self, group, possessions=None, variables=None):
-        print("simulation.panel removed. Use agent group's agg_log function")
-
-    def network(self, frequency=1, savefig=False, savegml=True,
-                figsize=(24, 20), dpi=100, pos_fixed=False, alpha=0.8):
-        """ network(.) prepares abce to write network data.
-
-        Args:
-            frequency:
-                the frequency with which the network is written, default=1
-            savefig:
-                wether to save a png file, default=False
-            savegml:
-                wether to save a gml file, default=True
-            figsize:
-               size of the graph in inch. (see matplotlib)
-            dpi:
-                resulution of the picture
-            pos_fixed:
-                positions are fixed after the first round
-
-        Example::
-
-            simulation.network(savefig=True)
-        """
-        self._network_drawing_frequency = frequency
-        self._logger = AbceLogger(self.path,
-                                  self.logger_queue,
-                                  savefig=savefig,
-                                  savegml=savegml,
-                                  figsize=figsize,
-                                  dpi=dpi,
-                                  pos_fixed=pos_fixed,
-                                  alpha=alpha)
-        self._logger.start()
-
     def _execute_advance_round_seriel(self, time):
         for pg in self._processor_groups:
             pg.execute_advance_round(time)
@@ -430,13 +388,6 @@ class Simulation(object):
             print(str("time only simulation %6.2f" %
                   (time.time() - self.clock)))
             self.database_queue.put('close')
-            self.logger_queue.put(['close', 'close', 'close'])
-
-            try:
-                while self._logger.is_alive():
-                    time.sleep(0.05)
-            except AttributeError:
-                pass
 
             while self._db.is_alive():
                 time.sleep(0.05)
@@ -512,7 +463,6 @@ class Simulation(object):
                          agent_args={'group': group_name,
                                      'trade_logging': self.trade_logging_mode,
                                      'database': self.database_queue,
-                                     'logger': self.logger_queue,
                                      'random_seed': random.random()},
                          parameters=parameters,
                          agent_parameters=agent_parameters,
@@ -534,7 +484,6 @@ class Simulation(object):
                                       'trade_logging':
                                       self.trade_logging_mode,
                                       'database': self.database_queue,
-                                      'logger': self.logger_queue,
                                       'random_seed': random.random(),
                                       'start_round': round + 1},
                           parameters=parameters,
