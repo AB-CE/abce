@@ -237,7 +237,7 @@ class Simulation(object):
         self.clock = time.time()
         self.database = self
         self.time = None
-        """ Returns the current time set with simulation.advance_round(time) """
+        """Returns the current time set with simulation.advance_round(time)"""
 
     def declare_round_endowment(self, resource, units,
                                 product):
@@ -380,13 +380,13 @@ class Simulation(object):
         """
         self._network_drawing_frequency = frequency
         self._logger = AbceLogger(self.path,
-                                             self.logger_queue,
-                                             savefig=savefig,
-                                             savegml=savegml,
-                                             figsize=figsize,
-                                             dpi=dpi,
-                                             pos_fixed=pos_fixed,
-                                             alpha=alpha)
+                                  self.logger_queue,
+                                  savefig=savefig,
+                                  savegml=savegml,
+                                  figsize=figsize,
+                                  dpi=dpi,
+                                  pos_fixed=pos_fixed,
+                                  alpha=alpha)
         self._logger.start()
 
     def execute_advance_round_seriel(self, time):
