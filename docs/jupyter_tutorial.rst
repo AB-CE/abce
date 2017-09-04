@@ -50,8 +50,8 @@ From the abstract agent, we create four concrete agents.
 
 ``agents`` allows you to call each agents in the agents group. Each
 agent in this group has a group name, which is 'agent' and an id.
-Further we give each of the agents a parameter a family\_name. We can
-now run the simulation and let all agents say their name:
+Further we give each of the agents a parameter a family\_name. Run the
+simulation and let all agents say their name:
 
 .. code:: ipython3
 
@@ -89,14 +89,15 @@ now run the simulation and let all agents say their name:
     hello I am deurich my id 3 and my group is 'agent', it is the 4 round
 
 
-It is necessary to tell the simulation when a new round starts. The
-parameter can be any representation of time.
+It is necessary to tell the simulation when a new round starts and what time it is
+simulation.advance_round(r) does that. The parameter can be any representation of
+time.
 
 Giving a Good
 =============
 
 ABCE provide goods. Goods are things that can be given, sold or
-transformed. We create 5 agents, the first one has a balls the agents
+transformed. We create 5 agents, the first one has a ball the agents
 pass the ball around.
 
 .. code:: ipython3
@@ -317,7 +318,8 @@ possessions.
 
 Every round the groups need to be instructed to collect the according
 data. **simulation.finalize()** must be called after the simulation, to
-write the data! Otherwise the program hangs.
+write the data! Otherwise the program hangs. Never forget to put
+**simulation.finalize()** otherwise the program will just block()
 
 .. code:: ipython3
 
