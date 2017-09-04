@@ -121,11 +121,13 @@ cdef class Offer:
     cdef readonly object id
     cdef readonly int made
     cdef public int status_round
+    cdef readonly object sender
 
     def __cinit__(self, str sender_group, int sender_id, str receiver_group,
                   int receiver_id, object good, double quantity, double price,
                   char buysell, str status, double final_quantity, long id,
                   int made, int status_round):
+        self.sender = (sender_group, sender_id)
         self.sender_group = sender_group
         self.sender_id = sender_id
         self.receiver_group = receiver_group

@@ -27,15 +27,11 @@ from random import shuffle
 
 
 class Message(object):
-    __slots__ = ['sender_group', 'sender_id', 'receiver_group',
-                 'receiver_id', 'topic', 'content']
+    __slots__ = ['sender', 'receiver', 'topic', 'content']
 
-    def __init__(self, sender_group, sender_id, receiver_group,
-                 receiver_id, topic, content):
-        self.sender_group = sender_group
-        self.sender_id = sender_id
-        self.receiver_group = receiver_group
-        self.receiver_id = receiver_id
+    def __init__(self, sender, receiver, topic, content):
+        self.sender = sender
+        self.receiver = receiver
         self.topic = topic
         self.content = content
 
@@ -82,10 +78,8 @@ class Messaging(object):
          self.message('firm', 01, 'm', "hello my message")
 
         """
-        msg = Message(sender_group=self.group,
-                      sender_id=self.id,
-                      receiver_group=receiver[0],
-                      receiver_id=receiver[1],
+        msg = Message(sender=self.name,
+                      receiver=receiver,
                       topic=topic,
                       content=content)
         self._send(receiver[0], receiver[1], topic, msg)

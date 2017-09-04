@@ -49,7 +49,7 @@ def get_epsilon():
 
 
 class Offer:
-    __slots__ = ('sender_group', 'sender_id', 'receiver_group',
+    __slots__ = ('sender', 'sender_group', 'sender_id', 'receiver_group',
                 'receiver_id', 'good', 'quantity', 'price',
                 'buysell', 'status', 'final_quantity', 'id',
                 'made', 'status_round')
@@ -110,6 +110,7 @@ class Offer:
                  receiver_id, good, quantity, price,
                  buysell, status, final_quantity, id,
                  made, status_round):
+        self.sender = (sender_group, sender_id)
         self.sender_group = sender_group
         self.sender_id = sender_id
         self.receiver_group = receiver_group

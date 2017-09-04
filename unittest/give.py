@@ -36,11 +36,9 @@ class Give(abce.Agent):
                 assert len(msg) == 1, len(msg)
             msg = msg[0]
             assert msg.content == self.possession('cookies')
-            assert msg.sender_group == 'give'
-            assert msg.sender_id == 0
+            assert msg.sender == ('give', 0), msg.sender
             assert msg.topic == 'tpc'
-            assert msg.receiver_id == 1
-            assert msg.receiver_group == 'give'
+            assert msg.receiver == ('give', 1)
 
     def three(self):
         pass
