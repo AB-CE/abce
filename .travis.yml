@@ -16,10 +16,16 @@ cache: pip
 
 matrix:
   include:
+<<<<<<< Updated upstream
     - os: linux
       python: "3.5"
     - os: linux
       python: "2.7"
+=======
+    - python: 3.5
+    - python: 3.4
+    - python: pypy3
+>>>>>>> Stashed changes
     - os: osx
       sudo: required
       language: generic

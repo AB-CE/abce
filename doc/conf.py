@@ -13,9 +13,8 @@
 
 import sys, os
 try:
-    import mock
-    MOCK_MODULES = ['scipy', 'numpy', 'pandas', 'networkx']
- 
+    MOCK_MODULES = ['scipy', 'numpy', 'pandas', 'networkx', 'dataset', '__future__']
+
     for mod_name in MOCK_MODULES:
         sys.modules[mod_name] = mock.Mock()
 except ImportError:
@@ -24,6 +23,7 @@ except ImportError:
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath('../abce'))
+sys.path.insert(0, os.path.abspath('../..'))
 
 # -- General configuration -----------------------------------------------------
 
