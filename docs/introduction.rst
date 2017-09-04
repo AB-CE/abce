@@ -60,7 +60,7 @@ What is more Python is readable even for non Python programmers.
 .. [#noeq] with out the equilibrium of course
 
 Design
-------
+======
 
 ABCE's first design goal is that, code can be rapidly written,
 to enable a modeler to quickly write down
@@ -105,7 +105,7 @@ the agents receive is random, as if the agent's in the round before
 would make offers in a random order.
 
 Differences to other agent-based modeling platforms
----------------------------------------------------
+```````````````````````````````````````````````````
 
 We identified several survey articles as well as
 a quite complete overview of agent-based modeling software
@@ -170,7 +170,7 @@ Moduleco,
 We will concentrate on the most widely used ABM frameworks/platforms: MASON, NetLogo, Repast.
 
 General differences to other agent-based modeling platforms
-===========================================================
+```````````````````````````````````````````````````````````
 
 First of all ABCE is domain specific, that enables it to provide
 the basic functions such as production, consumption, trade and
@@ -228,7 +228,7 @@ good choice.
 .. [#30000] https://pypi.python.org/
 
 Physical Goods
-==============
+``````````````
 
 Physical goods are at the heart of almost every economic model.
 The core feature and main difference to other ABM platforms is the
@@ -264,7 +264,7 @@ Selling of a good for example works like this:
        the unsold part of the good is re-credited.
 
 Difference to MASON
-===================
+```````````````````
 
 Masons is a single-threaded discrete event platform that is intended
 for simulations of social, biological and economical systems.
@@ -294,7 +294,7 @@ MASON, like Repast Java is based on Java, while ABCE is
 based on Python, the advantages have been discussed before.
 
 Difference to NetLogo
-=====================
+`````````````````````
 
 Netlogo is a multi-agent programming language, which is part of
 the Lisp language family. Netlogo is interpreted.
@@ -313,7 +313,7 @@ concept of the observer agent, while in ABCE the simulation
 is controlled by the simulation process.
 
 Difference Repast
-=================
+`````````````````
 
 Repast is a modeling environment for social science. It was
 originally conceived as a Java recoding of SWARM.

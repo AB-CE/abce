@@ -307,7 +307,9 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         self._out = [[] for _ in range(self.num_managers + 2)]
         try:
             self._clearing__end_of_subround(list(self.inbox))
+            self._begin_subround()
             self._out[-2] = (getattr(self, command)(*args, **kwargs), )
+            self._end_subround()
             self._reject_polled_but_not_accepted_offers()
         except KeyboardInterrupt:
             return None
@@ -320,6 +322,16 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
 
         self.inbox.clear()
         return self._out
+
+    def _begin_subround(self):
+        """ Overwrite this to make ABCE plugins, that need to do
+        something at the beginning of every subround """
+        pass
+
+    def _end_subround(self):
+        """ Overwrite this to make ABCE plugins, that need to do
+        something at the beginning of every subround """
+        pass
 
     def _register_resource(self, resource, units, product):
         self._resources.append((resource, units, product))

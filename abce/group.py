@@ -15,13 +15,11 @@ class Group(object):
                    else self.execute_serial)
 
         self.agent_class = agent_class
-        methods = get_methods(agent_class)
-        for base in agent_class.__bases__:
-            methods += get_methods(base)
-        for method in methods:
-            setattr(self, method,
-                    eval('lambda self=self, *argc, **kw: self.do("%s")' %
-                         method))
+        for method in dir(agent_class):
+            if method[0] != '_':
+                setattr(self, method,
+                        eval('lambda self=self, *argc, **kw: self.do("%s", *argc, **kw)' %
+                             method))
 
         self.panel_serial = 0
         self.last_action = "Begin_of_Simulation"

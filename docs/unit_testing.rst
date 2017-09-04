@@ -11,8 +11,8 @@ create more robust software.
 
 Currently all trade and exchange related as well as endowment, production
 utility and data logging facilities are unit tested. It is planned to extend
-unit testing to quotes, so that by version 0.6
-all functions of the agents will be fully unit tested.
+unit testing to quotes, so that by version 1.0 all functions of the agents
+will be fully unit tested.
 
 The modeler can run the unit testing facilities on his own system and therefore
 assert that on his own system the code runs correctly.

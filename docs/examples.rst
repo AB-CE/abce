@@ -60,7 +60,6 @@ Concepts used in examples
 | sugarscape             |            |          |                  |        |        |        |           |           |            |           |
 +------------------------+------------+----------+------------------+--------+--------+--------+-----------+-----------+------------+-----------+
 | CCE                    | X          | X        |                  |        |        |        | X         |           |            |           |
-|                        |            |          |                  |        |        |        |           |           |            |           |
 +------------------------+------------+----------+------------------+--------+--------+--------+-----------+-----------+------------+-----------+
 | cheesegrater insurance |            |          |                  |        |        |        | X         |           |            |           |
 +------------------------+------------+----------+------------------+--------+--------+--------+-----------+-----------+------------+-----------+
@@ -74,6 +73,12 @@ Concepts used in examples
 
 Models
 ------
+
+CCE
+```
+
+This is the most complete example featuring an agent-based model of climate change tax policies for
+the United States. It includes a GUI, is databased and and uses production and utility functions.
 
 One sector model
 ````````````````

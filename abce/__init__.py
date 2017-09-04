@@ -37,29 +37,34 @@ This is a minimal template for a start.py::
         agents.two()
         agents.three()
     simulation.graphs()
+
+Note two things are important: there must be either a
+:code:`simulation.graphs()` or a :code:`simulation.finalize()` at the end
+and every round needs to be announced using simulation.advance_round(r).
+Where r is any representation of time.
 """
 import datetime
 import os
 import time
 import random
+import json
+import queue
 import multiprocessing as mp
 from multiprocessing.managers import BaseManager
-import queue
-import abce.db
-import abce.abcelogger
+from collections import defaultdict, OrderedDict
+from .db import Database
+from .abcelogger import AbceLogger
 from .agent import Agent, Trade  # noqa: F401
 from .group import Group
-from collections import defaultdict, OrderedDict
-from abce.notenoughgoods import NotEnoughGoods  # noqa: F401
-from abce.agents import (FirmMultiTechnologies, Firm,  # noqa: F401
-                        Household, Utility_Function,
-                        ProductionFunction, SilentDeadAgent,  # noqa: F401
-                        LoudDeadAgent)  # noqa: F401
+from .notenoughgoods import NotEnoughGoods  # noqa: F401
+from .agents import (FirmMultiTechnologies, Firm,  # noqa: F401
+                     Household, Utility_Function,
+                     ProductionFunction, SilentDeadAgent,  # noqa: F401
+                     LoudDeadAgent)  # noqa: F401
 from .quote import Quote  # noqa: F401
-from abce.contracts import Contracting  # noqa: F401
-import json
+from .contracts import Contracting  # noqa: F401
 from .processorgroup import ProcessorGroup
-from abce.gui import gui, graphs  # noqa: F401
+from .gui import gui, graphs  # noqa: F401
 
 
 def execute_advance_round_wrapper(inp):
@@ -147,8 +152,8 @@ class Simulation(object):
         """
         """
         try:
-            name = abce.simulation_name
-        except AttributeError:
+            name = simulation_name  # noqa: F821
+        except NameError:
             pass
 
         self.num_of_agents_in_group = {}
@@ -217,7 +222,7 @@ class Simulation(object):
 
         self.messagess = [list() for _ in range(self.processes + 2)]
 
-        self._db = abce.db.Database(
+        self._db = Database(
             self.path,
             self.database_queue,
             trade_log=self.trade_logging_mode != 'off')
@@ -231,6 +236,8 @@ class Simulation(object):
             {'name': name, 'random_seed': random_seed})
         self.clock = time.time()
         self.database = self
+        self.time = None
+        """Returns the current time set with simulation.advance_round(time)"""
 
     def declare_round_endowment(self, resource, units,
                                 product):
@@ -372,14 +379,14 @@ class Simulation(object):
             simulation.network(savefig=True)
         """
         self._network_drawing_frequency = frequency
-        self._logger = abce.abcelogger.AbceLogger(self.path,
-                                                  self.logger_queue,
-                                                  savefig=savefig,
-                                                  savegml=savegml,
-                                                  figsize=figsize,
-                                                  dpi=dpi,
-                                                  pos_fixed=pos_fixed,
-                                                  alpha=alpha)
+        self._logger = AbceLogger(self.path,
+                                  self.logger_queue,
+                                  savefig=savefig,
+                                  savegml=savegml,
+                                  figsize=figsize,
+                                  dpi=dpi,
+                                  pos_fixed=pos_fixed,
+                                  alpha=alpha)
         self._logger.start()
 
     def execute_advance_round_seriel(self, time):
@@ -394,6 +401,7 @@ class Simulation(object):
         if not self._db_started:
             self._db.start()
             self._db_started = True
+        self.time = time
         print("\rRound" + str(time))
         self.execute_advance_round(time)
         self.add_and_delete_agents(time)
