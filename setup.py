@@ -33,6 +33,11 @@ class TXEntension(build_ext):
 cmdclass = {}
 ext_modules = []
 
+install_requires = ['networkx >= 1.9.1',
+                        'flexx >= 0.4.1',
+                        'future',
+                        'dataset']
+
 readthedocs = os.environ.get('READTHEDOCS') == 'True'
 
 if not readthedocs:
@@ -49,13 +54,10 @@ if not readthedocs:
         ]
 
 
-install_requires = ['numpy >= 1.10.2p;platform_python_implementation=="CPython"',
-                    'pandas >= 0.17.1;platform_python_implementation=="CPython"',
-                    'bokeh == 0.12.7;platform_python_implementation=="CPython"',
-                    'networkx >= 1.9.1',
-                    'flexx >= 0.4.1',
-                    'future',
-                    'dataset']
+    install_requires += ['numpy >= 1.10.2p;platform_python_implementation=="CPython"',
+                        'pandas >= 0.17.1;platform_python_implementation=="CPython"',
+                        'bokeh == 0.12.7;platform_python_implementation=="CPython"']
+
 
 version = '0.8.1a23'
 
