@@ -50,7 +50,7 @@ def get_epsilon():
 
 class Offer:
     __slots__ = ('sender', 'sender_group', 'sender_id', 'receiver_group',
-                'receiver_id', 'good', 'quantity', 'price',
+                'receiver_id', 'good', 'quantity', 'price', 'currency',
                 'buysell', 'status', 'final_quantity', 'id',
                 'made', 'status_round')
     """ This is an offer container that is send to the other agent. You can
@@ -69,6 +69,9 @@ class Offer:
 
         receiver_id:
             this is the ID of the sender
+
+        currency:
+            The other good against which the good is traded.
 
         good:
             the good offered or demanded
@@ -107,7 +110,7 @@ class Offer:
             a unique identifier
     """
     def __init__(self, sender_group, sender_id, receiver_group,
-                 receiver_id, good, quantity, price,
+                 receiver_id, good, quantity, price, currency,
                  buysell, status, final_quantity, id,
                  made, status_round):
         self.sender = (sender_group, sender_id)
@@ -116,6 +119,7 @@ class Offer:
         self.receiver_group = receiver_group
         self.receiver_id = receiver_id
         self.good = good
+        self.currency = currency
         self.quantity = quantity
         self.price = price
         self.buysell = buysell
@@ -127,11 +131,11 @@ class Offer:
 
     def __repr__(self):
         return ("""<{sender: %s, %i, receiver_group: %s,
-                receiver_id: %i, good: %s, quantity: %f, price: %f,
+                receiver_id: %i, good: %s, quantity: %f, price: %f, currency: %f,
                 buysell: %s, status: %s, final_quantity: % f, id: %i,
                 made: %i, status_round: %i }>""" %
                 (self.sender_group, self.sender_id, self.receiver_group,
-                 self.receiver_id, self.good, self.quantity, self.price,
+                 self.receiver_id, self.good, self.quantity, self.price, self.currency,
                  self.buysell, self.status, self.final_quantity, self.id,
                  self.made, self.status_round))
 
@@ -143,12 +147,12 @@ class Trade:
 
     1. An agent sends an offer. :meth:`~.sell`
 
-       *The good offered is blocked and self.possession(...) does not account for it.*
+       *The good offered is blocked and self.possession(...) does shows the decreased amount.*
 
     2. **Next subround:** An agent receives the offer :meth:`~.get_offers`, and can
        :meth:`~.accept`, :meth:`~.reject` or partially accept it. :meth:`~.accept`
 
-       *The good is credited and the price is deducted from the agent's possesions.*
+       *The good is credited and the price is deducted from the agent's possessions.*
 
     3. **Next subround:**
 
@@ -183,6 +187,27 @@ class Trade:
                 self.price *= .9
             elif offer.status = 'accepted':
                 self.price *= offer.final_quantity / offer.quantity
+    Example::
+
+        # Agent 1
+        def sales(self):
+            self.remember_trade = self.sell('Household', 0, 'cookies', quantity=5, price=self.price, currency='dollars')
+
+        # Agent 2
+        def receive_sale(self):
+            oo = self.get_offers('cookies')
+            for offer in oo:
+                if ((offer.currency == 'dollars' and offer.price < 0.3 * exchange_rate)
+                    or (offer.currency == 'euros' and dollars'offer.price < 0.3)):
+
+                    try:
+                        self.accept(offer)
+                    except NotEnoughGoods:
+                        self.accept(offer, self.possession('money') / offer.price)
+                else:
+                    self.reject(offer)
+
+    If we did not implement a barter class, but one can use this class as a barter class,
     """
     def get_offers_all(self, descending=False, sorted=True):
         """ returns all offers in a dictionary, with goods as key. The in each
@@ -301,7 +326,7 @@ class Trade:
         return ret
 
     def sell(self, receiver,
-             good, quantity, price, epsilon=epsilon):
+             good, quantity, price, currency='money', epsilon=epsilon):
         """ commits to sell the quantity of good at price
 
         The good is not available for the agent. When the offer is
@@ -324,6 +349,9 @@ class Trade:
 
             price:
                 price per unit
+
+            currency:
+                is the currency of this transaction (defaults to 'money')
 
             epsilon (optional):
                 if you have floating point errors, a quantity or prices is
@@ -368,6 +396,7 @@ class Trade:
                       receiver[0],
                       receiver[1],
                       good,
+                      currency,
                       quantity,
                       price,
                       115,
@@ -381,7 +410,7 @@ class Trade:
         return offer
 
     def buy(self, receiver, good,
-            quantity, price, epsilon=epsilon):
+            quantity, price, currency, epsilon=epsilon):
         """ commits to sell the quantity of good at price
 
         The goods are not in haves or self.count(). When the offer is
@@ -403,6 +432,9 @@ class Trade:
             price:
                 price per unit
 
+            currency:
+                is the currency of this transaction (defaults to 'money')
+
             epsilon (optional):
                 if you have floating point errors, a quantity or prices is
                 a fraction of number to high or low. You can increase the
@@ -414,22 +446,23 @@ class Trade:
         money_amount = quantity * price
         # makes sure the money_amount is between zero and maximum available, but
         # if its only a little bit above or below its set to the bounds
-        available = self._haves['money']
-        assert money_amount > - epsilon, 'money (price * quantity) %.30f is smaller than 0 - epsilon (%.30f)' % (money_amount, - epsilon)
+        available = self._haves[currency]
+        assert money_amount > - epsilon, '%s (price * quantity) %.30f is smaller than 0 - epsilon (%.30f)' % (currency, money_amount, - epsilon)
         if money_amount < 0:
             money_amount = 0
         if money_amount > available + epsilon + epsilon * max(money_amount, available):
-            raise NotEnoughGoods(self.name, 'money', money_amount - available)
+            raise NotEnoughGoods(self.name, currency, money_amount - available)
         if money_amount > available:
             money_amount = available
 
         offer_id = self._offer_counter()
-        self._haves['money'] -= money_amount
+        self._haves[currency] -= money_amount
         offer = Offer(self.group,
                       self.id,
                       receiver[0],
                       receiver[1],
                       good,
+                      currency,
                       quantity,
                       price,
                       98,
@@ -459,7 +492,7 @@ class Trade:
     def accept(self, offer, quantity=-999, epsilon=epsilon):
         """ The buy or sell offer is accepted and cleared. If no quantity is
         given the offer is fully accepted; If a quantity is given the offer is
-        partial accepted. Peaked offers can not be accepted.
+        partial accepted.
 
         Args:
 
@@ -490,7 +523,7 @@ class Trade:
 
         if quantity == 0:
             self.reject(offer)
-            return {offer.good: 0, 'money': 0}
+            return {offer.good: 0, offer.currency: 0}
 
         money_amount = quantity * offer.price
         if offer.buysell == 115:  # ord('s')
@@ -498,13 +531,13 @@ class Trade:
             if money_amount < 0:
                 money_amount = 0
 
-            available = self._haves['money']
+            available = self._haves[offer.currency]
             if money_amount > available + epsilon + epsilon * max(money_amount, available):
-                raise NotEnoughGoods(self.name, 'money', money_amount - available)
+                raise NotEnoughGoods(self.name, offer.currency, money_amount - available)
             if money_amount > available:
                 money_amount = available
             self._haves[offer.good] += quantity
-            self._haves['money'] -= quantity * offer.price
+            self._haves[offer.currency] -= quantity * offer.price
         else:
             assert quantity > - epsilon, 'quantity %.30f is smaller than 0 - epsilon (%.30f)' % (quantity, - epsilon)
             if quantity < 0:
@@ -515,14 +548,15 @@ class Trade:
             if quantity > available:
                 quantity = available
             self._haves[offer.good] -= quantity
-            self._haves['money'] += quantity * offer.price
+            self._haves[offer.currency] += quantity * offer.price
         offer.final_quantity = quantity
         self._send(offer.sender_group, offer.sender_id, '_p', (offer.id, quantity))
         del self._polled_offers[offer.id]
         if offer.buysell == 115:  # ord('s')
-            return {offer.good: - quantity, 'money': money_amount}
+            return {offer.good: - quantity, offer.currency: money_amount}
         else:
-            return {offer.good: quantity, 'money': - money_amount}
+            return {offer.good: quantity, offer.currency: - money_amount}
+
 
     def _reject_polled_but_not_accepted_offers(self):
         for offer in self._polled_offers.values():
@@ -603,7 +637,7 @@ class Trade:
         if offer.buysell == 115:
             self._haves[offer.good] += offer.quantity
         else:
-            self._haves['money'] += offer.quantity * offer.price
+            self._haves[offer.currency] += offer.quantity * offer.price
         offer.status = "rejected"
         offer.status_round = self.round
         offer.final_quantity = 0
@@ -614,7 +648,7 @@ class Trade:
         if offer.buysell == 115:
             self._haves[offer.good] += offer.quantity
         else:
-            self._haves['money'] += offer.quantity * offer.price
+            self._haves[offer.currency] += offer.quantity * offer.price
 
     def give(self, receiver, good, quantity, epsilon=epsilon):
         """ gives a good to another agent
@@ -735,7 +769,6 @@ class Trade:
                 self._msgs.setdefault(typ, []).append(msg)
 
 
-# TODO when cython supports function overloading overload this function with compare_with_ties(int x, int y)
 def compare_with_ties(x, y):
     if x < y:
         return -1
