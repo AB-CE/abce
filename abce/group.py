@@ -15,14 +15,16 @@ class Group(object):
                    else self.execute_serial)
 
         self.agent_class = agent_class
+        methods = get_methods(agent_class)
+        for base in agent_class.__bases__:
+            methods += get_methods(base)
+        for method in methods:
+            setattr(self, method,
+                    eval('lambda self=self, *argc, **kw: self.do("%s")' %
+                         method))
 
         self.panel_serial = 0
         self.last_action = "Begin_of_Simulation"
-
-    def __getattr__(self, command):
-        self.command = command
-        return self.do
-
 
     def __add__(self, g):
         return Group(self.sim, self.groups + g.groups, self.agent_class)
@@ -33,8 +35,7 @@ class Group(object):
         else:
             return self
 
-    def execute_serial(self, *args, **kwargs):
-        command = self.command
+    def execute_serial(self, command, *args, **kwargs):
         self.last_action = command
         self.sim.messagess[-2].clear()
         out_messages = self._processor_groups[0].execute(
@@ -43,8 +44,7 @@ class Group(object):
             self.sim.messagess[pgid].extend(messages)
         return self.sim.messagess[-2]
 
-    def execute_parallel(self, *args, **kwargs):
-        command = self.command
+    def execute_parallel(self, command, *args, **kwargs):
         self.last_action = command
         self.sim.messagess[-2].clear()
         parameters = ((pg, self.groups, command, self.sim.messagess[pgid], args, kwargs)
