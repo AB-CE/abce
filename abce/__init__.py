@@ -200,7 +200,7 @@ class Simulation(object):
             self.database_queue = queue.Queue()
             self.logger_queue = queue.Queue()
             self._processor_groups = [ProcessorGroup(1, batch=0)]
-            self.execute_advance_round = self.execute_advance_round_seriel
+            self.execute_advance_round = self._execute_advance_round_seriel
         else:
 
             manager = mp.Manager()
@@ -218,7 +218,7 @@ class Simulation(object):
                 pg = manager.ProcessorGroup(self.processes, batch=i)
                 self._processor_groups.append(pg)
 
-            self.execute_advance_round = self.execute_advance_round_parallel
+            self.execute_advance_round = self._execute_advance_round_parallel
 
         self.messagess = [list() for _ in range(self.processes + 2)]
 
@@ -389,11 +389,11 @@ class Simulation(object):
                                   alpha=alpha)
         self._logger.start()
 
-    def execute_advance_round_seriel(self, time):
+    def _execute_advance_round_seriel(self, time):
         for pg in self._processor_groups:
             pg.execute_advance_round(time)
 
-    def execute_advance_round_parallel(self, time):
+    def _execute_advance_round_parallel(self, time):
         parameters = ((pg, time) for pg in self._processor_groups)
         self.pool.map(execute_advance_round_wrapper, parameters, chunksize=1)
 
