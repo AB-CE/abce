@@ -1,20 +1,10 @@
-.. ABCE documentation master file, created by
-   sphinx-quickstart on Sat Apr 14 03:01:26 2012.
+.. Agent-Based Computational Economics documentation master file, created by
+   sphinx-quickstart on Mon Sep  4 18:00:57 2017.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-ABCE the Agent-Based Computational Economy platform that makes modeling easier
-//////////////////////////////////////////////////////////////////////////////
-
-ABCE is a Python Agent-Based Computational Economy Platform, written by Davoud Taghawi-Nejad.
-The impatient reader can jump directly to the 'Interactive jupyter / IPython notebook Tutorial',
-which explains how to set up a simulation. In the walk through you will learn how to set up an agent
-and how to trade with other agents. The Household and Firm classes allow to
-produce with different production functions and consume with utility functions.
-But models don't have to use neoclassical assumptions.
-
-ABCE runs on macOS, Windows, and Linux. ABCE runs 10x faster on pypy!
-
+Welcome to Agent-Based Computational Economics's documentation!
+===============================================================
 
 Introduction
 ============
@@ -36,6 +26,7 @@ Simulation Programming
 
    simulation
    Agent_class
+   Goods
    Trade
    Messaging
    Firm
@@ -65,18 +56,8 @@ Graphical User Interface and Results
    deploy
 
 
-.. raw:: latex
 
-    \bibliographystyle{plain}
-    \bibliography{/home/taghawi/Dropbox/zpipe/library}
 
-Troubleshooting
-===============
-
-.. toctree::
-   :maxdepth: 1
-
-   troubleshooting
 
 Indices and tables
 ==================
@@ -84,4 +65,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-

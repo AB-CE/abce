@@ -52,7 +52,7 @@ install_requires = ['numpy >= 1.10.2p;platform_python_implementation=="CPython"'
                     'future',
                     'dataset']
 
-version = '0.8.1a22'
+version = '0.8.1a23'
 
 setup(name='abce',
       version=version,
