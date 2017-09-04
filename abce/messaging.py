@@ -20,9 +20,6 @@ either be sent to an individual with :meth:`messaging.Messaging.message` or to a
 with  :meth:`messaging.Messaging.get_messages_all` or messages with a specific topic with
 :meth:`messaging.Messaging.get_messages`.
 """
-from __future__ import division
-from builtins import str
-from builtins import object
 from random import shuffle
 
 
@@ -36,9 +33,8 @@ class Message(object):
         self.content = content
 
     def __repr__(self):
-        return "<{sender: %s, %i; receiver: %s, %i; topic: %s; content: %s}>" % (
-            self.sender_group, self.sender_id, self.receiver_group,
-            self.receiver_id, self.topic, str(self.content))
+        return "<{sender: %s; receiver: %s; topic: %s; content: %s}>" % (
+            str(self.sender), str(self.receiver), self.topic, str(self.content))
 
 
 class Messaging(object):
