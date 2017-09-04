@@ -34,7 +34,6 @@ from collections import OrderedDict, defaultdict
 from pprint import pprint
 import abce
 from .database import Database
-from .networklogger import NetworkLogger
 from .trade import Trade
 from .messaging import Messaging
 from .expiringgood import ExpiringGood
@@ -46,7 +45,7 @@ class DummyContracts:
         pass
 
 
-class Agent(Database, NetworkLogger, Trade, Messaging):
+class Agent(Database, Trade, Messaging):
     """ Every agent has to inherit this class. It connects the agent to the
     simulation and to other agent. The :class:`abce.Trade`,
     :class:`abce.Database` and :class:`abce.Messaging` classes are included.
@@ -298,9 +297,6 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
             NotEnoughGoods: when goods are insufficient
         """
         self._haves.destroy(good, quantity)
-
-    def _set_network_drawing_frequency(self, frequency):
-        self._network_drawing_frequency = frequency
 
     def _execute(self, command, args, kwargs):
         self._out = [[] for _ in range(self.num_managers + 2)]
