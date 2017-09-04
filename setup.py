@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+
 import os
 try:
     from setuptools import setup
@@ -12,7 +12,6 @@ except ImportError:
     from distutils.command.build_ext import build_ext
 from distutils.errors import CCompilerError, DistutilsExecError, \
     DistutilsPlatformError
-
 
 class TXEntension(build_ext):
     # This class allows C extension building to fail.
@@ -28,8 +27,7 @@ class TXEntension(build_ext):
             build_ext.build_extension(self, ext)
         except (CCompilerError, DistutilsExecError, DistutilsPlatformError):
             pass  # raise BuildFailed()
-
-
+          
 cmdclass = {}
 ext_modules = []
 
@@ -37,6 +35,7 @@ install_requires = ['networkx >= 1.9.1',
                         'flexx >= 0.4.1',
                         'future',
                         'dataset']
+
 
 readthedocs = os.environ.get('READTHEDOCS') == 'True'
 
@@ -60,6 +59,7 @@ if not readthedocs:
 
 
 version = '0.8.1a23'
+
 
 setup(name='abce',
       version=version,
