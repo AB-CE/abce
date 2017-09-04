@@ -9,10 +9,8 @@ try:
     from Cython.Distutils import build_ext
 except ImportError:
     from distutils.command.build_ext import build_ext
-import platform
 from distutils.errors import CCompilerError, DistutilsExecError, \
     DistutilsPlatformError
-
 
 
 class TXEntension(build_ext):
@@ -22,7 +20,7 @@ class TXEntension(build_ext):
         try:
             build_ext.run(self)
         except DistutilsPlatformError:
-            raise BuildFailed()
+            raise Exception("BuildFailed")
 
     def build_extension(self, ext):
         try:
@@ -30,8 +28,10 @@ class TXEntension(build_ext):
         except (CCompilerError, DistutilsExecError, DistutilsPlatformError):
             pass  # raise BuildFailed()
 
+
 cmdclass = {}
 ext_modules = []
+
 
 try:
     ext_modules += [
@@ -54,14 +54,14 @@ install_requires = ['numpy >= 1.10.2p;platform_python_implementation=="CPython"'
                     'future',
                     'dataset']
 
-version = '0.8.1a15'
+version = '0.8.1a16'
 setup(name='abce',
       version=version,
       author='Davoud Taghawi-Nejad',
       author_email='Davoud@Taghawi-Nejad.de',
       description='Agent-Based Complete Economy modelling platform',
       url='https://github.com/AB-CE/abce.git',
-      package_dir={'abce': 'abce', 'abce.gui': 'abce/gui'},
+      package_dir={'abce': 'abce', 'abce.gui': 'abce/gui', 'abce.agents': 'abce/agents', 'abce.contracts': 'abce/contracts'},
       packages=['abce'],
       long_description=open('README.rst').read(),
       install_requires=install_requires,
