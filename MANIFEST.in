@@ -1,0 +1,5 @@
+include README.rst        
+include abce/contracts/*        
+include unittest/*        
+include abce/agents/*        
+include abce/gui/*
