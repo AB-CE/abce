@@ -167,8 +167,6 @@ class Simulation(object):
         self.expiring = []
         self._start_round = 0
         self.round = int(self._start_round)
-        # this is default value as declared in self.network() method
-        self._network_drawing_frequency = 1
 
         try:
             os.makedirs(os.path.abspath('.') + '/result/')
@@ -399,7 +397,7 @@ class Simulation(object):
             except AttributeError:
                 pass
 
-            print(str("time with data and network %6.2f" %
+            print(str("time with data %6.2f" %
                       (time.time() - self.clock)))
             self._write_description_file()
             self._displaydescribtion()
@@ -455,8 +453,7 @@ class Simulation(object):
         agent_params_from_sim = {
             'expiring': self.expiring,
             'perishable': self.perishable,
-            'resource_endowment': self.resource_endowment,
-            'ndf': self._network_drawing_frequency}
+            'resource_endowment': self.resource_endowment}
 
         for pg in self._processor_groups:
             pg.add_group(AgentClass,

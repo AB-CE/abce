@@ -33,7 +33,7 @@ Simulation Programming
    Household
    Database
    notenoughgoods
-   Network
+
 
 Advanced
 ========

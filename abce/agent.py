@@ -88,7 +88,7 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
 
     """
     def __init__(self, id, group, trade_logging,
-                 database, logger, random_seed, num_managers, start_round=None):
+                 database, random_seed, num_managers, start_round=None):
         """ Do not overwrite __init__ instead use a method called init instead.
         init is called whenever the agent are build.
         """
@@ -104,7 +104,6 @@ class Agent(Database, NetworkLogger, Trade, Messaging):
         # TODO should be group_address(group), but it would not work
         # when fired manual + ':' and manual group_address need to be removed
         self.database_connection = database
-        self.logger_connection = logger
 
         self.trade_logging = {'individual': 1,
                               'group': 2, 'off': 0}[trade_logging]

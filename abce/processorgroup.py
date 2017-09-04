@@ -38,7 +38,6 @@ class ProcessorGroup(object):
             agent._register_perish(good)
         for resource, units, product in self.apfs['resource_endowment']:
             agent._register_resource(resource, units, product)
-        agent._set_network_drawing_frequency(self.apfs['ndf'])
         try:
             agent.init(parameters, agent_parameters)
         except AttributeError:
