@@ -31,17 +31,18 @@ This is a minimal template for a start.py::
 
     simulation = Simulation(name='ABCE')
     agents = simulation.build_agents(Agent, 'agent', 2)
-    for r in range(100):
-        simulation.advance_round(r)
+    for time in range(100):
+        simulation.advance_round(time)
         agents.one()
         agents.two()
         agents.three()
     simulation.graphs()
 
 Note two things are important: there must be either a
-:code:`simulation.graphs()` or a :code:`simulation.finalize()` at the end
-and every round needs to be announced using simulation.advance_round(r).
-Where r is any representation of time.
+:func:`~abce.simulation.graphs` or a :func:`~abce.simulation.finalize` at the end
+otherwise the simulation blocks at the end.
+Further, every round needs to be announced using simulation.advance_round(time).
+Where time is any representation of time.
 """
 import datetime
 import os
@@ -433,7 +434,7 @@ class Simulation(object):
              number=simulation_parameters['num_firms'])
          banks = simulation.build_agents(Bank, 'bank',
                                          parameters=simulation_parameters,
-                                         agent_parameters=[{'name': UBS'},
+                                         agent_parameters=[{'name': 'UBS'},
                                          {'name': 'amex'},{'name': 'chase'})
 
          centralbanks = simulation.build_agents(CentralBank, 'centralbank',
