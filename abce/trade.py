@@ -299,7 +299,7 @@ class Trade:
         ret.sort(key=lambda objects: objects.price, reverse=descending)
         return ret
 
-    def sell(self, receiver_group, receiver_id,
+    def sell(self, receiver,
              good, quantity, price, epsilon=epsilon):
         """ commits to sell the quantity of good at price
 
@@ -364,8 +364,8 @@ class Trade:
         self._haves[good] -= quantity
         offer = Offer(self.group,
                       self.id,
-                      receiver_group,
-                      receiver_id,
+                      receiver[0],
+                      receiver[1],
                       good,
                       quantity,
                       price,
@@ -376,10 +376,10 @@ class Trade:
                       self.round,
                       -2)
         self.given_offers[offer_id] = offer
-        self._send(receiver_group, receiver_id, '_o', offer)
+        self._send(receiver[0], receiver[1], '_o', offer)
         return offer
 
-    def buy(self, receiver_group, receiver_id, good,
+    def buy(self, receiver, good,
             quantity, price, epsilon=epsilon):
         """ commits to sell the quantity of good at price
 
@@ -389,11 +389,9 @@ class Trade:
         accordingly)
 
         Args:
-            receiver_group:
-                group of the receiving agent
-
-            receiver_id:
-                number of the receiving agent
+            receiver:
+                The name of the receiving agent a tuple (group, id).
+                e.G. ('firm', 15)
 
             'good':
                 name of the good
@@ -428,8 +426,8 @@ class Trade:
         self._haves['money'] -= money_amount
         offer = Offer(self.group,
                       self.id,
-                      receiver_group,
-                      receiver_id,
+                      receiver[0],
+                      receiver[1],
                       good,
                       quantity,
                       price,
@@ -439,7 +437,7 @@ class Trade:
                       offer_id,
                       self.round,
                       -1)
-        self._send(receiver_group, receiver_id, '_o', offer)
+        self._send(receiver[0], receiver[1], '_o', offer)
         self.given_offers[offer_id] = offer
         return offer
 
@@ -617,15 +615,13 @@ class Trade:
         else:
             self._haves['money'] += offer.quantity * offer.price
 
-    def give(self, receiver_group, receiver_id, good, quantity, epsilon=epsilon):
+    def give(self, receiver, good, quantity, epsilon=epsilon):
         """ gives a good to another agent
 
         Args:
-
-            receiver_group:
-                Group name of the receiver
-            receiver_id:
-                id number of the receiver
+            receiver:
+                The name of the receiving agent a tuple (group, id).
+                e.G. ('firm', 15)
             good:
                 the good to be transfered
             quantity:
@@ -657,10 +653,10 @@ class Trade:
         if quantity > available:
             quantity = available
         self._haves[good] -= quantity
-        self._send(receiver_group, receiver_id, '_g', [good, quantity])
+        self._send(receiver[0], receiver[1], '_g', [good, quantity])
         return {good: quantity}
 
-    def take(self, receiver_group, receiver_id, good, quantity, epsilon=epsilon):
+    def take(self, receiver, good, quantity, epsilon=epsilon):
         """ take a good from another agent. The other agent has to accept.
         using self.accept()
 
@@ -684,7 +680,7 @@ class Trade:
                 a fraction of number to high or low. You can increase the
                 floating point tolerance. See troubleshooting -- floating point problems
         """
-        self.buy(receiver_group, receiver_id, good=good, quantity=quantity, price=0, epsilon=epsilon)
+        self.buy(receiver[0], receiver[1], good=good, quantity=quantity, price=0, epsilon=epsilon)
 
     def _clearing__end_of_subround(self, incomming_messages):
         """ agent receives all messages and objects that have been send in this

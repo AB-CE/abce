@@ -18,9 +18,9 @@ class Give(abce.Agent):
             self.create('cookies', random.uniform(0, 10000))
             self.cookies = self.possession('cookies')
             quantity = random.uniform(0, self.possession('cookies'))
-            self.give('give', 1, 'cookies', quantity)
+            self.give(('give', 1), 'cookies', quantity)
             assert self.possession('cookies') == self.cookies - quantity
-            self.message('give', 1, topic='tpc', content=quantity)
+            self.send(('give', 1), topic='tpc', content=quantity)
 
     def two(self):
         if self.id == 1:

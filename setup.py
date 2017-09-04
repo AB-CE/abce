@@ -54,7 +54,7 @@ install_requires = ['numpy >= 1.10.2p;platform_python_implementation=="CPython"'
                     'future',
                     'dataset']
 
-version = '0.8.1a16'
+version = '0.8.1a18'
 setup(name='abce',
       version=version,
       author='Davoud Taghawi-Nejad',

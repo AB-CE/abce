@@ -13,4 +13,4 @@ class Killer(abce.Agent, abce.Household):
 
     def send_message(self):
         if self.round > 0:
-            self.message('victim', self.round - 1, 'topic', 'creepy hello')
+            self.send(('victim', self.round - 1), 'topic', 'creepy hello')

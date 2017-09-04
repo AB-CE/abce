@@ -18,8 +18,8 @@ class Sell(abce.Agent):
             self.cookies = self.possession('cookies')
             self.price = random.uniform(0.0001, 1)
             quantity = random.uniform(0, self.cookies)
-            self.offer = self.sell('sell', self.id + 1,
-                                   'cookies', quantity, self.price)
+            self.offer = self.sell(receiver=('sell', self.id + 1),
+                                   good='cookies', quantity=quantity, price=self.price)
             assert self.possession('cookies') == self.cookies - quantity
 
     def two(self):

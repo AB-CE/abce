@@ -22,7 +22,7 @@ class Buy(Agent):
             self.money = self.possession('money')
             self.price = random.uniform(0.0001, 1)
             quantity = random.uniform(0, self.money / self.price)
-            self.offer = self.buy('buy', self.id + 1,
+            self.offer = self.buy(('buy', self.id + 1),
                                   'cookies', quantity, self.price)
             assert self.possession('money') == self.money - \
                 quantity * self.price

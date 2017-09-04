@@ -47,18 +47,25 @@ class Message(object):
 
 class Messaging(object):
     def message(self, receiver_group, receiver_id, topic, content):
+        print("message is depreciated please use send")
+        self.send((receiver_group, receiver_id), topic, content)
+
+    def send(self, receiver, topic, content):
         """ sends a message to agent. Agents receive it
         at the beginning of next round with :meth:`~abceagent.Messaging.get_messages` or
         :meth:`~abceagent.Messaging.get_messages_all`.
 
-        See:
-            message_to_group for messages to multiple agents
-
         Args::
 
-         receiver_group: agent, agent_group or 'all'
-         topic: string, with which this message can be received
-         content: string, dictionary or class, that is send.
+            receiver:
+                The name of the receiving agent a tuple (group, id).
+                e.G. ('firm', 15)
+
+            topic:
+                string, with which this message can be received
+
+            content:
+                string, dictionary or class, that is send.
 
         Example::
 
@@ -77,11 +84,11 @@ class Messaging(object):
         """
         msg = Message(sender_group=self.group,
                       sender_id=self.id,
-                      receiver_group=receiver_group,
-                      receiver_id=receiver_id,
+                      receiver_group=receiver[0],
+                      receiver_id=receiver[1],
                       topic=topic,
                       content=content)
-        self._send(receiver_group, receiver_id, topic, msg)
+        self._send(receiver[0], receiver[1], topic, msg)
 
     def get_messages(self, topic='m'):
         """ self.messages() returns all new messages send with :meth:`~abceagent.Messaging.message`
