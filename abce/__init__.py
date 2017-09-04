@@ -236,6 +236,8 @@ class Simulation(object):
             {'name': name, 'random_seed': random_seed})
         self.clock = time.time()
         self.database = self
+        self.time = None
+        """ Returns the current time set with simulation.advance_round(time) """
 
     def declare_round_endowment(self, resource, units,
                                 product):
@@ -399,6 +401,7 @@ class Simulation(object):
         if not self._db_started:
             self._db.start()
             self._db_started = True
+        self.time = time
         print("\rRound" + str(time))
         self.execute_advance_round(time)
         self.add_and_delete_agents(time)
