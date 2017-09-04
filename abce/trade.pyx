@@ -125,7 +125,7 @@ cdef class Offer:
     cdef readonly object sender
 
     def __cinit__(self, str sender_group, int sender_id, str receiver_group,
-                  int receiver_id, object good, str currency, double quantity, double price,
+                  int receiver_id, object good, double quantity, double price, str currency,
                   char buysell, str status, double final_quantity, long id,
                   int made, int status_round):
         self.sender = (sender_group, sender_id)
@@ -146,7 +146,7 @@ cdef class Offer:
 
     def __reduce__(self):
         return (rebuild_offer, (self.sender_group, self.sender_id, self.receiver_group,
-                self.receiver_id, self.good, self.quantity, self.price,
+                self.receiver_id, self.good, self.quantity, self.price, self.currency,
                 self.buysell, self.status, self.final_quantity, self.id,
                 self.made, self.status_round))
 
@@ -163,10 +163,10 @@ cdef class Offer:
 
 def rebuild_offer(str sender_group, int sender_id, str receiver_group,
                   int receiver_id, object good, double quantity, double price,
-                  char buysell, str status, double final_quantity, long id,
-                  int made, int status_round):
+                  str currency, char buysell, str status, double final_quantity,
+                  long id, int made, int status_round):
     return Offer(sender_group, sender_id, receiver_group,
-                receiver_id, good, quantity, price,
+                receiver_id, good, quantity, price, currency,
                 buysell, status, final_quantity, id,
                 made, status_round)
 
@@ -428,9 +428,9 @@ cdef class Trade:
                                  receiver[0],
                                  receiver[1],
                                  good,
-                                 currency,
                                  quantity,
                                  price,
+                                 currency,
                                  115,
                                  'new',
                                  -2,
@@ -496,9 +496,9 @@ cdef class Trade:
                                  receiver[0],
                                  receiver[1],
                                  good,
-                                 currency,
                                  quantity,
                                  price,
+                                 currency,
                                  98,
                                  'new',
                                  -1,

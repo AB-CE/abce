@@ -396,9 +396,9 @@ class Trade:
                       receiver[0],
                       receiver[1],
                       good,
-                      currency,
                       quantity,
                       price,
+                      currency,
                       115,
                       'new',
                       -2,
@@ -410,7 +410,7 @@ class Trade:
         return offer
 
     def buy(self, receiver, good,
-            quantity, price, currency, epsilon=epsilon):
+            quantity, price, currency='money', epsilon=epsilon):
         """ commits to sell the quantity of good at price
 
         The goods are not in haves or self.count(). When the offer is
@@ -462,9 +462,9 @@ class Trade:
                       receiver[0],
                       receiver[1],
                       good,
-                      currency,
                       quantity,
                       price,
+                      currency,
                       98,
                       'new',
                       -1,
@@ -556,7 +556,6 @@ class Trade:
             return {offer.good: - quantity, offer.currency: money_amount}
         else:
             return {offer.good: quantity, offer.currency: - money_amount}
-
 
     def _reject_polled_but_not_accepted_offers(self):
         for offer in self._polled_offers.values():
