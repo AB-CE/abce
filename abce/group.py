@@ -35,16 +35,15 @@ class Group(object):
 
     def execute_serial(self, command, *args, **kwargs):
         self.last_action = command
-        self.sim.messagess[-2].clear()
+        self.sim.messagess[-1].clear()
         out_messages = self._processor_groups[0].execute(
             self.groups, command, [], args, kwargs)
-        for pgid, messages in enumerate(out_messages):
-            self.sim.messagess[pgid].extend(messages)
-        return self.sim.messagess[-2]
+        self.sim.messagess = out_messages
+        return out_messages[-1]
 
     def execute_parallel(self, command, *args, **kwargs):
         self.last_action = command
-        self.sim.messagess[-2].clear()
+        self.sim.messagess[-1].clear()
         parameters = ((pg, self.groups, command, self.sim.messagess[pgid], args, kwargs)
                       for pgid, pg in enumerate(
             self._processor_groups))
@@ -54,7 +53,7 @@ class Group(object):
         for out_messages in out:
             for pgid, messages in enumerate(out_messages):
                 self.sim.messagess[pgid].extend(messages)
-        return self.sim.messagess[-2]
+        return self.sim.messagess[-1]
 
     def panel_log(self, variables=[], possessions=[], func={}, len=[]):
         """ panel_log(.) writes a panel of variables and possessions
