@@ -13,9 +13,9 @@ except ImportError:
 from distutils.errors import CCompilerError, DistutilsExecError, \
     DistutilsPlatformError
 
+
 class TXEntension(build_ext):
     # This class allows C extension building to fail.
-
     def run(self):
         try:
             build_ext.run(self)
@@ -27,14 +27,15 @@ class TXEntension(build_ext):
             build_ext.build_extension(self, ext)
         except (CCompilerError, DistutilsExecError, DistutilsPlatformError):
             pass  # raise BuildFailed()
-          
+
+
 cmdclass = {}
 ext_modules = []
 
 install_requires = ['networkx >= 1.9.1',
-                        'flexx >= 0.4.1',
-                        'future',
-                        'dataset']
+                    'flexx >= 0.4.1',
+                    'future',
+                    'dataset']
 
 
 readthedocs = os.environ.get('READTHEDOCS') == 'True'
@@ -52,13 +53,12 @@ if not readthedocs:
             Extension("abce.online_variance", ["abce/online_variance.c"]),
         ]
 
-
     install_requires += ['numpy >= 1.10.2p;platform_python_implementation=="CPython"',
-                        'pandas >= 0.17.1;platform_python_implementation=="CPython"',
-                        'bokeh == 0.12.7;platform_python_implementation=="CPython"']
+                         'pandas >= 0.17.1;platform_python_implementation=="CPython"',
+                         'bokeh == 0.12.7;platform_python_implementation=="CPython"']
 
 
-version = '0.8.1a23'
+version = '0.8.2a0'
 
 
 setup(name='abce',
