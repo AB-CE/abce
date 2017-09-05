@@ -7,9 +7,11 @@ class Killer(abce.Agent, abce.Household):
         # your agent initialization goes here, not in __init__
         pass
 
-    def kill(self):
-        self.delete_agent('victim', self.round, quite=True)
-        self.delete_agent('loudvictim', self.round, quite=False)
+    def kill_silent(self):
+        return (('victim', self.round), True)
+
+    def kill_loud(self):
+        return (('loudvictim', self.round), False)
 
     def send_message(self):
         if self.round > 0:

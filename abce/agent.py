@@ -306,11 +306,11 @@ class Agent(Database, Trade, Messaging):
         self._haves.destroy(good, quantity)
 
     def _execute(self, command, args, kwargs):
-        self._out = [[] for _ in range(self.num_managers + 2)]
+        self._out = [[] for _ in range(self.num_managers + 1)]
         try:
             self._clearing__end_of_subround(list(self.inbox))
             self._begin_subround()
-            self._out[-2] = (getattr(self, command)(*args, **kwargs), )
+            self._out[-1] = getattr(self, command)(*args, **kwargs)
             self._end_subround()
             self._reject_polled_but_not_accepted_offers()
         except KeyboardInterrupt:
@@ -351,53 +351,6 @@ class Agent(Database, Trade, Messaging):
         self._out[receiver_id % self.num_managers].append(
             (receiver_group, receiver_id, (typ, msg)))
 
-    def create_agent(self, AgentClass, group_name,
-                     parameters=None, agent_parameters=None):
-        """ create a new agent.
-
-        Args:
-
-            AgentClass:
-                the class of agent to create.
-                (can be the same class as the creating agent)
-
-            'group_name':
-                the name of the group the agent should belong to
-
-            parameters:
-                a dictionary of parameters
-
-            agent_parameters:
-                a dictionary of parameters
-
-        Example::
-
-            self.create_agent(BeerFirm, 'beerfirm',
-                              parameters=self.parameters,
-                              agent_parameters={'creation': self.round + 1})
-        """
-        self._out[-1].append(('add', (AgentClass, group_name,
-                                      parameters, agent_parameters)))
-
-    def delete_agent(self, group_name, id, quite=True):
-        """ This deletes an agent, an agent can delete itself. There are two
-        ways of deleting an agent. By default, quite is set to True, all future
-        messages to this agent are deleted. If quite is set to False agents are
-        completely deleted. This makes the simulation faster, but if messages
-        are send to this agents the simulation stops.
-
-        Args:
-
-            group_name:
-                group name of the agent
-
-            id:
-                the id of the agent to be deleted
-
-            quite:
-                whether the agent deletes incomming messages.
-        """
-        self._out[-1].append(('delete', (group_name, id, quite)))
 
     def __getitem__(self, good):
         return self._haves[good]
