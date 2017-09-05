@@ -768,7 +768,7 @@ class Trade:
         for typ, msg in incomming_messages:
             if typ == '!b':
                 self._open_offers_buy[msg.good][msg.id] = msg
-            elif typ == '!b':
+            elif typ == '!s':
                 self._open_offers_sell[msg.good][msg.id] = msg
             elif typ == '_p':
                 offer = self._receive_accept(msg)

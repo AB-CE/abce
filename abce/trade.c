@@ -11447,7 +11447,7 @@ static PyObject *__pyx_pf_5trade_5Trade_46_clearing__end_of_subround(struct __py
  *         for typ, msg in incomming_messages:
  *             if typ == '!b':             # <<<<<<<<<<<<<<
  *                 self._open_offers_buy[msg.good][msg.id] = msg
- *             elif typ == '!b':
+ *             elif typ == '!s':
  */
     __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_v_typ, __pyx_kp_s_b, Py_EQ)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 802, __pyx_L1_error)
     if (__pyx_t_9) {
@@ -11456,7 +11456,7 @@ static PyObject *__pyx_pf_5trade_5Trade_46_clearing__end_of_subround(struct __py
  *         for typ, msg in incomming_messages:
  *             if typ == '!b':
  *                 self._open_offers_buy[msg.good][msg.id] = msg             # <<<<<<<<<<<<<<
- *             elif typ == '!b':
+ *             elif typ == '!s':
  *                 self._open_offers_sell[msg.good][msg.id] = msg
  */
       __pyx_t_4 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_open_offers_buy); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 803, __pyx_L1_error)
@@ -11478,7 +11478,7 @@ static PyObject *__pyx_pf_5trade_5Trade_46_clearing__end_of_subround(struct __py
  *         for typ, msg in incomming_messages:
  *             if typ == '!b':             # <<<<<<<<<<<<<<
  *                 self._open_offers_buy[msg.good][msg.id] = msg
- *             elif typ == '!b':
+ *             elif typ == '!s':
  */
       goto __pyx_L7;
     }
@@ -11486,16 +11486,16 @@ static PyObject *__pyx_pf_5trade_5Trade_46_clearing__end_of_subround(struct __py
     /* "trade.pyx":804
  *             if typ == '!b':
  *                 self._open_offers_buy[msg.good][msg.id] = msg
- *             elif typ == '!b':             # <<<<<<<<<<<<<<
+ *             elif typ == '!s':             # <<<<<<<<<<<<<<
  *                 self._open_offers_sell[msg.good][msg.id] = msg
  *             elif typ == '_p':
  */
-    __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_v_typ, __pyx_kp_s_b, Py_EQ)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 804, __pyx_L1_error)
+    __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_v_typ, __pyx_kp_s_s, Py_EQ)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 804, __pyx_L1_error)
     if (__pyx_t_9) {
 
       /* "trade.pyx":805
  *                 self._open_offers_buy[msg.good][msg.id] = msg
- *             elif typ == '!b':
+ *             elif typ == '!s':
  *                 self._open_offers_sell[msg.good][msg.id] = msg             # <<<<<<<<<<<<<<
  *             elif typ == '_p':
  *                 offer = self._receive_accept(msg)
@@ -11517,7 +11517,7 @@ static PyObject *__pyx_pf_5trade_5Trade_46_clearing__end_of_subround(struct __py
       /* "trade.pyx":804
  *             if typ == '!b':
  *                 self._open_offers_buy[msg.good][msg.id] = msg
- *             elif typ == '!b':             # <<<<<<<<<<<<<<
+ *             elif typ == '!s':             # <<<<<<<<<<<<<<
  *                 self._open_offers_sell[msg.good][msg.id] = msg
  *             elif typ == '_p':
  */
@@ -11525,7 +11525,7 @@ static PyObject *__pyx_pf_5trade_5Trade_46_clearing__end_of_subround(struct __py
     }
 
     /* "trade.pyx":806
- *             elif typ == '!b':
+ *             elif typ == '!s':
  *                 self._open_offers_sell[msg.good][msg.id] = msg
  *             elif typ == '_p':             # <<<<<<<<<<<<<<
  *                 offer = self._receive_accept(msg)
@@ -11751,7 +11751,7 @@ static PyObject *__pyx_pf_5trade_5Trade_46_clearing__end_of_subround(struct __py
       __pyx_L8:;
 
       /* "trade.pyx":806
- *             elif typ == '!b':
+ *             elif typ == '!s':
  *                 self._open_offers_sell[msg.good][msg.id] = msg
  *             elif typ == '_p':             # <<<<<<<<<<<<<<
  *                 offer = self._receive_accept(msg)
