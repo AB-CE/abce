@@ -63,7 +63,6 @@ if not readthedocs:
 version = '0.8.3a6'
 
 
-
 setup(name='abce',
       version=version,
       author='Davoud Taghawi-Nejad',

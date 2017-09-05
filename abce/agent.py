@@ -351,6 +351,5 @@ class Agent(Database, Trade, Messaging):
         self._out[receiver_id % self.num_managers].append(
             (receiver_group, receiver_id, (typ, msg)))
 
-
     def __getitem__(self, good):
         return self._haves[good]
