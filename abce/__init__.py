@@ -39,10 +39,12 @@ This is a minimal template for a start.py::
     simulation.graphs()
 
 Note two things are important: there must be either a
+
 :func:`~abce.simulation.graphs` or a :func:`~abce.simulation.finalize` at the end
 otherwise the simulation blocks at the end.
 Further, every round needs to be announced using simulation.advance_round(time).
 Where time is any representation of time.
+
 """
 import datetime
 import os
@@ -347,6 +349,7 @@ class Simulation(object):
         self.declare_perishable(service)
 
     def _execute_advance_round_seriel(self, time):
+
         for pg in self._processor_groups:
             pg.execute_advance_round(time)
 

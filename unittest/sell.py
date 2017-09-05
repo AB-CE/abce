@@ -27,7 +27,7 @@ class Sell(abce.Agent):
             self.create('money', random.uniform(0, 10000))
             money = self.possession('money')
             oo = self.get_offers('cookies')
-            assert oo
+            assert oo, oo
             for offer in oo:
                 if random.randrange(0, 10) == 0:
                     self.tests['not_answered'] = True

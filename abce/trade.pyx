@@ -37,10 +37,8 @@ Messaging between agents:
 # compile.sh and compile.py because the resulting trade.c file is distributed.             #
 # Don't forget to commit it to git                                                         #
 #******************************************************************************************#
-from __future__ import division
-from abce.notenoughgoods import NotEnoughGoods
-from abce.messaging import Message
 import random
+from abce.notenoughgoods import NotEnoughGoods
 
 cdef double epsilon = 0.00000000001
 
@@ -81,9 +79,8 @@ cdef class Offer:
         price:
             the suggested tansaction price
 
-        buysell:
-            this can have the values 'b' for buy; 's' for sell; 'qb' for a
-            nonbinding buy quote; and 'qs' for a nonbinding sell quote
+        sell:
+            this can have the values False for buy; True for sell
 
         status:
             'new':
@@ -116,7 +113,7 @@ cdef class Offer:
     cdef readonly str currency
     cdef readonly double quantity
     cdef readonly double price
-    cdef readonly char buysell
+    cdef readonly bint sell
     cdef public str status
     cdef public double final_quantity
     cdef readonly object id
@@ -126,7 +123,7 @@ cdef class Offer:
 
     def __cinit__(self, str sender_group, int sender_id, str receiver_group,
                   int receiver_id, object good, double quantity, double price, str currency,
-                  char buysell, str status, double final_quantity, long id,
+                  bint sell, str status, double final_quantity, long id,
                   int made, int status_round):
         self.sender = (sender_group, sender_id)
         self.sender_group = sender_group
@@ -137,7 +134,7 @@ cdef class Offer:
         self.currency = currency
         self.quantity = quantity
         self.price = price
-        self.buysell = buysell
+        self.sell = sell
         self.status = status
         self.final_quantity = final_quantity
         self.id = id
@@ -147,27 +144,27 @@ cdef class Offer:
     def __reduce__(self):
         return (rebuild_offer, (self.sender_group, self.sender_id, self.receiver_group,
                 self.receiver_id, self.good, self.quantity, self.price, self.currency,
-                self.buysell, self.status, self.final_quantity, self.id,
+                self.sell, self.status, self.final_quantity, self.id,
                 self.made, self.status_round))
 
     def __repr__(self):
         return """<{sender: %s, %i, receiver_group: %s,
                 receiver_id: %i, good: %s, quantity: %f, price: %f,
-                buysell: %s, status: %s, final_quantity: % f, id: %i,
+                sell: %r, status: %s, final_quantity: % f, id: %i,
                 made: %i, status_round: %i }>""" % (
 
                     self.sender_group, self.sender_id, self.receiver_group,
                     self.receiver_id, self.good, self.quantity, self.price,
-                    self.buysell, self.status, self.final_quantity, self.id,
+                    self.sell, self.status, self.final_quantity, self.id,
                     self.made, self.status_round)
 
 def rebuild_offer(str sender_group, int sender_id, str receiver_group,
                   int receiver_id, object good, double quantity, double price,
-                  str currency, char buysell, str status, double final_quantity,
+                  str currency, bint sell, str status, double final_quantity,
                   long id, int made, int status_round):
     return Offer(sender_group, sender_id, receiver_group,
                 receiver_id, good, quantity, price, currency,
-                buysell, status, final_quantity, id,
+                sell, status, final_quantity, id,
                 made, status_round)
 
 cdef class Trade:
@@ -239,6 +236,14 @@ cdef class Trade:
 
     If we did not implement a barter class, but one can use this class as a barter class,
     """
+    def get_buy_offers_all(self, descending=False, sorted=True):
+        goods = list(self._open_offers_buy.keys())
+        return {good: self.get_offers(good, descending, sorted) for good in goods}
+
+    def get_sell_offers_all(self, descending=False, sorted=True):
+        goods = list(self._open_offers_sell.keys())
+        return {good: self.get_offers(good, descending, sorted) for good in goods}
+
     def get_offers_all(self, descending=False, sorted=True):
         """ returns all offers in a dictionary, with goods as key. The in each
         goods-category the goods are ordered by price. The order can be reversed
@@ -273,10 +278,30 @@ cdef class Trade:
          for offer in oo.beer:
             print(offer.price, offer.sender_group, offer.sender_id)
         """
-        goods = list(self._open_offers.keys())
+        goods = list(self._open_offers_sell.keys() + self._open_offers_buy.keys())
         return {good: self.get_offers(good, descending, sorted) for good in goods}
 
-    def get_offers(self, good, descending=False, sorted=True, shuffled=True):
+    def get_buy_offers(self, good, sorted=True, descending=False, shuffled=True):
+        ret = list(self._open_offers_buy[good].values())
+        self._polled_offers.update(self._open_offers_buy[good])
+        del self._open_offers_buy[good]
+        if shuffled:
+            random.shuffle(ret)
+        if sorted:
+            ret.sort(key=lambda objects: objects.price, reverse=descending)
+        return ret
+
+    def get_sell_offers(self, good, sorted=True, descending=False, shuffled=True):
+        ret = list(self._open_offers_sell[good].values())
+        self._polled_offers.update(self._open_offers_sell[good])
+        del self._open_offers_sell[good]
+        if shuffled:
+            random.shuffle(ret)
+        if sorted:
+            ret.sort(key=lambda objects: objects.price, reverse=descending)
+        return ret
+
+    def get_offers(self, good, sorted=True, descending=False, shuffled=True):
         """ returns all offers of the 'good' ordered by price.
 
         *Offers that are not accepted in the same subround (def block) are
@@ -289,11 +314,11 @@ cdef class Trade:
             good:
                 the good which should be retrieved
 
-            descending(bool, default=False):
-                False for descending True for ascending by price
-
             sorted(bool, default=True):
                 Whether offers are sorted by price. Faster if False.
+
+            descending(bool, default=False):
+                False for descending True for ascending by price
 
             shuffled(bool, default=True):
                 whether the order of messages is randomized or correlated with
@@ -314,16 +339,35 @@ cdef class Trade:
                 else:
                     self.reject(offer)  # optional
         """
-        ret = list(self._open_offers[good].values())
-        self._polled_offers.update(self._open_offers[good])
-        del self._open_offers[good]
+        ret = (self.get_buy_offers(good, descending=False, sorted=False, shuffled=False) +
+               self.get_sell_offers(good, descending=False, sorted=False, shuffled=False))
         if shuffled:
             random.shuffle(ret)
         if sorted:
             ret.sort(key=lambda objects: objects.price, reverse=descending)
         return ret
 
-    def peak_offers(self, good, descending=False):
+    def peak_buy_offers(self, good, sorted=True, descending=False, shuffled=True):
+        ret = []
+        for offer in self._open_offers_buy[good].values():
+            ret.append(offer)
+        if shuffled:
+            random.shuffle(ret)
+        if sorted:
+            ret.sort(key=lambda objects: objects.price, reverse=descending)
+        return ret
+
+    def peak_sell_offers(self, good, sorted=True, descending=False, shuffled=True):
+        ret = []
+        for offer in self._open_offers_sell[good].values():
+            ret.append(offer)
+        if shuffled:
+            random.shuffle(ret)
+        if sorted:
+            ret.sort(key=lambda objects: objects.price, reverse=descending)
+        return ret
+
+    def peak_offers(self, good, sorted=True, descending=False, shuffled=True):
         """ returns a peak on all offers of the 'good' ordered by price.
         Peaked offers can not be accepted or rejected and they do not
         expire.
@@ -348,12 +392,12 @@ cdef class Trade:
                 else:
                     self.reject(offer)  # optional
         """
-        cdef Offer offer
-        ret = []
-        for offer in self._open_offers[good].values():
-            ret.append(offer)
-        random.shuffle(ret)
-        ret.sort(key=lambda objects: objects.price, reverse=descending)
+        ret = (self.peak_buy_offers(good, sorted=False, descending=False, shuffled=False) +
+               self.peak_sell_offers(good, sorted=False, descending=False, shuffled=False))
+        if shuffled:
+            random.shuffle(ret)
+        if sorted:
+            ret.sort(key=lambda objects: objects.price, reverse=descending)
         return ret
 
     def sell(self, receiver,
@@ -431,14 +475,14 @@ cdef class Trade:
                                  quantity,
                                  price,
                                  currency,
-                                 115,
+                                 True,
                                  'new',
                                  -2,
                                  offer_id,
                                  self.round,
                                  -2)
         self.given_offers[offer_id] = offer
-        self._send(receiver[0], receiver[1], '_o', offer)
+        self._send(receiver[0], receiver[1], '!s', offer)
         return offer
 
     def buy(self, receiver, good,
@@ -499,30 +543,15 @@ cdef class Trade:
                                  quantity,
                                  price,
                                  currency,
-                                 98,
+                                 False,
                                  'new',
                                  -1,
                                  offer_id,
                                  self.round,
                                  -1)
-        self._send(receiver[0], receiver[1], '_o', offer)
+        self._send(receiver[0], receiver[1], '!b', offer)
         self.given_offers[offer_id] = offer
         return offer
-
-    def retract(self, Offer offer):
-        """ The agent who made a buy or sell offer can retract it
-
-        The offer an agent made is deleted at the end of the sub-round and the
-        committed good reappears in the haves. However if another agent
-        accepts in the same round the trade will be cleared and not retracted.
-
-        Args:
-            offer: the offer he made with buy or sell
-            (offer not quote!)
-        """
-        self._send(offer.receiver_group, '_d', offer)
-        del self.given_offers[offer.id]
-
 
     def accept(self, Offer offer, double quantity=-999, double epsilon=epsilon):
         """ The buy or sell offer is accepted and cleared. If no quantity is
@@ -564,7 +593,7 @@ cdef class Trade:
             return {offer.good: 0, offer.currency: 0}
 
         money_amount = quantity * offer.price
-        if offer.buysell == 115:  # ord('s')
+        if offer.sell:  # ord('s')
             assert money_amount > - epsilon, 'money = quantity * offer.price %.30f is smaller than 0 - epsilon (%.30f)' % (money_amount, - epsilon)
             if money_amount < 0:
                 money_amount = 0
@@ -590,7 +619,7 @@ cdef class Trade:
         offer.final_quantity = quantity
         self._send(offer.sender_group, offer.sender_id, '_p', (offer.id, quantity))
         del self._polled_offers[offer.id]
-        if offer.buysell == 115:  # ord('s')
+        if offer.sell:  # ord('s')
             return {offer.good: - quantity, offer.currency: money_amount}
         else:
             return {offer.good: quantity, offer.currency: - money_amount}
@@ -623,14 +652,14 @@ cdef class Trade:
         """
         pass
 
-    def _log_receive_accept_group(self, Offer offer):
-        if offer.buysell == 115:
+    def _log_receive_accept_group(self, offer):
+        if offer.sell:
             self._trade_log[(offer.good, self.group, offer.receiver_group, offer.price)] += offer.quantity
         else:
             self._trade_log[(offer.good, offer.receiver_group, self.group, offer.price)] += offer.quantity
 
-    def _log_receive_accept_agent(self, Offer offer):
-        if offer.buysell == 115:
+    def _log_receive_accept_agent(self, offer):
+        if offer.sell:
             self._trade_log[(offer.good, self.name_without_colon, '%s_%i' % (offer.receiver_group, offer.receiver_id), offer.price)] += offer.quantity
         else:
             self._trade_log[(offer.good, '%s_%i' % (offer.receiver_group, offer.receiver_id), self.name_without_colon, offer.price)] += offer.quantity
@@ -642,7 +671,7 @@ cdef class Trade:
         """
         cdef Offer offer = self.given_offers[offer_id_final_quantity[0]]
         offer.final_quantity = offer_id_final_quantity[1]
-        if offer.buysell == 115:
+        if offer.sell:
             self._haves['money'] += offer.final_quantity * offer.price
             self._haves[offer.good] += offer.quantity - offer.final_quantity
         else:
@@ -653,14 +682,14 @@ cdef class Trade:
         del self.given_offers[offer.id]
         return offer
 
-    def _log_receive_accept_group(self, Offer offer):
-        if offer.buysell == 115:
+    def _log_receive_accept_group(self, offer):
+        if offer.sell:
             self._trade_log[(offer.good, self.group, offer.receiver_group, offer.price)] += offer.final_quantity
         else:
             self._trade_log[(offer.good, offer.receiver_group, self.group, offer.price)] += offer.final_quantity
 
-    def _log_receive_accept_agent(self, Offer offer):
-        if offer.buysell == 115:
+    def _log_receive_accept_agent(self, offer):
+        if offer.sell:
             self._trade_log[(offer.good, self.name_without_colon, '%s_%i' % (offer.receiver_group, offer.receiver_id), offer.price)] += offer.final_quantity
         else:
             self._trade_log[(offer.good, '%s_%i' % (offer.receiver_group, offer.receiver_id), self.name_without_colon, offer.price)] += offer.final_quantity
@@ -673,7 +702,7 @@ cdef class Trade:
 
         """
         cdef Offer offer = self.given_offers[offer_id]
-        if offer.buysell == 115:
+        if offer.sell:
             self._haves[offer.good] += offer.quantity
         else:
             self._haves[offer.currency] += offer.quantity * offer.price
@@ -684,7 +713,7 @@ cdef class Trade:
 
     def _delete_given_offer(self, offer_id):
         cdef Offer offer = self.given_offers.pop(offer_id)
-        if offer.buysell == 115:
+        if offer.sell:
             self._haves[offer.good] += offer.quantity
         else:
             self._haves[offer.currency] += offer.quantity * offer.price
@@ -693,11 +722,9 @@ cdef class Trade:
         """ gives a good to another agent
 
         Args:
-
-            receiver_group:
-                Group name of the receiver
-            receiver_id:
-                id number of the receiver
+            receiver:
+                The name of the receiving agent a tuple (group, id).
+                e.G. ('firm', 15)
             good:
                 the good to be transfered
             quantity:
@@ -772,10 +799,10 @@ cdef class Trade:
         """
         cdef Offer offer
         for typ, msg in incomming_messages:
-            if typ == '_o':
-                self._open_offers[msg.good][msg.id] = msg
-            elif typ == '_d':
-                del self._open_offers[msg.good][msg.id]
+            if typ == '!b':
+                self._open_offers_buy[msg.good][msg.id] = msg
+            elif typ == '!s':
+                self._open_offers_sell[msg.good][msg.id] = msg
             elif typ == '_p':
                 offer = self._receive_accept(msg)
                 if self.trade_logging == 2:

@@ -117,7 +117,8 @@ class Agent(Database, Trade, Messaging):
         self._msgs = {}
 
         self.given_offers = OrderedDict()
-        self._open_offers = defaultdict(dict)
+        self._open_offers_buy = defaultdict(dict)
+        self._open_offers_sell = defaultdict(dict)
         self._polled_offers = {}
         self._offer_count = 0
         self._reject_offers_retrieved_end_subround = []
@@ -211,8 +212,14 @@ class Agent(Database, Trade, Messaging):
 
         self._trade_log = defaultdict(int)
 
-        if sum([len(offers) for offers in list(self._open_offers.values())]):
-            pprint(dict(self._open_offers))
+        if sum([len(offers) for offers in list(self._open_offers_buy.values())]):
+            pprint(dict(self._open_offers_buy))
+            raise Exception('%s_%i: There are offers an agent send that have '
+                            'not been retrieved in this round get_offer(.)' %
+                            (self.group, self.id))
+
+        if sum([len(offers) for offers in list(self._open_offers_sell.values())]):
+            pprint(dict(self._open_offers_sell))
             raise Exception('%s_%i: There are offers an agent send that have '
                             'not been retrieved in this round get_offer(.)' %
                             (self.group, self.id))

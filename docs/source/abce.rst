@@ -13,14 +13,6 @@ Subpackages
 Submodules
 ----------
 
-abce\.abcelogger module
------------------------
-
-.. automodule:: abce.abcelogger
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 abce\.agent module
 ------------------
 
@@ -105,14 +97,6 @@ abce\.multicurrencytrade module
 -------------------------------
 
 .. automodule:: abce.multicurrencytrade
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-abce\.networklogger module
---------------------------
-
-.. automodule:: abce.networklogger
     :members:
     :undoc-members:
     :show-inheritance:
