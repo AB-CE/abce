@@ -12,9 +12,11 @@ The impatient reader can jump directly to the 'Interactive jupyter / IPython not
 which explains how to set up a simulation. In the walk through you will learn how to set up an agent
 and how to trade with other agents. The Household and Firm classes allow to
 produce with different production functions and consume with utility functions.
-But models don't have to use neoclassical assumptions.
+But models don't have to use neoclassical assumptions. ABCE does support an accounting framwork
+for financial simulations. `ESL can be downloaded here<https://github.com/AB-CE/ABCESL>`_.
 
 ABCE runs on macOS, Windows, and Linux. ABCE runs 10x faster on pypy!
+
 
 
 Introduction
