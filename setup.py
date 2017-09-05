@@ -12,6 +12,7 @@ except ImportError:
     from distutils.command.build_ext import build_ext
 from distutils.errors import CCompilerError, DistutilsExecError, \
     DistutilsPlatformError
+import platform
 
 
 class TXEntension(build_ext):
@@ -53,12 +54,13 @@ if not readthedocs:
             Extension("abce.online_variance", ["abce/online_variance.c"]),
         ]
 
-    install_requires += ['numpy >= 1.10.2p;platform_python_implementation=="CPython"',
-                         'pandas >= 0.17.1;platform_python_implementation=="CPython"',
-                         'bokeh == 0.12.7;platform_python_implementation=="CPython"']
+    if not platform.python_implementation() == "PyPy":
+        install_requires += ['numpy >= 1.10.2p',
+                             'pandas >= 0.17.1',
+                             'bokeh == 0.12.7']
 
 
-version = '0.8.2a0'
+version = '0.8.2a1'
 
 
 setup(name='abce',
@@ -67,7 +69,10 @@ setup(name='abce',
       author_email='Davoud@Taghawi-Nejad.de',
       description='Agent-Based Complete Economy modelling platform',
       url='https://github.com/AB-CE/abce.git',
-      package_dir={'abce': 'abce', 'abce.gui': 'abce/gui', 'abce.agents': 'abce/agents', 'abce.contracts': 'abce/contracts'},
+      package_dir={'abce': 'abce',
+                   'abce.gui': 'abce/gui',
+                   'abce.agents': 'abce/agents',
+                   'abce.contracts': 'abce/contracts'},
       packages=['abce'],
       long_description=open('README.rst').read(),
       install_requires=install_requires,
