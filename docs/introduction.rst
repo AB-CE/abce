@@ -109,11 +109,11 @@ Differences to other agent-based modeling platforms
 
 We identified several survey articles as well as
 a quite complete overview of agent-based modeling software
-on Wikipedia. :raw-tex:`\cite{Serenko2002}`, :raw-tex:`\cite{Allan2010}`
-:raw-tex:`\cite{Societies2009}`, :raw-tex:`\cite{Tobias2004}`, :raw-tex:`\cite{Railsback2006}`,
-:raw-tex:`\cite{abmcomparisonWikipedia2013}`. The articles
-'Tools of the Trade' by Madey and Nikolai :raw-tex:`\cite{Societies2009}`
-and 'Survey of Agent Based Modelling and Simulation Tools' by Allan  :raw-tex:`\cite{Allan2010}`
+on Wikipedia. [Serenko2002]_, [Allan2010]_
+[Societies2009]_, [Tobias2004]_, [Railsback2006]_,
+[abmcomparisonWikipedia2013]_. The articles
+'Tools of the Trade' by Madey and Nikolai [Societies2009]_
+and 'Survey of Agent Based Modelling and Simulation Tools' by Allan  [Allan2010]_
 attempt to give a complete overview
 of agent-based modelling platforms/frameworks. The Madey and Nikolai paper
 categorizes the abm-platforms according
@@ -122,17 +122,17 @@ Operating System and Domain). According to this article, there
 is only one software platform which aims at the specific
 domain of economics: JASA. But JASA is a modeling platform
 that aims specifically at auctions.
-Wikipedia :raw-tex:`\cite{abmcomparisonWikipedia2013}` lists JAMEL
+Wikipedia [abmcomparisonWikipedia2013]_ lists JAMEL
 as an economic platform, but JAMEL a is closed source and
 an non-programming platform. The 'Survey of Agent Based Modelling and Simulation Tools'
-by Allan :raw-tex:`\cite{Allan2010}` draws
+by Allan [Allan2010]_ draws
 our attention to LSD, which, as it states, is rather a system dynamic,
 than an agent-based modeling platform. We conclude that
 there is a market for a domain specific language for economics.
 
 While the formerly mentioned modeling platforms aim to give a
 complete overview, 'Evaluation of free Java - libraries for
-social scientific agent based simulation' :raw-tex:`\cite{Tobias2004}`
+social scientific agent based simulation' [Tobias2004]_
 by Tobias and Hoffman
 chooses to concentrate on a smaller number of simulation packages.
 Tobias and Hoffman discuss: RePast, Swarm, Quicksilver, and VSEit.
@@ -140,7 +140,7 @@ We will follow this approach and concentrate on a subset of
 ABM models. First as economics is a subset of social science we
 dismiss all platforms that are not explicitly targeted at
 social science. The list of social science platforms according
-to :raw-tex:`\cite{Societies2009}` Madey and Nikolai is:
+to [Societies2009]_ Madey and Nikolai is:
 AgentSheets, LSD, FAMOJA, MAML, MAS-SOC,  MIMOSE, NetLogo, Repast
 SimBioSys, StarLogo, StarLogoT, StarLogo TNG, Sugarscape, VSEit
 NetLogo and  Moduleco.
@@ -154,17 +154,17 @@ MAML,
     because it does not use a standard programming language, but it is it's own.
 MAS-SOC,
     because we could not find it in the Internet and its documentation
-    according to :raw-tex:`\cite{Allan2010}` is sparse.
+    according to [Allan2010]_ is sparse.
 MIMOSE,
     is an interesting language, but we will not analyze as it is based on a completely different
     programming paradigm, functional programming, as opposed to object-oriented
     programming.
 SimBioSys,
-    because it has according to Allan :raw-tex:`\cite{Allan2010}` and our research  a sparse documentation.
+    because it has according to Allan [Allan2010]_ and our research  a sparse documentation.
 StarLogo, StarLogoT, StarLogo TNG,
     because they have been superseded by NetLogo
 Moduleco,
-    because it has  according to Allan :raw-tex:`\cite{Allan2010}` and our research a sparse documentation.
+    because it has  according to Allan [Allan2010]_ and our research a sparse documentation.
     Further, it appears not to be updated since roughly 2001
 
 We will concentrate on the most widely used ABM frameworks/platforms: MASON, NetLogo, Repast.
@@ -268,7 +268,7 @@ Difference to MASON
 
 Masons is a single-threaded discrete event platform that is intended
 for simulations of social, biological and economical systems.
-:raw-tex:`\cite{Luke}`. Mason is a platform that was explicitly designed with the goal of
+[Luke]_. Mason is a platform that was explicitly designed with the goal of
 running it on large platforms. MASON distributes a large number
 of single threaded simulations over deferent computers or processors.
 ABCE on the other hand is multi-threaded it
@@ -298,7 +298,7 @@ Difference to NetLogo
 
 Netlogo is a multi-agent programming language, which is part of
 the Lisp language family. Netlogo is interpreted.
-:raw-tex:`\cite{Tisue2004}` Python on the
+[Tisue2004]_ Python on the
 other hand is a compiled [#compiled]_ general programming language.
 Consequently it is faster than NetLogo.
 
@@ -317,15 +317,15 @@ Difference Repast
 
 Repast is a modeling environment for social science. It was
 originally conceived as a Java recoding of SWARM.
-:raw-tex:`\cite{Collier}` :raw-tex:`\cite{NORTH2005}` Repast
+[Collier]_ [NORTH2005]_ Repast
 comes in several flavors: Java, .Net, and a Python like
 programming language. Repast has been superseded by
 Repast Symphony which maintains all functionality, but
 is limited to Java. Symphony has a point and click
-interface for simple models. :raw-tex:\cite{NORTH2005a}
+interface for simple models. [NORTH2005a]_
 
 Repast does allow static and dynamic scheduling.
-:raw-tex:`\cite{Collier}`. ABCE,
+[Collier]_. ABCE,
 does not (yet) allow for dynamic scheduling. In ABCE, the
 order of actions - or in ABCE language order of sub-rounds -
 is fixed and is repeated for every round. This however is not
@@ -338,7 +338,7 @@ subclass the scheduler in ABCE it is sufficient to specify
 the schedule and pass it the Simulation class.
 
 Repast is vast, it contains 210 classes in 9 packages
-:raw-tex`\cite{Collier}`. ABCE, thanks to its limited
+[Collier]_. ABCE, thanks to its limited
 scope and Python, has only 6 classes visible to the
 modeler in a single package.
 

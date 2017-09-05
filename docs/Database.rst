@@ -65,12 +65,6 @@ Aggregate Data
 
 .. automethod:: abce.group.Group.agg_log
 
-Network logging
-~~~~~~~~~~~~~~~
-
-.. autoclass:: abce.networklogger.NetworkLogger
-    :members:
-    :show-inheritance:
 
 .. _retrieval:
 
