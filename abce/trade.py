@@ -315,8 +315,8 @@ class Trade:
                 else:
                     self.reject(offer)  # optional
         """
-        ret = (self.get_buy_offers(self, good, descending=False, sorted=False, shuffled=False) +
-               self.get_sell_offers(self, good, descending=False, sorted=False, shuffled=False))
+        ret = (self.get_buy_offers(good, descending=False, sorted=False, shuffled=False) +
+               self.get_sell_offers(good, descending=False, sorted=False, shuffled=False))
         if shuffled:
             random.shuffle(ret)
         if sorted:
