@@ -5,9 +5,9 @@ Prepare your simulation to be displayed on the web
 --------------------------------------------------
 
 In order for your simulation to be able to be run on the web it must be running
-in the web browser. for this you need to add @gui(...) before the main function.
-Further @gui needs to
-be switched to serve::
+in the web browser. for this you need to add :func:`@gui(...) <abce.gui.gui>` before the main function.
+Further :func:`@gui <abce.gui.gui>` needs to
+be switched to :code:`serve`::
 
     ...
 
@@ -40,9 +40,9 @@ It is important to note that the :code:`main()` function is not called, when sta
 is imported! :code:`if __name__ == '__main__':`, means that it is not called
 when start.py is imported. you can also simply delete the call of :code:`main()`.
 
-:code:`@gui` is the part that generates the web application and runs it.
+:func:`@gui <abce.gui.gui>` is the part that generates the web application and runs it.
 :code:`serve` must be set to True in
-:code:`@gui(simulation_parameters, text=text, title=title, serve=True)`.
+:func:`@gui(simulation_parameters, text=text, title=title, serve=True) <abce.gui.gui>`
 
 The easiest way to get your code to the server is via github. For this follow the
 following instructions.
@@ -69,8 +69,8 @@ create an amazon ec2 instance following `Amazon's tutorial here<http://docs.aws.
 
 make sure that in step 7b, configure the security groups, such that you have a HTTP access. This setting allows access to port 80 (HTTP) from anywhere, and ssh access only from your IP address.
 
-.. image:: aws_security_group.png
-   :scale: 100 %
+.. figure:: aws_security_group.png
+   :figwidth: 100 %
    :align: right
 
 then from the console ssh into your account

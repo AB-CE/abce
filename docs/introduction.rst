@@ -2,63 +2,6 @@
     :format: latex html
 
 
-Introduction
-------------
-
-ABCE is a Python based modeling platform for economic simulations.
-For simulations of trade, production and consumption, ABCE comes
-with standard functions that implement these kinds of interactions
-and actions. The modeler only has to implement
-the logic and decisions of an agent; ABCE takes care of all exchange
-of goods and production and consumption.
-
-One special feature of ABCE is that goods have the physical properties of
-goods in reality. In other words if agent A gives a good to agent B, then
-- unlike information - agent B receives the good and agent B does not have
-the good anymore. That means that agents can trade, produce or consume a good.
-The ownership and transformations (production or consumption) of goods are
-automatically handled by the platform.
-
-ABCE models are programmed in standard Python, stock functions of agents
-are inherited from archetype classes (Agent, Firm or Household). The only
-not-so-standard Python is that agents are executed in parallel by the
-Simulation class (in start.py).
-
-ABCE allows the modeler to program agents as ordinary Python class-objects,
-but run the simulation on a multi-core/processor computer. It takes no
-effort or intervention from the modeler to run the simulation on a
-multi-core processor production,
-consumption, trade, communication and similar functions are automatically
-handled by the platform. The modeler only needs to instruct ABCE, which
-automatically executes the specific functions. The speed advantages of
-ABCE are typically only observed for 10000 agents and more. Below, it
-might be between half as fast to equally fast to a pure python implementation.
-
-ABCE is a scheduler [#scheduler]_ and a set of agent classes.
-According to the schedule the simulation class calls - each sub-round - agents
-to execute some actions. Each agent executes these actions
-using some of the build-in functions, such as trade, production and
-consumption of ABCE. The agents can use the full set of commands of the
-Python general purpose language.
-
-The audience of ABCE are economists that want to model agent-based
-models of trade and production. It is especially geared towards
-simulations that are similar to standard economic models
-like general or partial equilibrium models [#noeq]_. What is more ABCE is
-especially designed to make writing the simulation and the execution
-fast. Therefore models can be developed in an interlinked process of
-running and rewriting the simulation.
-
-ABCE uses Python - a language that is especially beginner friendly, but also
-easy to learn for people who already know object oriented programming
-languages such as Java, C++ or even MATLAB. ABCE uses C++, to handle
-background tasks to increase speed.
-Python allows simple, but fully functional, programming for economists.
-What is more Python is readable even for non Python programmers.
-
-.. [#scheduler] the Simulation class
-.. [#noeq] with out the equilibrium of course
-
 Design
 ======
 
@@ -68,7 +11,7 @@ code and quickly explore different alternatives of a model.
 
 Execution speed is a secondary concern to the goal of rapid development.
 Execution speed is achieved by making use of multiple-cores/processors
-and using C++ for background tasks.
+and using C++ for background tasks or using pypy.
 
 Secondly, the modeler can concentrate on programming the behavior of the agents and
 the specification of goods, production and consumption function.
@@ -80,6 +23,13 @@ it's rich environment of standard libraries. Python for example
 comes with a stock representation of agents in a spacial world,
 which allow the modeler to model a spatial model.
 
+Python is especially beginner friendly, but also
+easy to learn for people who already know object oriented programming
+languages such as Java, C++ or even MATLAB. ABCE uses C++, to handle
+background tasks to increase speed.
+Python allows simple, but fully functional, programming for economists.
+What is more Python is readable even for non Python programmers.
+
 Python is a language that lends itself to writing of code fast, because it
 has low overhead. In Python variables do not have to be declared, garbage
 does not have to be collected and classes have no boiler-plate code.
@@ -87,8 +37,8 @@ does not have to be collected and classes have no boiler-plate code.
 Python, is slower than Java or C, but its reputation for slow speed is usually
 exaggerated. Various packages for numerical calculations and optimization such as numpy and scipy offer
 the C like speed to numerical problems. Contrary to the common belief
-Python is not an interpreted language. Python is compiled to bytecode and
-than executed. ABCE allows
+Python is not an interpreted language. Pypy even provides a just in time
+complier Python is compiled to bytecode and than executed. ABCE allows
 to parallelize the code and gain significant speed advantage over
 single-threaded code, that does not make use of the speed advantage of
 multi-core or multi-processor computers.
@@ -105,7 +55,7 @@ the agents receive is random, as if the agent's in the round before
 would make offers in a random order.
 
 Differences to other agent-based modeling platforms
-```````````````````````````````````````````````````
+---------------------------------------------------
 
 We identified several survey articles as well as
 a quite complete overview of agent-based modeling software
@@ -170,7 +120,7 @@ Moduleco,
 We will concentrate on the most widely used ABM frameworks/platforms: MASON, NetLogo, Repast.
 
 General differences to other agent-based modeling platforms
-```````````````````````````````````````````````````````````
+-----------------------------------------------------------
 
 First of all ABCE is domain specific, that enables it to provide
 the basic functions such as production, consumption, trade and
@@ -224,44 +174,6 @@ transport costs or other properties according to the geographical
 position of the agents, but the agent's do not move or the movement
 does not have to be represented graphically, ABCE could still be a
 good choice.
-
-.. [#30000] https://pypi.python.org/
-
-Physical Goods
-``````````````
-
-Physical goods are at the heart of almost every economic model.
-The core feature and main difference to other ABM platforms is the
-implementation of physical goods. In contrast
-to information or messages, sharing a good means having less of it. In other
-words if agent A gives a good to agent B then agent A does not have this good
-anymore. On of the major strength of ABCE is that this is automatically handled.
-
-In ABCE goods can be created, destroyed, traded, given or changed through
-production and consumption. All these functions are implemented in ABCE and
-can be inherited by an agent as a method. These functions are automatically handled by
-ABCE upon decision from the modeler.
-
-Every agent in ABCE must inherit from the abce.Agent class. This gives the
-agent a couple of stock methods: create, destroy, trade and give. Create and
-destroy create or destroy a good immediately. Because trade and give involve
-a form of interaction between the agents they run over several sub-rounds.
-Selling of a good for example works like this:
-
-- Sub-round 1. The first agent offers the goods.
-       The good is automatically subtracted from the agents possessions, to avoid double selling.
-- Sub-round 2. The counter agent receives the offer. The agent can
-    1. accept:
-       the goods are added to the counter part's possessions. Money is subtracted.
-    2. reject (or equivalently ignore):
-       Nothing happens in this sub-round
-    3. partially accept the offer:
-       The partial amount of goods is added to the counter part's possessions. Money is subtracted.
-- Sub-round 3. In case of
-    1. acceptance, the money is credited
-    2. rejection the original good is re-credited
-    3. partial acceptance the money is credited and
-       the unsold part of the good is re-credited.
 
 Difference to MASON
 ```````````````````
@@ -341,6 +253,46 @@ Repast is vast, it contains 210 classes in 9 packages
 [Collier]_. ABCE, thanks to its limited
 scope and Python, has only 6 classes visible to the
 modeler in a single package.
+
+
+
+.. [#30000] https://pypi.python.org/
+
+Physical Goods
+--------------
+
+Physical goods are at the heart of almost every economic model.
+The core feature and main difference to other ABM platforms is the
+implementation of physical goods. In contrast
+to information or messages, sharing a good means having less of it. In other
+words if agent A gives a good to agent B then agent A does not have this good
+anymore. On of the major strength of ABCE is that this is automatically handled.
+
+In ABCE goods can be created, destroyed, traded, given or changed through
+production and consumption. All these functions are implemented in ABCE and
+can be inherited by an agent as a method. These functions are automatically handled by
+ABCE upon decision from the modeler.
+
+Every agent in ABCE must inherit from the abce.Agent class. This gives the
+agent a couple of stock methods: create, destroy, trade and give. Create and
+destroy create or destroy a good immediately. Because trade and give involve
+a form of interaction between the agents they run over several sub-rounds.
+Selling of a good for example works like this:
+
+- Sub-round 1. The first agent offers the goods.
+       The good is automatically subtracted from the agents possessions, to avoid double selling.
+- Sub-round 2. The counter agent receives the offer. The agent can
+    1. accept:
+       the goods are added to the counter part's possessions. Money is subtracted.
+    2. reject (or equivalently ignore):
+       Nothing happens in this sub-round
+    3. partially accept the offer:
+       The partial amount of goods is added to the counter part's possessions. Money is subtracted.
+- Sub-round 3. In case of
+    1. acceptance, the money is credited
+    2. rejection the original good is re-credited
+    3. partial acceptance the money is credited and
+       the unsold part of the good is re-credited.
 
 
 
