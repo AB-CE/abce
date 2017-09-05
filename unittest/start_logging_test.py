@@ -1,6 +1,7 @@
 import platform
 import csv
 import abce
+from math import isclose
 
 
 class Agent(abce.Agent):
@@ -17,26 +18,30 @@ def compare(to_compare, path, message, processes):
     the_path = (path + '/' + to_compare)
     if platform.system() == 'Windows':  # windows compatibility
         the_path = the_path[the_path.find('/') + 1:]
-        with open(to_compare, 'r') as generatedf:
-            generated = {}
-            for row in csv.DictReader(generatedf):
-                try:
-                    generated[(row['round'], row['id'])] = row
-                except KeyError:
-                    generated[row['round']] = row
-        with open(the_path, 'r') as orginialf:
-            orginial = {}
-            for row in csv.DictReader(orginialf):
-                try:
-                    orginial[(row['round'], row['id'])] = row
-                except KeyError:
-                    orginial[row['round']] = row
-        for row in generated:
-            for key in generated[row]:
-                assert generated[row][key] == orginial[row][key], (key, generated[row][key], orginial[row][key])
-        for row in orginial:
-            for key in orginial[row]:
-                assert generated[row][key] == orginial[row][key], (key, generated[row][key], orginial[row][key])
+    with open(to_compare, 'r') as generatedf:
+        generated = {}
+        for row in csv.DictReader(generatedf):
+            try:
+                generated[(row['round'], row['id'])] = row
+            except KeyError:
+                generated[row['round']] = row
+    with open(the_path, 'r') as orginialf:
+        orginial = {}
+        for row in csv.DictReader(orginialf):
+            try:
+                orginial[(row['round'], row['id'])] = row
+            except KeyError:
+                orginial[row['round']] = row
+    for row in generated:
+        for key in generated[row]:
+            if key != 'index':
+                if generated[row][key] != orginial[row][key]:
+                    assert isclose(float(generated[row][key]), float(orginial[row][key])), (key, generated[row][key], orginial[row][key])
+    for row in orginial:
+        for key in orginial[row]:
+            if key != 'index':
+                if generated[row][key] != orginial[row][key]:
+                    assert isclose(float(generated[row][key]), float(orginial[row][key])), (key, generated[row][key], orginial[row][key])
 
 
 def main(processes):
