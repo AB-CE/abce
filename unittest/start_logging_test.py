@@ -18,9 +18,6 @@ def compare(to_compare, path, message, processes):
     the_path = (path + '/' + to_compare)
     if platform.system() == 'Windows':  # windows compatibility
         the_path = the_path[the_path.find('/') + 1:]
-    if processes == 1:
-        assert cmp(to_compare, the_path)
-    else:
         with open(to_compare, 'r') as generatedf:
             generated = {}
             for row in csv.DictReader(generatedf):
