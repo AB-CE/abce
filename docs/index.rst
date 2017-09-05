@@ -58,6 +58,7 @@ Advanced
    MultiCurrencyTrade
    Quote
    spatial
+   plugins
 
 Graphical User Interface and Results
 ====================================
