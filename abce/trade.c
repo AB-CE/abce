@@ -5050,20 +5050,17 @@ static PyObject *__pyx_pf_5trade_5Trade_10get_offers(struct __pyx_obj_5trade_Tra
   /* "trade.pyx":342
  *                     self.reject(offer)  # optional
  *         """
- *         ret = (self.get_buy_offers(self, good, descending=False, sorted=False, shuffled=False) +             # <<<<<<<<<<<<<<
- *                self.get_sell_offers(self, good, descending=False, sorted=False, shuffled=False))
+ *         ret = (self.get_buy_offers(good, descending=False, sorted=False, shuffled=False) +             # <<<<<<<<<<<<<<
+ *                self.get_sell_offers(good, descending=False, sorted=False, shuffled=False))
  *         if shuffled:
  */
   __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_get_buy_offers); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 342, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = PyTuple_New(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 342, __pyx_L1_error)
+  __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 342, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __Pyx_INCREF(((PyObject *)__pyx_v_self));
-  __Pyx_GIVEREF(((PyObject *)__pyx_v_self));
-  PyTuple_SET_ITEM(__pyx_t_2, 0, ((PyObject *)__pyx_v_self));
   __Pyx_INCREF(__pyx_v_good);
   __Pyx_GIVEREF(__pyx_v_good);
-  PyTuple_SET_ITEM(__pyx_t_2, 1, __pyx_v_good);
+  PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_v_good);
   __pyx_t_3 = PyDict_New(); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 342, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_descending, Py_False) < 0) __PYX_ERR(0, 342, __pyx_L1_error)
@@ -5077,21 +5074,18 @@ static PyObject *__pyx_pf_5trade_5Trade_10get_offers(struct __pyx_obj_5trade_Tra
 
   /* "trade.pyx":343
  *         """
- *         ret = (self.get_buy_offers(self, good, descending=False, sorted=False, shuffled=False) +
- *                self.get_sell_offers(self, good, descending=False, sorted=False, shuffled=False))             # <<<<<<<<<<<<<<
+ *         ret = (self.get_buy_offers(good, descending=False, sorted=False, shuffled=False) +
+ *                self.get_sell_offers(good, descending=False, sorted=False, shuffled=False))             # <<<<<<<<<<<<<<
  *         if shuffled:
  *             random.shuffle(ret)
  */
   __pyx_t_3 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_get_sell_offers); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 343, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_2 = PyTuple_New(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 343, __pyx_L1_error)
+  __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 343, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __Pyx_INCREF(((PyObject *)__pyx_v_self));
-  __Pyx_GIVEREF(((PyObject *)__pyx_v_self));
-  PyTuple_SET_ITEM(__pyx_t_2, 0, ((PyObject *)__pyx_v_self));
   __Pyx_INCREF(__pyx_v_good);
   __Pyx_GIVEREF(__pyx_v_good);
-  PyTuple_SET_ITEM(__pyx_t_2, 1, __pyx_v_good);
+  PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_v_good);
   __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 343, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_descending, Py_False) < 0) __PYX_ERR(0, 343, __pyx_L1_error)
@@ -5106,8 +5100,8 @@ static PyObject *__pyx_pf_5trade_5Trade_10get_offers(struct __pyx_obj_5trade_Tra
   /* "trade.pyx":342
  *                     self.reject(offer)  # optional
  *         """
- *         ret = (self.get_buy_offers(self, good, descending=False, sorted=False, shuffled=False) +             # <<<<<<<<<<<<<<
- *                self.get_sell_offers(self, good, descending=False, sorted=False, shuffled=False))
+ *         ret = (self.get_buy_offers(good, descending=False, sorted=False, shuffled=False) +             # <<<<<<<<<<<<<<
+ *                self.get_sell_offers(good, descending=False, sorted=False, shuffled=False))
  *         if shuffled:
  */
   __pyx_t_1 = PyNumber_Add(__pyx_t_4, __pyx_t_5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 342, __pyx_L1_error)
@@ -5118,8 +5112,8 @@ static PyObject *__pyx_pf_5trade_5Trade_10get_offers(struct __pyx_obj_5trade_Tra
   __pyx_t_1 = 0;
 
   /* "trade.pyx":344
- *         ret = (self.get_buy_offers(self, good, descending=False, sorted=False, shuffled=False) +
- *                self.get_sell_offers(self, good, descending=False, sorted=False, shuffled=False))
+ *         ret = (self.get_buy_offers(good, descending=False, sorted=False, shuffled=False) +
+ *                self.get_sell_offers(good, descending=False, sorted=False, shuffled=False))
  *         if shuffled:             # <<<<<<<<<<<<<<
  *             random.shuffle(ret)
  *         if sorted:
@@ -5128,7 +5122,7 @@ static PyObject *__pyx_pf_5trade_5Trade_10get_offers(struct __pyx_obj_5trade_Tra
   if (__pyx_t_6) {
 
     /* "trade.pyx":345
- *                self.get_sell_offers(self, good, descending=False, sorted=False, shuffled=False))
+ *                self.get_sell_offers(good, descending=False, sorted=False, shuffled=False))
  *         if shuffled:
  *             random.shuffle(ret)             # <<<<<<<<<<<<<<
  *         if sorted:
@@ -5185,8 +5179,8 @@ static PyObject *__pyx_pf_5trade_5Trade_10get_offers(struct __pyx_obj_5trade_Tra
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
     /* "trade.pyx":344
- *         ret = (self.get_buy_offers(self, good, descending=False, sorted=False, shuffled=False) +
- *                self.get_sell_offers(self, good, descending=False, sorted=False, shuffled=False))
+ *         ret = (self.get_buy_offers(good, descending=False, sorted=False, shuffled=False) +
+ *                self.get_sell_offers(good, descending=False, sorted=False, shuffled=False))
  *         if shuffled:             # <<<<<<<<<<<<<<
  *             random.shuffle(ret)
  *         if sorted:
