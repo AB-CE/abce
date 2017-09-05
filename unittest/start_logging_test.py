@@ -18,6 +18,9 @@ def compare(to_compare, path, message, processes):
     the_path = (path + '/' + to_compare)
     if platform.system() == 'Windows':  # windows compatibility
         the_path = the_path[the_path.find('/') + 1:]
+    if processes == 1:
+        assert cmp(to_compare, the_path)
+    else:
         with open(to_compare, 'r') as generatedf:
             generated = {}
             for row in csv.DictReader(generatedf):
@@ -34,10 +37,10 @@ def compare(to_compare, path, message, processes):
                     orginial[row['round']] = row
         for row in generated:
             for key in generated[row]:
-                generated[row][key] == orginial[row][key], (key, generated[row][key], orginial[row][key])
+                assert generated[row][key] == orginial[row][key], (key, generated[row][key], orginial[row][key])
         for row in orginial:
             for key in orginial[row]:
-                generated[row][key] == orginial[row][key], (key, generated[row][key], orginial[row][key])
+                assert generated[row][key] == orginial[row][key], (key, generated[row][key], orginial[row][key])
 
 
 def main(processes):
