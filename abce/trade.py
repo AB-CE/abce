@@ -209,10 +209,12 @@ class Trade:
     If we did not implement a barter class, but one can use this class as a barter class,
     """
     def get_buy_offers_all(self, descending=False, sorted=True):
+        """ """
         goods = list(self._open_offers_buy.keys())
         return {good: self.get_offers(good, descending, sorted) for good in goods}
 
     def get_sell_offers_all(self, descending=False, sorted=True):
+        """ """
         goods = list(self._open_offers_sell.keys())
         return {good: self.get_offers(good, descending, sorted) for good in goods}
 
@@ -254,6 +256,7 @@ class Trade:
         return {good: self.get_offers(good, descending, sorted) for good in goods}
 
     def get_buy_offers(self, good, sorted=True, descending=False, shuffled=True):
+        """ """
         ret = list(self._open_offers_buy[good].values())
         self._polled_offers.update(self._open_offers_buy[good])
         del self._open_offers_buy[good]
@@ -264,6 +267,7 @@ class Trade:
         return ret
 
     def get_sell_offers(self, good, sorted=True, descending=False, shuffled=True):
+        """ """
         ret = list(self._open_offers_sell[good].values())
         self._polled_offers.update(self._open_offers_sell[good])
         del self._open_offers_sell[good]
@@ -320,6 +324,7 @@ class Trade:
         return ret
 
     def peak_buy_offers(self, good, sorted=True, descending=False, shuffled=True):
+        """ """
         ret = []
         for offer in self._open_offers_buy[good].values():
             ret.append(offer)
@@ -330,6 +335,7 @@ class Trade:
         return ret
 
     def peak_sell_offers(self, good, sorted=True, descending=False, shuffled=True):
+        """ """
         ret = []
         for offer in self._open_offers_sell[good].values():
             ret.append(offer)
@@ -446,7 +452,7 @@ class Trade:
                       quantity,
                       price,
                       currency,
-                      115,
+                      True,
                       'new',
                       -2,
                       offer_id,
@@ -512,7 +518,7 @@ class Trade:
                       quantity,
                       price,
                       currency,
-                      98,
+                      False,
                       'new',
                       -1,
                       offer_id,
