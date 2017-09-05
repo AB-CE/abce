@@ -1,7 +1,11 @@
 import platform
 import csv
 import abce
-from math import isclose
+try:
+    from math import isclose
+except ImportError:
+    def isclose(a, b):
+        return a - 0.000001 < b < a + 0.000001
 
 
 class Agent(abce.Agent):
