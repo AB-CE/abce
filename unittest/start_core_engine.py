@@ -1,5 +1,3 @@
-from __future__ import division
-from __future__ import print_function
 from buy import Buy
 # from quote_buy import QuoteBuy
 from sell import Sell
@@ -13,9 +11,6 @@ from buyexpiringcapital import BuyExpiringCapital
 from abce import Simulation
 from messagea import MessageA
 from messageb import MessageB
-from addagent import AddAgent
-from killer import Killer
-from victim import Victim
 
 
 def main(processes, rounds):
@@ -76,23 +71,11 @@ def main(processes, rounds):
     print('build MessageB')
     messageb = s.build_agents(MessageB, 'messageb',
                               20, parameters={'rounds': rounds})
-    print('build Killer')
-    killer = s.build_agents(Killer, 'killer', 1,
-                            parameters={'rounds': rounds})
-    print('build Victim')
-    victim = s.build_agents(Victim, 'victim', rounds,
-                            parameters={'rounds': rounds})
-    print('build Victim loudvictim')
-    _ = s.build_agents(
-        Victim, 'loudvictim', rounds, parameters={'rounds': rounds})
 
     some = buy + sell + give + loggertest + utilityhousehold
-
 #    contractagents = (contractbuyer + contractseller
 #                      + contractbuyerstop + contractsellerstop)
 
-    print('build AddAgent')
-    addagent = s.build_agents(AddAgent, 'addagent', 0)
     for r in range(rounds):
         s.advance_round(r)
         for _ in range(5):
@@ -133,11 +116,8 @@ def main(processes, rounds):
         # contractagents.deliver()
         # contractagents.pay()
         # contractagents.control()
-        killer.kill()
-        killer.send_message()
-        victim.am_I_dead()
+
         some.all_tests_completed()
-        addagent.add_agent()
     s.finalize()
 
 

@@ -167,8 +167,6 @@ class Simulation(object):
         self.resource_endowment = []
         self.perishable = []
         self.expiring = []
-        self._start_round = 0
-        self.round = int(self._start_round)
 
         try:
             os.makedirs(os.path.abspath('.') + '/result/')
@@ -218,7 +216,7 @@ class Simulation(object):
 
             self.execute_advance_round = self._execute_advance_round_parallel
 
-        self.messagess = [list() for _ in range(self.processes + 2)]
+        self.messagess = [list() for _ in range(self.processes + 1)]
 
         self._db = Database(
             self.path,
@@ -364,7 +362,6 @@ class Simulation(object):
         self.time = time
         print("\rRound" + str(time))
         self.execute_advance_round(time)
-        self.add_and_delete_agents(time)
 
     def __del__(self):
         self.finalize()
@@ -472,31 +469,64 @@ class Simulation(object):
             self.num_of_agents_in_group[group_name] = num_agents_this_group
         return Group(self, [group_name], AgentClass)
 
-    def add_and_delete_agents(self, round):
-        for command, agent_details in self.messagess[-1]:
-            if command == 'add':
-                (AgentClass, group_name,
-                 parameters, agent_parameters) = agent_details
-                id = self.num_of_agents_in_group[group_name]
-                self.num_of_agents_in_group[group_name] += 1
-                pg = self._processor_groups[id % self.processes]
-                pg.append(AgentClass, id=id,
-                          agent_args={'group': group_name,
-                                      'trade_logging':
-                                      self.trade_logging_mode,
-                                      'database': self.database_queue,
-                                      'random_seed': random.random(),
-                                      'start_round': round + 1},
-                          parameters=parameters,
-                          agent_parameters=agent_parameters)
-            elif command == 'delete':
-                group, id, quite = agent_details
-                pg = self._processor_groups[id % self.processes]
-                if quite:
-                    pg.replace_with_dead(group, id, SilentDeadAgent)
-                else:
-                    pg.replace_with_dead(group, id, LoudDeadAgent)
-        self.messagess[-1] = []
+    def create_agent(self, AgentClass, group_name, parameters=None, agent_parameters=None):
+        """ Creates an additional agent in an existing group during the simulation.
+
+        Args:
+
+            AgentClass:
+                the class of agent to create.
+                (can be the same class as the creating agent)
+
+            'group_name':
+                the name of the group the agent should belong to. This is the
+                group name string e.G. :code:`'firm'`, not the group variable e.G.
+                :code:`firms` in :code:`firms = simulation.build_agents(...)`
+
+            parameters:
+                a dictionary of parameters
+
+            agent_parameters:
+                a dictionary of parameters
+
+        Example::
+
+            self.create_agent(BeerFirm, 'beerfirm',
+                              parameters=self.parameters,
+                              agent_parameters={'creation': self.time})
+        """
+        id = self.num_of_agents_in_group[group_name]
+        self.num_of_agents_in_group[group_name] += 1
+        pg = self._processor_groups[id % self.processes]
+        pg.append(AgentClass, id=id,
+                  agent_args={'group': group_name,
+                              'trade_logging': self.trade_logging_mode,
+                              'database': self.database_queue,
+                              'random_seed': random.random(),
+                              'start_round': self.time},
+                  parameters=parameters,
+                  agent_parameters=agent_parameters)
+
+    def delete_agent(self, name, quite=True):
+        """ This deletes an agent. By default, quite is set to True, all future
+        messages to this agent are deleted. If quite is set to False agents are
+        completely deleted. This makes the simulation faster, but if messages
+        are send to this agents the simulation stops.
+
+        Args:
+            name:
+                Name tuple of the agent. e.G. ('firm', 13)
+
+            quite:
+                whether the dead agent ignores incoming messages.
+        """
+        group, id = name
+
+        pg = self._processor_groups[id % self.processes]
+        if quite:
+            pg.replace_with_dead(group, id, SilentDeadAgent)
+        else:
+            pg.replace_with_dead(group, id, LoudDeadAgent)
 
     def _write_description_file(self):
         description = open(os.path.abspath(
