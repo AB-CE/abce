@@ -47,6 +47,7 @@ ABCE does support an accounting framework
 for financial simulations. `ESL can be downloaded here <https://github.com/AB-CE/ABCESL>`_.
 
 ABCE runs on macOS, Windows, and Linux. ABCE runs 10x faster on pypy!
+
 .. image:: https://zenodo.org/badge/4157636.svg
    :target: https://zenodo.org/badge/latestdoi/4157636
 
@@ -86,3 +87,4 @@ A code example is here:
 More code examples are here:
 
 https://github.com/AB-CE/examples
+]
