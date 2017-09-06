@@ -82,7 +82,7 @@ An example is here:
 
 A code example is here:
 
-    `Jupytor Tutorial <https://github.com/AB-CE/examples/tree/master/examples/jupyter_tutorial>`_
+    `Jupyter Tutorial <https://github.com/AB-CE/examples/tree/master/examples/jupyter_tutorial>`_
 
 More code examples are here:
 
