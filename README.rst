@@ -33,7 +33,7 @@ ABCE are typically only observed for 10000 agents and more. Below, it
 might be slower than pure python implementation. ABCE supports pypy3,
 which is approximately 10 times faster than CPython.
 
-ABCE is a scheduler [#scheduler]_ and a set of agent classes.
+ABCE is a scheduler and a set of agent classes.
 According to the schedule the simulation class calls - each sub-round - agents
 to execute some actions. Each agent executes these actions
 using some of the build-in functions, such as trade, production and
