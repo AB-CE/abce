@@ -9,7 +9,7 @@ of goods and production and consumption.
 
 .. figure:: http://abce.readthedocs.io/en/0.9b/_images/cheesegrater.png
    :target: http://35.176.189.179/ABCE/
-   :figwidth: 50 %
+   :scale: 20 %
    :align: right
 
 In ABCE  goods have the physical properties of
@@ -74,17 +74,17 @@ Install with::
 
 The documentation is here:
 
-http://abce.readthedocs.io/
+    http://abce.readthedocs.io/
 
 An example is here:
 
-`Insurance Market <http://35.176.189.179/ABCE/>`_
+    `Insurance Market <http://35.176.189.179/ABCE/>`_
 
 A code example is here:
 
-`Jupytor Tutorial <https://github.com/AB-CE/examples/tree/master/examples/jupyter_tutorial>`_
+    `Jupytor Tutorial <https://github.com/AB-CE/examples/tree/master/examples/jupyter_tutorial>`_
 
 More code examples are here:
 
 https://github.com/AB-CE/examples
-]
+
