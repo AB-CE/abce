@@ -5,4 +5,4 @@ networkx >= 1.9.1
 flask >= 0.10.1
 bokeh == 0.12.7
 flexx == 0.4.1
-dataset
+dataset == 0.8

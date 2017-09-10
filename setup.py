@@ -36,7 +36,7 @@ ext_modules = []
 install_requires = ['networkx >= 1.9.1',
                     'flexx >= 0.4.1',
                     'future',
-                    'dataset']
+                    'dataset == 0.8']
 
 
 readthedocs = os.environ.get('READTHEDOCS') == 'True'
@@ -60,7 +60,7 @@ if not readthedocs:
                              'bokeh == 0.12.7']
 
 
-version = '0.9b'
+version = '0.9b1'
 
 
 setup(name='abce',
