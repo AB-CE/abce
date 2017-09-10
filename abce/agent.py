@@ -87,7 +87,8 @@ class Agent(Database, Trade, Messaging):
 
     """
     def __init__(self, id, group, trade_logging,
-                 database, random_seed, num_managers, agent_parameters, simulation_parameters, start_round=None):
+                 database, random_seed, num_managers, agent_parameters, simulation_parameters,
+                 check_unchecked_msgs, start_round=None):
         """ Do not overwrite __init__ instead use a method called init instead.
         init is called whenever the agent are build.
         """
@@ -113,7 +114,6 @@ class Agent(Database, Trade, Messaging):
 
         # TODO make defaultdict; delete all key errors regarding self._haves as
         # defaultdict, does not have missing keys
-        self._haves['money'] = 0
         self._msgs = {}
 
         self.given_offers = OrderedDict()
@@ -153,6 +153,8 @@ class Agent(Database, Trade, Messaging):
 
         self.log_this_round = True
 
+        self._check_every_round_for_lost_messages = check_unchecked_msgs
+
     def init(self, parameters, agent_parameters):
         """ This method is called when the agents are build.
         It can be overwritten by the user, to initialize the agents.
@@ -191,7 +193,7 @@ class Agent(Database, Trade, Messaging):
         self._offer_count += 1
         return hash((self.name, self._offer_count))
 
-    def _advance_round(self, time):
+    def _check_for_lost_messages(self):
         for offer in list(self.given_offers.values()):
             if offer.made < self.round:
                 print("in agent %s this offers have not been retrieved:" %
@@ -202,15 +204,6 @@ class Agent(Database, Trade, Messaging):
                 raise Exception('%s_%i: There are offers have been made before'
                                 'last round and not been retrieved in this'
                                 'round get_offer(.)' % (self.group, self.id))
-
-        self._haves._advance_round()
-        self.contracts._advance_round(self.round)
-
-        if self.trade_logging > 0:
-            self.database_connection.put(
-                ["trade_log", self._trade_log, self.round])
-
-        self._trade_log = defaultdict(int)
 
         if sum([len(offers) for offers in list(self._open_offers_buy.values())]):
             pprint(dict(self._open_offers_buy))
@@ -230,6 +223,13 @@ class Agent(Database, Trade, Messaging):
                             'have not been retrieved in this round '
                             'get_messages(.)' % (self.group, self.id))
 
+    def _advance_round(self, time):
+        self._haves._advance_round()
+        self.contracts._advance_round(self.round)
+
+        if self._check_every_round_for_lost_messages:
+            self._check_for_lost_messages()
+
         for ingredient, units, product in self._resources:
             self._haves.create(product, self.possession(ingredient) * units)
 
@@ -244,6 +244,12 @@ class Agent(Database, Trade, Messaging):
                 self.log_this_round = True
             else:
                 self.log_this_round = False
+
+        if self.trade_logging > 0:
+            self.database_connection.put(
+                ["trade_log", self._trade_log, self.round])
+
+        self._trade_log = defaultdict(int)
 
     def create(self, good, quantity):
         """ creates quantity of the good out of nothing
@@ -353,3 +359,6 @@ class Agent(Database, Trade, Messaging):
 
     def __getitem__(self, good):
         return self._haves[good]
+
+    def __del__(self):
+        self._check_for_lost_messages()

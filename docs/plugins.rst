@@ -7,7 +7,8 @@ have to do is write a class that inherits from Agent in agent.py.
 This class can overwrite::
 
     def __init__(self, id, group, trade_logging, database, random_seed, num_managers,
-                 agent_parameters, simulation_parameters, start_round=None):
+                 agent_parameters, simulation_parameters,
+                 check_unchecked_msgs, start_round=None):
     def _begin_subround(self):
     def _end_subround(self):
     def _advance_round(self, time):
@@ -15,12 +16,13 @@ This class can overwrite::
 For example like this::
 
     class UselessAgent(abce.Agent):
-        def __init__(self, id, group, trade_logging,
-                     database, random_seed, num_managers, agent_parameters,
-                     simulation_parameters, start_round=None):
+        def __init__(self, id, group, trade_logging, database, random_seed, num_managers,
+                     agent_parameters, simulation_parameters,
+                     check_unchecked_msgs, start_round=None):
             super().__init__(id, group, trade_logging,
                              database, random_seed, num_managers, agent_parameters,
-                             simulation_parameters, start_round=None):
+                             simulation_parameters, check_unchecked_msgs,
+                             start_round):
             print("Here i begin")
 
         def _begin_subround(self):

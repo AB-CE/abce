@@ -7,7 +7,7 @@ if __name__ == '__main__':
     start_logging_test.main(processes=1)
     print('Iteration of logger testing with 1 core finished')
 
-    if (platform.system() != 'Windows'):
+    if (platform.system() != 'Windows' and platform.python_implementation() != 'PyPy'):
         start_logging_test.main(processes=4)
         print('Iteration of logger testing with multiple processes finished')
 
