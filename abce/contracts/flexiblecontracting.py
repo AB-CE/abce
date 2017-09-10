@@ -7,7 +7,7 @@ from abce.notenoughgoods import NotEnoughGoods
 from random import shuffle
 from abce.trade import get_epsilon
 from .contracts import Contracts
-from .contract import Contract
+from .contracting import Contract
 
 epsilon = get_epsilon()
 
