@@ -461,7 +461,9 @@ class Simulation(object):
                          agent_args={'group': group_name,
                                      'trade_logging': self.trade_logging_mode,
                                      'database': self.database_queue,
-                                     'random_seed': random.random()},
+                                     'random_seed': random.random(),
+                                     'agent_parameters': agent_parameters,
+                                     'simulation_parameters': parameters},
                          parameters=parameters,
                          agent_parameters=agent_parameters,
                          agent_params_from_sim=agent_params_from_sim)
@@ -503,6 +505,8 @@ class Simulation(object):
                               'trade_logging': self.trade_logging_mode,
                               'database': self.database_queue,
                               'random_seed': random.random(),
+                              'agent_parameters': agent_parameters,
+                              'simulation_parameters': parameters,
                               'start_round': self.time},
                   parameters=parameters,
                   agent_parameters=agent_parameters)
