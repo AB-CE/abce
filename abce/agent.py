@@ -87,7 +87,7 @@ class Agent(Database, Trade, Messaging):
 
     """
     def __init__(self, id, group, trade_logging,
-                 database, random_seed, num_managers, start_round=None):
+                 database, random_seed, num_managers, agent_parameters, simulation_parameters, start_round=None):
         """ Do not overwrite __init__ instead use a method called init instead.
         init is called whenever the agent are build.
         """
