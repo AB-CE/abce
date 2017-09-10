@@ -32,6 +32,9 @@ class Message(object):
         self.topic = topic
         self.content = content
 
+    def __getitem__(self, item):
+        return self.content[item]
+
     def __repr__(self):
         return "<{sender: %s; receiver: %s; topic: %s; content: %s}>" % (
             str(self.sender), str(self.receiver), self.topic, str(self.content))
