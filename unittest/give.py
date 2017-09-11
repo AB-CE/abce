@@ -1,7 +1,4 @@
-from __future__ import division
-from __future__ import print_function
 import abce
-from tools import *
 import random
 
 
@@ -16,10 +13,10 @@ class Give(abce.Agent):
     def one(self):
         if self.id == 0:
             self.create('cookies', random.uniform(0, 10000))
-            self.cookies = self.possession('cookies')
-            quantity = random.uniform(0, self.possession('cookies'))
+            self.cookies = self['cookies']
+            quantity = random.uniform(0, self['cookies'])
             self.give(('give', 1), 'cookies', quantity)
-            assert self.possession('cookies') == self.cookies - quantity
+            assert self['cookies'] == self.cookies - quantity
             self.send(('give', 1), topic='tpc', content=quantity)
 
     def two(self):
@@ -35,7 +32,7 @@ class Give(abce.Agent):
                 self.tests['topic'] = True
                 assert len(msg) == 1, len(msg)
             msg = msg[0]
-            assert msg.content == self.possession('cookies')
+            assert msg.content == self['cookies']
             assert msg.sender == ('give', 0), msg.sender
             assert msg.topic == 'tpc'
             assert msg.receiver == ('give', 1)

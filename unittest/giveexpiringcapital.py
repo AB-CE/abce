@@ -1,5 +1,4 @@
-from __future__ import division
-from __future__ import print_function
+
 import abce
 from abce.agents import Firm
 
@@ -9,24 +8,19 @@ class GiveExpiringCapital(abce.Agent, Firm):
         self.last_round = simulation_parameters['rounds'] - 1
         if self.id == 0:
             self.create('xcapital', 10)
-            assert self.possession(
-                'xcapital') == 10, self.possession('xcapital')
+            assert self['xcapital'] == 10, self['xcapital']
 
     def one(self):
         if self.id == 0:
-            assert self.possession(
-                'xcapital') == 10, self.possession('xcapital')
+            assert self['xcapital'] == 10, self['xcapital']
             self.give('giveexpiringcapital', 1, 'xcapital', 10)
-            assert self.possession(
-                'xcapital') == 0, self.possession('xcapital')
+            assert self['xcapital'] == 0, self['xcapital']
 
     def two(self):
         if self.id == 1:
-            assert self.possession(
-                'xcapital') == 10, self.possession('xcapital')
+            assert self['xcapital'] == 10, self['xcapital']
             self.give('giveexpiringcapital', 0, 'xcapital', 10)
-            assert self.possession(
-                'xcapital') == 0, self.possession('xcapital')
+            assert self['xcapital'] == 0, self['xcapital']
 
     def three(self):
         pass

@@ -70,6 +70,9 @@ cdef class Offer:
         receiver_id:
             this is the ID of the sender
 
+        currency:
+            The other good against which the good is traded.
+
         good:
             the good offered or demanded
 
@@ -77,7 +80,7 @@ cdef class Offer:
             the quantity offered or demanded
 
         price:
-            the suggested tansaction price
+            the suggested transaction price
 
         sell:
             this can have the values False for buy; True for sell
@@ -203,7 +206,7 @@ cdef class Trade:
                     try:
                         self.accept(offer)
                     except NotEnoughGoods:
-                        self.accept(offer, self.possession('money') / offer.price)
+                        self.accept(offer, self['money'] / offer.price)
                 else:
                     self.reject(offer)
 
@@ -230,7 +233,7 @@ cdef class Trade:
                     try:
                         self.accept(offer)
                     except NotEnoughGoods:
-                        self.accept(offer, self.possession('money') / offer.price)
+                        self.accept(offer, self['money'] / offer.price)
                 else:
                     self.reject(offer)
 
@@ -375,7 +378,7 @@ cdef class Trade:
         Args:
             good:
                 the good which should be retrieved
-                descending(bool,default=False):
+                descending(bool, default=False):
                 False for descending True for ascending by price
 
         Returns:
@@ -456,7 +459,7 @@ cdef class Trade:
             price = 0
         # makes sure the quantity is between zero and maximum available, but
         # if its only a little bit above or below its set to the bounds
-        available = self._haves[good]
+        available = self._inventory[good]
         assert quantity > - epsilon, 'quantity %.30f is smaller than 0 - epsilon (%.30f)' % (quantity, - epsilon)
         if quantity < 0:
             quantity = 0
@@ -466,7 +469,7 @@ cdef class Trade:
             quantity = available
 
         offer_id = self._offer_counter()
-        self._haves[good] -= quantity
+        self._inventory.reserve(good, quantity)
         cdef Offer offer = Offer(self.group,
                                  self.id,
                                  receiver[0],
@@ -524,17 +527,15 @@ cdef class Trade:
         money_amount = quantity * price
         # makes sure the money_amount is between zero and maximum available, but
         # if its only a little bit above or below its set to the bounds
-        available = self._haves[currency]
+        available = self._inventory[currency]
         assert money_amount > - epsilon, '%s (price * quantity) %.30f is smaller than 0 - epsilon (%.30f)' % (currency, money_amount, - epsilon)
         if money_amount < 0:
             money_amount = 0
-        if money_amount > available + epsilon + epsilon * fmax(money_amount, available):
-            raise NotEnoughGoods(self.name, currency, money_amount - available)
         if money_amount > available:
             money_amount = available
 
         offer_id = self._offer_counter()
-        self._haves[currency] -= money_amount
+        self._inventory.reserve(currency, money_amount)
         cdef Offer offer = Offer(self.group,
                                  self.id,
                                  receiver[0],
@@ -598,24 +599,24 @@ cdef class Trade:
             if money_amount < 0:
                 money_amount = 0
 
-            available = self._haves[offer.currency]
+            available = self._inventory[offer.currency]
             if money_amount > available + epsilon + epsilon * max(money_amount, available):
                 raise NotEnoughGoods(self.name, offer.currency, money_amount - available)
             if money_amount > available:
                 money_amount = available
-            self._haves[offer.good] += quantity
-            self._haves[offer.currency] -= quantity * offer.price
+            self._inventory.haves[offer.good] += quantity
+            self._inventory.haves[offer.currency] -= quantity * offer.price
         else:
             assert quantity > - epsilon, 'quantity %.30f is smaller than 0 - epsilon (%.30f)' % (quantity, - epsilon)
             if quantity < 0:
                 quantity = 0
-            available = self._haves[offer.good]
+            available = self._inventory[offer.good]
             if quantity > available + epsilon + epsilon * max(quantity, available):
                 raise NotEnoughGoods(self.name, offer.good, quantity - available)
             if quantity > available:
                 quantity = available
-            self._haves[offer.good] -= quantity
-            self._haves[offer.currency] += quantity * offer.price
+            self._inventory.haves[offer.good] -= quantity
+            self._inventory.haves[offer.currency] += quantity * offer.price
         offer.final_quantity = quantity
         self._send(offer.sender_group, offer.sender_id, '_p', (offer.id, quantity))
         del self._polled_offers[offer.id]
@@ -672,11 +673,11 @@ cdef class Trade:
         cdef Offer offer = self.given_offers[offer_id_final_quantity[0]]
         offer.final_quantity = offer_id_final_quantity[1]
         if offer.sell:
-            self._haves['money'] += offer.final_quantity * offer.price
-            self._haves[offer.good] += offer.quantity - offer.final_quantity
+            self._inventory.commit(offer.good, offer.quantity, offer.final_quantity)
+            self._inventory.haves[offer.currency] += offer.final_quantity * offer.price
         else:
-            self._haves[offer.good] += offer.final_quantity
-            self._haves['money'] += (offer.quantity - offer.final_quantity) * offer.price
+            self._inventory.haves[offer.good] += offer.final_quantity
+            self._inventory.commit(offer.currency, offer.quantity * offer.price, offer.final_quantity * offer.price)
         offer.status = "accepted"
         offer.status_round = self.round
         del self.given_offers[offer.id]
@@ -703,9 +704,9 @@ cdef class Trade:
         """
         cdef Offer offer = self.given_offers[offer_id]
         if offer.sell:
-            self._haves[offer.good] += offer.quantity
+            self._inventory.rewind(offer.good, offer.quantity)
         else:
-            self._haves[offer.currency] += offer.quantity * offer.price
+            self._inventory.rewind(offer.currency, offer.quantity * offer.price)
         offer.status = "rejected"
         offer.status_round = self.round
         offer.final_quantity = 0
@@ -714,9 +715,9 @@ cdef class Trade:
     def _delete_given_offer(self, offer_id):
         cdef Offer offer = self.given_offers.pop(offer_id)
         if offer.sell:
-            self._haves[offer.good] += offer.quantity
+            self._inventory.rewind(offer.good, offer.quantity)
         else:
-            self._haves[offer.currency] += offer.quantity * offer.price
+            self._inventory.rewind(offer.currency, offer.quantity * offer.price)
 
     def give(self, receiver, good, double quantity, double epsilon=epsilon):
         """ gives a good to another agent
@@ -751,12 +752,12 @@ cdef class Trade:
         assert quantity > - epsilon, 'quantity %.30f is smaller than 0 - epsilon (%.30f)' % (quantity, - epsilon)
         if quantity < 0:
             quantity = 0
-        available = self._haves[good]
+        available = self._inventory[good]
         if quantity > available + epsilon + epsilon * max(quantity, available):
             raise NotEnoughGoods(self.name, good, quantity - available)
         if quantity > available:
             quantity = available
-        self._haves[good] -= quantity
+        self._inventory.haves[good] -= quantity
         self._send(receiver[0], receiver[1], '_g', [good, quantity])
         return {good: quantity}
 
@@ -812,7 +813,7 @@ cdef class Trade:
             elif typ == '_r':
                 self._receive_reject(msg)
             elif typ == '_g':
-                self._haves[msg[0]] += msg[1]
+                self._inventory.haves[msg[0]] += msg[1]
             elif typ == '_q':
                 self._quotes[msg.id] = msg
             elif typ == '!o':
@@ -825,10 +826,10 @@ cdef class Trade:
                     self._contracts_deliver[contract.good][contract.id] = contract
             elif typ == '_dp':
                 if msg.pay_group == self.group and msg.pay_id == self.id:
-                    self._haves[msg.good] += msg.quantity
+                    self._inventory[msg.good] += msg.quantity
                     self._contracts_pay[msg.good][msg.id].delivered.append(self.round)
                 else:
-                    self._haves['money'] += msg.quantity * msg.price
+                    self._inventory['money'] += msg.quantity * msg.price
                     self._contracts_deliver[msg.good][msg.id].paid.append(self.round)
 
             elif typ == '!d':

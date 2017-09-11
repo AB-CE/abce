@@ -1,7 +1,4 @@
-from __future__ import division
-from __future__ import print_function
 import abce
-from tools import *
 
 
 class Endowment(abce.Agent, abce.Household):
@@ -13,13 +10,13 @@ class Endowment(abce.Agent, abce.Household):
         self.set_cobb_douglas_utility_function({'milk': 2})
 
     def Iconsume(self):
-        assert self.possession('labor') == 5, self.possession('labor')
-        assert self.possession('milk') == 10 + (self.round - self.creation) * (10 - 3), (10 + (
-            self.round - self.creation) * (10 - 3), self.possession('milk'), self.creation)
-        milk = self.possession('milk')
+        assert self['labor'] == 5, self['labor']
+        assert self['milk'] == 10 + (self.round - self.creation) * (10 - 3), (10 + (
+            self.round - self.creation) * (10 - 3), self['milk'], self.creation)
+        milk = self['milk']
         utility = self.consume({'milk': 3})
         assert utility == 9, utility
-        assert milk - 3 == self.possession('milk'), self.possession('milk')
+        assert milk - 3 == self['milk'], self['milk']
 
     def all_tests_completed(self):
         if self.round == self.last_round and self.id == 0:
