@@ -1,15 +1,16 @@
 from abce.trade import get_epsilon
 from collections import defaultdict
 from abce.notenoughgoods import NotEnoughGoods
-from copy import copy
+from .expiringgood import ExpiringGood
 
 
 epsilon = get_epsilon()
 
 
-class Inventory(defaultdict):
+class Inventory(object):
     def __init__(self, name):
-        super(Inventory, self).__init__(float)
+        self.haves = defaultdict(int)
+        self.committed = defaultdict(int)
         self.name = name
         self._expiring_goods = []
         self._perishable = []
@@ -25,7 +26,7 @@ class Inventory(defaultdict):
             quantity: number
         """
         assert quantity >= 0.0
-        self[good] += quantity
+        self.haves[good] += quantity
 
     def create_timestructured(self, good, quantity):
         """ creates quantity of the time structured good out of nothing.
@@ -36,7 +37,7 @@ class Inventory(defaultdict):
         Creates capital. 10 units are 2 years old 20 units are 1 year old
         and 30 units are new.
 
-        It can alse be used with a quantity instead of an array. In this
+        It can also be used with a quantity instead of an array. In this
         case the amount is equally split on the years.::
 
             self.creat_timestructured('capital', 60)
@@ -51,10 +52,10 @@ class Inventory(defaultdict):
             quantity:
                 an arry or number
         """
-        length = len(self[good].time_structure)
+        length = len(self.haves[good].time_structure)
         for i in range(length):
             qty = quantity[i] if type(quantity) == list else quantity / length
-            self[good].time_structure[i] += qty
+            self.haves[good].time_structure[i] += qty
 
     def destroy(self, good, quantity=None):
         """ destroys quantity of the good. If quantity is omitted destroys all
@@ -73,21 +74,38 @@ class Inventory(defaultdict):
             NotEnoughGoods: when goods are insufficient
         """
         if quantity is None:
-            self[good] = 0
+            self.haves[good] = 0
         else:
             assert quantity >= 0.0
-            available = self[good]
+            available = self.haves[good]
             if available < quantity - epsilon:
                 raise NotEnoughGoods(self.name, good, quantity - available)
-            self[good] -= quantity
+            self.haves[good] -= quantity
+
+    def reserve(self, good, quantity):
+        self.committed[good] += quantity
+        if self.committed[good] > self.haves[good]:
+            self.committed[good] += quantity
+            raise NotEnoughGoods(self.name, good, quantity - (self.haves[good] - self.committed[good]))
+
+    def rewind(self, good, quantity):
+        self.committed[good] -= quantity
+
+    def commit(self, good, committed_quantity, final_quantity):
+        self.committed[good] -= committed_quantity
+        self.haves[good] -= final_quantity
 
     def transform(self, ingredient, unit, product, quantity=None):
         if quantity is None:
-            quantity = self[ingredient]
+            quantity = self.haves[ingredient]
         self.destroy(ingredient, quantity)
         self.create(product, float(unit) * quantity)
 
     def possession(self, good):
+        print('possession depreciated')
+        return self.free(good)
+
+    def free(self, good):
         """ returns how much of good an agent possesses.
 
         Returns:
@@ -98,18 +116,18 @@ class Inventory(defaultdict):
 
         Example::
 
-            if self.possession('money') < 1:
+            if self['money'] < 1:
                 self.financial_crisis = True
 
-            if not(is_positive(self.possession('money')):
+            if not(is_positive(self['money']):
                 self.bankruptcy = True
 
         """
-        return float(self[good])
+        return float(self.haves[good] - self.committed[good])
 
     def possessions(self):
         """ returns all possessions """
-        return copy(super())
+        return {good: float(self.haves[good] - self.committed[good]) for good in self.haves}
 
     def calculate_netvalue(self, prices):
         return sum(quantity * prices[name]
@@ -140,9 +158,16 @@ class Inventory(defaultdict):
     def _advance_round(self):
         # expiring goods
         for good in self._expiring_goods:
-            self[good]._advance_round()
+            self.haves[good]._advance_round()
 
         # perishing goods
         for good in self._perishable:
-            if good in self:
+            if good in self.haves:
                 self.destroy(good)
+
+    def __getitem__(self, good):
+        return self.haves[good]
+
+    def _declare_expiring(self, good, duration):
+        self.haves[good] = ExpiringGood(duration)
+        self._expiring_goods.append(good)

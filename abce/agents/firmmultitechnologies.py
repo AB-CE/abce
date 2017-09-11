@@ -48,7 +48,7 @@ class FirmMultiTechnologies(object):
 
             self.produce_use_everything(car_production_function)
         """
-        return self.produce(production_function, {inp: self.possession(inp) for inp in production_function['input']})
+        return self.produce(production_function, {inp: self[inp] for inp in production_function['input']})
 
     def produce(self, production_function, input_goods):
         """ Produces output goods given the specified amount of inputs.
@@ -80,24 +80,24 @@ class FirmMultiTechnologies(object):
         """
         if production_function.use == 'all':
             for good in list(input_goods.keys()):
-                if self._haves[good] < input_goods[good] - epsilon:
+                if self._inventory[good] < input_goods[good] - epsilon:
                     raise NotEnoughGoods(
-                        self.name, good, (input_goods[good] - self._haves[good]))
+                        self.name, good, (input_goods[good] - self._inventory[good]))
 
             for good in input_goods:
-                self._haves[good] -= input_goods[good]
+                self._inventory.haves[good] -= input_goods[good]
         else:
             for good in list(production_function.use.keys()):
-                if self._haves[good] < input_goods[good] - epsilon:
+                if self._inventory[good] < input_goods[good] - epsilon:
                     raise NotEnoughGoods(
-                        self.name, good, (input_goods[good] - self._haves[good]))
+                        self.name, good, (input_goods[good] - self._inventory[good]))
 
             for good, use in production_function.use.items():
-                self._haves[good] -= input_goods[good] * use
+                self._inventory.haves[good] -= input_goods[good] * use
 
         output_dict = production_function.production(input_goods)
         for good in list(output_dict.keys()):
-            self._haves[good] += output_dict[good]
+            self._inventory.haves[good] += output_dict[good]
 
         return output_dict
 
@@ -473,9 +473,9 @@ class FirmMultiTechnologies(object):
     def sufficient_goods(self, input_goods):
         """ checks whether the agent has all the goods in the vector input """
         for good in input_goods:
-            if self._haves[good] < input_goods[good] - epsilon:
+            if self._inventory[good] < input_goods[good] - epsilon:
                 raise NotEnoughGoods(
-                    self.name, good, input_goods[good] - self._haves[good])
+                    self.name, good, input_goods[good] - self._inventory[good])
 
 
 class ProductionFunction(object):

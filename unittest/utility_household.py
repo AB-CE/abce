@@ -1,7 +1,5 @@
-from __future__ import division
-from __future__ import print_function
 import abce
-from tools import *
+from tools import is_zero
 
 
 class UtilityHousehold(abce.Agent, abce.Household):
@@ -39,9 +37,9 @@ class UtilityHousehold(abce.Agent, abce.Household):
             self.create('c', 10)
             utility = self.consume({'a': 5, 'b': 3, 'c': 1})
             assert utility == max(5 ** 0.2, 3 ** 0.5 * 1 ** 0.3), utility
-            assert self.possession('a') == 5
-            assert self.possession('b') == 9.7
-            assert self.possession('c') == 10
+            assert self['a'] == 5
+            assert self['b'] == 9.7
+            assert self['c'] == 10
             self.destroy('a')
             self.destroy('b')
             self.destroy('c')
@@ -52,13 +50,13 @@ class UtilityHousehold(abce.Agent, abce.Household):
             self.create('c', 10)
             utility = self.consume({'a': 5, 'b': 3, 'c': 1})
             assert utility == 5 ** 0.2 * 3 ** 0.5 * 1 ** 0.3, utility
-            assert self.possession('a') == 5
-            assert self.possession('b') == 7
-            assert self.possession('c') == 9
+            assert self['a'] == 5
+            assert self['b'] == 7
+            assert self['c'] == 9
             self.consume_everything()
-            assert self.possession('a') == 0
-            assert self.possession('b') == 0
-            assert self.possession('c') == 0
+            assert self['a'] == 0
+            assert self['b'] == 0
+            assert self['c'] == 0
 
             pu = self.predict_utility({'a': 5, 'b': 300, 'c': 10})
             assert pu == 5 ** 0.2 * 300 ** 0.5 * 10 ** 0.3
@@ -70,9 +68,9 @@ class UtilityHousehold(abce.Agent, abce.Household):
             utility = self.consume_everything()
             assert is_zero(utility - max(10 ** 0.2, 10 ** 0.5 * 10 ** 0.3)
                            ), (utility, max(10 ** 0.2, 10 ** 0.5 * 10 ** 0.3))
-            assert self.possession('a') == 0
-            assert self.possession('b') == 9
-            assert self.possession('c') == 10
+            assert self['a'] == 0
+            assert self['b'] == 9
+            assert self['c'] == 10
             self.destroy('a')
             self.destroy('b')
             self.destroy('c')
@@ -84,9 +82,9 @@ class UtilityHousehold(abce.Agent, abce.Household):
             utility = self.consume_everything()
             assert is_zero(utility - 10 ** 0.2 * 10 ** 0.5 * 10 **
                            0.3), (utility, 10 ** 0.2 * 10 ** 0.5 * 10 ** 0.3)
-            assert self.possession('a') == 0
-            assert self.possession('b') == 0
-            assert self.possession('c') == 0
+            assert self['a'] == 0
+            assert self['b'] == 0
+            assert self['c'] == 0
 
             pu = self.predict_utility({'a': 5, 'b': 300, 'c': 10})
             assert pu == 5 ** 0.2 * 300 ** 0.5 * 10 ** 0.3

@@ -61,8 +61,8 @@ class Database(object):
             self.log('profit', profit)
 
             self.log('employment_and_rent',
-                     {'employment': self.possession('LAB'),
-                     'rent': self.possession('CAP'),
+                     {'employment': self['LAB'],
+                     'rent': self['CAP'],
                      'composite': self.composite})
 
             self.log(self.produce_use_everything())
@@ -105,7 +105,7 @@ class Database(object):
 
         Examples::
 
-            self.log_change('profit', {'money': self.possession('money')]})
+            self.log_change('profit', {'money': self['money']]})
             self.log_change('inputs',
                 {'money': self.possessions(['money', 'gold', 'CAP', 'LAB')]})
         """
@@ -148,8 +148,8 @@ class Database(object):
             ... different method ...
 
             self.log('employment_and_rent', {
-                'employment': self.possession('LAB'),
-                'rent': self.possession('CAP')})
+                'employment': self['LAB'],
+                'rent': self['CAP']})
         """
         if self.log_this_round:
             self._data_to_observe[action_name] = data_to_observe
@@ -172,8 +172,8 @@ class Database(object):
             ... different method ...
 
             self.log('employment_and_rent', {
-                'employment': self.possession('LAB'),
-                'rent':self.possession('CAP')})
+                'employment': self['LAB'],
+                'rent':self['CAP']})
         """
         if self.log_this_round:
             before = self._data_to_observe.pop(action_name)
@@ -190,7 +190,7 @@ class Database(object):
         for var in variables:
             ret[var] = self.__dict__[var]
         for pos in possessions:
-            ret[pos] = self._haves[pos]
+            ret[pos] = self._inventory[pos]
         for name, func in functions.items():
             ret[name] = func(self)
         for length in lengths:

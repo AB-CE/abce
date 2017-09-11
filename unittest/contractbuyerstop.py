@@ -1,7 +1,4 @@
-from __future__ import division
-from __future__ import print_function
 import abce
-from tools import *
 
 
 class ContractBuyerStop(abce.Agent, abce.Contracting):
@@ -30,35 +27,35 @@ class ContractBuyerStop(abce.Agent, abce.Contracting):
     def deliver(self):
         for contract in self.contracts_to_deliver('labor'):
             self.deliver_contract(contract)
-            assert self.possession('labor') == 0
+            assert self['labor'] == 0
 
     def pay(self):
         for contract in self.contracts_to_receive('labor'):
             if self.was_delivered_this_round(contract):
                 self.create('money', 50)
                 self.pay_contract(contract)
-                assert self.possession('money') == 0
+                assert self['money'] == 0
 
     def control(self):
         if self.round % 10 < 5:
             if self.id == 1:
                 assert self.was_delivered_this_round(
                     self.given_contract), self.given_contract
-                assert self.possession('money') == 0
-                assert self.possession('labor') == 5
+                assert self['money'] == 0
+                assert self['labor'] == 5
             else:
                 assert self.was_paid_this_round(
                     self.accepted_contract), self._contracts_payed
-                assert self.possession('labor') == 0, self.possession('labor')
-                assert self.possession('money') == 50, self.possession('money')
+                assert self['labor'] == 0, self['labor']
+                assert self['money'] == 50, self['money']
                 self.destroy('money')
         else:
             if self.id == 1:
-                assert self.possession('money') == 0
-                assert self.possession('labor') == 0
+                assert self['money'] == 0
+                assert self['labor'] == 0
             else:
-                assert self.possession('labor') == 5, self.possession('labor')
-                assert self.possession('money') == 0, self.possession('money')
+                assert self['labor'] == 5, self['labor']
+                assert self['money'] == 0, self['money']
                 self.destroy('labor')
 
     def clean_up(self):

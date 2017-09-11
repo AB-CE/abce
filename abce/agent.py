@@ -36,7 +36,6 @@ import abce
 from .database import Database
 from .trade import Trade
 from .messaging import Messaging
-from .expiringgood import ExpiringGood
 from .inventory import Inventory
 
 
@@ -68,7 +67,7 @@ class Agent(Database, Trade, Messaging):
 
             ...
             def return_quantity_of_good(self):
-                return possession('good')
+                return['good']
 
 
         ...
@@ -110,9 +109,9 @@ class Agent(Database, Trade, Messaging):
         self.num_managers = num_managers
         self._out = [[] for _ in range(self.num_managers + 1)]
 
-        self._haves = Inventory(self.name)
+        self._inventory = Inventory(self.name)
 
-        # TODO make defaultdict; delete all key errors regarding self._haves as
+        # TODO make defaultdict; delete all key errors regarding self._inventory as
         # defaultdict, does not have missing keys
         self._msgs = {}
 
@@ -174,18 +173,19 @@ class Agent(Database, Trade, Messaging):
 
         Example::
 
-            if self.possession('money') < 1:
+            if self['money'] < 1:
                 self.financial_crisis = True
 
-            if not(is_positive(self.possession('money')):
+            if not(is_positive(self['money']):
                 self.bancrupcy = True
 
         """
-        return self._haves.possession(good)
+        print("depreciated use self[good]")
+        return self._inventory[good]
 
     def possessions(self):
         """ returns all possessions """
-        return self._haves.possessions()
+        return self._inventory.possessions()
 
     def _offer_counter(self):
         """ returns a unique number for an offer (containing the agent's name)
@@ -224,14 +224,14 @@ class Agent(Database, Trade, Messaging):
                             'get_messages(.)' % (self.group, self.id))
 
     def _advance_round(self, time):
-        self._haves._advance_round()
+        self._inventory._advance_round()
         self.contracts._advance_round(self.round)
 
         if self._check_every_round_for_lost_messages:
             self._check_for_lost_messages()
 
         for ingredient, units, product in self._resources:
-            self._haves.create(product, self.possession(ingredient) * units)
+            self._inventory.create(product, self[ingredient] * units)
 
         self.round = time
         self.time = time
@@ -261,7 +261,7 @@ class Agent(Database, Trade, Messaging):
             'good': is the name of the good
             quantity: number
         """
-        self._haves.create(good, quantity)
+        self._inventory.create(good, quantity)
 
     def create_timestructured(self, good, quantity):
         """ creates quantity of the time structured good out of nothing.
@@ -287,13 +287,15 @@ class Agent(Database, Trade, Messaging):
             quantity:
                 an arry or number
         """
-        self._haves.create_timestructured(good, quantity)
+        self._inventory.create_timestructured(good, quantity)
 
     def _declare_expiring(self, good, duration):
         """ creates a good that has a limited duration
         """
-        self._haves[good] = ExpiringGood(duration)
-        self._haves._expiring_goods.append(good)
+        self._inventory._declare_expiring(good, duration)
+
+    def free(self, good):
+        return self._inventory.free(good)
 
     def destroy(self, good, quantity=None):
         """ destroys quantity of the good. If quantity is omitted destroys all
@@ -309,7 +311,7 @@ class Agent(Database, Trade, Messaging):
 
             NotEnoughGoods: when goods are insufficient
         """
-        self._haves.destroy(good, quantity)
+        self._inventory.destroy(good, quantity)
 
     def _execute(self, command, args, kwargs):
         self._out = [[] for _ in range(self.num_managers + 1)]
@@ -345,7 +347,7 @@ class Agent(Database, Trade, Messaging):
         self._resources.append((resource, units, product))
 
     def _register_perish(self, good):
-        self._haves._perishable.append(good)
+        self._inventory._perishable.append(good)
 
     def _send(self, receiver_group, receiver_id, typ, msg):
         """ sends a message to 'receiver_group', who can be an agent, a group or
@@ -358,7 +360,7 @@ class Agent(Database, Trade, Messaging):
             (receiver_group, receiver_id, (typ, msg)))
 
     def __getitem__(self, good):
-        return self._haves[good]
+        return self._inventory[good]
 
     def __del__(self):
         self._check_for_lost_messages()

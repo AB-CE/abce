@@ -60,7 +60,7 @@ if not readthedocs:
                              'bokeh == 0.12.7']
 
 
-version = '0.9b1'
+version = '0.9.1b0'
 
 
 setup(name='abce',
