@@ -360,7 +360,7 @@ class Agent(Database, Trade, Messaging):
             (receiver_group, receiver_id, (typ, msg)))
 
     def __getitem__(self, good):
-        return self._inventory[good]
+        return self._inventory.haves[good]
 
     def __del__(self):
         self._check_for_lost_messages()
