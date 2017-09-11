@@ -25,17 +25,17 @@ class ExpiringCapital(abce.Agent, Firm):
             self.create('xcapital', 10)
 
         if self.round == 0:
-            assert self.possession('xcapital') == 1
+            assert self['xcapital'] == 1
         if self.round == 1:
-            assert self.possession('xcapital') == 1
+            assert self['xcapital'] == 1
         if self.round == 2:
-            assert self.possession('xcapital') == 11
+            assert self['xcapital'] == 11
         if self.round == 3:
-            assert self.possession('xcapital') == 11
+            assert self['xcapital'] == 11
         if self.round == 4:
-            assert self.possession('xcapital') == 11
+            assert self['xcapital'] == 11
         if self.round == 5:
-            assert self.possession('xcapital') == 10
+            assert self['xcapital'] == 10
 
     def clean_up(self):
         pass

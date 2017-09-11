@@ -17,9 +17,7 @@
 """
 The Household class extends the agent by giving him utility functions and the ability to consume goods.
 """
-from __future__ import division
-from __future__ import absolute_import
-from builtins import object
+from abce import NotEnoughGoods
 import operator
 from functools import reduce
 from ..trade import get_epsilon
@@ -51,7 +49,7 @@ class Household(object):
             utility = self.consume_everything()
             self.log('utility': {'u': utility})
         """
-        return self.consume({inp: self._haves[inp] for inp in list(self._utility_function.use.keys())})
+        return self.consume({inp: self._inventory[inp] for inp in list(self._utility_function.use.keys())})
 
     def consume(self, input_goods):
         """ consumes input_goods returns utility according to the agent's
@@ -83,12 +81,12 @@ class Household(object):
 
         """
         for good in list(self._utility_function.use.keys()):
-            if self._haves[good] < input_goods[good] - epsilon:
+            if self._inventory[good] < input_goods[good] - epsilon:
                 raise NotEnoughGoods(
-                    self.name, good, (input_goods[good] - self._haves[good]))
+                    self.name, good, (input_goods[good] - self._inventory[good]))
 
         for good, use in self._utility_function.use.items():
-            self._haves[good] -= input_goods[good] * use
+            self._inventory.haves[good] -= input_goods[good] * use
 
         return self._utility_function.formula(input_goods)
 

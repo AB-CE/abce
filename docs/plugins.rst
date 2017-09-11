@@ -6,7 +6,9 @@ you want to author your own plugin - its dead simple. All you
 have to do is write a class that inherits from Agent in agent.py.
 This class can overwrite::
 
-    def init(self, parameter, agent_parameter)
+    def __init__(self, id, group, trade_logging, database, random_seed, num_managers,
+                 agent_parameters, simulation_parameters,
+                 check_unchecked_msgs, start_round=None):
     def _begin_subround(self):
     def _end_subround(self):
     def _advance_round(self, time):
@@ -14,14 +16,18 @@ This class can overwrite::
 For example like this::
 
     class UselessAgent(abce.Agent):
-        def init(self, parameter, agent_parameter):
-            super().init()
+        def __init__(self, id, group, trade_logging, database, random_seed, num_managers,
+                     agent_parameters, simulation_parameters,
+                     check_unchecked_msgs, start_round=None):
+            super().__init__(id, group, trade_logging,
+                             database, random_seed, num_managers, agent_parameters,
+                             simulation_parameters, check_unchecked_msgs,
+                             start_round):
             print("Here i begin")
 
         def _begin_subround(self):
             super()._begin_subround()
             print('subround begins')
-            print("its %r o'clock" % self.time)
 
         def _end_subround(self):
             super()._end_subround()
@@ -32,4 +38,8 @@ For example like this::
             print('Super I made it to the next round')
 
         def ability(self):
+            print("its %r o'clock" % self.time)
             print("the simulation called my ability")
+
+
+**Do not overwrite the init(parameters, simulation_parameters)** method
