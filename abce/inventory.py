@@ -10,7 +10,7 @@ epsilon = get_epsilon()
 class Inventory(object):
     def __init__(self, name):
         self.haves = defaultdict(int)
-        self.committed = defaultdict(int)
+        self.reserved = defaultdict(int)
         self.name = name
         self._expiring_goods = []
         self._perishable = []
@@ -83,16 +83,16 @@ class Inventory(object):
             self.haves[good] -= quantity
 
     def reserve(self, good, quantity):
-        self.committed[good] += quantity
-        if self.committed[good] > self.haves[good]:
-            self.committed[good] += quantity
-            raise NotEnoughGoods(self.name, good, quantity - (self.haves[good] - self.committed[good]))
+        self.reserved[good] += quantity
+        if self.reserved[good] > self.haves[good]:
+            self.reserved[good] += quantity
+            raise NotEnoughGoods(self.name, good, quantity - (self.haves[good] - self.reserved[good]))
 
     def rewind(self, good, quantity):
-        self.committed[good] -= quantity
+        self.reserved[good] -= quantity
 
     def commit(self, good, committed_quantity, final_quantity):
-        self.committed[good] -= committed_quantity
+        self.reserved[good] -= committed_quantity
         self.haves[good] -= final_quantity
 
     def transform(self, ingredient, unit, product, quantity=None):
@@ -102,10 +102,9 @@ class Inventory(object):
         self.create(product, float(unit) * quantity)
 
     def possession(self, good):
-        print('possession depreciated')
-        return self.free(good)
+        return self.not_reserved(good)
 
-    def free(self, good):
+    def not_reserved(self, good):
         """ returns how much of good an agent possesses.
 
         Returns:
@@ -123,11 +122,31 @@ class Inventory(object):
                 self.bankruptcy = True
 
         """
-        return float(self.haves[good] - self.committed[good])
+        return float(self.haves[good] - self.reserved[good])
+
+    def reserved(self, good):
+        """ returns how much of a good an agent has currently reseed to sell or buy.
+
+        Returns:
+            A number.
+
+        possession does not return a dictionary for self.log(...), you can use self.possessions([...])
+        (plural) with self.log.
+
+        Example::
+
+            if self['money'] < 1:
+                self.financial_crisis = True
+
+            if not(is_positive(self['money']):
+                self.bankruptcy = True
+
+        """
+        return self.reserved[good]
 
     def possessions(self):
         """ returns all possessions """
-        return {good: float(self.haves[good] - self.committed[good]) for good in self.haves}
+        return {good: float(self.haves[good] - self.reserved[good]) for good in self.haves}
 
     def calculate_netvalue(self, prices):
         return sum(quantity * prices[name]

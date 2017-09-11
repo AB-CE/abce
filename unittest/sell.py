@@ -20,7 +20,7 @@ class Sell(abce.Agent):
             quantity = random.uniform(0, self.cookies)
             self.offer = self.sell(receiver=('sell', self.id + 1),
                                    good='cookies', quantity=quantity, price=self.price)
-            assert self.free('cookies') == self.cookies - quantity
+            assert self.not_reserved('cookies') == self.cookies - quantity
 
     def two(self):
         if self.id % 2 == 1:

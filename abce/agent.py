@@ -180,7 +180,7 @@ class Agent(Database, Trade, Messaging):
                 self.bancrupcy = True
 
         """
-        print("depreciated use self[good]")
+        print("depreciated use self[good] or self.not_reserved[good]")
         return self._inventory[good]
 
     def possessions(self):
@@ -294,8 +294,8 @@ class Agent(Database, Trade, Messaging):
         """
         self._inventory._declare_expiring(good, duration)
 
-    def free(self, good):
-        return self._inventory.free(good)
+    def not_reserved(self, good):
+        return self._inventory.not_reserved(good)
 
     def destroy(self, good, quantity=None):
         """ destroys quantity of the good. If quantity is omitted destroys all
