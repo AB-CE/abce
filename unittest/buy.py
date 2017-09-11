@@ -24,7 +24,7 @@ class Buy(Agent):
             quantity = random.uniform(0, self.money / self.price)
             self.offer = self.buy(('buy', self.id + 1),
                                   'cookies', quantity, self.price)
-            assert self.free('money') == self.money - \
+            assert self.not_reserved('money') == self.money - \
                 quantity * self.price
 
     def two(self):
