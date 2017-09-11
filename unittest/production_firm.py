@@ -1,5 +1,3 @@
-from __future__ import division
-from __future__ import print_function
 import abce
 from tools import is_zero
 from abce.agents import Firm
@@ -51,10 +49,9 @@ class ProductionFirm(abce.Agent, Firm):
             self.create('b', 2)
             self.produce({'a': 1, 'b': 2})
 
-            assert self.possession('a') == 1, self.possession('a')
-            assert self.possession('b') == 1.8, self.possession('b')
-            assert self.possession(
-                'consumption_good') == 1 ** 0.5 * 2, self.possession('consumption_good')
+            assert self['a'] == 1, self['a']
+            assert self['b'] == 1.8, self['b']
+            assert self['consumption_good'] == 1 ** 0.5 * 2, self['consumption_good']
             self.destroy('a', 1)
             self.destroy('b', 1.8)
             self.destroy('consumption_good', 1 ** 0.5 * 2)
@@ -75,10 +72,10 @@ class ProductionFirm(abce.Agent, Firm):
             self.create('b', 2)
             self.produce({'a': 1, 'b': 2})
 
-            assert self.possession('a') == 1, self.possession('a')
-            assert self.possession('b') == 0, self.possession('b')
-            assert self.possession('consumption_good') == 5 * \
-                1 ** 2 * 2 ** 1, self.possession('consumption_good')
+            assert self['a'] == 1, self['a']
+            assert self['b'] == 0, self['b']
+            assert self['consumption_good'] == 5 * \
+                1 ** 2 * 2 ** 1, self['consumption_good']
             self.destroy('a', 1)
             self.destroy('consumption_good', 5 * 1 ** 2 * 2 ** 1)
 
@@ -87,10 +84,10 @@ class ProductionFirm(abce.Agent, Firm):
             self.create('b', 2)
             self.produce({'a': 1, 'b': 2})
 
-            assert self.possession('a') == 1, self.possession('a')
-            assert self.possession('b') == 0, self.possession('b')
-            assert self.possession('consumption_good') == min(
-                1 * 3, 2 * 1), self.possession('consumption_good')
+            assert self['a'] == 1, self['a']
+            assert self['b'] == 0, self['b']
+            assert self['consumption_good'] == min(
+                1 * 3, 2 * 1), self['consumption_good']
             self.destroy('a', 1)
             self.destroy('consumption_good', min(1 * 3, 2 * 1))
 
@@ -100,14 +97,12 @@ class ProductionFirm(abce.Agent, Firm):
             self.create('c', 10)
             self.produce({'a': 1, 'b': 2, 'c': 5})
 
-            assert self.possession('a') == 9, self.possession('a')
-            assert self.possession('b') == 9.8, self.possession('b')
-            assert self.possession('c') == 10, self.possession('c')
-            assert self.possession(
-                'soft_rubber') == 1 ** 0.25 * 2 ** 0.5 * 5 ** 0.25
-            assert self.possession(
-                'hard_rubber') == 1 ** 0.1 * 2 ** 0.2 * 5 ** 0.01
-            assert self.possession('waste') == 2 / 2, self.possession('waste')
+            assert self['a'] == 9, self['a']
+            assert self['b'] == 9.8, self['b']
+            assert self['c'] == 10, self['c']
+            assert self['soft_rubber'] == 1 ** 0.25 * 2 ** 0.5 * 5 ** 0.25
+            assert self['hard_rubber'] == 1 ** 0.1 * 2 ** 0.2 * 5 ** 0.01
+            assert self['waste'] == 2 / 2, self['waste']
             self.destroy('a')
             self.destroy('b')
             self.destroy('c')
@@ -127,13 +122,13 @@ class ProductionFirm(abce.Agent, Firm):
             self.create('c', 4)
             self.produce({'a': 1, 'b': 2, 'c': 4})
 
-            assert self.possession('a') == 1, self.possession('a')
-            assert self.possession('b') == 0, self.possession('b')
-            assert self.possession('c') == 0, self.possession('c')
+            assert self['a'] == 1, self['a']
+            assert self['b'] == 0, self['b']
+            assert self['c'] == 0, self['c']
             expected = (0.25 * 1 ** 0.5 + 0.25 * 2 **
                         0.5 + 0.5 * 4 ** 0.5) ** (1 / 0.5)
-            assert self.possession('consumption_good') == expected, (self.possession(
-                'consumption_good'), expected)
+            assert self['consumption_good'] == expected, (self[
+                'consumption_good'], expected)
             self.destroy('a', 1)
             self.destroy('consumption_good', expected)
 
@@ -145,15 +140,14 @@ class ProductionFirm(abce.Agent, Firm):
             self.create('e', 2)
             self.produce({'a': 1, 'b': 2, 'c': 2, 'd': 2, 'e': 2})
 
-            assert self.possession('a') == 1, self.possession('a')
-            assert self.possession('b') == 0, self.possession('b')
-            assert self.possession('c') == 0, self.possession('c')
-            assert self.possession('d') == 0, self.possession('d')
-            assert self.possession('e') == 0, self.possession('e')
+            assert self['a'] == 1, self['a']
+            assert self['b'] == 0, self['b']
+            assert self['c'] == 0, self['c']
+            assert self['d'] == 0, self['d']
+            assert self['e'] == 0, self['e']
             expected = 2 * (0.2 * 1 ** 0.5 + 0.2 * 2 ** 0.5 + 0.2 *
                             2 ** 0.5 + 0.2 * 2 ** 0.5 + 0.2 * 2 ** 0.5) ** (1 / 0.5)
-            assert is_zero(self.possession('consumption_good') - expected), (self.possession(
-                'consumption_good'), expected)
+            assert is_zero(self['consumption_good'] - expected), (self['consumption_good'], expected)
             self.destroy('a', 1)
             self.destroy('consumption_good', expected)
 

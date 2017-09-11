@@ -106,6 +106,9 @@ class Simulation(object):
             **For easy debugging set processes to 1, this way only one agent
             runs at a time and only one error message is displayed**
 
+        check_unchecked_msgs:
+            check every round that all messages have been received with get_massages or get_offers.
+
         Example::
 
             simulation = Simulation(name='ABCE',
@@ -150,13 +153,15 @@ class Simulation(object):
     """
 
     def __init__(self, name='abce', random_seed=None,
-                 trade_logging='off', processes=1):
+                 trade_logging='off', processes=1, check_unchecked_msgs=False):
         """
         """
         try:
             name = simulation_name  # noqa: F821
         except NameError:
             pass
+
+        self.check_unchecked_msgs = check_unchecked_msgs
 
         self.num_of_agents_in_group = {}
         self._messages = {}
@@ -386,6 +391,7 @@ class Simulation(object):
             print('')
             print(str("time only simulation %6.2f" %
                   (time.time() - self.clock)))
+
             self.database_queue.put('close')
 
             while self._db.is_alive():
@@ -461,7 +467,10 @@ class Simulation(object):
                          agent_args={'group': group_name,
                                      'trade_logging': self.trade_logging_mode,
                                      'database': self.database_queue,
-                                     'random_seed': random.random()},
+                                     'random_seed': random.random(),
+                                     'agent_parameters': agent_parameters,
+                                     'simulation_parameters': parameters,
+                                     'check_unchecked_msgs': self.check_unchecked_msgs},
                          parameters=parameters,
                          agent_parameters=agent_parameters,
                          agent_params_from_sim=agent_params_from_sim)
@@ -503,6 +512,9 @@ class Simulation(object):
                               'trade_logging': self.trade_logging_mode,
                               'database': self.database_queue,
                               'random_seed': random.random(),
+                              'agent_parameters': agent_parameters,
+                              'simulation_parameters': parameters,
+                              'check_unchecked_msgs': self.check_unchecked_msgs,
                               'start_round': self.time},
                   parameters=parameters,
                   agent_parameters=agent_parameters)

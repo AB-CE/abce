@@ -1,7 +1,5 @@
-from __future__ import division
-from __future__ import print_function
 import abce
-from tools import *
+from tools import is_zero
 import random
 
 
@@ -18,7 +16,7 @@ class QuoteBuy(abce.Agent):
         """
         if self.id == 0:
             self.create('money', random.uniform(0, 10000))
-            self.money = self.possession('money')
+            self.money = self['money']
             self.price = random.uniform(0.0001, 1)
             quantity = random.uniform(0, self.money / self.price)
             self.quote_buy('quotebuy', 1, 'cookies', quantity, self.price)
@@ -29,7 +27,7 @@ class QuoteBuy(abce.Agent):
         """
         if self.id == 1:
             self.create('cookies', random.uniform(0, 10000))
-            cookies = self.possession('cookies')
+            cookies = self['cookies']
             if random.randint(0, 1) == 0:
                 quotes = self.get_quotes('cookies')
             else:
@@ -40,16 +38,15 @@ class QuoteBuy(abce.Agent):
                 if random.randint(0, 1) == 0:
                     self.tests['not_answered'] = True
                     continue
-                if self.possession('cookies') >= quote['quantity']:
+                if self['cookies'] >= quote['quantity']:
                     self.accept_quote(quote)
                     self.final_money = quote['price'] * quote['quantity']
-                    assert self.possession(
-                        'cookies') == cookies - quote['quantity']
+                    assert self['cookies'] == cookies - quote['quantity']
                     self.tests['accepted'] = True
                 else:
                     self.accept_quote_partial(
-                        quote, self.possession('cookies'))
-                    assert is_zero(self.possession('cookies'))
+                        quote, self['cookies'])
+                    assert is_zero(self['cookies'])
                     self.final_money = cookies * quote['price']
                     self.tests['partial'] = True
 
@@ -65,7 +62,7 @@ class QuoteBuy(abce.Agent):
         self.destroy_all('money')
         self.destroy_all('cookies')
         if self.id == 1:
-            self.final_money = self.possession('money')
+            self.final_money = self['money']
 
     def all_tests_completed(self):
         if self.round == self.last_round and self.id == 1:

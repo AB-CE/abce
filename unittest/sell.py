@@ -1,5 +1,5 @@
 import abce
-from tools import *
+from tools import is_zero
 import random
 from abce import NotEnoughGoods
 
@@ -15,17 +15,17 @@ class Sell(abce.Agent):
     def one(self):
         if self.id % 2 == 0:
             self.create('cookies', random.uniform(0, 10000))
-            self.cookies = self.possession('cookies')
+            self.cookies = self['cookies']
             self.price = random.uniform(0.0001, 1)
             quantity = random.uniform(0, self.cookies)
             self.offer = self.sell(receiver=('sell', self.id + 1),
                                    good='cookies', quantity=quantity, price=self.price)
-            assert self.possession('cookies') == self.cookies - quantity
+            assert self.not_reserved('cookies') == self.cookies - quantity
 
     def two(self):
         if self.id % 2 == 1:
             self.create('money', random.uniform(0, 10000))
-            money = self.possession('money')
+            money = self['money']
             oo = self.get_offers('cookies')
             assert oo, oo
             for offer in oo:
@@ -34,30 +34,27 @@ class Sell(abce.Agent):
                     continue
                 elif random.randrange(0, 10) == 0:
                     self.reject(offer)
-                    assert self.possession('money') == money
-                    assert self.possession('cookies') == 0
+                    assert self['money'] == money
+                    assert self['cookies'] == 0
                     self.tests['rejected'] = True
                     break  # tests the automatic clean-up of polled offers
                 try:
                     if random.randrange(2) == 0:
                         self.accept(offer)
-                        assert self.possession('cookies') == offer.quantity
-                        assert self.possession(
-                            'money') == money - offer.quantity * offer.price
+                        assert self['cookies'] == offer.quantity
+                        assert self['money'] == money - offer.quantity * offer.price
                         self.tests['accepted'] = True
                     else:
                         self.accept(offer, offer.quantity)
-                        assert self.possession('cookies') == offer.quantity
-                        assert self.possession(
-                            'money') == money - offer.quantity * offer.price
+                        assert self['cookies'] == offer.quantity
+                        assert self['money'] == money - offer.quantity * offer.price
                         self.tests['full_partial'] = True
 
                 except NotEnoughGoods:
-                    self.accept(offer, self.possession('money') / offer.price)
-                    assert self.possession(
-                        'money') < 0.00000001, self.possession('money')
-                    test = (self.possession('money') - money) - \
-                        self.possession('cookies') / offer.price
+                    self.accept(offer, self['money'] / offer.price)
+                    assert self['money'] < 0.00000001, self['money']
+                    test = (self['money'] - money) - \
+                        self['cookies'] / offer.price
                     assert test < 0.00000001, test
                     self.tests['partial'] = True
 
@@ -65,20 +62,19 @@ class Sell(abce.Agent):
         if self.id % 2 == 0:
             offer = self.offer
             if offer.status == 'rejected':
-                assert is_zero(self.cookies - self.possession('cookies'))
+                assert is_zero(self.cookies - self['cookies'])
                 self.tests['rejected'] = True
             elif offer.status == 'accepted':
                 if offer.final_quantity == offer.quantity:
                     assert self.cookies - \
-                        offer.quantity == self.possession('cookies')
-                    assert self.possession(
-                        'money') == offer.quantity * offer.price
+                        offer.quantity == self['cookies']
+                    assert self['money'] == offer.quantity * offer.price
                     self.tests['accepted'] = True
                 else:
                     test = (self.cookies - offer.final_quantity) - \
-                        self.possession('cookies')
+                        self['cookies']
                     assert is_zero(test), test
-                    test = self.possession('money') - \
+                    test = self['money'] - \
                         offer.final_quantity * offer.price
                     assert is_zero(test), test
                     self.tests['partial'] = True

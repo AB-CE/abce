@@ -33,11 +33,11 @@ Messaging between agents:
 
 .. [1] or :class:`abceagent.FirmMultiTechnologies` for simulations with complex technologies.
 """
-#******************************************************************************************#
-# trade.pyx is written in cython. When you modify trade.pyx you need to compile it with    #
-# compile.sh and compile.py because the resulting trade.c file is distributed.             #
-# Don't forget to commit it to git                                                         #
-#******************************************************************************************#
+# ***************************************************************************************** #
+#  trade.pyx is written in cython. When you modify trade.pyx you need to compile it with    #
+# compile.sh and compile.py because the resulting trade.c file is distributed.              #
+# Don't forget to commit it to git                                                          #
+# ***************************************************************************************** #
 import random
 from abce.notenoughgoods import NotEnoughGoods
 
@@ -146,7 +146,7 @@ class Trade:
 
     1. An agent sends an offer. :meth:`~.sell`
 
-       *The good offered is blocked and self.possession(...) does shows the decreased amount.*
+       *ABCE does not allow you to sell the same good twice; self.free(good) shows how much good is not reserved yet*
 
     2. **Next subround:** An agent receives the offer :meth:`~.get_offers`, and can
        :meth:`~.accept`, :meth:`~.reject` or partially accept it. :meth:`~.accept`
@@ -156,7 +156,7 @@ class Trade:
     3. **Next subround:**
 
        - in case of acceptance *the money is automatically credited.*
-       - in case of partial acceptance *the money is credited and part of the blocked good is unblocked.*
+       - in case of partial acceptance *the money is credited and part of the reserved good is unblocked.*
        - in case of rejection *the good is unblocked.*
 
     Analogously for buying: :meth:`~.buy`
@@ -175,7 +175,7 @@ class Trade:
                     try:
                         self.accept(offer)
                     except NotEnoughGoods:
-                        self.accept(offer, self.possession('money') / offer.price)
+                        self.accept(offer, self['money'] / offer.price)
                 else:
                     self.reject(offer)
 
@@ -202,7 +202,7 @@ class Trade:
                     try:
                         self.accept(offer)
                     except NotEnoughGoods:
-                        self.accept(offer, self.possession('money') / offer.price)
+                        self.accept(offer, self['money'] / offer.price)
                 else:
                     self.reject(offer)
 
@@ -353,7 +353,7 @@ class Trade:
         Args:
             good:
                 the good which should be retrieved
-                descending(bool,default=False):
+                descending(bool, default=False):
                 False for descending True for ascending by price
 
         Returns:
@@ -380,12 +380,8 @@ class Trade:
 
     def sell(self, receiver,
              good, quantity, price, currency='money', epsilon=epsilon):
-        """ commits to sell the quantity of good at price
-
-        The good is not available for the agent. When the offer is
-        rejected it is automatically re-credited. When the offer is
-        accepted the money amount is credited. (partial acceptance
-        accordingly)
+        """ Sends a offer to sell a particular good to somebody. The amount promised
+        is reserved. (self.free(good), shows the not yet reserved goods)
 
         Args:
             receiver_group:
@@ -433,17 +429,15 @@ class Trade:
             price = 0
         # makes sure the quantity is between zero and maximum available, but
         # if its only a little bit above or below its set to the bounds
-        available = self._haves[good]
+        available = self._inventory[good]
         assert quantity > - epsilon, 'quantity %.30f is smaller than 0 - epsilon (%.30f)' % (quantity, - epsilon)
         if quantity < 0:
             quantity = 0
-        if quantity > available + epsilon + epsilon * max(quantity, available):
-            raise NotEnoughGoods(self.name, good, quantity - available)
         if quantity > available:
             quantity = available
 
         offer_id = self._offer_counter()
-        self._haves[good] -= quantity
+        self._inventory.reserve(good, quantity)
         offer = Offer(self.group,
                       self.id,
                       receiver[0],
@@ -464,12 +458,8 @@ class Trade:
 
     def buy(self, receiver, good,
             quantity, price, currency='money', epsilon=epsilon):
-        """ commits to sell the quantity of good at price
-
-        The goods are not in haves or self.count(). When the offer is
-        rejected it is automatically re-credited. When the offer is
-        accepted the money amount is credited. (partial acceptance
-        accordingly)
+        """ Sends a offer to buy a particular good to somebody. The money promised
+        is reserved. (self.free(currency), shows the not yet reserved goods)
 
         Args:
             receiver:
@@ -499,17 +489,15 @@ class Trade:
         money_amount = quantity * price
         # makes sure the money_amount is between zero and maximum available, but
         # if its only a little bit above or below its set to the bounds
-        available = self._haves[currency]
+        available = self._inventory[currency]
         assert money_amount > - epsilon, '%s (price * quantity) %.30f is smaller than 0 - epsilon (%.30f)' % (currency, money_amount, - epsilon)
         if money_amount < 0:
             money_amount = 0
-        if money_amount > available + epsilon + epsilon * max(money_amount, available):
-            raise NotEnoughGoods(self.name, currency, money_amount - available)
         if money_amount > available:
             money_amount = available
 
         offer_id = self._offer_counter()
-        self._haves[currency] -= money_amount
+        self._inventory.reserve(currency, money_amount)
         offer = Offer(self.group,
                       self.id,
                       receiver[0],
@@ -570,24 +558,24 @@ class Trade:
             if money_amount < 0:
                 money_amount = 0
 
-            available = self._haves[offer.currency]
+            available = self._inventory[offer.currency]
             if money_amount > available + epsilon + epsilon * max(money_amount, available):
                 raise NotEnoughGoods(self.name, offer.currency, money_amount - available)
             if money_amount > available:
                 money_amount = available
-            self._haves[offer.good] += quantity
-            self._haves[offer.currency] -= quantity * offer.price
+            self._inventory.haves[offer.good] += quantity
+            self._inventory.haves[offer.currency] -= quantity * offer.price
         else:
             assert quantity > - epsilon, 'quantity %.30f is smaller than 0 - epsilon (%.30f)' % (quantity, - epsilon)
             if quantity < 0:
                 quantity = 0
-            available = self._haves[offer.good]
+            available = self._inventory[offer.good]
             if quantity > available + epsilon + epsilon * max(quantity, available):
                 raise NotEnoughGoods(self.name, offer.good, quantity - available)
             if quantity > available:
                 quantity = available
-            self._haves[offer.good] -= quantity
-            self._haves[offer.currency] += quantity * offer.price
+            self._inventory.haves[offer.good] -= quantity
+            self._inventory.haves[offer.currency] += quantity * offer.price
         offer.final_quantity = quantity
         self._send(offer.sender_group, offer.sender_id, '_p', (offer.id, quantity))
         del self._polled_offers[offer.id]
@@ -642,11 +630,11 @@ class Trade:
         offer = self.given_offers[offer_id_final_quantity[0]]
         offer.final_quantity = offer_id_final_quantity[1]
         if offer.sell:
-            self._haves['money'] += offer.final_quantity * offer.price
-            self._haves[offer.good] += offer.quantity - offer.final_quantity
+            self._inventory.commit(offer.good, offer.quantity, offer.final_quantity)
+            self._inventory.haves[offer.currency] += offer.final_quantity * offer.price
         else:
-            self._haves[offer.good] += offer.final_quantity
-            self._haves['money'] += (offer.quantity - offer.final_quantity) * offer.price
+            self._inventory.haves[offer.good] += offer.final_quantity
+            self._inventory.commit(offer.currency, offer.quantity * offer.price, offer.final_quantity * offer.price)
         offer.status = "accepted"
         offer.status_round = self.round
         del self.given_offers[offer.id]
@@ -673,9 +661,9 @@ class Trade:
         """
         offer = self.given_offers[offer_id]
         if offer.sell:
-            self._haves[offer.good] += offer.quantity
+            self._inventory.rewind(offer.good, offer.quantity)
         else:
-            self._haves[offer.currency] += offer.quantity * offer.price
+            self._inventory.rewind(offer.currency, offer.quantity * offer.price)
         offer.status = "rejected"
         offer.status_round = self.round
         offer.final_quantity = 0
@@ -684,9 +672,9 @@ class Trade:
     def _delete_given_offer(self, offer_id):
         offer = self.given_offers.pop(offer_id)
         if offer.sell:
-            self._haves[offer.good] += offer.quantity
+            self._inventory.rewind(offer.good, offer.quantity)
         else:
-            self._haves[offer.currency] += offer.quantity * offer.price
+            self._inventory.rewind(offer.currency, offer.quantity * offer.price)
 
     def give(self, receiver, good, quantity, epsilon=epsilon):
         """ gives a good to another agent
@@ -714,18 +702,18 @@ class Trade:
 
         Example::
 
-            self.log('taxes', self.give('money': 0.05 * self.possession('money'))
+            self.log('taxes', self.give('money': 0.05 * self['money'])
 
         """
         assert quantity > - epsilon, 'quantity %.30f is smaller than 0 - epsilon (%.30f)' % (quantity, - epsilon)
         if quantity < 0:
             quantity = 0
-        available = self._haves[good]
+        available = self._inventory[good]
         if quantity > available + epsilon + epsilon * max(quantity, available):
             raise NotEnoughGoods(self.name, good, quantity - available)
         if quantity > available:
             quantity = available
-        self._haves[good] -= quantity
+        self._inventory.haves[good] -= quantity
         self._send(receiver[0], receiver[1], '_g', [good, quantity])
         return {good: quantity}
 
@@ -779,7 +767,7 @@ class Trade:
             elif typ == '_r':
                 self._receive_reject(msg)
             elif typ == '_g':
-                self._haves[msg[0]] += msg[1]
+                self._inventory.haves[msg[0]] += msg[1]
             elif typ == '_q':
                 self._quotes[msg.id] = msg
             elif typ == '!o':
@@ -792,10 +780,10 @@ class Trade:
                     self._contracts_deliver[contract.good][contract.id] = contract
             elif typ == '_dp':
                 if msg.pay_group == self.group and msg.pay_id == self.id:
-                    self._haves[msg.good] += msg.quantity
+                    self._inventory[msg.good] += msg.quantity
                     self._contracts_pay[msg.good][msg.id].delivered.append(self.round)
                 else:
-                    self._haves['money'] += msg.quantity * msg.price
+                    self._inventory['money'] += msg.quantity * msg.price
                     self._contracts_deliver[msg.good][msg.id].paid.append(self.round)
 
             elif typ == '!d':

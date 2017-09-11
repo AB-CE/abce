@@ -36,7 +36,6 @@ import abce
 from .database import Database
 from .trade import Trade
 from .messaging import Messaging
-from .expiringgood import ExpiringGood
 from .inventory import Inventory
 
 
@@ -68,7 +67,7 @@ class Agent(Database, Trade, Messaging):
 
             ...
             def return_quantity_of_good(self):
-                return possession('good')
+                return['good']
 
 
         ...
@@ -87,7 +86,8 @@ class Agent(Database, Trade, Messaging):
 
     """
     def __init__(self, id, group, trade_logging,
-                 database, random_seed, num_managers, start_round=None):
+                 database, random_seed, num_managers, agent_parameters, simulation_parameters,
+                 check_unchecked_msgs, start_round=None):
         """ Do not overwrite __init__ instead use a method called init instead.
         init is called whenever the agent are build.
         """
@@ -109,11 +109,10 @@ class Agent(Database, Trade, Messaging):
         self.num_managers = num_managers
         self._out = [[] for _ in range(self.num_managers + 1)]
 
-        self._haves = Inventory(self.name)
+        self._inventory = Inventory(self.name)
 
-        # TODO make defaultdict; delete all key errors regarding self._haves as
+        # TODO make defaultdict; delete all key errors regarding self._inventory as
         # defaultdict, does not have missing keys
-        self._haves['money'] = 0
         self._msgs = {}
 
         self.given_offers = OrderedDict()
@@ -153,6 +152,8 @@ class Agent(Database, Trade, Messaging):
 
         self.log_this_round = True
 
+        self._check_every_round_for_lost_messages = check_unchecked_msgs
+
     def init(self, parameters, agent_parameters):
         """ This method is called when the agents are build.
         It can be overwritten by the user, to initialize the agents.
@@ -172,18 +173,19 @@ class Agent(Database, Trade, Messaging):
 
         Example::
 
-            if self.possession('money') < 1:
+            if self['money'] < 1:
                 self.financial_crisis = True
 
-            if not(is_positive(self.possession('money')):
+            if not(is_positive(self['money']):
                 self.bancrupcy = True
 
         """
-        return self._haves.possession(good)
+        print("depreciated use self[good] or self.not_reserved[good]")
+        return self._inventory[good]
 
     def possessions(self):
         """ returns all possessions """
-        return self._haves.possessions()
+        return self._inventory.possessions()
 
     def _offer_counter(self):
         """ returns a unique number for an offer (containing the agent's name)
@@ -191,7 +193,7 @@ class Agent(Database, Trade, Messaging):
         self._offer_count += 1
         return hash((self.name, self._offer_count))
 
-    def _advance_round(self, time):
+    def _check_for_lost_messages(self):
         for offer in list(self.given_offers.values()):
             if offer.made < self.round:
                 print("in agent %s this offers have not been retrieved:" %
@@ -202,15 +204,6 @@ class Agent(Database, Trade, Messaging):
                 raise Exception('%s_%i: There are offers have been made before'
                                 'last round and not been retrieved in this'
                                 'round get_offer(.)' % (self.group, self.id))
-
-        self._haves._advance_round()
-        self.contracts._advance_round(self.round)
-
-        if self.trade_logging > 0:
-            self.database_connection.put(
-                ["trade_log", self._trade_log, self.round])
-
-        self._trade_log = defaultdict(int)
 
         if sum([len(offers) for offers in list(self._open_offers_buy.values())]):
             pprint(dict(self._open_offers_buy))
@@ -230,8 +223,15 @@ class Agent(Database, Trade, Messaging):
                             'have not been retrieved in this round '
                             'get_messages(.)' % (self.group, self.id))
 
+    def _advance_round(self, time):
+        self._inventory._advance_round()
+        self.contracts._advance_round(self.round)
+
+        if self._check_every_round_for_lost_messages:
+            self._check_for_lost_messages()
+
         for ingredient, units, product in self._resources:
-            self._haves.create(product, self.possession(ingredient) * units)
+            self._inventory.create(product, self[ingredient] * units)
 
         self.round = time
         self.time = time
@@ -245,6 +245,12 @@ class Agent(Database, Trade, Messaging):
             else:
                 self.log_this_round = False
 
+        if self.trade_logging > 0:
+            self.database_connection.put(
+                ["trade_log", self._trade_log, self.round])
+
+        self._trade_log = defaultdict(int)
+
     def create(self, good, quantity):
         """ creates quantity of the good out of nothing
 
@@ -255,7 +261,7 @@ class Agent(Database, Trade, Messaging):
             'good': is the name of the good
             quantity: number
         """
-        self._haves.create(good, quantity)
+        self._inventory.create(good, quantity)
 
     def create_timestructured(self, good, quantity):
         """ creates quantity of the time structured good out of nothing.
@@ -281,13 +287,15 @@ class Agent(Database, Trade, Messaging):
             quantity:
                 an arry or number
         """
-        self._haves.create_timestructured(good, quantity)
+        self._inventory.create_timestructured(good, quantity)
 
     def _declare_expiring(self, good, duration):
         """ creates a good that has a limited duration
         """
-        self._haves[good] = ExpiringGood(duration)
-        self._haves._expiring_goods.append(good)
+        self._inventory._declare_expiring(good, duration)
+
+    def not_reserved(self, good):
+        return self._inventory.not_reserved(good)
 
     def destroy(self, good, quantity=None):
         """ destroys quantity of the good. If quantity is omitted destroys all
@@ -303,7 +311,7 @@ class Agent(Database, Trade, Messaging):
 
             NotEnoughGoods: when goods are insufficient
         """
-        self._haves.destroy(good, quantity)
+        self._inventory.destroy(good, quantity)
 
     def _execute(self, command, args, kwargs):
         self._out = [[] for _ in range(self.num_managers + 1)]
@@ -339,7 +347,7 @@ class Agent(Database, Trade, Messaging):
         self._resources.append((resource, units, product))
 
     def _register_perish(self, good):
-        self._haves._perishable.append(good)
+        self._inventory._perishable.append(good)
 
     def _send(self, receiver_group, receiver_id, typ, msg):
         """ sends a message to 'receiver_group', who can be an agent, a group or
@@ -352,4 +360,7 @@ class Agent(Database, Trade, Messaging):
             (receiver_group, receiver_id, (typ, msg)))
 
     def __getitem__(self, good):
-        return self._haves[good]
+        return self._inventory.haves[good]
+
+    def __del__(self):
+        self._check_for_lost_messages()

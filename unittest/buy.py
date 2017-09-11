@@ -19,12 +19,12 @@ class Buy(Agent):
         """
         if self.id % 2 == 0:
             self.create('money', random.uniform(0, 10000))
-            self.money = self.possession('money')
+            self.money = self['money']
             self.price = random.uniform(0.0001, 1)
             quantity = random.uniform(0, self.money / self.price)
             self.offer = self.buy(('buy', self.id + 1),
                                   'cookies', quantity, self.price)
-            assert self.possession('money') == self.money - \
+            assert self.not_reserved('money') == self.money - \
                 quantity * self.price
 
     def two(self):
@@ -33,7 +33,7 @@ class Buy(Agent):
         """
         if self.id % 2 == 1:
             self.create('cookies', random.uniform(0, 10000))
-            cookies = self.possession('cookies')
+            cookies = self['cookies']
             oo = self.get_offers('cookies')
             assert oo
             for offer in oo:
@@ -42,21 +42,19 @@ class Buy(Agent):
                     continue
                 elif random.randint(0, 10) == 0:
                     self.reject(offer)
-                    assert self.possession('money') == 0
-                    assert self.possession('cookies') == cookies
+                    assert self['money'] == 0
+                    assert self['cookies'] == cookies
                     self.tests['rejected'] = True
                     break  # tests the automatic clean-up of polled offers
                 try:
                     self.accept(offer)
-                    assert self.possession(
-                        'money') == offer.price * offer.quantity
-                    assert self.possession(
-                        'cookies') == cookies - offer.quantity
+                    assert self['money'] == offer.price * offer.quantity
+                    assert self['cookies'] == cookies - offer.quantity
                     self.tests['accepted'] = True
                 except NotEnoughGoods:
-                    self.accept(offer, self.possession('cookies'))
-                    assert is_zero(self.possession('cookies'))
-                    assert self.possession('money') == cookies * offer.price
+                    self.accept(offer, self['cookies'])
+                    assert is_zero(self['cookies'])
+                    assert self['money'] == cookies * offer.price
                     self.tests['partial'] = True
 
     def three(self):
@@ -65,21 +63,21 @@ class Buy(Agent):
         if self.id % 2 == 0:
             offer = self.offer
             if offer.status == 'rejected':
-                test = self.money - self.possession('money')
+                test = self.money - self['money']
                 assert is_zero(test), test
                 self.tests['rejected'] = True
             elif offer.status == 'accepted':
                 if offer.final_quantity == offer.quantity:
                     assert self.money - offer.quantity * \
-                        offer.price == self.possession('money')
+                        offer.price == self['money']
 
-                    assert self.possession('cookies') == offer.quantity
+                    assert self['cookies'] == offer.quantity
                     self.tests['accepted'] = True
                 else:
                     test = (self.money - offer.final_quantity *
-                            offer.price) - self.possession('money')
+                            offer.price) - self['money']
                     assert is_zero(test), test
-                    test = self.possession('cookies') - offer.final_quantity
+                    test = self['cookies'] - offer.final_quantity
                     assert is_zero(test), test
                     self.tests['partial'] = True
             else:
