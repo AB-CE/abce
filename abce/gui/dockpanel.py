@@ -129,7 +129,7 @@ class DockPanel(Layout):
                         self.phosphor.insertLeft(widget.phosphor,
                                                  self.relative)
                         self.lastworking = self.relative
-                    except:
+                    except Exception:
                         self.phosphor.insertLeft(widget.phosphor,
                                                  self.lastworking)
 
@@ -138,7 +138,7 @@ class DockPanel(Layout):
                         self.phosphor.insertTop(widget.phosphor,
                                                 self.relative)
                         self.lastworking = self.relative
-                    except:
+                    except Exception:
                         self.phosphor.insertTop(widget.phosphor,
                                                 self.lastworking)
 
@@ -147,7 +147,7 @@ class DockPanel(Layout):
                         self.phosphor.insertRight(widget.phosphor,
                                                   self.relative)
                         self.lastworking = self.relative
-                    except:
+                    except Exception:
                         self.phosphor.insertRight(widget.phosphor,
                                                   self.lastworking)
 
@@ -156,7 +156,7 @@ class DockPanel(Layout):
                         self.phosphor.insertBottom(widget.phosphor,
                                                    self.relative)
                         self.lastworking = self.relative
-                    except:
+                    except Exception:
                         self.phosphor.insertBottom(widget.phosphor,
                                                    self.lastworking)
 
@@ -165,7 +165,7 @@ class DockPanel(Layout):
                         self.phosphor.insertTabBefore(widget.phosphor,
                                                       self.relative)
                         self.lastworking = self.relative
-                    except:
+                    except Exception:
                         self.phosphor.insertTabBefore(widget.phosphor,
                                                       self.lastworking)
 
@@ -174,7 +174,7 @@ class DockPanel(Layout):
                         self.phosphor.insertTabAfter(widget.phosphor,
                                                      self.relative)
                         self.lastworking = self.relative
-                    except:
+                    except Exception:
                         self.phosphor.insertTabAfter(widget.phosphor,
                                                      self.lastworking)
 

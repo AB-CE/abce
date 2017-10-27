@@ -193,7 +193,7 @@ def graphs(parameter_mask=None, names=None):
     if platform.python_implementation() == 'PyPy':
         try:
             call(['python3', '-mabce.show'])
-        except:
+        except Exception:
             call(['python', '-mabce.show'])
     else:
 

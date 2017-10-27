@@ -9,9 +9,9 @@ class YourAgent(Agent):
 
     def compute(self):
         # print('here', self.idn)
-        l = range(1)
-        shuffle(l)
-        max(l)
+        ll = list(range(1))
+        shuffle(ll)
+        max(ll)
 
     def s(self):
         self.create('cookie', 1)

@@ -47,7 +47,7 @@ class ProcessorGroup(object):
                 raise
         except KeyboardInterrupt:
             return None
-        except:
+        except Exception:
             sleep(random.random())
             traceback.print_exc()
             raise Exception()
@@ -68,7 +68,7 @@ class ProcessorGroup(object):
                                 out[pgid].append(msg)
                             else:
                                 out[pgid].extend(msg)
-        except:
+        except Exception:
             traceback.print_exc()
             raise
         return out
@@ -87,7 +87,7 @@ class ProcessorGroup(object):
                     agent._advance_round(time)
                 except KeyboardInterrupt:
                     return None
-                except:
+                except Exception:
                     sleep(random.random())
                     traceback.print_exc()
                     raise Exception()

@@ -9,9 +9,9 @@ class MyAgent(Agent):
 
     def compute(self):
         # print('here', self.idn)
-        l = range(1)
-        shuffle(l)
-        max(l)
+        ll = list(range(1))
+        shuffle(ll)
+        max(ll)
 
     def g(self):
         self.accept(self.get_offers('cookie')[0])

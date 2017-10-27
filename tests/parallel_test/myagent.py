@@ -9,6 +9,6 @@ class MyAgent(Agent):
     def compute(self):
         # print('here', self.idn)
         return None
-        l = range(10000)
-        shuffle(l)
-        max(l)
+        ll = list(range(10000))
+        shuffle(ll)
+        max(ll)
