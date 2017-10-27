@@ -27,6 +27,13 @@ def make_title(table_name, col):
             col.replace('_ttl', ''))
 
 
+def abce_figure(title):
+    return figure(title=title, width=1200, height=600,
+                  sizing_mode='stretch_both',
+                  output_backed='webgl',
+                  toolbar_location='below', tools=TOOLS)
+
+
 def make_aggregate_graphs(data, filename, ignore_initial_rounds):
     """Make timeseries graphs from aggregate or aggregate_ files, which contain
     _ttl, _mean and _std suffixes, to denote total, mean and
@@ -44,9 +51,7 @@ def make_aggregate_graphs(data, filename, ignore_initial_rounds):
         if col == 'index':
             continue
         title = make_title(filename, col)
-        plot = figure(title=title, sizing_mode='stretch_both',
-                      output_backend='webgl',
-                      toolbar_location='below', tools=TOOLS)
+        plot = abce_figure(title)
         plot.yaxis.visible = None
         plot.legend.orientation = "top_left"
 
@@ -88,9 +93,7 @@ def make_simple_graphs(data, filename, ignore_initial_rounds):
     for col in data.columns:
         title = make_title(filename, col)
         if col not in ['round', 'id', 'index']:
-            plot = figure(title=title, sizing_mode='stretch_both',
-                          output_backend='webgl',
-                          toolbar_location='below', tools=TOOLS)
+            plot = abce_figure(title)
             plot.yaxis.visible = None
             plot.legend.orientation = "top_left"
             plot.extra_y_ranges['ttl'] = y_range(col, '', data,
@@ -126,6 +129,7 @@ def make_histograms(data, filename):
             tplot = []
             for i in range(num_graphs):
                 plot = Histogram(data[data['id'] == i][col],
+                                 width=1200, height=600,
                                  sizing_mode='stretch_both')
                 mean = data[data['id'] == i][col].mean()
                 line = Span(location=mean,
@@ -141,7 +145,7 @@ def make_histograms(data, filename):
 
 
 def make_panel_graphs(data, filename):
-    """ Creates panal graphs from data with 'round' and 'id' picks no more than 20
+    """ Creates panel graphs from data with 'round' and 'id' picks no more than 20
     samples to display"""
     data = clean_nans(data)
 
@@ -157,9 +161,7 @@ def make_panel_graphs(data, filename):
     for col in data.columns:
         if col not in ['round', 'id', 'index']:
             title = make_title(filename, col)
-            plot = figure(title=title, sizing_mode='stretch_both',
-                          output_backend='webgl',
-                          toolbar_location='below', tools=TOOLS)
+            plot = abce_figure(title)
 
             plot.legend.orientation = "top_left"
             for i, id in enumerate(individuals):
