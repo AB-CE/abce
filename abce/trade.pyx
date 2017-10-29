@@ -281,7 +281,7 @@ cdef class Trade:
          for offer in oo.beer:
             print(offer.price, offer.sender_group, offer.sender_id)
         """
-        goods = list(self._open_offers_sell.keys() + self._open_offers_buy.keys())
+        goods = list(self._open_offers_sell.keys()) + list(self._open_offers_buy.keys())
         return {good: self.get_offers(good, descending, sorted) for good in goods}
 
     def get_buy_offers(self, good, sorted=True, descending=False, shuffled=True):
