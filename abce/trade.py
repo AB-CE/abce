@@ -48,9 +48,8 @@ def get_epsilon():
     return epsilon
 
 
-class Offer:
-    __slots__ = ('sender', 'sender_group', 'sender_id', 'receiver_group',
-                 'receiver_id', 'good', 'quantity', 'price', 'currency',
+class Offer(object):
+    __slots__ = ('sender', 'receiver', 'good', 'quantity', 'price', 'currency',
                  'sell', 'status', 'final_quantity', 'id',
                  'made', 'status_round')
     """ This is an offer container that is send to the other agent. You can
@@ -61,14 +60,11 @@ class Offer:
         sender_group:
             this is the group name of the sender
 
-        sender_id:
-            this is the ID of the sender
+        sender:
+            this is the  the sender
 
-        receiver_group:
-            This is the group name of the receiver
-
-        receiver_id:
-            this is the ID of the sender
+        receiver:
+            this is the the sender
 
         currency:
             The other good against which the good is traded.
@@ -108,35 +104,26 @@ class Offer:
         id:
             a unique identifier
     """
-    def __init__(self, sender_group, sender_id, receiver_group,
-                 receiver_id, good, quantity, price, currency,
-                 sell, status, final_quantity, id,
-                 made, status_round):
-        self.sender = (sender_group, sender_id)
-        self.sender_group = sender_group
-        self.sender_id = sender_id
-        self.receiver_group = receiver_group
-        self.receiver_id = receiver_id
+    def __init__(self, sender, receiver, good, quantity, price, currency,
+                 sell, id, made):
+        self.sender = sender
+        self.receiver = receiver
         self.good = good
         self.currency = currency
         self.quantity = quantity
         self.price = price
         self.sell = sell
-        self.status = status
-        self.final_quantity = final_quantity
+        self.status = 'new'
+        self.final_quantity = None
         self.id = id
         self.made = made
-        self.status_round = status_round
+        self.status_round = None
 
     def __repr__(self):
-        return ("""<{sender: %s, %i, receiver_group: %s,
-                receiver_id: %i, good: %s, quantity: %f, price: %f, currency: %f,
-                sell: %s, status: %s, final_quantity: % f, id: %i,
-                made: %i, status_round: %i }>""" %
-                (self.sender_group, self.sender_id, self.receiver_group,
-                 self.receiver_id, self.good, self.quantity, self.price, self.currency,
-                 self.sell, self.status, self.final_quantity, self.id,
-                 self.made, self.status_round))
+        return ("""<{sender: (%s, %i), receiver: (%s, %i), good: %s, quantity: %f, price: %f, currency: %f,
+                sell: %s, status: %s, final_quantity: % f, id: %i, made: %i, status_round: %i }>""" %
+                (*self.sender, *self.receiver, self.good, self.quantity, self.price, self.currency,
+                 self.sell, self.status, self.final_quantity, self.id, self.made, self.status_round))
 
 
 class Trade:
@@ -250,7 +237,7 @@ class Trade:
                     self.accept(offer)
 
          for offer in oo.beer:
-            print(offer.price, offer.sender_group, offer.sender_id)
+            print(offer.price, offer.sender)
         """
         goods = list(self._open_offers_sell.keys() + self._open_offers_buy.keys())
         return {good: self.get_offers(good, descending, sorted) for good in goods}
@@ -378,17 +365,15 @@ class Trade:
             ret.sort(key=lambda objects: objects.price, reverse=descending)
         return ret
 
+
     def sell(self, receiver,
              good, quantity, price, currency='money', epsilon=epsilon):
         """ Sends a offer to sell a particular good to somebody. The amount promised
         is reserved. (self.free(good), shows the not yet reserved goods)
 
         Args:
-            receiver_group:
-                group of the receiving agent
-
-            receiver_id:
-                number of the receiving agent
+            receiver:
+                the receiving agent
 
             'good':
                 name of the good
@@ -429,29 +414,22 @@ class Trade:
             price = 0
         # makes sure the quantity is between zero and maximum available, but
         # if its only a little bit above or below its set to the bounds
-        available = self._inventory[good]
         assert quantity > - epsilon, 'quantity %.30f is smaller than 0 - epsilon (%.30f)' % (quantity, - epsilon)
         if quantity < 0:
             quantity = 0
-        if quantity > available:
-            quantity = available
+
+        self._inventory.reserve(good, quantity)
 
         offer_id = self._offer_counter()
-        self._inventory.reserve(good, quantity)
-        offer = Offer(self.group,
-                      self.id,
-                      receiver[0],
-                      receiver[1],
+        offer = Offer(self.name,
+                      receiver,
                       good,
                       quantity,
                       price,
                       currency,
                       True,
-                      'new',
-                      -2,
                       offer_id,
-                      self.round,
-                      -2)
+                      self.round)
         self.given_offers[offer_id] = offer
         self._send(receiver[0], receiver[1], '!s', offer)
         return offer
@@ -498,20 +476,15 @@ class Trade:
 
         offer_id = self._offer_counter()
         self._inventory.reserve(currency, money_amount)
-        offer = Offer(self.group,
-                      self.id,
-                      receiver[0],
-                      receiver[1],
+        offer = Offer(self.name,
+                      receiver,
                       good,
                       quantity,
                       price,
                       currency,
                       False,
-                      'new',
-                      -1,
                       offer_id,
-                      self.round,
-                      -1)
+                      self.round)
         self._send(receiver[0], receiver[1], '!b', offer)
         self.given_offers[offer_id] = offer
         return offer
@@ -577,9 +550,9 @@ class Trade:
             self._inventory.haves[offer.good] -= quantity
             self._inventory.haves[offer.currency] += quantity * offer.price
         offer.final_quantity = quantity
-        self._send(offer.sender_group, offer.sender_id, '_p', (offer.id, quantity))
+        self._send(*offer.sender, '_p', (offer.id, quantity))
         del self._polled_offers[offer.id]
-        if offer.sell:  # ord('s')
+        if offer.sell:
             return {offer.good: - quantity, offer.currency: money_amount}
         else:
             return {offer.good: quantity, offer.currency: - money_amount}
@@ -597,7 +570,7 @@ class Trade:
                 the offer the other party made
                 (offer not quote!)
         """
-        self._send(offer.sender_group, offer.sender_id, '_r', offer.id)
+        self._send(*offer.sender, '_r', offer.id)
 
     def reject(self, offer):
         """ Rejects and offer, if the offer is subsequently accepted in the
@@ -618,9 +591,9 @@ class Trade:
 
     def _log_receive_accept_agent(self, offer):
         if offer.sell:
-            self._trade_log[(offer.good, self.name_without_colon, '%s_%i' % (offer.receiver_group, offer.receiver_id), offer.price)] += offer.quantity
+            self._trade_log[(offer.good, self.name_without_colon, '%s_%i' % (*offer.receiver, offer.price))] += offer.quantity
         else:
-            self._trade_log[(offer.good, '%s_%i' % (offer.receiver_group, offer.receiver_id), self.name_without_colon, offer.price)] += offer.quantity
+            self._trade_log[(offer.good, '%s_%i' % (*offer.receiver, self.name_without_colon, offer.price))] += offer.quantity
 
     def _receive_accept(self, offer_id_final_quantity):
         """ When the other party partially accepted the  money or good is
@@ -648,9 +621,9 @@ class Trade:
 
     def _log_receive_accept_agent(self, offer):
         if offer.sell:
-            self._trade_log[(offer.good, self.name_without_colon, '%s_%i' % (offer.receiver_group, offer.receiver_id), offer.price)] += offer.final_quantity
+            self._trade_log[(offer.good, self.name_without_colon, '%s_%i' % (*offer.receiver, offer.price))] += offer.final_quantity
         else:
-            self._trade_log[(offer.good, '%s_%i' % (offer.receiver_group, offer.receiver_id), self.name_without_colon, offer.price)] += offer.final_quantity
+            self._trade_log[(offer.good, '%s_%i' % (*offer.receiver, self.name_without_colon, offer.price))] += offer.final_quantity
 
     def _receive_reject(self, offer_id):
         """ delets a given offer
@@ -724,11 +697,8 @@ class Trade:
         Args:
 
 
-            receiver_group:
-                group of the receiving agent
-
-            receiver_id:
-                number of the receiving agent
+            receiver:
+                the receiving agent
 
             good:
                 the good to be taken
