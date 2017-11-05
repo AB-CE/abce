@@ -198,12 +198,12 @@ class Trade:
     def get_buy_offers_all(self, descending=False, sorted=True):
         """ """
         goods = list(self._open_offers_buy.keys())
-        return {good: self.get_offers(good, descending, sorted) for good in goods}
+        return {good: self.get_buy_offers(good, descending, sorted) for good in goods}
 
     def get_sell_offers_all(self, descending=False, sorted=True):
         """ """
         goods = list(self._open_offers_sell.keys())
-        return {good: self.get_offers(good, descending, sorted) for good in goods}
+        return {good: self.get_sell_offers(good, descending, sorted) for good in goods}
 
     def get_offers_all(self, descending=False, sorted=True):
         """ returns all offers in a dictionary, with goods as key. The in each
@@ -364,7 +364,6 @@ class Trade:
         if sorted:
             ret.sort(key=lambda objects: objects.price, reverse=descending)
         return ret
-
 
     def sell(self, receiver,
              good, quantity, price, currency='money', epsilon=epsilon):
