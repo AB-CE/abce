@@ -120,7 +120,6 @@ class Agent(Database, Trade, Messaging):
         self._open_offers_sell = defaultdict(dict)
         self._polled_offers = {}
         self._offer_count = 0
-        self._reject_offers_retrieved_end_subround = []
 
         self._trade_log = defaultdict(int)
         self._data_to_observe = {}
