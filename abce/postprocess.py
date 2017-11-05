@@ -39,9 +39,15 @@ def to_csv(directory, dataset):
 def create_aggregated_table(group, dataset):
     columns = ', '.join('AVG(%s) %s_mean, SUM(%s) %s_ttl' % (c, c, c, c)
                         for c in get_columns(dataset, 'panel_%s' % group))
-    dataset.query("CREATE TABLE aggregated_%s AS "
-                  "SELECT round, %s FROM panel_%s GROUP BY round;"
-                  % (group, columns, group))
+    try:
+        dataset.query("CREATE TABLE aggregated_%s AS "
+                      "SELECT round, %s FROM panel_%s GROUP BY round ORDER BY cast(round as float);"
+                      % (group, columns, group))
+    except Exception:
+        print('round not castable as float; default to unordered group by')
+        dataset.query("CREATE TABLE aggregated_%s AS "
+                      "SELECT round, %s FROM panel_%s GROUP BY round;"
+                      % (group, columns, group))
     dataset.update_table('aggregated_%s' % group)
 
 
