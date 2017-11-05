@@ -315,7 +315,7 @@ class Agent(Database, Trade, Messaging):
     def _execute(self, command, args, kwargs):
         self._out = [[] for _ in range(self.num_managers + 1)]
         try:
-            self._clearing__end_of_subround(list(self.inbox))
+            self._clearing__end_of_subround(self.inbox)
             self._begin_subround()
             self._out[-1] = getattr(self, command)(*args, **kwargs)
             self._end_subround()
