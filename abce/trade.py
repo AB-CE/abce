@@ -773,7 +773,7 @@ class Trade:
             elif typ == '!o':
                 self._contract_offers[msg.good].append(msg)
             elif typ == '_ac':
-                contract = self._contract_offers_made[msg.id]
+                contract = self._contract_offers_made.pop(msg.id)
                 if contract.pay_group == self.group and contract.pay_id == self.id:
                     self._contracts_pay[contract.good][contract.id] = contract
                 else:
