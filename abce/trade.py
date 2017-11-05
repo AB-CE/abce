@@ -582,18 +582,6 @@ class Trade:
         """
         pass
 
-    def _log_receive_accept_group(self, offer):
-        if offer.sell:
-            self._trade_log[(offer.good, self.group, offer.receiver_group, offer.price)] += offer.quantity
-        else:
-            self._trade_log[(offer.good, offer.receiver_group, self.group, offer.price)] += offer.quantity
-
-    def _log_receive_accept_agent(self, offer):
-        if offer.sell:
-            self._trade_log[(offer.good, self.name_without_colon, '%s_%i' % (*offer.receiver, offer.price))] += offer.quantity
-        else:
-            self._trade_log[(offer.good, '%s_%i' % (*offer.receiver, self.name_without_colon, offer.price))] += offer.quantity
-
     def _receive_accept(self, offer_id_final_quantity):
         """ When the other party partially accepted the  money or good is
         received, remaining good or money is added back to haves and the offer
