@@ -2,9 +2,13 @@ from abce.trade import get_epsilon
 from collections import defaultdict
 from abce.notenoughgoods import NotEnoughGoods
 from .expiringgood import ExpiringGood
-from math import isclose
 
 epsilon = get_epsilon()
+
+
+def isclose(a, b):
+    rel_tol = 1e-9
+    return abs(a - b) <= max(rel_tol * max(abs(a), abs(b)), 0.0)
 
 
 class Inventory(object):
