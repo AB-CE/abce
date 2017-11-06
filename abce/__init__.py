@@ -61,8 +61,7 @@ from .group import Group
 from .notenoughgoods import NotEnoughGoods  # noqa: F401
 from .agents import (FirmMultiTechnologies, Firm,  # noqa: F401
                      Household, Utility_Function,
-                     ProductionFunction, SilentDeadAgent,  # noqa: F401
-                     LoudDeadAgent)  # noqa: F401
+                     ProductionFunction)  # noqa: F401
 from .quote import Quote  # noqa: F401
 from .contracts import Contracting  # noqa: F401
 from .processorgroup import ProcessorGroup
@@ -504,10 +503,10 @@ class Simulation(object):
                               parameters=self.parameters,
                               agent_parameters={'creation': self.time})
         """
-        id = self.num_of_agents_in_group[group_name]
+        pg_id = self.num_of_agents_in_group[group_name] % self.processes
         self.num_of_agents_in_group[group_name] += 1
-        pg = self._processor_groups[id % self.processes]
-        pg.append(AgentClass, id=id,
+        pg = self._processor_groups[pg_id]
+        pg.append(AgentClass, pg_id=pg_id,
                   agent_args={'group': group_name,
                               'trade_logging': self.trade_logging_mode,
                               'database': self.database_queue,
@@ -519,11 +518,12 @@ class Simulation(object):
                   parameters=parameters,
                   agent_parameters=agent_parameters)
 
-    def delete_agent(self, name, quite=True):
-        """ This deletes an agent. By default, quite is set to True, all future
-        messages to this agent are deleted. If quite is set to False agents are
-        completely deleted. This makes the simulation faster, but if messages
-        are send to this agents the simulation stops.
+    def delete_agent(self, name):
+        """ This deletes an agent. The model has to make sure that other
+        agents are notified of the death of an agent in order to stop them from corresponding
+        with this agent. Note that if you create new agents
+        after deleting agents the ID's of the deleted agents are reused.
+
 
         Args:
             name:
@@ -535,10 +535,8 @@ class Simulation(object):
         group, id = name
 
         pg = self._processor_groups[id % self.processes]
-        if quite:
-            pg.replace_with_dead(group, id, SilentDeadAgent)
-        else:
-            pg.replace_with_dead(group, id, LoudDeadAgent)
+        self.num_of_agents_in_group[group] -= 1
+        pg.delete_agent(group, id)
 
     def _write_description_file(self):
         description = open(os.path.abspath(

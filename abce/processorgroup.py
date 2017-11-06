@@ -1,4 +1,4 @@
-from collections import defaultdict
+from collections import defaultdict, deque
 import traceback
 from time import sleep
 import random
@@ -10,6 +10,7 @@ class ProcessorGroup(object):
         self.batch = batch
         self.num_managers = num_managers
         self.mymessages = list()
+        self.free_ids = deque()
 
     def add_group(self, Agent, num_agents_this_group, agent_args, parameters,
                   agent_parameters, agent_params_from_sim):
@@ -22,11 +23,16 @@ class ProcessorGroup(object):
                                        agent_parameters=agent_parameters[i])
             self.agents[group].append(agent)
 
-    def append(self, Agent, id, agent_args, parameters, agent_parameters):
+    def append(self, Agent, pg_id, agent_args, parameters, agent_parameters):
         group = agent_args['group']
+        if self.free_ids:
+            id = self.free_ids.popleft()
+        else:
+            id = len(self.agents[group])
+            self.agents[group].append(None)
         agent = self.make_an_agent(
             Agent, id, agent_args, parameters, agent_parameters)
-        self.agents[group].append(agent)
+        self.agents[group][id] = agent
 
     def make_an_agent(self, Agent, id, agent_args,
                       parameters, agent_parameters):
@@ -59,23 +65,27 @@ class ProcessorGroup(object):
             self.put_messages_in_pigeonbox(messages)
             for group in groups:
                 for agent in self.agents[group]:
-                    outmessages = agent._execute(command, args, kwargs)
-                    for pgid, msg in enumerate(outmessages):
-                        if msg is not None:
-                            if pgid == self.batch:
-                                self.mymessages.extend(msg)
-                            elif pgid == self.num_managers:
-                                out[pgid].append(msg)
-                            else:
-                                out[pgid].extend(msg)
+                    try:
+                        outmessages = agent._execute(command, args, kwargs)
+                        for pgid, msg in enumerate(outmessages):
+                            if msg is not None:
+                                if pgid == self.batch:
+                                    self.mymessages.extend(msg)
+                                elif pgid == self.num_managers:
+                                    out[pgid].append(msg)
+                                else:
+                                    out[pgid].extend(msg)
+                    except AttributeError:
+                        pass
         except Exception:
             traceback.print_exc()
             raise
         return out
 
-    def replace_with_dead(self, group, id, DeadAgent):
+    def delete_agent(self, group, id):
         """ replaces a deleted agent """
-        self.agents[group][id // self.num_managers] = DeadAgent()
+        self.agents[group][id // self.num_managers] = None
+        self.free_ids.append(id)
 
     def name(self):
         return (self.group, self.batch)
