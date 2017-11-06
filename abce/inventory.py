@@ -3,14 +3,18 @@ from collections import defaultdict
 from abce.notenoughgoods import NotEnoughGoods
 from .expiringgood import ExpiringGood
 
-
 epsilon = get_epsilon()
+
+
+def isclose(a, b):
+    rel_tol = 1e-9
+    return abs(a - b) <= max(rel_tol * max(abs(a), abs(b)), 0.0)
 
 
 class Inventory(object):
     def __init__(self, name):
         self.haves = defaultdict(int)
-        self.reserved = defaultdict(int)
+        self._reserved = defaultdict(int)
         self.name = name
         self._expiring_goods = []
         self._perishable = []
@@ -83,16 +87,19 @@ class Inventory(object):
             self.haves[good] -= quantity
 
     def reserve(self, good, quantity):
-        self.reserved[good] += quantity
-        if self.reserved[good] > self.haves[good]:
-            self.reserved[good] += quantity
-            raise NotEnoughGoods(self.name, good, quantity - (self.haves[good] - self.reserved[good]))
+        self._reserved[good] += quantity
+        if self._reserved[good] > self.haves[good]:
+            if isclose(self._reserved[good], self.haves[good]):
+                self._reserved[good] = self.haves[good]
+            else:
+                self._reserved[good] -= quantity
+                raise NotEnoughGoods(self.name, good, quantity - (self.haves[good] - self._reserved[good]))
 
     def rewind(self, good, quantity):
-        self.reserved[good] -= quantity
+        self._reserved[good] -= quantity
 
     def commit(self, good, committed_quantity, final_quantity):
-        self.reserved[good] -= committed_quantity
+        self._reserved[good] -= committed_quantity
         self.haves[good] -= final_quantity
 
     def transform(self, ingredient, unit, product, quantity=None):
@@ -122,7 +129,7 @@ class Inventory(object):
                 self.bankruptcy = True
 
         """
-        return float(self.haves[good] - self.reserved[good])
+        return float(self.haves[good] - self._reserved[good])
 
     def reserved(self, good):
         """ returns how much of a good an agent has currently reseed to sell or buy.
@@ -142,11 +149,11 @@ class Inventory(object):
                 self.bankruptcy = True
 
         """
-        return self.reserved[good]
+        return self._reserved[good]
 
     def possessions(self):
         """ returns all possessions """
-        return {good: float(self.haves[good] - self.reserved[good]) for good in self.haves}
+        return {good: float(self.haves[good] - self._reserved[good]) for good in self.haves}
 
     def calculate_netvalue(self, prices):
         return sum(quantity * prices[name]
