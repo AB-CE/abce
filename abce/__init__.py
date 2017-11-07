@@ -172,10 +172,7 @@ class Simulation(object):
         self.perishable = []
         self.expiring = []
 
-        try:
-            os.makedirs(os.path.abspath('.') + '/result/')
-        except OSError:
-            pass
+        os.makedirs(os.path.abspath('.') + '/result/', exist_ok=True)
 
         self.path = (os.path.abspath('.') + '/result/' + name + '_' +
                      datetime.datetime.now().strftime("%Y-%m-%d_%H-%M"))
