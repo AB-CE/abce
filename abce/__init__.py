@@ -507,17 +507,32 @@ class Simulation(object):
         id = self.num_of_agents_in_group[group_name]
         self.num_of_agents_in_group[group_name] += 1
         pg = self._processor_groups[id % self.processes]
-        pg.append(AgentClass, id=id,
-                  agent_args={'group': group_name,
-                              'trade_logging': self.trade_logging_mode,
-                              'database': self.database_queue,
-                              'random_seed': random.random(),
-                              'agent_parameters': agent_parameters,
-                              'simulation_parameters': parameters,
-                              'check_unchecked_msgs': self.check_unchecked_msgs,
-                              'start_round': self.time},
-                  parameters=parameters,
-                  agent_parameters=agent_parameters)
+
+        # make an agent
+        agent_args = {'group': group_name,
+                      'trade_logging': self.trade_logging_mode,
+                      'database': self.database_queue,
+                      'random_seed': random.random(),
+                      'agent_parameters': agent_parameters,
+                      'simulation_parameters': parameters,
+                      'check_unchecked_msgs': self.check_unchecked_msgs,
+                      'start_round': self.time}
+        agent = AgentClass(id=id, **agent_args)
+        for good, duration in pg.apfs['expiring']:
+            agent._declare_expiring(good, duration)
+        for good in pg.apfs['perishable']:
+            agent._register_perish(good)
+        for resource, units, product in pg.apfs['resource_endowment']:
+            agent._register_resource(resource, units, product)
+        try:
+            agent.init(parameters, agent_parameters)
+        except AttributeError:
+            if 'init' not in dir(agent):
+                print("Warning: agent %s has no init function" % agent.group)
+            else:
+                raise
+
+        pg.agents[group_name].append(agent)
 
     def delete_agent(self, name, quite=True):
         """ This deletes an agent. By default, quite is set to True, all future
