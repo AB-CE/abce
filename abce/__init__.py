@@ -568,19 +568,3 @@ class Simulation(object):
         """
         self.finalize()
         graphs(self.sim_parameters)
-
-
-def _number_or_string(word):
-    """ returns a int if possible otherwise a float from a string
-    """
-    try:
-        return int(word)
-    except ValueError:
-        try:
-            return float(word)
-        except ValueError:
-            return word
-
-
-def defaultdict_list():
-    return defaultdict(list)

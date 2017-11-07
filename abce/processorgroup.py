@@ -119,7 +119,3 @@ class ProcessorGroup(object):
 
     def __repr__(self):
         return repr()
-
-
-def defaultdict_list():
-    return defaultdict(list)
