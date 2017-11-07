@@ -22,37 +22,6 @@ class ProcessorGroup(object):
                                        agent_parameters=agent_parameters[i])
             self.agents[group].append(agent)
 
-    def append(self, Agent, id, agent_args, parameters, agent_parameters):
-        group = agent_args['group']
-        agent = self.make_an_agent(
-            Agent, id, agent_args, parameters, agent_parameters)
-        self.agents[group].append(agent)
-
-    def make_an_agent(self, Agent, id, agent_args,
-                      parameters, agent_parameters):
-        agent_args['num_managers'] = self.num_managers
-        agent = Agent(id=id, **agent_args)
-        for good, duration in self.apfs['expiring']:
-            agent._declare_expiring(good, duration)
-        for good in self.apfs['perishable']:
-            agent._register_perish(good)
-        for resource, units, product in self.apfs['resource_endowment']:
-            agent._register_resource(resource, units, product)
-        try:
-            agent.init(parameters, agent_parameters)
-        except AttributeError:
-            if 'init' not in dir(agent):
-                print("Warning: agent %s has no init function" % agent.group)
-            else:
-                raise
-        except KeyboardInterrupt:
-            return None
-        except Exception:
-            sleep(random.random())
-            traceback.print_exc()
-            raise Exception()
-        return agent
-
     def execute(self, groups, command, messages, args, kwargs):
         try:
             out = [[] for _ in range(self.num_managers + 1)]
