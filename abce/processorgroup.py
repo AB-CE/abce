@@ -10,7 +10,7 @@ class ProcessorGroup(object):
         self.batch = batch
         self.num_managers = num_managers
         self.mymessages = list()
-        self.free_ids = deque()
+        self.free_ids = defaultdict(deque)
 
     def add_group(self, Agent, num_agents_this_group, agent_args, parameters,
                   agent_parameters, agent_params_from_sim):
@@ -23,16 +23,17 @@ class ProcessorGroup(object):
                                        agent_parameters=agent_parameters[i])
             self.agents[group].append(agent)
 
-    def append(self, Agent, pg_id, agent_args, parameters, agent_parameters):
+    def append(self, Agent, agent_args, parameters, agent_parameters):
         group = agent_args['group']
-        if self.free_ids:
-            id = self.free_ids.popleft()
-        else:
-            id = len(self.agents[group])
+        try:
+            id = self.free_ids[group].popleft()
+        except IndexError:
+            id = (len(self.agents[group])) * self.num_managers + self.batch
             self.agents[group].append(None)
         agent = self.make_an_agent(
             Agent, id, agent_args, parameters, agent_parameters)
-        self.agents[group][id] = agent
+        self.agents[group][id // self.num_managers] = agent
+        return id
 
     def make_an_agent(self, Agent, id, agent_args,
                       parameters, agent_parameters):
@@ -83,9 +84,8 @@ class ProcessorGroup(object):
         return out
 
     def delete_agent(self, group, id):
-        """ replaces a deleted agent """
         self.agents[group][id // self.num_managers] = None
-        self.free_ids.append(id)
+        self.free_ids[group].append(id)
 
     def name(self):
         return (self.group, self.batch)
@@ -97,6 +97,8 @@ class ProcessorGroup(object):
                     agent._advance_round(time)
                 except KeyboardInterrupt:
                     return None
+                except AttributeError:
+                    pass
                 except Exception:
                     sleep(random.random())
                     traceback.print_exc()
