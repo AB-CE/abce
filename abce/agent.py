@@ -313,11 +313,12 @@ class Agent(Database, Trade, Messaging):
         self._inventory.destroy(good, quantity)
 
     def _execute(self, command, args, kwargs):
-        self._out = [[] for _ in range(self.num_managers + 1)]
+        self._out = defaultdict(list)
         try:
             self._clearing__end_of_subround(self.inbox)
+            self.inbox.clear()
             self._begin_subround()
-            self._out[-1] = getattr(self, command)(*args, **kwargs)
+            ret = getattr(self, command)(*args, **kwargs)
             self._end_subround()
             self._reject_polled_but_not_accepted_offers()
         except KeyboardInterrupt:
@@ -329,8 +330,7 @@ class Agent(Database, Trade, Messaging):
             print('kwargs', kwargs)
             raise
 
-        self.inbox.clear()
-        return self._out
+        return self._out, ret
 
     def _begin_subround(self):
         """ Overwrite this to make ABCE plugins, that need to do
@@ -355,7 +355,7 @@ class Agent(Database, Trade, Messaging):
         typ =(_o,c,u,r) are
         reserved for internally processed offers.
         """
-        self._out[receiver_id % self.num_managers].append(
+        self._out[receiver_group].append(
             (receiver_group, receiver_id, (typ, msg)))
 
     def __getitem__(self, good):
