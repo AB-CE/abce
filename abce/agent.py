@@ -107,7 +107,7 @@ class Agent(Database, Trade, Messaging):
         self.trade_logging = {'individual': 1,
                               'group': 2, 'off': 0}[trade_logging]
         self.num_managers = num_managers
-        self._out = defaultdict(list)
+        self._out = []
 
         self._inventory = Inventory(self.name)
 
@@ -130,7 +130,7 @@ class Agent(Database, Trade, Messaging):
         self.time = start_round
         """ self.time, contains the time set with simulation.advance_round(time)
             you can set time to anything you want an integer or
-            (12, 30, 21, 09, 1979) or 'monday' """
+            (12, 30, 21, 09, 1979) or 'Monday' """
         self._resources = []
         self.variables_to_track_panel = []
         self.variables_to_track_aggregate = []
@@ -332,11 +332,9 @@ class Agent(Database, Trade, Messaging):
         return ret
 
     def _post_messages(self, inbox_handles):
-        for group_name, messages in self._out.items():
-            group = inbox_handles[group_name]
-            for id, envelope in messages:
-                group.agents[id].inbox.append(envelope)
-        self._out = defaultdict(list)
+        for group, id, envelope in self._out:
+            inbox_handles[group].agents[id].inbox.append(envelope)
+        self._out.clear()
 
     def _begin_subround(self):
         """ Overwrite this to make ABCE plugins, that need to do
@@ -361,8 +359,8 @@ class Agent(Database, Trade, Messaging):
         typ =(_o,c,u,r) are
         reserved for internally processed offers.
         """
-        self._out[receiver_group].append(
-            (receiver_id, (typ, msg)))
+        self._out.append(
+            (receiver_group, receiver_id, (typ, msg)))
 
     def __getitem__(self, good):
         return self._inventory.haves[good]
