@@ -175,7 +175,7 @@ class Group(object):
             self.agents[id].inbox.append(msg)
         self.sim.messagess[self.group_name].clear()
 
-    def len(self):
+    def __len__(self):
         """ Returns the length of a group """
         return sum([1 for agent in self.agents if agent is not None])
 
