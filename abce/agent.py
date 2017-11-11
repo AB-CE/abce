@@ -107,7 +107,7 @@ class Agent(Database, Trade, Messaging):
         self.trade_logging = {'individual': 1,
                               'group': 2, 'off': 0}[trade_logging]
         self.num_managers = num_managers
-        self._out = [[] for _ in range(self.num_managers + 1)]
+        self._out = defaultdict(list)
 
         self._inventory = Inventory(self.name)
 
@@ -313,7 +313,7 @@ class Agent(Database, Trade, Messaging):
         self._inventory.destroy(good, quantity)
 
     def _execute(self, command, args, kwargs):
-        self._out = defaultdict(list)
+
         try:
             self._clearing__end_of_subround(self.inbox)
             self.inbox.clear()
@@ -336,6 +336,7 @@ class Agent(Database, Trade, Messaging):
             group = inbox_handles[group_name]
             for id, envelope in messages:
                 group.agents[id].inbox.append(envelope)
+        self._out = defaultdict(list)
 
     def _begin_subround(self):
         """ Overwrite this to make ABCE plugins, that need to do
