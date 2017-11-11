@@ -139,10 +139,13 @@ class Group(object):
         self.put_messages_in_pigeonbox()
         for agent in self.agents:
             try:
-                messages, ret = agent._execute(command, args, kwargs)
-                for group, msg in messages.items():
-                    self.sim.messagess[group].extend(msg)
+                ret = agent._execute(command, args, kwargs)
                 rets.append(ret)
+            except AttributeError:
+                pass
+        for agent in self.agents:
+            try:
+                agent._post_messages(self.sim._groups)
             except AttributeError:
                 pass
         return rets

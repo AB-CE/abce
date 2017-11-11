@@ -329,8 +329,13 @@ class Agent(Database, Trade, Messaging):
             print('args', args)
             print('kwargs', kwargs)
             raise
+        return ret
 
-        return self._out, ret
+    def _post_messages(self, inbox_handles):
+        for group_name, messages in self._out.items():
+            group = inbox_handles[group_name]
+            for id, envelope in messages:
+                group.agents[id].inbox.append(envelope)
 
     def _begin_subround(self):
         """ Overwrite this to make ABCE plugins, that need to do
@@ -356,7 +361,7 @@ class Agent(Database, Trade, Messaging):
         reserved for internally processed offers.
         """
         self._out[receiver_group].append(
-            (receiver_group, receiver_id, (typ, msg)))
+            (receiver_id, (typ, msg)))
 
     def __getitem__(self, good):
         return self._inventory.haves[good]
