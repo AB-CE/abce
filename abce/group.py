@@ -141,13 +141,13 @@ class Group(object):
     def do(self, command, *args, **kwargs):
         self.last_action = command
         rets = []
-        for agent in self._agents[self.group_names]:
+        for agent in self._agents.get_groups(self.group_names):
             try:
                 ret = agent._execute(command, args, kwargs)
                 rets.append(ret)
             except AttributeError:
                 pass
-        for agent in self._agents[self.group_names]:
+        for agent in self._agents.get_groups(self.group_names):
             if agent is not None:
                 agent._post_messages(self._agents)
         return rets
@@ -161,7 +161,7 @@ class Group(object):
         return (self.group, self.batch)
 
     def execute_advance_round(self, time):
-        for agent in self._agents[self.group_names]:
+        for agent in self._agents.get_groups(self.group_names):
             try:
                 agent._advance_round(time)
             except KeyboardInterrupt:
@@ -175,7 +175,7 @@ class Group(object):
 
     def __len__(self):
         """ Returns the length of a group """
-        return sum([1 for agent in self._agents[self.group_names] if agent is not None])
+        return sum([1 for agent in self._agents.get_groups(self.group_names) if agent is not None])
 
     def repr(self):
         return str(self.batch)
