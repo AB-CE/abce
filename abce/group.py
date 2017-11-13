@@ -4,32 +4,34 @@ from time import sleep
 import random
 
 
-def get_methods(a_class):
-    return [method for method in a_class.__dict__.keys() if
-            callable(getattr(a_class, method)) and not
-            method.startswith('_') and method != 'init']
+def get_methods(agent_class):
+    return set(method
+               for method in dir(agent_class)
+               if callable(getattr(agent_class, method)) and
+               method[0] != '_' and method != 'init')
 
 
 class Group(object):
-    def __init__(self, sim, group_name, processorgroup, agent_class=None):
+    def __init__(self, sim, processorgroup, group_names, agent_classes):
         self.sim = sim
         self.num_managers = sim.processes
-        self.group_name = group_name
-        self.agent_class = agent_class
-        for method in dir(agent_class):
-            if method[0] != '_':
-                setattr(self, method,
-                        eval('lambda self=self, *argc, **kw: self.do("%s", *argc, **kw)' %
-                             method))
+        self._agents = processorgroup
+        self.group_names = group_names
+        self.agent_classes = agent_classes
+        for method in set.intersection(*(get_methods(agent_class) for agent_class in agent_classes)):
+            setattr(self, method,
+                    eval('lambda self=self, *argc, **kw: self.do("%s", *argc, **kw)' %
+                         method))
 
         self.panel_serial = 0
         self.last_action = "Begin_of_Simulation"
-        self.free_ids = defaultdict(deque)
-        self._agents = processorgroup
-        self._agents.new_group(group_name)
 
-    def __add__(self, g):
-        return Group(self.sim, self.groups + g.groups, self.agent_class)
+        if len(group_names) == 1:
+            self.free_ids = defaultdict(deque)
+            self._agents.new_group(group_names[0])
+
+    def __add__(self, other):
+        return Group(self.sim, self._agents, self.group_names + other.group_names, self.agent_classes + other.agent_classes)
 
     def __radd__(self, g):
         if isinstance(g, Group):
@@ -91,22 +93,24 @@ class Group(object):
 
     def add_group(self, Agent, num_agents_this_group, agent_args, parameters,
                   agent_parameters, agent_params_from_sim):
+        assert len(self.group_names) == 1
         self.apfs = agent_params_from_sim
         for id in range(num_agents_this_group):
             agent = self.make_an_agent(Agent, id=id, agent_args=agent_args,
                                        parameters=parameters,
                                        agent_parameters=agent_parameters[id])
-            self._agents.append(agent, self.group_name, id)
+            self._agents.append(agent, self.group_names[0], id)
 
     def append(self, Agent, agent_args, parameters, agent_parameters):
+        assert len(self.group_names) == 1
         try:
-            id = self.free_ids[self.group_name].popleft()
+            id = self.free_ids[self.group_names[0]].popleft()
         except IndexError:
-            id = len(self._agents[self.group_name])
-            self._agents[self.group_name].append(None)
+            id = len(self._agents.agents[self.group_names[0]])
+            self._agents.agents[self.group_names[0]].append(None)
         agent = self.make_an_agent(
             Agent, id, agent_args, parameters, agent_parameters)
-        self._agents[self.group_name][id] = agent
+        self._agents.agents[self.group_names[0]][id] = agent
         return id
 
     def make_an_agent(self, Agent, id, agent_args,
@@ -137,26 +141,27 @@ class Group(object):
     def do(self, command, *args, **kwargs):
         self.last_action = command
         rets = []
-        for agent in self._agents[self.group_name]:
+        for agent in self._agents[self.group_names]:
             try:
                 ret = agent._execute(command, args, kwargs)
                 rets.append(ret)
             except AttributeError:
                 pass
-        for agent in self._agents[self.group_name]:
+        for agent in self._agents[self.group_names]:
             if agent is not None:
                 agent._post_messages(self._agents)
         return rets
 
     def delete_agent(self, id):
-        self._agents[self.group_name][id] = None
-        self.free_ids[self.group_name].append(id)
+        assert len(self.group_names) == 1
+        self._agents.agents[self.group_names[0]][id] = None
+        self.free_ids[self.group_names[0]].append(id)
 
     def name(self):
         return (self.group, self.batch)
 
     def execute_advance_round(self, time):
-        for agent in self._agents[self.group_name]:
+        for agent in self._agents[self.group_names]:
             try:
                 agent._advance_round(time)
             except KeyboardInterrupt:
@@ -170,7 +175,7 @@ class Group(object):
 
     def __len__(self):
         """ Returns the length of a group """
-        return sum([1 for agent in self._agents[self.group_name] if agent is not None])
+        return sum([1 for agent in self._agents[self.group_names] if agent is not None])
 
     def repr(self):
         return str(self.batch)

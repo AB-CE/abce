@@ -1,3 +1,6 @@
+import itertools
+
+
 class SingleProcess(object):
     def __init__(self):
         self.agents = {}
@@ -8,6 +11,8 @@ class SingleProcess(object):
     def append(self, agent, group, id):
         self.agents[group].append(agent)
 
-    def __getitem__(self, group):
-        return self.agents[group]
+    def __getitem__(self, groups):
+        return itertools.chain(*(self.agents[group] for group in groups))
 
+    def get(self, group, id):
+        return self.agents[group][id]

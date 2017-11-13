@@ -427,7 +427,7 @@ class Simulation(object):
             'perishable': self.perishable,
             'resource_endowment': self.resource_endowment}
 
-        group = Group(self, group_name, self._processorgroup, AgentClass)
+        group = Group(self, self._processorgroup, [group_name], [AgentClass])
         group.add_group(AgentClass,
                         num_agents_this_group=num_agents_this_group,
                         agent_args={'group': group_name,
