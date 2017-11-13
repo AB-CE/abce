@@ -1,12 +1,13 @@
-from collections import defaultdict
-
-
 class SingleProcess(object):
     def __init__(self):
-        self.agents = defaultdict(list)
+        self.agents = {}
+
+    def new_group(self, group):
+        self.agents[group] = []
 
     def append(self, agent, group, id):
         self.agents[group].append(agent)
 
-    def __getitem__(self, groups):
-        return self.agents[groups]
+    def __getitem__(self, group):
+        return self.agents[group]
+

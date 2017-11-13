@@ -26,6 +26,7 @@ class Group(object):
         self.last_action = "Begin_of_Simulation"
         self.free_ids = defaultdict(deque)
         self._agents = processorgroup
+        self._agents.new_group(group_name)
 
     def __add__(self, g):
         return Group(self.sim, self.groups + g.groups, self.agent_class)
