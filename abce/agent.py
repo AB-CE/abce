@@ -331,9 +331,9 @@ class Agent(Database, Trade, Messaging):
             raise
         return ret
 
-    def _post_messages(self, inbox_handles):
+    def _post_messages(self, _agents):
         for group, id, envelope in self._out:
-            inbox_handles[group][id].inbox.append(envelope)
+            _agents.get(group, id).inbox.append(envelope)
         self._out.clear()
 
     def _begin_subround(self):
