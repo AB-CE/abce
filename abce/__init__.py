@@ -65,6 +65,7 @@ from .agents import (FirmMultiTechnologies, Firm,  # noqa: F401
 from .quote import Quote  # noqa: F401
 from .contracts import Contracting  # noqa: F401
 from .gui import gui, graphs  # noqa: F401
+from .singleprocess import SingleProcess
 
 
 class MyManager(BaseManager):
@@ -211,6 +212,7 @@ class Simulation(object):
         self.time = None
         """Returns the current time set with simulation.advance_round(time)"""
         self._groups = {}
+        self._processorgroup = SingleProcess()
 
     def declare_round_endowment(self, resource, units,
                                 product):
@@ -425,7 +427,7 @@ class Simulation(object):
             'perishable': self.perishable,
             'resource_endowment': self.resource_endowment}
 
-        group = Group(self, group_name, AgentClass)
+        group = Group(self, group_name, self._processorgroup, AgentClass)
         group.add_group(AgentClass,
                         num_agents_this_group=num_agents_this_group,
                         agent_args={'group': group_name,

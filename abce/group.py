@@ -1,4 +1,4 @@
-from collections import deque
+from collections import deque, defaultdict
 import traceback
 from time import sleep
 import random
@@ -11,7 +11,7 @@ def get_methods(a_class):
 
 
 class Group(object):
-    def __init__(self, sim, group_name, agent_class=None):
+    def __init__(self, sim, group_name, processorgroup, agent_class=None):
         self.sim = sim
         self.num_managers = sim.processes
         self.group_name = group_name
@@ -24,7 +24,8 @@ class Group(object):
 
         self.panel_serial = 0
         self.last_action = "Begin_of_Simulation"
-        self.free_ids = deque()
+        self.free_ids = defaultdict(deque)
+        self._agents = processorgroup
 
     def __add__(self, g):
         return Group(self.sim, self.groups + g.groups, self.agent_class)
@@ -89,23 +90,22 @@ class Group(object):
 
     def add_group(self, Agent, num_agents_this_group, agent_args, parameters,
                   agent_parameters, agent_params_from_sim):
-        self.agents = []
         self.apfs = agent_params_from_sim
-        for i in range(num_agents_this_group):
-            agent = self.make_an_agent(Agent, id=i, agent_args=agent_args,
+        for id in range(num_agents_this_group):
+            agent = self.make_an_agent(Agent, id=id, agent_args=agent_args,
                                        parameters=parameters,
-                                       agent_parameters=agent_parameters[i])
-            self.agents.append(agent)
+                                       agent_parameters=agent_parameters[id])
+            self._agents.append(agent, self.group_name, id)
 
     def append(self, Agent, agent_args, parameters, agent_parameters):
         try:
-            id = self.free_ids.popleft()
+            id = self.free_ids[self.group_name].popleft()
         except IndexError:
-            id = len(self.agents)
-            self.agents.append(None)
+            id = len(self._agents[self.group_name])
+            self._agents[self.group_name].append(None)
         agent = self.make_an_agent(
             Agent, id, agent_args, parameters, agent_parameters)
-        self.agents[id] = agent
+        self._agents[self.group_name][id] = agent
         return id
 
     def make_an_agent(self, Agent, id, agent_args,
@@ -136,29 +136,26 @@ class Group(object):
     def do(self, command, *args, **kwargs):
         self.last_action = command
         rets = []
-        self.put_messages_in_pigeonbox()
-        for agent in self.agents:
+        for agent in self._agents[self.group_name]:
             try:
                 ret = agent._execute(command, args, kwargs)
                 rets.append(ret)
             except AttributeError:
                 pass
-        for agent in self.agents:
-            try:
-                agent._post_messages(self.sim._groups)
-            except AttributeError:
-                pass
+        for agent in self._agents[self.group_name]:
+            if agent is not None:
+                agent._post_messages(self._agents)
         return rets
 
     def delete_agent(self, id):
-        self.agents[id] = None
-        self.free_ids.append(id)
+        self._agents[self.group_name][id] = None
+        self.free_ids[self.group_name].append(id)
 
     def name(self):
         return (self.group, self.batch)
 
     def execute_advance_round(self, time):
-        for agent in self.agents:
+        for agent in self._agents[self.group_name]:
             try:
                 agent._advance_round(time)
             except KeyboardInterrupt:
@@ -170,14 +167,9 @@ class Group(object):
                 traceback.print_exc()
                 raise Exception()
 
-    def put_messages_in_pigeonbox(self):
-        for _, id, msg in self.sim.messagess[self.group_name]:
-            self.agents[id].inbox.append(msg)
-        self.sim.messagess[self.group_name].clear()
-
     def __len__(self):
         """ Returns the length of a group """
-        return sum([1 for agent in self.agents if agent is not None])
+        return sum([1 for agent in self._agents[self.group_name] if agent is not None])
 
     def repr(self):
         return str(self.batch)
