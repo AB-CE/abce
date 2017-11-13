@@ -333,7 +333,7 @@ class Agent(Database, Trade, Messaging):
 
     def _post_messages(self, inbox_handles):
         for group, id, envelope in self._out:
-            inbox_handles[group].agents[id].inbox.append(envelope)
+            inbox_handles[group][id].inbox.append(envelope)
         self._out.clear()
 
     def _begin_subround(self):
