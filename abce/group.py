@@ -1,7 +1,4 @@
 from collections import deque, defaultdict
-import traceback
-from time import sleep
-import random
 
 
 def _get_methods(agent_class):
@@ -140,18 +137,9 @@ class Group(object):
     def name(self):
         return (self.group, self.batch)
 
-    def execute_advance_round(self, time):
+    def _execute_advance_round(self, time):
         for agent in self._agents.get_agents(self.group_names, self._ids):
-            try:
-                agent._advance_round(time)
-            except KeyboardInterrupt:
-                return None
-            except AttributeError:
-                pass
-            except Exception:
-                sleep(random.random())
-                traceback.print_exc()
-                raise Exception()
+            agent._advance_round(time)
 
     def __getitem__(self, *ids):
         if isinstance(*ids, int):
