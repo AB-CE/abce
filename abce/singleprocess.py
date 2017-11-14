@@ -32,24 +32,24 @@ class SingleProcess(object):
         """appends an agent to a group """
         self.agents[group].append(agent)
 
-    def get_agents(self, groups, ids):
-        """ Iterate over agents in ids in several groups
-
-        Args:
-            groups:
-                array of group names
-            ids:
-                array of the same length as group names, which
-                contains arrais with the id's of individual agent.
-
-        Example::
-
-            get_agents([agentsA, agentsB ], [[1,3,4], [1,5,6]])
-        """
+    def do(self, groups, ids, command, args, kwargs):
+        rets = []
         for group, iss in zip(groups, ids):
             for i in iss:
                 if i is not None:
-                    yield self.agents[group][i]
+                    ret = self.agents[group][i]._execute(command, args, kwargs)
+                    rets.append(ret)
+        for group, iss in zip(groups, ids):
+            for i in iss:
+                if i is not None:
+                    self.agents[group][i]._post_messages(self)
+        return rets
+
+    def advance_round(self, groups, ids, time):
+        for group, iss in zip(groups, ids):
+            for i in iss:
+                if i is not None:
+                    self.agents[group][i]._advance_round(time)
 
     def get(self, group, id):
         return self.agents[group][id]

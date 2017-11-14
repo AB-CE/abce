@@ -178,13 +178,7 @@ class Group(object):
     def do(self, command, *args, **kwargs):
         """ agent actions can be executed by group.action() or group.do('action') """
         self.last_action = command
-        rets = []
-        for agent in self._agents.get_agents(self.group_names, self._ids):
-            ret = agent._execute(command, args, kwargs)
-            rets.append(ret)
-        for agent in self._agents.get_agents(self.group_names, self._ids):
-            agent._post_messages(self._agents)
-        return rets
+        return self._agents.do(self.group_names, self._ids, command, args, kwargs)
 
     def delete_agent(self, id):
         """ Remove an agent from not combined group, by specifying his ID:
@@ -199,8 +193,7 @@ class Group(object):
         self.free_ids[self.group_names[0]].append(id)
 
     def _execute_advance_round(self, time):
-        for agent in self._agents.get_agents(self.group_names, self._ids):
-            agent._advance_round(time)
+        self._agents.advance_round(self.group_names, self._ids, time)
 
     def __getitem__(self, *ids):
         if isinstance(*ids, int):
