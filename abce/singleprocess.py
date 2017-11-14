@@ -28,9 +28,12 @@ class SingleProcess(object):
         """ Creates a new group. """
         self.agents[group] = []
 
-    def append(self, agent, group, id):
+    def insert_or_append(self, group, id, agent):
         """appends an agent to a group """
-        self.agents[group].append(agent)
+        try:
+            self.agents[group][id] = agent
+        except IndexError:
+            self.agents[group].append(agent)
 
     def do(self, groups, ids, command, args, kwargs):
         rets = []

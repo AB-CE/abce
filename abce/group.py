@@ -151,8 +151,8 @@ class Group(object):
         """
         self.do('_agg_log', variables, possessions, func, len)
 
-    def append(self, simulation_parameters, agent_parameters):
-        """ Append a new agent to this group. Works only for non-combined groups
+    def create_agent(self, simulation_parameters, agent_parameters):
+        """ Create a new agent to this group. Works only for non-combined groups
 
         Args:
             simulation_parameters:
@@ -160,19 +160,23 @@ class Group(object):
 
             agent_parameters:
                 A dictionary of simulation_parameters
+
+        Returns:
+            The id of the new agent
         """
         assert len(self.group_names) == 1, 'Group is a combined group, no appending permitted'
-        if self.free_ids[self.group_names[0]]:
-            id = self.free_ids[self.group_names[0]].popleft()
+        group_name = self.group_names[0]
+        if self.free_ids[group_name]:
+            id = self.free_ids[group_name].popleft()
+            self._ids[0][id] = id
         else:
-            id = len(self._agents.agents[self.group_names[0]])
-            self._agents.agents[self.group_names[0]].append(None)
+            id = len(self._ids[0])
             self._ids[0].append(id)
+
         Agent = self.agent_classes[0]
         agent = Agent(id, simulation_parameters, agent_parameters, **self._agent_arguments)
         agent.init(simulation_parameters, agent_parameters)
-        self._agents.agents[self.group_names[0]][id] = agent
-        self._ids[0][id] = id
+        self._agents.insert_or_append(group_name, id, agent)
         return id
 
     def do(self, command, *args, **kwargs):
