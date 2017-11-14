@@ -332,7 +332,7 @@ class Simulation(object):
         self.time = time
         print("\rRound" + str(time))
         for groups in self._groups.values():
-            groups.execute_advance_round(time)
+            groups._execute_advance_round(time)
 
     def __del__(self):
         self.finalize()
