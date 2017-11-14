@@ -431,8 +431,8 @@ class Simulation(object):
                                        'perishable': self.perishable,
                                        'resource_endowment': self.resource_endowment})
         for id in range(num_agents_this_group):
-            group.append(simulation_parameters=parameters,
-                         agent_parameters=agent_parameters[id])
+            group.create_agent(simulation_parameters=parameters,
+                               agent_parameters=agent_parameters[id])
         self.num_of_agents_in_group[group_name] = num_agents_this_group
         self._groups[group_name] = group
         self.messagess[group_name] = []
@@ -470,8 +470,8 @@ class Simulation(object):
         """
         group = self._groups[group_name]
         self.num_of_agents_in_group[group_name] += 1
-        id = group.append(simulation_parameters=parameters,
-                          agent_parameters=agent_parameters)
+        id = group.create_agent(simulation_parameters=parameters,
+                                agent_parameters=agent_parameters)
         return id
 
     def delete_agent(self, name):
