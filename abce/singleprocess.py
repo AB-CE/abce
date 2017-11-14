@@ -48,7 +48,7 @@ class SingleProcess(object):
         for group, iss in zip(groups, ids):
             for i in iss:
                 if i is not None:
-                    self.agents[group][i]._post_messages(self)
+                    self.agents[group][i]._post_messages(self.agents)
         return rets
 
     def advance_round(self, groups, ids, time):
@@ -56,9 +56,6 @@ class SingleProcess(object):
             for i in iss:
                 if i is not None:
                     self.agents[group][i]._advance_round(time)
-
-    def get(self, group, id):
-        return self.agents[group][id]
 
     def group_names(self):
         return self.agents.keys()

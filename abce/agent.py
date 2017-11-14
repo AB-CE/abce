@@ -334,9 +334,9 @@ class Agent(Database, Trade, Messaging):
         self._reject_polled_but_not_accepted_offers()
         return ret
 
-    def _post_messages(self, _agents):
+    def _post_messages(self, agents):
         for group, id, envelope in self._out:
-            _agents.get(group, id).inbox.append(envelope)
+            agents[group][id].inbox.append(envelope)
         self._out.clear()
 
     def _begin_subround(self):
