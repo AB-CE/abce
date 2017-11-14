@@ -83,7 +83,7 @@ class Group(object):
 
         if len(group_names) == 1:
             self.free_ids = defaultdict(deque)
-            if group_names[0] not in self._agents.agents:
+            if group_names[0] not in self._agents.group_names():
                 self._agents.new_group(group_names[0])
         if ids is None:
             self._ids = [[]]
