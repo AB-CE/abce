@@ -12,7 +12,7 @@ def get_methods(agent_class):
 
 
 class Group(object):
-    def __init__(self, sim, processorgroup, group_names, agent_classes):
+    def __init__(self, sim, processorgroup, group_names, agent_classes, ids=None):
         self.sim = sim
         self.num_managers = sim.processes
         self._agents = processorgroup
@@ -28,10 +28,15 @@ class Group(object):
 
         if len(group_names) == 1:
             self.free_ids = defaultdict(deque)
-            self._agents.new_group(group_names[0])
+            if group_names[0] not in self._agents.agents:
+                self._agents.new_group(group_names[0])
+        if ids is None:
+            self._ids = [[]]
+        else:
+            self._ids = ids
 
     def __add__(self, other):
-        return Group(self.sim, self._agents, self.group_names + other.group_names, self.agent_classes + other.agent_classes)
+        return Group(self.sim, self._agents, self.group_names + other.group_names, self.agent_classes + other.agent_classes, self._ids + other._ids)
 
     def __radd__(self, g):
         if isinstance(g, Group):
@@ -100,6 +105,7 @@ class Group(object):
                                        parameters=parameters,
                                        agent_parameters=agent_parameters[id])
             self._agents.append(agent, self.group_names[0], id)
+            self._ids[0].append(id)
 
     def append(self, Agent, agent_args, parameters, agent_parameters):
         assert len(self.group_names) == 1
@@ -108,9 +114,11 @@ class Group(object):
         except IndexError:
             id = len(self._agents.agents[self.group_names[0]])
             self._agents.agents[self.group_names[0]].append(None)
+            self._ids[0].append(id)
         agent = self.make_an_agent(
             Agent, id, agent_args, parameters, agent_parameters)
         self._agents.agents[self.group_names[0]][id] = agent
+        self._ids[0][id] = id
         return id
 
     def make_an_agent(self, Agent, id, agent_args,
@@ -141,27 +149,24 @@ class Group(object):
     def do(self, command, *args, **kwargs):
         self.last_action = command
         rets = []
-        for agent in self._agents.get_groups(self.group_names):
-            try:
-                ret = agent._execute(command, args, kwargs)
-                rets.append(ret)
-            except AttributeError:
-                pass
-        for agent in self._agents.get_groups(self.group_names):
-            if agent is not None:
-                agent._post_messages(self._agents)
+        for agent in self._agents.get_agents(self.group_names, self._ids):
+            ret = agent._execute(command, args, kwargs)
+            rets.append(ret)
+        for agent in self._agents.get_agents(self.group_names, self._ids):
+            agent._post_messages(self._agents)
         return rets
 
     def delete_agent(self, id):
         assert len(self.group_names) == 1
         self._agents.agents[self.group_names[0]][id] = None
+        self._ids[0][id] = None
         self.free_ids[self.group_names[0]].append(id)
 
     def name(self):
         return (self.group, self.batch)
 
     def execute_advance_round(self, time):
-        for agent in self._agents.get_groups(self.group_names):
+        for agent in self._agents.get_agents(self.group_names, self._ids):
             try:
                 agent._advance_round(time)
             except KeyboardInterrupt:
@@ -173,9 +178,14 @@ class Group(object):
                 traceback.print_exc()
                 raise Exception()
 
+    def __getitem__(self, *ids):
+        if isinstance(*ids, int):
+            ids = [ids]
+        return Group(self.sim, self._agents, self.group_names, self.agent_classes, ids=ids * len(self.group_names))
+
     def __len__(self):
         """ Returns the length of a group """
-        return sum([1 for agent in self._agents.get_groups(self.group_names) if agent is not None])
+        return sum([1 for agent in self._agents.get_agents(self.group_names, self._ids) if agent is not None])
 
     def repr(self):
         return str(self.batch)
