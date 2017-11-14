@@ -164,7 +164,17 @@ class Agent(Database, Trade, Messaging):
         """ This method is called when the agents are build.
         It can be overwritten by the user, to initialize the agents.
         parameters and agent_parameters are the parameters given in
-        :py:meth:`abce.Simulation.build_agents`
+        :py:meth:`abce.Simulation.build_agents`.
+
+        This function has two arguments simulation_parameters and
+        agent_parameters. The two arguments are taken from
+        :py:meth:`abce.Simulation.build_agents`.
+
+        Example:
+
+            def init(self, simulation_parameters, agent_parameters):
+                self.length = simulation_parameters['length']
+                self.age = agent_parameters['age']
         """
         print("Warning: agent %s has no init function" % self.group)
 
