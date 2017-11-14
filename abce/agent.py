@@ -28,8 +28,6 @@ Logging and data creation, see :doc:`Database`.
 
 Messaging between agents, see :doc:`Messaging`.
 """
-import time
-import random
 from collections import OrderedDict, defaultdict
 from pprint import pprint
 import abce
@@ -328,22 +326,12 @@ class Agent(Database, Trade, Messaging):
         self._inventory.destroy(good, quantity)
 
     def _execute(self, command, args, kwargs):
-
-        try:
-            self._clearing__end_of_subround(self.inbox)
-            self.inbox.clear()
-            self._begin_subround()
-            ret = getattr(self, command)(*args, **kwargs)
-            self._end_subround()
-            self._reject_polled_but_not_accepted_offers()
-        except KeyboardInterrupt:
-            return None
-        except Exception:
-            time.sleep(random.random())
-            print('command', command)
-            print('args', args)
-            print('kwargs', kwargs)
-            raise
+        self._clearing__end_of_subround(self.inbox)
+        self.inbox.clear()
+        self._begin_subround()
+        ret = getattr(self, command)(*args, **kwargs)
+        self._end_subround()
+        self._reject_polled_but_not_accepted_offers()
         return ret
 
     def _post_messages(self, _agents):
