@@ -72,7 +72,7 @@ class Group(object):
         self._agents = processorgroup
         self.group_names = group_names
         self.agent_classes = agent_classes
-        self._agent_arguments    = agent_arguments
+        self._agent_arguments = agent_arguments
         for method in set.intersection(*(_get_methods(agent_class) for agent_class in agent_classes)):
             setattr(self, method,
                     eval('lambda self=self, *argc, **kw: self.do("%s", *argc, **kw)' %
@@ -187,7 +187,7 @@ class Group(object):
         return rets
 
     def delete_agent(self, id):
-        """ Remove an agent from not combined group, by specifieing his ID:
+        """ Remove an agent from not combined group, by specifying his ID:
 
         Args:
             id:
@@ -209,7 +209,7 @@ class Group(object):
 
     def __len__(self):
         """ Returns the length of a group """
-        return sum([1 for agent in self._agents.get_agents(self.group_names, self._ids) if agent is not None])
+        return sum([len(groupids) for groupids in self._ids])
 
     def __repr__(self):
         return repr(self)
