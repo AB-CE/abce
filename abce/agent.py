@@ -166,7 +166,7 @@ class Agent(Database, Trade, Messaging):
         parameters and agent_parameters are the parameters given in
         :py:meth:`abce.Simulation.build_agents`
         """
-        pass
+        print("Warning: agent %s has no init function" % self.group)
 
     def possession(self, good):
         """ returns how much of good an agent possesses.
