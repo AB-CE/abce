@@ -96,22 +96,13 @@ class Group(object):
         """
         self.do('_agg_log', variables, possessions, func, len)
 
-    def add_group(self, Agent, num_agents_this_group, agent_args, parameters,
-                  agent_parameters, agent_params_from_sim):
-        assert len(self.group_names) == 1
-        self.apfs = agent_params_from_sim
-        for id in range(num_agents_this_group):
-            agent = self.make_an_agent(Agent, id=id, agent_args=agent_args,
-                                       parameters=parameters,
-                                       agent_parameters=agent_parameters[id])
-            self._agents.append(agent, self.group_names[0], id)
-            self._ids[0].append(id)
-
     def append(self, Agent, agent_args, parameters, agent_parameters):
-        assert len(self.group_names) == 1
-        try:
+        """ Append a new agent to this group. Works only for non-combined groups
+        """
+        assert len(self.group_names) == 1, 'Group is a combined group, no appending permitted'
+        if self.free_ids[self.group_names[0]]:
             id = self.free_ids[self.group_names[0]].popleft()
-        except IndexError:
+        else:
             id = len(self._agents.agents[self.group_names[0]])
             self._agents.agents[self.group_names[0]].append(None)
             self._ids[0].append(id)
