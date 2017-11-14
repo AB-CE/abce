@@ -85,9 +85,8 @@ class Agent(Database, Trade, Messaging):
 
 
     """
-    def __init__(self, id, group, trade_logging,
-                 database, random_seed, num_managers, agent_parameters, simulation_parameters,
-                 check_unchecked_msgs, start_round=None):
+    def __init__(self, id, agent_parameters, simulation_parameters, group, trade_logging,
+                 database, random_seed, check_unchecked_msgs, expiring, perishable, resource_endowment, start_round=None):
         """ Do not overwrite __init__ instead use a method called init instead.
         init is called whenever the agent are build.
         """
@@ -106,7 +105,6 @@ class Agent(Database, Trade, Messaging):
 
         self.trade_logging = {'individual': 1,
                               'group': 2, 'off': 0}[trade_logging]
-        self.num_managers = num_managers
         self._out = []
 
         self._inventory = Inventory(self.name)
@@ -153,7 +151,16 @@ class Agent(Database, Trade, Messaging):
 
         self._check_every_round_for_lost_messages = check_unchecked_msgs
 
-    def init(self, parameters, agent_parameters):
+        for good, duration in expiring:
+            self._declare_expiring(good, duration)
+
+        for good in perishable:
+            self._register_perish(good)
+
+        for resource, units, product in resource_endowment:
+            self._register_resource(resource, units, product)
+
+    def init(self, simulation_parameters, agent_parameters):
         """ This method is called when the agents are build.
         It can be overwritten by the user, to initialize the agents.
         parameters and agent_parameters are the parameters given in

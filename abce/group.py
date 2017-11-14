@@ -12,7 +12,7 @@ def get_methods(agent_class):
 
 
 class Group(object):
-    def __init__(self, sim, processorgroup, group_names, agent_classes, ids=None):
+    def __init__(self, sim, processorgroup, group_names, agent_classes, ids=None, agent_arguments=None):
         self.sim = sim
         self.num_managers = sim.processes
         self._agents = processorgroup
@@ -96,8 +96,15 @@ class Group(object):
         """
         self.do('_agg_log', variables, possessions, func, len)
 
-    def append(self, Agent, agent_args, parameters, agent_parameters):
+    def append(self, simulation_parameters, agent_parameters):
         """ Append a new agent to this group. Works only for non-combined groups
+
+        Args:
+            simulation_parameters:
+                A dictionary of simulation_parameters
+
+            agent_parameters:
+                A dictionary of simulation_parameters
         """
         assert len(self.group_names) == 1, 'Group is a combined group, no appending permitted'
         if self.free_ids[self.group_names[0]]:
@@ -106,36 +113,12 @@ class Group(object):
             id = len(self._agents.agents[self.group_names[0]])
             self._agents.agents[self.group_names[0]].append(None)
             self._ids[0].append(id)
-        agent = self.make_an_agent(
-            Agent, id, agent_args, parameters, agent_parameters)
+        Agent = self.agent_classes[0]
+        agent = Agent(id, simulation_parameters, agent_parameters, **self._agent_arguments)
+        agent.init(simulation_parameters, agent_parameters)
         self._agents.agents[self.group_names[0]][id] = agent
         self._ids[0][id] = id
         return id
-
-    def make_an_agent(self, Agent, id, agent_args,
-                      parameters, agent_parameters):
-        agent_args['num_managers'] = self.num_managers
-        agent = Agent(id=id, **agent_args)
-        for good, duration in self.apfs['expiring']:
-            agent._declare_expiring(good, duration)
-        for good in self.apfs['perishable']:
-            agent._register_perish(good)
-        for resource, units, product in self.apfs['resource_endowment']:
-            agent._register_resource(resource, units, product)
-        try:
-            agent.init(parameters, agent_parameters)
-        except AttributeError:
-            if 'init' not in dir(agent):
-                print("Warning: agent %s has no init function" % agent.group)
-            else:
-                raise
-        except KeyboardInterrupt:
-            return None
-        except Exception:
-            sleep(random.random())
-            traceback.print_exc()
-            raise Exception()
-        return agent
 
     def do(self, command, *args, **kwargs):
         self.last_action = command
@@ -178,8 +161,5 @@ class Group(object):
         """ Returns the length of a group """
         return sum([1 for agent in self._agents.get_agents(self.group_names, self._ids) if agent is not None])
 
-    def repr(self):
-        return str(self.batch)
-
     def __repr__(self):
-        return repr()
+        return repr(self)
