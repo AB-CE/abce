@@ -4,7 +4,7 @@ from time import sleep
 import random
 
 
-def get_methods(agent_class):
+def _get_methods(agent_class):
     return set(method
                for method in dir(agent_class)
                if callable(getattr(agent_class, method)) and
@@ -18,7 +18,8 @@ class Group(object):
         self._agents = processorgroup
         self.group_names = group_names
         self.agent_classes = agent_classes
-        for method in set.intersection(*(get_methods(agent_class) for agent_class in agent_classes)):
+        self._agent_arguments    = agent_arguments
+        for method in set.intersection(*(_get_methods(agent_class) for agent_class in agent_classes)):
             setattr(self, method,
                     eval('lambda self=self, *argc, **kw: self.do("%s", *argc, **kw)' %
                          method))
