@@ -53,3 +53,6 @@ class SingleProcess(object):
 
     def get(self, group, id):
         return self.agents[group][id]
+
+    def group_names(self):
+        return self.agents.keys()
