@@ -86,7 +86,7 @@ class Agent(Database, Trade, Messaging):
 
     """
     def __init__(self, id, agent_parameters, simulation_parameters, group, trade_logging,
-                 database, random_seed, check_unchecked_msgs, expiring, perishable, resource_endowment, start_round=None):
+                 database, check_unchecked_msgs, expiring, perishable, resource_endowment, start_round=None):
         """ Do not overwrite __init__ instead use a method called init instead.
         init is called whenever the agent are build.
         """
@@ -133,8 +133,6 @@ class Agent(Database, Trade, Messaging):
         self.variables_to_track_panel = []
         self.variables_to_track_aggregate = []
         self.inbox = []
-
-        random.seed(random_seed)
 
         try:
             self._add_contracts_list()

@@ -426,7 +426,6 @@ class Simulation(object):
                       agent_arguments={'group': group_name,
                                        'trade_logging': self.trade_logging_mode,
                                        'database': self.database_queue,
-                                       'random_seed': random.random(),
                                        'check_unchecked_msgs': self.check_unchecked_msgs,
                                        'expiring': self.expiring,
                                        'perishable': self.perishable,
