@@ -422,22 +422,17 @@ class Simulation(object):
 
         self.sim_parameters.update(parameters)
 
-        agent_params_from_sim = {
-            'expiring': self.expiring,
-            'perishable': self.perishable,
-            'resource_endowment': self.resource_endowment}
-
-        group = Group(self, self._processorgroup, [group_name], [AgentClass], agent_params_from_sim=agent_params_from_sim)
+        group = Group(self, self._processorgroup, [group_name], [AgentClass],
+                      agent_arguments={'group': group_name,
+                                       'trade_logging': self.trade_logging_mode,
+                                       'database': self.database_queue,
+                                       'random_seed': random.random(),
+                                       'check_unchecked_msgs': self.check_unchecked_msgs,
+                                       'expiring': self.expiring,
+                                       'perishable': self.perishable,
+                                       'resource_endowment': self.resource_endowment})
         for id in range(num_agents_this_group):
-            group.append(AgentClass,
-                         agent_args={'group': group_name,
-                                     'trade_logging': self.trade_logging_mode,
-                                     'database': self.database_queue,
-                                     'random_seed': random.random(),
-                                     'agent_parameters': agent_parameters,
-                                     'simulation_parameters': parameters,
-                                     'check_unchecked_msgs': self.check_unchecked_msgs},
-                         parameters=parameters,
+            group.append(simulation_parameters=parameters,
                          agent_parameters=agent_parameters[id])
         self.num_of_agents_in_group[group_name] = num_agents_this_group
         self._groups[group_name] = group
@@ -476,16 +471,7 @@ class Simulation(object):
         """
         group = self._groups[group_name]
         self.num_of_agents_in_group[group_name] += 1
-        id = group.append(AgentClass,
-                          agent_args={'group': group_name,
-                                      'trade_logging': self.trade_logging_mode,
-                                      'database': self.database_queue,
-                                      'random_seed': random.random(),
-                                      'agent_parameters': agent_parameters,
-                                      'simulation_parameters': parameters,
-                                      'check_unchecked_msgs': self.check_unchecked_msgs,
-                                      'start_round': self.time},
-                          parameters=parameters,
+        id = group.append(simulation_parameters=parameters,
                           agent_parameters=agent_parameters)
         return id
 
