@@ -35,6 +35,9 @@ class SingleProcess(object):
         except IndexError:
             self.agents[group].append(agent)
 
+    def delete_agent(self, group, id):
+            self.agents[group][id] = None
+
     def do(self, groups, ids, command, args, kwargs):
         rets = []
         for group, iss in zip(groups, ids):

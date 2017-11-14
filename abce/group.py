@@ -192,7 +192,7 @@ class Group(object):
                 id of the agent
         """
         assert len(self.group_names) == 1, 'Group is a combined group, no deleting permitted'
-        self._agents.agents[self.group_names[0]][id] = None
+        self._agents.delete_agent(self.group_names[0], id)
         self._ids[0][id] = None
         self.free_ids[self.group_names[0]].append(id)
 
