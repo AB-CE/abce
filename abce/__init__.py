@@ -331,8 +331,7 @@ class Simulation(object):
             self._db_started = True
         self.time = time
         print("\rRound" + str(time))
-        for groups in self._groups.values():
-            groups._execute_advance_round(time)
+        self._processorgroup.advance_round(time)
 
     def __del__(self):
         self.finalize()
