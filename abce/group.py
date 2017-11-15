@@ -196,9 +196,6 @@ class Group(object):
         self._ids[0][id] = None
         self.free_ids[self.group_names[0]].append(id)
 
-    def _execute_advance_round(self, time):
-        self._agents.advance_round(self.group_names, self._ids, time)
-
     def __getitem__(self, *ids):
         if isinstance(*ids, int):
             ids = [ids]
