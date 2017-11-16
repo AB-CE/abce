@@ -53,7 +53,6 @@ import random
 import json
 import queue
 import multiprocessing as mp
-from multiprocessing.managers import BaseManager
 from collections import defaultdict, OrderedDict
 from .db import Database
 from .agent import Agent, Trade  # noqa: F401
@@ -66,10 +65,7 @@ from .quote import Quote  # noqa: F401
 from .contracts import Contracting  # noqa: F401
 from .gui import gui, graphs  # noqa: F401
 from .singleprocess import SingleProcess
-
-
-class MyManager(BaseManager):
-    pass
+from .multiprocess import MultiProcess
 
 
 class Simulation(object):
@@ -191,7 +187,13 @@ class Simulation(object):
 
         self.processes = mp.cpu_count() * 2 if processes is None else processes
 
-        self.database_queue = queue.Queue()
+        if processes == 1:
+            self._processorgroup = SingleProcess()
+            self.database_queue = queue.Queue()
+        else:
+            self._processorgroup = MultiProcess()
+            manager = mp.Manager()
+            self.database_queue = manager.Queue()
 
         self.messagess = {}
 
@@ -212,7 +214,6 @@ class Simulation(object):
         self.time = None
         """Returns the current time set with simulation.advance_round(time)"""
         self._groups = {}
-        self._processorgroup = SingleProcess()
 
     def declare_round_endowment(self, resource, units,
                                 product):
@@ -429,15 +430,14 @@ class Simulation(object):
                                        'expiring': self.expiring,
                                        'perishable': self.perishable,
                                        'resource_endowment': self.resource_endowment})
-        for id in range(num_agents_this_group):
-            group.create_agent(simulation_parameters=parameters,
-                               agent_parameters=agent_parameters[id])
+        group.create_agents(simulation_parameters=parameters,
+                            agent_parameters=agent_parameters)
         self.num_of_agents_in_group[group_name] = num_agents_this_group
         self._groups[group_name] = group
         self.messagess[group_name] = []
         return group
 
-    def create_agent(self, AgentClass, group_name, parameters=None, agent_parameters=None):
+    def create_agents(self, AgentClass, group_name, simulation_parameters=None, agent_parameters=None, number=1):
         """ Creates an additional agent in an existing group during the simulation. If agents
         have been deleted, their id's are reduced.
 
@@ -452,11 +452,11 @@ class Simulation(object):
                 group name string e.G. :code:`'firm'`, not the group variable e.G.
                 :code:`firms` in :code:`firms = simulation.build_agents(...)`
 
-            parameters:
+            simulation_parameters:
                 a dictionary of parameters
 
             agent_parameters:
-                a dictionary of parameters
+                List of a dictionary of parameters
 
         Returns:
            id of new agent.
@@ -467,11 +467,20 @@ class Simulation(object):
                               parameters=self.parameters,
                               agent_parameters={'creation': self.time})
         """
+        if simulation_parameters is None:
+            simulation_parameters = {}
+        if agent_parameters is None:
+            agent_parameters = [{}] * number
+        else:
+            check_iterable(agent_parameters)
         group = self._groups[group_name]
         self.num_of_agents_in_group[group_name] += 1
-        id = group.create_agent(simulation_parameters=parameters,
-                                agent_parameters=agent_parameters)
+        id = group.create_agents(simulation_parameters=simulation_parameters,
+                                 agent_parameters=agent_parameters)
         return id
+
+    def create_agent(self, AgentClass, group_name, simulation_parameters=None, agent_parameters=None):
+        print("create_agent is depreciated for create_agents")
 
     def delete_agent(self, name):
         """ This deletes an agent. The model has to make sure that other

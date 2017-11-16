@@ -339,6 +339,11 @@ class Agent(Database, Trade, Messaging):
             agents[group][id].inbox.append(envelope)
         self._out.clear()
 
+    def _post_messages_multiprocessing(self, num_processes):
+        out = self._out
+        self._out = defaultdict(list)
+        return out
+
     def _begin_subround(self):
         """ Overwrite this to make ABCE plugins, that need to do
         something at the beginning of every subround """
@@ -363,6 +368,12 @@ class Agent(Database, Trade, Messaging):
         reserved for internally processed offers.
         """
         self._out.append(
+            (receiver_group, receiver_id, (typ, msg)))
+
+    def _send_multiprocessing(self, receiver_group, receiver_id, typ, msg):
+        """ Is used to overwrite _send in multiprocessing mode.
+        Requires that self._out is overwritten with a defaultdict(list) """
+        self._out[receiver_id % 4].append(
             (receiver_group, receiver_id, (typ, msg)))
 
     def __getitem__(self, good):

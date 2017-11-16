@@ -151,33 +151,40 @@ class Group(object):
         """
         self.do('_agg_log', variables, possessions, func, len)
 
-    def create_agent(self, simulation_parameters, agent_parameters):
+    def create_agents(self, simulation_parameters=None, agent_parameters=None, number=1):
         """ Create a new agent to this group. Works only for non-combined groups
 
         Args:
+            number:
+                number of agents to create if agent_parameters is not set
+
             simulation_parameters:
                 A dictionary of simulation_parameters
 
             agent_parameters:
-                A dictionary of simulation_parameters
+                List of dictionaries of agent_parameters
 
         Returns:
             The id of the new agent
         """
+        if agent_parameters is None:
+            agent_parameters = [[]] * number
         assert len(self.group_names) == 1, 'Group is a combined group, no appending permitted'
         group_name = self.group_names[0]
-        if self.free_ids[group_name]:
-            id = self.free_ids[group_name].popleft()
-            self._ids[0][id] = id
-        else:
-            id = len(self._ids[0])
-            self._ids[0].append(id)
+        ids = []
+        for _ in range(len(agent_parameters)):
+            if self.free_ids[group_name]:
+                id = self.free_ids[group_name].popleft()
+                self._ids[0][id] = id
+            else:
+                id = len(self._ids[0])
+                self._ids[0].append(id)
+            ids.append(id)
 
         Agent = self.agent_classes[0]
-        agent = Agent(id, simulation_parameters, agent_parameters, **self._agent_arguments)
-        agent.init(simulation_parameters, agent_parameters)
-        self._agents.insert_or_append(group_name, id, agent)
-        return id
+
+        self._agents.insert_or_append(group_name, ids, Agent, simulation_parameters, agent_parameters, self._agent_arguments)
+        return ids
 
     def do(self, command, *args, **kwargs):
         """ agent actions can be executed by group.action() or group.do('action') """
