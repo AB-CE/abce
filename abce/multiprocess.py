@@ -139,8 +139,8 @@ class MultiProcess(object):
         return sorted_ret
 
     def advance_round(self, time):
-        for pg in self.processor_groups:
-            pg.advance_round(time)
+        lpg = len(self.processor_groups)
+        self.pool.map(advance_round_wrapper, zip(self.processor_groups, [time] * lpg))
 
     def group_names(self):
         return self.processor_groups[0].keys()
@@ -159,3 +159,8 @@ def insert_or_append_wrapper(arg):
 def delete_agents_wrapper(arg):
     pg, group, ids = arg
     pg.delete_agents(group, ids)
+
+
+def advance_round_wrapper(arg):
+    pg, time = arg
+    pg.advance_round(time)
