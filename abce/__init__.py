@@ -154,7 +154,7 @@ class Simulation(object):
 
         self.check_unchecked_msgs = check_unchecked_msgs
 
-        self.num_of_agents_in_group = {}
+        self.agents_created = False
         self._messages = {}
         self._resource_command_group = {}
         self._db_commands = {}
@@ -246,7 +246,7 @@ class Simulation(object):
                                       units=1000,
                                       product='wheat')
         """
-        if self.num_of_agents_in_group:
+        if self.agents_created:
             raise Exception(
                 "WARNING: declare_round_endowment(...)"
                 " must be called before the agents are build")
@@ -273,7 +273,7 @@ class Simulation(object):
              w.declare_perishable(good='CAP')
 
         """
-        if self.num_of_agents_in_group:
+        if self.agents_created:
             raise Exception(
                 "WARNING: declare_perishable(...) must be called before "
                 "the agents are build")
@@ -291,7 +291,7 @@ class Simulation(object):
             duration:
                 the duration before the good expires
         """
-        if self.num_of_agents_in_group:
+        if self.agents_created:
             raise Exception(
                 "WARNING: declare_expiring(...) must be called "
                 "before the agents are build")
@@ -432,7 +432,7 @@ class Simulation(object):
                                        'resource_endowment': self.resource_endowment})
         group.create_agents(simulation_parameters=parameters,
                             agent_parameters=agent_parameters)
-        self.num_of_agents_in_group[group_name] = num_agents_this_group
+        self.agents_created = True
         self._groups[group_name] = group
         self.messagess[group_name] = []
         return group
@@ -474,28 +474,31 @@ class Simulation(object):
         else:
             check_iterable(agent_parameters)
         group = self._groups[group_name]
-        self.num_of_agents_in_group[group_name] += 1
         id = group.create_agents(simulation_parameters=simulation_parameters,
                                  agent_parameters=agent_parameters)
         return id
 
     def create_agent(self, AgentClass, group_name, simulation_parameters=None, agent_parameters=None):
-        print("create_agent is depreciated for create_agents")
+        raise Exception("create_agent is depreciated for create_agents")
 
-    def delete_agent(self, name):
+    def delete_agent(self, *ang):
+        raise Exception("delete_agent is depreciated for create_agents")
+
+    def delete_agents(self, group, ids):
         """ This deletes an agent. The model has to make sure that other
         agents are notified of the death of an agent in order to stop them from corresponding
         with this agent. Note that if you create new agents
         after deleting agents the ID's of the deleted agents are reused.
 
         Args:
-            name:
-                Name tuple of the agent. e.G. ('firm', 13)
+            group:
+                group of the agent
+
+            ids:
+                a list of ids of the agents to be deleted in that group
         """
-        group_name, id = name
-        group = self._groups[group_name]
-        group.delete_agent(id)
-        self.num_of_agents_in_group[group_name] -= 1
+        group = self._groups[group]
+        group.delete_agents(ids)
 
     def _write_description_file(self):
         description = open(os.path.abspath(

@@ -191,7 +191,7 @@ class Group(object):
         self.last_action = command
         return self._agents.do(self.group_names, self._ids, command, args, kwargs)
 
-    def delete_agent(self, id):
+    def delete_agents(self, ids):
         """ Remove an agent from not combined group, by specifying his ID:
 
         Args:
@@ -199,9 +199,11 @@ class Group(object):
                 id of the agent
         """
         assert len(self.group_names) == 1, 'Group is a combined group, no deleting permitted'
-        self._agents.delete_agent(self.group_names[0], id)
-        self._ids[0][id] = None
-        self.free_ids[self.group_names[0]].append(id)
+        for id in ids:
+            assert self._ids[0][id] == id
+            self._ids[0][id] = None
+        self._agents.delete_agents(self.group_names[0], ids)
+        self.free_ids[self.group_names[0]].extend(ids)
 
     def __getitem__(self, *ids):
         if isinstance(*ids, int):

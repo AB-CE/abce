@@ -58,10 +58,12 @@ class ProcessorGroup:
                 if agent is not None:
                     agent._advance_round(time)
 
-    def delete_agent(self, group, id):
-        assert self.agents[group][id // 4].id == id
-        assert self.agents[group][id // 4].group == group
-        self.agents[group][id // 4] = None
+    def delete_agents(self, group, ids):
+        for id in ids:
+            if id % 4 == self.batch:
+                assert self.agents[group][id // 4].id == id
+                assert self.agents[group][id // 4].group == group
+                self.agents[group][id // 4] = None
 
     def do(self, groups, ids, command, args, kwargs):
         try:
@@ -120,8 +122,9 @@ class MultiProcess(object):
         lpg = len(self.processor_groups)
         self.pool.map(insert_or_append_wrapper, zip(self.processor_groups, [group] * lpg, [ids] * lpg, [Agent] * lpg, [simulation_parameters] * lpg, [agent_parameters] * lpg, [agent_arguments] * lpg))
 
-    def delete_agent(self, group, id):
-            self.processor_groups[id % 4].delete_agent(group, id)
+    def delete_agents(self, group, ids):
+        lpg = len(self.processor_groups)
+        self.pool.map(delete_agents_wrapper, zip(self.processor_groups, [group] * lpg, [ids] * lpg))
 
     def do(self, groups, ids, command, args, kwargs):
         lpg = len(self.processor_groups)
@@ -151,3 +154,8 @@ def wrapper(arg):
 def insert_or_append_wrapper(arg):
     pg, group, ids, Agent, simulation_parameters, agent_parameters, agent_arguments = arg
     return pg.insert_or_append(group, ids, Agent, simulation_parameters, agent_parameters, agent_arguments)
+
+
+def delete_agents_wrapper(arg):
+    pg, group, ids = arg
+    pg.delete_agents(group, ids)
