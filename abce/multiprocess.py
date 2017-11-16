@@ -117,8 +117,8 @@ class MultiProcess(object):
 
     def insert_or_append(self, group, ids, Agent, simulation_parameters, agent_parameters, agent_arguments):
         """appends an agent to a group """
-        for pg in self.processor_groups:
-            pg.insert_or_append(group, ids, Agent, simulation_parameters, agent_parameters, agent_arguments)
+        lpg = len(self.processor_groups)
+        self.pool.map(insert_or_append_wrapper, zip(self.processor_groups, [group] * lpg, [ids] * lpg, [Agent] * lpg, [simulation_parameters] * lpg, [agent_parameters] * lpg, [agent_arguments] * lpg))
 
     def delete_agent(self, group, id):
             self.processor_groups[id % 4].delete_agent(group, id)
@@ -146,3 +146,8 @@ class MultiProcess(object):
 def wrapper(arg):
     pg, groups, ids, command, args, kwargs = arg
     return pg.do(groups, ids, command, args, kwargs)
+
+
+def insert_or_append_wrapper(arg):
+    pg, group, ids, Agent, simulation_parameters, agent_parameters, agent_arguments = arg
+    return pg.insert_or_append(group, ids, Agent, simulation_parameters, agent_parameters, agent_arguments)
