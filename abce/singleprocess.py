@@ -39,7 +39,8 @@ class SingleProcess(object):
                 self.agents[group].append(agent)
         return ids
 
-    def delete_agent(self, group, id):
+    def delete_agents(self, group, ids):
+        for id in ids:
             self.agents[group][id] = None
 
     def do(self, groups, ids, command, args, kwargs):
