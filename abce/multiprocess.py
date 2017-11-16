@@ -119,7 +119,13 @@ class MultiProcess(object):
 
     def insert_or_append(self, group, ids, Agent, simulation_parameters, agent_parameters, agent_arguments):
         """appends an agent to a group """
-        self.pool.map(insert_or_append_wrapper, jkk(self.processor_groups, group, ids, Agent, simulation_parameters, agent_parameters, agent_arguments))
+        self.pool.map(insert_or_append_wrapper, jkk(self.processor_groups,
+                                                    group,
+                                                    ids,
+                                                    Agent,
+                                                    simulation_parameters,
+                                                    agent_parameters,
+                                                    agent_arguments))
 
     def delete_agents(self, group, ids):
         self.pool.map(delete_agents_wrapper, jkk(self.processor_groups, group, ids))
