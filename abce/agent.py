@@ -373,7 +373,7 @@ class Agent(Database, Trade, Messaging):
     def _send_multiprocessing(self, receiver_group, receiver_id, typ, msg):
         """ Is used to overwrite _send in multiprocessing mode.
         Requires that self._out is overwritten with a defaultdict(list) """
-        self._out[receiver_id % 4].append(
+        self._out[receiver_id % self._processes].append(
             (receiver_group, receiver_id, (typ, msg)))
 
     def __getitem__(self, good):
