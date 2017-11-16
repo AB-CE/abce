@@ -191,7 +191,7 @@ class Simulation(object):
             self._processorgroup = SingleProcess()
             self.database_queue = queue.Queue()
         else:
-            self._processorgroup = MultiProcess()
+            self._processorgroup = MultiProcess(processes)
             manager = mp.Manager()
             self.database_queue = manager.Queue()
 
