@@ -51,11 +51,11 @@ class SingleProcess(object):
                     self.agents[group][i]._post_messages(self.agents)
         return rets
 
-    def advance_round(self, groups, ids, time):
-        for group, iss in zip(groups, ids):
-            for i in iss:
-                if i is not None:
-                    self.agents[group][i]._advance_round(time)
+    def advance_round(self, time):
+        for agents in self.agents.values():
+            for agent in agents:
+                if agent is not None:
+                    agent._advance_round(time)
 
     def group_names(self):
         return self.agents.keys()
