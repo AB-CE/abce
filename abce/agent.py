@@ -377,7 +377,7 @@ class Agent(Database, Trade, Messaging):
 
     def _send(self, receiver_group, receiver_id, typ, msg):
         """ sends a message to 'receiver_group', 'receiver_id'
-        The agents receives it at the begin of each round.
+        The agents receives it at the begin of each subround.
         """
         self._out.append(
             (receiver_group, receiver_id, (typ, msg)))
