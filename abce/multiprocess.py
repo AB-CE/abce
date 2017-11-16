@@ -119,28 +119,17 @@ class MultiProcess(object):
 
     def insert_or_append(self, group, ids, Agent, simulation_parameters, agent_parameters, agent_arguments):
         """appends an agent to a group """
-        lpg = len(self.processor_groups)
-        self.pool.map(insert_or_append_wrapper, zip(self.processor_groups, [group] * lpg, [ids] * lpg, [Agent] * lpg, [simulation_parameters] * lpg, [agent_parameters] * lpg, [agent_arguments] * lpg))
+        self.pool.map(insert_or_append_wrapper, jkk(self.processor_groups, group, ids, Agent, simulation_parameters, agent_parameters, agent_arguments))
 
     def delete_agents(self, group, ids):
-        lpg = len(self.processor_groups)
-        self.pool.map(delete_agents_wrapper, zip(self.processor_groups, [group] * lpg, [ids] * lpg))
+        self.pool.map(delete_agents_wrapper, jkk(self.processor_groups, group, ids))
 
     def do(self, groups, ids, command, args, kwargs):
-        lpg = len(self.processor_groups)
-        ret = self.pool.map(wrapper, zip(self.processor_groups, [groups] * lpg, [ids] * lpg, [command] * lpg, [args] * lpg, [kwargs] * lpg))
-        sorted_ret = []
-        for i in range(len(ret[0])):
-            for pg in ret:
-                try:
-                    sorted_ret.append(pg[i])
-                except IndexError:
-                    pass
-        return sorted_ret
+        ret = self.pool.map(wrapper, jkk(self.processor_groups, groups, ids, command, args, kwargs))
+        return sort_ret(ret)
 
     def advance_round(self, time):
-        lpg = len(self.processor_groups)
-        self.pool.map(advance_round_wrapper, zip(self.processor_groups, [time] * lpg))
+        self.pool.map(advance_round_wrapper, jkk(self.processor_groups, time))
 
     def group_names(self):
         return self.processor_groups[0].keys()
@@ -164,3 +153,19 @@ def delete_agents_wrapper(arg):
 def advance_round_wrapper(arg):
     pg, time = arg
     pg.advance_round(time)
+
+
+def sort_ret(ret):
+    sorted_ret = []
+    for i in range(len(ret[0])):
+        for pg in ret:
+            try:
+                sorted_ret.append(pg[i])
+            except IndexError:
+                pass
+    return sorted_ret
+
+
+def jkk(iterator, *args):
+    for i in iterator:
+        yield (i, *args)
