@@ -39,6 +39,7 @@ Messaging between agents:
 # Don't forget to commit it to git                                                          #
 # ***************************************************************************************** #
 import random
+from collections import defaultdict, OrderedDict
 from abce.notenoughgoods import NotEnoughGoods
 
 epsilon = 0.00000000001
@@ -195,6 +196,33 @@ class Trade:
 
     If we did not implement a barter class, but one can use this class as a barter class,
     """
+    def __init__(self, id, group, trade_logging,
+                 database, random_seed, num_managers, agent_parameters, simulation_parameters,
+                 check_unchecked_msgs, start_round):
+        super().__init__(id, group, trade_logging,
+                         database, random_seed, num_managers, agent_parameters, simulation_parameters,
+                         check_unchecked_msgs, start_round)
+        self.given_offers = OrderedDict()
+        self._open_offers_buy = defaultdict(dict)
+        self._open_offers_sell = defaultdict(dict)
+        self._polled_offers = {}
+        self._offer_count = 0
+        self.trade_logging = {'individual': 1,
+                              'group': 2, 'off': 0}[trade_logging]
+        self._trade_log = defaultdict(int)
+        self._quotes = {}
+
+    def _offer_counter(self):
+        """ returns a unique number for an offer (containing the agent's name)
+        """
+        self._offer_count += 1
+        return hash((self.name, self._offer_count))
+
+    def _advance_round(self, time):
+        if self.trade_logging > 0:
+            self.database_connection.put(["trade_log", self._trade_log, self.round])
+        self._trade_log = defaultdict(int)
+
     def get_buy_offers_all(self, descending=False, sorted=True):
         """ """
         goods = list(self._open_offers_buy.keys())
