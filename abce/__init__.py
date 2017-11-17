@@ -458,6 +458,9 @@ class Simulation(object):
             agent_parameters:
                 List of a dictionary of parameters
 
+            number:
+                if no agent_parameters list is given the number of agents to be created can be specified
+
         Returns:
            id of new agent.
 
@@ -485,8 +488,8 @@ class Simulation(object):
         raise Exception("delete_agent is depreciated for create_agents")
 
     def delete_agents(self, group, ids):
-        """ This deletes an agent. The model has to make sure that other
-        agents are notified of the death of an agent in order to stop them from corresponding
+        """ This deletes a group of agents. The model has to make sure that other
+        agents are notified of the death of agents in order to stop them from corresponding
         with this agent. Note that if you create new agents
         after deleting agents the ID's of the deleted agents are reused.
 

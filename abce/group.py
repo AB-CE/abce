@@ -155,14 +155,14 @@ class Group(object):
         """ Create a new agent to this group. Works only for non-combined groups
 
         Args:
-            number:
-                number of agents to create if agent_parameters is not set
-
             simulation_parameters:
                 A dictionary of simulation_parameters
 
             agent_parameters:
                 List of dictionaries of agent_parameters
+
+            number:
+                number of agents to create if agent_parameters is not set
 
         Returns:
             The id of the new agent
