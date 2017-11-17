@@ -34,7 +34,7 @@ import abce
 from .database import Database
 from .trade import Trade
 from .messaging import Messaging
-from .inventory import Inventory
+from .goods import Goods
 
 
 class DummyContracts:
@@ -42,7 +42,7 @@ class DummyContracts:
         pass
 
 
-class Agent(Database, Trade, Messaging):
+class Agent(Database, Trade, Messaging, Goods):
     """ Every agent has to inherit this class. It connects the agent to the
     simulation and to other agent. The :class:`abce.Trade`,
     :class:`abce.Database` and :class:`abce.Messaging` classes are included.
@@ -126,8 +126,7 @@ class Agent(Database, Trade, Messaging):
         self.time = start_round
         """ self.time, contains the time set with simulation.advance_round(time)
             you can set time to anything you want an integer or
-            (12, 30, 21, 09, 1979) or 'Monday' """
-        self._resources = []
+            (12, 30, 21, 09, 1979) or 'monday' """
         self.variables_to_track_panel = []
         self.variables_to_track_aggregate = []
         self.inbox = []
@@ -188,31 +187,6 @@ class Agent(Database, Trade, Messaging):
 
         """
         print("Warning: agent %s has no init function" % self.group)
-
-    def possession(self, good):
-        """ returns how much of good an agent possesses.
-
-        Returns:
-            A number.
-
-        possession does not return a dictionary for self.log(...), you can use
-        self.possessions([...]) (plural) with self.log.
-
-        Example::
-
-            if self['money'] < 1:
-                self.financial_crisis = True
-
-            if not(is_positive(self['money']):
-                self.bancrupcy = True
-
-        """
-        print("depreciated use self[good] or self.not_reserved[good]")
-        return self._inventory[good]
-
-    def possessions(self):
-        """ returns all possessions """
-        return self._inventory.possessions()
 
     def _offer_counter(self):
         """ returns a unique number for an offer (containing the agent's name)
@@ -278,68 +252,6 @@ class Agent(Database, Trade, Messaging):
 
         self._trade_log = defaultdict(int)
 
-    def create(self, good, quantity):
-        """ creates quantity of the good out of nothing
-
-        Use create with care, as long as you use it only for labor and
-        natural resources your model is macro-economically complete.
-
-        Args:
-            'good': is the name of the good
-            quantity: number
-        """
-        self._inventory.create(good, quantity)
-
-    def create_timestructured(self, good, quantity):
-        """ creates quantity of the time structured good out of nothing.
-        For example::
-
-            self.creat_timestructured('capital', [10,20,30])
-
-        Creates capital. 10 units are 2 years old 20 units are 1 year old
-        and 30 units are new.
-
-        It can alse be used with a quantity instead of an array. In this
-        case the amount is equally split on the years.::
-
-            self.create_timestructured('capital', 60)
-
-        In this case 20 units are 2 years old 20 units are 1 year old
-        and 20 units are new.
-
-        Args:
-            'good':
-                is the name of the good
-
-            quantity:
-                an arry or number
-        """
-        self._inventory.create_timestructured(good, quantity)
-
-    def _declare_expiring(self, good, duration):
-        """ creates a good that has a limited duration
-        """
-        self._inventory._declare_expiring(good, duration)
-
-    def not_reserved(self, good):
-        return self._inventory.not_reserved(good)
-
-    def destroy(self, good, quantity=None):
-        """ destroys quantity of the good. If quantity is omitted destroys all
-
-        Args::
-
-            'good':
-                is the name of the good
-            quantity (optional):
-                number
-
-        Raises::
-
-            NotEnoughGoods: when goods are insufficient
-        """
-        self._inventory.destroy(good, quantity)
-
     def _execute(self, command, args, kwargs):
         self._clearing__end_of_subround(self.inbox)
         self.inbox.clear()
@@ -369,12 +281,6 @@ class Agent(Database, Trade, Messaging):
         something at the beginning of every subround """
         pass
 
-    def _register_resource(self, resource, units, product):
-        self._resources.append((resource, units, product))
-
-    def _register_perish(self, good):
-        self._inventory._perishable.append(good)
-
     def _send(self, receiver_group, receiver_id, typ, msg):
         """ sends a message to 'receiver_group', 'receiver_id'
         The agents receives it at the begin of each subround.
@@ -387,9 +293,6 @@ class Agent(Database, Trade, Messaging):
         Requires that self._out is overwritten with a defaultdict(list) """
         self._out[receiver_id % self._processes].append(
             (receiver_group, receiver_id, (typ, msg)))
-
-    def __getitem__(self, good):
-        return self._inventory.haves[good]
 
     def __del__(self):
         self._check_for_lost_messages()
