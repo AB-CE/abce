@@ -101,26 +101,14 @@ class Agent(Database, Trade, Messaging, Goods):
         # when fired manual + ':' and manual group_address need to be removed
         self.database_connection = database
 
-        self.trade_logging = {'individual': 1,
-                              'group': 2, 'off': 0}[trade_logging]
-        self._out = []
-
-        self._inventory = Inventory(self.name)
-
+        self.num_managers = num_managers
+        self._out = [[] for _ in range(self.num_managers + 1)]
         # TODO make defaultdict; delete all key errors regarding self._inventory as
         # defaultdict, does not have missing keys
         self._msgs = {}
 
-        self.given_offers = OrderedDict()
-        self._open_offers_buy = defaultdict(dict)
-        self._open_offers_sell = defaultdict(dict)
-        self._polled_offers = {}
-        self._offer_count = 0
-
-        self._trade_log = defaultdict(int)
         self._data_to_observe = {}
         self._data_to_log_1 = {}
-        self._quotes = {}
         self.round = start_round
         """ self.round is depreciated"""
         self.time = start_round
@@ -188,12 +176,6 @@ class Agent(Database, Trade, Messaging, Goods):
         """
         print("Warning: agent %s has no init function" % self.group)
 
-    def _offer_counter(self):
-        """ returns a unique number for an offer (containing the agent's name)
-        """
-        self._offer_count += 1
-        return hash((self.name, self._offer_count))
-
     def _check_for_lost_messages(self):
         for offer in list(self.given_offers.values()):
             if offer.made < self.round:
@@ -225,6 +207,7 @@ class Agent(Database, Trade, Messaging, Goods):
                             'get_messages(.)' % (self.group, self.id))
 
     def _advance_round(self, time):
+        super()._advance_round(time)
         self._inventory._advance_round()
         self.contracts._advance_round(self.round)
 
@@ -245,12 +228,6 @@ class Agent(Database, Trade, Messaging, Goods):
                 self.log_this_round = True
             else:
                 self.log_this_round = False
-
-        if self.trade_logging > 0:
-            self.database_connection.put(
-                ["trade_log", self._trade_log, self.round])
-
-        self._trade_log = defaultdict(int)
 
     def _execute(self, command, args, kwargs):
         self._clearing__end_of_subround(self.inbox)
