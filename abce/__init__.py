@@ -61,8 +61,7 @@ from .group import Group
 from .notenoughgoods import NotEnoughGoods  # noqa: F401
 from .agents import (FirmMultiTechnologies, Firm,  # noqa: F401
                      Household, Utility_Function,
-                     ProductionFunction, SilentDeadAgent,  # noqa: F401
-                     LoudDeadAgent)  # noqa: F401
+                     ProductionFunction)  # noqa: F401
 from .quote import Quote  # noqa: F401
 from .contracts import Contracting  # noqa: F401
 from .processorgroup import ProcessorGroup
@@ -479,7 +478,8 @@ class Simulation(object):
         return Group(self, [group_name], AgentClass)
 
     def create_agent(self, AgentClass, group_name, parameters=None, agent_parameters=None):
-        """ Creates an additional agent in an existing group during the simulation.
+        """ Creates an additional agent in an existing group during the simulation. If agents
+        have been deleted, their id's are reduced.
 
         Args:
 
@@ -498,47 +498,45 @@ class Simulation(object):
             agent_parameters:
                 a dictionary of parameters
 
+        Returns:
+           id of new agent.
+
         Example::
 
             self.create_agent(BeerFirm, 'beerfirm',
                               parameters=self.parameters,
                               agent_parameters={'creation': self.time})
         """
-        id = self.num_of_agents_in_group[group_name]
+        pg = self._processor_groups[self.num_of_agents_in_group[group_name] % self.processes]
         self.num_of_agents_in_group[group_name] += 1
-        pg = self._processor_groups[id % self.processes]
-        pg.append(AgentClass, id=id,
-                  agent_args={'group': group_name,
-                              'trade_logging': self.trade_logging_mode,
-                              'database': self.database_queue,
-                              'random_seed': random.random(),
-                              'agent_parameters': agent_parameters,
-                              'simulation_parameters': parameters,
-                              'check_unchecked_msgs': self.check_unchecked_msgs,
-                              'start_round': self.time},
-                  parameters=parameters,
-                  agent_parameters=agent_parameters)
+        id = pg.append(AgentClass,
+                       agent_args={'group': group_name,
+                                   'trade_logging': self.trade_logging_mode,
+                                   'database': self.database_queue,
+                                   'random_seed': random.random(),
+                                   'agent_parameters': agent_parameters,
+                                   'simulation_parameters': parameters,
+                                   'check_unchecked_msgs': self.check_unchecked_msgs,
+                                   'start_round': self.time},
+                       parameters=parameters,
+                       agent_parameters=agent_parameters)
+        return id
 
-    def delete_agent(self, name, quite=True):
-        """ This deletes an agent. By default, quite is set to True, all future
-        messages to this agent are deleted. If quite is set to False agents are
-        completely deleted. This makes the simulation faster, but if messages
-        are send to this agents the simulation stops.
+    def delete_agent(self, name):
+        """ This deletes an agent. The model has to make sure that other
+        agents are notified of the death of an agent in order to stop them from corresponding
+        with this agent. Note that if you create new agents
+        after deleting agents the ID's of the deleted agents are reused.
 
         Args:
             name:
                 Name tuple of the agent. e.G. ('firm', 13)
-
-            quite:
-                whether the dead agent ignores incoming messages.
         """
         group, id = name
 
         pg = self._processor_groups[id % self.processes]
-        if quite:
-            pg.replace_with_dead(group, id, SilentDeadAgent)
-        else:
-            pg.replace_with_dead(group, id, LoudDeadAgent)
+        pg.delete_agent(group, id)
+        self.num_of_agents_in_group[group] -= 1
 
     def _write_description_file(self):
         description = open(os.path.abspath(

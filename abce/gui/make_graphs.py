@@ -30,7 +30,7 @@ def make_title(table_name, col):
 def abce_figure(title):
     return figure(title=title, width=1200, height=600,
                   sizing_mode='stretch_both',
-                  output_backed='webgl',
+                  output_backend='webgl',
                   toolbar_location='below', tools=TOOLS)
 
 

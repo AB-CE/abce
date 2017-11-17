@@ -8,11 +8,7 @@ class Killer(abce.Agent, abce.Household):
         pass
 
     def kill_silent(self):
-        return (('victim', self.round), True)
+        return ('victim', self.round)
 
     def kill_loud(self):
-        return (('loudvictim', self.round), False)
-
-    def send_message(self):
-        if self.round > 0:
-            self.send(('victim', self.round - 1), 'topic', 'creepy hello')
+        return ('loudvictim', self.round)

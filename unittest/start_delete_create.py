@@ -21,11 +21,10 @@ def main(processes, rounds):
         assert len(balls.boing()) == time, len(balls.boing())
         deads = killer.kill_silent()
         for dead in deads:
-            simulation.delete_agent(*dead)
+            simulation.delete_agent(dead)
         deads = killer.kill_loud()
         for dead in deads:
-            simulation.delete_agent(*dead)
-        killer.send_message()
+            simulation.delete_agent(dead)
         victims.am_I_dead()
         loudvictims.am_I_dead()
         simulation.create_agent(Ball, 'ball')
