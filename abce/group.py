@@ -206,7 +206,7 @@ class Group(object):
         self.free_ids[self.group_names[0]].extend(ids)
 
     def __getitem__(self, *ids):
-        if isinstance(*ids, int):
+        if isinstance(ids, int):
             ids = [ids]
         return Group(self.sim, self._agents, self.group_names, self.agent_classes, ids=ids * len(self.group_names))
 
