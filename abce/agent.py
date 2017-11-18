@@ -361,8 +361,8 @@ class Agent(Database, Trade, Messaging):
         self._inventory._perishable.append(good)
 
     def _send(self, receiver_group, receiver_id, typ, msg):
-        """ sends a message to 'receiver_group', who can be an agent, a group
-        The agents receives it at the begin of each round in
+        """ sends a message to 'receiver_group', 'receiver_id'
+        The agents receives it at the begin of each round.
         """
         self._out.append(
             (receiver_group, receiver_id, (typ, msg)))
