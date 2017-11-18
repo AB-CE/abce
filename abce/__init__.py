@@ -53,7 +53,7 @@ import random
 import json
 import queue
 import multiprocessing as mp
-from collections import defaultdict, OrderedDict
+from collections import OrderedDict
 from .db import Database
 from .agent import Agent, Trade  # noqa: F401
 from .group import Group
@@ -534,6 +534,7 @@ class Simulation(object):
         """
         self.finalize()
         graphs(self.sim_parameters)
+
 
 def make_iterable(var):
         if isinstance(var, dict):
