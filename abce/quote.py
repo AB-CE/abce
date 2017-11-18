@@ -122,10 +122,10 @@ class Quote(object):
 
         """
         if quote.buysell == 'qs':
-            self.buy(quote.sender_group, quote.sender_id,
+            self.buy((quote.sender_group, quote.sender_id),
                      quote.good, quote.quantity, quote.price)
         else:
-            self.sell(quote.sender_group, quote.sender_id,
+            self.sell((quote.sender_group, quote.sender_id),
                       quote.good, quote.quantity, quote.price)
 
     def accept_quote_partial(self, quote, quantity):
@@ -138,10 +138,10 @@ class Quote(object):
 
         """
         if quote.buysell == 'qs':
-            self.buy(quote.sender_group, quote.sender_id,
+            self.buy((quote.sender_group, quote.sender_id),
                      quote.good, quantity, quote.price)
         else:
-            self.sell(quote.sender_group, quote.sender_id,
+            self.sell((quote.sender_group, quote.sender_id),
                       quote.good, quantity, quote.price)
 
     def quote_sell(self, receiver,
