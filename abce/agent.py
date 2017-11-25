@@ -28,8 +28,6 @@ Logging and data creation, see :doc:`Database`.
 
 Messaging between agents, see :doc:`Messaging`.
 """
-import time
-import random
 from collections import OrderedDict, defaultdict
 from pprint import pprint
 import abce
@@ -85,9 +83,8 @@ class Agent(Database, Trade, Messaging):
 
 
     """
-    def __init__(self, id, group, trade_logging,
-                 database, random_seed, num_managers, agent_parameters, simulation_parameters,
-                 check_unchecked_msgs, start_round=None):
+    def __init__(self, id, agent_parameters, simulation_parameters, group, trade_logging,
+                 database, check_unchecked_msgs, expiring, perishable, resource_endowment, start_round=None):
         """ Do not overwrite __init__ instead use a method called init instead.
         init is called whenever the agent are build.
         """
@@ -106,8 +103,7 @@ class Agent(Database, Trade, Messaging):
 
         self.trade_logging = {'individual': 1,
                               'group': 2, 'off': 0}[trade_logging]
-        self.num_managers = num_managers
-        self._out = [[] for _ in range(self.num_managers + 1)]
+        self._out = []
 
         self._inventory = Inventory(self.name)
 
@@ -130,13 +126,11 @@ class Agent(Database, Trade, Messaging):
         self.time = start_round
         """ self.time, contains the time set with simulation.advance_round(time)
             you can set time to anything you want an integer or
-            (12, 30, 21, 09, 1979) or 'monday' """
+            (12, 30, 21, 09, 1979) or 'Monday' """
         self._resources = []
         self.variables_to_track_panel = []
         self.variables_to_track_aggregate = []
         self.inbox = []
-
-        random.seed(random_seed)
 
         try:
             self._add_contracts_list()
@@ -153,13 +147,32 @@ class Agent(Database, Trade, Messaging):
 
         self._check_every_round_for_lost_messages = check_unchecked_msgs
 
-    def init(self, parameters, agent_parameters):
+        for good, duration in expiring:
+            self._declare_expiring(good, duration)
+
+        for good in perishable:
+            self._register_perish(good)
+
+        for resource, units, product in resource_endowment:
+            self._register_resource(resource, units, product)
+
+    def init(self, simulation_parameters, agent_parameters):
         """ This method is called when the agents are build.
         It can be overwritten by the user, to initialize the agents.
         parameters and agent_parameters are the parameters given in
-        :py:meth:`abce.Simulation.build_agents`
+        :py:meth:`abce.Simulation.build_agents`.
+
+        This function has two arguments simulation_parameters and
+        agent_parameters. The two arguments are taken from
+        :py:meth:`abce.Simulation.build_agents`.
+
+        Example:
+
+            def init(self, simulation_parameters, agent_parameters):
+                self.length = simulation_parameters['length']
+                self.age = agent_parameters['age']
         """
-        pass
+        print("Warning: agent %s has no init function" % self.group)
 
     def possession(self, good):
         """ returns how much of good an agent possesses.
@@ -313,24 +326,23 @@ class Agent(Database, Trade, Messaging):
         self._inventory.destroy(good, quantity)
 
     def _execute(self, command, args, kwargs):
-        self._out = [[] for _ in range(self.num_managers + 1)]
-        try:
-            self._clearing__end_of_subround(self.inbox)
-            self._begin_subround()
-            self._out[-1] = getattr(self, command)(*args, **kwargs)
-            self._end_subround()
-            self._reject_polled_but_not_accepted_offers()
-        except KeyboardInterrupt:
-            return None
-        except Exception:
-            time.sleep(random.random())
-            print('command', command)
-            print('args', args)
-            print('kwargs', kwargs)
-            raise
-
+        self._clearing__end_of_subround(self.inbox)
         self.inbox.clear()
-        return self._out
+        self._begin_subround()
+        ret = getattr(self, command)(*args, **kwargs)
+        self._end_subround()
+        self._reject_polled_but_not_accepted_offers()
+        return ret
+
+    def _post_messages(self, agents):
+        for group, id, envelope in self._out:
+            agents[group][id].inbox.append(envelope)
+        self._out.clear()
+
+    def _post_messages_multiprocessing(self, num_processes):
+        out = self._out
+        self._out = defaultdict(list)
+        return out
 
     def _begin_subround(self):
         """ Overwrite this to make ABCE plugins, that need to do
@@ -355,7 +367,13 @@ class Agent(Database, Trade, Messaging):
         typ =(_o,c,u,r) are
         reserved for internally processed offers.
         """
-        self._out[receiver_id % self.num_managers].append(
+        self._out.append(
+            (receiver_group, receiver_id, (typ, msg)))
+
+    def _send_multiprocessing(self, receiver_group, receiver_id, typ, msg):
+        """ Is used to overwrite _send in multiprocessing mode.
+        Requires that self._out is overwritten with a defaultdict(list) """
+        self._out[receiver_id % self._processes].append(
             (receiver_group, receiver_id, (typ, msg)))
 
     def __getitem__(self, good):

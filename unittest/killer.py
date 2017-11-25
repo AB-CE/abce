@@ -8,7 +8,7 @@ class Killer(abce.Agent, abce.Household):
         pass
 
     def kill_silent(self):
-        return ('victim', self.round)
+        return self.round
 
     def kill_loud(self):
-        return ('loudvictim', self.round)
+        return self.round

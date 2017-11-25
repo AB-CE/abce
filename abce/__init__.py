@@ -53,8 +53,7 @@ import random
 import json
 import queue
 import multiprocessing as mp
-from multiprocessing.managers import BaseManager
-from collections import defaultdict, OrderedDict
+from collections import OrderedDict
 from .db import Database
 from .agent import Agent, Trade  # noqa: F401
 from .group import Group
@@ -64,16 +63,9 @@ from .agents import (FirmMultiTechnologies, Firm,  # noqa: F401
                      ProductionFunction)  # noqa: F401
 from .quote import Quote  # noqa: F401
 from .contracts import Contracting  # noqa: F401
-from .processorgroup import ProcessorGroup
 from .gui import gui, graphs  # noqa: F401
-
-
-def execute_advance_round_wrapper(inp):
-    return inp[0].execute_advance_round(inp[1])
-
-
-class MyManager(BaseManager):
-    pass
+from .singleprocess import SingleProcess
+from .multiprocess import MultiProcess
 
 
 class Simulation(object):
@@ -162,7 +154,7 @@ class Simulation(object):
 
         self.check_unchecked_msgs = check_unchecked_msgs
 
-        self.num_of_agents_in_group = {}
+        self.agents_created = False
         self._messages = {}
         self._resource_command_group = {}
         self._db_commands = {}
@@ -196,28 +188,14 @@ class Simulation(object):
         self.processes = mp.cpu_count() * 2 if processes is None else processes
 
         if processes == 1:
+            self._processorgroup = SingleProcess()
             self.database_queue = queue.Queue()
-            self._processor_groups = [ProcessorGroup(1, batch=0)]
-            self.execute_advance_round = self._execute_advance_round_seriel
         else:
-
+            self._processorgroup = MultiProcess(processes)
             manager = mp.Manager()
             self.database_queue = manager.Queue()
-            self.pool = mp.Pool(self.processes)
 
-            MyManager.register('ProcessorGroup', ProcessorGroup)
-            self.managers = []
-            self._processor_groups = []
-            for i in range(self.processes):
-                manager = MyManager()
-                manager.start()
-                self.managers.append(manager)
-                pg = manager.ProcessorGroup(self.processes, batch=i)
-                self._processor_groups.append(pg)
-
-            self.execute_advance_round = self._execute_advance_round_parallel
-
-        self.messagess = [list() for _ in range(self.processes + 1)]
+        self.messagess = {}
 
         self._db = Database(
             self.path,
@@ -235,6 +213,7 @@ class Simulation(object):
         self.database = self
         self.time = None
         """Returns the current time set with simulation.advance_round(time)"""
+        self._groups = {}
 
     def declare_round_endowment(self, resource, units,
                                 product):
@@ -267,7 +246,7 @@ class Simulation(object):
                                       units=1000,
                                       product='wheat')
         """
-        if self.num_of_agents_in_group:
+        if self.agents_created:
             raise Exception(
                 "WARNING: declare_round_endowment(...)"
                 " must be called before the agents are build")
@@ -294,7 +273,7 @@ class Simulation(object):
              w.declare_perishable(good='CAP')
 
         """
-        if self.num_of_agents_in_group:
+        if self.agents_created:
             raise Exception(
                 "WARNING: declare_perishable(...) must be called before "
                 "the agents are build")
@@ -312,7 +291,7 @@ class Simulation(object):
             duration:
                 the duration before the good expires
         """
-        if self.num_of_agents_in_group:
+        if self.agents_created:
             raise Exception(
                 "WARNING: declare_expiring(...) must be called "
                 "before the agents are build")
@@ -347,22 +326,13 @@ class Simulation(object):
             human_or_other_resource, units, service)
         self.declare_perishable(service)
 
-    def _execute_advance_round_seriel(self, time):
-
-        for pg in self._processor_groups:
-            pg.execute_advance_round(time)
-
-    def _execute_advance_round_parallel(self, time):
-        parameters = ((pg, time) for pg in self._processor_groups)
-        self.pool.map(execute_advance_round_wrapper, parameters, chunksize=1)
-
     def advance_round(self, time):
         if not self._db_started:
             self._db.start()
             self._db_started = True
         self.time = time
         print("\rRound" + str(time))
-        self.execute_advance_round(time)
+        self._processorgroup.advance_round(time)
 
     def __del__(self):
         self.finalize()
@@ -452,29 +422,22 @@ class Simulation(object):
 
         self.sim_parameters.update(parameters)
 
-        agent_params_from_sim = {
-            'expiring': self.expiring,
-            'perishable': self.perishable,
-            'resource_endowment': self.resource_endowment}
+        group = Group(self, self._processorgroup, [group_name], [AgentClass],
+                      agent_arguments={'group': group_name,
+                                       'trade_logging': self.trade_logging_mode,
+                                       'database': self.database_queue,
+                                       'check_unchecked_msgs': self.check_unchecked_msgs,
+                                       'expiring': self.expiring,
+                                       'perishable': self.perishable,
+                                       'resource_endowment': self.resource_endowment})
+        group.create_agents(simulation_parameters=parameters,
+                            agent_parameters=agent_parameters)
+        self.agents_created = True
+        self._groups[group_name] = group
+        self.messagess[group_name] = []
+        return group
 
-        for pg in self._processor_groups:
-            pg.add_group(AgentClass,
-                         num_agents_this_group=num_agents_this_group,
-                         agent_args={'group': group_name,
-                                     'trade_logging': self.trade_logging_mode,
-                                     'database': self.database_queue,
-                                     'random_seed': random.random(),
-                                     'agent_parameters': agent_parameters,
-                                     'simulation_parameters': parameters,
-                                     'check_unchecked_msgs': self.check_unchecked_msgs},
-                         parameters=parameters,
-                         agent_parameters=agent_parameters,
-                         agent_params_from_sim=agent_params_from_sim)
-
-            self.num_of_agents_in_group[group_name] = num_agents_this_group
-        return Group(self, [group_name], AgentClass)
-
-    def create_agent(self, AgentClass, group_name, parameters=None, agent_parameters=None):
+    def create_agents(self, AgentClass, group_name, simulation_parameters=None, agent_parameters=None, number=1):
         """ Creates an additional agent in an existing group during the simulation. If agents
         have been deleted, their id's are reduced.
 
@@ -489,11 +452,14 @@ class Simulation(object):
                 group name string e.G. :code:`'firm'`, not the group variable e.G.
                 :code:`firms` in :code:`firms = simulation.build_agents(...)`
 
-            parameters:
+            simulation_parameters:
                 a dictionary of parameters
 
             agent_parameters:
-                a dictionary of parameters
+                List of a dictionary of parameters
+
+            number:
+                if no agent_parameters list is given the number of agents to be created can be specified
 
         Returns:
            id of new agent.
@@ -504,36 +470,39 @@ class Simulation(object):
                               parameters=self.parameters,
                               agent_parameters={'creation': self.time})
         """
-        pg = self._processor_groups[self.num_of_agents_in_group[group_name] % self.processes]
-        self.num_of_agents_in_group[group_name] += 1
-        id = pg.append(AgentClass,
-                       agent_args={'group': group_name,
-                                   'trade_logging': self.trade_logging_mode,
-                                   'database': self.database_queue,
-                                   'random_seed': random.random(),
-                                   'agent_parameters': agent_parameters,
-                                   'simulation_parameters': parameters,
-                                   'check_unchecked_msgs': self.check_unchecked_msgs,
-                                   'start_round': self.time},
-                       parameters=parameters,
-                       agent_parameters=agent_parameters)
+        if simulation_parameters is None:
+            simulation_parameters = {}
+        if agent_parameters is None:
+            agent_parameters = [{}] * number
+        else:
+            agent_parameters = make_iterable(agent_parameters)
+        group = self._groups[group_name]
+        id = group.create_agents(simulation_parameters=simulation_parameters,
+                                 agent_parameters=agent_parameters)
         return id
 
-    def delete_agent(self, name):
-        """ This deletes an agent. The model has to make sure that other
-        agents are notified of the death of an agent in order to stop them from corresponding
+    def create_agent(self, AgentClass, group_name, simulation_parameters=None, agent_parameters=None):
+        raise Exception("create_agent is depreciated for create_agents")
+
+    def delete_agent(self, *ang):
+        raise Exception("delete_agent is depreciated for create_agents")
+
+    def delete_agents(self, group, ids):
+        """ This deletes a group of agents. The model has to make sure that other
+        agents are notified of the death of agents in order to stop them from corresponding
         with this agent. Note that if you create new agents
         after deleting agents the ID's of the deleted agents are reused.
 
         Args:
-            name:
-                Name tuple of the agent. e.G. ('firm', 13)
-        """
-        group, id = name
+            group:
+                group of the agent
 
-        pg = self._processor_groups[id % self.processes]
-        pg.delete_agent(group, id)
-        self.num_of_agents_in_group[group] -= 1
+            ids:
+                a list of ids of the agents to be deleted in that group
+        """
+        ids = make_iterable(ids)
+        group = self._groups[group]
+        group.delete_agents(ids)
 
     def _write_description_file(self):
         description = open(os.path.abspath(
@@ -565,3 +534,13 @@ class Simulation(object):
         """
         self.finalize()
         graphs(self.sim_parameters)
+
+
+def make_iterable(var):
+        if isinstance(var, dict):
+            return [var]
+        try:
+            iter(var)
+        except TypeError:
+            return [var]
+        return var
