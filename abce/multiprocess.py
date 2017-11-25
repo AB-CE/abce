@@ -22,6 +22,7 @@ import multiprocessing as mp
 from multiprocessing.managers import BaseManager
 import traceback
 from collections import defaultdict
+import sys
 
 
 class MyManager(BaseManager):
@@ -174,6 +175,13 @@ def sort_ret(ret):
     return sorted_ret
 
 
-def jkk(iterator, *args):
-    for i in iterator:
-        yield (i, *args)
+if sys.version_info[1] >= 5:
+    def jkk(iterator, *args):
+        for i in iterator:
+            yield (i, *args)
+else:
+    print("PLEASE UPDATE TO PYTHON 3.5 or newer")
+
+    def jkk(iterator, *args):
+        for i in iterator:
+            yield [i] + [a for a in args]
