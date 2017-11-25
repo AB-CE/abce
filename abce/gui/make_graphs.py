@@ -31,7 +31,7 @@ def abce_figure(title, y_range=None):
     return figure(title=title, width=12, height=6,
                   sizing_mode='stretch_both',
                   output_backend='webgl',
-                  toolbar_location='below', tools=TOOLS)
+                  toolbar_location='below', tools=TOOLS, y_range=y_range)
 
 
 def make_aggregate_graphs(data, filename, ignore_initial_rounds):
@@ -144,14 +144,13 @@ def make_histograms(data, filename):
     return titles, plots
 
 
-def make_panel_graphs(data, filename):
+def make_panel_graphs(data, filename, ignore_initial_rounds):
     """ Creates panel graphs from data with 'round' and 'id' picks no more than 20
     samples to display"""
     data = clean_nans(data)
-
     print('make_panel_graphs', filename)
-
-    if max(data['id']) > 20:
+    num_individuals = max(data['id'])
+    if num_individuals > 20:
         individuals = sorted(random.sample(range(max(data['id'])), 20))
     else:
         individuals = range(max(data['id']) + 1)
@@ -160,9 +159,11 @@ def make_panel_graphs(data, filename):
     plots = []
     for col in data.columns:
         if col not in ['round', 'id', 'index']:
+            y_range = (min(data[col][ignore_initial_rounds * len(individuals):]), max(data[col][ignore_initial_rounds * len(individuals):]))
+            if y_range[0] == y_range[1]:
+                y_range = (-1, 1)
             title = make_title(filename, col)
-            plot = abce_figure(title)
-
+            plot = abce_figure(title, y_range=y_range)
             plot.legend.orientation = "top_left"
             for i, id in enumerate(individuals):
                 index = data['round'][data['id'] == id]
