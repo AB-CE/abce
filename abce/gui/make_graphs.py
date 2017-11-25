@@ -27,8 +27,8 @@ def make_title(table_name, col):
             col.replace('_ttl', ''))
 
 
-def abce_figure(title):
-    return figure(title=title, width=1200, height=600,
+def abce_figure(title, y_range=None):
+    return figure(title=title, width=12, height=6,
                   sizing_mode='stretch_both',
                   output_backend='webgl',
                   toolbar_location='below', tools=TOOLS)
