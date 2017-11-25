@@ -52,7 +52,7 @@ def make_aggregate_graphs(data, filename, ignore_initial_rounds):
             continue
         title = make_title(filename, col)
         plot = abce_figure(title)
-        plot.yaxis.visible = None
+        plot.yaxis.visible = False
         plot.legend.orientation = "top_left"
 
         try:
@@ -94,7 +94,7 @@ def make_simple_graphs(data, filename, ignore_initial_rounds):
         title = make_title(filename, col)
         if col not in ['round', 'id', 'index']:
             plot = abce_figure(title)
-            plot.yaxis.visible = None
+            plot.yaxis.visible = False
             plot.legend.orientation = "top_left"
             plot.extra_y_ranges['ttl'] = y_range(col, '', data,
                                                  ignore_initial_rounds)
