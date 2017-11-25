@@ -322,11 +322,13 @@ class Agent(Database, Trade, Messaging):
             self._reject_polled_but_not_accepted_offers()
         except KeyboardInterrupt:
             return None
-        except Exception:
-            time.sleep(random.random())
+        except Exception as e:
+            time.sleep(random.random() / 10)
+            print(self.name, self.round)
             print('command', command)
             print('args', args)
             print('kwargs', kwargs)
+            print(e)
             raise
 
         self.inbox.clear()
