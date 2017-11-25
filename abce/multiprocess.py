@@ -176,4 +176,4 @@ def sort_ret(ret):
 
 def jkk(iterator, *args):
     for i in iterator:
-        yield (i, *args)
+        yield (i,) + args
