@@ -41,10 +41,6 @@ class Message(object):
 
 
 class Messaging(object):
-    def message(self, receiver_group, receiver_id, topic, content):
-        print("message is depreciated please use send")
-        self.send((receiver_group, receiver_id), topic, content)
-
     def send(self, receiver, topic, content):
         """ sends a message to agent. Agents receive it
         at the beginning of next round with :meth:`~abceagent.Messaging.get_messages` or
