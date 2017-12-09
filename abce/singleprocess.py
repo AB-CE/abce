@@ -16,6 +16,7 @@
  the License.
 """
 # pylint: disable=W0212, C0111
+from collections import ChainMap
 
 
 class SingleProcess(object):
@@ -32,7 +33,7 @@ class SingleProcess(object):
         """appends an agent to a group """
         for id, ap in zip(ids, agent_parameters):
             agent = Agent(id, simulation_parameters, ap, **agent_arguments)
-            agent.init(simulation_parameters, ap)
+            agent.init(**ChainMap(simulation_parameters, ap))
             try:
                 self.agents[group][id] = agent
             except IndexError:

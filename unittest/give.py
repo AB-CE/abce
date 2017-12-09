@@ -3,8 +3,8 @@ import random
 
 
 class Give(abce.Agent):
-    def init(self, simulation_parameters, agent_parameters):
-        self.last_round = simulation_parameters['rounds'] - 1
+    def init(self, rounds):
+        self.last_round = rounds - 1
         if self.id == 1:
             self.tests = {'all': False, 'topic': False}
         else:

@@ -8,11 +8,11 @@ def main(processes, rounds):
     simulation = abce.Simulation(processes=processes)
 
     print('build Killer')
-    killer = simulation.build_agents(Killer, 'killer', 1, parameters={'rounds': rounds})
+    killer = simulation.build_agents(Killer, 'killer', 1)
     print('build Victim')
-    victims = simulation.build_agents(Victim, 'victim', rounds, parameters={'rounds': rounds})
+    victims = simulation.build_agents(Victim, 'victim', rounds)
     print('build Victim loudvictim')
-    loudvictims = simulation.build_agents(Victim, 'loudvictim', rounds, parameters={'rounds': rounds})
+    loudvictims = simulation.build_agents(Victim, 'loudvictim', rounds)
     print('build AddAgent')
     balls = simulation.build_agents(Ball, 'ball', 0)
 
@@ -25,7 +25,7 @@ def main(processes, rounds):
         loudvictims.delete_agents(deads)
         victims.am_I_dead()
         loudvictims.am_I_dead()
-        simulation.create_agents(Ball, 'ball')
+        balls.create_agents(1)
 
     simulation.finalize()
     del simulation

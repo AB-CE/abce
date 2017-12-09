@@ -156,21 +156,36 @@ class Agent(Database, Trade, Messaging):
         for resource, units, product in resource_endowment:
             self._register_resource(resource, units, product)
 
-    def init(self, simulation_parameters, agent_parameters):
+    def init(self):
         """ This method is called when the agents are build.
         It can be overwritten by the user, to initialize the agents.
-        parameters and agent_parameters are the parameters given in
+        Parameters are the parameters given to
         :py:meth:`abce.Simulation.build_agents`.
 
-        This function has two arguments simulation_parameters and
-        agent_parameters. The two arguments are taken from
-        :py:meth:`abce.Simulation.build_agents`.
+        Example::
 
-        Example:
+            class Student(abce.Agent):
+                def init(self, rounds, age, lazy, school_size):
+                    self.rounds = rounds
+                    self.age = age
+                    self.lazy = lazy
+                    self.school_size = school_size
 
-            def init(self, simulation_parameters, agent_parameters):
-                self.length = simulation_parameters['length']
-                self.age = agent_parameters['age']
+                def say(self):
+                    print('I am', self.age ' years old and go to a school
+                    that is ', self.school_size')
+
+
+            def main():
+                sim = Simulation()
+                students = sim.build_agents(Student, 'student',
+                                            agent_parameters=[{'age': 12, lazy: True},
+                                                              {'age': 12, lazy: True},
+                                                              {'age': 13, lazy: False},
+                                                              {'age': 14, lazy: True}],
+                                            rounds=50,
+                                            school_size=990)
+
         """
         print("Warning: agent %s has no init function" % self.group)
 

@@ -7,8 +7,8 @@ from tools import is_zero
 
 
 class Buy(Agent):
-    def init(self, simulation_parameters, _,):
-        self.last_round = simulation_parameters['rounds'] - 1
+    def init(self, rounds):
+        self.last_round = rounds - 1
         self.tests = {'accepted': False, 'rejected': False, 'partial': False}
         self.price = 0
         if self.id == 1:

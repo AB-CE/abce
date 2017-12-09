@@ -2,7 +2,7 @@ from abce.agent import Agent
 
 
 class Ball(Agent):
-    def init(self, simulation_parameters, _,):
+    def init(self):
         pass
 
     def boing(self):

@@ -1,9 +1,8 @@
-from __future__ import division
 import abce
 
 
 class Killer(abce.Agent, abce.Household):
-    def init(self, simulation_parameters, agent_parameters):
+    def init(self):
         # your agent initialization goes here, not in __init__
         pass
 

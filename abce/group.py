@@ -1,20 +1,20 @@
-""" Copyright 2012 Davoud Taghawi-Nejad
+# Copyright 2012 Davoud Taghawi-Nejad
+#
+#  Module Author: Davoud Taghawi-Nejad
+#
+#  ABCE is open-source software. If you are using ABCE for your research you are
+#  requested the quote the use of this software.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License"); you may not
+#  use this file except in compliance with the License and quotation of the
+#  author. You may obtain a copy of the License at
+#        http://www.apache.org/licenses/LICENSE-2.0
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+#  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+#  License for the specific language governing permissions and limitations under
+# the License.
 
- Module Author: Davoud Taghawi-Nejad
-
- ABCE is open-source software. If you are using ABCE for your research you are
- requested the quote the use of this software.
-
- Licensed under the Apache License, Version 2.0 (the "License"); you may not
- use this file except in compliance with the License and quotation of the
- author. You may obtain a copy of the License at
-       http://www.apache.org/licenses/LICENSE-2.0
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- License for the specific language governing permissions and limitations under
- the License.
-"""
 # pylint: disable=W0212, C0111
 from collections import deque, defaultdict
 
@@ -27,10 +27,21 @@ def _get_methods(agent_class):
                method[0] != '_' and method != 'init')
 
 
-class Group(object):
+class Group:
     """ A group of agents. Groups of agents inherit the actions of the agents class they are created by.
     When a group is called with an agent action all agents execute this actions simultaneously.
     e.G. :code:`banks.buy_stocks()`, then all banks buy stocks simultaneously.
+
+    agents groups are created like this::
+
+        sim = Simulation()
+
+        Agents = sim.build_agents(AgentClass, 'group_name', number=100, param1=param1, param2=param2)
+        Agents = sim.build_agents(AgentClass, 'group_name',
+                                  param1=param1, param2=param2,
+                                  agent_parameters=[dict(ap=ap1_agentA, ap=ap2_agentA),
+                                                    dict(ap=ap1_agentB, ap=ap2_agentB),
+                                                    dict(ap=ap1_agentC, ap=ap2_agentC)])
 
     Agent groups can be combined using the + sign::
 
@@ -91,7 +102,8 @@ class Group(object):
             self._ids = ids
 
     def __add__(self, other):
-        return Group(self.sim, self._agents, self.group_names + other.group_names, self.agent_classes + other.agent_classes, self._ids + other._ids)
+        return Group(self.sim, self._agents, self.group_names + other.group_names,
+                     self.agent_classes + other.agent_classes, self._ids + other._ids)
 
     def __radd__(self, g):
         if isinstance(g, Group):
@@ -151,18 +163,18 @@ class Group(object):
         """
         self.do('_agg_log', variables, possessions, func, len)
 
-    def create_agents(self, simulation_parameters=None, agent_parameters=None, number=1):
-        """ Create a new agent to this group. Works only for non-combined groups
+    def create_agents(self, number=1, agent_parameters=None, **common_parameters):
+        """ Create new agents to this group. Works only for non-combined groups
 
         Args:
-            simulation_parameters:
-                A dictionary of simulation_parameters
-
             agent_parameters:
                 List of dictionaries of agent_parameters
 
             number:
                 number of agents to create if agent_parameters is not set
+
+            any keyword parameter:
+                parameters directly passed to :code:`agent.init` methood
 
         Returns:
             The id of the new agent
@@ -183,16 +195,18 @@ class Group(object):
 
         Agent = self.agent_classes[0]
 
-        self._agents.insert_or_append(group_name, ids, Agent, simulation_parameters, agent_parameters, self._agent_arguments)
+        self._agents.insert_or_append(group_name, ids, Agent, common_parameters, agent_parameters,
+                                      self._agent_arguments)
         return ids
 
     def do(self, command, *args, **kwargs):
-        """ agent actions can be executed by group.action() or group.do('action') """
+        """ agent actions can be executed by :code:`group.action(args=args)` or
+        :code:`group.do('action', args=args)` """
         self.last_action = command
         return self._agents.do(self.group_names, self._ids, command, args, kwargs)
 
     def delete_agents(self, ids):
-        """ Remove an agent from not combined group, by specifying his ID:
+        """ Remove an agent from a group, by specifying his ID. This does not work
 
         Args:
             id:

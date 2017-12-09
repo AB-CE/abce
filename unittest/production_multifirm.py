@@ -6,9 +6,9 @@ from tools import is_zero
 
 
 class ProductionMultifirm(abce.Agent, abce.FirmMultiTechnologies):
-    def init(self, simulation_parameters, agent_parameters):
+    def init(self, rounds):
         # pylint: disable=W0201
-        self.last_round = simulation_parameters['rounds'] - 1
+        self.last_round = rounds - 1
 
         def mes(goods):
             return max(goods['a'] ** 2, goods['a'] ** 0.5 * goods['b'])
