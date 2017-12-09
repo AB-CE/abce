@@ -206,11 +206,15 @@ class Group:
         return self._agents.do(self.group_names, self._ids, command, args, kwargs)
 
     def delete_agents(self, ids):
-        """ Remove an agent from a group, by specifying his ID. This does not work
+        """ Remove an agents from a group, by specifying their id.
 
         Args:
-            id:
-                id of the agent
+            ids:
+                list of ids of the agent
+
+        Example::
+
+            students.delete_agents([1, 5, 15])
         """
         assert len(self.group_names) == 1, 'Group is a combined group, no deleting permitted'
         for id in ids:
