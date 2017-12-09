@@ -58,9 +58,7 @@ from .db import Database
 from .agent import Agent, Trade  # noqa: F401
 from .group import Group
 from .notenoughgoods import NotEnoughGoods  # noqa: F401
-from .agents import (FirmMultiTechnologies, Firm,  # noqa: F401
-                     Household, Utility_Function,
-                     ProductionFunction)  # noqa: F401
+from .agents import Firm, Household  # noqa: F401
 from .quote import Quote  # noqa: F401
 from .contracts import Contracting  # noqa: F401
 from .gui import gui, graphs  # noqa: F401
