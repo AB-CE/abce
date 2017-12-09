@@ -4,8 +4,8 @@ from abce.agents import Firm
 
 
 class ProductionFirm(abce.Agent, Firm):
-    def init(self, simulation_parameters, agent_parameters):
-        self.last_round = simulation_parameters['rounds'] - 1
+    def init(self, rounds):
+        self.last_round = rounds - 1
 
         if self.id == 0:
             def mes(goods):

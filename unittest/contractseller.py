@@ -2,8 +2,8 @@ import abce
 
 
 class ContractSeller(abce.Agent, abce.Contracting):
-    def init(self, simulation_parameters, agent_parameters):
-        self.last_round = simulation_parameters['rounds'] - 1
+    def init(self, rounds):
+        self.last_round = rounds - 1
         if self.id == 0:
             self.create('labor_endowment', 1)
 

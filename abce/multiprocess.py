@@ -21,7 +21,7 @@
 import multiprocessing as mp
 from multiprocessing.managers import BaseManager
 import traceback
-from collections import defaultdict
+from collections import defaultdict, ChainMap
 
 
 class MyManager(BaseManager):
@@ -47,7 +47,7 @@ class ProcessorGroup:
                 agent = Agent(id, simulation_parameters, ap, **agent_arguments)
                 agent._send = agent._send_multiprocessing
                 agent._out = defaultdict(list)
-                agent.init(simulation_parameters, ap)
+                agent.init(**ChainMap(simulation_parameters, ap))
                 agent._processes = self.processes
                 if len(self.agents[group]) <= id // self.processes:
                     self.agents[group].append(agent)

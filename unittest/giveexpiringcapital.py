@@ -4,8 +4,8 @@ from abce.agents import Firm
 
 
 class GiveExpiringCapital(abce.Agent, Firm):
-    def init(self, simulation_parameters, _,):
-        self.last_round = simulation_parameters['rounds'] - 1
+    def init(self, rounds):
+        self.last_round = rounds - 1
         if self.id == 0:
             self.create('xcapital', 10)
             assert self['xcapital'] == 10, self['xcapital']

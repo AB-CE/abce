@@ -4,9 +4,9 @@ import random
 
 
 class QuoteBuy(abce.Agent):
-    def init(self, simulation_parameters, own_parameters):
-        self.last_round = simulation_parameters['rounds'] - 1
-        self.cut_of = simulation_parameters['cut_of']
+    def init(self, rounds, cut_of):
+        self.last_round = rounds - 1
+        self.cut_of = cut_of
         if self.id == 1:
             self.tests = {'accepted': False,
                           'not_answered': False, 'partial': False}

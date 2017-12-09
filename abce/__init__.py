@@ -374,8 +374,10 @@ class Simulation(object):
             self._write_description_file()
             self._displaydescribtion()
 
-    def build_agents(self, AgentClass, group_name, number=None,
-                     parameters={}, agent_parameters=None):
+    def build_agents(self, AgentClass, group_name,
+                     number=None,
+                     agent_parameters=None,
+                     **parameters):
         """ This method creates agents.
 
         Args:
@@ -391,32 +393,36 @@ class Simulation(object):
             number:
                 number of agents to be created.
 
-            parameters:
-                a dictionary of parameters
-
             agent_parameters:
                 a list of dictionaries, where each agent gets one dictionary.
                 The number of agents is the length of the list
+
+            any other parameters:
+                are directly passed to the agent
 
         Example::
 
          firms = simulation.build_agents(Firm, 'firm',
              number=simulation_parameters['num_firms'])
          banks = simulation.build_agents(Bank, 'bank',
-                                         parameters=simulation_parameters,
                                          agent_parameters=[{'name': 'UBS'},
-                                         {'name': 'amex'},{'name': 'chase'})
+                                         {'name': 'amex'},{'name': 'chase'}
+                                         **simulation_parameters,
+                                         loanable=True)
 
          centralbanks = simulation.build_agents(CentralBank, 'centralbank',
                                                 number=1,
-                                                parameters={'rounds':
-                                                             num_rounds})
+                                                rounds=num_rounds)
         """
         assert number is None or agent_parameters is None, \
             'either set number or agent_parameters in build_agents'
+        if agent_parameters is None:
+            agent_parameters = {}
+        if parameters is None:
+            parameters = {}
         if number is not None:
             num_agents_this_group = number
-            agent_parameters = [None] * num_agents_this_group
+            agent_parameters = [{} for _ in range(num_agents_this_group)]
         else:
             num_agents_this_group = len(agent_parameters)
 
@@ -430,8 +436,7 @@ class Simulation(object):
                                        'expiring': self.expiring,
                                        'perishable': self.perishable,
                                        'resource_endowment': self.resource_endowment})
-        group.create_agents(simulation_parameters=parameters,
-                            agent_parameters=agent_parameters)
+        group.create_agents(agent_parameters=agent_parameters, **parameters)
         self.agents_created = True
         self._groups[group_name] = group
         self.messagess[group_name] = []
