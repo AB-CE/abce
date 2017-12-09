@@ -111,14 +111,14 @@ class Group:
         else:
             return self
 
-    def panel_log(self, variables=[], possessions=[], func={}, len=[]):
-        """ panel_log(.) writes a panel of variables and possessions
+    def panel_log(self, variables=[], goods=[], func={}, len=[]):
+        """ panel_log(.) writes a panel of variables and goods
         of a group of agents into the database, so that it is displayed
         in the gui.
 
         Args:
-            possessions (list, optional):
-                a list of all possessions you want to track as 'strings'
+            goods (list, optional):
+                a list of all goods you want to track as 'strings'
             variables (list, optional):
                 a list of all variables you want to track as 'strings'
             func (dict, optional):
@@ -131,20 +131,20 @@ class Group:
 
             for round in simulation.next_round():
                 firms.produce_and_sell()
-                firms.panel_log(possessions=['money', 'input'],
+                firms.panel_log(goods=['money', 'input'],
                             variables=['production_target', 'gross_revenue'])
                 households.buying()
         """
-        self.do('_panel_log', variables, possessions, func, len, self.last_action)
+        self.do('_panel_log', variables, goods, func, len, self.last_action)
 
-    def agg_log(self, variables=[], possessions=[], func={}, len=[]):
-        """ agg_log(.) writes a aggregate data of variables and possessions
+    def agg_log(self, variables=[], goods=[], func={}, len=[]):
+        """ agg_log(.) writes a aggregate data of variables and goods
         of a group of agents into the database, so that it is displayed
         in the gui.
 
         Args:
-            possessions (list, optional):
-                a list of all possessions you want to track as 'strings'
+            goods (list, optional):
+                a list of all goods you want to track as 'strings'
             variables (list, optional):
                 a list of all variables you want to track as 'strings'
             func (dict, optional):
@@ -157,11 +157,11 @@ class Group:
 
             for round in simulation.next_round():
                 firms.produce_and_sell()
-                firms.agg_log(possessions=['money', 'input'],
+                firms.agg_log(goods=['money', 'input'],
                             variables=['production_target', 'gross_revenue'])
                 households.buying()
         """
-        self.do('_agg_log', variables, possessions, func, len)
+        self.do('_agg_log', variables, goods, func, len)
 
     def create_agents(self, number=1, agent_parameters=None, **common_parameters):
         """ Create new agents to this group. Works only for non-combined groups
