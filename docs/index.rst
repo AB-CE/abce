@@ -90,8 +90,6 @@ Advanced
    :maxdepth: 1
 
    Contracting
-   FirmMultiTechnologies
-   MultiCurrencyTrade
    Quote
    spatial
    plugins
