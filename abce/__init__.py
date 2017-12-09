@@ -474,8 +474,6 @@ class Simulation(object):
             simulation_parameters = {}
         if agent_parameters is None:
             agent_parameters = [{}] * number
-        else:
-            agent_parameters = make_iterable(agent_parameters)
         group = self._groups[group_name]
         id = group.create_agents(simulation_parameters=simulation_parameters,
                                  agent_parameters=agent_parameters)
@@ -500,7 +498,6 @@ class Simulation(object):
             ids:
                 a list of ids of the agents to be deleted in that group
         """
-        ids = make_iterable(ids)
         group = self._groups[group]
         group.delete_agents(ids)
 
@@ -534,13 +531,3 @@ class Simulation(object):
         """
         self.finalize()
         graphs(self.sim_parameters)
-
-
-def make_iterable(var):
-        if isinstance(var, dict):
-            return [var]
-        try:
-            iter(var)
-        except TypeError:
-            return [var]
-        return var
