@@ -2,6 +2,8 @@ import platform
 import start_core_engine
 import start_logging_test
 import start_delete_create
+import start_production_consumption
+
 
 if __name__ == '__main__':
     print("Logging test, 1 core")
@@ -32,3 +34,12 @@ if __name__ == '__main__':
         print('Iteration with multiple processes finished')
 
     print("PYPY and windows: core functions not tested with multi-processes")
+
+    print("Production and consumption test, 1 core")
+    start_production_consumption.main(processes=1)
+    print('Iteration of logger testing with 1 core finished')
+
+    if (platform.system() != 'Windows' and platform.python_implementation() != 'PyPy'):
+        print("Production and consumption test, 4 cores")
+        start_production_consumption.main(processes=4)
+        print('Iteration of production and consumption testing with multiple processes finished')
