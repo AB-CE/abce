@@ -2,9 +2,8 @@ from .inventory import Inventory
 
 
 class Goods:
-    def __init__(self, id, group, trade_logging,
-                 database, random_seed, num_managers, agent_parameters, simulation_parameters,
-                 check_unchecked_msgs, start_round):
+    def __init__(self, id, agent_parameters, simulation_parameters, group, trade_logging,
+                 database, check_unchecked_msgs, expiring, perishable, resource_endowment, start_round=None):
         self._inventory = Inventory((group, id))
         self._resources = []
 

@@ -39,8 +39,12 @@ Messaging between agents:
 from collections import OrderedDict
 
 
-class Database(object):
+class Database:
     """ The database class """
+    def __init__(self, id, agent_parameters, simulation_parameters, group, trade_logging,
+                 database, check_unchecked_msgs, expiring, perishable, resource_endowment, start_round=None):
+        super(Database, self).__init__(id, agent_parameters, simulation_parameters, group, trade_logging, database,
+                                       check_unchecked_msgs, expiring, perishable, resource_endowment, start_round)
 
     def log(self, action_name, data_to_log):
         """ With log you can write the models data. Log can save variable
