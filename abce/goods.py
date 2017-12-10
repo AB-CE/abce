@@ -2,6 +2,9 @@ from .inventory import Inventory
 
 
 class Goods:
+    """ Each agent can access his goods. self['good_name'] shows the quantity of goods of a certain type an agent
+    owns. Goods can be a string or any other python object.
+    """
     def __init__(self, id, agent_parameters, simulation_parameters, group, trade_logging,
                  database, check_unchecked_msgs, expiring, perishable, resource_endowment, start_round=None):
         self._inventory = Inventory((group, id))
