@@ -17,6 +17,7 @@
 
 # pylint: disable=W0212, C0111
 from collections import deque, defaultdict
+from itertools import chain
 
 
 def _get_methods(agent_class):
@@ -25,6 +26,30 @@ def _get_methods(agent_class):
                for method in dir(agent_class)
                if callable(getattr(agent_class, method)) and
                method[0] != '_' and method != 'init')
+
+
+class Action:
+    # This allows actions of Group to be combined. For example::
+    #
+    #     (firms.sell & households.buy)()
+    #
+    # It works by returning a callable and combinable action from
+    # the groups __getattr__ method.
+
+    def __init__(self, _agents, actions):
+        self._agents = _agents
+        self.actions = actions
+
+    def __and__(self, other):
+        return Action(self._agents, self.actions + other.actions)
+
+    def __add__(self, other):
+        return self.__and__(other)
+
+    def __call__(self):
+        for action in self.actions:
+            self._agents.do(*action)
+        return chain.from_iterable([self._agents.post_messages(action[0], action[1]) for action in self.actions])
 
 
 class Group:
@@ -62,11 +87,10 @@ class Group:
 
         (banks[6,4] + hedgefunds[7,9]).buy_stocks()
 
-    future:
 
     agents actions can also be combined::
 
-        buying_stuff = banks.buy_stocks + hedgefunds.buy_feraries
+        buying_stuff = banks.buy_stocks & hedgefunds.buy_feraries
         buy_stocks()
 
     or::
@@ -84,11 +108,6 @@ class Group:
         self.group_names = group_names
         self.agent_classes = agent_classes
         self._agent_arguments = agent_arguments
-        for method in set.intersection(*(_get_methods(agent_class) for agent_class in agent_classes)):
-            setattr(self, method,
-                    eval('lambda self=self, *argc, **kw: self.do("%s", *argc, **kw)' %
-                         method))
-
         self.panel_serial = 0
         self.last_action = "Begin_of_Simulation"
 
@@ -135,7 +154,7 @@ class Group:
                             variables=['production_target', 'gross_revenue'])
                 households.buying()
         """
-        self.do('_panel_log', variables, goods, func, len, self.last_action)
+        self._do('_panel_log', variables, goods, func, len, self.last_action)
 
     def agg_log(self, variables=[], goods=[], func={}, len=[]):
         """ agg_log(.) writes a aggregate data of variables and goods
@@ -161,7 +180,7 @@ class Group:
                             variables=['production_target', 'gross_revenue'])
                 households.buying()
         """
-        self.do('_agg_log', variables, goods, func, len)
+        self._do('_agg_log', variables, goods, func, len)
 
     def create_agents(self, number=1, agent_parameters=None, **common_parameters):
         """ Create new agents to this group. Works only for non-combined groups
@@ -199,11 +218,14 @@ class Group:
                                       self._agent_arguments)
         return ids
 
-    def do(self, command, *args, **kwargs):
-        """ agent actions can be executed by :code:`group.action(args=args)` or
-        :code:`group.do('action', args=args)` """
+    def _do(self, command, *args, **kwargs):
+        """ agent actions can be executed by :code:`group.action(args=args)`. """
         self.last_action = command
         return self._agents.do(self.group_names, self._ids, command, args, kwargs)
+
+    def __getattr__(self, command, *args, **kwargs):
+        self.last_action = command
+        return Action(self._agents, [(self.group_names, self._ids, command, args, kwargs)])
 
     def delete_agents(self, ids):
         """ Remove an agents from a group, by specifying their id.
