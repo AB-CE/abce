@@ -18,7 +18,7 @@ def main(processes, rounds):
 
     for time in range(rounds):
         simulation.advance_round(time)
-        assert len(balls.boing()) == time, len(balls.boing())
+        assert len(balls) == time, len(balls)
         deads = killer.kill_silent()
         victims.delete_agents(deads)
         deads = killer.kill_loud()
