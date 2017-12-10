@@ -196,12 +196,10 @@ class Trade:
 
     If we did not implement a barter class, but one can use this class as a barter class,
     """
-    def __init__(self, id, group, trade_logging,
-                 database, random_seed, num_managers, agent_parameters, simulation_parameters,
-                 check_unchecked_msgs, start_round):
-        super().__init__(id, group, trade_logging,
-                         database, random_seed, num_managers, agent_parameters, simulation_parameters,
-                         check_unchecked_msgs, start_round)
+    def __init__(self, id, agent_parameters, simulation_parameters, group, trade_logging,
+                 database, check_unchecked_msgs, expiring, perishable, resource_endowment, start_round=None):
+        super(Trade, self).__init__(id, agent_parameters, simulation_parameters, group, trade_logging,
+                                    database, check_unchecked_msgs, expiring, perishable, resource_endowment, start_round)
         self.given_offers = OrderedDict()
         self._open_offers_buy = defaultdict(dict)
         self._open_offers_sell = defaultdict(dict)

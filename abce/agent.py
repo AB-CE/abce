@@ -28,7 +28,7 @@ Logging and data creation, see :doc:`Database`.
 
 Messaging between agents, see :doc:`Messaging`.
 """
-from collections import OrderedDict, defaultdict
+from collections import defaultdict
 from pprint import pprint
 import abce
 from .database import Database
@@ -88,6 +88,9 @@ class Agent(Database, Trade, Messaging, Goods):
         """ Do not overwrite __init__ instead use a method called init instead.
         init is called whenever the agent are build.
         """
+        super(Agent, self).__init__(id, agent_parameters, simulation_parameters, group, trade_logging,
+                                    database, check_unchecked_msgs, expiring, perishable, resource_endowment,
+                                    start_round)
         self.id = id
         """ self.id returns the agents id READ ONLY"""
         self.name = (group, id)
@@ -101,8 +104,10 @@ class Agent(Database, Trade, Messaging, Goods):
         # when fired manual + ':' and manual group_address need to be removed
         self.database_connection = database
 
-        self.num_managers = num_managers
-        self._out = [[] for _ in range(self.num_managers + 1)]
+        self.trade_logging = {'individual': 1,
+                              'group': 2, 'off': 0}[trade_logging]
+
+        self._out = []
         # TODO make defaultdict; delete all key errors regarding self._inventory as
         # defaultdict, does not have missing keys
         self._msgs = {}
@@ -115,6 +120,7 @@ class Agent(Database, Trade, Messaging, Goods):
         """ self.time, contains the time set with simulation.advance_round(time)
             you can set time to anything you want an integer or
             (12, 30, 21, 09, 1979) or 'monday' """
+        self._resources = []
         self.variables_to_track_panel = []
         self.variables_to_track_aggregate = []
         self.inbox = []
