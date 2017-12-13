@@ -5,8 +5,8 @@ from abce import NotEnoughGoods
 
 
 class Sell(abce.Agent):
-    def init(self, simulation_parameters, agent_parameters):
-        self.last_round = simulation_parameters['rounds'] - 1
+    def init(self, rounds):
+        self.last_round = rounds - 1
         self.tests = {'accepted': False, 'rejected': False,
                       'partial': False, 'full_partial': False}
         if self.id == 1:

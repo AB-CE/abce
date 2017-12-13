@@ -23,8 +23,23 @@ class DifferentAgent(abce.Agent):
 
 sim = abce.Simulation()
 
-myagent = sim.build_agents(MyAgent, 'myagent', agent_parameters=[0, 1, 2, 3, 4, 5, 6])
-differentagent = sim.build_agents(DifferentAgent, 'differentagent', agent_parameters=[0, 1, 2, 3, 4, 5, 6])
+myagent = sim.build_agents(MyAgent, 'myagent',
+                           agent_parameters=[{'agent_parameters': 0},
+                                             {'agent_parameters': 1},
+                                             {'agent_parameters': 2},
+                                             {'agent_parameters': 3},
+                                             {'agent_parameters': 4},
+                                             {'agent_parameters': 5},
+                                             {'agent_parameters': 6}])
+
+differentagent = sim.build_agents(DifferentAgent, 'differentagent',
+                                  agent_parameters=[{'agent_parameters': 0},
+                                                    {'agent_parameters': 1},
+                                                    {'agent_parameters': 2},
+                                                    {'agent_parameters': 3},
+                                                    {'agent_parameters': 4},
+                                                    {'agent_parameters': 5},
+                                                    {'agent_parameters': 6}])
 
 print('len', len(myagent))
 

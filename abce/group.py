@@ -1,22 +1,23 @@
-""" Copyright 2012 Davoud Taghawi-Nejad
+# Copyright 2012 Davoud Taghawi-Nejad
+#
+#  Module Author: Davoud Taghawi-Nejad
+#
+#  ABCE is open-source software. If you are using ABCE for your research you are
+#  requested the quote the use of this software.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License"); you may not
+#  use this file except in compliance with the License and quotation of the
+#  author. You may obtain a copy of the License at
+#        http://www.apache.org/licenses/LICENSE-2.0
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+#  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+#  License for the specific language governing permissions and limitations under
+# the License.
 
- Module Author: Davoud Taghawi-Nejad
-
- ABCE is open-source software. If you are using ABCE for your research you are
- requested the quote the use of this software.
-
- Licensed under the Apache License, Version 2.0 (the "License"); you may not
- use this file except in compliance with the License and quotation of the
- author. You may obtain a copy of the License at
-       http://www.apache.org/licenses/LICENSE-2.0
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- License for the specific language governing permissions and limitations under
- the License.
-"""
 # pylint: disable=W0212, C0111
 from collections import deque, defaultdict
+from itertools import chain
 
 
 def _get_methods(agent_class):
@@ -27,10 +28,45 @@ def _get_methods(agent_class):
                method[0] != '_' and method != 'init')
 
 
-class Group(object):
+class Action:
+    # This allows actions of Group to be combined. For example::
+    #
+    #     (firms.sell & households.buy)()
+    #
+    # It works by returning a callable and combinable action from
+    # the groups __getattr__ method.
+
+    def __init__(self, _agents, actions):
+        self._agents = _agents
+        self.actions = actions
+
+    def __and__(self, other):
+        return Action(self._agents, self.actions + other.actions)
+
+    def __add__(self, other):
+        return self.__and__(other)
+
+    def __call__(self):
+        for action in self.actions:
+            self._agents.do(*action)
+        return chain.from_iterable([self._agents.post_messages(action[0], action[1]) for action in self.actions])
+
+
+class Group:
     """ A group of agents. Groups of agents inherit the actions of the agents class they are created by.
     When a group is called with an agent action all agents execute this actions simultaneously.
     e.G. :code:`banks.buy_stocks()`, then all banks buy stocks simultaneously.
+
+    agents groups are created like this::
+
+        sim = Simulation()
+
+        Agents = sim.build_agents(AgentClass, 'group_name', number=100, param1=param1, param2=param2)
+        Agents = sim.build_agents(AgentClass, 'group_name',
+                                  param1=param1, param2=param2,
+                                  agent_parameters=[dict(ap=ap1_agentA, ap=ap2_agentA),
+                                                    dict(ap=ap1_agentB, ap=ap2_agentB),
+                                                    dict(ap=ap1_agentC, ap=ap2_agentC)])
 
     Agent groups can be combined using the + sign::
 
@@ -51,11 +87,10 @@ class Group(object):
 
         (banks[6,4] + hedgefunds[7,9]).buy_stocks()
 
-    future:
 
     agents actions can also be combined::
 
-        buying_stuff = banks.buy_stocks + hedgefunds.buy_feraries
+        buying_stuff = banks.buy_stocks & hedgefunds.buy_feraries
         buy_stocks()
 
     or::
@@ -73,11 +108,6 @@ class Group(object):
         self.group_names = group_names
         self.agent_classes = agent_classes
         self._agent_arguments = agent_arguments
-        for method in set.intersection(*(_get_methods(agent_class) for agent_class in agent_classes)):
-            setattr(self, method,
-                    eval('lambda self=self, *argc, **kw: self.do("%s", *argc, **kw)' %
-                         method))
-
         self.panel_serial = 0
         self.last_action = "Begin_of_Simulation"
 
@@ -91,7 +121,8 @@ class Group(object):
             self._ids = ids
 
     def __add__(self, other):
-        return Group(self.sim, self._agents, self.group_names + other.group_names, self.agent_classes + other.agent_classes, self._ids + other._ids)
+        return Group(self.sim, self._agents, self.group_names + other.group_names,
+                     self.agent_classes + other.agent_classes, self._ids + other._ids)
 
     def __radd__(self, g):
         if isinstance(g, Group):
@@ -99,14 +130,14 @@ class Group(object):
         else:
             return self
 
-    def panel_log(self, variables=[], possessions=[], func={}, len=[]):
-        """ panel_log(.) writes a panel of variables and possessions
+    def panel_log(self, variables=[], goods=[], func={}, len=[]):
+        """ panel_log(.) writes a panel of variables and goods
         of a group of agents into the database, so that it is displayed
         in the gui.
 
         Args:
-            possessions (list, optional):
-                a list of all possessions you want to track as 'strings'
+            goods (list, optional):
+                a list of all goods you want to track as 'strings'
             variables (list, optional):
                 a list of all variables you want to track as 'strings'
             func (dict, optional):
@@ -119,20 +150,20 @@ class Group(object):
 
             for round in simulation.next_round():
                 firms.produce_and_sell()
-                firms.panel_log(possessions=['money', 'input'],
+                firms.panel_log(goods=['money', 'input'],
                             variables=['production_target', 'gross_revenue'])
                 households.buying()
         """
-        self.do('_panel_log', variables, possessions, func, len, self.last_action)
+        self._do('_panel_log', variables, goods, func, len, self.last_action)
 
-    def agg_log(self, variables=[], possessions=[], func={}, len=[]):
-        """ agg_log(.) writes a aggregate data of variables and possessions
+    def agg_log(self, variables=[], goods=[], func={}, len=[]):
+        """ agg_log(.) writes a aggregate data of variables and goods
         of a group of agents into the database, so that it is displayed
         in the gui.
 
         Args:
-            possessions (list, optional):
-                a list of all possessions you want to track as 'strings'
+            goods (list, optional):
+                a list of all goods you want to track as 'strings'
             variables (list, optional):
                 a list of all variables you want to track as 'strings'
             func (dict, optional):
@@ -145,24 +176,24 @@ class Group(object):
 
             for round in simulation.next_round():
                 firms.produce_and_sell()
-                firms.agg_log(possessions=['money', 'input'],
+                firms.agg_log(goods=['money', 'input'],
                             variables=['production_target', 'gross_revenue'])
                 households.buying()
         """
-        self.do('_agg_log', variables, possessions, func, len)
+        self._do('_agg_log', variables, goods, func, len)
 
-    def create_agents(self, simulation_parameters=None, agent_parameters=None, number=1):
-        """ Create a new agent to this group. Works only for non-combined groups
+    def create_agents(self, number=1, agent_parameters=None, **common_parameters):
+        """ Create new agents to this group. Works only for non-combined groups
 
         Args:
-            simulation_parameters:
-                A dictionary of simulation_parameters
-
             agent_parameters:
                 List of dictionaries of agent_parameters
 
             number:
                 number of agents to create if agent_parameters is not set
+
+            any keyword parameter:
+                parameters directly passed to :code:`agent.init` methood
 
         Returns:
             The id of the new agent
@@ -183,20 +214,29 @@ class Group(object):
 
         Agent = self.agent_classes[0]
 
-        self._agents.insert_or_append(group_name, ids, Agent, simulation_parameters, agent_parameters, self._agent_arguments)
+        self._agents.insert_or_append(group_name, ids, Agent, common_parameters, agent_parameters,
+                                      self._agent_arguments)
         return ids
 
-    def do(self, command, *args, **kwargs):
-        """ agent actions can be executed by group.action() or group.do('action') """
+    def _do(self, command, *args, **kwargs):
+        """ agent actions can be executed by :code:`group.action(args=args)`. """
         self.last_action = command
         return self._agents.do(self.group_names, self._ids, command, args, kwargs)
 
+    def __getattr__(self, command, *args, **kwargs):
+        self.last_action = command
+        return Action(self._agents, [(self.group_names, self._ids, command, args, kwargs)])
+
     def delete_agents(self, ids):
-        """ Remove an agent from not combined group, by specifying his ID:
+        """ Remove an agents from a group, by specifying their id.
 
         Args:
-            id:
-                id of the agent
+            ids:
+                list of ids of the agent
+
+        Example::
+
+            students.delete_agents([1, 5, 15])
         """
         assert len(self.group_names) == 1, 'Group is a combined group, no deleting permitted'
         for id in ids:

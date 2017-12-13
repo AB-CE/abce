@@ -1,13 +1,10 @@
-from __future__ import division
-from __future__ import print_function
 import abce
-from tools import *
 import time
 
 
 class LoggerTest(abce.Agent):
-    def init(self, simulation_parameters, agent_parameters):
-        self.last_round = simulation_parameters['rounds'] - 1
+    def init(self, rounds):
+        self.last_round = rounds - 1
         self.create('money', 50)
         self.create('cookies', 3)
 

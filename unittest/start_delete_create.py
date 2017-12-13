@@ -8,24 +8,24 @@ def main(processes, rounds):
     simulation = abce.Simulation(processes=processes)
 
     print('build Killer')
-    killer = simulation.build_agents(Killer, 'killer', 1, parameters={'rounds': rounds})
+    killer = simulation.build_agents(Killer, 'killer', 1)
     print('build Victim')
-    victims = simulation.build_agents(Victim, 'victim', rounds, parameters={'rounds': rounds})
+    victims = simulation.build_agents(Victim, 'victim', rounds)
     print('build Victim loudvictim')
-    loudvictims = simulation.build_agents(Victim, 'loudvictim', rounds, parameters={'rounds': rounds})
+    loudvictims = simulation.build_agents(Victim, 'loudvictim', rounds)
     print('build AddAgent')
     balls = simulation.build_agents(Ball, 'ball', 0)
 
     for time in range(rounds):
         simulation.advance_round(time)
-        assert len(balls.boing()) == time, len(balls.boing())
+        assert len(balls) == time, len(balls)
         deads = killer.kill_silent()
         victims.delete_agents(deads)
         deads = killer.kill_loud()
         loudvictims.delete_agents(deads)
         victims.am_I_dead()
         loudvictims.am_I_dead()
-        simulation.create_agents(Ball, 'ball')
+        balls.create_agents(1)
 
     simulation.finalize()
     del simulation
