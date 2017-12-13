@@ -20,12 +20,12 @@ def main(processes, rounds):
 
     for r in range(rounds):
         sim.advance_round(r)
-        (aagents.actionA & aagents.actionB)()
-        (aagents.actionA & bagents.actionB)()
-        (aagents.actionB & bagents.actionB)()
+        (aagents.actionA + aagents.actionB)()
+        (aagents.actionA + bagents.actionB)()
+        (aagents.actionB + bagents.actionB)()
         aagents.actionA()
         bagents.actionB()
-        (actionA & actionB)()
+        (actionA + actionB)()
 
     sim.finalize()
 

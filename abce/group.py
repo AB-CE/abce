@@ -40,11 +40,8 @@ class Action:
         self._agents = _agents
         self.actions = actions
 
-    def __and__(self, other):
-        return Action(self._agents, self.actions + other.actions)
-
     def __add__(self, other):
-        return self.__and__(other)
+        return Action(self._agents, self.actions + other.actions)
 
     def __call__(self):
         for action in self.actions:
