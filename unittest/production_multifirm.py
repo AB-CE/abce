@@ -1,48 +1,36 @@
-
-from __future__ import division
-from __future__ import print_function
 import abce
 from tools import is_zero
 
 
-class ProductionMultifirm(abce.Agent, abce.FirmMultiTechnologies):
-    def init(self, simulation_parameters, agent_parameters):
-        # pylint: disable=W0201
-        self.last_round = simulation_parameters['rounds'] - 1
+class ProductionMultifirm(abce.Agent, abce.Firm):
+    def init(self, rounds):
+        self.last_round = rounds - 1
 
-        def mes(goods):
-            return max(goods['a'] ** 2, goods['a'] ** 0.5 * goods['b'])
-        use = {'a': 1, 'b': 0.1}
+        def production_function(a, b):
+            consumption_good = max(a ** 2, a ** 0.5 * b)
+            a = 0
+            b = b * 0.9
+            return locals()
 
-        self.pf = self.create_production_function_one_good(
-            mes, 'consumption_good', use)
-        self.cd = self.create_cobb_douglas(
-            'consumption_good', 5, {'a': 2, 'b': 1})
-        self.leontief = self.create_leontief(
-            'consumption_good', {'a': 3, 'b': 1})
+        self.pf = production_function
+        self.cd = self.create_cobb_douglas('consumption_good', 5, {'a': 2, 'b': 1})
+        self.leontief = self.create_leontief('consumption_good', {'a': 3, 'b': 1})
         self.car = self.create_leontief('car', {'wheels': 4, 'chassi': 1})
         self.ces = self.create_ces('consumption_good', gamma=0.5, shares={
                                    'a': 0.25, 'b': 0.25, 'c': 0.5})
         self.ces_flexible = self.create_ces(
             'consumption_good', gamma=0.5, multiplier=2)
 
-        def many_goods_pf(goods):
-            output = {'soft_rubber':
-                      goods['a'] ** 0.25 *
-                      goods['b'] ** 0.5 *
-                      goods['c'] ** 0.25,
-                      'hard_rubber':
-                      goods['a'] ** 0.1 *
-                      goods['b'] ** 0.2 *
-                      goods['c'] ** 0.01,
-                      'waste':
-                      goods['b'] / 2}
-            return output
+        def many_goods_pf(a, b, c):
+            soft_rubber = a ** 0.25 * b ** 0.5 * c ** 0.25
+            hard_rubber = a ** 0.1 * b ** 0.2 * c ** 0.01
+            waste = b / 2
+            a = 0
+            b = b * 0.9
+            c = c
+            return locals()
 
-        use = {'a': 1, 'b': 0.1, 'c': 0}
-
-        self.many_goods_pf = self.create_production_function_many_goods(
-            many_goods_pf, use)
+        self.many_goods_pf = many_goods_pf
 
     def production(self):
         self.create('a', 2)
@@ -57,16 +45,10 @@ class ProductionMultifirm(abce.Agent, abce.FirmMultiTechnologies):
         self.destroy('b')
         self.destroy('consumption_good')
 
-        output = self.predict_produce_output(self.pf, {'a': 10, 'b': 10})
-        assert output['consumption_good'] == max(10 ** 2, 10 ** 0.5 * 10)
-
-        input = self.predict_produce_input(self.pf, {'a': 10, 'b': 10})
-        assert input['a'] == 10, input['a']
-        assert input['b'] == 1, input['b']
-
-        nv = self.net_value(
-            output, input, {'consumption_good': 10, 'a': 1, 'b': 2})
-        assert nv == 100 * 10 - (10 * 1 + 1 * 2), nv
+        result = self.pf(**{'a': 10, 'b': 10})
+        assert result['consumption_good'] == max(10 ** 2, 10 ** 0.5 * 10)
+        assert result['a'] == 0, result['a']
+        assert result['b'] == 9, result['b']
 
         self.create('a', 2)
         self.create('b', 2)
@@ -110,11 +92,6 @@ class ProductionMultifirm(abce.Agent, abce.FirmMultiTechnologies):
         self.destroy('soft_rubber')
         self.destroy('hard_rubber')
         self.destroy('waste')
-
-        input_goods = {'wheels': 4, 'chassi': 1}
-        price_vector = {'wheels': 10, 'chassi': 100, 'car': 1000}
-        nv = self.predict_net_value(self.car, input_goods, price_vector)
-        assert nv == 860
 
         self.create('a', 2)
         self.create('b', 2)

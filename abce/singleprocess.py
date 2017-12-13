@@ -16,6 +16,7 @@
  the License.
 """
 # pylint: disable=W0212, C0111
+from collections import ChainMap
 
 
 class SingleProcess(object):
@@ -32,7 +33,7 @@ class SingleProcess(object):
         """appends an agent to a group """
         for id, ap in zip(ids, agent_parameters):
             agent = Agent(id, simulation_parameters, ap, **agent_arguments)
-            agent.init(simulation_parameters, ap)
+            agent.init(**ChainMap(simulation_parameters, ap))
             try:
                 self.agents[group][id] = agent
             except IndexError:
@@ -44,17 +45,19 @@ class SingleProcess(object):
             self.agents[group][id] = None
 
     def do(self, groups, ids, command, args, kwargs):
-        rets = []
+        self.rets = []
         for group, iss in zip(groups, ids):
             for i in iss:
                 if i is not None:
                     ret = self.agents[group][i]._execute(command, args, kwargs)
-                    rets.append(ret)
+                    self.rets.append(ret)
+
+    def post_messages(self, groups, ids):
         for group, iss in zip(groups, ids):
             for i in iss:
                 if i is not None:
                     self.agents[group][i]._post_messages(self.agents)
-        return rets
+        return self.rets
 
     def advance_round(self, time):
         for agents in self.agents.values():

@@ -2,6 +2,8 @@ import platform
 import start_core_engine
 import start_logging_test
 import start_delete_create
+import start_production_consumption
+import start_combinable_actions
 
 if __name__ == '__main__':
     print("Logging test, 1 core")
@@ -13,16 +15,16 @@ if __name__ == '__main__':
         start_logging_test.main(processes=4)
         print('Iteration of logger testing with multiple processes finished')
 
-    print("Core engine, 1 core")
+    print("\nCore engine test, 1 core")
     start_core_engine.main(processes=1, rounds=50)
     print('Iteration with 1 core finished')
 
     if (platform.system() != 'Windows' and platform.python_implementation() != 'PyPy'):
-        print("Core engine, 4 cores")
+        print("Core engine test, 4 cores")
         start_core_engine.main(processes=4, rounds=50)
         print('Iteration with multiple processes finished')
 
-    print("Create/delete, 1 core")
+    print("\nCreate/delete, 1 core")
     start_delete_create.main(processes=1, rounds=30)
     print('Iteration with 1 core finished')
 
@@ -32,3 +34,21 @@ if __name__ == '__main__':
         print('Iteration with multiple processes finished')
 
     print("PYPY and windows: core functions not tested with multi-processes")
+
+    print("\nProduction and consumption test, 1 core")
+    start_production_consumption.main(processes=1)
+    print('Iteration of production and consumption testing with 1 core finished')
+
+    if (platform.system() != 'Windows' and platform.python_implementation() != 'PyPy'):
+        print("Production and consumption test, 4 cores")
+        start_production_consumption.main(processes=4)
+        print('Iteration of production and consumption testing with multiple processes finished')
+
+    print("\nCombinable actions test, 1 core")
+    start_combinable_actions.main(processes=1, rounds=1)
+    print('Iteration of combinable actions with 1 core finished')
+
+    if (platform.system() != 'Windows' and platform.python_implementation() != 'PyPy'):
+        print("Combinable actions test, 4 cores")
+        start_combinable_actions.main(processes=4, rounds=1)
+        print('Iteration of combinable actions with multiple processes finished')

@@ -40,24 +40,26 @@ def compare(to_compare, path, message, processes):
         for key in generated[row]:
             if key != 'index':
                 if generated[row][key] != orginial[row][key]:
-                    assert isclose(float(generated[row][key]), float(orginial[row][key])), (key, generated[row][key], orginial[row][key])
+                    assert isclose(float(generated[row][key]), float(orginial[row][key])), (
+                        key, generated[row][key], orginial[row][key])
     for row in orginial:
         for key in orginial[row]:
             if key != 'index':
                 if generated[row][key] != orginial[row][key]:
-                    assert isclose(float(generated[row][key]), float(orginial[row][key])), (key, generated[row][key], orginial[row][key])
+                    assert isclose(float(generated[row][key]), float(orginial[row][key])), (
+                        key, generated[row][key], orginial[row][key])
 
 
 def main(processes):
     simulation = abce.Simulation(processes=processes)
 
-    agents = simulation.build_agents(Agent, 'agent', 10, parameters='')
+    agents = simulation.build_agents(Agent, 'agent', 10)
 
     for rnd in range(100):
         simulation.advance_round(rnd)
         agents.go()
-        agents.agg_log(variables=['i', 'r'], possessions=['money'])
-        agents.panel_log(variables=['i', 'r'], possessions=['money'])
+        agents.agg_log(variables=['i', 'r'], goods=['money'])
+        agents.panel_log(variables=['i', 'r'], goods=['money'])
     simulation.finalize()
 
     if platform.system() == 'Windows':

@@ -40,7 +40,12 @@ class Message(object):
             str(self.sender), str(self.receiver), self.topic, str(self.content))
 
 
-class Messaging(object):
+class Messaging:
+    def __init__(self, id, agent_parameters, simulation_parameters, group, trade_logging,
+                 database, check_unchecked_msgs, expiring, perishable, resource_endowment, start_round=None):
+        super(Messaging, self).__init__(id, agent_parameters, simulation_parameters, group, trade_logging, database,
+                                        check_unchecked_msgs, expiring, perishable, resource_endowment, start_round)
+
     def send(self, receiver, topic, content):
         """ sends a message to agent. Agents receive it
         at the beginning of next round with :meth:`~abceagent.Messaging.get_messages` or

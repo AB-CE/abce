@@ -21,7 +21,7 @@
 import multiprocessing as mp
 from multiprocessing.managers import BaseManager
 import traceback
-from collections import defaultdict
+from collections import defaultdict, ChainMap
 
 
 class MyManager(BaseManager):
@@ -47,7 +47,7 @@ class ProcessorGroup:
                 agent = Agent(id, simulation_parameters, ap, **agent_arguments)
                 agent._send = agent._send_multiprocessing
                 agent._out = defaultdict(list)
-                agent.init(simulation_parameters, ap)
+                agent.init(**ChainMap(simulation_parameters, ap))
                 agent._processes = self.processes
                 if len(self.agents[group]) <= id // self.processes:
                     self.agents[group].append(agent)
@@ -69,29 +69,30 @@ class ProcessorGroup:
 
     def do(self, groups, ids, command, args, kwargs):
         try:
-            rets = []
-            post = [[] for _ in range(self.processes)]
+            self.rets = []
+            self.post = [[] for _ in range(self.processes)]
             for group, iss in zip(groups, ids):
                 for i in iss:
                     if i is not None:
                         if i % self.processes == self.batch:
                             agent = self.agents[group][i // self.processes]
                             ret = agent._execute(command, args, kwargs)
-                            rets.append(ret)
+                            self.rets.append(ret)
                             pst = agent._post_messages_multiprocessing(self.processes)
                             for o in range(self.processes):
-                                post[o].extend(pst[o])
-
-            for i in range(self.processes):
-                self.queues[i].put(post[i])
-
-            for i in range(self.processes):
-                for receiver_group, receiver_id, envelope in self.queue.get():
-                    self.agents[receiver_group][receiver_id // self.processes].inbox.append(envelope)
-            return rets
-        except Exception as e:
+                                self.post[o].extend(pst[o])
+        except Exception:
             traceback.print_exc()
             raise
+
+    def post_messages(self, groups, ids):
+        for i in range(self.processes):
+            self.queues[i].put(self.post[i])
+
+        for i in range(self.processes):
+            for receiver_group, receiver_id, envelope in self.queue.get():
+                self.agents[receiver_group][receiver_id // self.processes].inbox.append(envelope)
+        return self.rets
 
     def keys(self):
         return self.agents.keys()
@@ -133,7 +134,10 @@ class MultiProcess(object):
         self.pool.map(delete_agents_wrapper, jkk(self.processor_groups, group, ids))
 
     def do(self, groups, ids, command, args, kwargs):
-        ret = self.pool.map(wrapper, jkk(self.processor_groups, groups, ids, command, args, kwargs))
+        self.pool.map(wrapper, jkk(self.processor_groups, groups, ids, command, args, kwargs))
+
+    def post_messages(self, groups, ids):
+        ret = self.pool.map(post_messages, jkk(self.processor_groups, groups, ids))
         return sort_ret(ret)
 
     def advance_round(self, time):
@@ -143,9 +147,14 @@ class MultiProcess(object):
         return self.processor_groups[0].keys()
 
 
-def wrapper(arg):
-    pg, groups, ids, command, args, kwargs = arg
-    return pg.do(groups, ids, command, args, kwargs)
+def wrapper(args):
+    pg, groups, ids, command, args, kwargs = args
+    pg.do(groups, ids, command, args, kwargs)
+
+
+def post_messages(args):
+    pg, groups, ids = args
+    return pg.post_messages(groups, ids)
 
 
 def insert_or_append_wrapper(arg):

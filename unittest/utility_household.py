@@ -3,8 +3,8 @@ from tools import is_zero
 
 
 class UtilityHousehold(abce.Agent, abce.Household):
-    def init(self, simulation_parameters, agent_parameters):
-        self.last_round = simulation_parameters['rounds'] - 1
+    def init(self, rounds):
+        self.last_round = rounds - 1
 
         if self.id == 0 or self.id == 2:
             def utility(goods):
