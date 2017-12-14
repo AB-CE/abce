@@ -70,7 +70,7 @@ ABCE runs on macOS, Windows, and Linux. ABCE runs 10x faster on pypy!
 
 Install with::
 
-    python3 -m pip install abce
+    pip3 install abce
 
 The documentation is here:
 
