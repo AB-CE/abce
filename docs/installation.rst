@@ -14,7 +14,7 @@ Installation Ubuntu
 
 #. In terminal::
 
-    sudo python3 -m pip install abce
+    sudo pip3 install abce
 
 #. download and unzip the
    `zip file with examples and the template <https://github.com/AB-CE/examples>`_
@@ -44,14 +44,14 @@ Installation Mac
 
 #.  In terminal::
 
-      sudo python3 -m pip install abce
+      sudo pip3 install abce
 
 
 #. If you are on El Capitain, OSX will ask you to install cc - xcode "Command Line Developer Tools", click accept. [#update]_
 
 #. If XCODE was installed type again in terminal::
 
-    sudo python3 -m pip install abce
+    sudo pip3 install abce
 
 #. download and unzip the
    `zip file with examples and the template <https://github.com/AB-CE/examples>`_

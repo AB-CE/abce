@@ -81,7 +81,7 @@ then from the console ssh into your account
 
 Install the server software and ABCE requirements::
 
-    sudo python3 -m pip install abce
+    sudo pip3 install abce
 
 
 copy or clone your ABCE simulation into the ~/myproject directory the easiest way is to use a git repository, but you can also use scp::
