@@ -26,6 +26,7 @@ methods use this variable to produce with the according technology.
 """
 import operator
 from functools import reduce
+from collections import ChainMap
 from abce import NotEnoughGoods
 from ..trade import get_epsilon
 epsilon = get_epsilon()
@@ -71,7 +72,7 @@ class Firm:
     can not be omitted. It returns all variables you define in this function as a dictionary.
     """
 
-    def produce(self, production_function, input_goods=None):
+    def produce(self, production_function, input_goods=None, results=False):
         """ Produces output goods given the specified amount of inputs.
 
         Transforms the Agent's goods specified in input goods
@@ -88,7 +89,10 @@ class Firm:
 
             input goods {dictionary}:
                 dictionary containing the amount of input good used for the production.
-                If not specified None, uses everything the agent has
+                If not specified None, uses everything the agent owns.
+
+            results:
+                If True returns a dictionary with the used and produced goods.
 
         Raises:
             NotEnoughGoods:
@@ -118,10 +122,12 @@ class Firm:
         for good, quantity in input_goods.items():
             self._inventory.haves[good] -= quantity
 
-        print(result)
-
         for good, quantity in result.items():
             self._inventory.haves[good] += quantity
+
+        if results:
+            return {good: result.get(good, 0) - input_goods.get(good, 0)
+                    for good in ChainMap(input_goods, result).keys()}
 
     def create_cobb_douglas(self, output, multiplier, exponents):
         """ creates a Cobb-Douglas production function
