@@ -40,9 +40,15 @@ class ProcessorGroup:
         """ Creates a new group. """
         self.agents[group] = []
 
-    def insert_or_append(self, group, ids, Agent, simulation_parameters, agent_parameters, agent_arguments):
+    def insert_or_append(self, group, ids, free_ids, Agent, simulation_parameters, agent_parameters, agent_arguments):
         """appends an agent to a group """
-        for id, ap in zip(ids, agent_parameters):
+        for ap in agent_parameters:
+            if free_ids:
+                id = free_ids.popleft()
+                ids[id] = id
+            else:
+                id = len(ids)
+                ids.append(id)
             if id % self.processes == self.batch:
                 agent = Agent(id, simulation_parameters, ap, **agent_arguments)
                 agent._send = agent._send_multiprocessing
@@ -53,6 +59,7 @@ class ProcessorGroup:
                     self.agents[group].append(agent)
                 else:
                     self.agents[group][id // self.processes] = agent
+        return ids
 
     def advance_round(self, time):
         for agents in self.agents.values():
@@ -120,15 +127,17 @@ class MultiProcess(object):
         for pg in self.processor_groups:
             pg.new_group(group)
 
-    def insert_or_append(self, group, ids, Agent, simulation_parameters, agent_parameters, agent_arguments):
+    def insert_or_append(self, group, ids, free_ids, Agent, simulation_parameters, agent_parameters, agent_arguments):
         """appends an agent to a group """
-        self.pool.map(insert_or_append_wrapper, jkk(self.processor_groups,
-                                                    group,
-                                                    ids,
-                                                    Agent,
-                                                    simulation_parameters,
-                                                    agent_parameters,
-                                                    agent_arguments))
+        ids = self.pool.map(insert_or_append_wrapper, jkk(self.processor_groups,
+                                                          group,
+                                                          ids,
+                                                          free_ids,
+                                                          Agent,
+                                                          simulation_parameters,
+                                                          agent_parameters,
+                                                          agent_arguments))
+        return ids[0]
 
     def delete_agents(self, group, ids):
         self.pool.map(delete_agents_wrapper, jkk(self.processor_groups, group, ids))
@@ -158,8 +167,8 @@ def post_messages(args):
 
 
 def insert_or_append_wrapper(arg):
-    pg, group, ids, Agent, simulation_parameters, agent_parameters, agent_arguments = arg
-    return pg.insert_or_append(group, ids, Agent, simulation_parameters, agent_parameters, agent_arguments)
+    pg, group, ids, free_ids, Agent, simulation_parameters, agent_parameters, agent_arguments = arg
+    return pg.insert_or_append(group, ids, free_ids, Agent, simulation_parameters, agent_parameters, agent_arguments)
 
 
 def delete_agents_wrapper(arg):

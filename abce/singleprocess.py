@@ -29,9 +29,15 @@ class SingleProcess(object):
         """ Creates a new group. """
         self.agents[group] = []
 
-    def insert_or_append(self, group, ids, Agent, simulation_parameters, agent_parameters, agent_arguments):
+    def insert_or_append(self, group, ids, free_ids, Agent, simulation_parameters, agent_parameters, agent_arguments):
         """appends an agent to a group """
-        for id, ap in zip(ids, agent_parameters):
+        for ap in agent_parameters:
+            if free_ids:
+                id = free_ids.popleft()
+                ids[id] = id
+            else:
+                id = len(ids)
+                ids.append(id)
             agent = Agent(id, simulation_parameters, ap, **agent_arguments)
             agent.init(**ChainMap(simulation_parameters, ap))
             try:

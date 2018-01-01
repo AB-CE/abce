@@ -209,21 +209,12 @@ class Group:
             agent_parameters = [[]] * number
         assert len(self.group_names) == 1, 'Group is a combined group, no appending permitted'
         group_name = self.group_names[0]
-        ids = []
-        for _ in range(len(agent_parameters)):
-            if self.free_ids[group_name]:
-                id = self.free_ids[group_name].popleft()
-                self._ids[0][id] = id
-            else:
-                id = len(self._ids[0])
-                self._ids[0].append(id)
-            ids.append(id)
 
         Agent = self.agent_classes[0]
 
-        self._agents.insert_or_append(group_name, ids, Agent, common_parameters, agent_parameters,
-                                      self._agent_arguments)
-        return ids
+        self._ids[0] = self._agents.insert_or_append(group_name, self._ids[0], self.free_ids[group_name], Agent,
+                                                     common_parameters, agent_parameters, self._agent_arguments)
+        return self._ids[0]
 
     def _do(self, command, *args, **kwargs):
         """ agent actions can be executed by :code:`group.action(args=args)`. """
