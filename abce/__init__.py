@@ -419,10 +419,7 @@ class Simulation(object):
         if parameters is None:
             parameters = {}
         if number is not None:
-            num_agents_this_group = number
-            agent_parameters = [{} for _ in range(num_agents_this_group)]
-        else:
-            num_agents_this_group = len(agent_parameters)
+            agent_parameters = [{} for _ in range(number)]
 
         self.sim_parameters.update(parameters)
 
