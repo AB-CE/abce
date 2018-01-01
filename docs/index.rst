@@ -68,6 +68,7 @@ Introduction
    examples
    unit_testing
 
+
 Simulation Programming
 ======================
 .. toctree::
@@ -102,8 +103,12 @@ Graphical User Interface and Results
    gui
    deploy
 
+Frequently asked Questions
+==========================
+.. toctree::
+   :maxdepth: 1
 
-
+   faq
 
 
 Indices and tables
