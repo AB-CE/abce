@@ -31,6 +31,9 @@ class SingleProcess(object):
 
     def insert_or_append(self, group, ids, free_ids, Agent, simulation_parameters, agent_parameters, agent_arguments):
         """appends an agent to a group """
+        if isinstance(agent_parameters, int):
+            agent_parameters = [[]] * agent_parameters
+
         for ap in agent_parameters:
             if free_ids:
                 id = free_ids.popleft()
