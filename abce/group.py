@@ -17,7 +17,6 @@
 
 # pylint: disable=W0212, C0111
 from collections import deque, defaultdict
-from itertools import chain
 
 
 def _get_methods(agent_class):
@@ -26,6 +25,16 @@ def _get_methods(agent_class):
                for method in dir(agent_class)
                if callable(getattr(agent_class, method)) and
                method[0] != '_' and method != 'init')
+
+
+class Chain:
+    def __init__(self, iterables):
+        self.iterables = iterables
+
+    def __iter__(self):
+        for it in self.iterables:
+            for element in it:
+                yield element
 
 
 class Action:
@@ -43,10 +52,11 @@ class Action:
     def __add__(self, other):
         return Action(self._agents, self.actions + other.actions)
 
-    def __call__(self):
-        for action in self.actions:
-            self._agents.do(*action)
-        return chain.from_iterable([self._agents.post_messages(action[0], action[1]) for action in self.actions])
+    def __call__(self, *args, **kwargs):
+        for group_names, ids, command, _, __ in self.actions:
+            self._agents.do(group_names, ids, command, args, kwargs)
+        return Chain([self._agents.post_messages(action[0], action[1]) for action in self.actions])
+        # itertools.chain, does not work here
 
 
 class Group:
