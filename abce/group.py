@@ -205,11 +205,11 @@ class Group:
         Returns:
             The id of the new agent
         """
-        if agent_parameters is None:
-            agent_parameters = [[]] * number
         assert len(self.group_names) == 1, 'Group is a combined group, no appending permitted'
-        group_name = self.group_names[0]
 
+        if agent_parameters is None:
+            agent_parameters = number
+        group_name = self.group_names[0]
         Agent = self.agent_classes[0]
 
         self._ids[0] = self._agents.insert_or_append(group_name, self._ids[0], self.free_ids[group_name], Agent,
