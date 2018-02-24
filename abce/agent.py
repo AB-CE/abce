@@ -226,8 +226,6 @@ class Agent(Database, Trade, Messaging, Goods):
         self.round = time
         self.time = time
 
-        self.log_in_subround_serial = 0
-
         if self.conditional_logging:
             if self.round in self.log_rounds:
                 print("***", self.round)
