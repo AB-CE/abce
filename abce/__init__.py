@@ -20,7 +20,7 @@
 """ The best way to start creating a simulation is by copying the start.py
 file and other files from 'abce/template' in https://github.com/AB-CE/examples.
 
-To see how to create a simulation read :doc:`ipython_tutorial`.
+To see how to create a simulation, read :doc:`ipython_tutorial`.
 
 
 This is a minimal template for a start.py::
@@ -42,8 +42,8 @@ Note two things are important: there must be either a
 
 :func:`~abce.simulation.graphs` or a :func:`~abce.simulation.finalize` at the end
 otherwise the simulation blocks at the end.
-Further, every round needs to be announced using simulation.advance_round(time).
-Where time is any representation of time.
+Furthermore, every round needs to be announced using simulation.advance_round(time),
+where time is any representation of time.
 
 """
 import datetime
@@ -67,8 +67,8 @@ from .multiprocess import MultiProcess
 
 
 class Simulation(object):
-    """ This class in which the simulation is run. Actions and agents have to
-    be added. databases and resource declarations can be added. Then runs
+    """ This is the class in which the simulation is run. Actions and agents have to
+    be added. Databases and resource declarations can be added. Then run
     the simulation.
 
     Args:
@@ -83,15 +83,15 @@ class Simulation(object):
             'group' (fast) or 'individual' (slow) or 'off'
 
         processes (optional):
-            The number of processes that run in parallel. Each process hosts
+            The number of processes that runs in parallel. Each process hosts
             a share of the agents.
-            Default is all your logical processor cores times two, using
-            hyper-threading when available.
-            For easy debugging set processes to one and the simulation is
+            By default, if this parameter is not specified, `processes` is all
+            your logical processor cores times two, using hyper-threading when available.
+            For easy debugging, set processes to one and the simulation is
             executed without parallelization.
             Sometimes it is advisable to decrease the number of processes to
             the number of logical or even physical processor cores on your
-            computer. 'None' for all processor cores times 2.
+            computer.
             **For easy debugging set processes to 1, this way only one agent
             runs at a time and only one error message is displayed**
 
@@ -218,7 +218,7 @@ class Simulation(object):
         """ At the beginning of very round the agent gets 'units' units
         of good 'product' for every 'resource' he possesses.
 
-        Round endowments are group specific, that means that when
+        Round endowments are group specific, that means when
         somebody except the specified group holds them they do not produce.
 
         Args::
