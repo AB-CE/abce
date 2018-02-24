@@ -94,8 +94,7 @@ class Database:
                  self.id,
                  self.round,
                  data_to_write,
-                 str(self.log_in_subround_serial)])
-            self.log_in_subround_serial += 1
+                 action_name])
 
     def log_change(self, action_name, data_to_log):
         """ This command logs the change in the variable from the round before.
