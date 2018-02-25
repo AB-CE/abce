@@ -24,45 +24,25 @@ from ..trade import get_epsilon
 epsilon = get_epsilon()
 
 
-class Household(object):
-    def get_utility_function(self):
-        """ the utility function should be created with:
-        set_cobb_douglas_utility_function,
-        set_utility_function or
-        set_utility_function_fast
-        """
-        return self._utility_function
-
-    def consume_everything(self):
-        """ consumes everything that is in the utility function
-        returns utility according consumption
-
-        A utility_function, has to be set before see
-        py:meth:`~abceagent.Household.set_   utility_function`,
-        py:meth:`~abceagent.Household.set_cobb_douglas_utility_function`
-
-        Returns:
-            A the utility a number. To log it see example.
-
-        Example::
-
-            utility = self.consume_everything()
-            self.log('utility': {'u': utility})
-        """
-        return self.consume({inp: self._inventory[inp] for inp in list(self._utility_function.use.keys())})
-
-    def consume(self, input_goods):
+class Household:
+    def consume(self, utility_function, input_goods):
         """ consumes input_goods returns utility according to the agent's
-        consumption function
+        utility function.
 
         A utility_function, has to be set before see
-        py:meth:`~abceagent.Household.set_   utility_function`,
-        py:meth:`~abceagent.Household.set_cobb_douglas_utility_function` or
+        py:meth:`~abceagent.Household.create_cobb_douglas_utility_function` or
+        manually; see example.
 
         Args:
-            {'input_good1': amount1, 'input_good2': amount2 ...}:
-                dictionary containing the amount of input good consumed.
 
+            utility_function:
+                A function that takes goods as parameters and returns
+                a utility or returns (utility, left_over_dict). Where left_over_dict is
+                a dictionary of all goods that are not completely consumed
+
+            input goods dictionary or list:
+                dictionary containing the amount of input good used consumed or
+                a list of all goods that get completely consumed.
         Raises:
             NotEnoughGoods: This is raised when the goods are insufficient.
 
@@ -71,61 +51,49 @@ class Household(object):
 
         Example::
 
-            self.consumption_set = {'car': 1, 'ball': 2000, 'bike':  2}
-            self.consumption_set = {'car': 0, 'ball': 2500, 'bike':  20}
+            def utility_function(car, cookies, bike):
+                utility = car ** 0.5 * cookies ** 0.2 * bike ** 0.3
+                cookies = 0  # cookies are consumed, while the other goods are not consumed
+                return utility, locals()
+
+
+            def utility_function(cake, cookies, bonbons):  # all goods get completely consumed
+                utility = cake ** 0.5 * cookies ** 0.2 * bonbons ** 0.3
+                return utility
+
+            self.consumption_set = {'car': 1, 'cookies': 2000, 'bike':  2}
+            self.consume_everything = ['car', 'cookies', 'bike']
             try:
-                utility = self.consume(self.consumption_set)
+                utility = self.consume(utility_function, self.consumption_set)
             except NotEnoughGoods:
-                utility = self.consume(self.smaller_consumption_set)
+                utility = self.consume(utility_function, self.consume_everything)
             self.log('utility': {'u': utility})
 
         """
-        for good in list(self._utility_function.use.keys()):
-            if self._inventory[good] < input_goods[good] - epsilon:
-                raise NotEnoughGoods(
-                    self.name, good, (input_goods[good] - self._inventory[good]))
+        if not isinstance(input_goods, dict):
+            input_goods = {good: self[good] for good in input_goods}
 
-        for good, use in self._utility_function.use.items():
-            self._inventory.haves[good] -= input_goods[good] * use
+        utility_and_result = utility_function(**input_goods)
 
-        return self._utility_function.formula(input_goods)
+        try:
+            utility, result = utility_and_result
+        except TypeError:
+            result = {}
+            utility = utility_and_result
 
-    def set_utility_function(self, formula, use):
-        """ creates a utility function from a formula
+        for good, quantity in input_goods.items():
+            if self._inventory.haves[good] - quantity + result.get(good, 0) < -epsilon:
+                raise NotEnoughGoods
 
-        The formula is a function that takes a dictionary of goods
-        as an argument and returns a floating point number, the utility.
-        use is a dictionary containing the percentage use of the goods used in
-        the consumption. Goods can be fully used (=1) for example food,
-        partially used e.G. a car. And not used at all (=0) for example a
-        house.
+        for good, quantity in input_goods.items():
+            self._inventory.haves[good] -= quantity
 
-        Args:
+        for good, quantity in result.items():
+            self._inventory.haves[good] += quantity
 
-            formula:
-                a function that takes a dictionary of goods and
-                computes the utility as a floating number.
+        return utility
 
-            use:
-                a dictionary that specifies for every good, how much
-                it depreciates in percent.
-
-        Example::
-
-            self init(self):
-                ...
-                def utility_function(goods):
-                    return goods['house'] ** 0.2 * good['food'] ** 0.6 + good['car'] ** 0.2
-
-                {'house': 0, 'food': 1, 'car': 0.05}
-
-                self.set_utility_function(utility_function, use)
-        """
-        self._utility_function = Utility_Function()
-        self._utility_function.formula = formula
-        self._utility_function.use = use
-
-    def set_cobb_douglas_utility_function(self, exponents):
+    def create_cobb_douglas_utility_function(self, exponents):
         """ creates a Cobb-Douglas utility function
 
         Utility_functions are than used as an argument in consume_with_utility,
@@ -141,37 +109,9 @@ class Household(object):
         self._utility_function = self.create_cobb_douglas({'bread' : 10, 'milk' : 1})
         self.produce(self.plastic_utility_function, {'bread' : 20, 'milk' : 1})
         """
-        def utility_function(goods):
-            return reduce(operator.mul, [goods[name] ** exponent
-                                         for name, exponent in exponents.items()])
-
-        self._utility_function = Utility_Function()
-        self._utility_function.formula = utility_function
-        self._utility_function.use = {
-            name: 1 for name in list(exponents.keys())}
-
-    def predict_utility(self, input_goods):
-        """ Predicts the utility of a vecor of input goods
-
-            Predicts the utility of consume_with_utility(utility_function, input_goods)
-
-        Args::
-
-            {'input_good1': amount1, 'input_good2': amount2 ...}: dictionary
-            containing the amount of input good used for the production.
-
-        Returns::
-
-            utility: Number
-
-        Example::
-
-            print(A.predict_utility(self._utility_function, {'ball': 2, 'paint': 1}))
-
-
-        """
-        return self._utility_function.formula(input_goods)
-
-
-class Utility_Function(object):
-    pass
+        def utility_function(**goods):
+            utility = reduce(operator.mul,
+                             [goods[name] ** exponent
+                              for name, exponent in exponents.items()])
+            return utility
+        return utility_function
