@@ -7,15 +7,16 @@ class UtilityHousehold(abce.Agent, abce.Household):
         self.last_round = rounds - 1
 
         if self.id == 0 or self.id == 2:
-            def utility(goods):
-                return max(goods['a'] ** 0.2, goods['b'] ** 0.5 * goods['c'] ** 0.3)
+            def utility_function(a, b, c):
+                utility = max(a ** 0.2, b ** 0.5 * c ** 0.3)
+                a = 0
+                b = 0.9 * b
+                return utility, locals()
 
-            use = {'a': 1, 'b': 0.1, 'c': 0}
-
-            self.set_utility_function(utility, use)
+            self.utility_function = utility_function
 
         elif self.id == 1 or self.id == 3:
-            self.set_cobb_douglas_utility_function(
+            self.utility_function = self.create_cobb_douglas_utility_function(
                 {'a': 0.2, 'b': 0.5, 'c': 0.3})
 
     def one(self):
@@ -35,7 +36,7 @@ class UtilityHousehold(abce.Agent, abce.Household):
             self.create('a', 10)
             self.create('b', 10)
             self.create('c', 10)
-            utility = self.consume({'a': 5, 'b': 3, 'c': 1})
+            utility = self.consume(self.utility_function, {'a': 5, 'b': 3, 'c': 1})
             assert utility == max(5 ** 0.2, 3 ** 0.5 * 1 ** 0.3), utility
             assert self['a'] == 5
             assert self['b'] == 9.7
@@ -48,24 +49,24 @@ class UtilityHousehold(abce.Agent, abce.Household):
             self.create('a', 10)
             self.create('b', 10)
             self.create('c', 10)
-            utility = self.consume({'a': 5, 'b': 3, 'c': 1})
+            utility = self.consume(self.utility_function, {'a': 5, 'b': 3, 'c': 1})
             assert utility == 5 ** 0.2 * 3 ** 0.5 * 1 ** 0.3, utility
             assert self['a'] == 5
             assert self['b'] == 7
             assert self['c'] == 9
-            self.consume_everything()
+            self.consume(self.utility_function, ['a', 'b', 'c'])
             assert self['a'] == 0
             assert self['b'] == 0
             assert self['c'] == 0
 
-            pu = self.predict_utility({'a': 5, 'b': 300, 'c': 10})
+            pu = self.utility_function(**{'a': 5, 'b': 300, 'c': 10})
             assert pu == 5 ** 0.2 * 300 ** 0.5 * 10 ** 0.3
 
         elif self.id == 2:
             self.create('a', 10)
             self.create('b', 10)
             self.create('c', 10)
-            utility = self.consume_everything()
+            utility = self.consume(self.utility_function, ['a', 'b', 'c'])
             assert is_zero(utility - max(10 ** 0.2, 10 ** 0.5 * 10 ** 0.3)
                            ), (utility, max(10 ** 0.2, 10 ** 0.5 * 10 ** 0.3))
             assert self['a'] == 0
@@ -79,14 +80,14 @@ class UtilityHousehold(abce.Agent, abce.Household):
             self.create('a', 10)
             self.create('b', 10)
             self.create('c', 10)
-            utility = self.consume_everything()
+            utility = self.consume(self.utility_function, ['a', 'b', 'c'])
             assert is_zero(utility - 10 ** 0.2 * 10 ** 0.5 * 10 **
                            0.3), (utility, 10 ** 0.2 * 10 ** 0.5 * 10 ** 0.3)
             assert self['a'] == 0
             assert self['b'] == 0
             assert self['c'] == 0
 
-            pu = self.predict_utility({'a': 5, 'b': 300, 'c': 10})
+            pu = self.utility_function(**{'a': 5, 'b': 300, 'c': 10})
             assert pu == 5 ** 0.2 * 300 ** 0.5 * 10 ** 0.3
 
     def all_tests_completed(self):
