@@ -72,7 +72,7 @@ class Firm:
     can not be omitted. It returns all variables you define in this function as a dictionary.
     """
 
-    def produce(self, production_function, input_goods=None, results=False):
+    def produce(self, production_function, input_goods, results=False):
         """ Produces output goods given the specified amount of inputs.
 
         Transforms the Agent's goods specified in input goods
@@ -87,9 +87,9 @@ class Firm:
                 py:meth:`~abceagent.Firm.create_cobb_douglas` or
                 py:meth:`~abceagent.Firm.create_leontief`
 
-            input goods {dictionary}:
-                dictionary containing the amount of input good used for the production.
-                If not specified None, uses everything the agent owns.
+            input goods dictionary or list:
+                dictionary containing the amount of input good used for the production or
+                a list of all goods that get completely used.
 
             results:
                 If True returns a dictionary with the used and produced goods.
@@ -107,12 +107,12 @@ class Firm:
             except NotEnoughGoods:
                 A.produce(bike_production_function, bike)
 
-            self.produce(car_production_function)  # produces using all goods
+            self.produce(car_production_function, ['tire', 'metal', 'plastic'])  # produces using all goods
 
         """
+        if not isinstance(input_goods, dict):
+            input_goods = {good: self[good] for good in input_goods}
 
-        if input_goods is None:
-            input_goods = {inp: self[inp] for inp in production_function['input']}
         result = production_function(**input_goods)
 
         for good, quantity in input_goods.items():

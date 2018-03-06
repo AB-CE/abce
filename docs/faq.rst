@@ -11,7 +11,7 @@ The returned information can than be passed as arguments for another method::
         simulation.advance_round(r)
         agents.do_something()
         info = agents.return_info()
-        agents.retceive_public_information(info=info)
+        agents.receive_public_information(info=info)
 
 Currently only named function parameters are supported.
 

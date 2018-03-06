@@ -7,7 +7,7 @@ Tutorial for Plant Modeling
 
 1. Lets write the 1st agent:
 
-    a. Create a fire chpplant.py import abce and create a Plant class.
+    a. Create a file chpplant.py import abce and create a Plant class.
 
        .. code:: python
 
