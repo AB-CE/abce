@@ -76,6 +76,7 @@ Simulation Programming
 
    simulation
    Agent_class
+   group
    Goods
    Trade
    Messaging

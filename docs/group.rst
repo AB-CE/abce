@@ -1,10 +1,8 @@
-Groups
-======
+Group
+=====
 
 
-.. default-domain::abce.Group
-
-.. automodule:: abce.group
+.. default-domain::abce.group
 
 .. autoclass:: abce.Group
     :members:
