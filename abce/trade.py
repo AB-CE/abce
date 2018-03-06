@@ -514,7 +514,7 @@ class Trade:
         self.given_offers[offer_id] = offer
         return offer
 
-    def accept(self, offer, quantity=-999, epsilon=epsilon):
+    def accept(self, offer, quantity=None, epsilon=epsilon):
         """ The buy or sell offer is accepted and cleared. If no quantity is
         given the offer is fully accepted; If a quantity is given the offer is
         partial accepted.
@@ -535,7 +535,7 @@ class Trade:
             Returns a dictionary with the good's quantity and the amount paid.
         """
         offer_quantity = offer.quantity
-        if quantity == -999:
+        if quantity is None:
             quantity = offer_quantity
         assert quantity > - epsilon, 'quantity %.30f is smaller than 0 - epsilon (%.30f)' % (quantity, - epsilon)
         if quantity < 0:
