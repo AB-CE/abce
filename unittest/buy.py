@@ -1,5 +1,3 @@
-from __future__ import division
-from __future__ import print_function
 import random
 from abce.agent import Agent
 from abce import NotEnoughGoods
