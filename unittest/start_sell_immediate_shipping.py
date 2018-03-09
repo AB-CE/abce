@@ -1,0 +1,127 @@
+import abce
+from abce import tradewithshipping, NotEnoughGoods
+from tools import is_zero
+import random
+
+
+class ShippingSell(tradewithshipping.TradeWithShipping, abce.Agent):
+    def init(self, rounds):
+        self.last_round = rounds - 1
+        self.tests = {'accepted': False, 'rejected': False,
+                      'partial': False, 'full_partial': False}
+        if self.id == 1:
+            self.tests['not_answered'] = False
+
+    def one(self):
+        if self.id % 2 == 0:
+            self.create('cookies', random.uniform(0, 10000))
+            self.cookies = self['cookies']
+            self.price = random.uniform(0.0001, 1)
+            quantity = random.uniform(0, self.cookies)
+            self.offer = self.sell(receiver=('sell', self.id + 1),
+                                   good='cookies', quantity=quantity, price=self.price, arrival=None)
+            assert self.not_reserved('cookies') == self.cookies - quantity
+
+    def two(self):
+        if self.id % 2 == 1:
+            self.create('money', random.uniform(0, 10000))
+            money = self['money']
+            oo = self.get_offers('cookies')
+            assert oo, oo
+            for offer in oo:
+                if random.randrange(0, 10) == 0:
+                    self.tests['not_answered'] = True
+                    continue
+                elif random.randrange(0, 10) == 0:
+                    self.reject(offer)
+                    assert self['money'] == money
+                    assert self['cookies'] == 0
+                    self.tests['rejected'] = True
+                    break  # tests the automatic clean-up of polled offers
+                try:
+                    if random.randrange(2) == 0:
+                        self.accept(offer)
+                        assert self['cookies'] == offer.quantity
+                        assert self['money'] == money - offer.quantity * offer.price
+                        self.tests['accepted'] = True
+                    else:
+                        self.accept(offer, offer.quantity)
+                        assert self['cookies'] == offer.quantity
+                        assert self['money'] == money - offer.quantity * offer.price
+                        self.tests['full_partial'] = True
+
+                except NotEnoughGoods:
+                    self.accept(offer, self['money'] / offer.price)
+                    assert self['money'] < 0.00000001, self['money']
+                    test = (self['money'] - money) - \
+                        self['cookies'] / offer.price
+                    assert test < 0.00000001, test
+                    self.tests['partial'] = True
+
+    def three(self):
+        if self.id % 2 == 0:
+            offer = self.offer
+            if offer.status == 'rejected':
+                assert is_zero(self.cookies - self['cookies'])
+                self.tests['rejected'] = True
+            elif offer.status == 'accepted':
+                if offer.final_quantity == offer.quantity:
+                    assert self.cookies - \
+                        offer.quantity == self['cookies']
+                    assert self['money'] == offer.quantity * offer.price
+                    self.tests['accepted'] = True
+                else:
+                    test = (self.cookies - offer.final_quantity) - \
+                        self['cookies']
+                    assert is_zero(test), test
+                    test = self['money'] - \
+                        offer.final_quantity * offer.price
+                    assert is_zero(test), test
+                    self.tests['partial'] = True
+                    self.tests['full_partial'] = True
+            else:
+                SystemExit('Error in sell')
+
+    def clean_up(self):
+        self.destroy('cookies')
+        self.destroy('money')
+
+    def all_tests_completed(self):
+        if self.round == self.last_round and self.id == 0:
+            assert all(self.tests.values(
+            )), 'not all tests have been run; ABCE workes correctly, restart the unittesting to do all tests %s' % self.tests
+            print('Test abce.buy:\t\t\t\t\tOK')
+            print('Test abce.accept\t(abce.buy):\t\tOK')
+            print('Test abce.reject\t(abce.buy):\t\tOK')
+            print('Test abce.accept\t(abce.buy):\tOK')
+            print('Test reject pending automatic \t(abce.buy):\tOK')
+
+
+def main(processes, rounds=20):
+    s = abce.Simulation(processes=processes, name='unittest')
+    s.declare_round_endowment(
+        resource='labor_endowment', units=5, product='labor')
+    s.declare_round_endowment(resource='cow', units=10,
+                              product='milk')
+    s.declare_perishable(good='labor')
+
+    print('build Sell')
+    sell = s.build_agents(ShippingSell, 'sell', 1000, rounds=rounds)
+    print('build Give')
+
+    for r in range(rounds):
+        s.advance_round(r)
+        for _ in range(5):
+            sell.one()
+            sell.two()
+            sell.three()
+            sell.clean_up()
+        sell.all_tests_completed()
+    s.finalize()
+
+
+if __name__ == '__main__':
+    main(processes=1, rounds=5)
+    print('Iteration with 1 core finished')
+    main(processes=4, rounds=5)
+    print('Iteration with multiple processes finished')

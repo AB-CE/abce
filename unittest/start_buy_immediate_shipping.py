@@ -1,0 +1,131 @@
+import abce
+import random
+from abce.agent import Agent
+from abce import tradewithshipping, NotEnoughGoods
+from tools import is_zero
+
+
+class Buy(tradewithshipping.TradeWithShipping, Agent):
+    def init(self, rounds):
+        self.last_round = rounds - 1
+        self.tests = {'accepted': False, 'rejected': False, 'partial': False}
+        self.price = 0
+        if self.id == 1:
+            self.tests['not_answered'] = False
+
+    def one(self):
+        """ Acts only if he is agent 0: sends an buy offer to agent 1 offer
+        """
+        if self.id % 2 == 0:
+            self.create('money', random.uniform(0, 10000))
+            self.money = self['money']
+            self.price = random.uniform(0.0001, 1)
+            quantity = random.uniform(0, self.money / self.price)
+            self.offer = self.buy(('buy', self.id + 1),
+                                  'cookies', quantity, self.price, arrival=None)
+            assert self.not_reserved('money') == self.money - \
+                quantity * self.price
+
+    def two(self):
+        """ Acts only if he is agent 1: recieves offers and accepts;
+        rejects; partially accepts and leaves offers unanswerd.
+        """
+        if self.id % 2 == 1:
+            self.create('cookies', random.uniform(0, 10000))
+            cookies = self['cookies']
+            oo = self.get_offers('cookies')
+            assert oo
+            for offer in oo:
+                if random.randint(0, 10) == 0:
+                    self.tests['not_answered'] = True
+                    continue
+                elif random.randint(0, 10) == 0:
+                    self.reject(offer)
+                    assert self['money'] == 0
+                    assert self['cookies'] == cookies
+                    self.tests['rejected'] = True
+                    break  # tests the automatic clean-up of polled offers
+                try:
+                    self.accept(offer)
+                    assert self['money'] == offer.price * offer.quantity
+                    assert self['cookies'] == cookies - offer.quantity
+                    self.tests['accepted'] = True
+                except NotEnoughGoods:
+                    self.accept(offer, self['cookies'])
+                    assert is_zero(self['cookies'])
+                    assert self['money'] == cookies * offer.price
+                    self.tests['partial'] = True
+
+    def three(self):
+        """
+        """
+        if self.id % 2 == 0:
+            offer = self.offer
+            if offer.status == 'rejected':
+                test = self.money - self['money']
+                assert is_zero(test), test
+                self.tests['rejected'] = True
+            elif offer.status == 'accepted':
+                if offer.final_quantity == offer.quantity:
+                    assert self.money - offer.quantity * \
+                        offer.price == self['money']
+
+                    assert self['cookies'] == offer.quantity
+                    self.tests['accepted'] = True
+                else:
+                    test = (self.money - offer.final_quantity *
+                            offer.price) - self['money']
+                    assert is_zero(test), test
+                    test = self['cookies'] - offer.final_quantity
+                    assert is_zero(test), test
+                    self.tests['partial'] = True
+            else:
+                SystemExit('Error in buy')
+
+    def laut(self):
+        print("laut")
+        self.haut = 'xxxx'
+
+    def clean_up(self):
+        self.destroy('money')
+        self.destroy('cookies')
+
+    def all_tests_completed(self):
+        if self.round == self.last_round and self.id == 0:
+            assert all(self.tests.values()), (
+                'not all tests have been run; ABCE workes correctly, restart the unittesting to do all tests %s' % self.tests)
+            print('Test abce.buy:\t\t\t\t\tOK')
+            print('Test abce.accept\t(abce.buy):\t\tOK')
+            print('Test abce.reject\t(abce.buy):\t\tOK')
+            print('Test abce.accept, partial\t(abce.buy):\tOK')
+            print('Test reject pending automatic \t(abce.buy):\tOK')
+
+
+def main(processes, rounds=20):
+    s = abce.Simulation(processes=processes, name='unittest')
+    s.declare_round_endowment(
+        resource='labor_endowment', units=5, product='labor')
+    s.declare_round_endowment(resource='cow', units=10,
+                              product='milk')
+    s.declare_perishable(good='labor')
+
+    print('build Buy')
+    buy = s.build_agents(Buy, 'buy', 1000, rounds=rounds)
+
+    for r in range(rounds):
+        s.advance_round(r)
+        for _ in range(5):
+            buy.one()
+            buy.two()
+            buy.three()
+            buy.clean_up()
+        buy.panel_log(variables=['price'])
+        buy.all_tests_completed()
+    s.finalize()
+
+
+if __name__ == '__main__':
+    main(processes=1, rounds=5)
+    print('Iteration with 1 core finished')
+    main(processes=4, rounds=5)
+    print('Iteration with multiple processes finished')
