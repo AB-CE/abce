@@ -4,7 +4,7 @@ from killer import Killer
 from victim import Victim
 
 
-def main(processes, rounds):
+def main(processes, rounds=20):
     simulation = abce.Simulation(processes=processes)
 
     print('build Killer')

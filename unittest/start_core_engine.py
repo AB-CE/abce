@@ -10,7 +10,7 @@ from messagea import MessageA
 from messageb import MessageB
 
 
-def main(processes, rounds):
+def main(processes, rounds=20):
     s = Simulation(processes=processes, name='unittest')
     s.declare_round_endowment(
         resource='labor_endowment', units=5, product='labor')
