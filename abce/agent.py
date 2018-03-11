@@ -83,6 +83,7 @@ class Agent(Database, Trade, Messaging, Goods):
 
 
     """
+
     def __init__(self, id, agent_parameters, simulation_parameters, group, trade_logging,
                  database, check_unchecked_msgs, expiring, perishable, resource_endowment, start_round=None):
         """ Do not overwrite __init__ instead use a method called init instead.
@@ -91,13 +92,13 @@ class Agent(Database, Trade, Messaging, Goods):
         super(Agent, self).__init__(id, agent_parameters, simulation_parameters, group, trade_logging,
                                     database, check_unchecked_msgs, expiring, perishable, resource_endowment,
                                     start_round)
-        self.id = id
         """ self.id returns the agents id READ ONLY"""
         self.name = (group, id)
+        self._name = (group, id)
+        self.id = id
         """ self.name returns the agents name, which is the group name and the
         id
         """
-        self.name_without_colon = '%s_%i' % (group, id)
         self.group = group
         """ self.group returns the agents group or type READ ONLY! """
         # TODO should be group_address(group), but it would not work
@@ -243,8 +244,8 @@ class Agent(Database, Trade, Messaging, Goods):
         return ret
 
     def _post_messages(self, agents):
-        for group, id, envelope in self._out:
-            agents[group][id].inbox.append(envelope)
+        for name, envelope in self._out:
+            agents[name].inbox.append(envelope)
         self._out.clear()
 
     def _post_messages_multiprocessing(self, num_processes):
@@ -262,18 +263,17 @@ class Agent(Database, Trade, Messaging, Goods):
         something at the beginning of every subround """
         pass
 
-    def _send(self, receiver_group, receiver_id, typ, msg):
+    def _send(self, receiver, typ, msg):
         """ sends a message to 'receiver_group', 'receiver_id'
         The agents receives it at the begin of each subround.
         """
-        self._out.append(
-            (receiver_group, receiver_id, (typ, msg)))
+        self._out.append((receiver, (typ, msg)))
 
-    def _send_multiprocessing(self, receiver_group, receiver_id, typ, msg):
+    def _send_multiprocessing(self, receiver, typ, msg):
         """ Is used to overwrite _send in multiprocessing mode.
         Requires that self._out is overwritten with a defaultdict(list) """
-        self._out[receiver_id % self._processes].append(
-            (receiver_group, receiver_id, (typ, msg)))
+        self._out[hash(receiver) % self._processes].append(
+            (receiver, (typ, msg)))
 
     def __del__(self):
         self._check_for_lost_messages()
