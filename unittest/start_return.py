@@ -7,7 +7,7 @@ class Returner(abce.Agent):
         pass
 
     def returnit(self):
-        return self.name, self.id, [0, 1, 2, 3], self.time
+        return self.name, self.id, (0, 1, 2, 3), self.time
 
 
 class Getter(abce.Agent):
@@ -15,9 +15,9 @@ class Getter(abce.Agent):
         pass
 
     def getit(self, zeug):
-        assert list(zeug) == [(('returner', 0), 0, [0, 1, 2, 3], self.time),
-                              (('returner', 1), 1, [0, 1, 2, 3], self.time),
-                              (('returner', 2), 2, [0, 1, 2, 3], self.time)]
+        assert set(zeug) == set([(('returner', 0), 0, (0, 1, 2, 3), self.time),
+                                 (('returner', 1), 1, (0, 1, 2, 3), self.time),
+                                 (('returner', 2), 2, (0, 1, 2, 3), self.time)]), list(zeug)
 
     def method(self, a, b, c, d, e, f):
         assert a == 'a'

@@ -36,72 +36,56 @@ class ProcessorGroup:
         self.queue = queues[self.batch]
         self.processes = processes
 
-    def new_group(self, group):
-        """ Creates a new group. """
-        self.agents[group] = []
-
-    def insert_or_append(self, group, ids, free_ids, Agent, simulation_parameters, agent_parameters, agent_arguments):
+    def insert_or_append(self, Agent, simulation_parameters, agent_parameters, agent_arguments, maxid):
         """appends an agent to a group """
         if isinstance(agent_parameters, int):
             agent_parameters = ([] for _ in range(agent_parameters))
 
-        for ap in agent_parameters:
-            if free_ids:
-                id = free_ids.popleft()
-                ids[id] = id
-            else:
-                id = len(ids)
-                ids.append(id)
-            if id % self.processes == self.batch:
-                agent = Agent(id, simulation_parameters, ap, **agent_arguments)
-                agent._send = agent._send_multiprocessing
-                agent._out = defaultdict(list)
-                agent.init(**ChainMap(simulation_parameters, ap))
+        names = {}
+        for id, ap in enumerate(agent_parameters, maxid):
+            agent = Agent(id, simulation_parameters, ap, **agent_arguments)
+            agent._send = agent._send_multiprocessing
+            agent._out = defaultdict(list)
+            agent.init(**ChainMap(simulation_parameters, ap))
+            if hash(agent.name) % self.processes == self.batch:
+                assert agent.name not in self.agents, agent.name
+                names[agent.name] = agent._name
                 agent._processes = self.processes
-                if len(self.agents[group]) <= id // self.processes:
-                    self.agents[group].append(agent)
-                else:
-                    self.agents[group][id // self.processes] = agent
-        return ids
+                self.agents[agent.name] = agent
+        return names
 
     def advance_round(self, time):
-        for agents in self.agents.values():
-            for agent in agents:
-                if agent is not None:
-                    agent._advance_round(time)
+        for agent in self.agents.values():
+            agent._advance_round(time)
 
-    def delete_agents(self, group, ids):
-        for id in ids:
-            if id % self.processes == self.batch:
-                assert self.agents[group][id // self.processes].id == id
-                assert self.agents[group][id // self.processes].group == group
-                self.agents[group][id // self.processes] = None
+    def delete_agents(self, names):
+        for name in names:
+            if name in self.agents:
+                del self.agents[name]
 
-    def do(self, groups, ids, command, args, kwargs):
+    def do(self, names, command, args, kwargs):
         try:
             self.rets = []
             self.post = [[] for _ in range(self.processes)]
-            for group, iss in zip(groups, ids):
-                for i in iss:
-                    if i is not None:
-                        if i % self.processes == self.batch:
-                            agent = self.agents[group][i // self.processes]
-                            ret = agent._execute(command, args, kwargs)
-                            self.rets.append(ret)
-                            pst = agent._post_messages_multiprocessing(self.processes)
-                            for o in range(self.processes):
-                                self.post[o].extend(pst[o])
+            for name in names:
+                if hash(name) % self.processes == self.batch:
+                    agent = self.agents[name]
+                    ret = agent._execute(command, args, kwargs)
+                    self.rets.append(ret)
+                    pst = agent._post_messages_multiprocessing(self.processes)
+                    for o in range(self.processes):
+                        self.post[o].extend(pst[o])
         except Exception:
             traceback.print_exc()
             raise
 
-    def post_messages(self, groups, ids):
+    def post_messages(self, names):
         for i in range(self.processes):
             self.queues[i].put(self.post[i])
 
         for i in range(self.processes):
-            for receiver_group, receiver_id, envelope in self.queue.get():
-                self.agents[receiver_group][receiver_id // self.processes].inbox.append(envelope)
+            for receiver, envelope in self.queue.get():
+                self.agents[receiver].inbox.append(envelope)
         return self.rets
 
     def keys(self):
@@ -111,6 +95,7 @@ class ProcessorGroup:
 class MultiProcess(object):
     """ This is a container for all agents. It exists only to allow for multiprocessing with MultiProcess.
     """
+
     def __init__(self, processes):
         manager = mp.Manager()
         self.queues = [manager.Queue() for _ in range(processes)]
@@ -125,32 +110,25 @@ class MultiProcess(object):
             pg = manager.ProcessorGroup(i, self.queues, processes)
             self.processor_groups.append(pg)
 
-    def new_group(self, group):
-        """ Creates a new group. """
-        for pg in self.processor_groups:
-            pg.new_group(group)
-
-    def insert_or_append(self, group, ids, free_ids, Agent, simulation_parameters, agent_parameters, agent_arguments):
+    def insert_or_append(self, Agent, simulation_parameters, agent_parameters, agent_arguments, maxid):
         """appends an agent to a group """
-        ids = self.pool.map(insert_or_append_wrapper, jkk(self.processor_groups,
-                                                          group,
-                                                          ids,
-                                                          free_ids,
-                                                          Agent,
-                                                          simulation_parameters,
-                                                          agent_parameters,
-                                                          agent_arguments))
-        return ids[0]
+        names = self.pool.map(insert_or_append_wrapper, jkk(self.processor_groups,
+                                                            Agent,
+                                                            simulation_parameters,
+                                                            agent_parameters,
+                                                            agent_arguments,
+                                                            maxid))
 
-    def delete_agents(self, group, ids):
-        self.pool.map(delete_agents_wrapper, jkk(self.processor_groups, group, ids))
+        return flatten(names)
 
-    def do(self, groups, ids, command, args, kwargs):
-        self.pool.map(wrapper, jkk(self.processor_groups, groups, ids, command, args, kwargs))
+    def delete_agents(self, names):
+        self.pool.map(delete_agents_wrapper, jkk(self.processor_groups, names))
 
-    def post_messages(self, groups, ids):
-        ret = self.pool.map(post_messages, jkk(self.processor_groups, groups, ids))
-        return sort_ret(ret)
+    def do(self, names, command, args, kwargs):
+        self.pool.map(wrapper, jkk(self.processor_groups, names, command, args, kwargs))
+
+    def post_messages(self, names):
+        return flatten(self.pool.map(post_messages, jkk(self.processor_groups, names)))
 
     def advance_round(self, time):
         self.pool.map(advance_round_wrapper, jkk(self.processor_groups, time))
@@ -160,23 +138,23 @@ class MultiProcess(object):
 
 
 def wrapper(args):
-    pg, groups, ids, command, args, kwargs = args
-    pg.do(groups, ids, command, args, kwargs)
+    pg, names, command, args, kwargs = args
+    pg.do(names, command, args, kwargs)
 
 
 def post_messages(args):
-    pg, groups, ids = args
-    return pg.post_messages(groups, ids)
+    pg, names = args
+    return pg.post_messages(names)
 
 
 def insert_or_append_wrapper(arg):
-    pg, group, ids, free_ids, Agent, simulation_parameters, agent_parameters, agent_arguments = arg
-    return pg.insert_or_append(group, ids, free_ids, Agent, simulation_parameters, agent_parameters, agent_arguments)
+    pg, Agent, simulation_parameters, agent_parameters, agent_arguments, maxid = arg
+    return pg.insert_or_append(Agent, simulation_parameters, agent_parameters, agent_arguments, maxid)
 
 
 def delete_agents_wrapper(arg):
-    pg, group, ids = arg
-    pg.delete_agents(group, ids)
+    pg, names = arg
+    pg.delete_agents(names)
 
 
 def advance_round_wrapper(arg):
@@ -184,17 +162,10 @@ def advance_round_wrapper(arg):
     pg.advance_round(time)
 
 
-def sort_ret(ret):
-    sorted_ret = []
-    for i in range(len(ret[0])):
-        for pg in ret:
-            try:
-                sorted_ret.append(pg[i])
-            except IndexError:
-                pass
-    return sorted_ret
-
-
 def jkk(iterator, *args):
     for i in iterator:
         yield (i,) + args
+
+
+def flatten(l):
+    return [item for sublist in l for item in sublist]

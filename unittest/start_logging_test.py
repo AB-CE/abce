@@ -50,7 +50,7 @@ def compare(to_compare, path, message, processes):
                         key, generated[row][key], orginial[row][key])
 
 
-def main(processes):
+def main(processes, rounds):
     simulation = abce.Simulation(processes=processes)
 
     agents = simulation.build_agents(Agent, 'agent', 10)
@@ -77,5 +77,5 @@ def main(processes):
 
 
 if __name__ == '__main__':
-    main(processes=1)
-    main(processes=4)
+    main(processes=1, rounds=None)
+    main(processes=4, rounds=None)

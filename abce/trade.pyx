@@ -109,10 +109,8 @@ cdef class Offer:
         id:
             a unique identifier
     """
-    cdef readonly str sender_group
-    cdef readonly int sender_id
-    cdef readonly str receiver_group
-    cdef readonly int receiver_id
+    cdef readonly object sender
+    cdef readonly object receiver
     cdef readonly object good
     cdef readonly str currency
     cdef readonly double quantity
@@ -125,15 +123,11 @@ cdef class Offer:
     cdef public int status_round
     cdef readonly object sender
 
-    def __cinit__(self, str sender_group, int sender_id, str receiver_group,
-                  int receiver_id, object good, double quantity, double price, str currency,
+    def __cinit__(self, object sender, object receiver, object good, double quantity, double price, str currency,
                   bint sell, str status, double final_quantity, long id,
                   int made, int status_round):
-        self.sender = (sender_group, sender_id)
-        self.sender_group = sender_group
-        self.sender_id = sender_id
-        self.receiver_group = receiver_group
-        self.receiver_id = receiver_id
+        self.sender = sender
+        self.receiverss
         self.good = good
         self.currency = currency
         self.quantity = quantity
@@ -146,28 +140,23 @@ cdef class Offer:
         self.status_round = status_round
 
     def __reduce__(self):
-        return (rebuild_offer, (self.sender_group, self.sender_id, self.receiver_group,
-                self.receiver_id, self.good, self.quantity, self.price, self.currency,
+        return (rebuild_offer, (self.sender, self.receiver, self.good, self.quantity, self.price, self.currency,
                 self.sell, self.status, self.final_quantity, self.id,
                 self.made, self.status_round))
 
     def __repr__(self):
-        return """<{sender: %s, %i, receiver_group: %s,
-                receiver_id: %i, good: %s, quantity: %f, price: %f,
+        return """<{sender: %s, receiver_group: %s, good: %s, quantity: %f, price: %f,
                 sell: %r, status: %s, final_quantity: % f, id: %i,
                 made: %i, status_round: %i }>""" % (
 
-                    self.sender_group, self.sender_id, self.receiver_group,
-                    self.receiver_id, self.good, self.quantity, self.price,
+                    self.sender, self.receiver, self.good, self.quantity, self.price,
                     self.sell, self.status, self.final_quantity, self.id,
                     self.made, self.status_round)
 
-def rebuild_offer(str sender_group, int sender_id, str receiver_group,
-                  int receiver_id, object good, double quantity, double price,
+def rebuild_offer(object sender, object receiver, object good, double quantity, double price,
                   str currency, bint sell, str status, double final_quantity,
                   long id, int made, int status_round):
-    return Offer(sender_group, sender_id, receiver_group,
-                receiver_id, good, quantity, price, currency,
+    return Offer(sender, receiver, good, quantity, price, currency,
                 sell, status, final_quantity, id,
                 made, status_round)
 
@@ -512,7 +501,7 @@ class Trade:
                                  self.round,
                                  -2)
         self.given_offers[offer_id] = offer
-        self._send(receiver[0], receiver[1], '!s', offer)
+        self._send(receiver, '!s', offer)
         return offer
 
     def buy(self, receiver, good,
@@ -577,7 +566,7 @@ class Trade:
                                  offer_id,
                                  self.round,
                                  -1)
-        self._send(receiver[0], receiver[1], '!b', offer)
+        self._send(receiver, '!b', offer)
         self.given_offers[offer_id] = offer
         return offer
 
@@ -645,7 +634,7 @@ class Trade:
             self._inventory.haves[offer.good] -= quantity
             self._inventory.haves[offer.currency] += quantity * offer.price
         offer.final_quantity = quantity
-        self._send(offer.sender_group, offer.sender_id, '_p', (offer.id, quantity))
+        self._send(offer.sender, '_p', (offer.id, quantity))
         del self._polled_offers[offer.id]
         if offer.sell:  # ord('s')
             return {offer.good: - quantity, offer.currency: money_amount}
@@ -667,7 +656,7 @@ class Trade:
                 the offer the other party made
                 (offer not quote!)
         """
-        self._send(offer.sender_group, offer.sender_id, '_r', offer.id)
+        self._send(offer.sender, '_r', offer.id)
 
     def reject(self, Offer offer):
         """ Rejects and offer, if the offer is subsequently accepted in the
@@ -785,7 +774,7 @@ class Trade:
         if quantity > available:
             quantity = available
         self._inventory.haves[good] -= quantity
-        self._send(receiver[0], receiver[1], '_g', [good, quantity])
+        self._send(receiver, '_g', [good, quantity])
         return {good: quantity}
 
     def take(self, receiver, good, double quantity, double epsilon=epsilon):
