@@ -15,9 +15,6 @@
 #  License for the specific language governing permissions and limitations under
 # the License.
 
-# pylint: disable=W0212, C0111
-from collections import deque, defaultdict
-
 
 def _get_methods(agent_class):
     """ Returns all public methods of a class as a set, except for init """
@@ -53,9 +50,9 @@ class Action:
         return Action(self._agents, self.actions + other.actions)
 
     def __call__(self, *args, **kwargs):
-        for group_names, ids, command, _, __ in self.actions:
-            self._agents.do(group_names, ids, command, args, kwargs)
-        return Chain([self._agents.post_messages(action[0], action[1]) for action in self.actions])
+        for names, command, _, __ in self.actions:
+            self._agents.do(names, command, args, kwargs)
+        return Chain([self._agents.post_messages(action[0]) for action in self.actions])
         # itertools.chain, does not work here
 
 
@@ -105,31 +102,24 @@ class Group:
 
         (banks.buy_stocks & hedgefunds.buy_feraries)()
 
-
-
     """
-    def __init__(self, sim, processorgroup, group_names, agent_classes, ids=None, agent_arguments=None):
+
+    def __init__(self, sim, AgentClass, processorgroup, names, agent_arguments=None):
         self.sim = sim
         self.num_managers = sim.processes
         self._agents = processorgroup
-        self.group_names = group_names
-        self.agent_classes = agent_classes
+        self.AgentClass = AgentClass
+        if names is None:
+            self.names = set()
+        else:
+            self.names = names
         self._agent_arguments = agent_arguments
         self.panel_serial = 0
         self.last_action = "Begin_of_Simulation"
-
-        if len(group_names) == 1:
-            self.free_ids = defaultdict(deque)
-            if group_names[0] not in self._agents.group_names():
-                self._agents.new_group(group_names[0])
-        if ids is None:
-            self._ids = [[]]
-        else:
-            self._ids = ids
+        self.num_agents = 0
 
     def __add__(self, other):
-        return Group(self.sim, self._agents, self.group_names + other.group_names,
-                     self.agent_classes + other.agent_classes, self._ids + other._ids)
+        return Group(self.sim, None, self._agents, self.names.union(other.names))
 
     def __radd__(self, g):
         if isinstance(g, Group):
@@ -205,27 +195,26 @@ class Group:
         Returns:
             The id of the new agent
         """
-        assert len(self.group_names) == 1, 'Group is a combined group, no appending permitted'
-
         if agent_parameters is None:
             agent_parameters = number
-        group_name = self.group_names[0]
-        Agent = self.agent_classes[0]
+        Agent = self.AgentClass
 
-        self._ids[0] = self._agents.insert_or_append(group_name, self._ids[0], self.free_ids[group_name], Agent,
-                                                     common_parameters, agent_parameters, self._agent_arguments)
-        return self._ids[0]
+        new_names = self._agents.insert_or_append(Agent, common_parameters, agent_parameters,
+                                                  self._agent_arguments, self.num_agents)
+        self.num_agents += len(new_names)
+        self.names.update(new_names)
+        return new_names
 
     def _do(self, command, *args, **kwargs):
         """ agent actions can be executed by :code:`group.action(args=args)`. """
         self.last_action = command
-        return self._agents.do(self.group_names, self._ids, command, args, kwargs)
+        return self._agents.do(self.names, command, args, kwargs)
 
     def __getattr__(self, command, *args, **kwargs):
         self.last_action = command
-        return Action(self._agents, [(self.group_names, self._ids, command, args, kwargs)])
+        return Action(self._agents, [(self.names, command, args, kwargs)])
 
-    def delete_agents(self, ids):
+    def delete_agents(self, names):
         """ Remove an agents from a group, by specifying their id.
 
         Args:
@@ -236,21 +225,16 @@ class Group:
 
             students.delete_agents([1, 5, 15])
         """
-        assert len(self.group_names) == 1, 'Group is a combined group, no deleting permitted'
-        for id in ids:
-            assert self._ids[0][id] == id
-            self._ids[0][id] = None
-        self._agents.delete_agents(self.group_names[0], ids)
-        self.free_ids[self.group_names[0]].extend(ids)
+        for name in names:
+            self.names.remove(name)
+        self._agents.delete_agents(names)
 
-    def __getitem__(self, *ids):
-        if isinstance(ids, int):
-            ids = [ids]
-        return Group(self.sim, self._agents, self.group_names, self.agent_classes, ids=ids * len(self.group_names))
+    def __getitem__(self, *names):
+        return Group(self.sim, self.AgentClass, self._agents, names, self._agent_arguments)
 
     def __len__(self):
         """ Returns the length of a group """
-        return sum([len(groupids) for groupids in self._ids])
+        return len(self.names)
 
     def __repr__(self):
         return repr(self)

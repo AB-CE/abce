@@ -223,8 +223,10 @@ class Simulation(object):
         self.clock = time.time()
         self.database = self
         self.time = None
-        """Returns the current time set with simulation.advance_round(time)"""
+        """ The current time set with simulation.advance_round(time)"""
         self._groups = {}
+        self.names = {}
+        """ A list of all agent names in the simulation """
 
     def declare_round_endowment(self, resource, units,
                                 product):
@@ -438,7 +440,7 @@ class Simulation(object):
 
         self.sim_parameters.update(parameters)
 
-        group = Group(self, self._processorgroup, [group_name], [AgentClass],
+        group = Group(self, AgentClass, self._processorgroup, None,
                       agent_arguments={'group': group_name,
                                        'trade_logging': self.trade_logging_mode,
                                        'database': self.database_queue,
@@ -446,10 +448,11 @@ class Simulation(object):
                                        'expiring': self.expiring,
                                        'perishable': self.perishable,
                                        'resource_endowment': self.resource_endowment})
-        group.create_agents(agent_parameters=agent_parameters, **parameters)
+        names = group.create_agents(agent_parameters=agent_parameters, **parameters)
         self.agents_created = True
         self._groups[group_name] = group
         self.messagess[group_name] = []
+        self.names.update(names)
         return group
 
     def create_agents(self, AgentClass, group_name, simulation_parameters=None, agent_parameters=None, number=1):

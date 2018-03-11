@@ -82,7 +82,7 @@ class Messaging:
                       receiver=receiver,
                       topic=topic,
                       content=content)
-        self._send(receiver[0], receiver[1], topic, msg)
+        self._send(receiver, topic, msg)
 
     def get_messages(self, topic='m'):
         """ self.messages() returns all new messages send with :meth:`~abceagent.Messaging.message`
