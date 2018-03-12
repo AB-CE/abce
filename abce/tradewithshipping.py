@@ -15,29 +15,15 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 """
-The :class:`abceagent.Agent` class is the basic class for creating your agent. It
-automatically handles the possession of goods of an agent. In order to produce/transform
-goods you need to also subclass the :class:`abceagent.Firm` [1]_ or to create a consumer
-the :class:`abceagent.Household`.
 
-For detailed documentation on:
+The :class:`abce.TradeWithShipping` class allows to trade goods, that are not immediately delivered.
+In order to use :class:`abce.TradeWithShipping`, it must be inherited by the agent, before abce.Agent. E.g.:
 
-Trading:
-    see :class:`abceagent.Trade`
-Logging and data creation:
-    see :class:`abceagent.Database` and :doc:`simulation_results`
-Messaging between agents:
-    see :class:`abceagent.Messaging`.
+example::
 
-.. autoexception:: abcetools.NotEnoughGoods
-
-.. [1] or :class:`abceagent.FirmMultiTechnologies` for simulations with complex technologies.
+    class PizzaDelivery(abce.TradeWithShipping, abce.Agent):
+        pass
 """
-# ***************************************************************************************** #
-#  trade.pyx is written in cython. When you modify trade.pyx you need to compile it with    #
-# compile.sh and compile.py because the resulting trade.c file is distributed.              #
-# Don't forget to commit it to git                                                          #
-# ***************************************************************************************** #
 import random
 from collections import defaultdict, OrderedDict
 from abce.notenoughgoods import NotEnoughGoods
@@ -49,7 +35,7 @@ def get_epsilon():
     return epsilon
 
 
-class Offer(object):
+class Offer:
     __slots__ = ('sender', 'receiver', 'good', 'quantity', 'price', 'currency',
                  'sell', 'status', 'final_quantity', 'id',
                  'made', 'status_round', 'arrival')
@@ -130,18 +116,26 @@ class Offer(object):
 
 
 class TradeWithShipping:
-    """ Agents can trade with each other. The clearing of the trade is taken care
-    of fully by ABCE.
+    """
+
+    The :class:`abce.TradeWithShipping` class allows to trade goods, that are not immediately delivered.
+    In order to use :class:`abce.TradeWithShipping`, it must be inherited by the agent, before abce.Agent. E.g.:
+
+    example::
+
+        class PizzaDelivery(abce.TradeWithShipping, abce.Agent):
+            pass
+
+    Agents trade with each other in the same way as with the standard trade facilities. However,
+    if arrival is specified, the good arrives only in the corresponding round. For this the
+    :meth:`receive_shipments` method must be called.
+
     Selling a good works in the following way:
 
     1. An agent sends an offer. :meth:`~.sell`
 
-       *ABCE does not allow you to sell the same good twice; self.free(good) shows how much good is not reserved yet*
-
     2. **Next subround:** An agent receives the offer :meth:`~.get_offers`, and can
        :meth:`~.accept`, :meth:`~.reject` or partially accept it. :meth:`~.accept`
-
-       *The good is credited and the price is deducted from the agent's possessions.*
 
     3. **Next subround:**
 
@@ -149,13 +143,17 @@ class TradeWithShipping:
        - in case of partial acceptance *the money is credited and part of the reserved good is unblocked.*
        - in case of rejection *the good is unblocked.*
 
+    4. When :meth:`receive_shipments` is called and the time (self.time) corresponds to the arrival date
+       the good is credited
+
     Analogously for buying: :meth:`~.buy`
 
     Example::
 
         # Agent 1
         def sales(self):
-            self.remember_trade = self.sell('Household', 0, 'cookies', quantity=5, price=self.price)
+            self.remember_trade = self.sell(('Household', 0), 'cookies', quantity=5,
+                                            price=self.price, arrival=self.time+3)
 
         # Agent 2
         def receive_sale(self):
@@ -176,11 +174,16 @@ class TradeWithShipping:
                 self.price *= .9
             elif offer.status = 'accepted':
                 self.price *= offer.final_quantity / offer.quantity
+
+        def receive(self):
+            self.receive_shipments()
+
     Example::
 
         # Agent 1
         def sales(self):
-            self.remember_trade = self.sell('Household', 0, 'cookies', quantity=5, price=self.price, currency='dollars')
+            self.remember_trade = self.sell(('Household', 0), 'cookies', quantity=5,
+                                            price=self.price, currency='dollars', arrival=self.time+10)
 
         # Agent 2
         def receive_sale(self):
@@ -196,7 +199,8 @@ class TradeWithShipping:
                 else:
                     self.reject(offer)
 
-    If we did not implement a barter class, but one can use this class as a barter class,
+        def receive(self):
+            self.receive_shipments()
     """
     def __init__(self, id, agent_parameters, simulation_parameters, group, trade_logging,
                  database, check_unchecked_msgs, expiring, perishable, resource_endowment, start_round=None):
@@ -220,186 +224,10 @@ class TradeWithShipping:
         self._offer_count += 1
         return hash((self.name, self._offer_count))
 
-    def _advance_round(self, time):
-        if self.trade_logging > 0:
-            self.database_connection.put(["trade_log", self._trade_log, self.round])
-        self._trade_log = defaultdict(int)
-        super()._advance_round(time)
-
-    def get_buy_offers_all(self, descending=False, sorted=True):
-        """ """
-        goods = list(self._open_offers_buy.keys())
-        return {good: self.get_buy_offers(good, descending, sorted) for good in goods}
-
-    def get_sell_offers_all(self, descending=False, sorted=True):
-        """ """
-        goods = list(self._open_offers_sell.keys())
-        return {good: self.get_sell_offers(good, descending, sorted) for good in goods}
-
-    def get_offers_all(self, descending=False, sorted=True):
-        """ returns all offers in a dictionary, with goods as key. The in each
-        goods-category the goods are ordered by price. The order can be reversed
-        by setting descending=True
-
-        *Offers that are not accepted in the same subround (def block) are
-        automatically rejected.* However you can also manually reject.
-
-        Args:
-
-         descending(optional):
-            is a bool. False for descending True for ascending by price
-
-         sorted(default=True):
-                Whether offers are sorted by price. Faster if False.
-
-        Returns:
-
-            a dictionary with good types as keys and list of :class:`abce.trade.Offer`
-            as values
-
-        Example::
-
-         oo = get_offers_all(descending=False)
-         for good_category in oo:
-            print('The cheapest good of category' + good_category
-            + ' is ' + good_category[0])
-            for offer in oo[good_category]:
-                if offer.price < 0.5:
-                    self.accept(offer)
-
-         for offer in oo.beer:
-            print(offer.price, offer.sender)
-        """
-        goods = list(self._open_offers_sell.keys() + self._open_offers_buy.keys())
-        return {good: self.get_offers(good, descending, sorted) for good in goods}
-
-    def get_buy_offers(self, good, sorted=True, descending=False, shuffled=True):
-        """ """
-        ret = list(self._open_offers_buy[good].values())
-        self._polled_offers.update(self._open_offers_buy[good])
-        del self._open_offers_buy[good]
-        if shuffled:
-            random.shuffle(ret)
-        if sorted:
-            ret.sort(key=lambda objects: objects.price, reverse=descending)
-        return ret
-
-    def get_sell_offers(self, good, sorted=True, descending=False, shuffled=True):
-        """ """
-        ret = list(self._open_offers_sell[good].values())
-        self._polled_offers.update(self._open_offers_sell[good])
-        del self._open_offers_sell[good]
-        if shuffled:
-            random.shuffle(ret)
-        if sorted:
-            ret.sort(key=lambda objects: objects.price, reverse=descending)
-        return ret
-
-    def get_offers(self, good, sorted=True, descending=False, shuffled=True):
-        """ returns all offers of the 'good' ordered by price.
-
-        *Offers that are not accepted in the same subround (def block) are
-        automatically rejected.* However you can also manually reject.
-
-        peek_offers can be used to look at the offers without them being
-        rejected automatically
-
-        Args:
-            good:
-                the good which should be retrieved
-
-            sorted(bool, default=True):
-                Whether offers are sorted by price. Faster if False.
-
-            descending(bool, default=False):
-                False for descending True for ascending by price
-
-            shuffled(bool, default=True):
-                whether the order of messages is randomized or correlated with
-                the ID of the agent. Setting this to False speeds up the
-                simulation considerably, but introduces a bias.
-
-        Returns:
-            A list of :class:`abce.trade.Offer` ordered by price.
-
-        Example::
-
-            offers = get_offers('books')
-            for offer in offers:
-                if offer.price < 50:
-                    self.accept(offer)
-                elif offer.price < 100:
-                    self.accept(offer, 1)
-                else:
-                    self.reject(offer)  # optional
-        """
-        ret = (self.get_buy_offers(good, descending=False, sorted=False, shuffled=False) +
-               self.get_sell_offers(good, descending=False, sorted=False, shuffled=False))
-        if shuffled:
-            random.shuffle(ret)
-        if sorted:
-            ret.sort(key=lambda objects: objects.price, reverse=descending)
-        return ret
-
-    def peak_buy_offers(self, good, sorted=True, descending=False, shuffled=True):
-        """ """
-        ret = []
-        for offer in self._open_offers_buy[good].values():
-            ret.append(offer)
-        if shuffled:
-            random.shuffle(ret)
-        if sorted:
-            ret.sort(key=lambda objects: objects.price, reverse=descending)
-        return ret
-
-    def peak_sell_offers(self, good, sorted=True, descending=False, shuffled=True):
-        """ """
-        ret = []
-        for offer in self._open_offers_sell[good].values():
-            ret.append(offer)
-        if shuffled:
-            random.shuffle(ret)
-        if sorted:
-            ret.sort(key=lambda objects: objects.price, reverse=descending)
-        return ret
-
-    def peak_offers(self, good, sorted=True, descending=False, shuffled=True):
-        """ returns a peak on all offers of the 'good' ordered by price.
-        Peaked offers can not be accepted or rejected and they do not
-        expire.
-
-        Args:
-            good:
-                the good which should be retrieved
-                descending(bool, default=False):
-                False for descending True for ascending by price
-
-        Returns:
-            A list of offers ordered by price
-
-        Example::
-
-            offers = get_offers('books')
-            for offer in offers:
-                if offer.price < 50:
-                    self.accept(offer)
-                elif offer.price < 100:
-                    self.accept(offer, 1)
-                else:
-                    self.reject(offer)  # optional
-        """
-        ret = (self.peak_buy_offers(good, sorted=False, descending=False, shuffled=False) +
-               self.peak_sell_offers(good, sorted=False, descending=False, shuffled=False))
-        if shuffled:
-            random.shuffle(ret)
-        if sorted:
-            ret.sort(key=lambda objects: objects.price, reverse=descending)
-        return ret
-
     def sell(self, receiver,
              good, quantity, price, currency='money', arrival=None, epsilon=epsilon):
-        """ Sends a offer to sell a particular good to somebody. The amount promised
-        is reserved. (self.free(good), shows the not yet reserved goods)
+        """ Sends a offer to sell a particular good at a particular arrival time to somebody.
+        The amount promised is reserved. (self.free(good), shows the not yet reserved goods)
 
         Args:
             receiver:
@@ -413,6 +241,9 @@ class TradeWithShipping:
 
             price:
                 price per unit
+
+            arrival:
+                time when the good arrives and can be received with :meth:`receive_shippments`.
 
             currency:
                 is the currency of this transaction (defaults to 'money')
@@ -438,6 +269,9 @@ class TradeWithShipping:
                 else:
                     offer.status == 'rejected':
                     print('On diet')
+
+            def at_any_point(self):
+                self.receive_shippments()
         """
         assert price > - epsilon, 'price %.30f is smaller than 0 - epsilon (%.30f)' % (price, - epsilon)
         if price < 0:
@@ -466,7 +300,7 @@ class TradeWithShipping:
         return offer
 
     def buy(self, receiver, good, quantity, price, currency='money', arrival=None, epsilon=epsilon):
-        """ Sends a offer to buy a particular good to somebody. The money promised
+        """ Sends a offer to buy a particular good at a particular arrival time to somebody. The money promised
         is reserved. (self.free(currency), shows the not yet reserved goods)
 
         Args:
@@ -482,6 +316,9 @@ class TradeWithShipping:
 
             price:
                 price per unit
+
+            arrival:
+                time when the good arrives and can be received with :meth:`receive_shippments`.
 
             currency:
                 is the currency of this transaction (defaults to 'money')
@@ -591,32 +428,6 @@ class TradeWithShipping:
         else:
             return {offer.good: quantity, offer.currency: - money_amount}
 
-    def _reject_polled_but_not_accepted_offers(self):
-        for offer in self._polled_offers.values():
-            self._reject(offer)
-        self._polled_offers = {}
-
-    def _reject(self, offer):
-        """  Rejects the offer offer
-
-        Args:
-            offer:
-                the offer the other party made
-                (offer not quote!)
-        """
-        self._send(*offer.sender, '_r', offer.id)
-
-    def reject(self, offer):
-        """ Rejects and offer, if the offer is subsequently accepted in the
-        same subround it is accepted'. Peaked offers can not be rejected.
-
-        Args:
-
-            offer:
-                the offer to be rejected
-        """
-        pass
-
     def _receive_accept(self, offer_id_final_quantity):
         """ When the other party partially accepted the  money or good is
         received, remaining good or money is added back to haves and the offer
@@ -637,65 +448,6 @@ class TradeWithShipping:
         offer.status_round = self.round
         del self.given_offers[offer.id]
         return offer
-
-    def _log_receive_accept_group(self, offer):
-        if offer.sell:
-            self._trade_log[(offer.good, self.group, offer.receiver_group, offer.price)] += offer.final_quantity
-        else:
-            self._trade_log[(offer.good, offer.receiver_group, self.group, offer.price)] += offer.final_quantity
-
-    def _log_receive_accept_agent(self, offer):
-        if offer.sell:
-            self._trade_log[(offer.good, self.name_without_colon, '%s_%i' % (*offer.receiver, offer.price))] += offer.final_quantity
-        else:
-            self._trade_log[(offer.good, '%s_%i' % (*offer.receiver, self.name_without_colon, offer.price))] += offer.final_quantity
-
-    def _receive_reject(self, offer_id):
-        """ delets a given offer
-
-        is used by _msg_clearing__end_of_subround, when the other party rejects
-        or at the end of the subround when agent retracted the offer
-
-        """
-        offer = self.given_offers[offer_id]
-        if offer.sell:
-            self._inventory.rewind(offer.good, offer.quantity)
-        else:
-            self._inventory.rewind(offer.currency, offer.quantity * offer.price)
-        offer.status = "rejected"
-        offer.status_round = self.round
-        offer.final_quantity = 0
-        del self.given_offers[offer_id]
-
-    def _delete_given_offer(self, offer_id):
-        offer = self.given_offers.pop(offer_id)
-        if offer.sell:
-            self._inventory.rewind(offer.good, offer.quantity)
-        else:
-            self._inventory.rewind(offer.currency, offer.quantity * offer.price)
-
-    def take(self, receiver, good, quantity, epsilon=epsilon):
-        """ take a good from another agent. The other agent has to accept.
-        using self.accept()
-
-        Args:
-
-
-            receiver:
-                the receiving agent
-
-            good:
-                the good to be taken
-
-            quantity:
-                the quantity to be taken
-
-            epsilon (optional):
-                if you have floating point errors, a quantity or prices is
-                a fraction of number to high or low. You can increase the
-                floating point tolerance. See troubleshooting -- floating point problems
-        """
-        self.buy(receiver[0], receiver[1], good=good, quantity=quantity, price=0, epsilon=epsilon)
 
     def _clearing__end_of_subround(self, incomming_messages):
         """ agent receives all messages and objects that have been send in this

@@ -32,7 +32,7 @@ class Receiver(tradewithshipping.TradeWithShipping, abce.Agent):
         pass
 
     def receive(self):
-        offers = self.get_offers('g%i' % self.time)
+        offers = self.get_bids('g%i' % self.time)
         assert len(offers) == 1
         assert not self.get_offers_all()
         offer = offers[0]
