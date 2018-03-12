@@ -121,9 +121,9 @@ class Offer(object):
         self.status_round = None
 
     def __repr__(self):
-        return ("""<{sender: (%s, %i), receiver: (%s, %i), good: %s, quantity: %f, price: %f, currency: %f,
-                sell: %s, status: %s, final_quantity: % f, id: %i, made: %i, status_round: %i }>""" %
-                (*self.sender, *self.receiver, self.good, self.quantity, self.price, self.currency,
+        return ("""<{sender: %s, receiver: %s, good: %s, quantity: %f, price: %f, currency: %f,
+                sell: %s, status: %s, final_quantity: % f, id: %i, made: %s, status_round: %s }>""" %
+                (self.sender, self.receiver, self.good, self.quantity, self.price, self.currency,
                  self.sell, self.status, self.final_quantity, self.id, self.made, self.status_round))
 
 
