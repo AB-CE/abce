@@ -237,4 +237,4 @@ class Group:
         return len(self.names)
 
     def __repr__(self):
-        return repr(self)
+        return repr(self.names)
