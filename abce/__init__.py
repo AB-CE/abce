@@ -416,6 +416,8 @@ class Simulation(object):
         """
         assert number is None or agent_parameters is None, \
             'either set number or agent_parameters in build_agents'
+        assert number is not None or agent_parameters is not None, \
+            'please set either the number or agent_parameters in build_agents'
         assert group_name.isidentifier()
 
         if agent_parameters is None:
