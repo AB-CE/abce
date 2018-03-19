@@ -91,7 +91,7 @@ class Database:
             self.database_connection.put(
                 ["log",
                  self.group,
-                 self.id,
+                 self.name,
                  self.round,
                  data_to_write,
                  action_name])

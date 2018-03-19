@@ -86,10 +86,10 @@ class Database(threading.Thread):
                         current_trade = []
 
             elif msg[0] == 'log':
-                _, group, id, round, data_to_write, subround_or_serial = msg
+                _, group, name, round, data_to_write, subround_or_serial = msg
                 table_name = 'panel___%s___%s' % (group, subround_or_serial)
                 data_to_write['round'] = round
-                data_to_write['id'] = id
+                data_to_write['name'] = name
                 current_log[table_name].append(data_to_write)
                 if len(current_log[table_name]) == 1000:
                     if table_name not in table_log:
