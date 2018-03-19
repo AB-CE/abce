@@ -212,7 +212,7 @@ class Simulation(object):
         self.time = None
         """ The current time set with simulation.advance_round(time)"""
         self._groups = {}
-        self.names = {}
+        self.names = set()
         """ A list of all agent names in the simulation """
 
     def declare_round_endowment(self, resource, units,
