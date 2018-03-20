@@ -213,7 +213,7 @@ class Agent(Database, Trade, Messaging, Goods):
                             'have not been retrieved in this round '
                             'get_messages(.)' % (self.group, self.id))
 
-    def _advance_round(self, time):
+    def _advance_round(self, time, str_time):
         super()._advance_round(time)
         self._inventory._advance_round()
         self.contracts._advance_round(self.round)
@@ -225,6 +225,7 @@ class Agent(Database, Trade, Messaging, Goods):
             self._inventory.create(product, self[ingredient] * units)
 
         self.round = time
+        self._str_round = str_time
         self.time = time
 
         if self.conditional_logging:

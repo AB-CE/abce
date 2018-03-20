@@ -35,6 +35,7 @@ class SingleProcess(object):
         for id, ap in enumerate(agent_parameters, maxid):
             agent = Agent(id, simulation_parameters, ap, **agent_arguments)
             agent.init(**ChainMap(simulation_parameters, ap))
+            agent._str_name = str(agent.name).replace(',', '_').replace('"', '').replace("'", '')
             names[agent.name] = agent._name
             assert agent.name not in self.agents, agent.name
             self.agents[agent.name] = agent
@@ -55,9 +56,9 @@ class SingleProcess(object):
             self.agents[name]._post_messages(self.agents)
         return self.rets
 
-    def advance_round(self, time):
+    def advance_round(self, time, str_time):
         for agent in self.agents.values():
-            agent._advance_round(time)
+            agent._advance_round(time, str_time)
 
     def group_names(self):
         return self.agents.keys()
