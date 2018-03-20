@@ -48,6 +48,7 @@ where time is any representation of time.
 """
 import datetime
 import os
+import re
 import time
 import random
 import json
@@ -332,7 +333,7 @@ class Simulation(object):
             self._db_started = True
         self.time = time
         print("\rRound" + str(time))
-        str_time = str(time).replace(',', '_').replace('"', '').replace("'", '').replace(' ', '')
+        str_time = re.sub('[^0-9a-zA-Z_]', '', str(time))
         self._processorgroup.advance_round(time, str_time)
 
     def __del__(self):
