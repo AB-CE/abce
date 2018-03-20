@@ -31,14 +31,14 @@ def compare(to_compare, path, message, processes):
         generated = {}
         for row in csv.DictReader(generatedf):
             try:
-                generated[(row['round'], row['id'])] = row
+                generated[(row['round'], row['name'])] = row
             except KeyError:
                 generated[row['round']] = row
     with open(the_path, 'r') as orginialf:
         orginial = {}
         for row in csv.DictReader(orginialf):
             try:
-                orginial[(row['round'], row['id'])] = row
+                orginial[(row['round'], row['name'])] = row
             except KeyError:
                 orginial[row['round']] = row
     for row in generated:

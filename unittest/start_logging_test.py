@@ -26,14 +26,14 @@ def compare(to_compare, path, message, processes):
         generated = {}
         for row in csv.DictReader(generatedf):
             try:
-                generated[(row['round'], row['id'])] = row
+                generated[(row['round'], row['name'])] = row
             except KeyError:
                 generated[row['round']] = row
     with open(the_path, 'r') as orginialf:
         orginial = {}
         for row in csv.DictReader(orginialf):
             try:
-                orginial[(row['round'], row['id'])] = row
+                orginial[(row['round'], row['name'])] = row
             except KeyError:
                 orginial[row['round']] = row
     for row in generated:
@@ -41,13 +41,13 @@ def compare(to_compare, path, message, processes):
             if key != 'index':
                 if generated[row][key] != orginial[row][key]:
                     assert isclose(float(generated[row][key]), float(orginial[row][key])), (
-                        key, generated[row][key], orginial[row][key])
+                        to_compare, key, generated[row][key], orginial[row][key])
     for row in orginial:
         for key in orginial[row]:
             if key != 'index':
                 if generated[row][key] != orginial[row][key]:
                     assert isclose(float(generated[row][key]), float(orginial[row][key])), (
-                        key, generated[row][key], orginial[row][key])
+                        to_compare, key, generated[row][key], orginial[row][key])
 
 
 def main(processes, rounds):
