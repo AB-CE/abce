@@ -28,7 +28,7 @@ matrix:
       #  Manually install python on osx
       - brew update
       - brew upgrade python
-      - virtualenv env -p python
+      - virtualenv env -p python3
       - source env/bin/activate
 
 install:
