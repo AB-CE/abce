@@ -35,7 +35,7 @@ class SingleProcess(object):
         for id, ap in enumerate(agent_parameters, maxid):
             agent = Agent(id, simulation_parameters, ap, **agent_arguments)
             agent.init(**ChainMap(simulation_parameters, ap))
-            agent._str_name = str(agent.name).replace(',', '_').replace('"', '').replace("'", '')
+            agent._str_name = str(agent.name).replace(',', '_').replace('"', '').replace("'", '').replace(' ', '')
             names[agent.name] = agent._name
             assert agent.name not in self.agents, agent.name
             self.agents[agent.name] = agent

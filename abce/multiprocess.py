@@ -49,7 +49,7 @@ class ProcessorGroup:
             agent.init(**ChainMap(simulation_parameters, ap))
             if hash(agent.name) % self.processes == self.batch:
                 assert agent.name not in self.agents, agent.name
-                agent._str_name = str(agent.name).replace(',', '_').replace('"', '').replace("'", '')
+                agent._str_name = str(agent.name).replace(',', '_').replace('"', '').replace("'", '').replace(' ', '')
                 names[agent.name] = agent._name
                 agent._processes = self.processes
                 self.agents[agent.name] = agent
