@@ -58,7 +58,7 @@ def compare(to_compare, path, message, processes):
 def main(processes, rounds):
     simulation = abce.Simulation(name='logging_test_friendly_names', processes=processes)
 
-    agents = simulation.build_agents(Agent, 'agent',
+    agents = simulation.build_agents(Agent, 'friendly_agent',
                                      agent_parameters=[{'name': 'A'}, {'name': 'Davoud'}, {'name': "fred"}, {'name': "F12"}])
 
     for rnd in range(10):
@@ -72,17 +72,18 @@ def main(processes, rounds):
     if platform.system() == 'Windows':
         simulation.path = simulation.path.replace('/', '\\')
 
-    compare('aggregated_agent.csv',
+    compare('aggregated_friendly_agent.csv',
             simulation.path, 'aggregated logging test\t\t',
             processes)
-    compare('aggregate_agent.csv',
+    compare('aggregate_friendly_agent.csv',
             simulation.path, 'aggregate logging test\t\t',
             processes)
-    compare('panel_agent.csv',
+    compare('panel_friendly_agent.csv',
             simulation.path, 'aggregate logging test mean\t',
             processes)
 
 
 if __name__ == '__main__':
     main(processes=1, rounds=None)
-    main(processes=4, rounds=None)
+    if (platform.system() != 'Windows' and platform.python_implementation() != 'PyPy'):
+        main(processes=4, rounds=None)
