@@ -17,7 +17,7 @@
 """
 # pylint: disable=W0212, C0111
 from collections import ChainMap
-
+import re
 
 class SingleProcess(object):
     """ This is a container for all agents. It exists only to allow for multiprocessing with MultiProcess.
@@ -35,7 +35,7 @@ class SingleProcess(object):
         for id, ap in enumerate(agent_parameters, maxid):
             agent = Agent(id, simulation_parameters, ap, **agent_arguments)
             agent.init(**ChainMap(simulation_parameters, ap))
-            agent._str_name = str(agent.name).replace(',', '_').replace('"', '').replace("'", '').replace(' ', '')
+            agent._str_name = re.sub('[^0-9a-zA-Z_]', '', str(agent.name))
             names[agent.name] = agent._name
             assert agent.name not in self.agents, agent.name
             self.agents[agent.name] = agent
