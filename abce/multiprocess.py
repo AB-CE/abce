@@ -49,14 +49,15 @@ class ProcessorGroup:
             agent.init(**ChainMap(simulation_parameters, ap))
             if hash(agent.name) % self.processes == self.batch:
                 assert agent.name not in self.agents, agent.name
+                agent._str_name = str(agent.name).replace(',', '_').replace('"', '').replace("'", '')
                 names[agent.name] = agent._name
                 agent._processes = self.processes
                 self.agents[agent.name] = agent
         return names
 
-    def advance_round(self, time):
+    def advance_round(self, time, str_time):
         for agent in self.agents.values():
-            agent._advance_round(time)
+            agent._advance_round(time, str_time)
 
     def delete_agents(self, names):
         for name in names:
@@ -130,8 +131,8 @@ class MultiProcess(object):
     def post_messages(self, names):
         return flatten(self.pool.map(post_messages, jkk(self.processor_groups, names)))
 
-    def advance_round(self, time):
-        self.pool.map(advance_round_wrapper, jkk(self.processor_groups, time))
+    def advance_round(self, time, str_time):
+        self.pool.map(advance_round_wrapper, jkk(self.processor_groups, time, str_time))
 
     def group_names(self):
         return self.processor_groups[0].keys()
