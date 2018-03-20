@@ -160,8 +160,8 @@ def delete_agents_wrapper(arg):
 
 
 def advance_round_wrapper(arg):
-    pg, time = arg
-    pg.advance_round(time)
+    pg, time, str_time = arg
+    pg.advance_round(time, str_time)
 
 
 def jkk(iterator, *args):
