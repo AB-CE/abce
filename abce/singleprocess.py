@@ -19,6 +19,7 @@
 from collections import ChainMap
 import re
 
+
 class SingleProcess(object):
     """ This is a container for all agents. It exists only to allow for multiprocessing with MultiProcess.
     """
