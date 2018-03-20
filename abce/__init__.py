@@ -332,7 +332,8 @@ class Simulation(object):
             self._db_started = True
         self.time = time
         print("\rRound" + str(time))
-        self._processorgroup.advance_round(time, str(time).replace(',', '_').replace('"', '').replace("'", ''))
+        str_time = str(time).replace(',', '_').replace('"', '').replace("'", '').replace(' ', '')
+        self._processorgroup.advance_round(time, str_time)
 
     def __del__(self):
         self.finalize()
