@@ -69,9 +69,6 @@ def main(processes, rounds):
             agents.panel_log(variables=['i', 'r'], goods=['money'])
     simulation.finalize()
 
-    if platform.system() == 'Windows':
-        simulation.path = simulation.path.replace('/', '\\')
-
     compare('aggregated_friendly_agent.csv',
             simulation.path, 'aggregated logging test\t\t',
             processes)
