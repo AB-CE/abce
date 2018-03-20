@@ -1,6 +1,7 @@
 import platform
 import start_core_engine
 import start_logging_test
+import start_logging_friendly_names_test
 import start_delete_create
 import start_production_consumption
 import start_combinable_actions
@@ -22,6 +23,7 @@ def run_test(name, test):
 
 if __name__ == '__main__':
     run_test("Logging", start_logging_test)
+    run_test("Friendly Names Logging", start_logging_friendly_names_test)
     run_test("Core engine", start_core_engine)
     run_test("Returning and parameters", start_return)
     run_test("Create/Delete", start_delete_create)

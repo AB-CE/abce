@@ -9,19 +9,24 @@ except ImportError:
 
 
 class Agent(abce.Agent):
+    def init(self, name):
+        self.name = name
+
     def go(self):
         self.create('money', 0.1)
         self.i = self.id
-        self.r = self.round
+        self.r = self.round[0] + 10 * self.round[1]
         self.log('li', self.i)
         self.log('lr', self.r)
         self.log('l', {'i': self.i, 'r': self.r})
 
 
 def compare(to_compare, path, message, processes):
+
     the_path = (path + '/' + to_compare)
     if platform.system() == 'Windows':  # windows compatibility
         the_path = the_path[the_path.find('/') + 1:]
+
     with open(to_compare, 'r') as generatedf:
         generated = {}
         for row in csv.DictReader(generatedf):
@@ -51,16 +56,19 @@ def compare(to_compare, path, message, processes):
 
 
 def main(processes, rounds):
-    simulation = abce.Simulation(name='logging_test', processes=processes)
+    simulation = abce.Simulation(name='logging_test_friendly_names', processes=processes)
 
-    agents = simulation.build_agents(Agent, 'agent', 10)
+    agents = simulation.build_agents(Agent, 'agent',
+                                     agent_parameters=[{'name': 'A'}, {'name': 'Davoud'}, {'name': "fred"}, {'name': "F12"}])
 
-    for rnd in range(100):
-        simulation.advance_round(rnd)
-        agents.go()
-        agents.agg_log(variables=['i', 'r'], goods=['money'])
-        agents.panel_log(variables=['i', 'r'], goods=['money'])
+    for rnd in range(10):
+        for r in range(10):
+            simulation.advance_round((r, rnd))
+            agents.go()
+            agents.agg_log(variables=['i', 'r'], goods=['money'])
+            agents.panel_log(variables=['i', 'r'], goods=['money'])
     simulation.finalize()
+
 
     if platform.system() == 'Windows':
         simulation.path = simulation.path.replace('/', '\\')
