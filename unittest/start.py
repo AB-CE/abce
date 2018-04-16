@@ -6,7 +6,7 @@ import start_delete_create
 import start_production_consumption
 import start_combinable_actions
 import start_return
-
+import start_custom_database
 
 def run_test(name, test):
     print(name + " test, 1 core")
@@ -29,3 +29,4 @@ if __name__ == '__main__':
     run_test("Create/Delete", start_delete_create)
     run_test("Production and consumption", start_production_consumption)
     run_test("Combinable actions", start_combinable_actions)
+    run_test("Custom Database", start_custom_database)

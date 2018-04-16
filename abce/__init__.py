@@ -99,6 +99,9 @@ class Simulation(object):
         check_unchecked_msgs:
             check every round that all messages have been received with get_massages or get_offers.
 
+        dbplugin, dbpluginargs:
+            database plugin, see :ref:`Database Plugins`
+
         Example::
 
             simulation = Simulation(name='ABCE',
@@ -143,7 +146,7 @@ class Simulation(object):
     """
 
     def __init__(self, name='abce', random_seed=None,
-                 trade_logging='off', processes=1, check_unchecked_msgs=False):
+                 trade_logging='off', processes=1, check_unchecked_msgs=False, dbplugin=None, dbpluginargs=[]):
         """
         """
         try:
@@ -199,7 +202,9 @@ class Simulation(object):
         self._db = Database(
             self.path,
             self.database_queue,
-            trade_log=self.trade_logging_mode != 'off')
+            trade_log=self.trade_logging_mode != 'off',
+            plugin=dbplugin,
+            pluginargs=dbpluginargs)
         self._db_started = False
 
         if random_seed is None or random_seed == 0:

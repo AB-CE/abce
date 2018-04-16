@@ -1,7 +1,7 @@
-Plugins
-=======
+Create Plugins
+==============
 
-ABCE has one plugin so far. The ABCESL accounting framework. If
+abce has three plugin so far: abcFinance, abcLogistics, abcCython. If
 you want to author your own plugin - its dead simple. All you
 have to do is write a class that inherits from Agent in agent.py.
 This class can overwrite::
@@ -43,3 +43,34 @@ For example like this::
 
 
 **Do not overwrite the init(parameters, simulation_parameters)** method
+
+
+Database Plugins
+================
+
+In order to write custom logging functions, create a class with your custom logging::
+
+    class CustomLogging:
+        def __init__(self, dbname, tablename, arg3):
+            self.db = dataset.connect('sqlite:///factbook.db')
+            self.table = self.db[tablename]
+
+
+        def write_everything(self, name, data):
+            self.table.insert(dict(name=name, data=data))
+
+        def close(self):
+             self.db.commit()
+
+The close method is called when the simulation in ended with simulation.finalize().
+
+
+The CustomLogging class must be given to the simulation, in will be initialized with the dbpluginargs argument list::
+
+    sim = Simulation(name='mysim', dbplugin=CustomLogging, dbpluginargs=['somedb.db', 'sometable', 'arg3')
+
+The agents can execute your custom logging function like this::
+
+    self.custom_log('write_everything', name='joe', data=5)
+
+
