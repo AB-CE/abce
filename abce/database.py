@@ -223,3 +223,7 @@ class Database:
                                           str(self.round),
                                           data_to_write,
                                           serial])
+
+    def custom_log(self, method, *args, **kwargs):
+        """ send custom logging commands to database plugin, see :ref:`Database Plugins` """
+        self.database_connection.put([method, args, kwargs])

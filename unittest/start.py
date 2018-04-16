@@ -5,6 +5,13 @@ import start_delete_create
 import start_production_consumption
 import start_combinable_actions
 import start_return
+import start_custom_database
+
+
+def run_test(name, test):
+    print(name + " test, 1 core")
+    test.main(processes=1, rounds=10)
+    print('Iteration of %s testing with 1 core finished' % name)
 
 
 if __name__ == '__main__':
@@ -63,3 +70,5 @@ if __name__ == '__main__':
         print("Returning and parameters test, 4 cores")
         start_return.main(processes=4, rounds=5)
         print('Iteration of returning and parameters test with multiple processes finished')
+
+    run_test("Custom Database", start_custom_database)
