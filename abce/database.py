@@ -91,8 +91,8 @@ class Database:
             self.database_connection.put(
                 ["log",
                  self.group,
-                 self.id,
-                 self.round,
+                 self._str_name,
+                 self._str_round,
                  data_to_write,
                  action_name])
 
@@ -207,7 +207,7 @@ class Database:
                                              functions,
                                              lengths)
             self.database_connection.put(["snapshot_agg",
-                                          str(self.round),
+                                          self._str_round,
                                           self.group,
                                           data_to_write])
 
@@ -219,7 +219,11 @@ class Database:
                                              lengths)
             self.database_connection.put(["log",
                                           self.group,
-                                          self.id,
-                                          str(self.round),
+                                          self._str_name,
+                                          self._str_round,
                                           data_to_write,
                                           serial])
+
+    def custom_log(self, method, *args, **kwargs):
+        """ send custom logging commands to database plugin, see :ref:`Database Plugins` """
+        self.database_connection.put([method, args, kwargs])

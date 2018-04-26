@@ -24,7 +24,7 @@ from .postprocess import to_csv
 class Database(threading.Thread):
     """Separate thread that receives data from in_sok and saves it into a
     database"""
-    def __init__(self, directory, in_sok, trade_log):
+    def __init__(self, directory, in_sok, trade_log, plugin=None, pluginargs=[]):
         threading.Thread.__init__(self)
         self.directory = directory
         self.panels = {}
@@ -35,7 +35,12 @@ class Database(threading.Thread):
         self.aggregation = defaultdict(lambda: defaultdict(OnlineVariance))
         self.round = 0
 
+        self.plugin = plugin
+        self.pluginargs = pluginargs
+
     def run(self):
+        if self.plugin is not None:
+            self.plugin = self.plugin(*self.pluginargs)
         self.dataset_db = dataset.connect('sqlite://')
         self.dataset_db.query('PRAGMA synchronous=OFF')
         # self.dataset_db.query('PRAGMA journal_mode=OFF')
@@ -86,10 +91,10 @@ class Database(threading.Thread):
                         current_trade = []
 
             elif msg[0] == 'log':
-                _, group, id, round, data_to_write, subround_or_serial = msg
+                _, group, name, round, data_to_write, subround_or_serial = msg
                 table_name = 'panel___%s___%s' % (group, subround_or_serial)
-                data_to_write['round'] = round
-                data_to_write['id'] = id
+                data_to_write['round'] = str(round)
+                data_to_write['name'] = str(name)
                 current_log[table_name].append(data_to_write)
                 if len(current_log[table_name]) == 1000:
                     if table_name not in table_log:
@@ -102,8 +107,11 @@ class Database(threading.Thread):
                 break
 
             else:
-                raise Exception(
-                    "abce_db error '%s' command unknown ~87" % msg)
+                try:
+                    getattr(self.plugin, msg[0])(*msg[1], **msg[2])
+                except AttributeError:
+                    raise AttributeError(
+                        "abce_db error '%s' command unknown" % msg)
 
         for name, data in current_log.items():
             if name not in self.dataset_db:
@@ -114,6 +122,10 @@ class Database(threading.Thread):
         if self.trade_log:
             trade_table.insert_many(current_trade)
         self.dataset_db.commit()
+        try:
+            self.plugin.close()
+        except AttributeError:
+            pass
         to_csv(self.directory, self.dataset_db)
 
     def make_aggregation_and_write(self):

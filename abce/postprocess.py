@@ -23,7 +23,7 @@ def to_csv(directory, dataset):
         join_table(tables, group, 'round', 'aggregate', dataset)
 
     for group, tables in panels.items():
-        join_table(tables, group, 'id, round', 'panel', dataset)
+        join_table(tables, group, 'name, round', 'panel', dataset)
         create_aggregated_table(group, dataset)
     dataset.commit()
 
@@ -96,4 +96,4 @@ def get_str_columns(dataset, table_name, redundant_columns):
 
 def get_columns(dataset, table_name):
     return [c for c in dataset[table_name].columns
-            if c not in ('index', 'id', 'round')]
+            if c not in ('index', 'name', 'round')]

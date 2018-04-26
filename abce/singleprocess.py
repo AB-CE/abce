@@ -17,62 +17,49 @@
 """
 # pylint: disable=W0212, C0111
 from collections import ChainMap
+import re
 
 
 class SingleProcess(object):
     """ This is a container for all agents. It exists only to allow for multiprocessing with MultiProcess.
     """
+
     def __init__(self):
         self.agents = {}
 
-    def new_group(self, group):
-        """ Creates a new group. """
-        self.agents[group] = []
-
-    def insert_or_append(self, group, ids, free_ids, Agent, simulation_parameters, agent_parameters, agent_arguments):
+    def insert_or_append(self, Agent, simulation_parameters, agent_parameters, agent_arguments, maxid):
         """appends an agent to a group """
         if isinstance(agent_parameters, int):
             agent_parameters = ([] for _ in range(agent_parameters))
 
-        for ap in agent_parameters:
-            if free_ids:
-                id = free_ids.popleft()
-                ids[id] = id
-            else:
-                id = len(ids)
-                ids.append(id)
+        names = {}
+        for id, ap in enumerate(agent_parameters, maxid):
             agent = Agent(id, simulation_parameters, ap, **agent_arguments)
             agent.init(**ChainMap(simulation_parameters, ap))
-            try:
-                self.agents[group][id] = agent
-            except IndexError:
-                self.agents[group].append(agent)
-        return ids
+            agent._str_name = re.sub('[^0-9a-zA-Z_]', '', str(agent.name))
+            names[agent.name] = agent._name
+            assert agent.name not in self.agents, agent.name
+            self.agents[agent.name] = agent
+        return names
 
-    def delete_agents(self, group, ids):
-        for id in ids:
-            self.agents[group][id] = None
+    def delete_agents(self, names):
+        for name in names:
+            del self.agents[name]
 
-    def do(self, groups, ids, command, args, kwargs):
+    def do(self, names, command, args, kwargs):
         self.rets = []
-        for group, iss in zip(groups, ids):
-            for i in iss:
-                if i is not None:
-                    ret = self.agents[group][i]._execute(command, args, kwargs)
-                    self.rets.append(ret)
+        for name in names:
+            ret = self.agents[name]._execute(command, args, kwargs)
+            self.rets.append(ret)
 
-    def post_messages(self, groups, ids):
-        for group, iss in zip(groups, ids):
-            for i in iss:
-                if i is not None:
-                    self.agents[group][i]._post_messages(self.agents)
+    def post_messages(self, names):
+        for name in names:
+            self.agents[name]._post_messages(self.agents)
         return self.rets
 
-    def advance_round(self, time):
-        for agents in self.agents.values():
-            for agent in agents:
-                if agent is not None:
-                    agent._advance_round(time)
+    def advance_round(self, time, str_time):
+        for agent in self.agents.values():
+            agent._advance_round(time, str_time)
 
     def group_names(self):
         return self.agents.keys()

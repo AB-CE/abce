@@ -48,6 +48,7 @@ where time is any representation of time.
 """
 import datetime
 import os
+import re
 import time
 import random
 import json
@@ -98,6 +99,12 @@ class Simulation(object):
         check_unchecked_msgs:
             check every round that all messages have been received with get_massages or get_offers.
 
+        path:
+            path for database use None to omit directory creation.
+
+        dbplugin, dbpluginargs:
+            database plugin, see :ref:`Database Plugins`
+
         Example::
 
             simulation = Simulation(name='ABCE',
@@ -142,7 +149,7 @@ class Simulation(object):
     """
 
     def __init__(self, name='abce', random_seed=None,
-                 trade_logging='off', processes=1, check_unchecked_msgs=False):
+                 trade_logging='off', processes=1, check_unchecked_msgs=False, dbplugin=None, dbpluginargs=[], path='auto'):
         """
         """
         try:
@@ -162,20 +169,25 @@ class Simulation(object):
         self.perishable = []
         self.expiring = []
 
-        os.makedirs(os.path.abspath('.') + '/result/', exist_ok=True)
-
-        self.path = (os.path.abspath('.') + '/result/' + name + '_' +
-                     datetime.datetime.now().strftime("%Y-%m-%d_%H-%M"))
-        """ the path variable contains the path to the simulation outcomes
-        it can be used to generate your own graphs as all resulting
-        csv files are there.
-        """
-        while True:
-            try:
-                os.makedirs(self.path)
-                break
-            except OSError:
-                self.path += 'I'
+        if path is not None:
+            os.makedirs(os.path.abspath('.') + '/result/', exist_ok=True)
+            if path == 'auto':
+                self.path = (os.path.abspath('.') + '/result/' + name + '_' +
+                             datetime.datetime.now().strftime("%Y-%m-%d_%H-%M"))
+                """ the path variable contains the path to the simulation outcomes
+                it can be used to generate your own graphs as all resulting
+                csv files are there.
+                """
+            else:
+                self.path = path
+            while True:
+                try:
+                    os.makedirs(self.path)
+                    break
+                except OSError:
+                    self.path += 'I'
+        else:
+            self.path = None
 
         self.trade_logging_mode = trade_logging
         if self.trade_logging_mode not in ['individual', 'group', 'off']:
@@ -198,7 +210,9 @@ class Simulation(object):
         self._db = Database(
             self.path,
             self.database_queue,
-            trade_log=self.trade_logging_mode != 'off')
+            trade_log=self.trade_logging_mode != 'off',
+            plugin=dbplugin,
+            pluginargs=dbpluginargs)
         self._db_started = False
 
         if random_seed is None or random_seed == 0:
@@ -210,8 +224,10 @@ class Simulation(object):
         self.clock = time.time()
         self.database = self
         self.time = None
-        """Returns the current time set with simulation.advance_round(time)"""
+        """ The current time set with simulation.advance_round(time)"""
         self._groups = {}
+        self.names = set()
+        """ A list of all agent names in the simulation """
 
     def declare_round_endowment(self, resource, units,
                                 product):
@@ -330,7 +346,8 @@ class Simulation(object):
             self._db_started = True
         self.time = time
         print("\rRound" + str(time))
-        self._processorgroup.advance_round(time)
+        str_time = re.sub('[^0-9a-zA-Z_]', '', str(time))
+        self._processorgroup.advance_round(time, str_time)
 
     def __del__(self):
         self.finalize()
@@ -414,6 +431,8 @@ class Simulation(object):
         """
         assert number is None or agent_parameters is None, \
             'either set number or agent_parameters in build_agents'
+        assert number is not None or agent_parameters is not None, \
+            'please set either the number or agent_parameters in build_agents'
         assert group_name.isidentifier()
 
         if agent_parameters is None:
@@ -425,7 +444,7 @@ class Simulation(object):
 
         self.sim_parameters.update(parameters)
 
-        group = Group(self, self._processorgroup, [group_name], [AgentClass],
+        group = Group(self, AgentClass, self._processorgroup, None,
                       agent_arguments={'group': group_name,
                                        'trade_logging': self.trade_logging_mode,
                                        'database': self.database_queue,
@@ -433,10 +452,11 @@ class Simulation(object):
                                        'expiring': self.expiring,
                                        'perishable': self.perishable,
                                        'resource_endowment': self.resource_endowment})
-        group.create_agents(agent_parameters=agent_parameters, **parameters)
+        names = group.create_agents(agent_parameters=agent_parameters, **parameters)
         self.agents_created = True
         self._groups[group_name] = group
         self.messagess[group_name] = []
+        self.names.update(names)
         return group
 
     def create_agents(self, AgentClass, group_name, simulation_parameters=None, agent_parameters=None, number=1):
@@ -504,16 +524,18 @@ class Simulation(object):
         group.delete_agents(ids)
 
     def _write_description_file(self):
-        description = open(os.path.abspath(
-            self.path + '/description.txt'), 'w')
-        description.write(json.dumps(self.sim_parameters,
-                                     indent=4,
-                                     skipkeys=True,
-                                     default=lambda x: 'not_serializeable'))
+        if self.path is not None:
+            description = open(os.path.abspath(
+                self.path + '/description.txt'), 'w')
+            description.write(json.dumps(self.sim_parameters,
+                                         indent=4,
+                                         skipkeys=True,
+                                         default=lambda x: 'not_serializeable'))
 
     def _displaydescribtion(self):
-        description = open(self.path + '/description.txt', 'r')
-        print(description.read())
+        if self.path is not None:
+            description = open(self.path + '/description.txt', 'r')
+            print(description.read())
 
     def graphs(self):
         """ after the simulation is run, graphs() shows graphs of all data

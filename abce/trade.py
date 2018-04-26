@@ -121,9 +121,9 @@ class Offer(object):
         self.status_round = None
 
     def __repr__(self):
-        return ("""<{sender: (%s, %i), receiver: (%s, %i), good: %s, quantity: %f, price: %f, currency: %f,
-                sell: %s, status: %s, final_quantity: % f, id: %i, made: %i, status_round: %i }>""" %
-                (*self.sender, *self.receiver, self.good, self.quantity, self.price, self.currency,
+        return ("""<{sender: %s, receiver: %s, good: %s, quantity: %f, price: %f, currency: %f,
+                sell: %s, status: %s, final_quantity: % f, id: %i, made: %s, status_round: %s }>""" %
+                (self.sender, self.receiver, self.good, self.quantity, self.price, self.currency,
                  self.sell, self.status, self.final_quantity, self.id, self.made, self.status_round))
 
 
@@ -456,7 +456,7 @@ class Trade:
                       offer_id,
                       self.round)
         self.given_offers[offer_id] = offer
-        self._send(receiver[0], receiver[1], '!s', offer)
+        self._send(receiver, '!s', offer)
         return offer
 
     def buy(self, receiver, good,
@@ -510,7 +510,7 @@ class Trade:
                       False,
                       offer_id,
                       self.round)
-        self._send(receiver[0], receiver[1], '!b', offer)
+        self._send(receiver, '!b', offer)
         self.given_offers[offer_id] = offer
         return offer
 
@@ -575,7 +575,7 @@ class Trade:
             self._inventory.haves[offer.good] -= quantity
             self._inventory.haves[offer.currency] += quantity * offer.price
         offer.final_quantity = quantity
-        self._send(*offer.sender, '_p', (offer.id, quantity))
+        self._send(offer.sender, '_p', (offer.id, quantity))
         del self._polled_offers[offer.id]
         if offer.sell:
             return {offer.good: - quantity, offer.currency: money_amount}
@@ -595,7 +595,7 @@ class Trade:
                 the offer the other party made
                 (offer not quote!)
         """
-        self._send(*offer.sender, '_r', offer.id)
+        self._send(offer.sender, '_r', offer.id)
 
     def reject(self, offer):
         """ Rejects and offer, if the offer is subsequently accepted in the
@@ -700,7 +700,7 @@ class Trade:
         if quantity > available:
             quantity = available
         self._inventory.haves[good] -= quantity
-        self._send(receiver[0], receiver[1], '_g', [good, quantity])
+        self._send(receiver, '_g', [good, quantity])
         return {good: quantity}
 
     def take(self, receiver, good, quantity, epsilon=epsilon):
