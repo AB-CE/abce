@@ -147,3 +147,54 @@ class Messaging:
             ret[key] = messages
         self._msgs.clear()
         return ret
+
+    def _do_message_clearing(self, incomming_messages):
+        """ agent receives all messages and objects that have been send in this
+        subround and deletes the offers that where retracted, but not executed.
+
+        '_o': registers a new offer
+        '_d': delete received that the issuing agent retract
+        '_p': clears a made offer that was accepted by the other agent
+        '_r': deletes an offer that the other agent rejected
+        '_g': recive a 'free' good from another party
+        """
+        for typ, msg in incomming_messages:
+            if typ == '!b':
+                self._open_offers_buy[msg.good][msg.id] = msg
+            elif typ == '!s':
+                self._open_offers_sell[msg.good][msg.id] = msg
+            elif typ == '_p':
+                offer = self._receive_accept(msg)
+                if self.trade_logging == 2:
+                    self._log_receive_accept_group(offer)
+                elif self.trade_logging == 1:
+                    self._log_receive_accept_agent(offer)
+            elif typ == '_r':
+                self._receive_reject(msg)
+            elif typ == '_g':
+                self._inventory.haves[msg[0]] += msg[1]
+            elif typ == '_q':
+                self._quotes[msg.id] = msg
+            elif typ == '!o':
+                self._contract_offers[msg.good].append(msg)
+            elif typ == '_ac':
+                contract = self._contract_offers_made.pop(msg.id)
+                if contract.pay_group == self.group and contract.pay_id == self.id:
+                    self._contracts_pay[contract.good][contract.id] = contract
+                else:
+                    self._contracts_deliver[contract.good][contract.id] = contract
+            elif typ == '_dp':
+                if msg.pay_group == self.group and msg.pay_id == self.id:
+                    self._inventory[msg.good] += msg.quantity
+                    self._contracts_pay[msg.good][msg.id].delivered.append(self.round)
+                else:
+                    self._inventory['money'] += msg.quantity * msg.price
+                    self._contracts_deliver[msg.good][msg.id].paid.append(self.round)
+
+            elif typ == '!d':
+                if msg[0] == 'r':
+                    del self._contracts_pay[msg[1]][msg[2]]
+                if msg[0] == 'd':
+                    del self._contracts_deliver[msg[1]][msg[2]]
+            else:
+                self._msgs.setdefault(typ, []).append(msg)

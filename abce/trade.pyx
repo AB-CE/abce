@@ -723,9 +723,9 @@ class Trade:
             self._trade_log[(offer.good, '%s_%i' % (offer.receiver_group, offer.receiver_id), self.name_without_colon, offer.price)] += offer.final_quantity
 
     def _receive_reject(self, offer_id):
-        """ delets a given offer
+        """ deletes a given offer
 
-        is used by _msg_clearing__end_of_subround, when the other party rejects
+        is used by _do_message_clearing, when the other party rejects
         or at the end of the subround when agent retracted the offer
 
         """
@@ -814,58 +814,6 @@ class Trade:
         """
         self.buy(receiver[0], receiver[1], good=good, quantity=quantity, price=0, epsilon=epsilon)
 
-
-    def _clearing__end_of_subround(self, incomming_messages):
-        """ agent receives all messages and objects that have been send in this
-        subround and deletes the offers that where retracted, but not executed.
-
-        '_o': registers a new offer
-        '_d': delete received that the issuing agent retract
-        '_p': clears a made offer that was accepted by the other agent
-        '_r': deletes an offer that the other agent rejected
-        '_g': recive a 'free' good from another party
-        """
-        cdef Offer offer
-        for typ, msg in incomming_messages:
-            if typ == '!b':
-                self._open_offers_buy[msg.good][msg.id] = msg
-            elif typ == '!s':
-                self._open_offers_sell[msg.good][msg.id] = msg
-            elif typ == '_p':
-                offer = self._receive_accept(msg)
-                if self.trade_logging == 2:
-                    self._log_receive_accept_group(offer)
-                elif self.trade_logging == 1:
-                    self._log_receive_accept_agent(offer)
-            elif typ == '_r':
-                self._receive_reject(msg)
-            elif typ == '_g':
-                self._inventory.haves[msg[0]] += msg[1]
-            elif typ == '_q':
-                self._quotes[msg.id] = msg
-            elif typ == '!o':
-                self._contract_offers[msg.good].append(msg)
-            elif typ == '_ac':
-                contract = self._contract_offers_made[msg.id]
-                if contract.pay_group == self.group and contract.pay_id == self.id:
-                    self._contracts_pay[contract.good][contract.id] = contract
-                else:
-                    self._contracts_deliver[contract.good][contract.id] = contract
-            elif typ == '_dp':
-                if msg.pay_group == self.group and msg.pay_id == self.id:
-                    self._inventory[msg.good] += msg.quantity
-                    self._contracts_pay[msg.good][msg.id].delivered.append(self.round)
-                else:
-                    self._inventory['money'] += msg.quantity * msg.price
-                    self._contracts_deliver[msg.good][msg.id].paid.append(self.round)
-
-            elif typ == '!d':
-                if msg[0] == 'r':
-                    del self._contracts_pay[msg[1]][msg[2]]
-                if msg[0] == 'd':
-                    del self._contracts_deliver[msg[1]][msg[2]]
-            else:
-                self._msgs.setdefault(typ, []).append(msg)
 
 # TODO when cython supports function overloading overload this function with compare_with_ties(int x, int y)
 cdef int compare_with_ties(double x, double y):

@@ -234,7 +234,7 @@ class Agent(Database, Trade, Messaging, Goods):
                 self.log_this_round = False
 
     def _execute(self, command, args, kwargs):
-        self._clearing__end_of_subround(self.inbox)
+        self._do_message_clearing(self.inbox)
         self.inbox.clear()
         self._begin_subround()
         ret = getattr(self, command)(*args, **kwargs)
