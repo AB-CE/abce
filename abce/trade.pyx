@@ -723,9 +723,9 @@ class Trade:
             self._trade_log[(offer.good, '%s_%i' % (offer.receiver_group, offer.receiver_id), self.name_without_colon, offer.price)] += offer.final_quantity
 
     def _receive_reject(self, offer_id):
-        """ delets a given offer
+        """ deletes a given offer
 
-        is used by _msg_clearing__end_of_subround, when the other party rejects
+        is used by _do_message_clearing, when the other party rejects
         or at the end of the subround when agent retracted the offer
 
         """

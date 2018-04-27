@@ -12510,7 +12510,7 @@ static PyObject *__pyx_pf_5trade_5Trade_44_log_receive_accept_agent(CYTHON_UNUSE
 
 /* Python wrapper */
 static PyObject *__pyx_pw_5trade_5Trade_47_receive_reject(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_5trade_5Trade_46_receive_reject[] = " delets a given offer\n\n        is used by _msg_clearing__end_of_subround, when the other party rejects\n        or at the end of the subround when agent retracted the offer\n\n        ";
+static char __pyx_doc_5trade_5Trade_46_receive_reject[] = " delets a given offer\n\n        is used by _do_message_clearing, when the other party rejects\n        or at the end of the subround when agent retracted the offer\n\n        ";
 static PyMethodDef __pyx_mdef_5trade_5Trade_47_receive_reject = {"_receive_reject", (PyCFunction)__pyx_pw_5trade_5Trade_47_receive_reject, METH_VARARGS|METH_KEYWORDS, __pyx_doc_5trade_5Trade_46_receive_reject};
 static PyObject *__pyx_pw_5trade_5Trade_47_receive_reject(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_self = 0;

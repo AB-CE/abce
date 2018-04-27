@@ -148,7 +148,7 @@ class Messaging:
         self._msgs.clear()
         return ret
 
-    def _clearing__end_of_subround(self, incomming_messages):
+    def _do_message_clearing(self, incomming_messages):
         """ agent receives all messages and objects that have been send in this
         subround and deletes the offers that where retracted, but not executed.
 
