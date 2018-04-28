@@ -28,7 +28,7 @@ class Getter(abce.Agent):
         assert f == 'f'
 
 
-def main(processes, rounds):
+def main(processes, rounds=10):
     sim = abce.Simulation(processes=processes)
 
     returners = sim.build_agents(Returner, 'returner', number=3)

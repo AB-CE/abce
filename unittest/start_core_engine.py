@@ -1,6 +1,3 @@
-from buy import Buy
-# from quote_buy import QuoteBuy
-from sell import Sell
 from give import Give  # tests give and messaging
 from logger_test import LoggerTest
 from endowment import Endowment
@@ -10,7 +7,7 @@ from messagea import MessageA
 from messageb import MessageB
 
 
-def main(processes, rounds):
+def main(processes, rounds=20):
     s = Simulation(processes=processes, name='unittest')
     s.declare_round_endowment(
         resource='labor_endowment', units=5, product='labor')
@@ -19,11 +16,6 @@ def main(processes, rounds):
     s.declare_perishable(good='labor')
 
     # s.declare_expiring('xcapital', 5)
-    print('build Buy')
-    buy = s.build_agents(Buy, 'buy', 1000, rounds=rounds)
-    print('build Sell')
-    # s.build_agents(QuoteBuy, 2)
-    sell = s.build_agents(Sell, 'sell', 1000, rounds=rounds)
     print('build Give')
     give = s.build_agents(Give, 'give', 2, rounds=rounds)  # tests give and messaging
     print('build Endowment')
@@ -55,23 +47,12 @@ def main(processes, rounds):
     print('build MessageB')
     messageb = s.build_agents(MessageB, 'messageb', 20)
 
-    some = buy + sell + give + loggertest
+    some = give + loggertest
 #    contractagents = (contractbuyer + contractseller
 #                      + contractbuyerstop + contractsellerstop)
 
     for r in range(rounds):
         s.advance_round(r)
-        for _ in range(5):
-            buy.one()
-            buy.two()
-            buy.three()
-            buy.clean_up()
-        buy.panel_log(variables=['price'])
-        for _ in range(5):
-            sell.one()
-            sell.two()
-            sell.three()
-            sell.clean_up()
         for _ in range(5):
             give.one()
             give.two()

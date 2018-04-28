@@ -59,6 +59,7 @@ from .agent import Agent, Trade  # noqa: F401
 from .group import Group
 from .notenoughgoods import NotEnoughGoods  # noqa: F401
 from .agents import Firm, Household  # noqa: F401
+from .tradewithshipping import TradeWithShipping  # noqa: F401
 from .quote import Quote  # noqa: F401
 from .contracts import Contracting  # noqa: F401
 from .gui import gui, graphs  # noqa: F401

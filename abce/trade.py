@@ -221,15 +221,11 @@ class Trade:
             self.database_connection.put(["trade_log", self._trade_log, self.round])
         self._trade_log = defaultdict(int)
 
-    def get_buy_offers_all(self, descending=False, sorted=True):
-        """ """
+    def get_bids_all(self, descending=True, sorted=True):
+        """ Analogous to :meth:`get_offers_all`, this method gets all bids to buy any good.
+        Bids are ordered in a descending order"""
         goods = list(self._open_offers_buy.keys())
         return {good: self.get_buy_offers(good, descending, sorted) for good in goods}
-
-    def get_sell_offers_all(self, descending=False, sorted=True):
-        """ """
-        goods = list(self._open_offers_sell.keys())
-        return {good: self.get_sell_offers(good, descending, sorted) for good in goods}
 
     def get_offers_all(self, descending=False, sorted=True):
         """ returns all offers in a dictionary, with goods as key. The in each
@@ -265,25 +261,15 @@ class Trade:
          for offer in oo.beer:
             print(offer.price, offer.sender)
         """
-        goods = list(self._open_offers_sell.keys() + self._open_offers_buy.keys())
-        return {good: self.get_offers(good, descending, sorted) for good in goods}
+        goods = list(self._open_offers_sell.keys())
+        return {good: self.get_sell_offers(good, descending, sorted) for good in goods}
 
-    def get_buy_offers(self, good, sorted=True, descending=False, shuffled=True):
-        """ """
+    def get_bids(self, good, sorted=True, descending=True, shuffled=True):
+        """ Analogous to :meth:`get_offers` this method gets all bids to buy a specific good.
+        Bids are ordered in a descending order"""
         ret = list(self._open_offers_buy[good].values())
         self._polled_offers.update(self._open_offers_buy[good])
         del self._open_offers_buy[good]
-        if shuffled:
-            random.shuffle(ret)
-        if sorted:
-            ret.sort(key=lambda objects: objects.price, reverse=descending)
-        return ret
-
-    def get_sell_offers(self, good, sorted=True, descending=False, shuffled=True):
-        """ """
-        ret = list(self._open_offers_sell[good].values())
-        self._polled_offers.update(self._open_offers_sell[good])
-        del self._open_offers_sell[good]
         if shuffled:
             random.shuffle(ret)
         if sorted:
@@ -328,8 +314,9 @@ class Trade:
                 else:
                     self.reject(offer)  # optional
         """
-        ret = (self.get_buy_offers(good, descending=False, sorted=False, shuffled=False) +
-               self.get_sell_offers(good, descending=False, sorted=False, shuffled=False))
+        ret = list(self._open_offers_sell[good].values())
+        self._polled_offers.update(self._open_offers_sell[good])
+        del self._open_offers_sell[good]
         if shuffled:
             random.shuffle(ret)
         if sorted:
@@ -418,21 +405,23 @@ class Trade:
                 floating point tolerance. See troubleshooting -- floating point problems
 
         Returns:
-            A reference to the offer. The offer and the offer status can
-            be accessed with `self.info(offer_reference)`.
+            A reference to the offer.
 
         Example::
 
-            def subround_1(self):
-                self.offer = self.sell('household', 1, 'cookies', quantity=5, price=0.1)
+            class Shipper(abce.Agent):
+                def ship_(self):
+                    self.sell(('receiver', 0),
+                              good='cookies',
+                              quantity=self.time,
+                              price=self.time)
 
-            def subround_2(self):
-                offer = self.info(self.offer)
-                if offer.status == 'accepted':
-                    print(offer.final_quantity , 'cookies have be bougth')
-                else:
-                    offer.status == 'rejected':
-                    print('On diet')
+
+            class Receiver(abce.Agent):
+                def receive(self):
+                    offers = self.get_offers('cookies')
+                    if offer.price * offer.quantity > self['money']:
+                        self.accept(offer)
         """
         assert price > - epsilon, 'price %.30f is smaller than 0 - epsilon (%.30f)' % (price, - epsilon)
         if price < 0:
@@ -461,8 +450,10 @@ class Trade:
 
     def buy(self, receiver, good,
             quantity, price, currency='money', epsilon=epsilon):
-        """ Sends a offer to buy a particular good to somebody. The money promised
-        is reserved. (self.free(currency), shows the not yet reserved goods)
+        """ Sends a **bid** to buy a particular good to somebody. The money promised
+        is reserved. (self.free(currency), shows the not yet reserved goods).
+
+        Bids can be received with :meth:`self.get_bids`
 
         Args:
             receiver:

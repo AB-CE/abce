@@ -1,10 +1,11 @@
+import abce
 import random
 from abce.agent import Agent
-from abce import NotEnoughGoods
+from abce import tradewithshipping, NotEnoughGoods
 from tools import is_zero
 
 
-class Buy(Agent):
+class Buy(tradewithshipping.TradeWithShipping, Agent):
     def init(self, rounds):
         self.last_round = rounds - 1
         self.tests = {'accepted': False, 'rejected': False, 'partial': False}
@@ -21,7 +22,7 @@ class Buy(Agent):
             self.price = random.uniform(0.0001, 1)
             quantity = random.uniform(0, self.money / self.price)
             self.offer = self.buy(('buy', self.id + 1),
-                                  'cookies', quantity, self.price)
+                                  'cookies', quantity, self.price, arrival=None)
             assert self.not_reserved('money') == self.money - \
                 quantity * self.price
 
@@ -32,7 +33,7 @@ class Buy(Agent):
         if self.id % 2 == 1:
             self.create('cookies', random.uniform(0, 10000))
             cookies = self['cookies']
-            oo = self.get_bids('cookies')
+            oo = self.get_offers('cookies')
             assert oo
             for offer in oo:
                 if random.randint(0, 10) == 0:
@@ -91,10 +92,40 @@ class Buy(Agent):
 
     def all_tests_completed(self):
         if self.round == self.last_round and self.id == 0:
-            assert all(self.tests.values(
-            )), 'not all tests have been run; ABCE workes correctly, restart the unittesting to do all tests %s' % self.tests
+            assert all(self.tests.values()), (
+                'not all tests have been run; ABCE workes correctly, restart the unittesting to do all tests %s' % self.tests)
             print('Test abce.buy:\t\t\t\t\tOK')
             print('Test abce.accept\t(abce.buy):\t\tOK')
             print('Test abce.reject\t(abce.buy):\t\tOK')
             print('Test abce.accept, partial\t(abce.buy):\tOK')
             print('Test reject pending automatic \t(abce.buy):\tOK')
+
+
+def main(processes, rounds=20):
+    s = abce.Simulation(processes=processes, name='unittest')
+    s.declare_round_endowment(
+        resource='labor_endowment', units=5, product='labor')
+    s.declare_round_endowment(resource='cow', units=10,
+                              product='milk')
+    s.declare_perishable(good='labor')
+
+    print('build Buy')
+    buy = s.build_agents(Buy, 'buy', 1000, rounds=rounds)
+
+    for r in range(rounds):
+        s.advance_round(r)
+        for _ in range(5):
+            buy.one()
+            buy.two()
+            buy.three()
+            buy.clean_up()
+        buy.panel_log(variables=['price'])
+        buy.all_tests_completed()
+    s.finalize()
+
+
+if __name__ == '__main__':
+    main(processes=1, rounds=5)
+    print('Iteration with 1 core finished')
+    main(processes=4, rounds=5)
+    print('Iteration with multiple processes finished')

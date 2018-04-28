@@ -1,0 +1,532 @@
+# Copyright 2012 Davoud Taghawi-Nejad
+#
+# Module Author: Davoud Taghawi-Nejad
+#
+# ABCE is open-source software. If you are using ABCE for your research you are
+# requested the quote the use of this software.
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not
+# use this file except in compliance with the License and quotation of the
+# author. You may obtain a copy of the License at
+#       http://www.apache.org/licenses/LICENSE-2.0
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations under
+# the License.
+"""
+
+The :class:`abce.TradeWithShipping` class allows to trade goods, that are not immediately delivered.
+In order to use :class:`abce.TradeWithShipping`, it must be inherited by the agent, before abce.Agent. E.g.:
+
+example::
+
+    class PizzaDelivery(abce.TradeWithShipping, abce.Agent):
+        pass
+"""
+import random
+from collections import defaultdict, OrderedDict
+from abce.notenoughgoods import NotEnoughGoods
+
+epsilon = 0.00000000001
+
+
+def get_epsilon():
+    return epsilon
+
+
+class Offer:
+    __slots__ = ('sender', 'receiver', 'good', 'quantity', 'price', 'currency',
+                 'sell', 'status', 'final_quantity', 'id',
+                 'made', 'status_round', 'arrival')
+    """ This is an offer container that is send to the other agent. You can
+    access the offer container both at the receiver as well as at the sender,
+    if you have saved the offer. (e.G. self.offer = self.sell(...))
+
+    it has the following properties:
+        sender_group:
+            this is the group name of the sender
+
+        sender:
+            this is the  the sender
+
+        receiver:
+            this is the the sender
+
+        currency:
+            The other good against which the good is traded.
+
+        good:
+            the good offered or demanded
+
+        quantity:
+            the quantity offered or demanded
+
+        price:
+            the suggested transaction price
+
+        sell:
+            this can have the values False for buy; True for sell
+
+        status:
+            'new':
+                has been created, but not answered
+
+            'accepted':
+                trade fully accepted
+
+            'rejected':
+                trade rejected
+
+            'pending':
+                offer has not yet answered, and is not older than one round.
+
+            'perished':
+                the **perishable** good was not accepted by the end of the round
+                and therefore perished.
+
+        final_quantity:
+            If the offer has been answerd this returns the actual quantity
+            bought or sold. (Equal to quantity if the offer was accepted fully)
+        id:
+            a unique identifier
+    """
+
+    def __init__(self, sender, receiver, good, quantity, price, currency,
+                 sell, id, made, arrival=None):
+        self.sender = sender
+        self.receiver = receiver
+        self.good = good
+        self.currency = currency
+        self.quantity = quantity
+        self.price = price
+        self.sell = sell
+        self.status = 'new'
+        self.final_quantity = None
+        self.id = id
+        self.made = made
+        self.status_round = None
+        self.arrival = arrival
+
+    def __repr__(self):
+        return '{sender: %s, receiver: %s, good: %s, currency: %s, quantity: %s, price: %s, sell: %s, '
+        'status: %s, final_quantity: %s, id: %s, made: %s, status_round: %s, arrival: %s}' % (
+            self.sender, self.receiver, self.good, self.currency, self.quantity, self.price, self.sell,
+            self.status, self.final_quantity, self.id, self.made, self.status_round, self.arrival)
+
+
+class TradeWithShipping:
+    """
+
+    The :class:`abce.TradeWithShipping` class allows to trade goods, that are not immediately delivered.
+    In order to use :class:`abce.TradeWithShipping`, it must be inherited by the agent, before abce.Agent. E.g.:
+
+    example::
+
+        class PizzaDelivery(abce.TradeWithShipping, abce.Agent):
+            pass
+
+    Agents trade with each other in the same way as with the standard trade facilities. However,
+    if arrival is specified, the good arrives only in the corresponding round. For this the
+    :meth:`receive_shipments` method must be called.
+
+    Selling a good works in the following way:
+
+    1. An agent sends an offer. :meth:`~.sell`
+
+    2. **Next subround:** An agent receives the offer :meth:`~.get_offers`, and can
+       :meth:`~.accept`, :meth:`~.reject` or partially accept it. :meth:`~.accept`
+
+    3. **Next subround:**
+
+       - in case of acceptance *the money is automatically credited.*
+       - in case of partial acceptance *the money is credited and part of the reserved good is unblocked.*
+       - in case of rejection *the good is unblocked.*
+
+    4. When :meth:`receive_shipments` is called and the time (self.time) corresponds to the arrival date
+       the good is credited
+
+    Analogously for buying: :meth:`~.buy`
+
+    Example::
+
+        # Agent 1
+        def sales(self):
+            self.remember_trade = self.sell(('Household', 0), 'cookies', quantity=5,
+                                            price=self.price, arrival=self.time+3)
+
+        # Agent 2
+        def receive_sale(self):
+            oo = self.get_offers('cookies')
+            for offer in oo:
+                if offer.price < 0.3:
+                    try:
+                        self.accept(offer)
+                    except NotEnoughGoods:
+                        self.accept(offer, self['money'] / offer.price)
+                else:
+                    self.reject(offer)
+
+        # Agent 1, subround 3
+        def learning(self):
+            offer = self.info(self.remember_trade)
+            if offer.status == 'reject':
+                self.price *= .9
+            elif offer.status = 'accepted':
+                self.price *= offer.final_quantity / offer.quantity
+
+        def receive(self):
+            self.receive_shipments()
+
+    Example::
+
+        # Agent 1
+        def sales(self):
+            self.remember_trade = self.sell(('Household', 0), 'cookies', quantity=5,
+                                            price=self.price, currency='dollars', arrival=self.time+10)
+
+        # Agent 2
+        def receive_sale(self):
+            oo = self.get_offers('cookies')
+            for offer in oo:
+                if ((offer.currency == 'dollars' and offer.price < 0.3 * exchange_rate)
+                    or (offer.currency == 'euros' and dollars'offer.price < 0.3)):
+
+                    try:
+                        self.accept(offer)
+                    except NotEnoughGoods:
+                        self.accept(offer, self['money'] / offer.price)
+                else:
+                    self.reject(offer)
+
+        def receive(self):
+            self.receive_shipments()
+    """
+    def __init__(self, id, agent_parameters, simulation_parameters, group, trade_logging,
+                 database, check_unchecked_msgs, expiring, perishable, resource_endowment, start_round=None):
+        super().__init__(id, agent_parameters, simulation_parameters, group, trade_logging,
+                         database, check_unchecked_msgs, expiring, perishable, resource_endowment, start_round)
+        self.given_offers = OrderedDict()
+        self._open_offers_buy = defaultdict(dict)
+        self._open_offers_sell = defaultdict(dict)
+        self._polled_offers = {}
+        self._offer_count = 0
+        self.trade_logging = {'individual': 1,
+                              'group': 2, 'off': 0}[trade_logging]
+        self._trade_log = defaultdict(int)
+        self._quotes = {}
+
+        self.in_shipment = defaultdict(list)
+
+    def _offer_counter(self):
+        """ returns a unique number for an offer (containing the agent's name)
+        """
+        self._offer_count += 1
+        return hash((self.name, self._offer_count))
+
+    def sell(self, receiver,
+             good, quantity, price, currency='money', arrival=None, epsilon=epsilon):
+        """ Sends a offer to sell a particular good at a particular arrival time to somebody.
+        The amount promised is reserved. (self.free(good), shows the not yet reserved goods)
+
+        Args:
+            receiver:
+                the receiving agent
+
+            'good':
+                name of the good
+
+            quantity:
+                maximum units disposed to buy at this price
+
+            price:
+                price per unit
+
+            arrival:
+                time when the good arrives and can be received with :meth:`receive_shippments`.
+
+            currency:
+                is the currency of this transaction (defaults to 'money')
+
+            epsilon (optional):
+                if you have floating point errors, a quantity or prices is
+                a fraction of number to high or low. You can increase the
+                floating point tolerance. See troubleshooting -- floating point problems
+
+        Returns:
+            A reference to the offer. The offer and the offer status can
+            be accessed with `self.info(offer_reference)`.
+
+        Example::
+
+            def subround_1(self):
+                self.offer = self.sell('household', 1, 'cookies', quantity=5, price=0.1)
+
+            def subround_2(self):
+                offer = self.info(self.offer)
+                if offer.status == 'accepted':
+                    print(offer.final_quantity , 'cookies have be bougth')
+                else:
+                    offer.status == 'rejected':
+                    print('On diet')
+
+            def at_any_point(self):
+                self.receive_shippments()
+        """
+        assert price > - epsilon, 'price %.30f is smaller than 0 - epsilon (%.30f)' % (price, - epsilon)
+        if price < 0:
+            price = 0
+        # makes sure the quantity is between zero and maximum available, but
+        # if its only a little bit above or below its set to the bounds
+        assert quantity > - epsilon, 'quantity %.30f is smaller than 0 - epsilon (%.30f)' % (quantity, - epsilon)
+        if quantity < 0:
+            quantity = 0
+
+        self._inventory.reserve(good, quantity)
+
+        offer_id = self._offer_counter()
+        offer = Offer(self.name,
+                      receiver,
+                      good,
+                      quantity,
+                      price,
+                      currency,
+                      True,
+                      offer_id,
+                      self.round,
+                      arrival)
+        self.given_offers[offer_id] = offer
+        self._send(receiver[0], receiver[1], '!s', offer)
+        return offer
+
+    def buy(self, receiver, good, quantity, price, currency='money', arrival=None, epsilon=epsilon):
+        """ Sends a offer to buy a particular good at a particular arrival time to somebody. The money promised
+        is reserved. (self.free(currency), shows the not yet reserved goods)
+
+        Args:
+            receiver:
+                The name of the receiving agent a tuple (group, id).
+                e.G. ('firm', 15)
+
+            'good':
+                name of the good
+
+            quantity:
+                maximum units disposed to buy at this price
+
+            price:
+                price per unit
+
+            arrival:
+                time when the good arrives and can be received with :meth:`receive_shippments`.
+
+            currency:
+                is the currency of this transaction (defaults to 'money')
+
+            epsilon (optional):
+                if you have floating point errors, a quantity or prices is
+                a fraction of number to high or low. You can increase the
+                floating point tolerance. See troubleshooting -- floating point problems
+        """
+        assert price > - epsilon, 'price %.30f is smaller than 0 - epsilon (%.30f)' % (price, - epsilon)
+        if price < 0:
+            price = 0
+        money_amount = quantity * price
+        # makes sure the money_amount is between zero and maximum available, but
+        # if its only a little bit above or below its set to the bounds
+        available = self._inventory[currency]
+        assert money_amount > - epsilon, '%s (price * quantity) %.30f is smaller than 0 - epsilon (%.30f)' % (currency, money_amount, - epsilon)
+        if money_amount < 0:
+            money_amount = 0
+        if money_amount > available:
+            money_amount = available
+
+        offer_id = self._offer_counter()
+        self._inventory.reserve(currency, money_amount)
+        offer = Offer(self.name,
+                      receiver,
+                      good,
+                      quantity,
+                      price,
+                      currency,
+                      False,
+                      offer_id,
+                      self.round,
+                      arrival)
+        self._send(receiver[0], receiver[1], '!b', offer)
+        self.given_offers[offer_id] = offer
+        return offer
+
+    def accept(self, offer, quantity=None, epsilon=epsilon):
+        """ The buy or sell offer is accepted and cleared. If no quantity is
+        given the offer is fully accepted; If a quantity is given the offer is
+        partial accepted.
+
+        Args:
+
+            offer:
+                the offer the other party made
+            quantity:
+                quantity to accept. If not given all is accepted
+
+            epsilon (optional):
+                if you have floating point errors, a quantity or prices is
+                a fraction of number to high or low. You can increase the
+                floating point tolerance. See troubleshooting -- floating point problems
+
+        Return:
+            Returns a dictionary with the good's quantity and the amount paid.
+        """
+        offer_quantity = offer.quantity
+        if quantity is None:
+            quantity = offer_quantity
+        assert quantity > - epsilon, 'quantity %.30f is smaller than 0 - epsilon (%.30f)' % (quantity, - epsilon)
+        if quantity < 0:
+            quantity = 0
+        if quantity > offer_quantity + epsilon * max(quantity, offer_quantity):
+            raise AssertionError('accepted more than offered %s: %.100f >= %.100f'
+                                 % (offer.good, quantity, offer_quantity))
+        if quantity > offer_quantity:
+            quantity = offer_quantity
+
+        if quantity == 0:
+            self.reject(offer)
+            return {offer.good: 0, offer.currency: 0}
+
+        money_amount = quantity * offer.price
+        if offer.sell:  # ord('s')
+            assert money_amount > - epsilon, 'money = quantity * offer.price %.30f is smaller than 0 - epsilon (%.30f)' % (money_amount, - epsilon)
+            if money_amount < 0:
+                money_amount = 0
+
+            available = self._inventory[offer.currency]
+            if money_amount > available + epsilon + epsilon * max(money_amount, available):
+                raise NotEnoughGoods(self.name, offer.currency, money_amount - available)
+            if money_amount > available:
+                money_amount = available
+            if offer.arrival is None:
+                self._inventory.haves[offer.good] += quantity
+            else:
+                self.in_shipment[offer.arrival].append(offer)
+            self._inventory.haves[offer.currency] -= quantity * offer.price
+        else:
+            assert quantity > - epsilon, 'quantity %.30f is smaller than 0 - epsilon (%.30f)' % (quantity, - epsilon)
+            if quantity < 0:
+                quantity = 0
+            available = self._inventory[offer.good]
+            if quantity > available + epsilon + epsilon * max(quantity, available):
+                raise NotEnoughGoods(self.name, offer.good, quantity - available)
+            if quantity > available:
+                quantity = available
+            self._inventory.haves[offer.good] -= quantity
+            self._inventory.haves[offer.currency] += quantity * offer.price
+        offer.final_quantity = quantity
+        self._send(*offer.sender, '_p', (offer.id, quantity))
+        del self._polled_offers[offer.id]
+        if offer.sell:
+            return {offer.good: - quantity, offer.currency: money_amount}
+        else:
+            return {offer.good: quantity, offer.currency: - money_amount}
+
+    def _receive_accept(self, offer_id_final_quantity):
+        """ When the other party partially accepted the  money or good is
+        received, remaining good or money is added back to haves and the offer
+        is deleted
+        """
+        offer = self.given_offers[offer_id_final_quantity[0]]
+        offer.final_quantity = offer_id_final_quantity[1]
+        if offer.sell:
+            self._inventory.commit(offer.good, offer.quantity, offer.final_quantity)
+            self._inventory.haves[offer.currency] += offer.final_quantity * offer.price
+        else:
+            if offer.arrival is None:
+                self._inventory.haves[offer.good] += offer.final_quantity
+            else:
+                self.in_shipment[offer.arrival].append(offer)
+            self._inventory.commit(offer.currency, offer.quantity * offer.price, offer.final_quantity * offer.price)
+        offer.status = "accepted"
+        offer.status_round = self.round
+        del self.given_offers[offer.id]
+        return offer
+
+    def _clearing__end_of_subround(self, incomming_messages):
+        """ agent receives all messages and objects that have been send in this
+        subround and deletes the offers that where retracted, but not executed.
+
+        '_o': registers a new offer
+        '_d': delete received that the issuing agent retract
+        '_p': clears a made offer that was accepted by the other agent
+        '_r': deletes an offer that the other agent rejected
+        '_g': recive a 'free' good from another party
+        """
+        for typ, msg in incomming_messages:
+            if typ == '!b':
+                self._open_offers_buy[msg.good][msg.id] = msg
+            elif typ == '!s':
+                self._open_offers_sell[msg.good][msg.id] = msg
+            elif typ == '_p':
+                offer = self._receive_accept(msg)
+                if self.trade_logging == 2:
+                    self._log_receive_accept_group(offer)
+                elif self.trade_logging == 1:
+                    self._log_receive_accept_agent(offer)
+            elif typ == '_r':
+                self._receive_reject(msg)
+            elif typ == '_g':
+                self._inventory.haves[msg[0]] += msg[1]
+            elif typ == '_ss':
+                self.in_shipment[msg.arrival].append(msg)
+            elif typ == '_q':
+                self._quotes[msg.id] = msg
+            elif typ == '!o':
+                self._contract_offers[msg.good].append(msg)
+            elif typ == '_ac':
+                contract = self._contract_offers_made.pop(msg.id)
+                if contract.pay_group == self.group and contract.pay_id == self.id:
+                    self._contracts_pay[contract.good][contract.id] = contract
+                else:
+                    self._contracts_deliver[contract.good][contract.id] = contract
+            elif typ == '_dp':
+                if msg.pay_group == self.group and msg.pay_id == self.id:
+                    self._inventory[msg.good] += msg.quantity
+                    self._contracts_pay[msg.good][msg.id].delivered.append(self.round)
+                else:
+                    self._inventory['money'] += msg.quantity * msg.price
+                    self._contracts_deliver[msg.good][msg.id].paid.append(self.round)
+
+            elif typ == '!d':
+                if msg[0] == 'r':
+                    del self._contracts_pay[msg[1]][msg[2]]
+                if msg[0] == 'd':
+                    del self._contracts_deliver[msg[1]][msg[2]]
+            else:
+                self._msgs.setdefault(typ, []).append(msg)
+
+    def ship(self, receiver, good, quantity, arrival=None, epsilon=epsilon):
+        if arrival is None:
+            self.give(receiver, good, quantity, epsilon=epsilon)
+        else:
+            offer = Offer(self.name, receiver, good, quantity, price=0, currency=None,
+                          sell=True, id=self._offer_counter(), made=self.time, arrival=arrival)
+            offer.final_quantity = quantity
+
+            self._inventory.haves[good] -= quantity
+            self._send(receiver[0], receiver[1], '_ss', offer)
+
+    def receive_shipments(self, time=None):
+        if time is None:
+            time = self.time
+        current_shipments = self.in_shipment[time]
+        for offer in current_shipments:
+            self._inventory.haves[offer.good] += offer.final_quantity
+        del self.in_shipment[time]
+        return current_shipments
+
+
+def compare_with_ties(x, y):
+    if x < y:
+        return -1
+    elif x > y:
+        return 1
+    else:
+        return random.randint(0, 1) * 2 - 1

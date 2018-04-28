@@ -9,7 +9,7 @@ class Agent(abce.Agent):
         print(self.name, 'actionB')
 
 
-def main(processes, rounds):
+def main(processes, rounds=3):
     sim = abce.Simulation(processes=processes)
 
     aagents = sim.build_agents(Agent, 'aagent', number=5)
