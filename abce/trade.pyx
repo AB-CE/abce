@@ -121,7 +121,7 @@ cdef class Offer:
     cdef readonly object id
     cdef readonly int made
     cdef public int status_round
-    cdef readonly object sender
+
 
     def __cinit__(self, object sender, object receiver, object good, double quantity, double price, str currency,
                   bint sell, str status, double final_quantity, long id,
@@ -648,7 +648,7 @@ class Trade:
             self._reject(offer)
         self._polled_offers = {}
 
-    cdef _reject(self, Offer offer):
+    def _reject(self, offer):
         """  Rejects the offer offer
 
         Args:
