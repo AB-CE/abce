@@ -98,6 +98,12 @@ class Simulation(object):
         check_unchecked_msgs:
             check every round that all messages have been received with get_massages or get_offers.
 
+        path:
+            path for database use None to omit directory creation.
+
+        dbplugin, dbpluginargs:
+            database plugin, see :ref:`Database Plugins`
+
         Example::
 
             simulation = Simulation(name='ABCE',
@@ -142,7 +148,7 @@ class Simulation(object):
     """
 
     def __init__(self, name='abce', random_seed=None,
-                 trade_logging='off', processes=1, check_unchecked_msgs=False):
+                 trade_logging='off', processes=1, check_unchecked_msgs=False, dbplugin=None, dbpluginargs=[], path='auto'):
         """
         """
         try:
@@ -162,20 +168,25 @@ class Simulation(object):
         self.perishable = []
         self.expiring = []
 
-        os.makedirs(os.path.abspath('.') + '/result/', exist_ok=True)
-
-        self.path = (os.path.abspath('.') + '/result/' + name + '_' +
-                     datetime.datetime.now().strftime("%Y-%m-%d_%H-%M"))
-        """ the path variable contains the path to the simulation outcomes
-        it can be used to generate your own graphs as all resulting
-        csv files are there.
-        """
-        while True:
-            try:
-                os.makedirs(self.path)
-                break
-            except OSError:
-                self.path += 'I'
+        if path is not None:
+            os.makedirs(os.path.abspath('.') + '/result/', exist_ok=True)
+            if path == 'auto':
+                self.path = (os.path.abspath('.') + '/result/' + name + '_' +
+                             datetime.datetime.now().strftime("%Y-%m-%d_%H-%M"))
+                """ the path variable contains the path to the simulation outcomes
+                it can be used to generate your own graphs as all resulting
+                csv files are there.
+                """
+            else:
+                self.path = path
+            while True:
+                try:
+                    os.makedirs(self.path)
+                    break
+                except OSError:
+                    self.path += 'I'
+        else:
+            self.path = None
 
         self.trade_logging_mode = trade_logging
         if self.trade_logging_mode not in ['individual', 'group', 'off']:
@@ -198,7 +209,9 @@ class Simulation(object):
         self._db = Database(
             self.path,
             self.database_queue,
-            trade_log=self.trade_logging_mode != 'off')
+            trade_log=self.trade_logging_mode != 'off',
+            plugin=dbplugin,
+            pluginargs=dbpluginargs)
         self._db_started = False
 
         if random_seed is None or random_seed == 0:
@@ -504,16 +517,18 @@ class Simulation(object):
         group.delete_agents(ids)
 
     def _write_description_file(self):
-        description = open(os.path.abspath(
-            self.path + '/description.txt'), 'w')
-        description.write(json.dumps(self.sim_parameters,
-                                     indent=4,
-                                     skipkeys=True,
-                                     default=lambda x: 'not_serializeable'))
+        if self.path is not None:
+            description = open(os.path.abspath(
+                self.path + '/description.txt'), 'w')
+            description.write(json.dumps(self.sim_parameters,
+                                         indent=4,
+                                         skipkeys=True,
+                                         default=lambda x: 'not_serializeable'))
 
     def _displaydescribtion(self):
-        description = open(self.path + '/description.txt', 'r')
-        print(description.read())
+        if self.path is not None:
+            description = open(self.path + '/description.txt', 'r')
+            print(description.read())
 
     def graphs(self):
         """ after the simulation is run, graphs() shows graphs of all data
