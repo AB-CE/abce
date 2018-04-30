@@ -127,7 +127,7 @@ cdef class Offer:
                   bint sell, str status, double final_quantity, long id,
                   int made, int status_round):
         self.sender = sender
-        self.receiverss
+        self.receiver = receiver
         self.good = good
         self.currency = currency
         self.quantity = quantity
@@ -486,10 +486,8 @@ class Trade:
 
         offer_id = self._offer_counter()
         self._inventory.reserve(good, quantity)
-        cdef Offer offer = Offer(self.group,
-                                 self.id,
-                                 receiver[0],
-                                 receiver[1],
+        cdef Offer offer = Offer(self.name,
+                                 receiver,
                                  good,
                                  quantity,
                                  price,
@@ -552,10 +550,8 @@ class Trade:
 
         offer_id = self._offer_counter()
         self._inventory.reserve(currency, money_amount)
-        cdef Offer offer = Offer(self.group,
-                                 self.id,
-                                 receiver[0],
-                                 receiver[1],
+        cdef Offer offer = Offer(self.name,
+                                 receiver,
                                  good,
                                  quantity,
                                  price,
