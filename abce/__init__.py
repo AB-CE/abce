@@ -370,8 +370,8 @@ class Simulation(object):
         if self._db_started:
             self._db_started = False
             print('')
-            print(str("time only simulation %6.2f" %
-                  (time.time() - self.clock)))
+            print("time only simulation %6.2f" %
+                  (time.time() - self.clock))
 
             self.database_queue.put('close')
 
@@ -384,10 +384,9 @@ class Simulation(object):
             except AttributeError:
                 pass
 
-            print(str("time with data %6.2f" %
-                      (time.time() - self.clock)))
+            print("time with data %6.2f" %
+                  (time.time() - self.clock))
             self._write_description_file()
-            self._displaydescribtion()
 
     def build_agents(self, AgentClass, group_name,
                      number=None,
@@ -442,7 +441,7 @@ class Simulation(object):
         if number is not None:
             agent_parameters = [{} for _ in range(number)]
 
-        self.sim_parameters.update(parameters)
+        self.sim_parameters[group_name] = parameters
 
         group = Group(self, AgentClass, self._processorgroup, None,
                       agent_arguments={'group': group_name,
@@ -531,11 +530,6 @@ class Simulation(object):
                                          indent=4,
                                          skipkeys=True,
                                          default=lambda x: 'not_serializeable'))
-
-    def _displaydescribtion(self):
-        if self.path is not None:
-            description = open(self.path + '/description.txt', 'r')
-            print(description.read())
 
     def graphs(self):
         """ after the simulation is run, graphs() shows graphs of all data
