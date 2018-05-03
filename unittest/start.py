@@ -7,6 +7,9 @@ import start_production_consumption
 import start_combinable_actions
 import start_return
 import start_custom_database
+import start_agent_indexing
+import start_agent_numerical_indexing
+import start_individual_access
 
 
 def run_test(name, test):
@@ -31,3 +34,6 @@ if __name__ == '__main__':
     run_test("Production and consumption", start_production_consumption)
     run_test("Combinable actions", start_combinable_actions)
     run_test("Custom Database", start_custom_database)
+    run_test("individual agent indexing", start_agent_indexing)
+    run_test("individual agent indexing numerical", start_agent_numerical_indexing)
+    run_test("start_individual_access", start_individual_access)

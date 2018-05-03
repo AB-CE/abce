@@ -117,6 +117,8 @@ class Group:
         self.panel_serial = 0
         self.last_action = "Begin_of_Simulation"
         self.num_agents = 0
+        if agent_arguments is not None:
+            self.agent_name_prefix = agent_arguments['group']
 
     def __add__(self, other):
         return Group(self.sim, None, self._agents, self.names.union(other.names))
@@ -229,7 +231,25 @@ class Group:
             self.names.remove(name)
         self._agents.delete_agents(names)
 
-    def __getitem__(self, *names):
+    def __getitem__(self, ids):
+        try:
+            names = {(self.agent_name_prefix, id) for id in ids}
+        except TypeError:
+            names = {(self.agent_name_prefix, ids)}
+        return Group(self.sim, self.AgentClass, self._agents, names, self._agent_arguments)
+
+    def by_names(self, names):
+        """ Return a callable group of agents from a list of names.group
+
+        Example::
+
+            banks.by_names(['UBS', 'RBS', "DKB"]).give_loans() """
+        names = set(names)
+        return Group(self.sim, self.AgentClass, self._agents, names, self._agent_arguments)
+
+    def by_name(self, name):
+        """ Return a group of a single agents by its name """
+        names = {name}
         return Group(self.sim, self.AgentClass, self._agents, names, self._agent_arguments)
 
     def __len__(self):
