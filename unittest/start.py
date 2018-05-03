@@ -14,18 +14,13 @@ def run_test(name, test):
     test.main(processes=1, rounds=10)
     print('Iteration of %s testing with 1 core finished' % name)
 
-
-def run_test(name, test):
-    print(name + " test, 1 core")
-    test.main(processes=1, rounds=10)
-    print('Iteration of %s testing with 1 core finished' % name)
-
     if (platform.system() != 'Windows' and platform.python_implementation() != 'PyPy'):
         print("%s test, 4 cores" % name)
         test.main(processes=4, rounds=10)
         print('Iteration of %s testing with multiple processes finished' % name)
     else:
         print("PYPY and windows: functions not tested with multi-processes")
+
 
 if __name__ == '__main__':
     run_test("Logging", start_logging_test)
@@ -36,4 +31,3 @@ if __name__ == '__main__':
     run_test("Production and consumption", start_production_consumption)
     run_test("Combinable actions", start_combinable_actions)
     run_test("Custom Database", start_custom_database)
-
