@@ -210,7 +210,7 @@ class Simulation(object):
             trade_log=self.trade_logging_mode != 'off',
             plugin=dbplugin,
             pluginargs=dbpluginargs)
-        self._db_started = False
+        self._db.start()
 
         if random_seed is None or random_seed == 0:
             random_seed = time.time()
@@ -337,16 +337,10 @@ class Simulation(object):
         self.declare_perishable(service)
 
     def advance_round(self, time):
-        if not self._db_started:
-            self._db.start()
-            self._db_started = True
         self.time = time
         print("\rRound" + str(time))
         str_time = re.sub('[^0-9a-zA-Z_]', '', str(time))
         self.scheduler.advance_round(time, str_time)
-
-    def __del__(self):
-        self.finalize()
 
     def finalize(self):
         """ simulation.finalize() must be run after each simulation. It will
@@ -363,26 +357,24 @@ class Simulation(object):
 
             simulation.finalize()
         """
-        if self._db_started:
-            self._db_started = False
-            print('')
-            print("time only simulation %6.2f" %
-                  (time.time() - self.clock))
+        print('')
+        print("time only simulation %6.2f" %
+              (time.time() - self.clock))
 
-            self.database_queue.put('close')
+        self.database_queue.put('close')
 
-            while self._db.is_alive():
-                time.sleep(0.05)
+        while self._db.is_alive():
+            time.sleep(0.05)
 
-            try:
-                self.pool.close()
-                self.pool.join()
-            except AttributeError:
-                pass
+        try:
+            self.pool.close()
+            self.pool.join()
+        except AttributeError:
+            pass
 
-            print("time with data %6.2f" %
-                  (time.time() - self.clock))
-            self._write_description_file()
+        print("time with data %6.2f" %
+              (time.time() - self.clock))
+        self._write_description_file()
 
     def build_agents(self, AgentClass, group_name,
                      number=None,

@@ -12,6 +12,7 @@ class MyAgent(abce.Agent):
 
 def main(processes, rounds):
     sim = abce.Simulation()
+    sim.advance_round(0)
 
     myagents = sim.build_agents(MyAgent, 'myagent', agent_parameters=[{'name': 'me'},
                                                                       {'name': 'you'},
@@ -25,6 +26,7 @@ def main(processes, rounds):
 
     assert list(myagents.by_name(name).say()) == [name], (
         list(myagents.by_names(names).say()), names)
+    sim.finalize()
 
 
 if __name__ == '__main__':
