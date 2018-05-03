@@ -126,7 +126,8 @@ class Database(threading.Thread):
             self.plugin.close()
         except AttributeError:
             pass
-        to_csv(self.directory, self.dataset_db)
+        if self.directory is not None:
+            to_csv(self.directory, self.dataset_db)
 
     def make_aggregation_and_write(self):
         for group, table in self.aggregation.items():
