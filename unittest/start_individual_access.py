@@ -56,6 +56,7 @@ def main(processes, rounds):
 
     print('two individuals')
     for r in range(14, 28):
+        sim.advance_round(r)
         (myagent[r % 7] + myagent[3]).call_me_maybe()
         print('--')
 
