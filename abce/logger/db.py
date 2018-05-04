@@ -21,11 +21,13 @@ import dataset
 
 from .online_variance import OnlineVariance
 from .postprocess import to_csv
+import queue
 
 
 class DbDatabase(threading.Thread):
     """Separate thread that receives data from in_sok and saves it into a
     database"""
+
     def __init__(self, directory, in_sok, trade_log, plugin=None, pluginargs=[]):
         threading.Thread.__init__(self)
         self.directory = directory
@@ -60,14 +62,10 @@ class DbDatabase(threading.Thread):
 
         while True:
             try:
+                msg = self.in_sok.get(timeout=120)
+            except queue.Empty:
+                print("simulation.finalize() must be specified at the end of simulation")
                 msg = self.in_sok.get()
-            except KeyboardInterrupt:
-                print("ADD simulation.finalize() after the simulation command"
-                      "to write the simulation data and AVOID BLOCKING")
-
-                break
-            except EOFError:
-                break
 
             if msg[0] == 'snapshot_agg':
                 _, round, group, data_to_write = msg
