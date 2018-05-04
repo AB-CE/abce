@@ -797,7 +797,7 @@ class Trade:
                 a fraction of number to high or low. You can increase the
                 floating point tolerance. See troubleshooting -- floating point problems
         """
-        self.buy(receiver[0], receiver[1], good=good, quantity=quantity, price=0, epsilon=epsilon)
+        self.buy(receiver, good=good, quantity=quantity, price=0, epsilon=epsilon)
 
 
 # TODO when cython supports function overloading overload this function with compare_with_ties(int x, int y)
