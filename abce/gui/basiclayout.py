@@ -62,20 +62,21 @@ def basiclayout(Form, simulation, title, top_bar=None, story=None,
                              flex=0,
                              style="background-color: blue;")
                 with DockPanel(flex=1) as self.dockpanel:
-                    self.form = Form(title='Simulation',
-                                     style="location: N; overflow: scroll;")
-                    self.loadform = LoadForm(
-                        title='Load',
-                        style="location: A; overflow-y: scroll;")
-                    for text in texts:
-                        ui.Label(title=text.splitlines()[0],
-                                 text='\n'.join(text.splitlines()[1:]),
-                                 style="location: R; overflow: scroll;",
-                                 wrap=True)
-                    for pagetitle, page in pages:
-                        ui.IFrame(url=page,
-                                  title=pagetitle,
-                                  style="location: A; overflow: scroll;")
+                    if not graphs:
+                        self.form = Form(title='Simulation',
+                                         style="location: N; overflow: scroll;")
+                        self.loadform = LoadForm(
+                            title='Load',
+                            style="location: A; overflow-y: scroll;")
+                        for text in texts:
+                            ui.Label(title=text.splitlines()[0],
+                                     text='\n'.join(text.splitlines()[1:]),
+                                     style="location: R; overflow: scroll;",
+                                     wrap=True)
+                        for pagetitle, page in pages:
+                            ui.IFrame(url=page,
+                                      title=pagetitle,
+                                      style="location: A; overflow: scroll;")
                     self.progress_label = ui.Label(
                         title=' ',
                         text='Move tabs by dragging tabs; resize windows',
@@ -85,66 +86,67 @@ def basiclayout(Form, simulation, title, top_bar=None, story=None,
             if graphs:
                 self.display_results({'simulation_name': ''}, '')
 
-            @self.form.connect("run_simulation")
-            def run_simulation(events):
-                """ Runs simulation and shows results """
-                self.display_status('Running...', 'Simulation in progress')
-                abce.simulation_name, parameters = (
-                    hash_simulation_parameters(events))
-                simulation(parameters)
-                self.display_status('Success',
-                                    'Simulation succeeded, generating graphs')
-                self.display_results(events, abce.simulation_name)
-                self.display_status('Results:', 'Click left')
-                del abce.simulation_name
+            else:
+                @self.form.connect("run_simulation")
+                def run_simulation(events):
+                    """ Runs simulation and shows results """
+                    self.display_status('Running...', 'Simulation in progress')
+                    abce.simulation_name, parameters = (
+                        hash_simulation_parameters(events))
+                    simulation(parameters)
+                    self.display_status('Success',
+                                        'Simulation succeeded, generating graphs')
+                    self.display_results(events, abce.simulation_name)
+                    self.display_status('Results:', 'Click left')
+                    del abce.simulation_name
 
-            @self.form.connect("repeatexecution")
-            def _repeatexecution(events):
-                name, parameters = hash_simulation_parameters(events)
-                print("parameters:", parameters)
-                parameters['Name'] = name
-                pool_path = join(os.path.abspath('./result/cache'), name)
+                @self.form.connect("repeatexecution")
+                def _repeatexecution(events):
+                    name, parameters = hash_simulation_parameters(events)
+                    print("parameters:", parameters)
+                    parameters['Name'] = name
+                    pool_path = join(os.path.abspath('./result/cache'), name)
 
-                if name not in self.graphs:
-                    self.graphs[name] = load_cached(pool_path)
+                    if name not in self.graphs:
+                        self.graphs[name] = load_cached(pool_path)
 
-                self.display_status('Continuously updating',
-                                    'Series of simulations in progress')
-                abce.simulation_name = name
-                switch_on_conditional_logging(parameters, histograms)
-                simulation(parameters)
-                del abce.simulation_name
-                del abce.conditional_logging
-                path = newest_subdirectory('./result', name)
-                for filename in os.listdir(path):
-                    if (filename != 'trade.csv' and
-                            filename.endswith('.csv')):
-                        self.graphs[name][filename] = (
-                            self.graphs[name][filename]
-                            .append(pd.read_csv(join(path, filename)))
-                            .reset_index(drop=True))
-                        if len(self.graphs[name][filename]) % 10 == 0:
-                            self.graphs[name][filename].to_pickle(
-                                join(pool_path, filename))
-                number_obs = len(list(self.graphs[name].values())[0])
-                if number_obs < 12 or number_obs % 10 == 0:
-                    self.display_repeat_execution(self.graphs[name])
-                self.form.emit('_repeat_execution', events)
+                    self.display_status('Continuously updating',
+                                        'Series of simulations in progress')
+                    abce.simulation_name = name
+                    switch_on_conditional_logging(parameters, histograms)
+                    simulation(parameters)
+                    del abce.simulation_name
+                    del abce.conditional_logging
+                    path = newest_subdirectory('./result', name)
+                    for filename in os.listdir(path):
+                        if (filename != 'trade.csv' and
+                                filename.endswith('.csv')):
+                            self.graphs[name][filename] = (
+                                self.graphs[name][filename]
+                                .append(pd.read_csv(join(path, filename)))
+                                .reset_index(drop=True))
+                            if len(self.graphs[name][filename]) % 10 == 0:
+                                self.graphs[name][filename].to_pickle(
+                                    join(pool_path, filename))
+                    number_obs = len(list(self.graphs[name].values())[0])
+                    if number_obs < 12 or number_obs % 10 == 0:
+                        self.display_repeat_execution(self.graphs[name])
+                    self.form.emit('_repeat_execution', events)
 
-            @self.form.connect('display_results')
-            def display_results(events):  # pylint: disable=W0612
-                """ Forwarder """
-                self.display_results(events, events['simulation_name'])
+                @self.form.connect('display_results')
+                def display_results(events):  # pylint: disable=W0612
+                    """ Forwarder """
+                    self.display_results(events, events['simulation_name'])
 
-            @self.form.connect('update_parameter_database')
-            def _update_parameter_database(events):
-                """ Forwarder """
-                self.loadform.update(events)
+                @self.form.connect('update_parameter_database')
+                def _update_parameter_database(events):
+                    """ Forwarder """
+                    self.loadform.update(events)
 
-            @self.loadform.connect("load")
-            def _load(event):
-                self.form.load_parameter(event)
-                self.dockpanel.selectWidget(self.form)
+                @self.loadform.connect("load")
+                def _load(event):
+                    self.form.load_parameter(event)
+                    self.dockpanel.selectWidget(self.form)
 
         def display_status(self, title, text):
             """ displays status on bottom left
