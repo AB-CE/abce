@@ -37,6 +37,7 @@ Messaging between agents:
 .. [1] or :class:`abceagent.FirmMultiTechnologies` for  complex technologies.
 """
 from collections import OrderedDict
+import re
 
 import abce
 
@@ -102,8 +103,8 @@ class Logger:
         """
         if self.log_this_round:
             try:
-                data_to_write = {'%s_%s' % (str(action_name), str(
-                    key)): data_to_log[key] for key in data_to_log}
+                data_to_write = {re.sub('[^0-9a-zA-Z_]', '', '%s_%s' % (str(action_name), str(
+                    key))): data_to_log[key] for key in data_to_log}
             except TypeError:
                 data_to_write = {str(action_name): data_to_log}
 
