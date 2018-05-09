@@ -58,14 +58,11 @@ class Offer(object):
     if you have saved the offer. (e.G. self.offer = self.sell(...))
 
     it has the following properties:
-        sender_group:
-            this is the group name of the sender
-
         sender:
-            this is the  the sender
+            this is the name of the sender
 
         receiver:
-            this is the the sender
+            this is the name of the receiver
 
         currency:
             The other good against which the good is traded.
@@ -100,7 +97,7 @@ class Offer(object):
                 and therefore perished.
 
         final_quantity:
-            If the offer has been answerd this returns the actual quantity
+            If the offer has been answered this returns the actual quantity
             bought or sold. (Equal to quantity if the offer was accepted fully)
         id:
             a unique identifier
@@ -629,9 +626,9 @@ class Trade:
 
     def _log_receive_accept_group(self, offer):
         if offer.sell:
-            self._trade_log[(offer.good, self.group, offer.receiver_group, offer.price)] += offer.final_quantity
+            self._trade_log[(offer.good, self.group, offer.receiver[0], offer.price)] += offer.final_quantity
         else:
-            self._trade_log[(offer.good, offer.receiver_group, self.group, offer.price)] += offer.final_quantity
+            self._trade_log[(offer.good, offer.receiver[0], self.group, offer.price)] += offer.final_quantity
 
     def _log_receive_accept_agent(self, offer):
         if offer.sell:
