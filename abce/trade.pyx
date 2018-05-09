@@ -59,17 +59,11 @@ cdef class Offer:
     if you have saved the offer. (e.G. self.offer = self.sell(...))
 
     it has the following properties:
-        sender_group:
-            this is the group name of the sender
+        sender:
+            this is the name of the sender
 
-        sender_id:
-            this is the ID of the sender
-
-        receiver_group:
-            This is the group name of the receiver
-
-        receiver_id:
-            this is the ID of the sender
+        receiver:
+            This is the name of the receiver
 
         currency:
             The other good against which the good is traded.
@@ -637,7 +631,6 @@ class Trade:
         else:
             return {offer.good: quantity, offer.currency: - money_amount}
 
-
     def _reject_polled_but_not_accepted_offers(self):
         cdef Offer offer
         for offer in self._polled_offers.values():
@@ -667,15 +660,17 @@ class Trade:
 
     def _log_receive_accept_group(self, offer):
         if offer.sell:
-            self._trade_log[(offer.good, self.group, offer.receiver_group, offer.price)] += offer.quantity
+            self._trade_log[(offer.good, self.group, offer.receiver[0], offer.price)] += offer.quantity
         else:
-            self._trade_log[(offer.good, offer.receiver_group, self.group, offer.price)] += offer.quantity
+            self._trade_log[(offer.good, offer.receiver[0], self.group, offer.price)] += offer.quantity
 
     def _log_receive_accept_agent(self, offer):
         if offer.sell:
-            self._trade_log[(offer.good, self.name_without_colon, '%s_%i' % (offer.receiver_group, offer.receiver_id), offer.price)] += offer.quantity
+            self._trade_log[(offer.good, self.name_without_colon, '%s_%i' % (
+                offer.receiver[0], offer.receiver[1]), offer.price)] += offer.quantity
         else:
-            self._trade_log[(offer.good, '%s_%i' % (offer.receiver_group, offer.receiver_id), self.name_without_colon, offer.price)] += offer.quantity
+            self._trade_log[(offer.good, '%s_%i' % (
+                offer.receiver[0], offer.receiver[1]), self.name_without_colon, offer.price)] += offer.quantity
 
     def _receive_accept(self, offer_id_final_quantity):
         """ When the other party partially accepted the  money or good is
