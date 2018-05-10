@@ -1,9 +1,9 @@
-""" :code:`python -m abce.show` shows the simulation results in ./result/*  """
-from .gui import graphs
+""" :code:`python -m abcEconomics.show` shows the simulation results in ./result/*  """
+from .gui import graph
 
 
 def show():
-    graphs({'name': 'show'})
+    graph({'name': 'show'})
 
 
 if __name__ == '__main__':
