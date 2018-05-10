@@ -160,7 +160,7 @@ def gui(parameter_mask, names=None, header=None, story=None,
     return inner
 
 
-def graphs(parameter_mask=None, names=None):
+def graph(parameter_mask=None, names=None):
     """ After the simulation simulation.graphs displays all logged data,
     this can not be use in conjuncture with @gui.
 

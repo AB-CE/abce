@@ -60,7 +60,7 @@ from .agent import Agent  # noqa: F401
 from .group import Group
 from .notenoughgoods import NotEnoughGoods  # noqa: F401
 from .contracts import Contracting  # noqa: F401
-from .gui import gui, graphs  # noqa: F401
+from .gui import gui, graph  # noqa: F401
 from .singleprocess import SingleProcess
 from .multiprocess import MultiProcess
 
@@ -480,7 +480,7 @@ class Simulation(object):
                                          skipkeys=True,
                                          default=lambda x: 'not_serializeable'))
 
-    def graphs(self):
+    def graph(self):
         """ after the simulation is run, graphs() shows graphs of all data
         collected in the simulation. Shows the same output as the @gui
         decorator shows.
@@ -497,4 +497,4 @@ class Simulation(object):
             simulation.graphs()
         """
         self.finalize()
-        graphs(self.sim_parameters)
+        graph(self.sim_parameters)
