@@ -10,8 +10,7 @@ import abce
 from .dockpanel import DockPanel
 from .make_graphs import (make_panel_graphs,
                           make_simple_graphs,
-                          make_aggregate_graphs,
-                          make_histograms)
+                          make_aggregate_graphs)
 from .bokehwidget import BokehWidget
 from .webtext import abcedescription
 from .loadform import LoadForm
@@ -52,8 +51,8 @@ def basiclayout(Form, simulation, title, top_bar=None, story=None,
          """
 
         def init(self):
+            self.first = True
             self.graphs = {}
-            self.first = self.first_repeat = True
             with ui.BoxLayout(orientation='v',
                               style=css_style):
                 with ui.HBox(flex=0):
@@ -102,39 +101,6 @@ def basiclayout(Form, simulation, title, top_bar=None, story=None,
                     self.display_results(events, abce.simulation_name)
                     self.display_status('Results:', 'Click left')
                     del abce.simulation_name
-
-                @self.form.connect("repeatexecution")
-                def _repeatexecution(events):
-                    name, parameters = hash_simulation_parameters(events)
-                    print("parameters:", parameters)
-                    parameters['Name'] = name
-                    pool_path = join(os.path.abspath('./result/cache'), name)
-
-                    if name not in self.graphs:
-                        self.graphs[name] = load_cached(pool_path)
-
-                    self.display_status('Continuously updating',
-                                        'Series of simulations in progress')
-                    abce.simulation_name = name
-                    switch_on_conditional_logging(parameters, histograms)
-                    simulation(parameters)
-                    del abce.simulation_name
-                    del abce.conditional_logging
-                    path = newest_subdirectory('./result', name)
-                    for filename in os.listdir(path):
-                        if (filename != 'trade.csv' and
-                                filename.endswith('.csv')):
-                            self.graphs[name][filename] = (
-                                self.graphs[name][filename]
-                                .append(pd.read_csv(join(path, filename)))
-                                .reset_index(drop=True))
-                            if len(self.graphs[name][filename]) % 10 == 0:
-                                self.graphs[name][filename].to_pickle(
-                                    join(pool_path, filename))
-                    number_obs = len(list(self.graphs[name].values())[0])
-                    if number_obs < 12 or number_obs % 10 == 0:
-                        self.display_repeat_execution(self.graphs[name])
-                    self.form.emit('_repeat_execution', events)
 
                 @self.form.connect('display_results')
                 def display_results(events):  # pylint: disable=W0612
@@ -213,28 +179,6 @@ def basiclayout(Form, simulation, title, top_bar=None, story=None,
 
             self.first = False
 
-        def display_repeat_execution(self, graphs):
-            """ Displays histograms of repeat executions """
-            if self.first_repeat:
-                self.repeat_plot_widgets = []
-            i = 0
-            for filename, data in graphs.items():
-                titles, plots = make_histograms(data, filename)
-
-                if self.first_repeat:
-                    with self.dockpanel:
-                        for plottitle, plot in zip(titles, plots):
-                            plotwidget = BokehWidget(plot=plot,
-                                                     style="location: A",
-                                                     title=plottitle)
-                            self.repeat_plot_widgets.append(plotwidget)
-                        self.dockpanel.selectWidget(
-                            self.repeat_plot_widgets[0])
-                else:
-                    for plot in plots:
-                        self.repeat_plot_widgets[i].plot = plot
-                        i += 1
-            self.first_repeat = False
     return ABCE
 
 

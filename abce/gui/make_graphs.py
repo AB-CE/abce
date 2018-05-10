@@ -3,8 +3,12 @@ simulation.graphs()"""
 import random
 import pandas as pd
 from bokeh.plotting import figure
+<<<<<<< HEAD
 from bokeh.models import Range1d, LinearAxis, Span, Label
 from bokeh.layouts import row
+=======
+from bokeh.models import Range1d, LinearAxis
+>>>>>>> 081af9b... Remove repeated execution and histograms
 
 
 COLORS = ["red", "blue", "green", "black", "purple", "pink", "yellow",

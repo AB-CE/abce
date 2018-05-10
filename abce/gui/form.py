@@ -87,8 +87,6 @@ def form(parameter_mask, names):
                             print(str(value) + "not recognized")
                 with ui.VBox():
                     self.btn = ui.Button(text="start simulation")
-                    self.repeat_execution_checker = ui.ToggleButton(
-                        text='repeated execution')
                 with ui.GroupWidget(title="Save"):
                     with ui.HBox():
                         self.name = ui.LineEdit(title="Name:",
@@ -144,11 +142,6 @@ def form(parameter_mask, names):
             self.emit('run_simulation',
                       {'simulation_parameter': parameter})
 
-        @event.connect('repeat_execution_checker.mouse_click')
-        def repeat_execution(self, events):
-            parameter = self.parse_parameter()
-            self.emit('_repeat_execution', {'simulation_parameter': parameter})
-
         def stt(self, events):  # This is executed in python, but should
                         # be executed in JS without server interaction
             slider = events['source']
@@ -172,11 +165,6 @@ def form(parameter_mask, names):
                 slider.min = new_value
             slider.value = new_value
 
-        class JS:
-            @event.connect('_repeat_execution')
-            def _repeat_execution(self, event):
-                if self.repeat_execution_checker.checked:
-                    self.emit('repeatexecution', event)
     return Form
 
 
