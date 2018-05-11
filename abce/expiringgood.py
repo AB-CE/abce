@@ -1,9 +1,3 @@
-from __future__ import division
-from past.builtins import cmp
-from builtins import str
-from builtins import zip
-from builtins import range
-from builtins import object
 from collections import deque
 from abce.notenoughgoods import NotEnoughGoods
 from abce.trade import get_epsilon
@@ -65,7 +59,8 @@ class ExpiringGood(object):
         return sum(self.time_structure) ** other
 
     def __cmp__(self, other):
-        return cmp(sum(self.time_structure), other)
+        a = sum(self.time_structure)
+        return (a > other) - (a < other)
 
     def __int__(self):
         return int(sum(self.time_structure))
