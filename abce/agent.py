@@ -94,7 +94,6 @@ class Agent(Database, Trade, Messaging, Goods):
                                     start_round)
         """ self.id returns the agents id READ ONLY"""
         self.name = (group, id)
-        self._name = (group, id)
         self.id = id
         """ self.name returns the agents name, which is the group name and the
         id

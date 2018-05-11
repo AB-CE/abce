@@ -51,7 +51,7 @@ class ProcessorGroup:
             if hash(agent.name) % self.processes == self.batch:
                 assert agent.name not in self.agents, agent.name
                 agent._str_name = re.sub('[^0-9a-zA-Z_]', '', str(agent.name))
-                names[agent.name] = agent._name
+                names[agent.name] = agent.name
                 agent._processes = self.processes
                 self.agents[agent.name] = agent
         return names

@@ -37,7 +37,7 @@ class SingleProcess(object):
             agent = Agent(id, simulation_parameters, ap, **agent_arguments)
             agent.init(**ChainMap(simulation_parameters, ap))
             agent._str_name = re.sub('[^0-9a-zA-Z_]', '', str(agent.name))
-            names[agent.name] = agent._name
+            names[agent.name] = agent.name
             assert agent.name not in self.agents, agent.name
             self.agents[agent.name] = agent
         return names
