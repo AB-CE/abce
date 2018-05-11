@@ -163,7 +163,6 @@ class Simulation(object):
         self._messages = {}
         self._resource_command_group = {}
         self._db_commands = {}
-        self.num_agents = 0
         self._build_first_run = True
         self.resource_endowment = []
         self.perishable = []
