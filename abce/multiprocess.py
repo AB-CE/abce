@@ -62,8 +62,7 @@ class ProcessorGroup:
 
     def delete_agents(self, names):
         for name in names:
-            if name in self.agents:
-                del self.agents[name]
+            self.agents.pop(name, None)
 
     def do(self, names, command, args, kwargs):
         try:

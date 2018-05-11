@@ -44,7 +44,7 @@ class SingleProcess(object):
 
     def delete_agents(self, names):
         for name in names:
-            del self.agents[name]
+            self.agents.pop(name, None)
 
     def do(self, names, command, args, kwargs):
         self.rets = []
