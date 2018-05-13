@@ -51,7 +51,7 @@ class ProcessorGroup:
             if hash(agent.name) % self.processes == self.batch:
                 assert agent.name not in self.agents, agent.name
                 agent._str_name = re.sub('[^0-9a-zA-Z_]', '', str(agent.name))
-                names[agent.name] = agent._name
+                names[agent.name] = agent.name
                 agent._processes = self.processes
                 self.agents[agent.name] = agent
         return names
@@ -62,8 +62,7 @@ class ProcessorGroup:
 
     def delete_agents(self, names):
         for name in names:
-            if name in self.agents:
-                del self.agents[name]
+            self.agents.pop(name, None)
 
     def do(self, names, command, args, kwargs):
         try:

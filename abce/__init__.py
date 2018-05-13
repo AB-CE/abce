@@ -163,7 +163,6 @@ class Simulation(object):
         self._messages = {}
         self._resource_command_group = {}
         self._db_commands = {}
-        self.num_agents = 0
         self._build_first_run = True
         self.resource_endowment = []
         self.perishable = []
@@ -226,7 +225,6 @@ class Simulation(object):
         self.time = None
         """ The current time set with simulation.advance_round(time)"""
         self._groups = {}
-        self.names = set()
         """ A list of all agent names in the simulation """
 
     def declare_round_endowment(self, resource, units,
@@ -451,11 +449,10 @@ class Simulation(object):
                                        'expiring': self.expiring,
                                        'perishable': self.perishable,
                                        'resource_endowment': self.resource_endowment})
-        names = group.create_agents(agent_parameters=agent_parameters, **parameters)
+        group.create_agents(agent_parameters=agent_parameters, **parameters)
         self.agents_created = True
         self._groups[group_name] = group
         self.messagess[group_name] = []
-        self.names.update(names)
         return group
 
     def create_agents(self, AgentClass, group_name, simulation_parameters=None, agent_parameters=None, number=1):
