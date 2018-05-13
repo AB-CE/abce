@@ -104,11 +104,10 @@ class Group:
 
     """
 
-    def __init__(self, sim, AgentClass, processorgroup, names, agent_arguments=None):
+    def __init__(self, sim, processorgroup, names, agent_arguments=None):
         self.sim = sim
         self.num_managers = sim.processes
         self._agents = processorgroup
-        self.AgentClass = AgentClass
         if names is None:
             self.names = set()
         else:
@@ -121,7 +120,7 @@ class Group:
             self.agent_name_prefix = agent_arguments['group']
 
     def __add__(self, other):
-        return Group(self.sim, None, self._agents, self.names.union(other.names))
+        return Group(self.sim, self._agents, self.names.union(other.names))
 
     def __radd__(self, g):
         if isinstance(g, Group):
@@ -181,10 +180,12 @@ class Group:
         """
         self._do('_agg_log', variables, goods, func, len)
 
-    def create_agents(self, number=1, agent_parameters=None, **common_parameters):
+    def create_agents(self, Agent, number=1, agent_parameters=None, **common_parameters):
         """ Create new agents to this group. Works only for non-combined groups
 
         Args:
+            Agent:
+                The class used to initialize the agents
             agent_parameters:
                 List of dictionaries of agent_parameters
 
@@ -199,7 +200,6 @@ class Group:
         """
         if agent_parameters is None:
             agent_parameters = number
-        Agent = self.AgentClass
 
         new_names = self._agents.insert_or_append(Agent, common_parameters, agent_parameters,
                                                   self._agent_arguments, self.num_agents)
@@ -236,7 +236,7 @@ class Group:
             names = {(self.agent_name_prefix, id) for id in ids}
         except TypeError:
             names = {(self.agent_name_prefix, ids)}
-        return Group(self.sim, self.AgentClass, self._agents, names, self._agent_arguments)
+        return Group(self.sim, self._agents, names, self._agent_arguments)
 
     def by_names(self, names):
         """ Return a callable group of agents from a list of names.group
@@ -245,12 +245,12 @@ class Group:
 
             banks.by_names(['UBS', 'RBS', "DKB"]).give_loans() """
         names = set(names)
-        return Group(self.sim, self.AgentClass, self._agents, names, self._agent_arguments)
+        return Group(self.sim, self._agents, names, self._agent_arguments)
 
     def by_name(self, name):
         """ Return a group of a single agents by its name """
         names = {name}
-        return Group(self.sim, self.AgentClass, self._agents, names, self._agent_arguments)
+        return Group(self.sim, self._agents, names, self._agent_arguments)
 
     def __len__(self):
         """ Returns the length of a group """
