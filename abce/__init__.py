@@ -441,7 +441,7 @@ class Simulation(object):
 
         self.sim_parameters[group_name] = parameters
 
-        group = Group(self, AgentClass, self._processorgroup, None,
+        group = Group(self, self._processorgroup, None,
                       agent_arguments={'group': group_name,
                                        'trade_logging': self.trade_logging_mode,
                                        'database': self.database_queue,
@@ -449,7 +449,7 @@ class Simulation(object):
                                        'expiring': self.expiring,
                                        'perishable': self.perishable,
                                        'resource_endowment': self.resource_endowment})
-        group.create_agents(agent_parameters=agent_parameters, **parameters)
+        group.create_agents(AgentClass, agent_parameters=agent_parameters, **parameters)
         self.agents_created = True
         self._groups[group_name] = group
         self.messagess[group_name] = []
@@ -493,7 +493,7 @@ class Simulation(object):
         if agent_parameters is None:
             agent_parameters = [{}] * number
         group = self._groups[group_name]
-        id = group.create_agents(simulation_parameters=simulation_parameters,
+        id = group.create_agents(AgentClass, simulation_parameters=simulation_parameters,
                                  agent_parameters=agent_parameters)
         return id
 

@@ -25,7 +25,7 @@ def main(processes, rounds):
         loudvictims.delete_agents(deads)
         victims.am_I_dead()
         loudvictims.am_I_dead()
-        balls.create_agents(1)
+        balls.create_agents(Ball, 1)
 
     simulation.finalize()
     del simulation
