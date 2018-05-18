@@ -45,13 +45,13 @@ if not readthedocs:
     try:
         ext_modules += [
             Extension("abce.trade", ["abce/trade.pyx"]),
-            Extension("abce.online_variance", ["abce/online_variance.pyx"]),
+            Extension("abce.logger.online_variance", ["abce/logger/online_variance.pyx"]),
         ]
         cmdclass.update({'build_ext': TXEntension})
     except ImportError:
         ext_modules += [
             Extension("abce.trade", ["abce/trade.c"]),
-            Extension("abce.online_variance", ["abce/online_variance.c"]),
+            Extension("abce.logger.online_variance", ["abce/logger/online_variance.c"]),
         ]
 
     if not platform.python_implementation() == "PyPy":
@@ -72,7 +72,9 @@ setup(name='abce',
       package_dir={'abce': 'abce',
                    'abce.gui': 'abce/gui',
                    'abce.agents': 'abce/agents',
-                   'abce.contracts': 'abce/contracts'},
+                   'abce.contracts': 'abce/contracts',
+                   'abce.logger': 'abce/logger',
+                   },
       packages=['abce'],
       long_description=open('README.rst').read(),
       install_requires=install_requires,
