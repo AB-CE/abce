@@ -32,13 +32,14 @@ class Database(multiprocessing.Process):
         self.data = {}
         self.trade_log = trade_log
 
-        self.aggregation = defaultdict(lambda: defaultdict(OnlineVariance))
+
         self.round = 0
 
         self.plugin = plugin
         self.pluginargs = pluginargs
 
     def run(self):
+        self.aggregation = defaultdict(lambda: defaultdict(OnlineVariance))
         if self.plugin is not None:
             self.plugin = self.plugin(*self.pluginargs)
         self.dataset_db = dataset.connect('sqlite://')
