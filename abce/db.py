@@ -14,18 +14,18 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations
 # under the License.
-import threading
+import multiprocessing
 from collections import defaultdict
 import dataset
 from .online_variance import OnlineVariance
 from .postprocess import to_csv
 
 
-class Database(threading.Thread):
+class Database(multiprocessing.Process):
     """Separate thread that receives data from in_sok and saves it into a
     database"""
     def __init__(self, directory, in_sok, trade_log, plugin=None, pluginargs=[]):
-        threading.Thread.__init__(self)
+        multiprocessing.Process.__init__(self)
         self.directory = directory
         self.panels = {}
         self.in_sok = in_sok
