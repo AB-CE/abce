@@ -16,14 +16,6 @@
 # the License.
 
 
-def _get_methods(agent_class):
-    """ Returns all public methods of a class as a set, except for init """
-    return set(method
-               for method in dir(agent_class)
-               if callable(getattr(agent_class, method)) and
-               method[0] != '_' and method != 'init')
-
-
 class Chain:
     def __init__(self, iterables):
         self.iterables = iterables
