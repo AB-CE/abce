@@ -198,8 +198,9 @@ class Simulation(object):
         self.processes = mp.cpu_count() * 2 if processes is None else processes
 
         if processes == 1:
+            manager = mp.Manager()
             self._processorgroup = SingleProcess()
-            self.database_queue = queue.Queue()
+            self.database_queue = manager.Queue()
         else:
             self._processorgroup = MultiProcess(processes)
             manager = mp.Manager()
