@@ -13,6 +13,6 @@ setup(
     name='trade',
     ext_modules=[
         Extension('trade', ['trade.pyx']),
-        Extension('online_variance', ['online_variance.pyx'])],
+        Extension('logger/online_variance', ['logger/online_variance.pyx'])],
     cmdclass={'build_ext': build_ext}
 )

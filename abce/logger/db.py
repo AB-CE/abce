@@ -16,12 +16,14 @@
 # under the License.
 import threading
 from collections import defaultdict
+
 import dataset
+
 from .online_variance import OnlineVariance
 from .postprocess import to_csv
 
 
-class Database(threading.Thread):
+class DbDatabase(threading.Thread):
     """Separate thread that receives data from in_sok and saves it into a
     database"""
     def __init__(self, directory, in_sok, trade_log, plugin=None, pluginargs=[]):

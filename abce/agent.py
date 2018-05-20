@@ -31,7 +31,7 @@ Messaging between agents, see :doc:`Messaging`.
 from collections import defaultdict
 from pprint import pprint
 import abce
-from .database import Database
+from .logger import Database
 from .trade import Trade
 from .messaging import Messaging
 from .goods import Goods

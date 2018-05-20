@@ -33,8 +33,7 @@ class TXEntension(build_ext):
 cmdclass = {}
 ext_modules = []
 
-install_requires = ['networkx >= 1.9.1',
-                    'flexx >= 0.4.1',
+install_requires = ['flexx >= 0.4.1',
                     'future',
                     'dataset == 0.8']
 
@@ -45,19 +44,20 @@ if not readthedocs:
     try:
         ext_modules += [
             Extension("abce.trade", ["abce/trade.pyx"]),
-            Extension("abce.online_variance", ["abce/online_variance.pyx"]),
+            Extension("abce.logger.online_variance", ["abce/logger/online_variance.pyx"]),
         ]
         cmdclass.update({'build_ext': TXEntension})
     except ImportError:
         ext_modules += [
             Extension("abce.trade", ["abce/trade.c"]),
-            Extension("abce.online_variance", ["abce/online_variance.c"]),
+            Extension("abce.logger.online_variance", ["abce/logger/online_variance.c"]),
         ]
 
     if not platform.python_implementation() == "PyPy":
-        install_requires += ['numpy >= 1.10.2p',
-                             'pandas >= 0.17.1',
-                             'bokeh == 0.12.7']
+        install_requires += ['numpy >= 1.10.2p']
+        if ('APPVEYOR' not in os.environ) or ('TRAVIS' not in os.environ):
+            install_requires += ['pandas >= 0.17.1',
+                                 'bokeh == 0.12.7']
 
 
 version = '0.9.5b0'
@@ -72,7 +72,9 @@ setup(name='abce',
       package_dir={'abce': 'abce',
                    'abce.gui': 'abce/gui',
                    'abce.agents': 'abce/agents',
-                   'abce.contracts': 'abce/contracts'},
+                   'abce.contracts': 'abce/contracts',
+                   'abce.logger': 'abce/logger',
+                   },
       packages=['abce'],
       long_description=open('README.rst').read(),
       install_requires=install_requires,

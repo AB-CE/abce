@@ -3,3 +3,4 @@ include abce/contracts/*
 include unittest/*        
 include abce/agents/*        
 include abce/gui/*
+include abce/logger/*
