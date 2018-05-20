@@ -21,7 +21,7 @@ import os
 
 try:
     import mock
-    MOCK_MODULES = ['scipy', 'numpy', 'pandas', 'networkx', 'trade', 'dataset']
+    MOCK_MODULES = ['scipy', 'numpy', 'pandas', 'trade', 'dataset']
 
     for mod_name in MOCK_MODULES:
         sys.modules[mod_name] = mock.Mock()

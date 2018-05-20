@@ -33,8 +33,7 @@ class TXEntension(build_ext):
 cmdclass = {}
 ext_modules = []
 
-install_requires = ['networkx >= 1.9.1',
-                    'flexx >= 0.4.1',
+install_requires = ['flexx >= 0.4.1',
                     'future',
                     'dataset == 0.8']
 
