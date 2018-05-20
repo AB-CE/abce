@@ -28,7 +28,6 @@ Logging and data creation, see :doc:`Database`.
 
 Messaging between agents, see :doc:`Messaging`.
 """
-from collections import defaultdict
 from pprint import pprint
 import abce
 from .logger import Database
@@ -107,7 +106,6 @@ class Agent(Database, Trade, Messaging, Goods):
         self.trade_logging = {'individual': 1,
                               'group': 2, 'off': 0}[trade_logging]
 
-        self._out = []
         # TODO make defaultdict; delete all key errors regarding self._inventory as
         # defaultdict, does not have missing keys
         self._msgs = {}
@@ -241,16 +239,6 @@ class Agent(Database, Trade, Messaging, Goods):
         self._reject_polled_but_not_accepted_offers()
         return ret
 
-    def _post_messages(self, agents):
-        for name, envelope in self._out:
-            agents[name].inbox.append(envelope)
-        self._out.clear()
-
-    def _post_messages_multiprocessing(self, num_processes):
-        out = self._out
-        self._out = defaultdict(list)
-        return out
-
     def _begin_subround(self):
         """ Overwrite this to make ABCE plugins, that need to do
         something at the beginning of every subround """
@@ -260,18 +248,6 @@ class Agent(Database, Trade, Messaging, Goods):
         """ Overwrite this to make ABCE plugins, that need to do
         something at the beginning of every subround """
         pass
-
-    def _send(self, receiver, typ, msg):
-        """ sends a message to 'receiver_group', 'receiver_id'
-        The agents receives it at the begin of each subround.
-        """
-        self._out.append((receiver, (typ, msg)))
-
-    def _send_multiprocessing(self, receiver, typ, msg):
-        """ Is used to overwrite _send in multiprocessing mode.
-        Requires that self._out is overwritten with a defaultdict(list) """
-        self._out[hash(receiver) % self._processes].append(
-            (receiver, (typ, msg)))
 
     def __del__(self):
         self._check_for_lost_messages()
