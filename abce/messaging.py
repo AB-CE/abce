@@ -45,6 +45,7 @@ class Messaging:
                  database, check_unchecked_msgs, expiring, perishable, resource_endowment, start_round=None):
         super(Messaging, self).__init__(id, agent_parameters, simulation_parameters, group, trade_logging, database,
                                         check_unchecked_msgs, expiring, perishable, resource_endowment, start_round)
+        self.inbox = []
 
     def send(self, receiver, topic, content):
         """ sends a message to agent. Agents receive it
@@ -148,7 +149,7 @@ class Messaging:
         self._msgs.clear()
         return ret
 
-    def _do_message_clearing(self, incomming_messages):
+    def _do_message_clearing(self):
         """ agent receives all messages and objects that have been send in this
         subround and deletes the offers that where retracted, but not executed.
 
@@ -158,7 +159,7 @@ class Messaging:
         '_r': deletes an offer that the other agent rejected
         '_g': recive a 'free' good from another party
         """
-        for typ, msg in incomming_messages:
+        for typ, msg in self.inbox:
             if typ == '!b':
                 self._open_offers_buy[msg.good][msg.id] = msg
             elif typ == '!s':
@@ -198,3 +199,4 @@ class Messaging:
                     del self._contracts_deliver[msg[1]][msg[2]]
             else:
                 self._msgs.setdefault(typ, []).append(msg)
+        self.inbox.clear()

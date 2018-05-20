@@ -123,7 +123,6 @@ class Agent(Database, Trade, Messaging, Goods):
         self._resources = []
         self.variables_to_track_panel = []
         self.variables_to_track_aggregate = []
-        self.inbox = []
 
         try:
             self._add_contracts_list()
@@ -235,8 +234,7 @@ class Agent(Database, Trade, Messaging, Goods):
                 self.log_this_round = False
 
     def _execute(self, command, args, kwargs):
-        self._do_message_clearing(self.inbox)
-        self.inbox.clear()
+        self._do_message_clearing()
         self._begin_subround()
         ret = getattr(self, command)(*args, **kwargs)
         self._end_subround()
