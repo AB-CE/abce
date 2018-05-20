@@ -24,12 +24,14 @@ from multiprocessing.managers import BaseManager
 import traceback
 from collections import defaultdict, ChainMap
 
+from .singleprocess import SingleProcess
+
 
 class MyManager(BaseManager):
     pass
 
 
-class ProcessorGroup:
+class ProcessorGroup(SingleProcess):
     def __init__(self, batch, queues, processes):
         self.agents = {}
         self.batch = batch
@@ -56,14 +58,6 @@ class ProcessorGroup:
                 self.agents[agent.name] = agent
         return names
 
-    def advance_round(self, time, str_time):
-        for agent in self.agents.values():
-            agent._advance_round(time, str_time)
-
-    def delete_agents(self, names):
-        for name in names:
-            self.agents.pop(name, None)
-
     def do(self, names, command, args, kwargs):
         try:
             self.rets = []
@@ -88,9 +82,6 @@ class ProcessorGroup:
             for receiver, envelope in self.queue.get():
                 self.agents[receiver].inbox.append(envelope)
         return self.rets
-
-    def keys(self):
-        return self.agents.keys()
 
 
 class MultiProcess(object):
@@ -135,7 +126,7 @@ class MultiProcess(object):
         self.pool.map(advance_round_wrapper, jkk(self.processor_groups, time, str_time))
 
     def group_names(self):
-        return self.processor_groups[0].keys()
+        return self.processor_groups[0].group_names()
 
 
 def wrapper(args):
