@@ -34,17 +34,17 @@ class Action:
     # It works by returning a callable and combinable action from
     # the groups __getattr__ method.
 
-    def __init__(self, _agents, actions):
-        self._agents = _agents
+    def __init__(self, scheduler, actions):
+        self._scheduler = scheduler
         self.actions = actions
 
     def __add__(self, other):
-        return Action(self._agents, self.actions + other.actions)
+        return Action(self._scheduler, self.actions + other.actions)
 
     def __call__(self, *args, **kwargs):
         for names, command, _, __ in self.actions:
-            self._agents.do(names, command, args, kwargs)
-        return Chain([self._agents.post_messages(action[0]) for action in self.actions])
+            self._scheduler.do(names, command, args, kwargs)
+        return Chain([self._scheduler.post_messages(action[0]) for action in self.actions])
         # itertools.chain, does not work here
 
 
@@ -99,7 +99,7 @@ class Group:
     def __init__(self, sim, scheduler, names, agent_arguments=None):
         self.sim = sim
         self.num_managers = sim.processes
-        self._agents = scheduler
+        self._scheduler = scheduler
         if names is None:
             self.names = set()
         else:
@@ -112,7 +112,7 @@ class Group:
             self.agent_name_prefix = agent_arguments['group']
 
     def __add__(self, other):
-        return Group(self.sim, self._agents, self.names.union(other.names))
+        return Group(self.sim, self._scheduler, self.names.union(other.names))
 
     def __radd__(self, g):
         if isinstance(g, Group):
@@ -193,7 +193,7 @@ class Group:
         if agent_parameters is None:
             agent_parameters = number
 
-        new_names = self._agents.add_agents(Agent, common_parameters, agent_parameters,
+        new_names = self._scheduler.add_agents(Agent, common_parameters, agent_parameters,
                                             self._agent_arguments, self.num_agents)
         self.num_agents += len(new_names)
         self.names.update(new_names)
@@ -202,11 +202,11 @@ class Group:
     def _do(self, command, *args, **kwargs):
         """ agent actions can be executed by :code:`group.action(args=args)`. """
         self.last_action = command
-        return self._agents.do(self.names, command, args, kwargs)
+        return self._scheduler.do(self.names, command, args, kwargs)
 
     def __getattr__(self, command, *args, **kwargs):
         self.last_action = command
-        return Action(self._agents, [(self.names, command, args, kwargs)])
+        return Action(self._scheduler, [(self.names, command, args, kwargs)])
 
     def delete_agents(self, names):
         """ Remove an agents from a group, by specifying their id.
@@ -221,14 +221,14 @@ class Group:
         """
         for name in names:
             self.names.remove(name)
-        self._agents.delete_agents(names)
+        self._scheduler.delete_agents(names)
 
     def __getitem__(self, ids):
         try:
             names = {(self.agent_name_prefix, id) for id in ids}
         except TypeError:
             names = {(self.agent_name_prefix, ids)}
-        return Group(self.sim, self._agents, names, self._agent_arguments)
+        return Group(self.sim, self._scheduler, names, self._agent_arguments)
 
     def by_names(self, names):
         """ Return a callable group of agents from a list of names.group
@@ -237,12 +237,12 @@ class Group:
 
             banks.by_names(['UBS', 'RBS', "DKB"]).give_loans() """
         names = set(names)
-        return Group(self.sim, self._agents, names, self._agent_arguments)
+        return Group(self.sim, self._scheduler, names, self._agent_arguments)
 
     def by_name(self, name):
         """ Return a group of a single agents by its name """
         names = {name}
-        return Group(self.sim, self._agents, names, self._agent_arguments)
+        return Group(self.sim, self._scheduler, names, self._agent_arguments)
 
     def __len__(self):
         """ Returns the length of a group """
