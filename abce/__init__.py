@@ -197,10 +197,10 @@ class Simulation(object):
         self.processes = mp.cpu_count() * 2 if processes is None else processes
 
         if processes == 1:
-            self._processorgroup = SingleProcess()
+            self.scheduler = SingleProcess()
             self.database_queue = queue.Queue()
         else:
-            self._processorgroup = MultiProcess(processes)
+            self.scheduler = MultiProcess(processes)
             manager = mp.Manager()
             self.database_queue = manager.Queue()
 
@@ -345,7 +345,7 @@ class Simulation(object):
         self.time = time
         print("\rRound" + str(time))
         str_time = re.sub('[^0-9a-zA-Z_]', '', str(time))
-        self._processorgroup.advance_round(time, str_time)
+        self.scheduler.advance_round(time, str_time)
 
     def __del__(self):
         self.finalize()
@@ -441,7 +441,7 @@ class Simulation(object):
 
         self.sim_parameters[group_name] = parameters
 
-        group = Group(self, self._processorgroup, None,
+        group = Group(self, self.scheduler, None,
                       agent_arguments={'group': group_name,
                                        'trade_logging': self.trade_logging_mode,
                                        'database': self.database_queue,

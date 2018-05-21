@@ -96,10 +96,10 @@ class Group:
 
     """
 
-    def __init__(self, sim, processorgroup, names, agent_arguments=None):
+    def __init__(self, sim, scheduler, names, agent_arguments=None):
         self.sim = sim
         self.num_managers = sim.processes
-        self._agents = processorgroup
+        self._agents = scheduler
         if names is None:
             self.names = set()
         else:
