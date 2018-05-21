@@ -39,7 +39,7 @@ class ProcessorGroup(SingleProcess):
         self.queue = queues[self.batch]
         self.processes = processes
 
-    def insert_or_append(self, Agent, simulation_parameters, agent_parameters, agent_arguments, maxid):
+    def add_agents(self, Agent, simulation_parameters, agent_parameters, agent_arguments, maxid):
         """appends an agent to a group """
         if isinstance(agent_parameters, int):
             agent_parameters = ([] for _ in range(agent_parameters))
@@ -102,14 +102,14 @@ class MultiProcess(object):
             pg = manager.ProcessorGroup(i, self.queues, processes)
             self.processor_groups.append(pg)
 
-    def insert_or_append(self, Agent, simulation_parameters, agent_parameters, agent_arguments, maxid):
+    def add_agents(self, Agent, simulation_parameters, agent_parameters, agent_arguments, maxid):
         """appends an agent to a group """
-        names = self.pool.map(insert_or_append_wrapper, jkk(self.processor_groups,
-                                                            Agent,
-                                                            simulation_parameters,
-                                                            agent_parameters,
-                                                            agent_arguments,
-                                                            maxid))
+        names = self.pool.map(add_agents_wrapper, jkk(self.processor_groups,
+                                                      Agent,
+                                                      simulation_parameters,
+                                                      agent_parameters,
+                                                      agent_arguments,
+                                                      maxid))
 
         return flatten(names)
 
@@ -139,9 +139,9 @@ def post_messages(args):
     return pg.post_messages(names)
 
 
-def insert_or_append_wrapper(arg):
+def add_agents_wrapper(arg):
     pg, Agent, simulation_parameters, agent_parameters, agent_arguments, maxid = arg
-    return pg.insert_or_append(Agent, simulation_parameters, agent_parameters, agent_arguments, maxid)
+    return pg.add_agents(Agent, simulation_parameters, agent_parameters, agent_arguments, maxid)
 
 
 def delete_agents_wrapper(arg):

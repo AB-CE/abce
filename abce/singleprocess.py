@@ -27,7 +27,7 @@ class SingleProcess(object):
     def __init__(self):
         self.agents = {}
 
-    def insert_or_append(self, Agent, simulation_parameters, agent_parameters, agent_arguments, maxid):
+    def add_agents(self, Agent, simulation_parameters, agent_parameters, agent_arguments, maxid):
         """appends an agent to a group """
         if isinstance(agent_parameters, int):
             agent_parameters = ([] for _ in range(agent_parameters))
