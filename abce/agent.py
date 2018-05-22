@@ -112,7 +112,6 @@ class Agent(Database, Trade, Messaging, Goods):
         """ self.time, contains the time set with simulation.advance_round(time)
             you can set time to anything you want an integer or
             (12, 30, 21, 09, 1979) or 'monday' """
-        self._resources = []
 
         try:
             self._add_contracts_list()
@@ -120,15 +119,6 @@ class Agent(Database, Trade, Messaging, Goods):
             self.contracts = DummyContracts()
 
         self._check_every_round_for_lost_messages = check_unchecked_msgs
-
-        for good, duration in expiring:
-            self._declare_expiring(good, duration)
-
-        for good in perishable:
-            self._register_perish(good)
-
-        for resource, units, product in resource_endowment:
-            self._register_resource(resource, units, product)
 
     def init(self):
         """ This method is called when the agents are build.

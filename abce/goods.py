@@ -10,6 +10,15 @@ class Goods:
         self._inventory = Inventory((group, id))
         self._resources = []
 
+        for good, duration in expiring:
+            self._declare_expiring(good, duration)
+
+        for good in perishable:
+            self._register_perish(good)
+
+        for resource, units, product in resource_endowment:
+            self._register_resource(resource, units, product)
+
     def possession(self, good):
         """ returns how much of good an agent possesses.
 
