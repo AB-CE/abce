@@ -100,10 +100,6 @@ class Agent(Database, Trade, Messaging, Goods):
         # TODO should be group_address(group), but it would not work
         # when fired manual + ':' and manual group_address need to be removed
 
-        # TODO make defaultdict; delete all key errors regarding self._inventory as
-        # defaultdict, does not have missing keys
-        self._msgs = {}
-
         self.round = start_round
         """ self.round is depreciated"""
         self.time = start_round
@@ -115,8 +111,6 @@ class Agent(Database, Trade, Messaging, Goods):
             self._add_contracts_list()
         except AttributeError:
             self.contracts = DummyContracts()
-
-        self._check_every_round_for_lost_messages = check_unchecked_msgs
 
     def init(self):
         """ This method is called when the agents are build.
