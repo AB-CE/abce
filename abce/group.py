@@ -193,8 +193,7 @@ class Group:
         if agent_parameters is None:
             agent_parameters = number
 
-        new_names = self._scheduler.add_agents(Agent, common_parameters, agent_parameters,
-                                            self._agent_arguments, self.num_agents)
+        new_names = self._scheduler.add_agents(Agent, common_parameters, agent_parameters, self._agent_arguments, self.num_agents)
         self.num_agents += len(new_names)
         self.names.update(new_names)
         return new_names

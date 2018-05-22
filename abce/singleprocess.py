@@ -27,14 +27,14 @@ class SingleProcess(object):
     def __init__(self):
         self.agents = {}
 
-    def add_agents(self, Agent, simulation_parameters, agent_parameters, agent_arguments, maxid):
+    def add_agents(self, Agent, simulation_parameters, agent_parameters, default_sim_params, maxid):
         """appends an agent to a group """
         if isinstance(agent_parameters, int):
             agent_parameters = ([] for _ in range(agent_parameters))
 
         names = {}
         for id, ap in enumerate(agent_parameters, maxid):
-            agent = Agent(id, simulation_parameters, ap, **agent_arguments)
+            agent = Agent(id, ap, {**default_sim_params, **simulation_parameters})
             agent.init(**ChainMap(simulation_parameters, ap))
             agent._str_name = re.sub('[^0-9a-zA-Z_]', '', str(agent.name))
             names[agent.name] = agent.name

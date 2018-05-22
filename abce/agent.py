@@ -81,15 +81,16 @@ class Agent(Database, Trade, Messaging, Goods):
 
     """
 
-    def __init__(self, id, agent_parameters, simulation_parameters, group, trade_logging,
-                 database, check_unchecked_msgs, expiring, perishable, resource_endowment, start_round=None):
+    def __init__(self, id, agent_parameters, simulation_parameters):
         """ Do not overwrite __init__ instead use a method called init instead.
         init is called whenever the agent are build.
         """
-        super(Agent, self).__init__(id, agent_parameters, simulation_parameters, group, trade_logging,
-                                    database, check_unchecked_msgs, expiring, perishable, resource_endowment,
-                                    start_round)
+        super(Agent, self).__init__(id, agent_parameters, simulation_parameters)
         """ self.id returns the agents id READ ONLY"""
+        # unpacking simulation_parameters
+        group = simulation_parameters['group']
+        start_round = simulation_parameters.get('start_round', None)
+
         self.name = (group, id)
         self.id = id
         """ self.name returns the agents name, which is the group name and the

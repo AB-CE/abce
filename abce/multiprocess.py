@@ -39,14 +39,14 @@ class ProcessorGroup(SingleProcess):
         self.queue = queues[self.batch]
         self.processes = processes
 
-    def add_agents(self, Agent, simulation_parameters, agent_parameters, agent_arguments, maxid):
+    def add_agents(self, Agent, simulation_parameters, agent_parameters, default_sim_params, maxid):
         """appends an agent to a group """
         if isinstance(agent_parameters, int):
             agent_parameters = ([] for _ in range(agent_parameters))
 
         names = {}
         for id, ap in enumerate(agent_parameters, maxid):
-            agent = Agent(id, simulation_parameters, ap, **agent_arguments)
+            agent = Agent(id, ap, {**default_sim_params, **simulation_parameters})
             agent._send = agent._send_multiprocessing
             agent._out = defaultdict(list)
             agent.init(**ChainMap(simulation_parameters, ap))

@@ -43,10 +43,11 @@ import abce
 
 class Database:
     """ The database class """
-    def __init__(self, id, agent_parameters, simulation_parameters, group, trade_logging,
-                 database, check_unchecked_msgs, expiring, perishable, resource_endowment, start_round=None):
-        super(Database, self).__init__(id, agent_parameters, simulation_parameters, group, trade_logging, database,
-                                       check_unchecked_msgs, expiring, perishable, resource_endowment, start_round)
+    def __init__(self, id, agent_parameters, simulation_parameters):
+        super(Database, self).__init__(id, agent_parameters, simulation_parameters)
+        # unpack simulation_parameters
+        database = simulation_parameters['database']
+        trade_logging = simulation_parameters['trade_logging']
 
         self.database_connection = database
 
