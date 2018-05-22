@@ -48,6 +48,8 @@ class Database:
         super(Database, self).__init__(id, agent_parameters, simulation_parameters, group, trade_logging, database,
                                        check_unchecked_msgs, expiring, perishable, resource_endowment, start_round)
 
+        self.database_connection = database
+
         self._data_to_log_1 = {}
         self._data_to_observe = {}
 

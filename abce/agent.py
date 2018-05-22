@@ -100,7 +100,6 @@ class Agent(Database, Trade, Messaging, Goods):
         """ self.group returns the agents group or type READ ONLY! """
         # TODO should be group_address(group), but it would not work
         # when fired manual + ':' and manual group_address need to be removed
-        self.database_connection = database
 
         # TODO make defaultdict; delete all key errors regarding self._inventory as
         # defaultdict, does not have missing keys
