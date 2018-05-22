@@ -1,7 +1,8 @@
 import abce
+from abce.agents import Household
 
 
-class Endowment(abce.Agent, abce.Household):
+class Endowment(abce.Agent, Household):
     def init(self, rounds, creation):
         self.last_round = rounds - 1
         self.creation = creation

@@ -1,8 +1,10 @@
 import abce
+from abce.agents import Household
+
 from tools import is_zero
 
 
-class UtilityHousehold(abce.Agent, abce.Household):
+class UtilityHousehold(abce.Agent, Household):
     def init(self, rounds):
         self.last_round = rounds - 1
 
