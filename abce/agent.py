@@ -117,8 +117,6 @@ class Agent(Database, Trade, Messaging, Goods):
             you can set time to anything you want an integer or
             (12, 30, 21, 09, 1979) or 'monday' """
         self._resources = []
-        self.variables_to_track_panel = []
-        self.variables_to_track_aggregate = []
 
         try:
             self._add_contracts_list()
