@@ -20,6 +20,7 @@ either be sent to an individual with :meth:`messaging.Messaging.message` or to a
 with  :meth:`messaging.Messaging.get_messages_all` or messages with a specific topic with
 :meth:`messaging.Messaging.get_messages`.
 """
+from collections import defaultdict
 from random import shuffle
 
 
@@ -45,6 +46,8 @@ class Messaging:
                  database, check_unchecked_msgs, expiring, perishable, resource_endowment, start_round=None):
         super(Messaging, self).__init__(id, agent_parameters, simulation_parameters, group, trade_logging, database,
                                         check_unchecked_msgs, expiring, perishable, resource_endowment, start_round)
+        self.inbox = []
+        self._out = []
 
     def send(self, receiver, topic, content):
         """ sends a message to agent. Agents receive it
@@ -148,7 +151,7 @@ class Messaging:
         self._msgs.clear()
         return ret
 
-    def _do_message_clearing(self, incomming_messages):
+    def _do_message_clearing(self):
         """ agent receives all messages and objects that have been send in this
         subround and deletes the offers that where retracted, but not executed.
 
@@ -158,7 +161,7 @@ class Messaging:
         '_r': deletes an offer that the other agent rejected
         '_g': recive a 'free' good from another party
         """
-        for typ, msg in incomming_messages:
+        for typ, msg in self.inbox:
             if typ == '!b':
                 self._open_offers_buy[msg.good][msg.id] = msg
             elif typ == '!s':
@@ -198,3 +201,26 @@ class Messaging:
                     del self._contracts_deliver[msg[1]][msg[2]]
             else:
                 self._msgs.setdefault(typ, []).append(msg)
+        self.inbox.clear()
+
+    def _post_messages(self, agents):
+        for name, envelope in self._out:
+            agents[name].inbox.append(envelope)
+        self._out.clear()
+
+    def _post_messages_multiprocessing(self, num_processes):
+        out = self._out
+        self._out = defaultdict(list)
+        return out
+
+    def _send(self, receiver, typ, msg):
+        """ sends a message to 'receiver_group', 'receiver_id'
+        The agents receives it at the begin of each subround.
+        """
+        self._out.append((receiver, (typ, msg)))
+
+    def _send_multiprocessing(self, receiver, typ, msg):
+        """ Is used to overwrite _send in multiprocessing mode.
+        Requires that self._out is overwritten with a defaultdict(list) """
+        self._out[hash(receiver) % self._processes].append(
+            (receiver, (typ, msg)))

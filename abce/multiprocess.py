@@ -24,12 +24,14 @@ from multiprocessing.managers import BaseManager
 import traceback
 from collections import defaultdict, ChainMap
 
+from .singleprocess import SingleProcess
+
 
 class MyManager(BaseManager):
     pass
 
 
-class ProcessorGroup:
+class ProcessorGroup(SingleProcess):
     def __init__(self, batch, queues, processes):
         self.agents = {}
         self.batch = batch
@@ -37,7 +39,7 @@ class ProcessorGroup:
         self.queue = queues[self.batch]
         self.processes = processes
 
-    def insert_or_append(self, Agent, simulation_parameters, agent_parameters, agent_arguments, maxid):
+    def add_agents(self, Agent, simulation_parameters, agent_parameters, agent_arguments, maxid):
         """appends an agent to a group """
         if isinstance(agent_parameters, int):
             agent_parameters = ([] for _ in range(agent_parameters))
@@ -55,14 +57,6 @@ class ProcessorGroup:
                 agent._processes = self.processes
                 self.agents[agent.name] = agent
         return names
-
-    def advance_round(self, time, str_time):
-        for agent in self.agents.values():
-            agent._advance_round(time, str_time)
-
-    def delete_agents(self, names):
-        for name in names:
-            self.agents.pop(name, None)
 
     def do(self, names, command, args, kwargs):
         try:
@@ -89,9 +83,6 @@ class ProcessorGroup:
                 self.agents[receiver].inbox.append(envelope)
         return self.rets
 
-    def keys(self):
-        return self.agents.keys()
-
 
 class MultiProcess(object):
     """ This is a container for all agents. It exists only to allow for multiprocessing with MultiProcess.
@@ -111,14 +102,14 @@ class MultiProcess(object):
             pg = manager.ProcessorGroup(i, self.queues, processes)
             self.processor_groups.append(pg)
 
-    def insert_or_append(self, Agent, simulation_parameters, agent_parameters, agent_arguments, maxid):
+    def add_agents(self, Agent, simulation_parameters, agent_parameters, agent_arguments, maxid):
         """appends an agent to a group """
-        names = self.pool.map(insert_or_append_wrapper, jkk(self.processor_groups,
-                                                            Agent,
-                                                            simulation_parameters,
-                                                            agent_parameters,
-                                                            agent_arguments,
-                                                            maxid))
+        names = self.pool.map(add_agents_wrapper, jkk(self.processor_groups,
+                                                      Agent,
+                                                      simulation_parameters,
+                                                      agent_parameters,
+                                                      agent_arguments,
+                                                      maxid))
 
         return flatten(names)
 
@@ -135,7 +126,7 @@ class MultiProcess(object):
         self.pool.map(advance_round_wrapper, jkk(self.processor_groups, time, str_time))
 
     def group_names(self):
-        return self.processor_groups[0].keys()
+        return self.processor_groups[0].group_names()
 
 
 def wrapper(args):
@@ -148,9 +139,9 @@ def post_messages(args):
     return pg.post_messages(names)
 
 
-def insert_or_append_wrapper(arg):
+def add_agents_wrapper(arg):
     pg, Agent, simulation_parameters, agent_parameters, agent_arguments, maxid = arg
-    return pg.insert_or_append(Agent, simulation_parameters, agent_parameters, agent_arguments, maxid)
+    return pg.add_agents(Agent, simulation_parameters, agent_parameters, agent_arguments, maxid)
 
 
 def delete_agents_wrapper(arg):
