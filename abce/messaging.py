@@ -21,6 +21,7 @@ with  :meth:`messaging.Messaging.get_messages_all` or messages with a specific t
 :meth:`messaging.Messaging.get_messages`.
 """
 from collections import defaultdict
+from pprint import pprint
 from random import shuffle
 
 
@@ -224,3 +225,33 @@ class Messaging:
         Requires that self._out is overwritten with a defaultdict(list) """
         self._out[hash(receiver) % self._processes].append(
             (receiver, (typ, msg)))
+
+    def _check_for_lost_messages(self):
+        for offer in list(self.given_offers.values()):
+            if offer.made < self.round:
+                print("in agent %s this offers have not been retrieved:" %
+                      self.name_without_colon)
+                for offer in list(self.given_offers.values()):
+                    if offer.made < self.round:
+                        print(offer.__repr__())
+                raise Exception('%s_%i: There are offers have been made before'
+                                'last round and not been retrieved in this'
+                                'round get_offer(.)' % (self.group, self.id))
+
+        if sum([len(offers) for offers in list(self._open_offers_buy.values())]):
+            pprint(dict(self._open_offers_buy))
+            raise Exception('%s_%i: There are offers an agent send that have '
+                            'not been retrieved in this round get_offer(.)' %
+                            (self.group, self.id))
+
+        if sum([len(offers) for offers in list(self._open_offers_sell.values())]):
+            pprint(dict(self._open_offers_sell))
+            raise Exception('%s_%i: There are offers an agent send that have '
+                            'not been retrieved in this round get_offer(.)' %
+                            (self.group, self.id))
+
+        if sum([len(offers) for offers in list(self._msgs.values())]):
+            pprint(dict(self._msgs))
+            raise Exception('(%s, %i): There are messages an agent send that '
+                            'have not been retrieved in this round '
+                            'get_messages(.)' % (self.group, self.id))
