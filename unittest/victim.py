@@ -1,7 +1,8 @@
 import abce
+from abce.agents import Household
 
 
-class Victim(abce.Agent, abce.Household):
+class Victim(abce.Agent, Household):
     def init(self):
         self.count = 1
 

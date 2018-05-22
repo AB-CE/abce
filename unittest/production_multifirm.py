@@ -1,8 +1,10 @@
 import abce
+from abce.agents import Firm
+
 from tools import is_zero
 
 
-class ProductionMultifirm(abce.Agent, abce.Firm):
+class ProductionMultifirm(abce.Agent, Firm):
     def init(self, rounds):
         self.last_round = rounds - 1
 
