@@ -73,7 +73,7 @@ Retrieval of the simulation results
 ===================================
 
 Agents can log their internal states and the simulation can create
-panel data. :mod:`abce.database`.
+panel data. :mod:`abce.logger`.
 
 the results are stored in a subfolder of the ./results/ folder. The
 exact path is in simulation.path. So if you want to post-process your

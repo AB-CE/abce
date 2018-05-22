@@ -37,10 +37,10 @@ abce\.credit module
     :undoc-members:
     :show-inheritance:
 
-abce\.database module
+abce\.logger module
 ---------------------
 
-.. automodule:: abce.database
+.. automodule:: abce.logger
     :members:
     :undoc-members:
     :show-inheritance:
