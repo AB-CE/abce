@@ -38,6 +38,8 @@ Messaging between agents:
 """
 from collections import OrderedDict
 
+import abce
+
 
 class Database:
     """ The database class """
@@ -48,6 +50,17 @@ class Database:
 
         self._data_to_log_1 = {}
         self._data_to_observe = {}
+
+        if hasattr(abce, 'conditional_logging'):
+            self.conditional_logging = True
+            self.log_rounds = abce.conditional_logging
+        else:
+            self.conditional_logging = False
+        self.log_this_round = True
+
+        self.trade_logging = {'individual': 1,
+                              'group': 2,
+                              'off': 0}[trade_logging]
 
     def log(self, action_name, data_to_log):
         """ With log you can write the models data. Log can save variable

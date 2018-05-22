@@ -29,7 +29,6 @@ Logging and data creation, see :doc:`Database`.
 Messaging between agents, see :doc:`Messaging`.
 """
 from pprint import pprint
-import abce
 from .logger import Database
 from .trade import Trade
 from .messaging import Messaging
@@ -103,9 +102,6 @@ class Agent(Database, Trade, Messaging, Goods):
         # when fired manual + ':' and manual group_address need to be removed
         self.database_connection = database
 
-        self.trade_logging = {'individual': 1,
-                              'group': 2, 'off': 0}[trade_logging]
-
         # TODO make defaultdict; delete all key errors regarding self._inventory as
         # defaultdict, does not have missing keys
         self._msgs = {}
@@ -122,14 +118,6 @@ class Agent(Database, Trade, Messaging, Goods):
             self._add_contracts_list()
         except AttributeError:
             self.contracts = DummyContracts()
-
-        if hasattr(abce, 'conditional_logging'):
-            self.conditional_logging = True
-            self.log_rounds = abce.conditional_logging
-        else:
-            self.conditional_logging = False
-
-        self.log_this_round = True
 
         self._check_every_round_for_lost_messages = check_unchecked_msgs
 
