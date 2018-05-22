@@ -110,8 +110,6 @@ class Agent(Database, Trade, Messaging, Goods):
         # defaultdict, does not have missing keys
         self._msgs = {}
 
-        self._data_to_observe = {}
-        self._data_to_log_1 = {}
         self.round = start_round
         """ self.round is depreciated"""
         self.time = start_round

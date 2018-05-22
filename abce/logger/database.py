@@ -46,6 +46,9 @@ class Database:
         super(Database, self).__init__(id, agent_parameters, simulation_parameters, group, trade_logging, database,
                                        check_unchecked_msgs, expiring, perishable, resource_endowment, start_round)
 
+        self._data_to_log_1 = {}
+        self._data_to_observe = {}
+
     def log(self, action_name, data_to_log):
         """ With log you can write the models data. Log can save variable
         states and and the working of individual functions such as production,
