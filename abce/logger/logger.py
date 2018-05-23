@@ -30,7 +30,7 @@ Logging and data creation:
     see :class:`abceagent.Database` and :doc:`simulation_results`
 
 Messaging between agents:
-    see :class:`abceagent.Messaging`.
+    see :class:`abceagent.Messenger`.
 
 .. autoexception:: abce.NotEnoughGoods
 
@@ -41,10 +41,10 @@ from collections import OrderedDict
 import abce
 
 
-class Database:
-    """ The database class """
+class Logger:
+    """ The Logger class """
     def __init__(self, id, agent_parameters, simulation_parameters):
-        super(Database, self).__init__(id, agent_parameters, simulation_parameters)
+        super(Logger, self).__init__(id, agent_parameters, simulation_parameters)
         # unpack simulation_parameters
         database = simulation_parameters['database']
         trade_logging = simulation_parameters['trade_logging']

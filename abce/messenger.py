@@ -15,10 +15,10 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 """ This is the agent's facility to send and receive messages. Messages can
-either be sent to an individual with :meth:`messaging.Messaging.message` or to a group with
-:meth:`messaging.Messaging.message_to_group`. The receiving agent can either get all messages
-with  :meth:`messaging.Messaging.get_messages_all` or messages with a specific topic with
-:meth:`messaging.Messaging.get_messages`.
+either be sent to an individual with :meth:`messenger.Messenger.message` or to a group with
+:meth:`messenger.Messenger.message_to_group`. The receiving agent can either get all messages
+with  :meth:`messenger.Messenger.get_messages_all` or messages with a specific topic with
+:meth:`messenger.Messenger.get_messages`.
 """
 from collections import defaultdict
 from pprint import pprint
@@ -42,9 +42,9 @@ class Message(object):
             str(self.sender), str(self.receiver), self.topic, str(self.content))
 
 
-class Messaging:
+class Messenger:
     def __init__(self, id, agent_parameters, simulation_parameters):
-        super(Messaging, self).__init__(id, agent_parameters, simulation_parameters)
+        super(Messenger, self).__init__(id, agent_parameters, simulation_parameters)
         self._msgs = {}
         self.inbox = []
         self._out = []
@@ -52,8 +52,8 @@ class Messaging:
 
     def send(self, receiver, topic, content):
         """ sends a message to agent. Agents receive it
-        at the beginning of next round with :meth:`~abceagent.Messaging.get_messages` or
-        :meth:`~abceagent.Messaging.get_messages_all`.
+        at the beginning of next round with :meth:`~abceagent.Messenger.get_messages` or
+        :meth:`~abceagent.Messenger.get_messages_all`.
 
         Args::
 
@@ -89,7 +89,7 @@ class Messaging:
         self._send(receiver, topic, msg)
 
     def get_messages(self, topic='m'):
-        """ self.messages() returns all new messages send with :meth:`~abceagent.Messaging.message`
+        """ self.messages() returns all new messages send with :meth:`~abceagent.Messenger.message`
         (topic='m'). The order is randomized. self.messages(topic) returns all
         messages with a topic.
 

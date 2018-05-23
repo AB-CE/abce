@@ -59,7 +59,6 @@ from .logger import DbDatabase as Database  # noqa: F401
 from .agent import Agent  # noqa: F401
 from .group import Group
 from .notenoughgoods import NotEnoughGoods  # noqa: F401
-from .quote import Quote  # noqa: F401
 from .contracts import Contracting  # noqa: F401
 from .gui import gui, graphs  # noqa: F401
 from .singleprocess import SingleProcess
