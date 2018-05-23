@@ -17,6 +17,9 @@ from .webtext import abcedescription
 from .loadform import LoadForm
 
 
+css_style = 'background-color: steelblue;'
+
+
 def basiclayout(Form, simulation, title, top_bar=None, story=None,
                 texts=None, pages=None, truncate_rounds=0,
                 histograms=None, graphs=False):
@@ -52,15 +55,15 @@ def basiclayout(Form, simulation, title, top_bar=None, story=None,
             self.graphs = {}
             self.first = self.first_repeat = True
             with ui.BoxLayout(orientation='v',
-                              style="background-color: blue;"):
+                              style=css_style):
                 with ui.HBox(flex=0):
                     ui.Label(text='<h1 style="color: white">%s</h1>' % title,
                              flex=1,
-                             style="background-color: blue;")
+                             style=css_style)
                 if top_bar is not None:
                     ui.Label(text=top_bar,
                              flex=0,
-                             style="background-color: blue;")
+                             style=css_style)
                 with DockPanel(flex=1) as self.dockpanel:
                     self.form = Form(title='Simulation',
                                      style="location: N; overflow: scroll;")
