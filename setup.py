@@ -57,7 +57,8 @@ if not readthedocs:
         install_requires += ['numpy >= 1.10.2p']
         if ('APPVEYOR' not in os.environ) or ('TRAVIS' not in os.environ):
             install_requires += ['pandas >= 0.17.1',
-                                 'bokeh == 0.12.7']
+                                 'bokeh == 0.12.16',
+                                 'tornado == 4.3']
 
 
 version = '0.9.5b0'
