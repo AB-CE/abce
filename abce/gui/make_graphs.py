@@ -4,7 +4,6 @@ import random
 import pandas as pd
 from bokeh.plotting import figure
 from bokeh.models import Range1d, LinearAxis, Span, Label
-from bokeh.charts import Histogram
 from bokeh.layouts import row
 
 
@@ -110,38 +109,7 @@ def make_simple_graphs(data, filename, ignore_initial_rounds):
 
 
 def make_histograms(data, filename):
-    """Creates histograms from data. If several 'id's are present,
-    several histograms for each id are created in the same plot """
-    data = clean_nans(data)
-    print('make_histograms', filename)
-    titles = []
-    plots = []
-    num_graphs = 1
-    if 'id' in data.columns:
-        num_graphs = min(len(set(data['id'])), 6)
-    else:
-        data['id'] = 0
-    for col in data.columns:
-        if (col not in ['round', 'id', 'index', 'index_ttl'] and
-                not col.endswith('_mean') and
-                not col.endswith('_std')):
-            title = make_title(filename, col)
-            tplot = []
-            for i in range(num_graphs):
-                plot = Histogram(data[data['id'] == i][col],
-                                 width=1200, height=600,
-                                 sizing_mode='stretch_both')
-                mean = data[data['id'] == i][col].mean()
-                line = Span(location=mean,
-                            dimension='height', line_color='blue',
-                            line_width=1)
-                plot.add_layout(line)
-                label = Label(x=mean, y=0, text='mean: %f' % mean)
-                plot.add_layout(label)
-                tplot.append(plot)
-            titles.append(title + ' (hist)')
-            plots.append(row(tplot, sizing_mode='stretch_both'))
-    return titles, plots
+    return [], []
 
 
 def make_panel_graphs(data, filename, ignore_initial_rounds):
