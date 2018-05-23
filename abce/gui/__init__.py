@@ -9,12 +9,8 @@ import dataset
 import flexx
 from flexx import app
 from .webtext import abcedescription
-try:
-    from .basiclayout import basiclayout
-    from .form import form
-    IMPORTERROR = False
-except ImportError:
-    IMPORTERROR = True
+from .basiclayout import basiclayout
+from .form import form
 
 
 def gui(parameter_mask, names=None, header=None, story=None,
@@ -142,36 +138,24 @@ def gui(parameter_mask, names=None, header=None, story=None,
         print(title)
 
     def inner(simulation):
-        if not IMPORTERROR:
-            if pypy is not None:
-                def simulation(parameters):
-                    print("CALLING PYPY")
-                    call([pypy,
-                          sys.argv[0],
-                          json.dumps(parameters),
-                          abce.simulation_name])
-            database = dataset.connect('sqlite:///parameter.db')
-            abce.parameter_database = database['parameter']
-            Form = form(parameter_mask, names)  # pylint: disable=C0103
-            if serve:
-                flexx.config.hostname = hostname
-                flexx.config.port = port
-                app.serve(basiclayout(Form, simulation, title, header,
-                                      truncate_rounds,
-                                      texts=texts, pages=pages,
-                                      histograms=histograms))
-                app.start()
-            else:
-                app.launch(basiclayout(Form, simulation, title, header,
-                                       truncate_rounds,
-                                       texts=texts, pages=pages,
-                                       histograms=histograms),
-                           windowmode='maximized', runtime=runtime)
-                app.run()
+        database = dataset.connect('sqlite:///parameter.db')
+        abce.parameter_database = database['parameter']
+        Form = form(parameter_mask, names)  # pylint: disable=C0103
+        if serve:
+            flexx.config.hostname = hostname
+            flexx.config.port = port
+            app.serve(basiclayout(Form, simulation, title, header,
+                                  truncate_rounds,
+                                  texts=texts, pages=pages,
+                                  histograms=histograms))
+            app.start()
         else:
-            print("RUN PYPY")
-            abce.simulation_name = sys.argv[2]
-            simulation(json.loads(sys.argv[1]))
+            app.launch(basiclayout(Form, simulation, title, header,
+                                   truncate_rounds,
+                                   texts=texts, pages=pages,
+                                   histograms=histograms),
+                       windowmode='maximized', runtime=runtime)
+            app.run()
         return lambda _: None
     return inner
 
