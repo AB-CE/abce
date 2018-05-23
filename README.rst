@@ -7,7 +7,7 @@ and consumption. The modeler can concentrate on implementing
 the logic and decisions of an agents; ABCE takes care of all exchange
 of goods and production and consumption.
 
-.. figure:: http://abce.readthedocs.io/en/0.9b/_images/cheesegrater.png
+.. figure:: https://raw.githubusercontent.com/AB-CE/abce/master/docs/cheesegrater.png
    :target: http://35.176.189.179/ABCE/
    :scale: 20 %
    :align: right
