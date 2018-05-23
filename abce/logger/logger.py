@@ -30,7 +30,7 @@ Logging and data creation:
     see :class:`abceagent.Database` and :doc:`simulation_results`
 
 Messaging between agents:
-    see :class:`abceagent.Messaging`.
+    see :class:`abceagent.Messenger`.
 
 .. autoexception:: abce.NotEnoughGoods
 

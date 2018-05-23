@@ -373,8 +373,8 @@ And the NotEnoughGoods exception that allows us the handle situation in which th
 agent has insufficient resources.
 
 An agent is a class and must at least inherit :class:`abce.Agent`.
-It automatically inherits :class:`abce.Trade` - :class:`abce.Messaging`
-and :class:`abce.Database`
+It automatically inherits :class:`abce.Trade` - :class:`abce.Messenger`
+and :class:`abce.Logger`
 
 .. code-block:: python
 

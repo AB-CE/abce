@@ -26,11 +26,11 @@ Trading, see :doc:`Trade`
 
 Logging and data creation, see :doc:`Database`.
 
-Messaging between agents, see :doc:`Messaging`.
+Messaging between agents, see :doc:`Messenger`.
 """
 from .logger import Logger
 from .trade import Trade
-from .messaging import Messaging
+from .messenger import Messenger
 from .goods import Goods
 
 
@@ -39,10 +39,10 @@ class DummyContracts:
         pass
 
 
-class Agent(Logger, Trade, Messaging, Goods):
+class Agent(Logger, Trade, Messenger, Goods):
     """ Every agent has to inherit this class. It connects the agent to the
     simulation and to other agent. The :class:`abce.Trade`,
-    :class:`abce.Logger` and :class:`abce.Messaging` classes are included.
+    :class:`abce.Logger` and :class:`abce.Messenger` classes are included.
     An agent can also inheriting from :class:`abce.Firm`,
     :class:`abce.FirmMultiTechnologies` or :class:`abce.Household` classes.
 

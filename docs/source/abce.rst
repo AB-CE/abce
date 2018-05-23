@@ -85,10 +85,10 @@ abce\.inventory module
     :undoc-members:
     :show-inheritance:
 
-abce\.messaging module
+abce\.messenger module
 ----------------------
 
-.. automodule:: abce.messaging
+.. automodule:: abce.messenger
     :members:
     :undoc-members:
     :show-inheritance:
