@@ -5,10 +5,24 @@ class Goods:
     """ Each agent can access his goods. self['good_name'] shows the quantity of goods of a certain type an agent
     owns. Goods can be a string or any other python object.
     """
-    def __init__(self, id, agent_parameters, simulation_parameters, group, trade_logging,
-                 database, check_unchecked_msgs, expiring, perishable, resource_endowment, start_round=None):
+    def __init__(self, id, agent_parameters, simulation_parameters):
+        # unpack simulation_parameters
+        group = simulation_parameters['group']
+        expiring = simulation_parameters['expiring']
+        perishable = simulation_parameters['perishable']
+        resource_endowment = simulation_parameters['resource_endowment']
+
         self._inventory = Inventory((group, id))
         self._resources = []
+
+        for good, duration in expiring:
+            self._declare_expiring(good, duration)
+
+        for good in perishable:
+            self._register_perish(good)
+
+        for resource, units, product in resource_endowment:
+            self._register_resource(resource, units, product)
 
     def possession(self, good):
         """ returns how much of good an agent possesses.

@@ -28,7 +28,6 @@ Logging and data creation, see :doc:`Database`.
 
 Messaging between agents, see :doc:`Messaging`.
 """
-from pprint import pprint
 from .logger import Database
 from .trade import Trade
 from .messaging import Messaging
@@ -82,15 +81,16 @@ class Agent(Database, Trade, Messaging, Goods):
 
     """
 
-    def __init__(self, id, agent_parameters, simulation_parameters, group, trade_logging,
-                 database, check_unchecked_msgs, expiring, perishable, resource_endowment, start_round=None):
+    def __init__(self, id, agent_parameters, simulation_parameters):
         """ Do not overwrite __init__ instead use a method called init instead.
         init is called whenever the agent are build.
         """
-        super(Agent, self).__init__(id, agent_parameters, simulation_parameters, group, trade_logging,
-                                    database, check_unchecked_msgs, expiring, perishable, resource_endowment,
-                                    start_round)
+        super(Agent, self).__init__(id, agent_parameters, simulation_parameters)
         """ self.id returns the agents id READ ONLY"""
+        # unpacking simulation_parameters
+        group = simulation_parameters['group']
+        start_round = simulation_parameters.get('start_round', None)
+
         self.name = (group, id)
         self.id = id
         """ self.name returns the agents name, which is the group name and the
@@ -100,11 +100,6 @@ class Agent(Database, Trade, Messaging, Goods):
         """ self.group returns the agents group or type READ ONLY! """
         # TODO should be group_address(group), but it would not work
         # when fired manual + ':' and manual group_address need to be removed
-        self.database_connection = database
-
-        # TODO make defaultdict; delete all key errors regarding self._inventory as
-        # defaultdict, does not have missing keys
-        self._msgs = {}
 
         self.round = start_round
         """ self.round is depreciated"""
@@ -112,23 +107,11 @@ class Agent(Database, Trade, Messaging, Goods):
         """ self.time, contains the time set with simulation.advance_round(time)
             you can set time to anything you want an integer or
             (12, 30, 21, 09, 1979) or 'monday' """
-        self._resources = []
 
         try:
             self._add_contracts_list()
         except AttributeError:
             self.contracts = DummyContracts()
-
-        self._check_every_round_for_lost_messages = check_unchecked_msgs
-
-        for good, duration in expiring:
-            self._declare_expiring(good, duration)
-
-        for good in perishable:
-            self._register_perish(good)
-
-        for resource, units, product in resource_endowment:
-            self._register_resource(resource, units, product)
 
     def init(self):
         """ This method is called when the agents are build.
@@ -162,36 +145,6 @@ class Agent(Database, Trade, Messaging, Goods):
 
         """
         print("Warning: agent %s has no init function" % self.group)
-
-    def _check_for_lost_messages(self):
-        for offer in list(self.given_offers.values()):
-            if offer.made < self.round:
-                print("in agent %s this offers have not been retrieved:" %
-                      self.name_without_colon)
-                for offer in list(self.given_offers.values()):
-                    if offer.made < self.round:
-                        print(offer.__repr__())
-                raise Exception('%s_%i: There are offers have been made before'
-                                'last round and not been retrieved in this'
-                                'round get_offer(.)' % (self.group, self.id))
-
-        if sum([len(offers) for offers in list(self._open_offers_buy.values())]):
-            pprint(dict(self._open_offers_buy))
-            raise Exception('%s_%i: There are offers an agent send that have '
-                            'not been retrieved in this round get_offer(.)' %
-                            (self.group, self.id))
-
-        if sum([len(offers) for offers in list(self._open_offers_sell.values())]):
-            pprint(dict(self._open_offers_sell))
-            raise Exception('%s_%i: There are offers an agent send that have '
-                            'not been retrieved in this round get_offer(.)' %
-                            (self.group, self.id))
-
-        if sum([len(offers) for offers in list(self._msgs.values())]):
-            pprint(dict(self._msgs))
-            raise Exception('(%s, %i): There are messages an agent send that '
-                            'have not been retrieved in this round '
-                            'get_messages(.)' % (self.group, self.id))
 
     def _advance_round(self, time, str_time):
         super()._advance_round(time)

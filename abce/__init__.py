@@ -455,49 +455,11 @@ class Simulation(object):
         return group
 
     def create_agents(self, AgentClass, group_name, simulation_parameters=None, agent_parameters=None, number=1):
-        """ Creates an additional agent in an existing group during the simulation. If agents
-        have been deleted, their id's are reduced.
 
-        Args:
-
-            AgentClass:
-                the class of agent to create.
-                (can be the same class as the creating agent)
-
-            'group_name':
-                the name of the group the agent should belong to. This is the
-                group name string e.G. :code:`'firm'`, not the group variable e.G.
-                :code:`firms` in :code:`firms = simulation.build_agents(...)`
-
-            simulation_parameters:
-                a dictionary of parameters
-
-            agent_parameters:
-                List of a dictionary of parameters
-
-            number:
-                if no agent_parameters list is given the number of agents to be created can be specified
-
-        Returns:
-           id of new agent.
-
-        Example::
-
-            self.create_agent(BeerFirm, 'beerfirm',
-                              parameters=self.parameters,
-                              agent_parameters={'creation': self.time})
-        """
-        if simulation_parameters is None:
-            simulation_parameters = {}
-        if agent_parameters is None:
-            agent_parameters = [{}] * number
-        group = self._groups[group_name]
-        id = group.create_agents(AgentClass, simulation_parameters=simulation_parameters,
-                                 agent_parameters=agent_parameters)
-        return id
+        raise Exception("create_agents is depreciated for Group.create_agents")
 
     def create_agent(self, AgentClass, group_name, simulation_parameters=None, agent_parameters=None):
-        raise Exception("create_agent is depreciated for create_agents")
+        raise Exception("create_agent is depreciated for Group.create_agents")
 
     def delete_agent(self, *ang):
         raise Exception("delete_agent is depreciated for create_agents")
