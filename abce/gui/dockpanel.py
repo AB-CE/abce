@@ -28,16 +28,16 @@ class DockPanel(Layout):
         width: 20% !important;
         height: 100% !important;
         overflow-y: scroll;
-        border-color: blue !important;
+        border-color: steelblue !important;
     }
 
     div.p-TabBar-body {
-        border-color: blue !important;
+        border-color: steelblue !important;
     }
 
     ul.p-TabBar-content {
     display: block  !important;
-        background-color: blue !important;
+        background-color: steelblue !important;
     }
 
     span.p-TabBar-tabText {
@@ -45,12 +45,12 @@ class DockPanel(Layout):
     }
 
     span.p-TabBar-tabText:hover {
-        color: black !important;
+        color: steelblack !important;
     }
 
     li.p-TabBar-tab {
-        border-color: blue !important;
-        background-color: blue !important;
+        border-color: steelblue !important;
+        background-color: steelblue !important;
     }
 
     li.p-TabBar-tab:hover {

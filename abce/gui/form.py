@@ -17,7 +17,7 @@ def form(parameter_mask, names):
 
             with ui.GroupWidget(title="Simulation parameter"):
                 ui.Label(text="scroll down to start",
-                         style="float: right; color: blue", wrap=True)
+                         style="float: right; color: steelblue", wrap=True)
                 for parameter, value in list(parameter_mask.items()):
                     try:
                         title = names[parameter]
