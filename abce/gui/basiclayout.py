@@ -4,7 +4,6 @@ from os.path import join
 import json
 from hashlib import sha1
 from collections import defaultdict
-import pandas as pd
 from flexx import ui
 import abce
 from .dockpanel import DockPanel
@@ -14,6 +13,10 @@ from .make_graphs import (make_panel_graphs,
 from .bokehwidget import BokehWidget
 from .webtext import abcedescription
 from .loadform import LoadForm
+try:
+    import pandas as pd
+except ImportError:
+    pass
 
 
 css_style = 'background-color: steelblue;'

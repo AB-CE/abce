@@ -1,9 +1,12 @@
 """Internal helper package that creates graphs for gui and
 simulation.graphs()"""
 import random
-import pandas as pd
-from bokeh.plotting import figure
-from bokeh.models import Range1d, LinearAxis
+try:
+    import pandas as pd
+    from bokeh.plotting import figure
+    from bokeh.models import Range1d, LinearAxis
+except ImportError:
+    pass
 
 
 COLORS = ["red", "blue", "green", "black", "purple", "pink", "yellow",
