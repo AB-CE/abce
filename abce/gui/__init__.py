@@ -1,9 +1,5 @@
 """ ABCE can be started with a gui or provide visual data output """
 import os
-import sys
-import platform
-import json
-from subprocess import call
 import abce
 import dataset
 import flexx
@@ -174,19 +170,12 @@ def graph(parameter_mask=None, names=None):
     """
     names = ({} if names is None else names)
 
-    if platform.python_implementation() == 'PyPy':
-        try:
-            call(['python3', '-mabce.show'])
-        except Exception:
-            call(['python', '-mabce.show'])
-    else:
+    database = dataset.connect('sqlite:///parameter.db')
+    abce.parameter_database = database['parameter']
+    parameter_mask = ({} if parameter_mask is None else parameter_mask)
 
-        database = dataset.connect('sqlite:///parameter.db')
-        abce.parameter_database = database['parameter']
-        parameter_mask = ({} if parameter_mask is None else parameter_mask)
+    Form = form(parameter_mask, names)
 
-        Form = form(parameter_mask, names)
-
-        app.launch(basiclayout(Form, None, parameter_mask['name'],
-                   graphs=True), runtime='browser-X')
-        app.run()
+    app.launch(basiclayout(Form, None, parameter_mask['name'],
+               graphs=True), runtime='browser-X')
+    app.run()
