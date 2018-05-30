@@ -57,12 +57,11 @@ class Firm:
     A production function looks like this::
 
         def production_function(wheels, steel, stearing_wheels, machines):
-            result = {}
-            result['car'] = min(wheels / 4, steel / 10, stearing_wheels)
-            result['wheels'] = 0
-            result['steel'] = 0
-            result['stearing_wheels'] = 0
-            result['machine'] = machine * 0.9
+            result = {'car': min(wheels / 4, steel / 10, stearing_wheels),
+                      'wheels': 0,
+                      'steel': 0,
+                      'steering_wheels': 0,
+                      'machine': machine * 0.9}
             return result
 
     Or more readably like this:
