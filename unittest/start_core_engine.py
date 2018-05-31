@@ -3,7 +3,6 @@ from buy import Buy
 from sell import Sell
 from give import Give  # tests give and messaging
 from logger_test import LoggerTest
-from endowment import Endowment
 from buyexpiringcapital import BuyExpiringCapital
 from abce import Simulation
 from messagea import MessageA
