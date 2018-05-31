@@ -132,7 +132,7 @@ class ProductionMultifirm(abce.Agent, Firm):
         self.destroy('consumption_good', expected)
 
     def all_tests_completed(self):
-        if self.round == self.last_round and self.id == 0:
+        if self.time == self.last_round and self.id == 0:
             print('Test produce:                            \tOK')
             print('Test create_production_function_one_good:\tOK')
             print('Test create_cobb_douglas:                \tOK')

@@ -10,7 +10,7 @@ class LoggerTest(abce.Agent):
 
     def one(self):
         self.log('possessions', self.possessions())
-        self.log('round_log', self.round)
+        self.log('round_log', self.time)
         pass
 
     def two(self):
@@ -23,6 +23,6 @@ class LoggerTest(abce.Agent):
         pass
 
     def all_tests_completed(self):
-        if self.round == self.last_round:
+        if self.time == self.last_round:
             time.sleep(0.5)
             print('Check database whether logging succeeded')

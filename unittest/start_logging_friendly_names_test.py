@@ -15,7 +15,7 @@ class Agent(abce.Agent):
     def go(self):
         self.create('money', 0.1)
         self.i = self.id
-        self.r = self.round[0] + 10 * self.round[1]
+        self.r = self.time[0] + 10 * self.time[1]
         self.log('li', self.i)
         self.log('lr', self.r)
         self.log('l', {'i': self.i, 'r': self.r})

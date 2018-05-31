@@ -44,7 +44,7 @@ class Give(abce.Agent):
         self.destroy('cookies')
 
     def all_tests_completed(self):
-        if self.round == self.last_round and self.id == 0:
+        if self.time == self.last_round and self.id == 0:
             assert all(self.tests.values(
             )), 'not all tests have been run; ABCE workes correctly, restart the unittesting to do all tests %s' % self.tests
             print('Test abce.give:\t\t\t\t\tOK')
