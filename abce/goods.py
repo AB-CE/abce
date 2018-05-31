@@ -17,6 +17,10 @@ class Goods:
         self.destroy(service)
         self.create(service, getattr(self, derived_from) * units)
 
+    def refresh_services(self, service, derived_from, units=1):
+        self.destroy(service)
+        self.create(service, getattr(self, derived_from) * units)
+
     def possession(self, good):
         """ returns how much of good an agent possesses.
 
