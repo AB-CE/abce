@@ -143,14 +143,14 @@ class Simulation(object):
         w.graphs()
     """
 
-    def __init__(self, name='abce', random_seed=None, trade_logging='off', processes=1, dbplugin=None, dbpluginargs=[], path='auto'):
+    def __init__(self, name='abce', random_seed=None, trade_logging='off', processes=1, dbplugin=None,
+                 dbpluginargs=[], path='auto'):
         """
         """
         try:
             name = simulation_name  # noqa: F821
         except NameError:
             pass
-
 
         self.agents_created = False
         self._messages = {}

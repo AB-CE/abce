@@ -32,4 +32,3 @@ if __name__ == '__main__':
     print('Iteration with 1 core finished')
     main(processes=4, rounds=5)
     print('Iteration with multiple processes finished')
-
