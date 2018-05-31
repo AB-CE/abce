@@ -46,11 +46,9 @@ Furthermore, every round needs to be announced using simulation.advance_round(ti
 where time is any representation of time.
 
 """
-import os
 import re
 import time
 import random
-import json
 import queue
 import multiprocessing as mp
 from collections import OrderedDict
@@ -240,7 +238,7 @@ class Simulation(object):
 
         print("time with data %6.2f" %
               (time.time() - self.clock))
-        self._write_description_file()
+        self._db._write_description_file(self.sim_parameters)
 
     def build_agents(self, AgentClass, group_name,
                      number=None,
@@ -331,15 +329,6 @@ class Simulation(object):
         """
         group = self._groups[group]
         group.delete_agents(ids)
-
-    def _write_description_file(self):
-        if self._db.directory is not None:
-            description = open(os.path.abspath(
-                self._db.directory + '/description.txt'), 'w')
-            description.write(json.dumps(self.sim_parameters,
-                                         indent=4,
-                                         skipkeys=True,
-                                         default=lambda x: 'not_serializeable'))
 
     def graph(self):
         """ after the simulation is run, graphs() shows graphs of all data

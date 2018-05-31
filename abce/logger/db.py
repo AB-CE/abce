@@ -15,6 +15,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 import datetime
+import json
 import os
 import threading
 from collections import defaultdict
@@ -165,3 +166,12 @@ class DbDatabase(threading.Thread):
                     'aggregate___%s' % group, primary_id='index')
                 self.table_aggregates[group].insert(result)
             self.aggregation[group].clear()
+
+    def _write_description_file(self, data):
+        if self.directory is not None:
+            with open(os.path.abspath(self.directory + '/description.txt'), 'w') as description:
+                description.write(json.dumps(
+                    data,
+                    indent=4,
+                    skipkeys=True,
+                    default=lambda x: 'not_serializeable'))
