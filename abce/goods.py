@@ -5,24 +5,17 @@ class Goods:
     """ Each agent can access his goods. self['good_name'] shows the quantity of goods of a certain type an agent
     owns. Goods can be a string or any other python object.
     """
+
     def __init__(self, id, agent_parameters, simulation_parameters):
         # unpack simulation_parameters
         group = simulation_parameters['group']
-        expiring = simulation_parameters['expiring']
-        perishable = simulation_parameters['perishable']
-        resource_endowment = simulation_parameters['resource_endowment']
 
         self._inventory = Inventory((group, id))
         self._resources = []
 
-        for good, duration in expiring:
-            self._declare_expiring(good, duration)
-
-        for good in perishable:
-            self._register_perish(good)
-
-        for resource, units, product in resource_endowment:
-            self._register_resource(resource, units, product)
+    def refresh_services(self, service, derived_from, units=1):
+        self.destroy(service)
+        self.create(service, getattr(self, derived_from) * units)
 
     def possession(self, good):
         """ returns how much of good an agent possesses.
@@ -61,37 +54,6 @@ class Goods:
         """
         self._inventory.create(good, quantity)
 
-    def create_timestructured(self, good, quantity):
-        """ creates quantity of the time structured good out of nothing.
-        For example::
-
-            self.creat_timestructured('capital', [10,20,30])
-
-        Creates capital. 10 units are 2 years old 20 units are 1 year old
-        and 30 units are new.
-
-        It can alse be used with a quantity instead of an array. In this
-        case the amount is equally split on the years.::
-
-            self.create_timestructured('capital', 60)
-
-        In this case 20 units are 2 years old 20 units are 1 year old
-        and 20 units are new.
-
-        Args:
-            'good':
-                is the name of the good
-
-            quantity:
-                an arry or number
-        """
-        self._inventory.create_timestructured(good, quantity)
-
-    def _declare_expiring(self, good, duration):
-        """ creates a good that has a limited duration
-        """
-        self._inventory._declare_expiring(good, duration)
-
     def not_reserved(self, good):
         """ Returns the amount of goods that are not reserved for a trade
 
@@ -115,12 +77,6 @@ class Goods:
             NotEnoughGoods: when goods are insufficient
         """
         self._inventory.destroy(good, quantity)
-
-    def _register_resource(self, resource, units, product):
-        self._resources.append((resource, units, product))
-
-    def _register_perish(self, good):
-        self._inventory._perishable.append(good)
 
     def __getitem__(self, good):
         return self._inventory.haves[good]

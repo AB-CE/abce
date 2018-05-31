@@ -34,11 +34,6 @@ from .messenger import Messenger
 from .goods import Goods
 
 
-class DummyContracts:
-    def _advance_round(self, round):
-        pass
-
-
 class Agent(Logger, Trade, Messenger, Goods):
     """ Every agent has to inherit this class. It connects the agent to the
     simulation and to other agent. The :class:`abce.Trade`,
@@ -106,11 +101,6 @@ class Agent(Logger, Trade, Messenger, Goods):
             you can set time to anything you want an integer or
             (12, 30, 21, 09, 1979) or 'monday' """
 
-        try:
-            self._add_contracts_list()
-        except AttributeError:
-            self.contracts = DummyContracts()
-
     def init(self):
         """ This method is called when the agents are build.
         It can be overwritten by the user, to initialize the agents.
@@ -146,15 +136,6 @@ class Agent(Logger, Trade, Messenger, Goods):
 
     def _advance_round(self, time, str_time):
         super()._advance_round(time)
-        self._inventory._advance_round()
-        self.contracts._advance_round(self.time)
-
-        if self._check_every_round_for_lost_messages:
-            self._check_for_lost_messages()
-
-        for ingredient, units, product in self._resources:
-            self._inventory.create(product, self[ingredient] * units)
-
         self._str_round = str_time
         self.time = time
 
@@ -181,6 +162,3 @@ class Agent(Logger, Trade, Messenger, Goods):
         """ Overwrite this to make ABCE plugins, that need to do
         something at the beginning of every subround """
         pass
-
-    def __del__(self):
-        self._check_for_lost_messages()

@@ -12,13 +12,13 @@ from messageb import MessageB
 
 def main(processes, rounds):
     s = Simulation(processes=processes, name='unittest')
-    s.declare_round_endowment(
-        resource='labor_endowment', units=5, product='labor')
-    s.declare_round_endowment(resource='cow', units=10,
-                              product='milk')
-    s.declare_perishable(good='labor')
+#    s.declare_round_endowment(
+#        resource='labor_endowment', units=5, product='labor')
+#    s.declare_round_endowment(resource='cow', units=10,
+#                              product='milk')
+#    s.declare_perishable(good='labor')
 
-    # s.declare_expiring('xcapital', 5)
+#    # s.declare_expiring('xcapital', 5)
     print('build Buy')
     buy = s.build_agents(Buy, 'buy', 1000, rounds=rounds)
     print('build Sell')
@@ -26,9 +26,6 @@ def main(processes, rounds):
     sell = s.build_agents(Sell, 'sell', 1000, rounds=rounds)
     print('build Give')
     give = s.build_agents(Give, 'give', 2, rounds=rounds)  # tests give and messaging
-    print('build Endowment')
-    endowment = s.build_agents(Endowment, 'endowment', 2, rounds=rounds, creation=0)
-    # tests declare_round_endowment and declare_perishable
     print('build LoggerTest')
     loggertest = s.build_agents(
         LoggerTest, 'loggertest', 1, rounds=rounds)
@@ -84,7 +81,6 @@ def main(processes, rounds):
             loggertest.clean_up()
         (messagea + messageb).sendmsg()
         (messageb + messagea).recvmsg()
-        endowment.Iconsume()
         # (contractbuyer + contractbuyerstop).request_offer()
         # (contractseller + contractsellerstop).make_offer()
         # contractagents.accept_offer()
