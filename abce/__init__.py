@@ -119,10 +119,6 @@ class Simulation(object):
                        trade_logging='individual',
                        processes=None)
 
-        w.declare_round_endowment(resource='labor_endowment',
-                                  productivity=1,
-                                  product='labor')
-
         w.panel('firm', command='after_sales_before_consumption')
 
         firms = w.build_agents(Firm, 'firm', num_firms)
@@ -130,13 +126,14 @@ class Simulation(object):
 
         all = firms + households
 
-        for r in range(100):
-            self.advance_round(r)
+        for time in range(100):
+            self.time = time
+            endowment.refresh_services('labor', derived_from='labor_endowment', units=5)
             households.recieve_connections()
             households.offer_capital()
             firms.buy_capital()
             firms.production()
-            if r == 250:
+            if time == 250:
                 centralbank.intervention()
             households.buy_product()
             all.after_sales_before_consumption()
@@ -146,8 +143,8 @@ class Simulation(object):
         w.graphs()
     """
 
-    def __init__(self, name='abce', random_seed=None,
-                 trade_logging='off', processes=1, check_unchecked_msgs=False, dbplugin=None, dbpluginargs=[], path='auto'):
+    def __init__(self, name='abce', random_seed=None, trade_logging='off', processes=1,
+                 check_unchecked_msgs=False, dbplugin=None, dbpluginargs=[], path='auto'):
         """
         """
         try:
@@ -220,124 +217,23 @@ class Simulation(object):
             {'name': name, 'random_seed': random_seed})
         self.clock = time.time()
         self.database = self
-        self.time = None
+        self._time = None
         """ The current time set with simulation.advance_round(time)"""
         self._groups = {}
         """ A list of all agent names in the simulation """
 
-    def declare_round_endowment(self, resource, units,
-                                product):
-        """ At the beginning of very round the agent gets 'units' units
-        of good 'product' for every 'resource' he possesses.
+    @property
+    def time(self):
+        """ Set and get time for simulation and all agents """
+        return self._time
 
-        Round endowments are group specific, that means when
-        somebody except the specified group holds them they do not produce.
-
-        Args::
-
-            resource:
-                The good that you have to hold to get the other
-
-            units:
-                the multiplier to get the produced good
-
-            product:
-                the good that is produced if you hold the first good
-
-            groups:
-                a list of agent groups, which gain the second good,
-                if they hold the first one
-
-        Example::
-
-            A farmer gets a ton of harvest for every acre:
-
-            w.declare_round_endowment(resource='land',
-                                      units=1000,
-                                      product='wheat')
-        """
-        if self.agents_created:
-            raise Exception(
-                "WARNING: declare_round_endowment(...)"
-                " must be called before the agents are build")
-        self.resource_endowment.append(
-            (resource, units, product))
-
-    def declare_perishable(self, good):
-        """ This good only lasts one round and then disappears. For example
-        labor, if the labor is not used today today's labor is lost.
-        In combination with resource this is useful to model labor or capital.
-
-        In the example below a worker has an endowment of labor and capital.
-        Every round he can sell his labor service and rent his capital. If
-        he does not the labor service for this round and the rent is lost.
-
-        Args::
-
-         good:
-            the good that perishes
-
-         Example::
-
-             w.declare_perishable(good='LAB')
-             w.declare_perishable(good='CAP')
-
-        """
-        if self.agents_created:
-            raise Exception(
-                "WARNING: declare_perishable(...) must be called before "
-                "the agents are build")
-        self.perishable.append(good)
-
-    def declare_expiring(self, good, duration):
-        """ This type of good lasts for several rounds, but eventually
-        expires. For example computers would last for several years and than
-        become obsolete.
-
-        Args:
-
-            good:
-                the good, which expires
-            duration:
-                the duration before the good expires
-        """
-        if self.agents_created:
-            raise Exception(
-                "WARNING: declare_expiring(...) must be called "
-                "before the agents are build")
-        self.expiring.append((good, duration))
-
-    def declare_service(self, human_or_other_resource,
-                        units, service):
-        """ When the agent holds the human_or_other_resource,
-        he gets 'units' of service every round
-        the service can be used only with in this round.
-
-        Args::
-
-            human_or_other_resource:
-                the good that needs to be in possessions to create the other
-                good 'self.create('adult', 2)'
-            units:
-                how many units of the service is available
-            service:
-                the service that is created
-            groups:
-                a list of agent groups that can create the service
-
-        Example::
-
-            For example if a household has two adult family members, it gets
-            16 hours of work
-
-            w.declare_service('adult', 8, 'work')
-        """
-        self.declare_round_endowment(
-            human_or_other_resource, units, service)
-        self.declare_perishable(service)
+    @time.setter
+    def time(self, time):
+        """ Set and get time for simulation and all agents """
+        self.advance_round(time)
 
     def advance_round(self, time):
-        self.time = time
+        self._time = time
         print("\rRound" + str(time))
         str_time = re.sub('[^0-9a-zA-Z_]', '', str(time))
         self.scheduler.advance_round(time, str_time)
