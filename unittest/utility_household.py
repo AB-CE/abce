@@ -93,7 +93,7 @@ class UtilityHousehold(abce.Agent, Household):
             assert pu == 5 ** 0.2 * 300 ** 0.5 * 10 ** 0.3
 
     def all_tests_completed(self):
-        if self.round == self.last_round and self.id == 0:
+        if self.time == self.last_round and self.id == 0:
             print('Test consume:                             \tOK')
             print('Test set_utility_function:                \tOK')
             print('Test set_cobb_douglas_utility_function    \tOK')

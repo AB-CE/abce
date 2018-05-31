@@ -7,5 +7,5 @@ class Victim(abce.Agent, Household):
         self.count = 1
 
     def am_I_dead(self):
-        if self.id < self.round:
+        if self.id < self.time:
             raise Exception("should be dead %i" % self.id)

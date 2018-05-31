@@ -12,15 +12,15 @@ class Endowment(abce.Agent, Household):
 
     def Iconsume(self):
         assert self['labor'] == 5, self['labor']
-        assert self['milk'] == 10 + (self.round - self.creation) * (10 - 3), (10 + (
-            self.round - self.creation) * (10 - 3), self['milk'], self.creation)
+        assert self['milk'] == 10 + (self.time - self.creation) * (10 - 3), (10 + (
+            self.time - self.creation) * (10 - 3), self['milk'], self.creation)
         milk = self['milk']
         utility = self.consume(self.utility_function, {'milk': 3})
         assert utility == 9, utility
         assert milk - 3 == self['milk'], self['milk']
 
     def all_tests_completed(self):
-        if self.round == self.last_round and self.id == 0:
+        if self.time == self.last_round and self.id == 0:
             print('Test declare_round_endowment:\t\t\tOK')
             print('Test s.declare_perishable:\t\t\tOK')
             # utility testnot exaustive!

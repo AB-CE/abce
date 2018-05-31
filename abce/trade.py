@@ -216,7 +216,7 @@ class Trade:
 
     def _advance_round(self, time):
         if self.trade_logging > 0:
-            self.database_connection.put(["trade_log", self._trade_log, self.round])
+            self.database_connection.put(["trade_log", self._trade_log, self.time])
         self._trade_log = defaultdict(int)
 
     def get_buy_offers_all(self, descending=False, sorted=True):
@@ -452,7 +452,7 @@ class Trade:
                       currency,
                       True,
                       offer_id,
-                      self.round)
+                      self.time)
         self.given_offers[offer_id] = offer
         self._send(receiver, '!s', offer)
         return offer
@@ -507,7 +507,7 @@ class Trade:
                       currency,
                       False,
                       offer_id,
-                      self.round)
+                      self.time)
         self._send(receiver, '!b', offer)
         self.given_offers[offer_id] = offer
         return offer
@@ -620,7 +620,7 @@ class Trade:
             self._inventory.haves[offer.good] += offer.final_quantity
             self._inventory.commit(offer.currency, offer.quantity * offer.price, offer.final_quantity * offer.price)
         offer.status = "accepted"
-        offer.status_round = self.round
+        offer.status_round = self.time
         del self.given_offers[offer.id]
         return offer
 
@@ -649,7 +649,7 @@ class Trade:
         else:
             self._inventory.rewind(offer.currency, offer.quantity * offer.price)
         offer.status = "rejected"
-        offer.status_round = self.round
+        offer.status_round = self.time
         offer.final_quantity = 0
         del self.given_offers[offer_id]
 

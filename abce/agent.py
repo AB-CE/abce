@@ -101,8 +101,6 @@ class Agent(Logger, Trade, Messenger, Goods):
         # TODO should be group_address(group), but it would not work
         # when fired manual + ':' and manual group_address need to be removed
 
-        self.round = start_round
-        """ self.round is depreciated"""
         self.time = start_round
         """ self.time, contains the time set with simulation.advance_round(time)
             you can set time to anything you want an integer or
@@ -149,7 +147,7 @@ class Agent(Logger, Trade, Messenger, Goods):
     def _advance_round(self, time, str_time):
         super()._advance_round(time)
         self._inventory._advance_round()
-        self.contracts._advance_round(self.round)
+        self.contracts._advance_round(self.time)
 
         if self._check_every_round_for_lost_messages:
             self._check_for_lost_messages()
@@ -157,13 +155,11 @@ class Agent(Logger, Trade, Messenger, Goods):
         for ingredient, units, product in self._resources:
             self._inventory.create(product, self[ingredient] * units)
 
-        self.round = time
         self._str_round = str_time
         self.time = time
 
         if self.conditional_logging:
-            if self.round in self.log_rounds:
-                print("***", self.round)
+            if self.time in self.log_rounds:
                 self.log_this_round = True
             else:
                 self.log_this_round = False

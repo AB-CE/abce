@@ -1,5 +1,3 @@
-from __future__ import division
-from __future__ import print_function
 import random
 from abce.agent import Agent
 from abce import NotEnoughGoods
@@ -92,7 +90,7 @@ class Buy(Agent):
         self.destroy('cookies')
 
     def all_tests_completed(self):
-        if self.round == self.last_round and self.id == 0:
+        if self.time == self.last_round and self.id == 0:
             assert all(self.tests.values(
             )), 'not all tests have been run; ABCE workes correctly, restart the unittesting to do all tests %s' % self.tests
             print('Test abce.buy:\t\t\t\t\tOK')
