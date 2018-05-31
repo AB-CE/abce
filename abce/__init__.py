@@ -225,10 +225,7 @@ class Simulation(object):
         print("time only simulation %6.2f" %
               (time.time() - self.clock))
 
-        self.database_queue.put('close')
-
-        while self._db.is_alive():
-            time.sleep(0.05)
+        self._db.finalize(self.sim_parameters)
 
         try:
             self.pool.close()
@@ -238,7 +235,6 @@ class Simulation(object):
 
         print("time with data %6.2f" %
               (time.time() - self.clock))
-        self._db._write_description_file(self.sim_parameters)
 
     def build_agents(self, AgentClass, group_name,
                      number=None,
