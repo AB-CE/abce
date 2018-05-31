@@ -17,10 +17,6 @@ class Goods:
         self.destroy(service)
         self.create(service, getattr(self, derived_from) * units)
 
-    def refresh_services(self, service, derived_from, units=1):
-        self.destroy(service)
-        self.create(service, getattr(self, derived_from) * units)
-
     def possession(self, good):
         """ returns how much of good an agent possesses.
 
@@ -81,6 +77,12 @@ class Goods:
             NotEnoughGoods: when goods are insufficient
         """
         self._inventory.destroy(good, quantity)
+
+    def transform(self, inputs, outputs):
+        for good, quantity in inputs.items():
+            self._inventory.destroy(good, quantity)
+        for good, quantity in outputs.items():
+            self._inventory.create(good, quantity)
 
     def __getitem__(self, good):
         return self._inventory.haves[good]
