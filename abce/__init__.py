@@ -143,8 +143,7 @@ class Simulation(object):
         w.graphs()
     """
 
-    def __init__(self, name='abce', random_seed=None, trade_logging='off', processes=1,
-                 check_unchecked_msgs=False, dbplugin=None, dbpluginargs=[], path='auto'):
+    def __init__(self, name='abce', random_seed=None, trade_logging='off', processes=1, dbplugin=None, dbpluginargs=[], path='auto'):
         """
         """
         try:
@@ -152,7 +151,6 @@ class Simulation(object):
         except NameError:
             pass
 
-        self.check_unchecked_msgs = check_unchecked_msgs
 
         self.agents_created = False
         self._messages = {}
@@ -330,11 +328,7 @@ class Simulation(object):
         group = Group(self, self.scheduler, None,
                       agent_arguments={'group': group_name,
                                        'trade_logging': self.trade_logging_mode,
-                                       'database': self.database_queue,
-                                       'check_unchecked_msgs': self.check_unchecked_msgs,
-                                       'expiring': self.expiring,
-                                       'perishable': self.perishable,
-                                       'resource_endowment': self.resource_endowment})
+                                       'database': self.database_queue})
         group.create_agents(AgentClass, agent_parameters=agent_parameters, **parameters)
         self.agents_created = True
         self._groups[group_name] = group

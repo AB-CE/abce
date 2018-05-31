@@ -48,7 +48,6 @@ class Messenger:
         self._msgs = {}
         self.inbox = []
         self._out = []
-        self._check_every_round_for_lost_messages = simulation_parameters['check_unchecked_msgs']
 
     def send(self, receiver, topic, content):
         """ sends a message to agent. Agents receive it
@@ -226,7 +225,9 @@ class Messenger:
         self._out[hash(receiver) % self._processes].append(
             (receiver, (typ, msg)))
 
-    def _check_for_lost_messages(self):
+    def check_for_lost_messages(self):
+        """ Checks whether there are any messages, or trade requests that have not been
+        processed """
         for offer in list(self.given_offers.values()):
             if offer.made < self.round:
                 print("in agent %s this offers have not been retrieved:" %
