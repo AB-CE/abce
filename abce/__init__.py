@@ -153,13 +153,7 @@ class Simulation(object):
             pass
 
         self.agents_created = False
-        self._messages = {}
-        self._resource_command_group = {}
-        self._db_commands = {}
-        self._build_first_run = True
         self.resource_endowment = []
-        self.perishable = []
-        self.expiring = []
 
         if path is not None:
             os.makedirs(os.path.abspath('.') + '/result/', exist_ok=True)
@@ -197,8 +191,6 @@ class Simulation(object):
             manager = mp.Manager()
             self.database_queue = manager.Queue()
 
-        self.messagess = {}
-
         self._db = Database(
             self.path,
             self.database_queue,
@@ -214,7 +206,6 @@ class Simulation(object):
         self.sim_parameters = OrderedDict(
             {'name': name, 'random_seed': random_seed})
         self.clock = time.time()
-        self.database = self
         self._time = None
         """ The current time set with simulation.advance_round(time)"""
         self._groups = {}
@@ -332,7 +323,6 @@ class Simulation(object):
         group.create_agents(AgentClass, agent_parameters=agent_parameters, **parameters)
         self.agents_created = True
         self._groups[group_name] = group
-        self.messagess[group_name] = []
         return group
 
     def create_agents(self, AgentClass, group_name, simulation_parameters=None, agent_parameters=None, number=1):
