@@ -46,12 +46,9 @@ Furthermore, every round needs to be announced using simulation.advance_round(ti
 where time is any representation of time.
 
 """
-import datetime
-import os
 import re
 import time
 import random
-import json
 import queue
 import multiprocessing as mp
 from collections import OrderedDict
@@ -153,33 +150,7 @@ class Simulation(object):
             pass
 
         self.agents_created = False
-        self._messages = {}
-        self._resource_command_group = {}
-        self._db_commands = {}
-        self._build_first_run = True
         self.resource_endowment = []
-        self.perishable = []
-        self.expiring = []
-
-        if path is not None:
-            os.makedirs(os.path.abspath('.') + '/result/', exist_ok=True)
-            if path == 'auto':
-                self.path = (os.path.abspath('.') + '/result/' + name + '_' +
-                             datetime.datetime.now().strftime("%Y-%m-%d_%H-%M"))
-                """ the path variable contains the path to the simulation outcomes
-                it can be used to generate your own graphs as all resulting
-                csv files are there.
-                """
-            else:
-                self.path = path
-            while True:
-                try:
-                    os.makedirs(self.path)
-                    break
-                except OSError:
-                    self.path += 'I'
-        else:
-            self.path = None
 
         self.trade_logging_mode = trade_logging
         if self.trade_logging_mode not in ['individual', 'group', 'off']:
@@ -197,14 +168,14 @@ class Simulation(object):
             manager = mp.Manager()
             self.database_queue = manager.Queue()
 
-        self.messagess = {}
-
         self._db = Database(
-            self.path,
+            path,
+            name,
             self.database_queue,
             trade_log=self.trade_logging_mode != 'off',
             plugin=dbplugin,
             pluginargs=dbpluginargs)
+        self.path = self._db.directory
         self._db.start()
 
         if random_seed is None or random_seed == 0:
@@ -214,7 +185,6 @@ class Simulation(object):
         self.sim_parameters = OrderedDict(
             {'name': name, 'random_seed': random_seed})
         self.clock = time.time()
-        self.database = self
         self._time = None
         """ The current time set with simulation.advance_round(time)"""
         self._groups = {}
@@ -268,7 +238,7 @@ class Simulation(object):
 
         print("time with data %6.2f" %
               (time.time() - self.clock))
-        self._write_description_file()
+        self._db._write_description_file(self.sim_parameters)
 
     def build_agents(self, AgentClass, group_name,
                      number=None,
@@ -332,7 +302,6 @@ class Simulation(object):
         group.create_agents(AgentClass, agent_parameters=agent_parameters, **parameters)
         self.agents_created = True
         self._groups[group_name] = group
-        self.messagess[group_name] = []
         return group
 
     def create_agents(self, AgentClass, group_name, simulation_parameters=None, agent_parameters=None, number=1):
@@ -360,15 +329,6 @@ class Simulation(object):
         """
         group = self._groups[group]
         group.delete_agents(ids)
-
-    def _write_description_file(self):
-        if self.path is not None:
-            description = open(os.path.abspath(
-                self.path + '/description.txt'), 'w')
-            description.write(json.dumps(self.sim_parameters,
-                                         indent=4,
-                                         skipkeys=True,
-                                         default=lambda x: 'not_serializeable'))
 
     def graph(self):
         """ after the simulation is run, graphs() shows graphs of all data

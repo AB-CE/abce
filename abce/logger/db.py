@@ -14,6 +14,9 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations
 # under the License.
+import datetime
+import json
+import os
 import threading
 from collections import defaultdict
 
@@ -28,9 +31,29 @@ class DbDatabase(threading.Thread):
     """Separate thread that receives data from in_sok and saves it into a
     database"""
 
-    def __init__(self, directory, in_sok, trade_log, plugin=None, pluginargs=[]):
+    def __init__(self, directory, name, in_sok, trade_log, plugin=None, pluginargs=[]):
         threading.Thread.__init__(self)
+
+        # setting up directory
         self.directory = directory
+        if directory is not None:
+            os.makedirs(os.path.abspath('.') + '/result/', exist_ok=True)
+            if directory == 'auto':
+                self.directory = (os.path.abspath('.') + '/result/' + name + '_' +
+                             datetime.datetime.now().strftime("%Y-%m-%d_%H-%M"))
+                """ the directory variable contains the directory of the simulation outcomes
+                it can be used to generate your own graphs as all resulting
+                csv files are there.
+                """
+            else:
+                self.directory = directory
+            while True:
+                try:
+                    os.makedirs(self.directory)
+                    break
+                except OSError:
+                    self.directory += 'I'
+
         self.panels = {}
         self.in_sok = in_sok
         self.data = {}
@@ -143,3 +166,12 @@ class DbDatabase(threading.Thread):
                     'aggregate___%s' % group, primary_id='index')
                 self.table_aggregates[group].insert(result)
             self.aggregation[group].clear()
+
+    def _write_description_file(self, data):
+        if self.directory is not None:
+            with open(os.path.abspath(self.directory + '/description.txt'), 'w') as description:
+                description.write(json.dumps(
+                    data,
+                    indent=4,
+                    skipkeys=True,
+                    default=lambda x: 'not_serializeable'))
