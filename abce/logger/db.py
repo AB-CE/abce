@@ -18,6 +18,7 @@ import datetime
 import json
 import os
 import threading
+import time
 from collections import defaultdict
 
 import dataset
@@ -166,6 +167,12 @@ class DbDatabase(threading.Thread):
                     'aggregate___%s' % group, primary_id='index')
                 self.table_aggregates[group].insert(result)
             self.aggregation[group].clear()
+
+    def finalize(self, data):
+        self.in_sok.put('close')
+        while self.is_alive():
+            time.sleep(0.05)
+        self._write_description_file(data)
 
     def _write_description_file(self, data):
         if self.directory is not None:
