@@ -185,7 +185,7 @@ class Messenger:
             elif typ == 'abce_forceexecute':
                 getattr(self, msg[0])(*msg[1:])
             elif typ == 'forceexecute':
-                getattr(self, msg[0])(msg[1:])
+                getattr(self, msg[0])(*msg[1:])
             else:
                 self._msgs.setdefault(typ, []).append(msg)
         self.inbox.clear()
