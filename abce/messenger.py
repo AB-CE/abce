@@ -178,22 +178,6 @@ class Messenger:
                 self._inventory.haves[msg[0]] += msg[1]
             elif typ == '_q':
                 self._quotes[msg.id] = msg
-            elif typ == '!o':
-                self._contract_offers[msg.good].append(msg)
-            elif typ == '_ac':
-                contract = self._contract_offers_made.pop(msg.id)
-                if contract.pay_group == self.group and contract.pay_id == self.id:
-                    self._contracts_pay[contract.good][contract.id] = contract
-                else:
-                    self._contracts_deliver[contract.good][contract.id] = contract
-            elif typ == '_dp':
-                if msg.pay_group == self.group and msg.pay_id == self.id:
-                    self._inventory[msg.good] += msg.quantity
-                    self._contracts_pay[msg.good][msg.id].delivered.append(self.round)
-                else:
-                    self._inventory['money'] += msg.quantity * msg.price
-                    self._contracts_deliver[msg.good][msg.id].paid.append(self.round)
-
             elif typ == '!d':
                 if msg[0] == 'r':
                     del self._contracts_pay[msg[1]][msg[2]]
