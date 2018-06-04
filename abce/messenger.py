@@ -199,6 +199,8 @@ class Messenger:
                     del self._contracts_pay[msg[1]][msg[2]]
                 if msg[0] == 'd':
                     del self._contracts_deliver[msg[1]][msg[2]]
+            elif typ == 'forceexecute':
+                getattr(self, msg[0])(msg[1:])
             else:
                 self._msgs.setdefault(typ, []).append(msg)
         self.inbox.clear()
