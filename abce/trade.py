@@ -454,7 +454,7 @@ class Trade:
                       offer_id,
                       self.time)
         self.given_offers[offer_id] = offer
-        self._send(receiver, '!s', offer)
+        self._send(receiver, 'abce_propose_sell', offer)
         return offer
 
     def buy(self, receiver, good,
@@ -508,7 +508,7 @@ class Trade:
                       False,
                       offer_id,
                       self.time)
-        self._send(receiver, '!b', offer)
+        self._send(receiver, 'abce_propose_buy', offer)
         self.given_offers[offer_id] = offer
         return offer
 
@@ -573,7 +573,7 @@ class Trade:
             self._inventory.haves[offer.good] -= quantity
             self._inventory.haves[offer.currency] += quantity * offer.price
         offer.final_quantity = quantity
-        self._send(offer.sender, '_p', (offer.id, quantity))
+        self._send(offer.sender, 'abce_receive_accept', (offer.id, quantity))
         del self._polled_offers[offer.id]
         if offer.sell:
             return {offer.good: - quantity, offer.currency: money_amount}
@@ -593,7 +593,7 @@ class Trade:
                 the offer the other party made
                 (offer not quote!)
         """
-        self._send(offer.sender, '_r', offer.id)
+        self._send(offer.sender, 'abce_receive_reject', offer.id)
 
     def reject(self, offer):
         """ Rejects and offer, if the offer is subsequently accepted in the
@@ -698,7 +698,7 @@ class Trade:
         if quantity > available:
             quantity = available
         self._inventory.haves[good] -= quantity
-        self._send(receiver, '_g', [good, quantity])
+        self._send(receiver, 'abce_receive_good', [good, quantity])
         return {good: quantity}
 
     def take(self, receiver, good, quantity, epsilon=epsilon):
