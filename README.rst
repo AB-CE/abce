@@ -7,12 +7,31 @@ and consumption. The modeler can concentrate on implementing
 the logic and decisions of an agents; ABCE takes care of all exchange
 of goods and production and consumption.
 
+.. image:: https://zenodo.org/badge/4157636.svg
+   :target: https://zenodo.org/badge/latestdoi/4157636
+
+.. image:: https://travis-ci.org/AB-CE/abce.svg?branch=master
+   :alt: ABCE build status on Travis CI
+   :target: https://travis-ci.org/AB-CE/abce
+
+.. image:: https://ci.appveyor.com/api/projects/status/c2w73u9im2b87reb?svg=true
+   :alt: ABCE build status on Appveyor CI
+   :target: https://ci.appveyor.com/project/AB-CE/abce
+
+.. image:: https://img.shields.io/pypi/v/abce.svg
+   :alt:  Pypi version
+   :target: https://pypi.python.org/pypi/abce
+
+.. image:: https://readthedocs.org/projects/abce/badge/?version=master
+   :alt:  readthedocs
+   :target: https://abce.readthedocs.io
+
 .. figure:: https://raw.githubusercontent.com/AB-CE/abce/master/docs/cheesegrater.png
    :target: http://35.176.189.179/ABCE/
    :scale: 20 %
    :align: right
 
-In ABCE  goods have the physical properties of
+In ABCE, goods have the physical properties of
 goods in reality in the sense that if agent A gives a good to agent B, then
 - unlike information - agent B receives the good and agent B does not have
 the good anymore.
@@ -47,26 +66,6 @@ ABCE does support an accounting framework
 for financial simulations. `ESL can be downloaded here <https://github.com/AB-CE/ABCESL>`_.
 
 ABCE runs on macOS, Windows, and Linux. ABCE runs 10x faster on pypy!
-
-.. image:: https://zenodo.org/badge/4157636.svg
-   :target: https://zenodo.org/badge/latestdoi/4157636
-
-.. image:: https://travis-ci.org/AB-CE/abce.svg?branch=master
-   :alt: ABCE build status on Travis CI
-   :target: https://travis-ci.org/AB-CE/abce
-
-.. image:: https://ci.appveyor.com/api/projects/status/c2w73u9im2b87reb?svg=true
-   :alt: ABCE build status on Appveyor CI
-   :target: https://ci.appveyor.com/project/AB-CE/abce
-
-.. image:: https://img.shields.io/pypi/v/abce.svg
-   :alt:  Pypi version
-   :target: https://pypi.python.org/pypi/abce
-
-.. image:: https://readthedocs.org/projects/abce/badge/?version=master
-   :alt:  readthedocs
-   :target: https://abce.readthedocs.io
-
 
 Install with::
 
