@@ -155,35 +155,34 @@ class Messenger:
         """ agent receives all messages and objects that have been send in this
         subround and deletes the offers that where retracted, but not executed.
 
-        '_o': registers a new offer
         '_d': delete received that the issuing agent retract
-        '_p': clears a made offer that was accepted by the other agent
-        '_r': deletes an offer that the other agent rejected
-        '_g': recive a 'free' good from another party
+        'abce_receive_accept': clears a made offer that was accepted by the other agent
+        'abce_receive_reject': deletes an offer that the other agent rejected
+        'abce_receive_good': recive a 'free' good from another party
         """
         for typ, msg in self.inbox:
-            if typ == '!b':
+            if typ == 'abce_propose_buy':
                 self._open_offers_buy[msg.good][msg.id] = msg
-            elif typ == '!s':
+            elif typ == 'abce_propose_sell':
                 self._open_offers_sell[msg.good][msg.id] = msg
-            elif typ == '_p':
+            elif typ == 'abce_receive_accept':
                 offer = self._receive_accept(msg)
                 if self.trade_logging == 2:
                     self._log_receive_accept_group(offer)
                 elif self.trade_logging == 1:
                     self._log_receive_accept_agent(offer)
-            elif typ == '_r':
+            elif typ == 'abce_receive_reject':
                 self._receive_reject(msg)
-            elif typ == '_g':
+            elif typ == 'abce_receive_good':
                 self._inventory.haves[msg[0]] += msg[1]
-            elif typ == '_q':
+            elif typ == 'abce_receive_quote':
                 self._quotes[msg.id] = msg
             elif typ == '!d':
                 if msg[0] == 'r':
                     del self._contracts_pay[msg[1]][msg[2]]
                 if msg[0] == 'd':
                     del self._contracts_deliver[msg[1]][msg[2]]
-            elif typ == 'forceexecute':
+            elif typ == 'abce_forceexecute':
                 getattr(self, msg[0])(*msg[1:])
             else:
                 self._msgs.setdefault(typ, []).append(msg)
