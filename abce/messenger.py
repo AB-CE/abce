@@ -49,10 +49,18 @@ class Messenger:
         self.inbox = []
         self._out = []
 
-    def send(self, receiver, topic, content):
-        """ sends a message to agent. Agents receive it
+    def send_envelope(self, receiver, topic, content):
+        """ sends a message to agent, including sender, receiver and topic. Agents receive it
         at the beginning of next round with :meth:`~abceagent.Messenger.get_messages` or
         :meth:`~abceagent.Messenger.get_messages_all`.
+
+        The message that arrives has the following properties::
+        message.sender
+        message.receiver
+        message.topic
+        message.content
+
+        Important the content, when received is in message.content
 
         Args::
 
@@ -64,28 +72,29 @@ class Messenger:
                 string, with which this message can be received
 
             content:
-                string, dictionary or class, that is send.
+                variable, tuple, dictionary or class, that is send.
 
         Example::
 
             ... household_01 ...
-            self.message('firm', 01, 'quote_sell', {'good':'BRD', 'quantity': 5})
+            self.send_envelope('firm', 01, 'quote_sell', {'good':'BRD', 'quantity': 5})
 
             ... firm_01 - one subround later ...
+
             requests = self.get_messages('quote_sell')
             for req in requests:
-                self.sell(req.sender, req.good, reg.quantity, self.price[req.good])
+                self.make_offer(req.sender, req.content['good'], reg['quantity'], self.price[req.good])
 
         Example2::
 
-         self.message('firm', 01, 'm', "hello my message")
+         self.send_envelope('firm', 01, 'm', "hello my message")
 
         """
         msg = Message(sender=self.name,
                       receiver=receiver,
                       topic=topic,
                       content=content)
-        self._send(receiver, topic, msg)
+        self.send(receiver, topic, msg)
 
     def get_messages(self, topic='m'):
         """ self.messages() returns all new messages send with :meth:`~abceagent.Messenger.message`
@@ -198,11 +207,43 @@ class Messenger:
         self._out = defaultdict(list)
         return out
 
-    def _send(self, receiver, typ, msg):
-        """ sends a message to 'receiver_group', 'receiver_id'
+    def send(self, receiver, topic, msg):
+        """ sends a message to a receiver
         The agents receives it at the begin of each subround.
+
+        Args:
+
+        sends a message to agent. Agents receive it
+        at the beginning of next round with :meth:`~abceagent.Messenger.get_messages`(topic) or
+        :meth:`~abceagent.Messenger.get_messages_all`.
+
+        Args:
+            receiver:
+                to whom to send the message
+            topic:
+                topic, under which to receive the message
+            msg:
+                Some datatype with a message
+
+
+        Example::
+
+            ... household_01 ...
+            self.send(('firm', 01), 'quote_sell', {'good':'BRD', 'quantity': 5, 'sender': self.name})
+
+            ... firm_01 - one subround later ...
+
+            requests = self.get_messages('quote_sell')
+
+            for req in requests:
+                self.make_offer(req['sender'], req['good'], reg['quantity'], self.price[req.good])
+
+        Example2::
+
+         self.send(('firm', 01), 'm', "hello my message")
+
         """
-        self._out.append((receiver, (typ, msg)))
+        self._out.append((receiver, (topic, msg)))
 
     def _send_multiprocessing(self, receiver, typ, msg):
         """ Is used to overwrite _send in multiprocessing mode.
