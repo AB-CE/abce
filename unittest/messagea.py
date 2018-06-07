@@ -11,4 +11,5 @@ class MessageA(abce.Agent):
         self.send(('messageb', self.id), 'msg', 'hello there')
 
     def recvmsg(self):
-        assert self.get_messages('msg')[0].content == 'hello there'
+        msg = self.get_messages('msg')[0]
+        assert msg == 'hello there'
