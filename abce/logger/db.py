@@ -18,6 +18,7 @@ import datetime
 import json
 import os
 import threading
+import multiprocessing
 import time
 from collections import defaultdict
 
@@ -28,12 +29,12 @@ from .postprocess import to_csv
 import queue
 
 
-class DbDatabase(threading.Thread):
+class DbDatabase:
     """Separate thread that receives data from in_sok and saves it into a
     database"""
 
     def __init__(self, directory, name, in_sok, trade_log, plugin=None, pluginargs=[]):
-        threading.Thread.__init__(self)
+        super().__init__()
 
         # setting up directory
         self.directory = directory
@@ -182,3 +183,13 @@ class DbDatabase(threading.Thread):
                     indent=4,
                     skipkeys=True,
                     default=lambda x: 'not_serializeable'))
+
+
+class ThreadingDatabase(DbDatabase, threading.Thread):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+class MultiprocessingDatabase(DbDatabase, multiprocessing.Process):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
