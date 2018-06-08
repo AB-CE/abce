@@ -176,7 +176,6 @@ class Simulation(object):
         else:
             Database = ThreadingDatabase
 
-
         self._db = Database(
             path,
             name,
