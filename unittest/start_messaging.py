@@ -13,6 +13,7 @@ class MessageA(abce.Agent):
         msg = self.get_messages('msg')[0]
         assert msg == 'hello there'
 
+
 class MessageB(abce.Agent):
     def init(self):
         # your agent initialization goes here, not in __init__

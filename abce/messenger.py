@@ -50,7 +50,8 @@ class Messenger:
         self._out = []
 
     def send_envelope(self, receiver, topic, content):
-        """ sends a message to agent, including sender, receiver and topic. Agents receive it
+        """ sends an envelope to the agent, the envelope contains the message (content),
+        sender, receiver and topic. Agents receive it
         at the beginning of next round with :meth:`~abceagent.Messenger.get_messages` or
         :meth:`~abceagent.Messenger.get_messages_all`.
 
@@ -97,9 +98,9 @@ class Messenger:
         self.send(receiver, topic, msg)
 
     def get_messages(self, topic='m'):
-        """ self.messages() returns all new messages send with :meth:`~abceagent.Messenger.message`
-        (topic='m'). The order is randomized. self.messages(topic) returns all
-        messages with a topic.
+        """ self.get_messages() returns all new messages send with :meth:`~abceagent.Messenger.send`
+        and :meth:`~abceagent.Messenger.send_envelope`. The order is randomized. self.get_messages(topic) returns all
+        messages with a particular topic.
 
         A message is a string with the message. You can also retrieve the sender
         by `message.sender_group` and `message.sender_id` and view the topic with
@@ -125,7 +126,7 @@ class Messenger:
         Example::
 
          ... agent_01 ...
-         self.messages('firm_01', 'potential_buyers', 'hello message')
+         self.send_envelope('firm_01', 'potential_buyers', 'hello message')
 
          ... firm_01 - one subround later ...
          potential_buyers = get_messages('potential_buyers')
