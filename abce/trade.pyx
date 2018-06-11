@@ -413,8 +413,8 @@ class Trade:
             ret.sort(key=lambda objects: objects.price, reverse=descending)
         return ret
 
-    def sell(self, receiver,
-             good, double quantity, double price, str currency='money', double epsilon=epsilon):
+    def make_offer(self, receiver,
+                   good, double quantity, double price, str currency='money', double epsilon=epsilon):
         """ commits to sell the quantity of good at price
 
         The good is not available for the agent. When the offer is
@@ -453,7 +453,7 @@ class Trade:
         Example::
 
             def subround_1(self):
-                self.offer = self.sell('household', 1, 'cookies', quantity=5, price=0.1)
+                self.offer = self.make_offer('household', 1, 'cookies', quantity=5, price=0.1)
 
             def subround_2(self):
                 offer = self.info(self.offer)
@@ -496,7 +496,7 @@ class Trade:
         self._send(receiver, 'abce_propose_sell', offer)
         return offer
 
-    def buy(self, receiver, good,
+    def make_bid(self, receiver, good,
             double quantity, double price, str currency='money', double epsilon=epsilon):
         """ commits to sell the quantity of good at price
 
@@ -514,7 +514,7 @@ class Trade:
                 name of the good
 
             quantity:
-                maximum units disposed to buy at this price
+                maximum units available to buy at this price
 
             price:
                 price per unit
@@ -561,8 +561,8 @@ class Trade:
         return offer
 
     def accept(self, Offer offer, double quantity=-999, double epsilon=epsilon):
-        """ The buy or sell offer is accepted and cleared. If no quantity is
-        given the offer is fully accepted; If a quantity is given the offer is
+        """ The offer or bid is accepted and cleared. If no quantity is
+        given the offer/bid is fully accepted; If a quantity is given the offer/bid is
         partial accepted.
 
         Args:
@@ -792,7 +792,7 @@ class Trade:
                 a fraction of number to high or low. You can increase the
                 floating point tolerance. See troubleshooting -- floating point problems
         """
-        self.buy(receiver, good=good, quantity=quantity, price=0, epsilon=epsilon)
+        self.make_bid(receiver, good=good, quantity=quantity, price=0, epsilon=epsilon)
 
 
 # TODO when cython supports function overloading overload this function with compare_with_ties(int x, int y)

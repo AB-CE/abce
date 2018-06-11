@@ -389,7 +389,7 @@ class Trade:
             ret.sort(key=lambda objects: objects.price, reverse=descending)
         return ret
 
-    def sell(self, receiver,
+    def make_offer(self, receiver,
              good, quantity, price, currency='money', epsilon=epsilon):
         """ Sends a offer to sell a particular good to somebody. The amount promised
         is reserved. (self.free(good), shows the not yet reserved goods)
@@ -402,7 +402,7 @@ class Trade:
                 name of the good
 
             quantity:
-                maximum units disposed to buy at this price
+                maximum units available to buy at this price
 
             price:
                 price per unit
@@ -457,7 +457,7 @@ class Trade:
         self._send(receiver, 'abce_propose_sell', offer)
         return offer
 
-    def buy(self, receiver, good,
+    def make_bid(self, receiver, good,
             quantity, price, currency='money', epsilon=epsilon):
         """ Sends a offer to buy a particular good to somebody. The money promised
         is reserved. (self.free(currency), shows the not yet reserved goods)
@@ -471,7 +471,7 @@ class Trade:
                 name of the good
 
             quantity:
-                maximum units disposed to buy at this price
+                maximum units willing to buy at this price
 
             price:
                 price per unit
@@ -513,8 +513,8 @@ class Trade:
         return offer
 
     def accept(self, offer, quantity=-999, epsilon=epsilon):
-        """ The buy or sell offer is accepted and cleared. If no quantity is
-        given the offer is fully accepted; If a quantity is given the offer is
+        """ The offer or bid is accepted and cleared. If no quantity is
+        given the offer/bid is fully accepted; If a quantity is given the offer/bid is
         partial accepted.
 
         Args:
@@ -722,7 +722,7 @@ class Trade:
                 a fraction of number to high or low. You can increase the
                 floating point tolerance. See troubleshooting -- floating point problems
         """
-        self.buy(receiver, good=good, quantity=quantity, price=0, epsilon=epsilon)
+        self.make_bid(receiver, good=good, quantity=quantity, price=0, epsilon=epsilon)
 
 
 def compare_with_ties(x, y):
