@@ -18,7 +18,7 @@ class Sell(abce.Agent):
             self.cookies = self['cookies']
             self.price = random.uniform(0.0001, 1)
             quantity = random.uniform(0, self.cookies)
-            self.offer = self.sell(receiver=('sell', self.id + 1),
+            self.offer = self.make_offer(receiver=('sell', self.id + 1),
                                    good='cookies', quantity=quantity, price=self.price)
             assert self.not_reserved('cookies') == self.cookies - quantity
 
