@@ -12,6 +12,8 @@ import start_agent_numerical_indexing
 import start_individual_access
 import start_service
 import start_transform
+import start_messaging
+import start_messaging_with_envelope
 
 
 def run_test(name, test):
@@ -41,3 +43,5 @@ if __name__ == '__main__':
     run_test("start_individual_access", start_individual_access)
     run_test("Test service", start_service)
     run_test("Test Transform method", start_transform)
+    run_test("Messaging", start_messaging)
+    run_test("Messaging with envelope", start_messaging_with_envelope)

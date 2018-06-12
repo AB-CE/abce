@@ -17,7 +17,7 @@ class Give(abce.Agent):
             quantity = random.uniform(0, self['cookies'])
             self.give(('give', 1), 'cookies', quantity)
             assert self['cookies'] == self.cookies - quantity
-            self.send(('give', 1), topic='tpc', content=quantity)
+            self.send_envelope(('give', 1), topic='tpc', content=quantity)
 
     def two(self):
         if self.id == 1:

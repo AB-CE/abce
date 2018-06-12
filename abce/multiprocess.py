@@ -47,7 +47,7 @@ class ProcessorGroup(SingleProcess):
         names = {}
         for id, ap in enumerate(agent_parameters, maxid):
             agent = Agent(id, ap, {**default_sim_params, **simulation_parameters})
-            agent._send = agent._send_multiprocessing
+            agent.send = agent._send_multiprocessing
             agent._out = defaultdict(list)
             agent.init(**ChainMap(simulation_parameters, ap))
             if hash(agent.name) % self.processes == self.batch:
