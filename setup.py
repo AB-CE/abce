@@ -61,7 +61,7 @@ if not readthedocs:
                                  'tornado == 4.3']
 
 
-version = '0.9.5b0'
+version = '0.9.6b0'
 
 
 setup(name='abce',
