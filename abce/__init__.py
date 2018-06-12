@@ -52,7 +52,7 @@ import random
 import queue
 import multiprocessing as mp
 from collections import OrderedDict
-from .logger import DbDatabase as Database  # noqa: F401
+from .logger import ThreadingDatabase, MultiprocessingDatabase
 from .agent import Agent  # noqa: F401
 from .group import Group
 from .notenoughgoods import NotEnoughGoods  # noqa: F401
@@ -141,7 +141,7 @@ class Simulation(object):
     """
 
     def __init__(self, name='abce', random_seed=None, trade_logging='off', processes=1, dbplugin=None,
-                 dbpluginargs=[], path='auto'):
+                 dbpluginargs=[], path='auto', multithreading_database=False):
         """
         """
         try:
@@ -162,11 +162,19 @@ class Simulation(object):
 
         if processes == 1:
             self.scheduler = SingleProcess()
-            self.database_queue = queue.Queue()
         else:
             self.scheduler = MultiProcess(processes)
+
+        if processes == 1 and not multithreading_database:
+            self.database_queue = queue.Queue()
+        else:
             manager = mp.Manager()
             self.database_queue = manager.Queue()
+
+        if multithreading_database:
+            Database = MultiprocessingDatabase
+        else:
+            Database = ThreadingDatabase
 
         self._db = Database(
             path,

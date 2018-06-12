@@ -188,9 +188,9 @@ def basiclayout(Form, simulation, title, top_bar=None, story=None,
 def newest_subdirectory(directory='.', name=''):
     """ Returns the newes subdirectory in the 'directory/name' directory """
     directory = os.path.abspath(directory)
-    all_subdirs = [os.path.join(directory, name)
-                   for name in os.listdir(directory)
-                   if os.path.isdir(os.path.join(directory, name))]
+    all_subdirs = [os.path.join(directory, dirname)
+                   for dirname in os.listdir(directory)
+                   if os.path.isdir(os.path.join(directory, dirname))]
     all_subdirs = sorted(all_subdirs, key=os.path.getmtime, reverse=True)
     for subdir in all_subdirs:
         if name in subdir:
