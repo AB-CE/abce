@@ -25,6 +25,19 @@ class Chain:
             for element in it:
                 yield element
 
+    def __repr__(self):
+        return repr(list(self.iterables))
+
+    def __str__(self):
+        return str(list(self.iterables))
+
+    def __getitem__(self, item):
+        try:
+            return self.iterables[item]
+        except IndexError:
+            self.iterables = [i for i in iter(self)]
+            return self.iterables[item]
+
 
 class Action:
     # This allows actions of Group to be combined. For example::
