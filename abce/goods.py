@@ -1,5 +1,5 @@
 from .inventory import Inventory
-
+from .notenoughgoods import NotEnoughGoods
 
 class Goods:
     """ Each agent can access his goods. self['good_name'] shows the quantity of goods of a certain type an agent
@@ -79,6 +79,20 @@ class Goods:
         self._inventory.destroy(good, quantity)
 
     def transform(self, inputs, outputs):
+        """ Transforms a dictionary of goods into a new dictionary of goods.
+        Raises NotEnoughGoods exception if not enough input goods are available
+
+        Args:
+            inputs: dictionary of goods and quantities, that are used in the transformation
+            outputs: dictionary of goods and quantities, that are created by the transformation
+
+        Example::
+
+            self.transform(inputs={'gold': 1, 'copper': 4}, outputs={'redgold': 5})
+        """
+        for good, quantity in inputs.items():
+            if self._inventory.haves[good] < quantity:
+                raise NotEnoughGoods(self.name, good, quantity - self._inventory.haves[good])
         for good, quantity in inputs.items():
             self._inventory.destroy(good, quantity)
         for good, quantity in outputs.items():
