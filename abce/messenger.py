@@ -256,11 +256,11 @@ class Messenger:
         """ Checks whether there are any messages, or trade requests that have not been
         processed """
         for offer in list(self.given_offers.values()):
-            if offer.made < self.round:
+            if offer.made < self.time:
                 print("in agent %s this offers have not been retrieved:" %
                       self.name_without_colon)
                 for offer in list(self.given_offers.values()):
-                    if offer.made < self.round:
+                    if offer.made < self.time:
                         print(offer.__repr__())
                 raise Exception('%s_%i: There are offers have been made before'
                                 'last round and not been retrieved in this'
