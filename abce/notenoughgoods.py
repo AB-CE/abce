@@ -38,4 +38,4 @@ class NotEnoughGoods(Exception):
         Exception.__init__(self)
 
     def __str__(self):
-        return repr(str(self.name) + " " + str(self.amount_missing) + " of good '" + self.good + "' missing")
+        return repr(str(self.name) + " " + str(self.amount_missing) + " of good '" + str(self.good) + "' missing")
