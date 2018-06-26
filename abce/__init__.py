@@ -56,7 +56,7 @@ from .logger import ThreadingDatabase, MultiprocessingDatabase
 from .agent import Agent  # noqa: F401
 from .group import Group
 from .notenoughgoods import NotEnoughGoods  # noqa: F401
-from .contracts import Contracting  # noqa: F401
+from .agents import Firm, Household  # noqa: F401
 from .gui import gui, graph  # noqa: F401
 from .singleprocess import SingleProcess
 from .multiprocess import MultiProcess
