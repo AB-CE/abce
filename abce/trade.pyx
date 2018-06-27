@@ -161,7 +161,7 @@ class Trade:
 
     1. An agent sends an offer. :meth:`~.sell`
 
-       *The good offered is blocked and self.possession(...) does shows the decreased amount.*
+       *ABCE does not allow you to sell the same good twice; self.free(good) shows how much good is not reserved yet*
 
     2. **Next subround:** An agent receives the offer :meth:`~.get_offers`, and can
        :meth:`~.accept`, :meth:`~.reject` or partially accept it. :meth:`~.accept`
@@ -171,7 +171,7 @@ class Trade:
     3. **Next subround:**
 
        - in case of acceptance *the money is automatically credited.*
-       - in case of partial acceptance *the money is credited and part of the blocked good is unblocked.*
+       - in case of partial acceptance *the money is credited and part of the reserved good is unblocked.*
        - in case of rejection *the good is unblocked.*
 
     Analogously for buying: :meth:`~.buy`
@@ -516,11 +516,8 @@ class Trade:
         accordingly)
 
         Args:
-            receiver_group:
-                group of the receiving agent
-
-            receiver_id:
-                number of the receiving agent
+            receiver:
+                the receiving agent
 
             'good':
                 name of the good
