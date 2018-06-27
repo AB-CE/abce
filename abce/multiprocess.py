@@ -51,7 +51,7 @@ class ProcessorGroup(SingleProcess):
             agent._out = defaultdict(list)
             agent.init(**ChainMap(simulation_parameters, ap))
             if hash(agent.name) % self.processes == self.batch:
-                assert agent.name not in self.agents, agent.name
+                assert agent.name not in self.agents, ('Two agents with the same name %s' % str(agent.name))
                 agent._str_name = re.sub('[^0-9a-zA-Z_]', '', str(agent.name))
                 names[agent.name] = agent.name
                 agent._processes = self.processes
@@ -80,7 +80,11 @@ class ProcessorGroup(SingleProcess):
 
         for i in range(self.processes):
             for receiver, envelope in self.queue.get():
-                self.agents[receiver].inbox.append(envelope)
+                try:
+                    self.agents[receiver].inbox.append(envelope)
+                except KeyError:
+                    print(envelope)
+                    raise KeyError("Receiver %s does not exist" % str(name))
         return self.rets
 
 
