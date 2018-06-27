@@ -159,11 +159,12 @@ def basiclayout(Form, simulation, title, top_bar=None, story=None,
                         table, filename, ignore_initial_rounds)
                 else:
                     try:
-                        if max(table.get('id', [0])) == 0:
+                        try:
+                            titles, plots = make_panel_graphs(table, filename, ignore_initial_rounds)
+                        except KeyError as error:
+                            raise error
                             titles, plots = make_simple_graphs(
                                 table, filename, ignore_initial_rounds)
-                        else:
-                            titles, plots = make_panel_graphs(table, filename, ignore_initial_rounds)
                     except ValueError as error:
                         print(filename, 'not displayable: ValueError', error)
 
