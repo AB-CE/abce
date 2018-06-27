@@ -12,7 +12,7 @@ import start_agent_numerical_indexing
 import start_individual_access
 import start_service
 import start_transform
-
+import start_take
 
 def run_test(name, test):
     print(name + " test, 1 core")
@@ -41,3 +41,4 @@ if __name__ == '__main__':
     run_test("start_individual_access", start_individual_access)
     run_test("Test service", start_service)
     run_test("Test Transform method", start_transform)
+    run_test("Test taking", start_take)

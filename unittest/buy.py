@@ -32,7 +32,7 @@ class Buy(Agent):
         if self.id % 2 == 1:
             self.create('cookies', random.uniform(0, 10000))
             cookies = self['cookies']
-            oo = self.get_offers('cookies')
+            oo = self.get_bids('cookies')
             assert oo
             for offer in oo:
                 if random.randint(0, 10) == 0:
