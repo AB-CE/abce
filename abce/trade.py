@@ -103,7 +103,7 @@ class Offer(object):
             a unique identifier
     """
     def __init__(self, sender, receiver, good, quantity, price, currency,
-                 sell, id, made):
+                 sell, status, final_quantity, id, made, status_round):
         self.sender = sender
         self.receiver = receiver
         self.good = good
@@ -111,11 +111,11 @@ class Offer(object):
         self.quantity = quantity
         self.price = price
         self.sell = sell
-        self.status = 'new'
-        self.final_quantity = None
+        self.status = status
+        self.final_quantity = final_quantity
         self.id = id
         self.made = made
-        self.status_round = None
+        self.status_round = status_round
 
     def __repr__(self):
         return ("""<{sender: %s, receiver: %s, good: %s, quantity: %f, price: %f, currency: %f,
@@ -219,27 +219,54 @@ class Trade:
             self.database_connection.put(["trade_log", self._trade_log, self.time])
         self._trade_log = defaultdict(int)
 
-    def get_buy_offers_all(self, descending=False, sorted=True):
-        """ """
-        goods = list(self._open_offers_buy.keys())
-        return {good: self.get_buy_offers(good, descending, sorted) for good in goods}
+    def get_bids_all(self, descending=True, sorted=True):
+        """ returns all bids in a dictionary, with goods as key. The in each
+        goods-category the goods are ordered by price. The order can be reversed
+        by setting descending=False
 
-    def get_sell_offers_all(self, descending=False, sorted=True):
-        """ """
-        goods = list(self._open_offers_sell.keys())
-        return {good: self.get_sell_offers(good, descending, sorted) for good in goods}
+        *Bids that are not accepted in the same subround are
+        automatically rejected.* However you can also manually reject.
+
+        Args:
+
+         descending(=True):
+            False for descending True for ascending by price
+
+         sorted(=True):
+                Whether offers are sorted by price. Faster if False.
+
+        Returns:
+
+            a dictionary with good types as keys and list of :class:`abce.trade.Offer`
+            as values
+
+        Example::
+
+         oo = get_bids_all()
+         for good_category in oo:
+            print('The most expensive offer for good in category' + good_category
+            + ' is ' + good_category[0])
+            for bid in oo[good_category]:
+                if bid.price < 0.5:
+                    self.accept(bid)
+
+         for bid in oo.beer:
+            print(bid.price, bid.sender_group, bid.sender_id)
+        """
+        goods = list(self._open_offers_buy.keys())
+        return {good: self.get_offers(good, descending, sorted) for good in goods}
 
     def get_offers_all(self, descending=False, sorted=True):
         """ returns all offers in a dictionary, with goods as key. The in each
         goods-category the goods are ordered by price. The order can be reversed
         by setting descending=True
 
-        *Offers that are not accepted in the same subround (def block) are
+        *Offers that are not accepted in the same subround are
         automatically rejected.* However you can also manually reject.
 
         Args:
 
-         descending(optional):
+         descending(=False):
             is a bool. False for descending True for ascending by price
 
          sorted(default=True):
@@ -263,11 +290,47 @@ class Trade:
          for offer in oo.beer:
             print(offer.price, offer.sender)
         """
-        goods = list(self._open_offers_sell.keys() + self._open_offers_buy.keys())
+        goods = list(self._open_offers_sell.keys())
         return {good: self.get_offers(good, descending, sorted) for good in goods}
 
-    def get_buy_offers(self, good, sorted=True, descending=False, shuffled=True):
-        """ """
+    def get_bids(self, good, sorted=True, descending=True, shuffled=True):
+        """ returns all bids of the 'good' ordered by price.
+
+        *Bids that are not accepted in the same subround are
+        automatically rejected.* However you can also manually reject.
+
+        peek_bids can be used to look at the bids without them being
+        rejected automatically
+
+        Args:
+            good:
+                the good which should be retrieved
+
+            sorted(=True):
+                Whether bids are sorted by price. Faster if False.
+
+            descending(=True):
+                False for descending True for ascending by price
+
+            shuffled(=True):
+                whether the order of messages is randomized or correlated with
+                the ID of the agent. Setting this to False speeds up the
+                simulation considerably, but introduces a bias.
+
+        Returns:
+            A list of :class:`abce.trade.Offer` ordered by price.
+
+        Example::
+
+            bids = get_bids('books')
+            for bid in bids:
+                if offer.price < 50:
+                    self.accept(bid)
+                elif bid.price < 100:
+                    self.accept(bid, 1)
+                else:
+                    self.reject(bid)  # optional
+        """
         ret = list(self._open_offers_buy[good].values())
         self._polled_offers.update(self._open_offers_buy[good])
         del self._open_offers_buy[good]
@@ -277,21 +340,10 @@ class Trade:
             ret.sort(key=lambda objects: objects.price, reverse=descending)
         return ret
 
-    def get_sell_offers(self, good, sorted=True, descending=False, shuffled=True):
-        """ """
-        ret = list(self._open_offers_sell[good].values())
-        self._polled_offers.update(self._open_offers_sell[good])
-        del self._open_offers_sell[good]
-        if shuffled:
-            random.shuffle(ret)
-        if sorted:
-            ret.sort(key=lambda objects: objects.price, reverse=descending)
-        return ret
-
     def get_offers(self, good, sorted=True, descending=False, shuffled=True):
         """ returns all offers of the 'good' ordered by price.
 
-        *Offers that are not accepted in the same subround (def block) are
+        *Offers that are not accepted in the same subround are
         automatically rejected.* However you can also manually reject.
 
         peek_offers can be used to look at the offers without them being
@@ -301,13 +353,13 @@ class Trade:
             good:
                 the good which should be retrieved
 
-            sorted(bool, default=True):
+            sorted(=True):
                 Whether offers are sorted by price. Faster if False.
 
-            descending(bool, default=False):
+            descending(=False):
                 False for descending True for ascending by price
 
-            shuffled(bool, default=True):
+            shuffled(=True):
                 whether the order of messages is randomized or correlated with
                 the ID of the agent. Setting this to False speeds up the
                 simulation considerably, but introduces a bias.
@@ -326,29 +378,52 @@ class Trade:
                 else:
                     self.reject(offer)  # optional
         """
-        ret = (self.get_buy_offers(good, descending=False, sorted=False, shuffled=False) +
-               self.get_sell_offers(good, descending=False, sorted=False, shuffled=False))
+        ret = list(self._open_offers_sell[good].values())
+        self._polled_offers.update(self._open_offers_sell[good])
+        del self._open_offers_sell[good]
         if shuffled:
             random.shuffle(ret)
         if sorted:
             ret.sort(key=lambda objects: objects.price, reverse=descending)
         return ret
 
-    def peak_buy_offers(self, good, sorted=True, descending=False, shuffled=True):
-        """ """
+
+    def peak_bids(self, good, sorted=True, descending=True, shuffled=True):
+        """ returns a peak on all bids for the 'good' ordered by price.
+        Peaked bids can not be accepted or rejected and they do not
+        expire.
+
+        Args:
+            good:
+                the good which should be retrieved
+                descending(bool, default=False):
+                False for descending True for ascending by price
+
+            sorted(=True):
+                whether the bids are sorted, switch off for speed
+
+            descending(=True):
+                sort order
+
+            shuffled(=True):
+                randomizes equal prized bids, switch off for speed
+
+        Returns:
+            A list of bids ordered by price
+
+        Example::
+
+            bids = get_bids('books')
+            for bid in bids:
+                if bid.price < 50:
+                    self.accept(bid)
+                elif bid.price < 100:
+                    self.accept(bid, 1)
+                else:
+                    self.reject(bid)  # optional
+        """
         ret = []
         for offer in self._open_offers_buy[good].values():
-            ret.append(offer)
-        if shuffled:
-            random.shuffle(ret)
-        if sorted:
-            ret.sort(key=lambda objects: objects.price, reverse=descending)
-        return ret
-
-    def peak_sell_offers(self, good, sorted=True, descending=False, shuffled=True):
-        """ """
-        ret = []
-        for offer in self._open_offers_sell[good].values():
             ret.append(offer)
         if shuffled:
             random.shuffle(ret)
@@ -367,6 +442,17 @@ class Trade:
                 descending(bool, default=False):
                 False for descending True for ascending by price
 
+
+            sorted(=True):
+                whether the bids are sorted, switch off for speed
+
+            descending(=False):
+                sort order
+
+            shuffled(=True):
+                randomizes equal prized bids, switch off for speed
+
+
         Returns:
             A list of offers ordered by price
 
@@ -381,18 +467,22 @@ class Trade:
                 else:
                     self.reject(offer)  # optional
         """
-        ret = (self.peak_buy_offers(good, sorted=False, descending=False, shuffled=False) +
-               self.peak_sell_offers(good, sorted=False, descending=False, shuffled=False))
+        ret = []
+        for offer in self._open_offers_sell[good].values():
+            ret.append(offer)
         if shuffled:
             random.shuffle(ret)
         if sorted:
             ret.sort(key=lambda objects: objects.price, reverse=descending)
         return ret
 
-    def make_offer(self, receiver,
-             good, quantity, price, currency='money', epsilon=epsilon):
-        """ Sends a offer to sell a particular good to somebody. The amount promised
-        is reserved. (self.free(good), shows the not yet reserved goods)
+    def make_offer(self, receiver, good, quantity, price, currency='money', epsilon=epsilon):
+        """ commits to sell the quantity of good at price
+
+        The good is not available for the agent. When the offer is
+        rejected it is automatically re-credited. When the offer is
+        accepted the money amount is credited. (partial acceptance
+        accordingly)
 
         Args:
             receiver:
@@ -402,7 +492,7 @@ class Trade:
                 name of the good
 
             quantity:
-                maximum units available to buy at this price
+                maximum units disposeable to buy at this price
 
             price:
                 price per unit
@@ -422,7 +512,7 @@ class Trade:
         Example::
 
             def subround_1(self):
-                self.offer = self.sell('household', 1, 'cookies', quantity=5, price=0.1)
+                self.offer = self.make_offer('household', 1, 'cookies', quantity=5, price=0.1)
 
             def subround_2(self):
                 offer = self.info(self.offer)
@@ -442,7 +532,6 @@ class Trade:
             quantity = 0
 
         self._inventory.reserve(good, quantity)
-
         offer_id = self._offer_counter()
         offer = Offer(self.name,
                       receiver,
@@ -451,16 +540,22 @@ class Trade:
                       price,
                       currency,
                       True,
+                      'new',
+                      -2,
                       offer_id,
-                      self.time)
+                      self.time,
+                      -2)
         self.given_offers[offer_id] = offer
         self._send(receiver, 'abce_propose_sell', offer)
         return offer
 
-    def make_bid(self, receiver, good,
-            quantity, price, currency='money', epsilon=epsilon):
-        """ Sends a offer to buy a particular good to somebody. The money promised
-        is reserved. (self.free(currency), shows the not yet reserved goods)
+    def make_bid(self, receiver, good, quantity, price, currency='money', epsilon=epsilon):
+        """ commits to sell the quantity of good at price
+
+        The goods are not in haves or self.count(). When the offer is
+        rejected it is automatically re-credited. When the offer is
+        accepted the money amount is credited. (partial acceptance
+        accordingly)
 
         Args:
             receiver:
@@ -471,7 +566,7 @@ class Trade:
                 name of the good
 
             quantity:
-                maximum units willing to buy at this price
+                maximum units available to buy at this price
 
             price:
                 price per unit
@@ -506,8 +601,11 @@ class Trade:
                       price,
                       currency,
                       False,
+                      'new',
+                      -1,
                       offer_id,
-                      self.time)
+                      self.time,
+                      -1)
         self._send(receiver, 'abce_propose_buy', offer)
         self.given_offers[offer_id] = offer
         return offer
@@ -708,8 +806,11 @@ class Trade:
         Args:
 
 
-            receiver:
-                the receiving agent
+            receiver_group:
+                group of the receiving agent
+
+            receiver_id:
+                number of the receiving agent
 
             good:
                 the good to be taken
@@ -724,6 +825,8 @@ class Trade:
         """
         self.make_bid(receiver, good=good, quantity=quantity, price=0, epsilon=epsilon)
 
+    def get_take(self, *args, **kwargs):
+        return self.get_bids(*args, **kwargs)
 
 def compare_with_ties(x, y):
     if x < y:
