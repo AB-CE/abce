@@ -1,4 +1,4 @@
-""" ABCE can be started with a gui or provide visual data output """
+""" abcEconomics can be started with a gui or provide visual data output """
 import os
 import abcEconomics
 import dataset
@@ -82,7 +82,7 @@ def gui(parameter_mask, names=None, header=None, story=None,
             Port if serve is active, defaults to 80
 
         pypy:
-            Name of the pypy interpreter to run ABCE super fast. e.G. 'pypy' or
+            Name of the pypy interpreter to run abcEconomics super fast. e.G. 'pypy' or
             'pypy3'. The mainfile needs to be run with cpython e.G.:
             :code:`python3 start.py`
 

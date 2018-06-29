@@ -5,7 +5,7 @@
 Design
 ======
 
-ABCE's first design goal is that, code can be rapidly written,
+abcEconomics's first design goal is that, code can be rapidly written,
 to enable a modeler to quickly write down
 code and quickly explore different alternatives of a model.
 
@@ -25,7 +25,7 @@ which allow the modeler to model a spatial model.
 
 Python is especially beginner friendly, but also
 easy to learn for people who already know object oriented programming
-languages such as Java, C++ or even MATLAB. ABCE uses C++, to handle
+languages such as Java, C++ or even MATLAB. abcEconomics uses C++, to handle
 background tasks to increase speed.
 Python allows simple, but fully functional, programming for economists.
 What is more Python is readable even for non Python programmers.
@@ -38,12 +38,12 @@ Python, is slower than Java or C, but its reputation for slow speed is usually
 exaggerated. Various packages for numerical calculations and optimization such as numpy and scipy offer
 the C like speed to numerical problems. Contrary to the common belief
 Python is not an interpreted language. Pypy even provides a just in time
-complier Python is compiled to bytecode and than executed. ABCE allows
+complier Python is compiled to bytecode and than executed. abcEconomics allows
 to parallelize the code and gain significant speed advantage over
 single-threaded code, that does not make use of the speed advantage of
 multi-core or multi-processor computers.
 
-ABCE 0.6 supports Python 3.
+abcEconomics 0.6 supports Python 3.
 
 .. [#interpreter] Python is often falsely believe to be an interpreted language
 
@@ -122,32 +122,32 @@ We will concentrate on the most widely used ABM frameworks/platforms: MASON, Net
 General differences to other agent-based modeling platforms
 -----------------------------------------------------------
 
-First of all ABCE is domain specific, that enables it to provide
+First of all abcEconomics is domain specific, that enables it to provide
 the basic functions such as production, consumption, trade and
 communication as fully automated stock methods.
 Because any kind of agent interaction (communication and exchange of
-goods) is handled automatically ABCE, it can run the agents (virtually)
+goods) is handled automatically abcEconomics, it can run the agents (virtually)
 parallel and run simulations on multi-core/processor systems without
 any intervention by the modeler.
 
-The second biggest difference between ABCE and other platforms
-is that ABCE introduces the physical good as an ontological object in
-the simulation. Goods can be exchanged and transformed. ABCE handles
+The second biggest difference between abcEconomics and other platforms
+is that abcEconomics introduces the physical good as an ontological object in
+the simulation. Goods can be exchanged and transformed. abcEconomics handles
 these processes automatically, so that for the model a physical good
 behaves like a physical good and not like a message. That means that
 if a good is transfered between two agents the first agent does not
 have this good anymore, and the second agent has it now. Once, for
 example, two agents decide to trade
-a good ABCE makes sure that the transaction is cleared between
+a good abcEconomics makes sure that the transaction is cleared between
 the two agents.
 
-Thirdly, ABCE is just a scheduler that schedules the actions of
+Thirdly, abcEconomics is just a scheduler that schedules the actions of
 the agents and a python base class that enables the agent to
 produce, consume, trade and communicate. A model written
-in ABCE, therefore is standard Python code and the modeler can make
+in abcEconomics, therefore is standard Python code and the modeler can make
 use of the complete Python language and the Python language environment.
 This is a particular useful feature because Python comes with about 30.000 [#30000]_
-publicly available packages, that could be used in ABCE. Particularly
+publicly available packages, that could be used in abcEconomics. Particularly
 useful packages are:
 
 pybrain
@@ -164,15 +164,15 @@ turtle
 Fourth, many frameworks such as FLAME, NetLogo, StarLogo, Ascape
 and SugarScape and, in a
 more limited sense, Repast are designed with spacial representation in mind.
-For ABCE a spacial representation is possible, but not a design goal.
-However, since agents in ABCE are ordinary Python objects, they can use
+For abcEconomics a spacial representation is possible, but not a design goal.
+However, since agents in abcEconomics are ordinary Python objects, they can use
 python modules such as python-turtle and therefore gain a spacial
 representation much like NetLogo. This does by no means mean that
-ABCE could not be a good choice for a problem where the spacial
+abcEconomics could not be a good choice for a problem where the spacial
 position plays a role. If for example the model has different
 transport costs or other properties according to the geographical
 position of the agents, but the agent's do not move or the movement
-does not have to be represented graphically, ABCE could still be a
+does not have to be represented graphically, abcEconomics could still be a
 good choice.
 
 Difference to MASON
@@ -183,13 +183,13 @@ for simulations of social, biological and economical systems.
 [Luke]_. Mason is a platform that was explicitly designed with the goal of
 running it on large platforms. MASON distributes a large number
 of single threaded simulations over deferent computers or processors.
-ABCE on the other hand is multi-threaded it
+abcEconomics on the other hand is multi-threaded it
 allows to run agents in parallel. A single run of a simulation
 in MASON is therefore not faster on a computing cluster than
-on a potent single-processor computer. ABCE on the other hand
+on a potent single-processor computer. abcEconomics on the other hand
 uses the full capacity of multi-core/processor systems for
 a single simulation run. The fast
-execution of a model in ABCE allow a different software
+execution of a model in abcEconomics allow a different software
 development process, modelers can 'try' their models while they
 are developing and adjust the code until it works as desired.
 The different nature of both
@@ -197,12 +197,12 @@ platforms make it necessary to implement a different event
 scheduling system.
 
 Mason is a discrete event platform. Events can be scheduled by the
-agents. ABCE on the other hand is scheduled -
+agents. abcEconomics on the other hand is scheduled -
 it has global list of sub-rounds that establish the sequence
 of actions in every round. Each of these sub-rounds lets a
 number of agents execute the same actions in parallel.
 
-MASON, like Repast Java is based on Java, while ABCE is
+MASON, like Repast Java is based on Java, while abcEconomics is
 based on Python, the advantages have been discussed before.
 
 Difference to NetLogo
@@ -215,13 +215,13 @@ other hand is a compiled [#compiled]_ general programming language.
 Consequently it is faster than NetLogo.
 
 Netlogo's most prominent feature are the turtle agents. To
-have turtle agents in ABCE, Python's turtle library has to be
+have turtle agents in abcEconomics, Python's turtle library has to be
 used. The graphical representation of models is therefore not
-part of ABCE, but of Python itself, but needs to be included by
+part of abcEconomics, but of Python itself, but needs to be included by
 the modeler.
 
-One difference between Netlogo and ABCE is that it has the
-concept of the observer agent, while in ABCE the simulation
+One difference between Netlogo and abcEconomics is that it has the
+concept of the observer agent, while in abcEconomics the simulation
 is controlled by the simulation process.
 
 Difference Repast
@@ -237,20 +237,20 @@ is limited to Java. Symphony has a point and click
 interface for simple models. [NORTH2005a]_
 
 Repast does allow static and dynamic scheduling.
-[Collier]_. ABCE,
-does not (yet) allow for dynamic scheduling. In ABCE, the
-order of actions - or in ABCE language order of sub-rounds -
+[Collier]_. abcEconomics,
+does not (yet) allow for dynamic scheduling. In abcEconomics, the
+order of actions - or in abcEconomics language order of sub-rounds -
 is fixed and is repeated for every round. This however is not
 as restrictive as it sounds, because in any sub-round an
 agent could freely decide what he does.
 
 The advantage of the somehow more limited implementation of
-ABCE is ease of use. While in Repast it is necessary to
-subclass the scheduler in ABCE it is sufficient to specify
+abcEconomics is ease of use. While in Repast it is necessary to
+subclass the scheduler in abcEconomics it is sufficient to specify
 the schedule and pass it the Simulation class.
 
 Repast is vast, it contains 210 classes in 9 packages
-[Collier]_. ABCE, thanks to its limited
+[Collier]_. abcEconomics, thanks to its limited
 scope and Python, has only 6 classes visible to the
 modeler in a single package.
 
@@ -266,14 +266,14 @@ The core feature and main difference to other ABM platforms is the
 implementation of physical goods. In contrast
 to information or messages, sharing a good means having less of it. In other
 words if agent A gives a good to agent B then agent A does not have this good
-anymore. On of the major strength of ABCE is that this is automatically handled.
+anymore. On of the major strength of abcEconomics is that this is automatically handled.
 
-In ABCE goods can be created, destroyed, traded, given or changed through
-production and consumption. All these functions are implemented in ABCE and
+In abcEconomics goods can be created, destroyed, traded, given or changed through
+production and consumption. All these functions are implemented in abcEconomics and
 can be inherited by an agent as a method. These functions are automatically handled by
-ABCE upon decision from the modeler.
+abcEconomics upon decision from the modeler.
 
-Every agent in ABCE must inherit from the abcEconomics.Agent class. This gives the
+Every agent in abcEconomics must inherit from the abcEconomics.Agent class. This gives the
 agent a couple of stock methods: create, destroy, trade and give. Create and
 destroy create or destroy a good immediately. Because trade and give involve
 a form of interaction between the agents they run over several sub-rounds.

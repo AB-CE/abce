@@ -94,7 +94,7 @@ class Sell(abcEconomics.Agent):
 
     def all_tests_completed(self):
         assert all(self.tests.values(
-        )), 'not all tests have been run; ABCE workes correctly, restart the' \
+        )), 'not all tests have been run; abcEconomics workes correctly, restart the' \
             ' unittesting to do all tests %s' % self.tests
         if self.round == self.last_round and self.id == 0:
             print('Test abcEconomics.buy:\t\t\t\t\tOK')

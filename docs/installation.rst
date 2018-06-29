@@ -1,7 +1,7 @@
 Download and Installation
 =========================
 
-ABCE works exclusively with python 3!
+abcEconomics works exclusively with python 3!
 
 
 Installation Ubuntu
@@ -72,7 +72,7 @@ Installation Mac
 Installation Windows
 --------------------
 
-ABCE works best with anaconda python 3.5 follow
+abcEconomics works best with anaconda python 3.5 follow
 the instructions blow.
 
 

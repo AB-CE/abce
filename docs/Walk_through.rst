@@ -1,7 +1,7 @@
 Walk through
 ============
 
-In order to learn using ABCE we will now dissect and explain a simple ABCE model.
+In order to learn using abcEconomics we will now dissect and explain a simple abcEconomics model.
 Additional to this walk through you should also have a look on the examples in
  <https://github.com/AB-CE/examples>(https://github.com/AB-CE/examples),
 
@@ -15,7 +15,7 @@ Additional to this walk through you should also have a look on the examples in
     -  consumed
     -  destroyed (not really) and time depreciated
 
-    ABCE, takes care of trade, production / transformation and consumption
+    abcEconomics, takes care of trade, production / transformation and consumption
     of goods automatically. Good categories can also be made to perish or regrow.
 
  Services or labor
@@ -135,7 +135,7 @@ To set up a new model, you create a class instance a that will comprise your mod
 
 .. code-block:: python
 
-    simulation = Simulation(name="ABCE")
+    simulation = Simulation(name="abcEconomics")
 
     ...
 
@@ -143,7 +143,7 @@ The order of actions: The order of actions within a round
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Every agents-based model is characterized by the order of which the actions are executed.
-In ABCE, there are rounds, every round is composed of sub-rounds, in which a group or
+In abcEconomics, there are rounds, every round is composed of sub-rounds, in which a group or
 several groups of agents act in parallel. In the
 code below you see a typical sub-round. Therefore after declaring the :code:`Simulation` the
 order of actions, agents and objects are added.
@@ -228,7 +228,7 @@ labor_endowment respectively.
 declare_perishable, establishes that every unit of the specified good that is not used by
 the end of the round ceases to exist.
 
-Declaring a good as replenishing and perishable is ABCE's way of treating services.
+Declaring a good as replenishing and perishable is abcEconomics's way of treating services.
 In this example every household has some units of labor that can be used in the
 particular period. :py:meth:`abcEconomics.Simulation.declare_service` is a synthetic way
 of declaring a good as a service.
@@ -247,7 +247,7 @@ In this way the economy is physically closed.
                             variables=['utility']) #  a list of household variables to track here
 
 The possessions good1 and good2 are tracked, the agent's variable :code:`self.utility` is tracked.
-There are several ways in ABCE to log data. Note that the variable names a strings.
+There are several ways in abcEconomics to log data. Note that the variable names a strings.
 
 
 
@@ -402,7 +402,7 @@ The init method
 When an agent is created it's init function is called and the simulation
 parameters as well as the agent_parameters are given to him
 
-**DO NOT OVERWRITE THE __init__ method. Instead use ABCE's init method,
+**DO NOT OVERWRITE THE __init__ method. Instead use abcEconomics's init method,
 which is called when the agents are created**
 
 .. code-block:: python
@@ -497,7 +497,7 @@ a more advanced interface for firms with layered production functions.
 Trade
 ~~~~~
 
-ABCE clears trade automatically. That means, that goods are automatically
+abcEconomics clears trade automatically. That means, that goods are automatically
 exchanged, double selling of a good is avoided by subtracting a good from
 the possessions when it is offered for sale. The modeler has only to decide
 when the agent offers a trade and sets the criteria to accept the trade

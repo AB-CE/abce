@@ -2,7 +2,7 @@
 #
 # Module Author: Davoud Taghawi-Nejad
 #
-# ABCE is open-source software. If you are using ABCE for your research you are
+# abcEconomics is open-source software. If you are using abcEconomics for your research you are
 # requested the quote the use of this software.
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -126,12 +126,12 @@ class Offer(object):
 
 class Trade:
     """ Agents can trade with each other. The clearing of the trade is taken care
-    of fully by ABCE.
+    of fully by abcEconomics.
     Selling a good works in the following way:
 
     1. An agent sends an offer. :meth:`~.sell`
 
-       *ABCE does not allow you to sell the same good twice; self.free(good) shows how much good is not reserved yet*
+       *abcEconomics does not allow you to sell the same good twice; self.free(good) shows how much good is not reserved yet*
 
     2. **Next subround:** An agent receives the offer :meth:`~.get_offers`, and can
        :meth:`~.accept`, :meth:`~.reject` or partially accept it. :meth:`~.accept`

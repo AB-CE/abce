@@ -2,7 +2,7 @@
 #
 # Module Author: Davoud Taghawi-Nejad
 #
-# ABCE is open-source software. If you are using ABCE for your research you are
+# abcEconomics is open-source software. If you are using abcEconomics for your research you are
 # requested the quote the use of this software.
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -29,7 +29,7 @@ This is a minimal template for a start.py::
     from abcEconomics import *
 
 
-    simulation = Simulation(name='ABCE')
+    simulation = Simulation(name='abcEconomics')
     agents = simulation.build_agents(Agent, 'agent', 2)
     for time in range(100):
         simulation.advance_round(time)
@@ -102,7 +102,7 @@ class Simulation(object):
 
         Example::
 
-            simulation = Simulation(name='ABCE',
+            simulation = Simulation(name='abcEconomics',
                                     trade_logging='individual',
                                     processes=None)
 
@@ -112,7 +112,7 @@ class Simulation(object):
         num_firms = 5
         num_households = 2000
 
-        w = Simulation(name='ABCE',
+        w = Simulation(name='abcEconomics',
                        trade_logging='individual',
                        processes=None)
 

@@ -46,7 +46,7 @@ class Give(abcEconomics.Agent):
     def all_tests_completed(self):
         if self.time == self.last_round and self.id == 0:
             assert all(self.tests.values(
-            )), 'not all tests have been run; ABCE workes correctly, restart the unittesting to do all tests %s' % self.tests
+            )), 'not all tests have been run; abcEconomics workes correctly, restart the unittesting to do all tests %s' % self.tests
             print('Test abcEconomics.give:\t\t\t\t\tOK')
             print('Test abcEconomics.message:\t\t\t\tOK')
             print('Test abcEconomics.get_messages:\t\t\t\tOK')

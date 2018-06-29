@@ -1,4 +1,4 @@
-Deploying an ABCE simulation on-line
+Deploying an abcEconomics simulation on-line
 ====================================
 
 Prepare your simulation to be displayed on the web
@@ -62,7 +62,7 @@ how to push an existing repository from the command line your, they will look li
    git push -u origin master
 
 
-Deploy you ABCE simulation on amazon ec2 or your own Ubuntu server
+Deploy you abcEconomics simulation on amazon ec2 or your own Ubuntu server
 ------------------------------------------------------------------
 
 create an amazon ec2 instance following `Amazon's tutorial here<http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-launch-instance_linux.html>`_
@@ -79,12 +79,12 @@ then from the console ssh into your account
 
     ssh -i amazoninstanceweb2py.pem ubuntu@ec2-54-174-70-207.compute-1.amazonaws.com
 
-Install the server software and ABCE requirements::
+Install the server software and abcEconomics requirements::
 
     sudo pip3 install abcEconomics
 
 
-copy or clone your ABCE simulation into the ~/myproject directory the easiest way is to use a git repository, but you can also use scp::
+copy or clone your abcEconomics simulation into the ~/myproject directory the easiest way is to use a git repository, but you can also use scp::
 
     git clone https://github.com/your_name/myproject.git
 

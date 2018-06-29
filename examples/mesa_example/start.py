@@ -1,6 +1,6 @@
-""" This is a simple demonstration model how to integrate ABCE and mesa.
+""" This is a simple demonstration model how to integrate abcEconomics and mesa.
 The model and scheduler specification are taken care of in
-ABCE instead of Mesa.
+abcEconomics instead of Mesa.
 
 Based on
 https://github.com/projectmesa/mesa/tree/master/examples/boltzmann_wealth_model.
@@ -44,7 +44,7 @@ def main(x_size, y_size):
 
     server = ModularServer(MoneyModel,
                            [grid, chart],
-                           "ABCE and MESA integrated",
+                           "abcEconomics and MESA integrated",
                            x_size * y_size, x_size, y_size)
     server.port = 8534  # change this number if address is in use
     server.launch()

@@ -2,7 +2,7 @@
 #
 # Module Author: Davoud Taghawi-Nejad
 #
-# ABCE is open-source software. If you are using ABCE for your research you are
+# abcEconomics is open-source software. If you are using abcEconomics for your research you are
 # requested the quote the use of this software.
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -154,11 +154,11 @@ class Agent(Logger, Trade, Messenger, Goods):
         return ret
 
     def _begin_subround(self):
-        """ Overwrite this to make ABCE plugins, that need to do
+        """ Overwrite this to make abcEconomics plugins, that need to do
         something at the beginning of every subround """
         pass
 
     def _end_subround(self):
-        """ Overwrite this to make ABCE plugins, that need to do
+        """ Overwrite this to make abcEconomics plugins, that need to do
         something at the beginning of every subround """
         pass

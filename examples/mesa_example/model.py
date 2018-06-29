@@ -1,6 +1,6 @@
-""" This is a simple demonstration model how to integrate ABCE and mesa.
+""" This is a simple demonstration model how to integrate abcEconomics and mesa.
 The model and scheduler specification are taken care of in
-ABCE instead of Mesa.
+abcEconomics instead of Mesa.
 
 Based on
 https://github.com/projectmesa/mesa/tree/master/examples/boltzmann_wealth_model.
@@ -30,7 +30,7 @@ class MoneyModel(abcEconomics.Simulation):  # The actual simulation must inherit
 
     def __init__(self, num_agents, x_size, y_size):
         abcEconomics.Simulation.__init__(self,
-                                 name='ABCE and MESA integrated',
+                                 name='abcEconomics and MESA integrated',
                                  rounds=300,
                                  processes=1)
         # initialization of the base class. MESA integration requires
@@ -38,7 +38,7 @@ class MoneyModel(abcEconomics.Simulation):  # The actual simulation must inherit
         self.grid = MultiGrid(x_size, y_size, True)
         self.agents = self.build_agents(MoneyAgent, 'MoneyAgent', num_agents,
                                         parameters={'grid': self.grid})
-        # ABCE agents must inherit the MESA grid
+        # abcEconomics agents must inherit the MESA grid
         self.running = True
         # MESA requires this
         self.datacollector = DataCollector(

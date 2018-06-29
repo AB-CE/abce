@@ -1,4 +1,4 @@
-""" A graphical user interface for ABCE simulations """
+""" A graphical user interface for abcEconomics simulations """
 import os
 from os.path import join
 import json
@@ -30,7 +30,7 @@ def basiclayout(Form, simulation, title, top_bar=None, story=None,
     pages = ({} if pages is None else pages)
     texts = ([abcEconomicsdescription] if texts is None else texts)
 
-    class ABCE(ui.Widget):
+    class abcEconomics(ui.Widget):
         """ Basic layout of the website  """
         CSS = """
         h1, a {
@@ -183,7 +183,7 @@ def basiclayout(Form, simulation, title, top_bar=None, story=None,
 
             self.first = False
 
-    return ABCE
+    return abcEconomics
 
 
 def newest_subdirectory(directory='.', name=''):

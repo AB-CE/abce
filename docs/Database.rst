@@ -7,7 +7,7 @@ Observing agents and logging
 There are different ways of observing your agents:
 
 Trade Logging:
-	ABCE by default logs all trade and creates a SAM or IO matrix.
+	abcEconomics by default logs all trade and creates a SAM or IO matrix.
 
 Manual in agent logging:
 	An agent is instructed to log a variable with :py:meth:`.log` or a
@@ -27,7 +27,7 @@ How to retrieve the Simulation results is explained in retrieval_
 Trade Logging
 ~~~~~~~~~~~~~
 
-By default ABCE logs all trade and creates a social accounting matrix or
+By default abcEconomics logs all trade and creates a social accounting matrix or
 input output matrix. Because the creation of the trade log is very time consuming
 you can change the default behavior in world_parameter.csv. In the column
 'trade_logging' you can choose 'individual', 'group' or 'off'. (Without the

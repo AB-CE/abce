@@ -67,5 +67,5 @@ class QuoteBuy(abcEconomics.Agent):
     def all_tests_completed(self):
         if self.round == self.last_round and self.id == 1:
             assert all(self.tests.values(
-            )), 'not all tests have been run; ABCE workes correctly, restart the unittesting to do all tests %s' % self.tests
+            )), 'not all tests have been run; abcEconomics workes correctly, restart the unittesting to do all tests %s' % self.tests
             print('Test abcEconomics.quote_buy:\t\t\t\t\tOK')
