@@ -2,7 +2,7 @@
 #
 # Module Author: Davoud Taghawi-Nejad
 #
-# ABCE is open-source software. If you are using ABCE for your research you are
+# abcEconomics is open-source software. If you are using abcEconomics for your research you are
 # requested the quote the use of this software.
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -15,22 +15,22 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 """
-The :class:`abceagent.Agent` class is the basic class for creating your agent. It automatically handles the
+The :class:`abcEconomicsagent.Agent` class is the basic class for creating your agent. It automatically handles the
 possession of goods of an agent. In order to produce/transforme goods you need to also subclass
-the :class:`abceagent.Firm` [1]_ or to create a consumer the :class:`abceagent.Household`.
+the :class:`abcEconomicsagent.Firm` [1]_ or to create a consumer the :class:`abcEconomicsagent.Household`.
 
 For detailed documentation on:
 
 Trading:
-    see :class:`abceagent.Trade`
+    see :class:`abcEconomicsagent.Trade`
 Logging and data creation:
-    see :class:`abceagent.Database` and :doc:`simulation_results`
+    see :class:`abcEconomicsagent.Database` and :doc:`simulation_results`
 Messaging between agents:
-    see :class:`abceagent.Messenger`.
+    see :class:`abcEconomicsagent.Messenger`.
 
-.. autoexception:: abcetools.NotEnoughGoods
+.. autoexception:: abcEconomicstools.NotEnoughGoods
 
-.. [1] or :class:`abceagent.FirmMultiTechnologies` for simulations with complex technologies.
+.. [1] or :class:`abcEconomicsagent.FirmMultiTechnologies` for simulations with complex technologies.
 """
 #******************************************************************************************#
 # trade.pyx is written in cython. When you modify trade.pyx you need to compile it with    #
@@ -39,7 +39,7 @@ Messaging between agents:
 #******************************************************************************************#
 import random
 from collections import defaultdict, OrderedDict
-from abce.notenoughgoods import NotEnoughGoods
+from abcEconomics.notenoughgoods import NotEnoughGoods
 
 cdef double epsilon = 0.00000000001
 
@@ -156,7 +156,7 @@ def rebuild_offer(object sender, object receiver, object good, double quantity, 
 
 class Trade:
     """ Agents can trade with each other. The clearing of the trade is taken care
-    of fully by ABCE.
+    of fully by abcEconomics.
     Selling a good works in the following way:
 
     1. An agent sends an offer. :meth:`~.sell`
@@ -275,7 +275,7 @@ class Trade:
 
         Returns:
 
-            a dictionary with good types as keys and list of :class:`abce.trade.Offer`
+            a dictionary with good types as keys and list of :class:`abcEconomics.trade.Offer`
             as values
 
         Example::
@@ -339,7 +339,7 @@ class Trade:
                 simulation considerably, but introduces a bias.
 
         Returns:
-            A list of :class:`abce.trade.Offer` ordered by price.
+            A list of :class:`abcEconomics.trade.Offer` ordered by price.
 
         Example::
 
@@ -493,7 +493,7 @@ class Trade:
                                  self.time,
                                  -2)
         self.given_offers[offer_id] = offer
-        self.send(receiver, 'abce_propose_sell', offer)
+        self.send(receiver, 'abcEconomics_propose_sell', offer)
         return offer
 
     def buy(self, receiver, good,
@@ -556,7 +556,7 @@ class Trade:
                                  offer_id,
                                  self.time,
                                  -1)
-        self.send(receiver, 'abce_propose_buy', offer)
+        self.send(receiver, 'abcEconomics_propose_buy', offer)
         self.given_offers[offer_id] = offer
         return offer
 
@@ -624,7 +624,7 @@ class Trade:
             self._inventory.haves[offer.good] -= quantity
             self._inventory.haves[offer.currency] += quantity * offer.price
         offer.final_quantity = quantity
-        self.send(offer.sender, 'abce_receive_accept', (offer.id, quantity))
+        self.send(offer.sender, 'abcEconomics_receive_accept', (offer.id, quantity))
         del self._polled_offers[offer.id]
         if offer.sell:  # ord('s')
             return {offer.good: - quantity, offer.currency: money_amount}
@@ -645,7 +645,7 @@ class Trade:
                 the offer the other party made
                 (offer not quote!)
         """
-        self.send(offer.sender, 'abce_receive_reject', offer.id)
+        self.send(offer.sender, 'abcEconomics_receive_reject', offer.id)
 
     def reject(self, Offer offer):
         """ Rejects and offer, if the offer is subsequently accepted in the
@@ -765,7 +765,7 @@ class Trade:
         if quantity > available:
             quantity = available
         self._inventory.haves[good] -= quantity
-        self.send(receiver, 'abce_receive_good', [good, quantity])
+        self.send(receiver, 'abcEconomics_receive_good', [good, quantity])
         return {good: quantity}
 
     def take(self, receiver, good, double quantity, double epsilon=epsilon):

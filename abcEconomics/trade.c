@@ -1355,20 +1355,14 @@ static const char __pyx_k_get_sell_offers[] = "get_sell_offers";
 static const char __pyx_k_open_offers_buy[] = "_open_offers_buy";
 static const char __pyx_k_peak_buy_offers[] = "peak_buy_offers";
 static const char __pyx_k_Trade_get_offers[] = "Trade.get_offers";
-static const char __pyx_k_abce_propose_buy[] = "abce_propose_buy";
 static const char __pyx_k_agent_parameters[] = "agent_parameters";
 static const char __pyx_k_open_offers_sell[] = "_open_offers_sell";
 static const char __pyx_k_peak_sell_offers[] = "peak_sell_offers";
 static const char __pyx_k_Trade_peak_offers[] = "Trade.peak_offers";
-static const char __pyx_k_abce_propose_sell[] = "abce_propose_sell";
-static const char __pyx_k_abce_receive_good[] = "abce_receive_good";
 static const char __pyx_k_cline_in_traceback[] = "cline_in_traceback";
 static const char __pyx_k_delete_given_offer[] = "_delete_given_offer";
 static const char __pyx_k_get_buy_offers_all[] = "get_buy_offers_all";
 static const char __pyx_k_name_without_colon[] = "name_without_colon";
-static const char __pyx_k_abce_notenoughgoods[] = "abce.notenoughgoods";
-static const char __pyx_k_abce_receive_accept[] = "abce_receive_accept";
-static const char __pyx_k_abce_receive_reject[] = "abce_receive_reject";
 static const char __pyx_k_database_connection[] = "database_connection";
 static const char __pyx_k_get_sell_offers_all[] = "get_sell_offers_all";
 static const char __pyx_k_Trade__advance_round[] = "Trade._advance_round";
@@ -1383,15 +1377,21 @@ static const char __pyx_k_simulation_parameters[] = "simulation_parameters";
 static const char __pyx_k_Trade_peak_sell_offers[] = "Trade.peak_sell_offers";
 static const char __pyx_k_offer_id_final_quantity[] = "offer_id_final_quantity";
 static const char __pyx_k_Trade_get_buy_offers_all[] = "Trade.get_buy_offers_all";
+static const char __pyx_k_abcEconomics_propose_buy[] = "abcEconomics_propose_buy";
 static const char __pyx_k_log_receive_accept_agent[] = "_log_receive_accept_agent";
 static const char __pyx_k_log_receive_accept_group[] = "_log_receive_accept_group";
 static const char __pyx_k_Trade__delete_given_offer[] = "Trade._delete_given_offer";
 static const char __pyx_k_Trade_get_sell_offers_all[] = "Trade.get_sell_offers_all";
+static const char __pyx_k_abcEconomics_propose_sell[] = "abcEconomics_propose_sell";
+static const char __pyx_k_abcEconomics_receive_good[] = "abcEconomics_receive_good";
+static const char __pyx_k_abcEconomics_notenoughgoods[] = "abcEconomics.notenoughgoods";
+static const char __pyx_k_abcEconomics_receive_accept[] = "abcEconomics_receive_accept";
+static const char __pyx_k_abcEconomics_receive_reject[] = "abcEconomics_receive_reject";
 static const char __pyx_k_Trade_get_offers_locals_lambda[] = "Trade.get_offers.<locals>.<lambda>";
 static const char __pyx_k_reject_polled_but_not_accepted[] = "_reject_polled_but_not_accepted_offers";
 static const char __pyx_k_sender_s_receiver_group_s_good[] = "<{sender: %s, receiver_group: %s, good: %s, quantity: %f, price: %f,\n                sell: %r, status: %s, final_quantity: % f, id: %i,\n                made: %i, status_round: %i }>";
-static const char __pyx_k_Agents_can_trade_with_each_othe[] = " Agents can trade with each other. The clearing of the trade is taken care\n    of fully by ABCE.\n    Selling a good works in the following way:\n\n    1. An agent sends an offer. :meth:`~.sell`\n\n       *The good offered is blocked and self.possession(...) does shows the decreased amount.*\n\n    2. **Next subround:** An agent receives the offer :meth:`~.get_offers`, and can\n       :meth:`~.accept`, :meth:`~.reject` or partially accept it. :meth:`~.accept`\n\n       *The good is credited and the price is deducted from the agent's possessions.*\n\n    3. **Next subround:**\n\n       - in case of acceptance *the money is automatically credited.*\n       - in case of partial acceptance *the money is credited and part of the blocked good is unblocked.*\n       - in case of rejection *the good is unblocked.*\n\n    Analogously for buying: :meth:`~.buy`\n\n    Example::\n\n        # Agent 1\n        def sales(self):\n            self.remember_trade = self.sell('Household', 0, 'cookies', quantity=5, price=self.price)\n\n        # Agent 2\n        def receive_sale(self):\n            oo = self.get_offers('cookies')\n            for offer in oo:\n                if offer.price < 0.3:\n                    try:\n                        self.accept(offer)\n                    except NotEnoughGoods:\n                        self.accept(offer, self['money'] / offer.price)\n                else:\n                    self.reject(offer)\n\n        # Agent 1, subround 3\n        def learning(self):\n            offer = self.info(self.remember_trade)\n            if offer.status == 'reject':\n                self.price *= .9\n            elif offer.status = 'accepted':\n                self.price *= offer.final_quantity / offer.quantity\n    Example::\n\n        # Agent 1\n        def sales(self):\n            self.remember_trade = self.sell('Household', 0, 'cookies', quantity=5, price=self.price, currency='dollars')\n\n        # Agent 2\n        def receive_sale(self):\n         ""   oo = self.get_offers('cookies')\n            for offer in oo:\n                if ((offer.currency == 'dollars' and offer.price < 0.3 * exchange_rate)\n                    or (offer.currency == 'euros' and dollars'offer.price < 0.3)):\n\n                    try:\n                        self.accept(offer)\n                    except NotEnoughGoods:\n                        self.accept(offer, self['money'] / offer.price)\n                else:\n                    self.reject(offer)\n\n    If we did not implement a barter class, but one can use this class as a barter class,\n    ";
-static const char __pyx_k_The_class_abceagent_Agent_class[] = "\nThe :class:`abceagent.Agent` class is the basic class for creating your agent. It automatically handles the\npossession of goods of an agent. In order to produce/transforme goods you need to also subclass\nthe :class:`abceagent.Firm` [1]_ or to create a consumer the :class:`abceagent.Household`.\n\nFor detailed documentation on:\n\nTrading:\n    see :class:`abceagent.Trade`\nLogging and data creation:\n    see :class:`abceagent.Database` and :doc:`simulation_results`\nMessaging between agents:\n    see :class:`abceagent.Messenger`.\n\n.. autoexception:: abcetools.NotEnoughGoods\n\n.. [1] or :class:`abceagent.FirmMultiTechnologies` for simulations with complex technologies.\n";
+static const char __pyx_k_Agents_can_trade_with_each_othe[] = " Agents can trade with each other. The clearing of the trade is taken care\n    of fully by abcEconomics.\n    Selling a good works in the following way:\n\n    1. An agent sends an offer. :meth:`~.sell`\n\n       *The good offered is blocked and self.possession(...) does shows the decreased amount.*\n\n    2. **Next subround:** An agent receives the offer :meth:`~.get_offers`, and can\n       :meth:`~.accept`, :meth:`~.reject` or partially accept it. :meth:`~.accept`\n\n       *The good is credited and the price is deducted from the agent's possessions.*\n\n    3. **Next subround:**\n\n       - in case of acceptance *the money is automatically credited.*\n       - in case of partial acceptance *the money is credited and part of the blocked good is unblocked.*\n       - in case of rejection *the good is unblocked.*\n\n    Analogously for buying: :meth:`~.buy`\n\n    Example::\n\n        # Agent 1\n        def sales(self):\n            self.remember_trade = self.sell('Household', 0, 'cookies', quantity=5, price=self.price)\n\n        # Agent 2\n        def receive_sale(self):\n            oo = self.get_offers('cookies')\n            for offer in oo:\n                if offer.price < 0.3:\n                    try:\n                        self.accept(offer)\n                    except NotEnoughGoods:\n                        self.accept(offer, self['money'] / offer.price)\n                else:\n                    self.reject(offer)\n\n        # Agent 1, subround 3\n        def learning(self):\n            offer = self.info(self.remember_trade)\n            if offer.status == 'reject':\n                self.price *= .9\n            elif offer.status = 'accepted':\n                self.price *= offer.final_quantity / offer.quantity\n    Example::\n\n        # Agent 1\n        def sales(self):\n            self.remember_trade = self.sell('Household', 0, 'cookies', quantity=5, price=self.price, currency='dollars')\n\n        # Agent 2\n        def receive_sale(self):\n         ""   oo = self.get_offers('cookies')\n            for offer in oo:\n                if ((offer.currency == 'dollars' and offer.price < 0.3 * exchange_rate)\n                    or (offer.currency == 'euros' and dollars'offer.price < 0.3)):\n\n                    try:\n                        self.accept(offer)\n                    except NotEnoughGoods:\n                        self.accept(offer, self['money'] / offer.price)\n                else:\n                    self.reject(offer)\n\n    If we did not implement a barter class, but one can use this class as a barter class,\n    ";
+static const char __pyx_k_The_class_abcEconomicsagent_Age[] = "\nThe :class:`abcEconomicsagent.Agent` class is the basic class for creating your agent. It automatically handles the\npossession of goods of an agent. In order to produce/transforme goods you need to also subclass\nthe :class:`abcEconomicsagent.Firm` [1]_ or to create a consumer the :class:`abcEconomicsagent.Household`.\n\nFor detailed documentation on:\n\nTrading:\n    see :class:`abcEconomicsagent.Trade`\nLogging and data creation:\n    see :class:`abcEconomicsagent.Database` and :doc:`simulation_results`\nMessaging between agents:\n    see :class:`abcEconomicsagent.Messenger`.\n\n.. autoexception:: abcEconomicstools.NotEnoughGoods\n\n.. [1] or :class:`abcEconomicsagent.FirmMultiTechnologies` for simulations with complex technologies.\n";
 static const char __pyx_k_Trade__log_receive_accept_agent[] = "Trade._log_receive_accept_agent";
 static const char __pyx_k_Trade__log_receive_accept_group[] = "Trade._log_receive_accept_group";
 static const char __pyx_k_Trade_peak_offers_locals_lambda[] = "Trade.peak_offers.<locals>.<lambda>";
@@ -1441,12 +1441,12 @@ static PyObject *__pyx_n_s_Trade_peak_sell_offers_locals_la;
 static PyObject *__pyx_n_s_Trade_reject;
 static PyObject *__pyx_n_s_Trade_sell;
 static PyObject *__pyx_n_s_Trade_take;
-static PyObject *__pyx_n_s_abce_notenoughgoods;
-static PyObject *__pyx_n_s_abce_propose_buy;
-static PyObject *__pyx_n_s_abce_propose_sell;
-static PyObject *__pyx_n_s_abce_receive_accept;
-static PyObject *__pyx_n_s_abce_receive_good;
-static PyObject *__pyx_n_s_abce_receive_reject;
+static PyObject *__pyx_n_s_abcEconomics_notenoughgoods;
+static PyObject *__pyx_n_s_abcEconomics_propose_buy;
+static PyObject *__pyx_n_s_abcEconomics_propose_sell;
+static PyObject *__pyx_n_s_abcEconomics_receive_accept;
+static PyObject *__pyx_n_s_abcEconomics_receive_good;
+static PyObject *__pyx_n_s_abcEconomics_receive_reject;
 static PyObject *__pyx_n_s_accept;
 static PyObject *__pyx_n_s_accepted;
 static PyObject *__pyx_kp_s_accepted_more_than_offered_s_100;
@@ -4762,7 +4762,7 @@ static PyObject *__pyx_pf_5trade_5Trade_8get_sell_offers_all(CYTHON_UNUSED PyObj
 
 /* Python wrapper */
 static PyObject *__pyx_pw_5trade_5Trade_11get_offers_all(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_5trade_5Trade_10get_offers_all[] = " returns all offers in a dictionary, with goods as key. The in each\n        goods-category the goods are ordered by price. The order can be reversed\n        by setting descending=True\n\n        *Offers that are not accepted in the same subround (def block) are\n        automatically rejected.* However you can also manually reject.\n\n        Args:\n\n         descending(optional):\n            is a bool. False for descending True for ascending by price\n\n         sorted(default=True):\n                Whether offers are sorted by price. Faster if False.\n\n        Returns:\n\n            a dictionary with good types as keys and list of :class:`abce.trade.Offer`\n            as values\n\n        Example::\n\n         oo = get_offers_all(descending=False)\n         for good_category in oo:\n            print('The cheapest good of category' + good_category\n            + ' is ' + good_category[0])\n            for offer in oo[good_category]:\n                if offer.price < 0.5:\n                    self.accept(offer)\n\n         for offer in oo.beer:\n            print(offer.price, offer.sender_group, offer.sender_id)\n        ";
+static char __pyx_doc_5trade_5Trade_10get_offers_all[] = " returns all offers in a dictionary, with goods as key. The in each\n        goods-category the goods are ordered by price. The order can be reversed\n        by setting descending=True\n\n        *Offers that are not accepted in the same subround (def block) are\n        automatically rejected.* However you can also manually reject.\n\n        Args:\n\n         descending(optional):\n            is a bool. False for descending True for ascending by price\n\n         sorted(default=True):\n                Whether offers are sorted by price. Faster if False.\n\n        Returns:\n\n            a dictionary with good types as keys and list of :class:`abcEconomics.trade.Offer`\n            as values\n\n        Example::\n\n         oo = get_offers_all(descending=False)\n         for good_category in oo:\n            print('The cheapest good of category' + good_category\n            + ' is ' + good_category[0])\n            for offer in oo[good_category]:\n                if offer.price < 0.5:\n                    self.accept(offer)\n\n         for offer in oo.beer:\n            print(offer.price, offer.sender_group, offer.sender_id)\n        ";
 static PyMethodDef __pyx_mdef_5trade_5Trade_11get_offers_all = {"get_offers_all", (PyCFunction)__pyx_pw_5trade_5Trade_11get_offers_all, METH_VARARGS|METH_KEYWORDS, __pyx_doc_5trade_5Trade_10get_offers_all};
 static PyObject *__pyx_pw_5trade_5Trade_11get_offers_all(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_self = 0;
@@ -5934,7 +5934,7 @@ static PyObject *__pyx_pf_5trade_5Trade_14get_sell_offers(CYTHON_UNUSED PyObject
 
 /* Python wrapper */
 static PyObject *__pyx_pw_5trade_5Trade_17get_offers(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_5trade_5Trade_16get_offers[] = " returns all offers of the 'good' ordered by price.\n\n        *Offers that are not accepted in the same subround (def block) are\n        automatically rejected.* However you can also manually reject.\n\n        peek_offers can be used to look at the offers without them being\n        rejected automatically\n\n        Args:\n            good:\n                the good which should be retrieved\n\n            sorted(bool, default=True):\n                Whether offers are sorted by price. Faster if False.\n\n            descending(bool, default=False):\n                False for descending True for ascending by price\n\n            shuffled(bool, default=True):\n                whether the order of messages is randomized or correlated with\n                the ID of the agent. Setting this to False speeds up the\n                simulation considerably, but introduces a bias.\n\n        Returns:\n            A list of :class:`abce.trade.Offer` ordered by price.\n\n        Example::\n\n            offers = get_offers('books')\n            for offer in offers:\n                if offer.price < 50:\n                    self.accept(offer)\n                elif offer.price < 100:\n                    self.accept(offer, 1)\n                else:\n                    self.reject(offer)  # optional\n        ";
+static char __pyx_doc_5trade_5Trade_16get_offers[] = " returns all offers of the 'good' ordered by price.\n\n        *Offers that are not accepted in the same subround (def block) are\n        automatically rejected.* However you can also manually reject.\n\n        peek_offers can be used to look at the offers without them being\n        rejected automatically\n\n        Args:\n            good:\n                the good which should be retrieved\n\n            sorted(bool, default=True):\n                Whether offers are sorted by price. Faster if False.\n\n            descending(bool, default=False):\n                False for descending True for ascending by price\n\n            shuffled(bool, default=True):\n                whether the order of messages is randomized or correlated with\n                the ID of the agent. Setting this to False speeds up the\n                simulation considerably, but introduces a bias.\n\n        Returns:\n            A list of :class:`abcEconomics.trade.Offer` ordered by price.\n\n        Example::\n\n            offers = get_offers('books')\n            for offer in offers:\n                if offer.price < 50:\n                    self.accept(offer)\n                elif offer.price < 100:\n                    self.accept(offer, 1)\n                else:\n                    self.reject(offer)  # optional\n        ";
 static PyMethodDef __pyx_mdef_5trade_5Trade_17get_offers = {"get_offers", (PyCFunction)__pyx_pw_5trade_5Trade_17get_offers, METH_VARARGS|METH_KEYWORDS, __pyx_doc_5trade_5Trade_16get_offers};
 static PyObject *__pyx_pw_5trade_5Trade_17get_offers(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_self = 0;
@@ -8229,7 +8229,7 @@ static PyObject *__pyx_pf_5trade_5Trade_24sell(CYTHON_UNUSED PyObject *__pyx_sel
  *                                  self.time,
  *                                  -2)
  *         self.given_offers[offer_id] = offer             # <<<<<<<<<<<<<<
- *         self.send(receiver, 'abce_propose_sell', offer)
+ *         self.send(receiver, 'abcEconomics_propose_sell', offer)
  *         return offer
  */
   __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_given_offers); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 495, __pyx_L1_error)
@@ -8240,7 +8240,7 @@ static PyObject *__pyx_pf_5trade_5Trade_24sell(CYTHON_UNUSED PyObject *__pyx_sel
   /* "trade.pyx":496
  *                                  -2)
  *         self.given_offers[offer_id] = offer
- *         self.send(receiver, 'abce_propose_sell', offer)             # <<<<<<<<<<<<<<
+ *         self.send(receiver, 'abcEconomics_propose_sell', offer)             # <<<<<<<<<<<<<<
  *         return offer
  * 
  */
@@ -8260,7 +8260,7 @@ static PyObject *__pyx_pf_5trade_5Trade_24sell(CYTHON_UNUSED PyObject *__pyx_sel
   }
   #if CYTHON_FAST_PYCALL
   if (PyFunction_Check(__pyx_t_6)) {
-    PyObject *__pyx_temp[4] = {__pyx_t_3, __pyx_v_receiver, __pyx_n_s_abce_propose_sell, ((PyObject *)__pyx_v_offer)};
+    PyObject *__pyx_temp[4] = {__pyx_t_3, __pyx_v_receiver, __pyx_n_s_abcEconomics_propose_sell, ((PyObject *)__pyx_v_offer)};
     __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_6, __pyx_temp+1-__pyx_t_8, 3+__pyx_t_8); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 496, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_GOTREF(__pyx_t_1);
@@ -8268,7 +8268,7 @@ static PyObject *__pyx_pf_5trade_5Trade_24sell(CYTHON_UNUSED PyObject *__pyx_sel
   #endif
   #if CYTHON_FAST_PYCCALL
   if (__Pyx_PyFastCFunction_Check(__pyx_t_6)) {
-    PyObject *__pyx_temp[4] = {__pyx_t_3, __pyx_v_receiver, __pyx_n_s_abce_propose_sell, ((PyObject *)__pyx_v_offer)};
+    PyObject *__pyx_temp[4] = {__pyx_t_3, __pyx_v_receiver, __pyx_n_s_abcEconomics_propose_sell, ((PyObject *)__pyx_v_offer)};
     __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_6, __pyx_temp+1-__pyx_t_8, 3+__pyx_t_8); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 496, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_GOTREF(__pyx_t_1);
@@ -8283,9 +8283,9 @@ static PyObject *__pyx_pf_5trade_5Trade_24sell(CYTHON_UNUSED PyObject *__pyx_sel
     __Pyx_INCREF(__pyx_v_receiver);
     __Pyx_GIVEREF(__pyx_v_receiver);
     PyTuple_SET_ITEM(__pyx_t_9, 0+__pyx_t_8, __pyx_v_receiver);
-    __Pyx_INCREF(__pyx_n_s_abce_propose_sell);
-    __Pyx_GIVEREF(__pyx_n_s_abce_propose_sell);
-    PyTuple_SET_ITEM(__pyx_t_9, 1+__pyx_t_8, __pyx_n_s_abce_propose_sell);
+    __Pyx_INCREF(__pyx_n_s_abcEconomics_propose_sell);
+    __Pyx_GIVEREF(__pyx_n_s_abcEconomics_propose_sell);
+    PyTuple_SET_ITEM(__pyx_t_9, 1+__pyx_t_8, __pyx_n_s_abcEconomics_propose_sell);
     __Pyx_INCREF(((PyObject *)__pyx_v_offer));
     __Pyx_GIVEREF(((PyObject *)__pyx_v_offer));
     PyTuple_SET_ITEM(__pyx_t_9, 2+__pyx_t_8, ((PyObject *)__pyx_v_offer));
@@ -8298,7 +8298,7 @@ static PyObject *__pyx_pf_5trade_5Trade_24sell(CYTHON_UNUSED PyObject *__pyx_sel
 
   /* "trade.pyx":497
  *         self.given_offers[offer_id] = offer
- *         self.send(receiver, 'abce_propose_sell', offer)
+ *         self.send(receiver, 'abcEconomics_propose_sell', offer)
  *         return offer             # <<<<<<<<<<<<<<
  * 
  *     def buy(self, receiver, good,
@@ -8837,7 +8837,7 @@ static PyObject *__pyx_pf_5trade_5Trade_26buy(CYTHON_UNUSED PyObject *__pyx_self
  *                                  offer_id,
  *                                  self.time,             # <<<<<<<<<<<<<<
  *                                  -1)
- *         self.send(receiver, 'abce_propose_buy', offer)
+ *         self.send(receiver, 'abcEconomics_propose_buy', offer)
  */
   __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_time); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 557, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -8896,7 +8896,7 @@ static PyObject *__pyx_pf_5trade_5Trade_26buy(CYTHON_UNUSED PyObject *__pyx_self
   /* "trade.pyx":559
  *                                  self.time,
  *                                  -1)
- *         self.send(receiver, 'abce_propose_buy', offer)             # <<<<<<<<<<<<<<
+ *         self.send(receiver, 'abcEconomics_propose_buy', offer)             # <<<<<<<<<<<<<<
  *         self.given_offers[offer_id] = offer
  *         return offer
  */
@@ -8916,7 +8916,7 @@ static PyObject *__pyx_pf_5trade_5Trade_26buy(CYTHON_UNUSED PyObject *__pyx_self
   }
   #if CYTHON_FAST_PYCALL
   if (PyFunction_Check(__pyx_t_6)) {
-    PyObject *__pyx_temp[4] = {__pyx_t_8, __pyx_v_receiver, __pyx_n_s_abce_propose_buy, ((PyObject *)__pyx_v_offer)};
+    PyObject *__pyx_temp[4] = {__pyx_t_8, __pyx_v_receiver, __pyx_n_s_abcEconomics_propose_buy, ((PyObject *)__pyx_v_offer)};
     __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_6, __pyx_temp+1-__pyx_t_7, 3+__pyx_t_7); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 559, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
     __Pyx_GOTREF(__pyx_t_1);
@@ -8924,7 +8924,7 @@ static PyObject *__pyx_pf_5trade_5Trade_26buy(CYTHON_UNUSED PyObject *__pyx_self
   #endif
   #if CYTHON_FAST_PYCCALL
   if (__Pyx_PyFastCFunction_Check(__pyx_t_6)) {
-    PyObject *__pyx_temp[4] = {__pyx_t_8, __pyx_v_receiver, __pyx_n_s_abce_propose_buy, ((PyObject *)__pyx_v_offer)};
+    PyObject *__pyx_temp[4] = {__pyx_t_8, __pyx_v_receiver, __pyx_n_s_abcEconomics_propose_buy, ((PyObject *)__pyx_v_offer)};
     __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_6, __pyx_temp+1-__pyx_t_7, 3+__pyx_t_7); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 559, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
     __Pyx_GOTREF(__pyx_t_1);
@@ -8939,9 +8939,9 @@ static PyObject *__pyx_pf_5trade_5Trade_26buy(CYTHON_UNUSED PyObject *__pyx_self
     __Pyx_INCREF(__pyx_v_receiver);
     __Pyx_GIVEREF(__pyx_v_receiver);
     PyTuple_SET_ITEM(__pyx_t_3, 0+__pyx_t_7, __pyx_v_receiver);
-    __Pyx_INCREF(__pyx_n_s_abce_propose_buy);
-    __Pyx_GIVEREF(__pyx_n_s_abce_propose_buy);
-    PyTuple_SET_ITEM(__pyx_t_3, 1+__pyx_t_7, __pyx_n_s_abce_propose_buy);
+    __Pyx_INCREF(__pyx_n_s_abcEconomics_propose_buy);
+    __Pyx_GIVEREF(__pyx_n_s_abcEconomics_propose_buy);
+    PyTuple_SET_ITEM(__pyx_t_3, 1+__pyx_t_7, __pyx_n_s_abcEconomics_propose_buy);
     __Pyx_INCREF(((PyObject *)__pyx_v_offer));
     __Pyx_GIVEREF(((PyObject *)__pyx_v_offer));
     PyTuple_SET_ITEM(__pyx_t_3, 2+__pyx_t_7, ((PyObject *)__pyx_v_offer));
@@ -8954,7 +8954,7 @@ static PyObject *__pyx_pf_5trade_5Trade_26buy(CYTHON_UNUSED PyObject *__pyx_self
 
   /* "trade.pyx":560
  *                                  -1)
- *         self.send(receiver, 'abce_propose_buy', offer)
+ *         self.send(receiver, 'abcEconomics_propose_buy', offer)
  *         self.given_offers[offer_id] = offer             # <<<<<<<<<<<<<<
  *         return offer
  * 
@@ -8965,7 +8965,7 @@ static PyObject *__pyx_pf_5trade_5Trade_26buy(CYTHON_UNUSED PyObject *__pyx_self
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "trade.pyx":561
- *         self.send(receiver, 'abce_propose_buy', offer)
+ *         self.send(receiver, 'abcEconomics_propose_buy', offer)
  *         self.given_offers[offer_id] = offer
  *         return offer             # <<<<<<<<<<<<<<
  * 
@@ -9965,7 +9965,7 @@ static PyObject *__pyx_pf_5trade_5Trade_28accept(CYTHON_UNUSED PyObject *__pyx_s
  *             self._inventory.haves[offer.good] -= quantity
  *             self._inventory.haves[offer.currency] += quantity * offer.price             # <<<<<<<<<<<<<<
  *         offer.final_quantity = quantity
- *         self.send(offer.sender, 'abce_receive_accept', (offer.id, quantity))
+ *         self.send(offer.sender, 'abcEconomics_receive_accept', (offer.id, quantity))
  */
     __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_inventory); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 625, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
@@ -9993,7 +9993,7 @@ static PyObject *__pyx_pf_5trade_5Trade_28accept(CYTHON_UNUSED PyObject *__pyx_s
  *             self._inventory.haves[offer.good] -= quantity
  *             self._inventory.haves[offer.currency] += quantity * offer.price
  *         offer.final_quantity = quantity             # <<<<<<<<<<<<<<
- *         self.send(offer.sender, 'abce_receive_accept', (offer.id, quantity))
+ *         self.send(offer.sender, 'abcEconomics_receive_accept', (offer.id, quantity))
  *         del self._polled_offers[offer.id]
  */
   __pyx_v_offer->final_quantity = __pyx_v_quantity;
@@ -10001,7 +10001,7 @@ static PyObject *__pyx_pf_5trade_5Trade_28accept(CYTHON_UNUSED PyObject *__pyx_s
   /* "trade.pyx":627
  *             self._inventory.haves[offer.currency] += quantity * offer.price
  *         offer.final_quantity = quantity
- *         self.send(offer.sender, 'abce_receive_accept', (offer.id, quantity))             # <<<<<<<<<<<<<<
+ *         self.send(offer.sender, 'abcEconomics_receive_accept', (offer.id, quantity))             # <<<<<<<<<<<<<<
  *         del self._polled_offers[offer.id]
  *         if offer.sell:  # ord('s')
  */
@@ -10031,7 +10031,7 @@ static PyObject *__pyx_pf_5trade_5Trade_28accept(CYTHON_UNUSED PyObject *__pyx_s
   }
   #if CYTHON_FAST_PYCALL
   if (PyFunction_Check(__pyx_t_5)) {
-    PyObject *__pyx_temp[4] = {__pyx_t_6, __pyx_v_offer->sender, __pyx_n_s_abce_receive_accept, __pyx_t_4};
+    PyObject *__pyx_temp[4] = {__pyx_t_6, __pyx_v_offer->sender, __pyx_n_s_abcEconomics_receive_accept, __pyx_t_4};
     __pyx_t_3 = __Pyx_PyFunction_FastCall(__pyx_t_5, __pyx_temp+1-__pyx_t_10, 3+__pyx_t_10); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 627, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_GOTREF(__pyx_t_3);
@@ -10040,7 +10040,7 @@ static PyObject *__pyx_pf_5trade_5Trade_28accept(CYTHON_UNUSED PyObject *__pyx_s
   #endif
   #if CYTHON_FAST_PYCCALL
   if (__Pyx_PyFastCFunction_Check(__pyx_t_5)) {
-    PyObject *__pyx_temp[4] = {__pyx_t_6, __pyx_v_offer->sender, __pyx_n_s_abce_receive_accept, __pyx_t_4};
+    PyObject *__pyx_temp[4] = {__pyx_t_6, __pyx_v_offer->sender, __pyx_n_s_abcEconomics_receive_accept, __pyx_t_4};
     __pyx_t_3 = __Pyx_PyCFunction_FastCall(__pyx_t_5, __pyx_temp+1-__pyx_t_10, 3+__pyx_t_10); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 627, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_GOTREF(__pyx_t_3);
@@ -10056,9 +10056,9 @@ static PyObject *__pyx_pf_5trade_5Trade_28accept(CYTHON_UNUSED PyObject *__pyx_s
     __Pyx_INCREF(__pyx_v_offer->sender);
     __Pyx_GIVEREF(__pyx_v_offer->sender);
     PyTuple_SET_ITEM(__pyx_t_9, 0+__pyx_t_10, __pyx_v_offer->sender);
-    __Pyx_INCREF(__pyx_n_s_abce_receive_accept);
-    __Pyx_GIVEREF(__pyx_n_s_abce_receive_accept);
-    PyTuple_SET_ITEM(__pyx_t_9, 1+__pyx_t_10, __pyx_n_s_abce_receive_accept);
+    __Pyx_INCREF(__pyx_n_s_abcEconomics_receive_accept);
+    __Pyx_GIVEREF(__pyx_n_s_abcEconomics_receive_accept);
+    PyTuple_SET_ITEM(__pyx_t_9, 1+__pyx_t_10, __pyx_n_s_abcEconomics_receive_accept);
     __Pyx_GIVEREF(__pyx_t_4);
     PyTuple_SET_ITEM(__pyx_t_9, 2+__pyx_t_10, __pyx_t_4);
     __pyx_t_4 = 0;
@@ -10071,7 +10071,7 @@ static PyObject *__pyx_pf_5trade_5Trade_28accept(CYTHON_UNUSED PyObject *__pyx_s
 
   /* "trade.pyx":628
  *         offer.final_quantity = quantity
- *         self.send(offer.sender, 'abce_receive_accept', (offer.id, quantity))
+ *         self.send(offer.sender, 'abcEconomics_receive_accept', (offer.id, quantity))
  *         del self._polled_offers[offer.id]             # <<<<<<<<<<<<<<
  *         if offer.sell:  # ord('s')
  *             return {offer.good: - quantity, offer.currency: money_amount}
@@ -10082,7 +10082,7 @@ static PyObject *__pyx_pf_5trade_5Trade_28accept(CYTHON_UNUSED PyObject *__pyx_s
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
   /* "trade.pyx":629
- *         self.send(offer.sender, 'abce_receive_accept', (offer.id, quantity))
+ *         self.send(offer.sender, 'abcEconomics_receive_accept', (offer.id, quantity))
  *         del self._polled_offers[offer.id]
  *         if offer.sell:  # ord('s')             # <<<<<<<<<<<<<<
  *             return {offer.good: - quantity, offer.currency: money_amount}
@@ -10114,7 +10114,7 @@ static PyObject *__pyx_pf_5trade_5Trade_28accept(CYTHON_UNUSED PyObject *__pyx_s
     goto __pyx_L0;
 
     /* "trade.pyx":629
- *         self.send(offer.sender, 'abce_receive_accept', (offer.id, quantity))
+ *         self.send(offer.sender, 'abcEconomics_receive_accept', (offer.id, quantity))
  *         del self._polled_offers[offer.id]
  *         if offer.sell:  # ord('s')             # <<<<<<<<<<<<<<
  *             return {offer.good: - quantity, offer.currency: money_amount}
@@ -10468,7 +10468,7 @@ static PyObject *__pyx_pf_5trade_5Trade_32_reject(CYTHON_UNUSED PyObject *__pyx_
   /* "trade.pyx":648
  *                 (offer not quote!)
  *         """
- *         self.send(offer.sender, 'abce_receive_reject', offer.id)             # <<<<<<<<<<<<<<
+ *         self.send(offer.sender, 'abcEconomics_receive_reject', offer.id)             # <<<<<<<<<<<<<<
  * 
  *     def reject(self, Offer offer):
  */
@@ -10492,7 +10492,7 @@ static PyObject *__pyx_pf_5trade_5Trade_32_reject(CYTHON_UNUSED PyObject *__pyx_
   }
   #if CYTHON_FAST_PYCALL
   if (PyFunction_Check(__pyx_t_2)) {
-    PyObject *__pyx_temp[4] = {__pyx_t_5, __pyx_t_3, __pyx_n_s_abce_receive_reject, __pyx_t_4};
+    PyObject *__pyx_temp[4] = {__pyx_t_5, __pyx_t_3, __pyx_n_s_abcEconomics_receive_reject, __pyx_t_4};
     __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_6, 3+__pyx_t_6); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 648, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_GOTREF(__pyx_t_1);
@@ -10502,7 +10502,7 @@ static PyObject *__pyx_pf_5trade_5Trade_32_reject(CYTHON_UNUSED PyObject *__pyx_
   #endif
   #if CYTHON_FAST_PYCCALL
   if (__Pyx_PyFastCFunction_Check(__pyx_t_2)) {
-    PyObject *__pyx_temp[4] = {__pyx_t_5, __pyx_t_3, __pyx_n_s_abce_receive_reject, __pyx_t_4};
+    PyObject *__pyx_temp[4] = {__pyx_t_5, __pyx_t_3, __pyx_n_s_abcEconomics_receive_reject, __pyx_t_4};
     __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_6, 3+__pyx_t_6); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 648, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_GOTREF(__pyx_t_1);
@@ -10518,9 +10518,9 @@ static PyObject *__pyx_pf_5trade_5Trade_32_reject(CYTHON_UNUSED PyObject *__pyx_
     }
     __Pyx_GIVEREF(__pyx_t_3);
     PyTuple_SET_ITEM(__pyx_t_7, 0+__pyx_t_6, __pyx_t_3);
-    __Pyx_INCREF(__pyx_n_s_abce_receive_reject);
-    __Pyx_GIVEREF(__pyx_n_s_abce_receive_reject);
-    PyTuple_SET_ITEM(__pyx_t_7, 1+__pyx_t_6, __pyx_n_s_abce_receive_reject);
+    __Pyx_INCREF(__pyx_n_s_abcEconomics_receive_reject);
+    __Pyx_GIVEREF(__pyx_n_s_abcEconomics_receive_reject);
+    PyTuple_SET_ITEM(__pyx_t_7, 1+__pyx_t_6, __pyx_n_s_abcEconomics_receive_reject);
     __Pyx_GIVEREF(__pyx_t_4);
     PyTuple_SET_ITEM(__pyx_t_7, 2+__pyx_t_6, __pyx_t_4);
     __pyx_t_3 = 0;
@@ -10559,7 +10559,7 @@ static PyObject *__pyx_pf_5trade_5Trade_32_reject(CYTHON_UNUSED PyObject *__pyx_
 }
 
 /* "trade.pyx":650
- *         self.send(offer.sender, 'abce_receive_reject', offer.id)
+ *         self.send(offer.sender, 'abcEconomics_receive_reject', offer.id)
  * 
  *     def reject(self, Offer offer):             # <<<<<<<<<<<<<<
  *         """ Rejects and offer, if the offer is subsequently accepted in the
@@ -13104,7 +13104,7 @@ static PyObject *__pyx_pf_5trade_5Trade_50give(CYTHON_UNUSED PyObject *__pyx_sel
  *         if quantity > available:
  *             quantity = available             # <<<<<<<<<<<<<<
  *         self._inventory.haves[good] -= quantity
- *         self.send(receiver, 'abce_receive_good', [good, quantity])
+ *         self.send(receiver, 'abcEconomics_receive_good', [good, quantity])
  */
     __pyx_v_quantity = __pyx_v_available;
 
@@ -13121,7 +13121,7 @@ static PyObject *__pyx_pf_5trade_5Trade_50give(CYTHON_UNUSED PyObject *__pyx_sel
  *         if quantity > available:
  *             quantity = available
  *         self._inventory.haves[good] -= quantity             # <<<<<<<<<<<<<<
- *         self.send(receiver, 'abce_receive_good', [good, quantity])
+ *         self.send(receiver, 'abcEconomics_receive_good', [good, quantity])
  *         return {good: quantity}
  */
   __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_inventory); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 767, __pyx_L1_error)
@@ -13147,7 +13147,7 @@ static PyObject *__pyx_pf_5trade_5Trade_50give(CYTHON_UNUSED PyObject *__pyx_sel
   /* "trade.pyx":768
  *             quantity = available
  *         self._inventory.haves[good] -= quantity
- *         self.send(receiver, 'abce_receive_good', [good, quantity])             # <<<<<<<<<<<<<<
+ *         self.send(receiver, 'abcEconomics_receive_good', [good, quantity])             # <<<<<<<<<<<<<<
  *         return {good: quantity}
  * 
  */
@@ -13177,7 +13177,7 @@ static PyObject *__pyx_pf_5trade_5Trade_50give(CYTHON_UNUSED PyObject *__pyx_sel
   }
   #if CYTHON_FAST_PYCALL
   if (PyFunction_Check(__pyx_t_3)) {
-    PyObject *__pyx_temp[4] = {__pyx_t_1, __pyx_v_receiver, __pyx_n_s_abce_receive_good, __pyx_t_8};
+    PyObject *__pyx_temp[4] = {__pyx_t_1, __pyx_v_receiver, __pyx_n_s_abcEconomics_receive_good, __pyx_t_8};
     __pyx_t_2 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-__pyx_t_10, 3+__pyx_t_10); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 768, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_GOTREF(__pyx_t_2);
@@ -13186,7 +13186,7 @@ static PyObject *__pyx_pf_5trade_5Trade_50give(CYTHON_UNUSED PyObject *__pyx_sel
   #endif
   #if CYTHON_FAST_PYCCALL
   if (__Pyx_PyFastCFunction_Check(__pyx_t_3)) {
-    PyObject *__pyx_temp[4] = {__pyx_t_1, __pyx_v_receiver, __pyx_n_s_abce_receive_good, __pyx_t_8};
+    PyObject *__pyx_temp[4] = {__pyx_t_1, __pyx_v_receiver, __pyx_n_s_abcEconomics_receive_good, __pyx_t_8};
     __pyx_t_2 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-__pyx_t_10, 3+__pyx_t_10); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 768, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_GOTREF(__pyx_t_2);
@@ -13202,9 +13202,9 @@ static PyObject *__pyx_pf_5trade_5Trade_50give(CYTHON_UNUSED PyObject *__pyx_sel
     __Pyx_INCREF(__pyx_v_receiver);
     __Pyx_GIVEREF(__pyx_v_receiver);
     PyTuple_SET_ITEM(__pyx_t_11, 0+__pyx_t_10, __pyx_v_receiver);
-    __Pyx_INCREF(__pyx_n_s_abce_receive_good);
-    __Pyx_GIVEREF(__pyx_n_s_abce_receive_good);
-    PyTuple_SET_ITEM(__pyx_t_11, 1+__pyx_t_10, __pyx_n_s_abce_receive_good);
+    __Pyx_INCREF(__pyx_n_s_abcEconomics_receive_good);
+    __Pyx_GIVEREF(__pyx_n_s_abcEconomics_receive_good);
+    PyTuple_SET_ITEM(__pyx_t_11, 1+__pyx_t_10, __pyx_n_s_abcEconomics_receive_good);
     __Pyx_GIVEREF(__pyx_t_8);
     PyTuple_SET_ITEM(__pyx_t_11, 2+__pyx_t_10, __pyx_t_8);
     __pyx_t_8 = 0;
@@ -13217,7 +13217,7 @@ static PyObject *__pyx_pf_5trade_5Trade_50give(CYTHON_UNUSED PyObject *__pyx_sel
 
   /* "trade.pyx":769
  *         self._inventory.haves[good] -= quantity
- *         self.send(receiver, 'abce_receive_good', [good, quantity])
+ *         self.send(receiver, 'abcEconomics_receive_good', [good, quantity])
  *         return {good: quantity}             # <<<<<<<<<<<<<<
  * 
  *     def take(self, receiver, good, double quantity, double epsilon=epsilon):
@@ -13844,7 +13844,7 @@ static PyModuleDef_Slot __pyx_moduledef_slots[] = {
 static struct PyModuleDef __pyx_moduledef = {
     PyModuleDef_HEAD_INIT,
     "trade",
-    __pyx_k_The_class_abceagent_Agent_class, /* m_doc */
+    __pyx_k_The_class_abcEconomicsagent_Age, /* m_doc */
   #if CYTHON_PEP489_MULTI_PHASE_INIT
     0, /* m_size */
   #else
@@ -13899,12 +13899,12 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_Trade_reject, __pyx_k_Trade_reject, sizeof(__pyx_k_Trade_reject), 0, 0, 1, 1},
   {&__pyx_n_s_Trade_sell, __pyx_k_Trade_sell, sizeof(__pyx_k_Trade_sell), 0, 0, 1, 1},
   {&__pyx_n_s_Trade_take, __pyx_k_Trade_take, sizeof(__pyx_k_Trade_take), 0, 0, 1, 1},
-  {&__pyx_n_s_abce_notenoughgoods, __pyx_k_abce_notenoughgoods, sizeof(__pyx_k_abce_notenoughgoods), 0, 0, 1, 1},
-  {&__pyx_n_s_abce_propose_buy, __pyx_k_abce_propose_buy, sizeof(__pyx_k_abce_propose_buy), 0, 0, 1, 1},
-  {&__pyx_n_s_abce_propose_sell, __pyx_k_abce_propose_sell, sizeof(__pyx_k_abce_propose_sell), 0, 0, 1, 1},
-  {&__pyx_n_s_abce_receive_accept, __pyx_k_abce_receive_accept, sizeof(__pyx_k_abce_receive_accept), 0, 0, 1, 1},
-  {&__pyx_n_s_abce_receive_good, __pyx_k_abce_receive_good, sizeof(__pyx_k_abce_receive_good), 0, 0, 1, 1},
-  {&__pyx_n_s_abce_receive_reject, __pyx_k_abce_receive_reject, sizeof(__pyx_k_abce_receive_reject), 0, 0, 1, 1},
+  {&__pyx_n_s_abcEconomics_notenoughgoods, __pyx_k_abcEconomics_notenoughgoods, sizeof(__pyx_k_abcEconomics_notenoughgoods), 0, 0, 1, 1},
+  {&__pyx_n_s_abcEconomics_propose_buy, __pyx_k_abcEconomics_propose_buy, sizeof(__pyx_k_abcEconomics_propose_buy), 0, 0, 1, 1},
+  {&__pyx_n_s_abcEconomics_propose_sell, __pyx_k_abcEconomics_propose_sell, sizeof(__pyx_k_abcEconomics_propose_sell), 0, 0, 1, 1},
+  {&__pyx_n_s_abcEconomics_receive_accept, __pyx_k_abcEconomics_receive_accept, sizeof(__pyx_k_abcEconomics_receive_accept), 0, 0, 1, 1},
+  {&__pyx_n_s_abcEconomics_receive_good, __pyx_k_abcEconomics_receive_good, sizeof(__pyx_k_abcEconomics_receive_good), 0, 0, 1, 1},
+  {&__pyx_n_s_abcEconomics_receive_reject, __pyx_k_abcEconomics_receive_reject, sizeof(__pyx_k_abcEconomics_receive_reject), 0, 0, 1, 1},
   {&__pyx_n_s_accept, __pyx_k_accept, sizeof(__pyx_k_accept), 0, 0, 1, 1},
   {&__pyx_n_s_accepted, __pyx_k_accepted, sizeof(__pyx_k_accepted), 0, 0, 1, 1},
   {&__pyx_kp_s_accepted_more_than_offered_s_100, __pyx_k_accepted_more_than_offered_s_100, sizeof(__pyx_k_accepted_more_than_offered_s_100), 0, 0, 1, 0},
@@ -14295,7 +14295,7 @@ static int __Pyx_InitCachedConstants(void) {
   __pyx_codeobj__47 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__46, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_trade_pyx, __pyx_n_s_reject_2, 640, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__47)) __PYX_ERR(0, 640, __pyx_L1_error)
 
   /* "trade.pyx":650
- *         self.send(offer.sender, 'abce_receive_reject', offer.id)
+ *         self.send(offer.sender, 'abcEconomics_receive_reject', offer.id)
  * 
  *     def reject(self, Offer offer):             # <<<<<<<<<<<<<<
  *         """ Rejects and offer, if the offer is subsequently accepted in the
@@ -14633,7 +14633,7 @@ if (!__Pyx_RefNanny) {
   Py_INCREF(__pyx_m);
   #else
   #if PY_MAJOR_VERSION < 3
-  __pyx_m = Py_InitModule4("trade", __pyx_methods, __pyx_k_The_class_abceagent_Agent_class, 0, PYTHON_API_VERSION); Py_XINCREF(__pyx_m);
+  __pyx_m = Py_InitModule4("trade", __pyx_methods, __pyx_k_The_class_abcEconomicsagent_Age, 0, PYTHON_API_VERSION); Py_XINCREF(__pyx_m);
   #else
   __pyx_m = PyModule_Create(&__pyx_moduledef);
   #endif
@@ -14685,7 +14685,7 @@ if (!__Pyx_RefNanny) {
  * #******************************************************************************************#
  * import random             # <<<<<<<<<<<<<<
  * from collections import defaultdict, OrderedDict
- * from abce.notenoughgoods import NotEnoughGoods
+ * from abcEconomics.notenoughgoods import NotEnoughGoods
  */
   __pyx_t_1 = __Pyx_Import(__pyx_n_s_random, 0, -1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 40, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -14696,7 +14696,7 @@ if (!__Pyx_RefNanny) {
  * #******************************************************************************************#
  * import random
  * from collections import defaultdict, OrderedDict             # <<<<<<<<<<<<<<
- * from abce.notenoughgoods import NotEnoughGoods
+ * from abcEconomics.notenoughgoods import NotEnoughGoods
  * 
  */
   __pyx_t_1 = PyList_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 41, __pyx_L1_error)
@@ -14723,7 +14723,7 @@ if (!__Pyx_RefNanny) {
   /* "trade.pyx":42
  * import random
  * from collections import defaultdict, OrderedDict
- * from abce.notenoughgoods import NotEnoughGoods             # <<<<<<<<<<<<<<
+ * from abcEconomics.notenoughgoods import NotEnoughGoods             # <<<<<<<<<<<<<<
  * 
  * cdef double epsilon = 0.00000000001
  */
@@ -14732,7 +14732,7 @@ if (!__Pyx_RefNanny) {
   __Pyx_INCREF(__pyx_n_s_NotEnoughGoods);
   __Pyx_GIVEREF(__pyx_n_s_NotEnoughGoods);
   PyList_SET_ITEM(__pyx_t_2, 0, __pyx_n_s_NotEnoughGoods);
-  __pyx_t_1 = __Pyx_Import(__pyx_n_s_abce_notenoughgoods, __pyx_t_2, -1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 42, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_Import(__pyx_n_s_abcEconomics_notenoughgoods, __pyx_t_2, -1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 42, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_t_2 = __Pyx_ImportFrom(__pyx_t_1, __pyx_n_s_NotEnoughGoods); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 42, __pyx_L1_error)
@@ -14742,7 +14742,7 @@ if (!__Pyx_RefNanny) {
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "trade.pyx":44
- * from abce.notenoughgoods import NotEnoughGoods
+ * from abcEconomics.notenoughgoods import NotEnoughGoods
  * 
  * cdef double epsilon = 0.00000000001             # <<<<<<<<<<<<<<
  * 
@@ -14779,7 +14779,7 @@ if (!__Pyx_RefNanny) {
  * 
  * class Trade:             # <<<<<<<<<<<<<<
  *     """ Agents can trade with each other. The clearing of the trade is taken care
- *     of fully by ABCE.
+ *     of fully by abcEconomics.
  */
   __pyx_t_1 = __Pyx_Py3MetaclassPrepare((PyObject *) NULL, __pyx_empty_tuple, __pyx_n_s_Trade, __pyx_n_s_Trade, (PyObject *) NULL, __pyx_n_s_trade, __pyx_kp_s_Agents_can_trade_with_each_othe); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 157, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -15023,7 +15023,7 @@ if (!__Pyx_RefNanny) {
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "trade.pyx":650
- *         self.send(offer.sender, 'abce_receive_reject', offer.id)
+ *         self.send(offer.sender, 'abcEconomics_receive_reject', offer.id)
  * 
  *     def reject(self, Offer offer):             # <<<<<<<<<<<<<<
  *         """ Rejects and offer, if the offer is subsequently accepted in the
@@ -15153,7 +15153,7 @@ if (!__Pyx_RefNanny) {
  * 
  * class Trade:             # <<<<<<<<<<<<<<
  *     """ Agents can trade with each other. The clearing of the trade is taken care
- *     of fully by ABCE.
+ *     of fully by abcEconomics.
  */
   __pyx_t_2 = __Pyx_Py3ClassCreate(((PyObject*)&__Pyx_DefaultClassType), __pyx_n_s_Trade, __pyx_empty_tuple, __pyx_t_1, NULL, 0, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 157, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
