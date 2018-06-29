@@ -1,10 +1,10 @@
-import abce
+import abcEconomics
 from tools import is_zero
 import random
-from abce import NotEnoughGoods
+from abcEconomics import NotEnoughGoods
 
 
-class Sell(abce.Agent):
+class Sell(abcEconomics.Agent):
     def init(self, rounds):
         self.last_round = rounds - 1
         self.tests = {'accepted': False, 'rejected': False,
@@ -90,8 +90,8 @@ class Sell(abce.Agent):
         if self.time == self.last_round and self.id == 0:
             assert all(self.tests.values(
             )), 'not all tests have been run; ABCE workes correctly, restart the unittesting to do all tests %s' % self.tests
-            print('Test abce.buy:\t\t\t\t\tOK')
-            print('Test abce.accept\t(abce.buy):\t\tOK')
-            print('Test abce.reject\t(abce.buy):\t\tOK')
-            print('Test abce.accept\t(abce.buy):\tOK')
-            print('Test reject pending automatic \t(abce.buy):\tOK')
+            print('Test abcEconomics.buy:\t\t\t\t\tOK')
+            print('Test abcEconomics.accept\t(abcEconomics.buy):\t\tOK')
+            print('Test abcEconomics.reject\t(abcEconomics.buy):\t\tOK')
+            print('Test abcEconomics.accept\t(abcEconomics.buy):\tOK')
+            print('Test reject pending automatic \t(abcEconomics.buy):\tOK')

@@ -46,7 +46,7 @@ start.py
             timeline.
         """
 
-        from abce import Simulation, gui
+        from abcEconomics import Simulation, gui
         from firm import Firm
         from household import Household
 
@@ -86,7 +86,7 @@ set up. Further it is declared, what is observed and written to the database.
 
 .. code-block:: python
 
-    from abce import Simulation, gui
+    from abcEconomics import Simulation, gui
     from firm import Firm
     from household import Household
 
@@ -230,13 +230,13 @@ the end of the round ceases to exist.
 
 Declaring a good as replenishing and perishable is ABCE's way of treating services.
 In this example every household has some units of labor that can be used in the
-particular period. :py:meth:`abce.Simulation.declare_service` is a synthetic way
+particular period. :py:meth:`abcEconomics.Simulation.declare_service` is a synthetic way
 of declaring a good as a service.
 
 One important remark, for a logically consistent **macro-model** it is best to
 not create any goods during the simulation, but only in
-:py:meth:`abce.Agent.init`. During the simulation the only new goods
-should be created by :py:meth:`abce.Simulation.declare_round_endowment`.
+:py:meth:`abcEconomics.Agent.init`. During the simulation the only new goods
+should be created by :py:meth:`abcEconomics.Simulation.declare_round_endowment`.
 In this way the economy is physically closed.
 
 .. code-block:: python
@@ -253,7 +253,7 @@ There are several ways in ABCE to log data. Note that the variable names a strin
 
 
 Alternative to this
-you can also log within the agents by simply using `self.log('text', variable)` (:py:meth:`abce.Database.log`)
+you can also log within the agents by simply using `self.log('text', variable)` (:py:meth:`abcEconomics.Database.log`)
 Or self.log('text', {'var1': var1, 'var2': var2}). Using one log command with a dictionary is faster than
 using several seperate log commands.
 
@@ -289,10 +289,10 @@ The Household agent
 
 .. code-block:: python
 
-    import abce
+    import abcEconomics
 
 
-    class Household(abce.Agent, abce.Household, abce.Trade):
+    class Household(abcEconomics.Agent, abcEconomics.Household, abcEconomics.Trade):
         def init(self, simulation_parameters, agent_parameters):
             """ 1. labor_endowment, which produces, because of simulation.declare_resource(...)
             in start.py one unit of labor per month
@@ -326,10 +326,10 @@ The Firm agent
 
 .. code-block:: python
 
-    import abce
+    import abcEconomics
 
 
-    class Firm(abce.Agent, abce.Firm, abce.Trade):
+    class Firm(abcEconomics.Agent, abcEconomics.Firm, abcEconomics.Trade):
         def init(self, simulation_parameters, agent_parameters):
             """ 1. Gets an initial amount of money
             2. create a cobb_douglas function: GOOD = 1 * labor ** 1.
@@ -361,38 +361,38 @@ two agents: :code:`firm.py` and :code:`household.py`.
 
 At the beginning of each agent you will find
 
-An agent has to import the `abce` module and the :py:class:`abce.NotEnoughGoods` exception
+An agent has to import the `abcEconomics` module and the :py:class:`abcEconomics.NotEnoughGoods` exception
 
 .. code-block:: python
 
-    import abce
-    from abce import NotEnoughGoods
+    import abcEconomics
+    from abcEconomics import NotEnoughGoods
 
-This imports the module abce in order to use the base classes Household and Firm.
+This imports the module abcEconomics in order to use the base classes Household and Firm.
 And the NotEnoughGoods exception that allows us the handle situation in which the
 agent has insufficient resources.
 
-An agent is a class and must at least inherit :class:`abce.Agent`.
-It automatically inherits :class:`abce.Trade` - :class:`abce.Messenger`
-and :class:`abce.Logger`
+An agent is a class and must at least inherit :class:`abcEconomics.Agent`.
+It automatically inherits :class:`abcEconomics.Trade` - :class:`abcEconomics.Messenger`
+and :class:`abcEconomics.Logger`
 
 .. code-block:: python
 
-    class Agent(abce.Agent):
+    class Agent(abcEconomics.Agent):
 
 To create an agent that has can create a consumption function and consume
 
 .. code-block:: python
 
-    class Household(abce.Agent, abce.Household):
+    class Household(abcEconomics.Agent, abcEconomics.Household):
 
 To create an agent that can produce:
 
 .. code-block:: python
 
-    class Firm(abce.Agent, abce.Firm)
+    class Firm(abcEconomics.Agent, abcEconomics.Firm)
 
-You see our Household agent inherits from :class:`abce.Agent`, which is compulsory and :class:`abce.Household`.
+You see our Household agent inherits from :class:`abcEconomics.Agent`, which is compulsory and :class:`abcEconomics.Household`.
 Household on the other hand are a set of methods that are unique for Household agents.
 The Firm class accordingly
 
@@ -416,7 +416,7 @@ which is called when the agents are created**
 
 
 The init method is the method that is called when the agents are created (by
-the :py:meth:`abce.Simulation.build_agents`). When the agents were build,
+the :py:meth:`abcEconomics.Simulation.build_agents`). When the agents were build,
 a parameter dictionary and a list of agent parameters were given. These
 can now be accessed in :code:`init`  via the :code:`parameters` and
 :code:`agents_parameters` variable. Each agent gets only one element of the
@@ -427,9 +427,9 @@ good can be created. Generally speaking. In order to have a physically consisten
 economy goods should only be created in the init method. The good money is used
 in transactions.
 
-This agent class inherited :py:meth:`abce.Household.set_cobb_douglas_utility_function`
-from :class:`abce.Household`. With
-:meth:`abce.Household.set_cobb_douglas_utility_function` you can create a
+This agent class inherited :py:meth:`abcEconomics.Household.set_cobb_douglas_utility_function`
+from :class:`abcEconomics.Household`. With
+:meth:`abcEconomics.Household.set_cobb_douglas_utility_function` you can create a
 cobb-douglas function. Other functional forms are also available.
 
 In order to let the agent remember a parameter it has to be saved in the self
@@ -443,13 +443,13 @@ called from the action_list in the Simulation in start.py.
 
 For example when in the action list `('household', 'consumption')` is called the consumption method
 is executed of each household agent is executed. **It is important not to
-overwrite abce's methods with the agents methods.** For example if one would
-call the :code:`consumption(self)` method below :code:`consume(self)`, abce's
+overwrite abcEconomics's methods with the agents methods.** For example if one would
+call the :code:`consumption(self)` method below :code:`consume(self)`, abcEconomics's
 consume function would not work anymore.
 
 .. code-block:: python
 
-    class Household(abce.Agent, abce.Household):
+    class Household(abcEconomics.Agent, abcEconomics.Household):
         def init(self, simulation_parameters, agent_parameters):
             self.create('labor_endowment', 1)
             self.set_cobb_douglas_utility_function({"GOOD": 1})
@@ -483,7 +483,7 @@ yeast.
 
 .. code-block:: python
 
-    class Agent(abce.Agent, abce.Firm):
+    class Agent(abcEconomics.Agent, abcEconomics.Firm):
         def init(self):
            set_cobb_douglas('bread', 1.890, {"yeast": 0.333, "labor": 0.667})
             ...
@@ -491,7 +491,7 @@ yeast.
         def production(self):
             self.produce_use_everything()
 
-More details in :class:`abce.Firm`. :class:`abce.FirmMultiTechnologies` offers
+More details in :class:`abcEconomics.Firm`. :class:`abcEconomics.FirmMultiTechnologies` offers
 a more advanced interface for firms with layered production functions.
 
 Trade
@@ -537,9 +537,9 @@ If a NotEnoughGoods exception is thrown the except block
 :code:`self.accept(offer, self.possession('money') / offer.price)` is executed, which
 leads to a partial accept. Only as many goods as the agent can afford are accepted.
 If a polled offer is not accepted its automatically rejected. It can also be explicitly
-rejected with :code:`self.reject(offer)` (:py:meth:`abce.Trade.reject`).
+rejected with :code:`self.reject(offer)` (:py:meth:`abcEconomics.Trade.reject`).
 
-You can find a detailed explanation how trade works in :class:`abce.Trade`.
+You can find a detailed explanation how trade works in :class:`abcEconomics.Trade`.
 
 Data production
 ~~~~~~~~~~~~~~~
@@ -557,8 +557,8 @@ accessible as csv files in the :code:`simulation.path` directory
 Manual in agent logging
 +++++++++++++++++++++++
 
-An agent can log a variable, :py:meth:`abce.Agent.possession`, :py:meth:`abce.Agent.possessions`
-and most other methods such as :py:meth:`abce.Firm.produce` with :py:meth:`abce.Database.log`:
+An agent can log a variable, :py:meth:`abcEconomics.Agent.possession`, :py:meth:`abcEconomics.Agent.possessions`
+and most other methods such as :py:meth:`abcEconomics.Firm.produce` with :py:meth:`abcEconomics.Database.log`:
 
 .. code-block:: python
 
@@ -572,7 +572,7 @@ Retrieving the logged data
 ++++++++++++++++++++++++++
 
 If the GUI is switched off there must be a
-:py:meth:`abce.Simulation.graphs` after :py:meth:`abce.Simulation.run` .
+:py:meth:`abcEconomics.Simulation.graphs` after :py:meth:`abcEconomics.Simulation.run` .
 Otherwise no graphs are displayed.
 If no browser window open you have to go manually to the
 address "http://127.0.0.1:8000/"

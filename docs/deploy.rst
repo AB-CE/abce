@@ -5,8 +5,8 @@ Prepare your simulation to be displayed on the web
 --------------------------------------------------
 
 In order for your simulation to be able to be run on the web it must be running
-in the web browser. for this you need to add :func:`@gui(...) <abce.gui.gui>` before the main function.
-Further :func:`@gui <abce.gui.gui>` needs to
+in the web browser. for this you need to add :func:`@gui(...) <abcEconomics.gui.gui>` before the main function.
+Further :func:`@gui <abcEconomics.gui.gui>` needs to
 be switched to :code:`serve`::
 
     ...
@@ -40,9 +40,9 @@ It is important to note that the :code:`main()` function is not called, when sta
 is imported! :code:`if __name__ == '__main__':`, means that it is not called
 when start.py is imported. you can also simply delete the call of :code:`main()`.
 
-:func:`@gui <abce.gui.gui>` is the part that generates the web application and runs it.
+:func:`@gui <abcEconomics.gui.gui>` is the part that generates the web application and runs it.
 :code:`serve` must be set to True in
-:func:`@gui(simulation_parameters, text=text, title=title, serve=True) <abce.gui.gui>`
+:func:`@gui(simulation_parameters, text=text, title=title, serve=True) <abcEconomics.gui.gui>`
 
 The easiest way to get your code to the server is via github. For this follow the
 following instructions.
@@ -81,7 +81,7 @@ then from the console ssh into your account
 
 Install the server software and ABCE requirements::
 
-    sudo pip3 install abce
+    sudo pip3 install abcEconomics
 
 
 copy or clone your ABCE simulation into the ~/myproject directory the easiest way is to use a git repository, but you can also use scp::

@@ -1,11 +1,11 @@
-import abce
+import abcEconomics
 from ball import Ball
 from killer import Killer
 from victim import Victim
 
 
 def main(processes, rounds):
-    simulation = abce.Simulation(processes=processes)
+    simulation = abcEconomics.Simulation(processes=processes)
 
     print('build Killer')
     killer = simulation.build_agents(Killer, 'killer', 1)

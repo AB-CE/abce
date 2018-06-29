@@ -1,10 +1,10 @@
 from __future__ import division
 from __future__ import print_function
-import abce
-from abce.agents import Firm
+import abcEconomics
+from abcEconomics.agents import Firm
 
 
-class Firm(abce.Agent, Firm):
+class Firm(abcEconomics.Agent, Firm):
     def init(self, simulation_parameters, agent_parameters):
         # your agent initialization goes here, not in __init__
         self.create('field', 1)

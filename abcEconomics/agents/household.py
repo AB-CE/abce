@@ -17,7 +17,7 @@
 """
 The Household class extends the agent by giving him utility functions and the ability to consume goods.
 """
-from abce import NotEnoughGoods
+from abcEconomics import NotEnoughGoods
 import operator
 from functools import reduce
 from ..trade import get_epsilon
@@ -30,7 +30,7 @@ class Household:
         utility function.
 
         A utility_function, has to be set before see
-        py:meth:`~abceagent.Household.create_cobb_douglas_utility_function` or
+        py:meth:`~abcEconomicsagent.Household.create_cobb_douglas_utility_function` or
         manually; see example.
 
         Args:

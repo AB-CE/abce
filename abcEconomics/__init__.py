@@ -18,7 +18,7 @@
 
 
 """ The best way to start creating a simulation is by copying the start.py
-file and other files from 'abce/template' in https://github.com/AB-CE/examples.
+file and other files from 'abcEconomics/template' in https://github.com/AB-CE/examples.
 
 To see how to create a simulation, read :doc:`ipython_tutorial`.
 
@@ -26,7 +26,7 @@ To see how to create a simulation, read :doc:`ipython_tutorial`.
 This is a minimal template for a start.py::
 
     from agent import Agent
-    from abce import *
+    from abcEconomics import *
 
 
     simulation = Simulation(name='ABCE')
@@ -40,7 +40,7 @@ This is a minimal template for a start.py::
 
 Note two things are important: there must be either a
 
-:func:`~abce.simulation.graphs` or a :func:`~abce.simulation.finalize` at the end
+:func:`~abcEconomics.simulation.graphs` or a :func:`~abcEconomics.simulation.finalize` at the end
 otherwise the simulation blocks at the end.
 Furthermore, every round needs to be announced using simulation.advance_round(time),
 where time is any representation of time.
@@ -140,7 +140,7 @@ class Simulation(object):
         w.graphs()
     """
 
-    def __init__(self, name='abce', random_seed=None, trade_logging='off', processes=1, dbplugin=None,
+    def __init__(self, name='abcEconomics', random_seed=None, trade_logging='off', processes=1, dbplugin=None,
                  dbpluginargs=[], path='auto', multiprocessing_database=False):
         """
         """

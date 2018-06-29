@@ -16,17 +16,17 @@ Services
 --------
 
 Services are like goods, but the need to be declared as services
-in the simulation :func:`abce.__init__.service`.
+in the simulation :func:`abcEconomics.__init__.service`.
 In this function one declares a good that creates the other good and
 how much. For example if one has :code:`self['adults'] = 2`, one could
 get 16 hours of labor every day. :code:`simulation.declare_service('adults', 8, 'labor')`.
 
 
-.. default-domain::abce.Goods
+.. default-domain::abcEconomics.Goods
 
-.. automodule:: abce.goods
+.. automodule:: abcEconomics.goods
 
-.. autoclass:: abce.goods.Goods
+.. autoclass:: abcEconomics.goods.Goods
     :members:
     :undoc-members:
     :show-inheritance:

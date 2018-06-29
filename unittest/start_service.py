@@ -1,7 +1,7 @@
-import abce
+import abcEconomics
 
 
-class Endowment(abce.Agent):
+class Endowment(abcEconomics.Agent):
     def init(self, rounds):
         self.last_round = rounds - 1
         self.labor_endowment = 0
@@ -15,7 +15,7 @@ class Endowment(abce.Agent):
 
 
 def main(processes, rounds):
-    s = abce.Simulation(processes=processes, name='unittest')
+    s = abcEconomics.Simulation(processes=processes, name='unittest')
 
     endowment = s.build_agents(Endowment, 'endowment', 2, rounds=rounds)
 

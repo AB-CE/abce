@@ -1,1 +1,1 @@
-sphinx-apidoc -o source/ ../abce -f
+sphinx-apidoc -o source/ ../abcEconomics -f

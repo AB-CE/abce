@@ -11793,7 +11793,7 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">abce</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">abcEconomics</span>
 </pre></div>
 
 </div>
@@ -11810,7 +11810,7 @@ div#notebook {
 
 
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>/Users/taghawi/Dropbox/workspace/abce/pypi093b0/lib/python3.6/site-packages/bokeh/util/deprecation.py:34: BokehDeprecationWarning: 
+<pre>/Users/taghawi/Dropbox/workspace/abcEconomics/pypi093b0/lib/python3.6/site-packages/bokeh/util/deprecation.py:34: BokehDeprecationWarning: 
 The bokeh.charts API has moved to a separate &#39;bkcharts&#39; package.
 
 This compatibility shim will remain until Bokeh 1.0 is released.
@@ -11831,7 +11831,7 @@ the bkcharts package explicitly.
 <div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">simulation</span> <span class="o">=</span> <span class="n">abce</span><span class="o">.</span><span class="n">Simulation</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;ipythonsimulation&#39;</span><span class="p">,</span> <span class="n">processes</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">simulation</span> <span class="o">=</span> <span class="n">abcEconomics</span><span class="o">.</span><span class="n">Simulation</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;ipythonsimulation&#39;</span><span class="p">,</span> <span class="n">processes</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -11844,7 +11844,7 @@ the bkcharts package explicitly.
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Creating-the-Agent">Creating the Agent<a class="anchor-link" href="#Creating-the-Agent">&#182;</a></h2><p>We create a simple agent and intialize it. An agent is an object that has propeties and does things. In python that is a class. We create an agent that has a name, knows the world size and can say his name.</p>
-<p>The agent needs to inherit from abce.Agents. <em>The <code>__init__</code> function should not be overwritten, instead create an <code>init</code> function</em>. The init function will be called during initialisation.
+<p>The agent needs to inherit from abcEconomics.Agents. <em>The <code>__init__</code> function should not be overwritten, instead create an <code>init</code> function</em>. The init function will be called during initialisation.
 The agents gets two parameters. All agents get the parameters we will specify in the next round. From agent_parameters the agents get only agent_parameters[id], where id is the number of the agent.
 Agents have for now only one function. They can say their name.</p>
 
@@ -11856,7 +11856,7 @@ Agents have for now only one function. They can say their name.</p>
 <div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">Agent</span><span class="p">(</span><span class="n">abce</span><span class="o">.</span><span class="n">Agent</span><span class="p">):</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">Agent</span><span class="p">(</span><span class="n">abcEconomics</span><span class="o">.</span><span class="n">Agent</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">world_size</span><span class="p">,</span> <span class="n">family_name</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">family_name</span> <span class="o">=</span> <span class="n">family_name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">world_size</span> <span class="o">=</span> <span class="n">world_size</span>
@@ -12010,7 +12010,7 @@ We create 5 agents, the first one has a balls the agents pass the ball around.</
 <div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">Kid</span><span class="p">(</span><span class="n">abce</span><span class="o">.</span><span class="n">Agent</span><span class="p">):</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">Kid</span><span class="p">(</span><span class="n">abcEconomics</span><span class="o">.</span><span class="n">Agent</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_kids</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_kids</span> <span class="o">=</span> <span class="n">num_kids</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -12063,7 +12063,7 @@ We create 5 agents, the first one has a balls the agents pass the ball around.</
 <div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">simulation</span> <span class="o">=</span> <span class="n">abce</span><span class="o">.</span><span class="n">Simulation</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;ipythonsimulation&#39;</span><span class="p">,</span> <span class="n">processes</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">simulation</span> <span class="o">=</span> <span class="n">abcEconomics</span><span class="o">.</span><span class="n">Simulation</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;ipythonsimulation&#39;</span><span class="p">,</span> <span class="n">processes</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12178,7 +12178,7 @@ Round6
 <div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">NewKid</span><span class="p">(</span><span class="n">abce</span><span class="o">.</span><span class="n">Agent</span><span class="p">):</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">NewKid</span><span class="p">(</span><span class="n">abcEconomics</span><span class="o">.</span><span class="n">Agent</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_dealers</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_dealers</span> <span class="o">=</span> <span class="n">num_dealers</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s1">&#39;money&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>  <span class="c1"># don&#39;t we all wish you&#39;d this function in real live?</span>
@@ -12212,7 +12212,7 @@ Round6
 <div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">DrugDealer</span><span class="p">(</span><span class="n">abce</span><span class="o">.</span><span class="n">Agent</span><span class="p">):</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">DrugDealer</span><span class="p">(</span><span class="n">abcEconomics</span><span class="o">.</span><span class="n">Agent</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s1">&#39;drugs&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         
@@ -12257,7 +12257,7 @@ Round6
 <div class="prompt input_prompt">In&nbsp;[15]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">simulation</span> <span class="o">=</span> <span class="n">abce</span><span class="o">.</span><span class="n">Simulation</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;school_yard&#39;</span><span class="p">,</span> <span class="n">processes</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">simulation</span> <span class="o">=</span> <span class="n">abcEconomics</span><span class="o">.</span><span class="n">Simulation</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;school_yard&#39;</span><span class="p">,</span> <span class="n">processes</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12411,7 +12411,7 @@ Drug Dealer accepts or rejects the offer:
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">math</span> <span class="k">import</span> <span class="n">sin</span>
 
-<span class="k">class</span> <span class="nc">DataDealer</span><span class="p">(</span><span class="n">abce</span><span class="o">.</span><span class="n">Agent</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">DataDealer</span><span class="p">(</span><span class="n">abcEconomics</span><span class="o">.</span><span class="n">Agent</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s1">&#39;money&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
@@ -12434,7 +12434,7 @@ Drug Dealer accepts or rejects the offer:
 <div class="prompt input_prompt">In&nbsp;[21]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">simulation</span> <span class="o">=</span> <span class="n">abce</span><span class="o">.</span><span class="n">Simulation</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;gatherdata&#39;</span><span class="p">,</span> <span class="n">processes</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">simulation</span> <span class="o">=</span> <span class="n">abcEconomics</span><span class="o">.</span><span class="n">Simulation</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;gatherdata&#39;</span><span class="p">,</span> <span class="n">processes</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12655,7 +12655,7 @@ time with data   0.55
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>/Users/taghawi/Dropbox/workspace/abce_examples/examples/jupyter_tutorial/result/gatherdata_2018-02-27_04-15
+<pre>/Users/taghawi/Dropbox/workspace/abcEconomics_examples/examples/jupyter_tutorial/result/gatherdata_2018-02-27_04-15
 </pre>
 </div>
 </div>
@@ -13029,7 +13029,7 @@ time with data   0.55
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>When running a simulation with python from a start.py simulation.graphs() displays all recorded data. You can also use the @gui decorator to ship abce as an interactive web-app.</p>
+<p>When running a simulation with python from a start.py simulation.graphs() displays all recorded data. You can also use the @gui decorator to ship abcEconomics as an interactive web-app.</p>
 
 </div>
 </div>
@@ -13047,7 +13047,7 @@ time with data   0.55
 <div class="prompt input_prompt">In&nbsp;[31]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">simulation</span> <span class="o">=</span> <span class="n">abce</span><span class="o">.</span><span class="n">Simulation</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">simulation</span> <span class="o">=</span> <span class="n">abcEconomics</span><span class="o">.</span><span class="n">Simulation</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -13060,7 +13060,7 @@ time with data   0.55
 <div class="prompt input_prompt">In&nbsp;[32]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">Communicator</span><span class="p">(</span><span class="n">abce</span><span class="o">.</span><span class="n">Agent</span><span class="p">):</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">Communicator</span><span class="p">(</span><span class="n">abcEconomics</span><span class="o">.</span><span class="n">Agent</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">report_my_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
     

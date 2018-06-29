@@ -1,8 +1,8 @@
 from __future__ import division
-import abce
+import abcEconomics
 
 
-class MessageA(abce.Agent):
+class MessageA(abcEconomics.Agent):
     def init(self):
         # your agent initialization goes here, not in __init__
         pass

@@ -273,7 +273,7 @@ production and consumption. All these functions are implemented in ABCE and
 can be inherited by an agent as a method. These functions are automatically handled by
 ABCE upon decision from the modeler.
 
-Every agent in ABCE must inherit from the abce.Agent class. This gives the
+Every agent in ABCE must inherit from the abcEconomics.Agent class. This gives the
 agent a couple of stock methods: create, destroy, trade and give. Create and
 destroy create or destroy a good immediately. Because trade and give involve
 a form of interaction between the agents they run over several sub-rounds.

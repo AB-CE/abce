@@ -1,7 +1,7 @@
 Observing agents and logging
 ============================
 
-.. default-domain::abce.database.Database
+.. default-domain::abcEconomics.database.Database
 
 
 There are different ways of observing your agents:
@@ -51,19 +51,19 @@ Log logs dictionaries. To log your own variable::
 Further you can write the change of a variable between a start and an end point with:
 :py:meth:`.observe_begin` and :py:meth:`.observe_end`.
 
-.. autoclass:: abce.database.Database
+.. autoclass:: abcEconomics.database.Database
     :members:
     :show-inheritance:
 
 Panel Data
 ~~~~~~~~~~
 
-.. automethod:: abce.group.Group.panel_log
+.. automethod:: abcEconomics.group.Group.panel_log
 
 Aggregate Data
 ~~~~~~~~~~~~~~
 
-.. automethod:: abce.group.Group.agg_log
+.. automethod:: abcEconomics.group.Group.agg_log
 
 
 .. _retrieval:
@@ -73,7 +73,7 @@ Retrieval of the simulation results
 ===================================
 
 Agents can log their internal states and the simulation can create
-panel data. :mod:`abce.logger`.
+panel data. :mod:`abcEconomics.logger`.
 
 the results are stored in a subfolder of the ./results/ folder. The
 exact path is in simulation.path. So if you want to post-process your
@@ -88,7 +88,7 @@ Example::
 
     In start.py
 
-    simulation = abce.Simulation(...)
+    simulation = abcEconomics.Simulation(...)
     ...
     simulation.run()
 

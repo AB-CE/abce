@@ -10,23 +10,23 @@ of goods and production and consumption.
 .. image:: https://zenodo.org/badge/4157636.svg
    :target: https://zenodo.org/badge/latestdoi/4157636
 
-.. image:: https://travis-ci.org/AB-CE/abce.svg?branch=master
+.. image:: https://travis-ci.org/AB-CE/abcEconomics.svg?branch=master
    :alt: ABCE build status on Travis CI
-   :target: https://travis-ci.org/AB-CE/abce
+   :target: https://travis-ci.org/AB-CE/abcEconomics
 
 .. image:: https://ci.appveyor.com/api/projects/status/c2w73u9im2b87reb?svg=true
    :alt: ABCE build status on Appveyor CI
-   :target: https://ci.appveyor.com/project/AB-CE/abce
+   :target: https://ci.appveyor.com/project/AB-CE/abcEconomics
 
-.. image:: https://img.shields.io/pypi/v/abce.svg
+.. image:: https://img.shields.io/pypi/v/abcEconomics.svg
    :alt:  Pypi version
-   :target: https://pypi.python.org/pypi/abce
+   :target: https://pypi.python.org/pypi/abcEconomics
 
-.. image:: https://readthedocs.org/projects/abce/badge/?version=master
+.. image:: https://readthedocs.org/projects/abcEconomics/badge/?version=master
    :alt:  readthedocs
-   :target: https://abce.readthedocs.io
+   :target: https://abcEconomics.readthedocs.io
 
-.. figure:: https://raw.githubusercontent.com/AB-CE/abce/master/docs/cheesegrater.png
+.. figure:: https://raw.githubusercontent.com/AB-CE/abcEconomics/master/docs/cheesegrater.png
    :target: http://35.176.189.179/ABCE/
    :scale: 20 %
    :align: right
@@ -69,11 +69,11 @@ ABCE runs on macOS, Windows, and Linux. ABCE runs 10x faster on pypy!
 
 Install with::
 
-    pip3 install abce
+    pip3 install abcEconomics
 
 The documentation is here:
 
-    http://abce.readthedocs.io/
+    http://abcEconomics.readthedocs.io/
 
 An example is here:
 

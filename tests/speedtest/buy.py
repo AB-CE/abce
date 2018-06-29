@@ -1,8 +1,8 @@
 from __future__ import division
 from __future__ import print_function
 import random
-from abce.agent import Agent
-from abce.notenoughgoods import NotEnoughGoods
+from abcEconomics.agent import Agent
+from abcEconomics.notenoughgoods import NotEnoughGoods
 from math import isclose
 
 
@@ -97,8 +97,8 @@ class Buy(Agent):
         )), 'not all tests have been run; ABCE workes correctly, restart the' \
             ' unittesting to do all tests %s' % self.tests
         if self.round == self.last_round and self.id == 0:
-            print('Test abce.buy:\t\t\t\t\tOK')
-            print('Test abce.accept\t(abce.buy):\t\tOK')
-            print('Test abce.reject\t(abce.buy):\t\tOK')
-            print('Test abce.accept, partial\t(abce.buy):\tOK')
-            print('Test reject pending automatic \t(abce.buy):\tOK')
+            print('Test abcEconomics.buy:\t\t\t\t\tOK')
+            print('Test abcEconomics.accept\t(abcEconomics.buy):\t\tOK')
+            print('Test abcEconomics.reject\t(abcEconomics.buy):\t\tOK')
+            print('Test abcEconomics.accept, partial\t(abcEconomics.buy):\tOK')
+            print('Test reject pending automatic \t(abcEconomics.buy):\tOK')

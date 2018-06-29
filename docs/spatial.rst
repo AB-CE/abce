@@ -2,7 +2,7 @@
 Spatial and Netlogo like Models
 ===============================
 
-.. figure:: abcemesa.gif
+.. figure:: abcEconomicsmesa.gif
    :figwidth:  35 %
    :align: right
 

@@ -43,14 +43,14 @@ readthedocs = os.environ.get('READTHEDOCS') == 'True'
 if not readthedocs:
     try:
         ext_modules += [
-            Extension("abce.trade", ["abce/trade.pyx"]),
-            Extension("abce.logger.online_variance", ["abce/logger/online_variance.pyx"]),
+            Extension("abcEconomics.trade", ["abcEconomics/trade.pyx"]),
+            Extension("abcEconomics.logger.online_variance", ["abcEconomics/logger/online_variance.pyx"]),
         ]
         cmdclass.update({'build_ext': TXEntension})
     except ImportError:
         ext_modules += [
-            Extension("abce.trade", ["abce/trade.c"]),
-            Extension("abce.logger.online_variance", ["abce/logger/online_variance.c"]),
+            Extension("abcEconomics.trade", ["abcEconomics/trade.c"]),
+            Extension("abcEconomics.logger.online_variance", ["abcEconomics/logger/online_variance.c"]),
         ]
 
     if not platform.python_implementation() == "PyPy":
@@ -64,19 +64,19 @@ if not readthedocs:
 version = '0.9.5b0'
 
 
-setup(name='abce',
+setup(name='abcEconomics',
       version=version,
       author='Davoud Taghawi-Nejad',
       author_email='Davoud@Taghawi-Nejad.de',
       description='Agent-Based Complete Economy modelling platform',
-      url='https://github.com/AB-CE/abce.git',
-      package_dir={'abce': 'abce',
-                   'abce.gui': 'abce/gui',
-                   'abce.agents': 'abce/agents',
-                   'abce.contracts': 'abce/contracts',
-                   'abce.logger': 'abce/logger',
+      url='https://github.com/AB-CE/abcEconomics.git',
+      package_dir={'abcEconomics': 'abcEconomics',
+                   'abcEconomics.gui': 'abcEconomics/gui',
+                   'abcEconomics.agents': 'abcEconomics/agents',
+                   'abcEconomics.contracts': 'abcEconomics/contracts',
+                   'abcEconomics.logger': 'abcEconomics/logger',
                    },
-      packages=['abce'],
+      packages=['abcEconomics'],
       long_description=open('README.rst').read(),
       install_requires=install_requires,
       include_package_data=True,

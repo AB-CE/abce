@@ -1,8 +1,8 @@
 from __future__ import division
-import abce
+import abcEconomics
 
 
-class Firm(abce.Agent, abce.Firm):
+class Firm(abcEconomics.Agent, abcEconomics.Firm):
     def init(self, simulation_parameters, agent_parameters):
         # your agent initialization goes here, not in __init__
         self.num_households = simulation_parameters['households']

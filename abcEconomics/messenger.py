@@ -52,8 +52,8 @@ class Messenger:
     def send_envelope(self, receiver, topic, content):
         """ sends an envelope to the agent, the envelope contains the message (content),
         sender, receiver and topic. Agents receive it
-        at the beginning of next round with :meth:`~abceagent.Messenger.get_messages` or
-        :meth:`~abceagent.Messenger.get_messages_all`.
+        at the beginning of next round with :meth:`~abcEconomicsagent.Messenger.get_messages` or
+        :meth:`~abcEconomicsagent.Messenger.get_messages_all`.
 
         The message that arrives has the following properties::
         message.sender
@@ -98,8 +98,8 @@ class Messenger:
         self.send(receiver, topic, msg)
 
     def get_messages(self, topic='m'):
-        """ self.get_messages() returns all new messages send with :meth:`~abceagent.Messenger.send`
-        and :meth:`~abceagent.Messenger.send_envelope`. The order is randomized. self.get_messages(topic) returns all
+        """ self.get_messages() returns all new messages send with :meth:`~abcEconomicsagent.Messenger.send`
+        and :meth:`~abcEconomicsagent.Messenger.send_envelope`. The order is randomized. self.get_messages(topic) returns all
         messages with a particular topic.
 
         A message is a string with the message. You can also retrieve the sender
@@ -166,33 +166,33 @@ class Messenger:
         subround and deletes the offers that where retracted, but not executed.
 
         '_d': delete received that the issuing agent retract
-        'abce_receive_accept': clears a made offer that was accepted by the other agent
-        'abce_receive_reject': deletes an offer that the other agent rejected
-        'abce_receive_good': recive a 'free' good from another party
+        'abcEconomics_receive_accept': clears a made offer that was accepted by the other agent
+        'abcEconomics_receive_reject': deletes an offer that the other agent rejected
+        'abcEconomics_receive_good': recive a 'free' good from another party
         """
         for typ, msg in self.inbox:
-            if typ == 'abce_propose_buy':
+            if typ == 'abcEconomics_propose_buy':
                 self._open_offers_buy[msg.good][msg.id] = msg
-            elif typ == 'abce_propose_sell':
+            elif typ == 'abcEconomics_propose_sell':
                 self._open_offers_sell[msg.good][msg.id] = msg
-            elif typ == 'abce_receive_accept':
+            elif typ == 'abcEconomics_receive_accept':
                 offer = self._receive_accept(msg)
                 if self.trade_logging == 2:
                     self._log_receive_accept_group(offer)
                 elif self.trade_logging == 1:
                     self._log_receive_accept_agent(offer)
-            elif typ == 'abce_receive_reject':
+            elif typ == 'abcEconomics_receive_reject':
                 self._receive_reject(msg)
-            elif typ == 'abce_receive_good':
+            elif typ == 'abcEconomics_receive_good':
                 self._inventory.haves[msg[0]] += msg[1]
-            elif typ == 'abce_receive_quote':
+            elif typ == 'abcEconomics_receive_quote':
                 self._quotes[msg.id] = msg
             elif typ == '!d':
                 if msg[0] == 'r':
                     del self._contracts_pay[msg[1]][msg[2]]
                 if msg[0] == 'd':
                     del self._contracts_deliver[msg[1]][msg[2]]
-            elif typ == 'abce_forceexecute':
+            elif typ == 'abcEconomics_forceexecute':
                 getattr(self, msg[0])(*msg[1:])
             else:
                 self._msgs.setdefault(typ, []).append(msg)
@@ -219,8 +219,8 @@ class Messenger:
         Args:
 
         sends a message to agent. Agents receive it
-        at the beginning of next round with :meth:`~abceagent.Messenger.get_messages`(topic) or
-        :meth:`~abceagent.Messenger.get_messages_all`.
+        at the beginning of next round with :meth:`~abcEconomicsagent.Messenger.get_messages`(topic) or
+        :meth:`~abcEconomicsagent.Messenger.get_messages_all`.
 
         Args:
             receiver:

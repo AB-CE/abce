@@ -1,7 +1,7 @@
-import abce
+import abcEconomics
 
 
-class MyAgent(abce.Agent):
+class MyAgent(abcEconomics.Agent):
     def init(self):
         self.create('input_good', 10)
 
@@ -15,7 +15,7 @@ class MyAgent(abce.Agent):
 
 
 def main(processes, rounds):
-    sim = abce.Simulation(processes=processes)
+    sim = abcEconomics.Simulation(processes=processes)
 
     myagents = sim.build_agents(MyAgent, 'myagent', number=2)
 

@@ -136,7 +136,7 @@ class DbDatabase:
                     getattr(self.plugin, msg[0])(*msg[1], **msg[2])
                 except AttributeError:
                     raise AttributeError(
-                        "abce_db error '%s' command unknown" % msg)
+                        "abcEconomics_db error '%s' command unknown" % msg)
 
         for name, data in current_log.items():
             if name not in self.dataset_db:

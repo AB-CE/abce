@@ -1,7 +1,7 @@
-import abce
+import abcEconomics
 
 
-class Agent(abce.Agent):
+class Agent(abcEconomics.Agent):
     def actionA(self):
         print(self.name, 'actionA')
 
@@ -10,7 +10,7 @@ class Agent(abce.Agent):
 
 
 def main(processes, rounds):
-    sim = abce.Simulation(processes=processes)
+    sim = abcEconomics.Simulation(processes=processes)
 
     aagents = sim.build_agents(Agent, 'aagent', number=5)
     bagents = sim.build_agents(Agent, 'bagent', number=5)

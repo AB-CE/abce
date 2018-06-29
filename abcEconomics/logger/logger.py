@@ -15,31 +15,31 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 """
-The :class:`abceagent.Agent` class is the basic class for creating your agent.
+The :class:`abcEconomicsagent.Agent` class is the basic class for creating your agent.
 It automatically handles the
 possession of goods of an agent. In order to produce/transforme goods you
-need to also subclass the :class:`abceagent.Firm` [1]_ or to create a
-consumer the :class:`abceagent.Household`.
+need to also subclass the :class:`abcEconomicsagent.Firm` [1]_ or to create a
+consumer the :class:`abcEconomicsagent.Household`.
 
 For detailed documentation on:
 
 Trading:
-    see :class:`abceagent.Trade`
+    see :class:`abcEconomicsagent.Trade`
 
 Logging and data creation:
-    see :class:`abceagent.Database` and :doc:`simulation_results`
+    see :class:`abcEconomicsagent.Database` and :doc:`simulation_results`
 
 Messaging between agents:
-    see :class:`abceagent.Messenger`.
+    see :class:`abcEconomicsagent.Messenger`.
 
-.. autoexception:: abce.NotEnoughGoods
+.. autoexception:: abcEconomics.NotEnoughGoods
 
-.. [1] or :class:`abceagent.FirmMultiTechnologies` for  complex technologies.
+.. [1] or :class:`abcEconomicsagent.FirmMultiTechnologies` for  complex technologies.
 """
 from collections import OrderedDict
 import re
 
-import abce
+import abcEconomics
 
 
 class Logger:
@@ -55,9 +55,9 @@ class Logger:
         self._data_to_log_1 = {}
         self._data_to_observe = {}
 
-        if hasattr(abce, 'conditional_logging'):
+        if hasattr(abcEconomics, 'conditional_logging'):
             self.conditional_logging = True
-            self.log_rounds = abce.conditional_logging
+            self.log_rounds = abcEconomics.conditional_logging
         else:
             self.conditional_logging = False
         self.log_this_round = True

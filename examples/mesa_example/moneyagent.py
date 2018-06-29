@@ -1,8 +1,8 @@
-import abce
+import abcEconomics
 import random
 
 
-class MoneyAgent(abce.Agent):
+class MoneyAgent(abcEconomics.Agent):
     """ agents move randomly on a grid and give_money to another agent in the same cell """
 
     def init(self, parameters, agent_parameters):
@@ -29,7 +29,7 @@ class MoneyAgent(abce.Agent):
             other = random.choice(cellmates)
             try:
                 self.give(other.group, other.id, good='money', quantity=1)
-            except abce.NotEnoughGoods:
+            except abcEconomics.NotEnoughGoods:
                 pass
 
     def report_wealth(self):

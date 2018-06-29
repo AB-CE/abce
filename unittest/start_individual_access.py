@@ -1,8 +1,8 @@
-import abce
+import abcEconomics
 import platform
 
 
-class MyAgent(abce.Agent):
+class MyAgent(abcEconomics.Agent):
     def init(self, agent_parameters):
         print('init', agent_parameters)
         self.mine = agent_parameters
@@ -12,7 +12,7 @@ class MyAgent(abce.Agent):
         print(self.name, self.mine)
 
 
-class DifferentAgent(abce.Agent):
+class DifferentAgent(abcEconomics.Agent):
     def init(self, agent_parameters):
         print('init', agent_parameters)
         self.mine = agent_parameters
@@ -23,7 +23,7 @@ class DifferentAgent(abce.Agent):
 
 
 def main(processes, rounds):
-    sim = abce.Simulation()
+    sim = abcEconomics.Simulation()
 
     myagent = sim.build_agents(MyAgent, 'myagent',
                                agent_parameters=[{'agent_parameters': 0},

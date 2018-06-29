@@ -1,7 +1,7 @@
 """ Describes ABCE on GUI, if no other text is given"""
 
 
-abcedescription = """ (drag me)
+abcEconomicsdescription = """ (drag me)
 <h1>ABCE a Python based modeling library for economic simulations.</h1>
 For simulations of trade, production and consumption, ABCE comes with stan
 dard functions that implement these kinds of interactions and actions. The
@@ -92,5 +92,5 @@ so easy to learn for people who already know object oriented programming la
 nguages such as Java, C++ or even MATLAB. Python allows simple, but fully
 functional, programming for economists. What is more Python is readable even
 for non Python programmers.
-<h2> <a href="http://abce.readthedocs.io/en/master/">Find the Documentatio
+<h2> <a href="http://abcEconomics.readthedocs.io/en/master/">Find the Documentatio
 n at readthedocs</a> </h2>"""
