@@ -2,7 +2,7 @@
 #
 # Module Author: Davoud Taghawi-Nejad
 #
-# ABCE is open-source software. If you are using ABCE for your research you are
+# abcEconomics is open-source software. If you are using abcEconomics for your research you are
 # requested the quote the use of this software.
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -15,10 +15,10 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 """
-The :py:class:`abce.Agent` class is the basic class for creating your agents.
+The :py:class:`abcEconomics.Agent` class is the basic class for creating your agents.
 It automatically handles the possession of goods of an agent. In order to
-produce/transforme goods you also need to subclass the :py:class:`abce.Firm` or
-to create a consumer the :py:class:`abce.Household`.
+produce/transforme goods you also need to subclass the :py:class:`abcEconomics.Firm` or
+to create a consumer the :py:class:`abcEconomics.Household`.
 
 For detailed documentation on:
 
@@ -36,16 +36,16 @@ from .goods import Goods
 
 class Agent(Logger, Trade, Messenger, Goods):
     """ Every agent has to inherit this class. It connects the agent to the
-    simulation and to other agent. The :class:`abce.Trade`,
-    :class:`abce.Logger` and :class:`abce.Messenger` classes are included.
-    An agent can also inheriting from :class:`abce.Firm`,
-    :class:`abce.FirmMultiTechnologies` or :class:`abce.Household` classes.
+    simulation and to other agent. The :class:`abcEconomics.Trade`,
+    :class:`abcEconomics.Logger` and :class:`abcEconomics.Messenger` classes are included.
+    An agent can also inheriting from :class:`abcEconomics.Firm`,
+    :class:`abcEconomics.FirmMultiTechnologies` or :class:`abcEconomics.Household` classes.
 
     Every method can return parameters to the simulation.
 
     For example::
 
-        class Household(abce.Agent, abce.Household):
+        class Household(abcEconomics.Agent, abcEconomics.Household):
             def init(self, simulation_parameters, agent_parameters):
                 self.num_firms = simulation_parameters['num_firms']
                 self.type = agent_parameters['type']
@@ -105,11 +105,11 @@ class Agent(Logger, Trade, Messenger, Goods):
         """ This method is called when the agents are build.
         It can be overwritten by the user, to initialize the agents.
         Parameters are the parameters given to
-        :py:meth:`abce.Simulation.build_agents`.
+        :py:meth:`abcEconomics.Simulation.build_agents`.
 
         Example::
 
-            class Student(abce.Agent):
+            class Student(abcEconomics.Agent):
                 def init(self, rounds, age, lazy, school_size):
                     self.rounds = rounds
                     self.age = age
@@ -154,11 +154,11 @@ class Agent(Logger, Trade, Messenger, Goods):
         return ret
 
     def _begin_subround(self):
-        """ Overwrite this to make ABCE plugins, that need to do
+        """ Overwrite this to make abcEconomics plugins, that need to do
         something at the beginning of every subround """
         pass
 
     def _end_subround(self):
-        """ Overwrite this to make ABCE plugins, that need to do
+        """ Overwrite this to make abcEconomics plugins, that need to do
         something at the beginning of every subround """
         pass

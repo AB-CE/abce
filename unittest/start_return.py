@@ -1,8 +1,8 @@
 import platform
-import abce
+import abcEconomics
 
 
-class Returner(abce.Agent):
+class Returner(abcEconomics.Agent):
     def init(self):
         pass
 
@@ -10,7 +10,7 @@ class Returner(abce.Agent):
         return self.name, self.id, (0, 1, 2, 3), self.time
 
 
-class Getter(abce.Agent):
+class Getter(abcEconomics.Agent):
     def init(self):
         pass
 
@@ -29,7 +29,7 @@ class Getter(abce.Agent):
 
 
 def main(processes, rounds):
-    sim = abce.Simulation(processes=processes)
+    sim = abcEconomics.Simulation(processes=processes)
 
     returners = sim.build_agents(Returner, 'returner', number=3)
     getters = sim.build_agents(Getter, 'getter', number=1)

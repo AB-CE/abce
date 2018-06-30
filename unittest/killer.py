@@ -1,8 +1,8 @@
-import abce
-from abce.agents import Household
+import abcEconomics
+from abcEconomics.agents import Household
 
 
-class Killer(abce.Agent, Household):
+class Killer(abcEconomics.Agent, Household):
     def init(self):
         # your agent initialization goes here, not in __init__
         pass

@@ -1,8 +1,8 @@
-import abce
+import abcEconomics
 import time
 
 
-class LoggerTest(abce.Agent):
+class LoggerTest(abcEconomics.Agent):
     def init(self, rounds):
         self.last_round = rounds - 1
         self.create('money', 50)

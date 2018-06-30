@@ -1,4 +1,4 @@
-import abce
+import abcEconomics
 from flexx import ui
 
 
@@ -7,7 +7,7 @@ class LoadForm(ui.Widget):
         with ui.Widget(style="overflow-y: scroll"):
             with ui.VBox(style="overflow-y: scroll") as self.vbox:
                 name_descriptions = [(d['name'], d['description'])
-                                     for d in abce.parameter_database.all()]
+                                     for d in abcEconomics.parameter_database.all()]
                 for name, desc in name_descriptions:
                     with ui.GroupWidget():
                         btn = ui.Button(title=name, text=name)
@@ -31,5 +31,5 @@ class LoadForm(ui.Widget):
         self.emit('load', {'name': event['source'].title})
 
     def delete(self, event):
-        abce.parameter_database.delete(name=event['source'].title)
+        abcEconomics.parameter_database.delete(name=event['source'].title)
         event['source'].text = 'deleted'

@@ -2,11 +2,11 @@ Agents
 ======
 
 
-.. default-domain::abce.Agent
+.. default-domain::abcEconomics.Agent
 
-.. automodule:: abce.agent
+.. automodule:: abcEconomics.agent
 
-.. autoclass:: abce.Agent
+.. autoclass:: abcEconomics.Agent
     :members:
     :undoc-members:
     :show-inheritance:

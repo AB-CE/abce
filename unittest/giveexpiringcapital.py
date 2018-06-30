@@ -1,9 +1,9 @@
 
-import abce
-from abce.agents import Firm
+import abcEconomics
+from abcEconomics.agents import Firm
 
 
-class GiveExpiringCapital(abce.Agent, Firm):
+class GiveExpiringCapital(abcEconomics.Agent, Firm):
     def init(self, rounds):
         self.last_round = rounds - 1
         if self.id == 0:

@@ -1,6 +1,6 @@
 include README.rst        
-include abce/contracts/*        
+include abcEconomics/contracts/*        
 include unittest/*        
-include abce/agents/*        
-include abce/gui/*
-include abce/logger/*
+include abcEconomics/agents/*        
+include abcEconomics/gui/*
+include abcEconomics/logger/*

@@ -2,7 +2,7 @@
 # Copyright 2012 Davoud Taghawi-Nejad
 #
 # Module Author: Davoud Taghawi-Nejad
-# ABCE is open-source software. If you are using ABCE for your research you are
+# abcEconomics is open-source software. If you are using abcEconomics for your research you are
 # requested the quote the use of this software.
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -21,13 +21,13 @@ handles one technology, Firm allows you to manage several
 technologies manually.
 
 The create_* functions allow you to create a technology and assign it to
-a variable. :meth:`abce.Firm.produce` and similar
+a variable. :meth:`abcEconomics.Firm.produce` and similar
 methods use this variable to produce with the according technology.
 """
 import operator
 from functools import reduce
 from collections import ChainMap
-from abce import NotEnoughGoods
+from abcEconomics import NotEnoughGoods
 from ..trade import get_epsilon
 epsilon = get_epsilon()
 
@@ -36,7 +36,7 @@ class Firm:
     """ With :code:`self.produce` a firm produces a good using production functions.
     For example the following farm has a cobb-douglas production function:
 
-    class Farm(abce.Agent, abce.Firm):
+    class Farm(abcEconomics.Agent, abcEconomics.Firm):
         def init(self):
             self.production_function = create_cobb_douglas({'land': 0.7,
                                                             'capital': 0.1,
@@ -48,9 +48,9 @@ class Firm:
                                                      'labor': 2}})
 
     Production functions can be auto generated with:
-        - py:meth:`~abceagent.Firm.create_cobb_douglas` or
-        - py:meth:`~abceagent.Firm.create_ces` or
-        - py:meth:`~abceagent.Firm.create_leontief`
+        - py:meth:`~abcEconomicsagent.Firm.create_cobb_douglas` or
+        - py:meth:`~abcEconomicsagent.Firm.create_ces` or
+        - py:meth:`~abcEconomicsagent.Firm.create_leontief`
 
     or specified by hand:
 
@@ -93,9 +93,9 @@ class Firm:
         Args:
             production_function:
                 A production_function produced with
-                py:meth:`~abceagent.Firm.create_production_function`,
-                py:meth:`~abceagent.Firm.create_cobb_douglas` or
-                py:meth:`~abceagent.Firm.create_leontief`
+                py:meth:`~abcEconomicsagent.Firm.create_production_function`,
+                py:meth:`~abcEconomicsagent.Firm.create_cobb_douglas` or
+                py:meth:`~abcEconomicsagent.Firm.create_leontief`
 
             input goods dictionary or list:
                 dictionary containing the amount of input good used for the production or

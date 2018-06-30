@@ -1,7 +1,7 @@
 NotEnoughGoods Exception
 ========================
 
-.. autoexception:: abce.NotEnoughGoods
+.. autoexception:: abcEconomics.NotEnoughGoods
     :members:
     :undoc-members:
     :show-inheritance:

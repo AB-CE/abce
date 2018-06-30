@@ -1,8 +1,8 @@
-import abce
+import abcEconomics
 import platform
 
 
-class MyAgent(abce.Agent):
+class MyAgent(abcEconomics.Agent):
     def init(self):
         pass
 
@@ -11,7 +11,7 @@ class MyAgent(abce.Agent):
 
 
 def main(processes, rounds):
-    sim = abce.Simulation()
+    sim = abcEconomics.Simulation()
     sim.advance_round(0)
 
     myagents = sim.build_agents(MyAgent, 'myagent', number=5)

@@ -1,5 +1,5 @@
 """Form to input parameters acording to the parameter_mask"""
-import abce
+import abcEconomics
 from flexx import ui, event
 
 
@@ -116,11 +116,11 @@ def form(parameter_mask, names):
             parameter = self.parse_parameter()
             parameter['name'] = self.name.text
             parameter['description'] = self.description.text
-            abce.parameter_database.upsert(parameter, keys=['name'])
+            abcEconomics.parameter_database.upsert(parameter, keys=['name'])
             self.emit('update_parameter_database', parameter)
 
         def load_parameter(self, event):
-            parameter = abce.parameter_database.find_one(name=event['name'])
+            parameter = abcEconomics.parameter_database.find_one(name=event['name'])
 
             for key, element in self.fields.items():
                 if isinstance(element, ui.CheckBox):

@@ -1,29 +1,29 @@
-abce\.contracts package
+abcEconomics\.contracts package
 =======================
 
 Submodules
 ----------
 
-abce\.contracts\.contracting module
+abcEconomics\.contracts\.contracting module
 -----------------------------------
 
-.. automodule:: abce.contracts.contracting
+.. automodule:: abcEconomics.contracts.contracting
     :members:
     :undoc-members:
     :show-inheritance:
 
-abce\.contracts\.contracts module
+abcEconomics\.contracts\.contracts module
 ---------------------------------
 
-.. automodule:: abce.contracts.contracts
+.. automodule:: abcEconomics.contracts.contracts
     :members:
     :undoc-members:
     :show-inheritance:
 
-abce\.contracts\.flexiblecontracting module
+abcEconomics\.contracts\.flexiblecontracting module
 -------------------------------------------
 
-.. automodule:: abce.contracts.flexiblecontracting
+.. automodule:: abcEconomics.contracts.flexiblecontracting
     :members:
     :undoc-members:
     :show-inheritance:
@@ -32,7 +32,7 @@ abce\.contracts\.flexiblecontracting module
 Module contents
 ---------------
 
-.. automodule:: abce.contracts
+.. automodule:: abcEconomics.contracts
     :members:
     :undoc-members:
     :show-inheritance:

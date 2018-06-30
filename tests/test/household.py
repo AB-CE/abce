@@ -1,10 +1,10 @@
 from __future__ import division
 from __future__ import print_function
-import abce
-from abce.notenoughgoods import NotEnoughGoods
+import abcEconomics
+from abcEconomics.notenoughgoods import NotEnoughGoods
 
 
-class Household(abce.Agent, abce.Household):
+class Household(abcEconomics.Agent, abcEconomics.Household):
     def init(self, simulation_parameters, agent_parameters):
         # your agent initialization goes here, not in __init__
         self.create('shares', 1)

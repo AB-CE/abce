@@ -1,4 +1,4 @@
-import abce
+import abcEconomics
 import dataset
 
 
@@ -14,13 +14,13 @@ class CustomLogging:
         self.db.commit()
 
 
-class MyAgent(abce.Agent):
+class MyAgent(abcEconomics.Agent):
     def write(self):
         self.custom_log('write_everything', name='joe', m=5)
 
 
 def main(processes, rounds):
-    sim = abce.Simulation(name='mysim', processes=processes, dbplugin=CustomLogging, dbpluginargs=['sqlite:///:memory:', 'sometable'])
+    sim = abcEconomics.Simulation(name='mysim', processes=processes, dbplugin=CustomLogging, dbpluginargs=['sqlite:///:memory:', 'sometable'])
 
     myagents = sim.build_agents(MyAgent, 'myagent', number=5)
 

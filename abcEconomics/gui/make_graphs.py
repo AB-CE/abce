@@ -28,7 +28,7 @@ def make_title(table_name, col):
             col.replace('_ttl', ''))
 
 
-def abce_figure(title, y_range=None):
+def abcEconomics_figure(title, y_range=None):
     return figure(title=title, width=12, height=6,
                   sizing_mode='stretch_both',
                   output_backend='webgl',
@@ -52,7 +52,7 @@ def make_aggregate_graphs(data, filename, ignore_initial_rounds):
         if col == 'index':
             continue
         title = make_title(filename, col)
-        plot = abce_figure(title)
+        plot = abcEconomics_figure(title)
         plot.yaxis.visible = False
         plot.legend.orientation = "top_left"
 
@@ -94,7 +94,7 @@ def make_simple_graphs(data, filename, ignore_initial_rounds):
     for col in data.columns:
         title = make_title(filename, col)
         if col not in ['round', 'name', 'index']:
-            plot = abce_figure(title)
+            plot = abcEconomics_figure(title)
             plot.yaxis.visible = False
             plot.legend.orientation = "top_left"
             plot.extra_y_ranges['ttl'] = y_range(col, '', data,
@@ -133,7 +133,7 @@ def make_panel_graphs(data, filename, ignore_initial_rounds):
             if y_range[0] == y_range[1]:
                 y_range = (-1, 1)
             title = make_title(filename, col)
-            plot = abce_figure(title, y_range=y_range)
+            plot = abcEconomics_figure(title, y_range=y_range)
             plot.legend.orientation = "top_left"
             for i, id in enumerate(individuals):
                 index = data['round'][data['name'] == id]

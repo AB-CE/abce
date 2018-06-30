@@ -2,7 +2,7 @@ from buy import Buy
 from sell import Sell
 from give import Give
 from logger_test import LoggerTest
-from abce import Simulation
+from abcEconomics import Simulation
 
 
 def main(processes, rounds):

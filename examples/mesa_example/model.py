@@ -1,6 +1,6 @@
-""" This is a simple demonstration model how to integrate ABCE and mesa.
+""" This is a simple demonstration model how to integrate abcEconomics and mesa.
 The model and scheduler specification are taken care of in
-ABCE instead of Mesa.
+abcEconomics instead of Mesa.
 
 Based on
 https://github.com/projectmesa/mesa/tree/master/examples/boltzmann_wealth_model.
@@ -8,7 +8,7 @@ https://github.com/projectmesa/mesa/tree/master/examples/boltzmann_wealth_model.
 For further reading, see
 [Dragulescu, A and Yakovenko, V. Statistical Mechanics of Money, Income, and Wealth: A Short Survey. November, 2002](http://arxiv.org/pdf/cond-mat/0211175v1.pdf)
 """
-import abce
+import abcEconomics
 from mesa.space import MultiGrid
 from mesa.datacollection import DataCollector
 from moneyagent import MoneyAgent
@@ -23,14 +23,14 @@ def compute_gini(model):
     return 1 + (1 / N) - 2 * B
 
 
-class MoneyModel(abce.Simulation):  # The actual simulation must inherit from Simulation
+class MoneyModel(abcEconomics.Simulation):  # The actual simulation must inherit from Simulation
     """ The actual simulation. In order to interoperate with MESA the simulation
     needs to be encapsulated in a class. __init__ sets the simulation up. The step
     function runs one round of the simulation. """
 
     def __init__(self, num_agents, x_size, y_size):
-        abce.Simulation.__init__(self,
-                                 name='ABCE and MESA integrated',
+        abcEconomics.Simulation.__init__(self,
+                                 name='abcEconomics and MESA integrated',
                                  rounds=300,
                                  processes=1)
         # initialization of the base class. MESA integration requires
@@ -38,7 +38,7 @@ class MoneyModel(abce.Simulation):  # The actual simulation must inherit from Si
         self.grid = MultiGrid(x_size, y_size, True)
         self.agents = self.build_agents(MoneyAgent, 'MoneyAgent', num_agents,
                                         parameters={'grid': self.grid})
-        # ABCE agents must inherit the MESA grid
+        # abcEconomics agents must inherit the MESA grid
         self.running = True
         # MESA requires this
         self.datacollector = DataCollector(

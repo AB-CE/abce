@@ -3,7 +3,7 @@
 #
 # Module Author: Davoud Taghawi-Nejad
 #
-# ABCE is open-source software. If you are using ABCE for your research you are
+# abcEconomics is open-source software. If you are using abcEconomics for your research you are
 # requested the quote the use of this software.
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -32,7 +32,7 @@ epsilon = 1 / 1000000
 
 def is_zero(x):
     """ checks whether a number is sufficiently close to zero. All variables
-    in ABCE are floating point numbers. Due to the workings of floating point
+    in abcEconomics are floating point numbers. Due to the workings of floating point
     arithmetic. If x is 1.0*e^-100 so really close to 0, x == 0 will be false;
     is_zero will be true.
     """
@@ -41,7 +41,7 @@ def is_zero(x):
 
 def is_positive(x):
     """ checks whether a number is positive and sufficiently different from
-    zero. All variables in ABCE are floating point numbers. Due to the workings
+    zero. All variables in abcEconomics are floating point numbers. Due to the workings
     of floating point arithmetic. If x is 1.0*e^-100 so really close to 0,
     x > 0 will be true, eventhough it is very very small;
     is_zero will be true.

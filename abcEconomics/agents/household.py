@@ -2,7 +2,7 @@
 #
 # Module Author: Davoud Taghawi-Nejad
 #
-# ABCE is open-source software. If you are using ABCE for your research you are
+# abcEconomics is open-source software. If you are using abcEconomics for your research you are
 # requested the quote the use of this software.
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -17,7 +17,7 @@
 """
 The Household class extends the agent by giving him utility functions and the ability to consume goods.
 """
-from abce import NotEnoughGoods
+from abcEconomics import NotEnoughGoods
 import operator
 from functools import reduce
 from ..trade import get_epsilon
@@ -30,7 +30,7 @@ class Household:
         utility function.
 
         A utility_function, has to be set before see
-        py:meth:`~abceagent.Household.create_cobb_douglas_utility_function` or
+        py:meth:`~abcEconomicsagent.Household.create_cobb_douglas_utility_function` or
         manually; see example.
 
         Args:

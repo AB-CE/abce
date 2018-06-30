@@ -1,61 +1,61 @@
-abce\.gui package
+abcEconomics\.gui package
 =================
 
 Submodules
 ----------
 
-abce\.gui\.basiclayout module
+abcEconomics\.gui\.basiclayout module
 -----------------------------
 
-.. automodule:: abce.gui.basiclayout
+.. automodule:: abcEconomics.gui.basiclayout
     :members:
     :undoc-members:
     :show-inheritance:
 
-abce\.gui\.bokehwidget module
+abcEconomics\.gui\.bokehwidget module
 -----------------------------
 
-.. automodule:: abce.gui.bokehwidget
+.. automodule:: abcEconomics.gui.bokehwidget
     :members:
     :undoc-members:
     :show-inheritance:
 
-abce\.gui\.dockpanel module
+abcEconomics\.gui\.dockpanel module
 ---------------------------
 
-.. automodule:: abce.gui.dockpanel
+.. automodule:: abcEconomics.gui.dockpanel
     :members:
     :undoc-members:
     :show-inheritance:
 
-abce\.gui\.form module
+abcEconomics\.gui\.form module
 ----------------------
 
-.. automodule:: abce.gui.form
+.. automodule:: abcEconomics.gui.form
     :members:
     :undoc-members:
     :show-inheritance:
 
-abce\.gui\.loadform module
+abcEconomics\.gui\.loadform module
 --------------------------
 
-.. automodule:: abce.gui.loadform
+.. automodule:: abcEconomics.gui.loadform
     :members:
     :undoc-members:
     :show-inheritance:
 
-abce\.gui\.make\_graphs module
+abcEconomics\.gui\.make\_graphs module
 ------------------------------
 
-.. automodule:: abce.gui.make_graphs
+.. automodule:: abcEconomics.gui.make_graphs
     :members:
     :undoc-members:
     :show-inheritance:
 
-abce\.gui\.webtext module
+abcEconomics\.gui\.webtext module
 -------------------------
 
-.. automodule:: abce.gui.webtext
+.. automodule:: abcEconomics.gui.webtext
     :members:
     :undoc-members:
     :show-inheritance:
@@ -64,7 +64,7 @@ abce\.gui\.webtext module
 Module contents
 ---------------
 
-.. automodule:: abce.gui
+.. automodule:: abcEconomics.gui
     :members:
     :undoc-members:
     :show-inheritance:

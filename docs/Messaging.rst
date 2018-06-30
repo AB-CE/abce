@@ -1,9 +1,9 @@
 Messaging
 =========
 
-.. automodule:: abce.messenger
+.. automodule:: abcEconomics.messenger
 
-.. autoclass:: abce.messenger.Messenger
+.. autoclass:: abcEconomics.messenger.Messenger
     :members:
     :undoc-members:
     :show-inheritance:

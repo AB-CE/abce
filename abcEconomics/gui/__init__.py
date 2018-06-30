@@ -1,10 +1,10 @@
-""" ABCE can be started with a gui or provide visual data output """
+""" abcEconomics can be started with a gui or provide visual data output """
 import os
-import abce
+import abcEconomics
 import dataset
 import flexx
 from flexx import app
-from .webtext import abcedescription
+from .webtext import abcEconomicsdescription
 from .basiclayout import basiclayout
 from .form import form
 
@@ -82,7 +82,7 @@ def gui(parameter_mask, names=None, header=None, story=None,
             Port if serve is active, defaults to 80
 
         pypy:
-            Name of the pypy interpreter to run ABCE super fast. e.G. 'pypy' or
+            Name of the pypy interpreter to run abcEconomics super fast. e.G. 'pypy' or
             'pypy3'. The mainfile needs to be run with cpython e.G.:
             :code:`python3 start.py`
 
@@ -122,7 +122,7 @@ def gui(parameter_mask, names=None, header=None, story=None,
     parameter_mask = ({} if parameter_mask is None else parameter_mask)
     names = ({} if names is None else names)
     story = ({} if story is None else story)
-    texts = ([abcedescription] if texts is None else texts)
+    texts = ([abcEconomicsdescription] if texts is None else texts)
     pages = ([] if pages is None else pages)
 
     if any('SPYDER' in name for name in os.environ):
@@ -135,7 +135,7 @@ def gui(parameter_mask, names=None, header=None, story=None,
 
     def inner(simulation):
         database = dataset.connect('sqlite:///parameter.db')
-        abce.parameter_database = database['parameter']
+        abcEconomics.parameter_database = database['parameter']
         Form = form(parameter_mask, names)  # pylint: disable=C0103
         if serve:
             flexx.config.hostname = hostname
@@ -171,7 +171,7 @@ def graph(parameter_mask=None, names=None):
     names = ({} if names is None else names)
 
     database = dataset.connect('sqlite:///parameter.db')
-    abce.parameter_database = database['parameter']
+    abcEconomics.parameter_database = database['parameter']
     parameter_mask = ({} if parameter_mask is None else parameter_mask)
 
     Form = form(parameter_mask, names)

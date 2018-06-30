@@ -1,7 +1,7 @@
 Create Plugins
 ==============
 
-abce has three plugin so far: abcFinance, abcLogistics, abcCython. If
+abcEconomics has three plugin so far: abcFinance, abcLogistics, abcCython. If
 you want to author your own plugin - its dead simple. All you
 have to do is write a class that inherits from Agent in agent.py.
 This class can overwrite::
@@ -15,7 +15,7 @@ This class can overwrite::
 
 For example like this::
 
-    class UselessAgent(abce.Agent):
+    class UselessAgent(abcEconomics.Agent):
         def __init__(self, id, group, trade_logging, database, random_seed, num_managers,
                      agent_parameters, simulation_parameters,
                      check_unchecked_msgs, start_round=None):

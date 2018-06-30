@@ -1,6 +1,6 @@
 import platform
 import csv
-import abce
+import abcEconomics
 try:
     from math import isclose
 except ImportError:
@@ -8,7 +8,7 @@ except ImportError:
         return a - 0.000001 < b < a + 0.000001
 
 
-class Agent(abce.Agent):
+class Agent(abcEconomics.Agent):
     def init(self, name):
         self.name = name
 
@@ -56,7 +56,7 @@ def compare(to_compare, path, message, processes):
 
 
 def main(processes, rounds):
-    simulation = abce.Simulation(name='logging_test_friendly_names', processes=processes)
+    simulation = abcEconomics.Simulation(name='logging_test_friendly_names', processes=processes)
 
     agents = simulation.build_agents(Agent, 'friendly_agent',
                                      agent_parameters=[{'name': 'A'}, {'name': 'Davoud'}, {'name': "fred"}, {'name': "F12"}])
