@@ -10,13 +10,13 @@ of goods and production and consumption.
 .. image:: https://zenodo.org/badge/4157636.svg
    :target: https://zenodo.org/badge/latestdoi/4157636
 
-.. image:: https://travis-ci.org/AB-CE/abcEconomics.svg?branch=master
+.. image:: https://travis-ci.org/AB-CE/abce.svg?branch=master
    :alt: abcEconomics build status on Travis CI
-   :target: https://travis-ci.org/AB-CE/abcEconomics
+   :target: https://travis-ci.org/AB-CE/abce
 
 .. image:: https://ci.appveyor.com/api/projects/status/c2w73u9im2b87reb?svg=true
    :alt: abcEconomics build status on Appveyor CI
-   :target: https://ci.appveyor.com/project/AB-CE/abcEconomics
+   :target: https://ci.appveyor.com/project/AB-CE/abce
 
 .. image:: https://img.shields.io/pypi/v/abcEconomics.svg
    :alt:  Pypi version
@@ -26,7 +26,7 @@ of goods and production and consumption.
    :alt:  readthedocs
    :target: https://abcEconomics.readthedocs.io
 
-.. figure:: https://raw.githubusercontent.com/AB-CE/abcEconomics/master/docs/cheesegrater.png
+.. figure:: https://raw.githubusercontent.com/AB-CE/abce/master/docs/cheesegrater.png
    :target: http://35.176.189.179/abcEconomics/
    :scale: 20 %
    :align: right
@@ -63,7 +63,7 @@ The audience of abcEconomics are economists that want to model agent-based
 models of trade and production.
 
 abcEconomics does support an accounting framework
-for financial simulations. `ESL can be downloaded here <https://github.com/AB-CE/abcEconomicsSL>`_.
+for financial simulations. `ESL can be downloaded here <https://github.com/AB-CE/abcESL>`_.
 
 abcEconomics runs on macOS, Windows, and Linux. abcEconomics runs 10x faster on pypy!
 
