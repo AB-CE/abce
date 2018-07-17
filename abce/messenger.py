@@ -287,3 +287,12 @@ class Messenger:
             raise Exception('(%s, %i): There are messages an agent send that '
                             'have not been retrieved in this round '
                             'get_messages(.)' % (self.group, self.id))
+
+    def unchecked_messages(self):
+        """" Returns all unchecked messages"""
+        return self._msgs
+
+    def unanswered_bids_and_offers(self):
+        """" Returns all unanswered bids and offers"""
+        return list(self.given_offers.values())
+
