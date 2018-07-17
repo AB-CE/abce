@@ -61,7 +61,7 @@ class DbDatabase:
         self.data = {}
         self.trade_log = trade_log
 
-        self.aggregation = defaultdict(lambda: defaultdict(OnlineVariance))
+        self.aggregation = defaultdict(dd_online_variance)
         self.round = 0
 
         self.plugin = plugin
@@ -193,3 +193,6 @@ class ThreadingDatabase(DbDatabase, threading.Thread):
 class MultiprocessingDatabase(DbDatabase, multiprocessing.Process):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+def dd_online_variance():
+    return defaultdict(OnlineVariance)
