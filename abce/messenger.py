@@ -200,7 +200,11 @@ class Messenger:
 
     def _post_messages(self, agents):
         for name, envelope in self._out:
-            agents[name].inbox.append(envelope)
+            try:
+                agents[name].inbox.append(envelope)
+            except KeyError:
+                print(envelope)
+                raise KeyError("Receiver %s does not exist" % str(name))
         self._out.clear()
 
     def _post_messages_multiprocessing(self, num_processes):

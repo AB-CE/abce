@@ -93,7 +93,7 @@ def make_simple_graphs(data, filename, ignore_initial_rounds):
     plots = []
     for col in data.columns:
         title = make_title(filename, col)
-        if col not in ['round', 'id', 'index']:
+        if col not in ['round', 'name', 'index']:
             plot = abce_figure(title)
             plot.yaxis.visible = False
             plot.legend.orientation = "top_left"
@@ -115,20 +115,20 @@ def make_histograms(data, filename):
 
 
 def make_panel_graphs(data, filename, ignore_initial_rounds):
-    """ Creates panel graphs from data with 'round' and 'id' picks no more than 20
+    """ Creates panel graphs from data with 'round' and 'name' picks no more than 20
     samples to display"""
     data = clean_nans(data)
     print('make_panel_graphs', filename)
-    num_individuals = max(data['id'])
+    num_individuals = len(set(data['name']))
     if num_individuals > 20:
-        individuals = sorted(random.sample(range(max(data['id'])), 20))
+        individuals = sorted(random.sample(list(set(data['name']))))
     else:
-        individuals = range(max(data['id']) + 1)
-    data = data[data['id'].isin(individuals)]
+        individuals = list(set(data['name']))
+    data = data[data['name'].isin(individuals)]
     titles = []
     plots = []
     for col in data.columns:
-        if col not in ['round', 'id', 'index']:
+        if col not in ['round', 'name', 'index']:
             y_range = (min(data[col][ignore_initial_rounds * len(individuals):]), max(data[col][ignore_initial_rounds * len(individuals):]))
             if y_range[0] == y_range[1]:
                 y_range = (-1, 1)
@@ -136,8 +136,8 @@ def make_panel_graphs(data, filename, ignore_initial_rounds):
             plot = abce_figure(title, y_range=y_range)
             plot.legend.orientation = "top_left"
             for i, id in enumerate(individuals):
-                index = data['round'][data['id'] == id]
-                series = data[col][data['id'] == id]
+                index = data['round'][data['name'] == id]
+                series = data[col][data['name'] == id]
                 plot.line(index, series, legend=str(id),
                           line_width=2, line_color=COLORS[i])
             titles.append(title + ' (panel)')

@@ -1,6 +1,7 @@
 from .inventory import Inventory
 from .notenoughgoods import NotEnoughGoods
 
+
 class Goods:
     """ Each agent can access his goods. self['good_name'] shows the quantity of goods of a certain type an agent
     owns. Goods can be a string or any other python object.
