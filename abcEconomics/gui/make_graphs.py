@@ -121,7 +121,7 @@ def make_panel_graphs(data, filename, ignore_initial_rounds):
     print('make_panel_graphs', filename)
     num_individuals = len(set(data['name']))
     if num_individuals > 20:
-        individuals = sorted(random.sample(list(set(data['name']))))
+        individuals = sorted(random.sample(list(set(data['name'])), 20))
     else:
         individuals = list(set(data['name']))
     data = data[data['name'].isin(individuals)]
