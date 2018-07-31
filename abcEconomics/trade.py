@@ -487,18 +487,16 @@ class Trade:
         assert price > - epsilon, 'price %.30f is smaller than 0 - epsilon (%.30f)' % (price, - epsilon)
         if price < 0:
             price = 0
-        money_amount = quantity * price
         # makes sure the money_amount is between zero and maximum available, but
         # if its only a little bit above or below its set to the bounds
-        available = self._inventory[currency]
-        assert money_amount > - epsilon, '%s (price * quantity) %.30f is smaller than 0 - epsilon (%.30f)' % (currency, money_amount, - epsilon)
-        if money_amount < 0:
-            money_amount = 0
-        if money_amount > available:
-            money_amount = available
+
+        assert quantity > - epsilon, (
+            '%s quantity %.30f is smaller than 0 - epsilon (%.30f)' % (currency, quantity, - epsilon))
+        if quantity < 0:
+            quantity = 0
 
         offer_id = self._offer_counter()
-        self._inventory.reserve(currency, money_amount)
+        self._inventory.reserve(currency, quantity * price)
         offer = Offer(self.name,
                       receiver,
                       good,
