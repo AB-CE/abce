@@ -57,9 +57,14 @@ from .agent import Agent  # noqa: F401
 from .group import Group
 from .notenoughgoods import NotEnoughGoods  # noqa: F401
 from .agents import Firm, Household  # noqa: F401
-from .gui import gui, graph  # noqa: F401
 from .singleprocess import SingleProcess
 from .multiprocess import MultiProcess
+
+try:
+    # hack: make gui import optional
+    from .gui import gui, graph  # noqa: F401
+except Exception:
+    pass
 
 
 class Simulation(object):
