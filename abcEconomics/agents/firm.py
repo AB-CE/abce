@@ -48,9 +48,9 @@ class Firm:
                                                      'labor': 2}})
 
     Production functions can be auto generated with:
-        - py:meth:`~abcEconomicsagent.Firm.create_cobb_douglas` or
-        - py:meth:`~abcEconomicsagent.Firm.create_ces` or
-        - py:meth:`~abcEconomicsagent.Firm.create_leontief`
+        - py:meth:`~abcEconomics.Firm.create_cobb_douglas` or
+        - py:meth:`~abcEconomics.Firm.create_ces` or
+        - py:meth:`~abcEconomics.Firm.create_leontief`
 
     or specified by hand:
 
@@ -93,9 +93,9 @@ class Firm:
         Args:
             production_function:
                 A production_function produced with
-                py:meth:`~abcEconomicsagent.Firm.create_production_function`,
-                py:meth:`~abcEconomicsagent.Firm.create_cobb_douglas` or
-                py:meth:`~abcEconomicsagent.Firm.create_leontief`
+                py:meth:`~abcEconomics.Firm.create_production_function`,
+                py:meth:`~abcEconomics.Firm.create_cobb_douglas` or
+                py:meth:`~abcEconomics.Firm.create_leontief`
 
             input goods dictionary or list:
                 dictionary containing the amount of input good used for the production or

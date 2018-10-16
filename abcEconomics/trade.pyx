@@ -15,22 +15,22 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 """
-The :class:`abcEconomicsagent.Agent` class is the basic class for creating your agent. It automatically handles the
+The :class:`abcEconomics.Agent` class is the basic class for creating your agent. It automatically handles the
 possession of goods of an agent. In order to produce/transforme goods you need to also subclass
-the :class:`abcEconomicsagent.Firm` [1]_ or to create a consumer the :class:`abcEconomicsagent.Household`.
+the :class:`abcEconomics.Firm` [1]_ or to create a consumer the :class:`abcEconomics.Household`.
 
 For detailed documentation on:
 
 Trading:
-    see :class:`abcEconomicsagent.Trade`
+    see :class:`abcEconomics.Trade`
 Logging and data creation:
-    see :class:`abcEconomicsagent.Database` and :doc:`simulation_results`
+    see :class:`abcEconomics.Database` and :doc:`simulation_results`
 Messaging between agents:
-    see :class:`abcEconomicsagent.Messenger`.
+    see :class:`abcEconomics.Messenger`.
 
 .. autoexception:: abcEconomicstools.NotEnoughGoods
 
-.. [1] or :class:`abcEconomicsagent.FirmMultiTechnologies` for simulations with complex technologies.
+.. [1] or :class:`abcEconomics.FirmMultiTechnologies` for simulations with complex technologies.
 """
 #******************************************************************************************#
 # trade.pyx is written in cython. When you modify trade.pyx you need to compile it with    #

@@ -52,8 +52,8 @@ class Messenger:
     def send_envelope(self, receiver, topic, content):
         """ sends an envelope to the agent, the envelope contains the message (content),
         sender, receiver and topic. Agents receive it
-        at the beginning of next round with :meth:`~abcEconomicsagent.Messenger.get_messages` or
-        :meth:`~abcEconomicsagent.Messenger.get_messages_all`.
+        at the beginning of next round with :meth:`~abcEconomics.Messenger.get_messages` or
+        :meth:`~abcEconomics.Messenger.get_messages_all`.
 
         The message that arrives has the following properties::
         message.sender
@@ -98,8 +98,8 @@ class Messenger:
         self.send(receiver, topic, msg)
 
     def get_messages(self, topic='m'):
-        """ self.get_messages() returns all new messages send with :meth:`~abcEconomicsagent.Messenger.send`
-        and :meth:`~abcEconomicsagent.Messenger.send_envelope`. The order is randomized. self.get_messages(topic) returns all
+        """ self.get_messages() returns all new messages send with :meth:`~abcEconomics.Messenger.send`
+        and :meth:`~abcEconomics.Messenger.send_envelope`. The order is randomized. self.get_messages(topic) returns all
         messages with a particular topic.
 
         A message is a string with the message. You can also retrieve the sender
@@ -219,8 +219,8 @@ class Messenger:
         Args:
 
         sends a message to agent. Agents receive it
-        at the beginning of next round with :meth:`~abcEconomicsagent.Messenger.get_messages`(topic) or
-        :meth:`~abcEconomicsagent.Messenger.get_messages_all`.
+        at the beginning of next round with :meth:`~abcEconomics.Messenger.get_messages`(topic) or
+        :meth:`~abcEconomics.Messenger.get_messages_all`.
 
         Args:
             receiver:

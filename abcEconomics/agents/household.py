@@ -30,7 +30,7 @@ class Household:
         utility function.
 
         A utility_function, has to be set before see
-        py:meth:`~abcEconomicsagent.Household.create_cobb_douglas_utility_function` or
+        py:meth:`~abcEconomics.Household.create_cobb_douglas_utility_function` or
         manually; see example.
 
         Args:
