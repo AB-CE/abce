@@ -1,7 +1,7 @@
 from __future__ import division
 from buy import Buy
 from sell import Sell
-from abce import Simulation
+from abcEconomics import Simulation
 
 simulation_parameters = {'name': 'round',
                          'random_seed': None,

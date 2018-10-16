@@ -1,17 +1,17 @@
-""" A graphical user interface for ABCE simulations """
+""" A graphical user interface for abcEconomics simulations """
 import os
 from os.path import join
 import json
 from hashlib import sha1
 from collections import defaultdict
 from flexx import ui
-import abce
+import abcEconomics
 from .dockpanel import DockPanel
 from .make_graphs import (make_panel_graphs,
                           make_simple_graphs,
                           make_aggregate_graphs)
 from .bokehwidget import BokehWidget
-from .webtext import abcedescription
+from .webtext import abcEconomicsdescription
 from .loadform import LoadForm
 try:
     import pandas as pd
@@ -28,9 +28,9 @@ def basiclayout(Form, simulation, title, top_bar=None, story=None,
     """ Generates the basic layout of the website  """
     story = ({} if story is None else story)
     pages = ({} if pages is None else pages)
-    texts = ([abcedescription] if texts is None else texts)
+    texts = ([abcEconomicsdescription] if texts is None else texts)
 
-    class ABCE(ui.Widget):
+    class abcEconomics(ui.Widget):
         """ Basic layout of the website  """
         CSS = """
         h1, a {
@@ -96,14 +96,14 @@ def basiclayout(Form, simulation, title, top_bar=None, story=None,
                 def run_simulation(events):
                     """ Runs simulation and shows results """
                     self.display_status('Running...', 'Simulation in progress')
-                    abce.simulation_name, parameters = (
+                    abcEconomics.simulation_name, parameters = (
                         hash_simulation_parameters(events))
                     simulation(parameters)
                     self.display_status('Success',
                                         'Simulation succeeded, generating graphs')
-                    self.display_results(events, abce.simulation_name)
+                    self.display_results(events, abcEconomics.simulation_name)
                     self.display_status('Results:', 'Click left')
-                    del abce.simulation_name
+                    del abcEconomics.simulation_name
 
                 @self.form.connect('display_results')
                 def display_results(events):  # pylint: disable=W0612
@@ -152,7 +152,7 @@ def basiclayout(Form, simulation, title, top_bar=None, story=None,
                     rounds = max(table['index'])
                 if ignore_initial_rounds >= rounds:
                     ignore_initial_rounds = 0
-                    print('abcegui.py ignore_initial_rounds >= rounds')
+                    print('abcEconomicsgui.py ignore_initial_rounds >= rounds')
                 if (filename.startswith('aggregate_') or
                         filename.startswith('aggregated_')):
                     titles, plots = make_aggregate_graphs(
@@ -183,7 +183,7 @@ def basiclayout(Form, simulation, title, top_bar=None, story=None,
 
             self.first = False
 
-    return ABCE
+    return abcEconomics
 
 
 def newest_subdirectory(directory='.', name=''):
@@ -222,13 +222,13 @@ def load_cached(pool_path):
 
 
 def switch_on_conditional_logging(parameters, histograms):
-    """ Uses abce.conditional_logging, to instruct the simulation, to log
+    """ Uses abcEconomics.conditional_logging, to instruct the simulation, to log
     only at a specific point of time """
     if histograms is not None:
-        abce.conditional_logging = histograms
+        abcEconomics.conditional_logging = histograms
     elif 'rounds' in parameters:
-        abce.conditional_logging = [parameters['rounds'] - 1]
+        abcEconomics.conditional_logging = [parameters['rounds'] - 1]
     elif 'histogram' in parameters:
-        abce.conditional_logging = [parameters['histogram']]
+        abcEconomics.conditional_logging = [parameters['histogram']]
     else:
         raise Exception("In @gui specify when histograms should be produced")

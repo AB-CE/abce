@@ -1,7 +1,7 @@
-abce
+abcEconomics
 ====
 
 .. toctree::
    :maxdepth: 4
 
-   abce
+   abcEconomics

@@ -2,11 +2,11 @@ Quote
 =====
 
 
-.. default-domain::abce.quote.Quote
+.. default-domain::abcEconomics.quote.Quote
 
-.. autoclass:: abce.quote.Quote
+.. autoclass:: abcEconomics.quote.Quote
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. autofunction:: abce.quote.Quotation
+.. autofunction:: abcEconomics.quote.Quotation

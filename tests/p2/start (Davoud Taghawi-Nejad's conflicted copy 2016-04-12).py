@@ -1,7 +1,7 @@
 from __future__ import division
 from myagent import MyAgent
 from youragent import YourAgent
-from abce import Simulation
+from abcEconomics import Simulation
 
 
 def main():

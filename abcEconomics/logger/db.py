@@ -2,7 +2,7 @@
 #
 # Module Author: Davoud Taghawi-Nejad
 #
-# ABCE is open-source software. If you are using ABCE for your research you
+# abcEconomics is open-source software. If you are using abcEconomics for your research you
 # are requested the quote the use of this software.
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -136,7 +136,7 @@ class DbDatabase:
                     getattr(self.plugin, msg[0])(*msg[1], **msg[2])
                 except AttributeError:
                     raise AttributeError(
-                        "abce_db error '%s' command unknown" % msg)
+                        "abcEconomics_db error '%s' command unknown" % msg)
 
         for name, data in current_log.items():
             if name not in self.dataset_db:

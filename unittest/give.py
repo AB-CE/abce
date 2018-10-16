@@ -1,8 +1,8 @@
-import abce
+import abcEconomics
 import random
 
 
-class Give(abce.Agent):
+class Give(abcEconomics.Agent):
     def init(self, rounds):
         self.last_round = rounds - 1
         if self.id == 1:
@@ -46,8 +46,8 @@ class Give(abce.Agent):
     def all_tests_completed(self):
         if self.time == self.last_round and self.id == 0:
             assert all(self.tests.values(
-            )), 'not all tests have been run; ABCE workes correctly, restart the unittesting to do all tests %s' % self.tests
-            print('Test abce.give:\t\t\t\t\tOK')
-            print('Test abce.message:\t\t\t\tOK')
-            print('Test abce.get_messages:\t\t\t\tOK')
-            print('Test abce.get_messages_all:\t\t\tOK')
+            )), 'not all tests have been run; abcEconomics workes correctly, restart the unittesting to do all tests %s' % self.tests
+            print('Test abcEconomics.give:\t\t\t\t\tOK')
+            print('Test abcEconomics.message:\t\t\t\tOK')
+            print('Test abcEconomics.get_messages:\t\t\t\tOK')
+            print('Test abcEconomics.get_messages_all:\t\t\tOK')

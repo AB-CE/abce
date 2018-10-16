@@ -2,7 +2,7 @@
 
  Module Author: Davoud Taghawi-Nejad
 
- ABCE is open-source software. If you are using ABCE for your research you are
+ abcEconomics is open-source software. If you are using abcEconomics for your research you are
  requested the quote the use of this software.
 
  Licensed under the Apache License, Version 2.0 (the "License"); you may not

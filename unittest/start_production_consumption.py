@@ -1,10 +1,10 @@
-import abce
+import abcEconomics
 from production_multifirm import ProductionMultifirm
 from utility_household import UtilityHousehold
 
 
 def main(processes, rounds=5):
-    s = abce.Simulation(processes=processes, name='production_consumption_test')
+    s = abcEconomics.Simulation(processes=processes, name='production_consumption_test')
     print('build ProductionMultifirm')
     productionmultifirm = s.build_agents(ProductionMultifirm, 'productionmultifirm', 1, rounds=rounds)
     print('build UtilityHousehold')

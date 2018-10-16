@@ -3,9 +3,9 @@
 from __future__ import print_function
 from builtins import str
 from builtins import object
-from abce.notenoughgoods import NotEnoughGoods
+from abcEconomics.notenoughgoods import NotEnoughGoods
 from random import shuffle
-from abce.trade import get_epsilon
+from abcEconomics.trade import get_epsilon
 from .contracts import Contracts
 from .contracting import Contract
 
@@ -41,11 +41,11 @@ class FlexibleContracting(object):
 
     For example you have a firm and a worker class. 'Labor' is set as a service
     meaning that it lasts not longer than one round and the worker how has an
-    adult gets one unit of labor every round see: :meth:`abce.declare_service`.
+    adult gets one unit of labor every round see: :meth:`abcEconomics.declare_service`.
     The firm offers a work contract, the worker responds. Every round the
     worker delivers the labor and the firm pays.::
 
-        class Firm(abce.Agent, abce.Contract)
+        class Firm(abcEconomics.Agent, abcEconomics.Contract)
             def request_offer(self):
                 if self.round % 10 == 0:
                     self.given_contract = self.request_contract('contractbuyer', 0,
@@ -57,7 +57,7 @@ class FlexibleContracting(object):
             def deliver_or_pay(self):
                 self.pay_contract('labor')
 
-        class Worker(abce.Agent, abce.Contract):
+        class Worker(abcEconomics.Agent, abcEconomics.Contract):
             def init(self):
                 self.create('adult', 1)
 

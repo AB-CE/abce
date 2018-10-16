@@ -1,37 +1,37 @@
-abce\.agents package
+abcEconomics\.agents package
 ====================
 
 Submodules
 ----------
 
-abce\.agents\.deadagent module
+abcEconomics\.agents\.deadagent module
 ------------------------------
 
-.. automodule:: abce.agents.deadagent
+.. automodule:: abcEconomics.agents.deadagent
     :members:
     :undoc-members:
     :show-inheritance:
 
-abce\.agents\.firm module
+abcEconomics\.agents\.firm module
 -------------------------
 
-.. automodule:: abce.agents.firm
+.. automodule:: abcEconomics.agents.firm
     :members:
     :undoc-members:
     :show-inheritance:
 
-abce\.agents\.firmmultitechnologies module
+abcEconomics\.agents\.firmmultitechnologies module
 ------------------------------------------
 
-.. automodule:: abce.agents.firmmultitechnologies
+.. automodule:: abcEconomics.agents.firmmultitechnologies
     :members:
     :undoc-members:
     :show-inheritance:
 
-abce\.agents\.household module
+abcEconomics\.agents\.household module
 ------------------------------
 
-.. automodule:: abce.agents.household
+.. automodule:: abcEconomics.agents.household
     :members:
     :undoc-members:
     :show-inheritance:
@@ -40,7 +40,7 @@ abce\.agents\.household module
 Module contents
 ---------------
 
-.. automodule:: abce.agents
+.. automodule:: abcEconomics.agents
     :members:
     :undoc-members:
     :show-inheritance:

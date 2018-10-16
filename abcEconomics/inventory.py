@@ -1,6 +1,6 @@
-from abce.trade import get_epsilon
+from abcEconomics.trade import get_epsilon
 from collections import defaultdict
-from abce.notenoughgoods import NotEnoughGoods
+from abcEconomics.notenoughgoods import NotEnoughGoods
 from .expiringgood import ExpiringGood
 
 epsilon = get_epsilon()

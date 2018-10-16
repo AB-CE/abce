@@ -1,4 +1,4 @@
-from abce.agent import Agent
+from abcEconomics.agent import Agent
 from random import shuffle
 
 

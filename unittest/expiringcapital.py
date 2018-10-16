@@ -1,10 +1,10 @@
 from __future__ import division
 from __future__ import print_function
-import abce
-from abce.agents import Firm
+import abcEconomics
+from abcEconomics.agents import Firm
 
 
-class ExpiringCapital(abce.Agent, Firm):
+class ExpiringCapital(abcEconomics.Agent, Firm):
     def init(self, rounds, xcapital):
         self.last_round = rounds - 1
         self.create('xcapital', 1)

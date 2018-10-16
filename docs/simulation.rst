@@ -1,9 +1,9 @@
 The simulation in start.py
 ==========================
 
-.. automodule:: abce
+.. automodule:: abcEconomics
 
-.. autoclass:: abce.Simulation
+.. autoclass:: abcEconomics.Simulation
     :members:
     :undoc-members:
     :show-inheritance:

@@ -1,9 +1,9 @@
 Graphical User Interface
 ========================
 
-.. automodule:: abce.show
+.. automodule:: abcEconomics.show
 
-.. autofunction:: abce.gui.gui
+.. autofunction:: abcEconomics.gui.gui
 
-.. automethod:: abce.Simulation.graphs
+.. automethod:: abcEconomics.Simulation.graphs
 

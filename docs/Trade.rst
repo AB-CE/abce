@@ -2,11 +2,11 @@ Trade
 ===========
 
 
-.. default-domain::abce.Trade
+.. default-domain::abcEconomics.Trade
 
-.. autoclass:: abce.Trade
+.. autoclass:: abcEconomics.Trade
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. autofunction:: abce.trade.Offer
+.. autofunction:: abcEconomics.trade.Offer

@@ -1,4 +1,4 @@
-abce package
+abcEconomics package
 ============
 
 Subpackages
@@ -6,185 +6,185 @@ Subpackages
 
 .. toctree::
 
-    abce.agents
-    abce.contracts
-    abce.gui
+    abcEconomics.agents
+    abcEconomics.contracts
+    abcEconomics.gui
 
 Submodules
 ----------
 
-abce\.agent module
+abcEconomics\.agent module
 ------------------
 
-.. automodule:: abce.agent
+.. automodule:: abcEconomics.agent
     :members:
     :undoc-members:
     :show-inheritance:
 
-abce\.compile module
+abcEconomics\.compile module
 --------------------
 
-.. automodule:: abce.compile
+.. automodule:: abcEconomics.compile
     :members:
     :undoc-members:
     :show-inheritance:
 
-abce\.credit module
+abcEconomics\.credit module
 -------------------
 
-.. automodule:: abce.credit
+.. automodule:: abcEconomics.credit
     :members:
     :undoc-members:
     :show-inheritance:
 
-abce\.logger module
+abcEconomics\.logger module
 ---------------------
 
-.. automodule:: abce.logger
+.. automodule:: abcEconomics.logger
     :members:
     :undoc-members:
     :show-inheritance:
 
-abce\.db module
+abcEconomics\.db module
 ---------------
 
-.. automodule:: abce.db
+.. automodule:: abcEconomics.db
     :members:
     :undoc-members:
     :show-inheritance:
 
-abce\.expiringgood module
+abcEconomics\.expiringgood module
 -------------------------
 
-.. automodule:: abce.expiringgood
+.. automodule:: abcEconomics.expiringgood
     :members:
     :undoc-members:
     :show-inheritance:
 
-abce\.financial module
+abcEconomics\.financial module
 ----------------------
 
-.. automodule:: abce.financial
+.. automodule:: abcEconomics.financial
     :members:
     :undoc-members:
     :show-inheritance:
 
-abce\.group module
+abcEconomics\.group module
 ------------------
 
-.. automodule:: abce.group
+.. automodule:: abcEconomics.group
     :members:
     :undoc-members:
     :show-inheritance:
 
-abce\.inventory module
+abcEconomics\.inventory module
 ----------------------
 
-.. automodule:: abce.inventory
+.. automodule:: abcEconomics.inventory
     :members:
     :undoc-members:
     :show-inheritance:
 
-abce\.messenger module
+abcEconomics\.messenger module
 ----------------------
 
-.. automodule:: abce.messenger
+.. automodule:: abcEconomics.messenger
     :members:
     :undoc-members:
     :show-inheritance:
 
-abce\.multicurrencytrade module
+abcEconomics\.multicurrencytrade module
 -------------------------------
 
-.. automodule:: abce.multicurrencytrade
+.. automodule:: abcEconomics.multicurrencytrade
     :members:
     :undoc-members:
     :show-inheritance:
 
-abce\.notenoughgoods module
+abcEconomics\.notenoughgoods module
 ---------------------------
 
-.. automodule:: abce.notenoughgoods
+.. automodule:: abcEconomics.notenoughgoods
     :members:
     :undoc-members:
     :show-inheritance:
 
-abce\.online\_variance module
+abcEconomics\.online\_variance module
 -----------------------------
 
-.. automodule:: abce.online_variance
+.. automodule:: abcEconomics.online_variance
     :members:
     :undoc-members:
     :show-inheritance:
 
-abce\.online\_variance module
+abcEconomics\.online\_variance module
 -----------------------------
 
-.. automodule:: abce.online_variance
+.. automodule:: abcEconomics.online_variance
     :members:
     :undoc-members:
     :show-inheritance:
 
-abce\.postbox module
+abcEconomics\.postbox module
 --------------------
 
-.. automodule:: abce.postbox
+.. automodule:: abcEconomics.postbox
     :members:
     :undoc-members:
     :show-inheritance:
 
-abce\.postprocess module
+abcEconomics\.postprocess module
 ------------------------
 
-.. automodule:: abce.postprocess
+.. automodule:: abcEconomics.postprocess
     :members:
     :undoc-members:
     :show-inheritance:
 
-abce\.processorgroup module
+abcEconomics\.processorgroup module
 ---------------------------
 
-.. automodule:: abce.processorgroup
+.. automodule:: abcEconomics.processorgroup
     :members:
     :undoc-members:
     :show-inheritance:
 
-abce\.quote module
+abcEconomics\.quote module
 ------------------
 
-.. automodule:: abce.quote
+.. automodule:: abcEconomics.quote
     :members:
     :undoc-members:
     :show-inheritance:
 
-abce\.show module
+abcEconomics\.show module
 -----------------
 
-.. automodule:: abce.show
+.. automodule:: abcEconomics.show
     :members:
     :undoc-members:
     :show-inheritance:
 
-abce\.trade module
+abcEconomics\.trade module
 ------------------
 
-.. automodule:: abce.trade
+.. automodule:: abcEconomics.trade
     :members:
     :undoc-members:
     :show-inheritance:
 
-abce\.trade module
+abcEconomics\.trade module
 ------------------
 
-.. automodule:: abce.trade
+.. automodule:: abcEconomics.trade
     :members:
     :undoc-members:
     :show-inheritance:
 
-abce\.webtext module
+abcEconomics\.webtext module
 --------------------
 
-.. automodule:: abce.webtext
+.. automodule:: abcEconomics.webtext
     :members:
     :undoc-members:
     :show-inheritance:
@@ -193,7 +193,7 @@ abce\.webtext module
 Module contents
 ---------------
 
-.. automodule:: abce
+.. automodule:: abcEconomics
     :members:
     :undoc-members:
     :show-inheritance:

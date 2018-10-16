@@ -2,7 +2,7 @@
 #
 # Module Author: Davoud Taghawi-Nejad
 #
-# ABCE is open-source software. If you are using ABCE for your research you are
+# abcEconomics is open-source software. If you are using abcEconomics for your research you are
 # requested the quote the use of this software.
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -15,45 +15,44 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 """
-The :class:`abceagent.Agent` class is the basic class for creating your agent. It automatically handles the
-possession of goods of an agent. In order to produce/transforme goods you need to also subclass
-the :class:`abceagent.Firm` [1]_ or to create a consumer the :class:`abceagent.Household`.
+The :class:`abcEconomics.Agent` class is the basic class for creating your agent. It
+automatically handles the possession of goods of an agent. In order to produce/transform
+goods you need to also subclass the :class:`abcEconomics.Firm` [1]_ or to create a consumer
+the :class:`abcEconomics.Household`.
 
 For detailed documentation on:
 
 Trading:
-    see :class:`abceagent.Trade`
+    see :class:`abcEconomics.Trade`
 Logging and data creation:
-    see :class:`abceagent.Database` and :doc:`simulation_results`
+    see :class:`abcEconomics.Database` and :doc:`simulation_results`
 Messaging between agents:
-    see :class:`abceagent.Messenger`.
+    see :class:`abcEconomics.Messenger`.
 
-.. autoexception:: abcetools.NotEnoughGoods
+.. autoexception:: abcEconomicstools.NotEnoughGoods
 
-.. [1] or :class:`abceagent.FirmMultiTechnologies` for simulations with complex technologies.
+.. [1] or :class:`abcEconomics.FirmMultiTechnologies` for simulations with complex technologies.
 """
-#******************************************************************************************#
-# trade.pyx is written in cython. When you modify trade.pyx you need to compile it with    #
-# compile.sh and compile.py because the resulting trade.c file is distributed.             #
-# Don't forget to commit it to git                                                         #
-#******************************************************************************************#
+# ***************************************************************************************** #
+#  trade.pyx is written in cython. When you modify trade.pyx you need to compile it with    #
+# compile.sh and compile.py because the resulting trade.c file is distributed.              #
+# Don't forget to commit it to git                                                          #
+# ***************************************************************************************** #
 import random
 from collections import defaultdict, OrderedDict
-from abce.notenoughgoods import NotEnoughGoods
+from abcEconomics.notenoughgoods import NotEnoughGoods
 
-cdef double epsilon = 0.00000000001
+epsilon = 0.00000000001
+
 
 def get_epsilon():
     return epsilon
 
-cdef double fmax(double a, double b):
-    if a > b:
-        return a
-    else:
-        return b
 
-
-cdef class Offer:
+class Offer(object):
+    __slots__ = ('sender', 'receiver', 'good', 'quantity', 'price', 'currency',
+                 'sell', 'status', 'final_quantity', 'id',
+                 'made', 'status_round')
     """ This is an offer container that is send to the other agent. You can
     access the offer container both at the receiver as well as at the sender,
     if you have saved the offer. (e.G. self.offer = self.sell(...))
@@ -63,7 +62,7 @@ cdef class Offer:
             this is the name of the sender
 
         receiver:
-            This is the name of the receiver
+            this is the name of the receiver
 
         currency:
             The other good against which the good is traded.
@@ -98,28 +97,13 @@ cdef class Offer:
                 and therefore perished.
 
         final_quantity:
-            If the offer has been answerd this returns the actual quantity
+            If the offer has been answered this returns the actual quantity
             bought or sold. (Equal to quantity if the offer was accepted fully)
         id:
             a unique identifier
     """
-    cdef readonly object sender
-    cdef readonly object receiver
-    cdef readonly object good
-    cdef readonly str currency
-    cdef readonly double quantity
-    cdef readonly double price
-    cdef readonly bint sell
-    cdef public str status
-    cdef public double final_quantity
-    cdef readonly object id
-    cdef readonly int made
-    cdef public int status_round
-
-
-    def __cinit__(self, object sender, object receiver, object good, double quantity, double price, str currency,
-                  bint sell, str status, double final_quantity, long id,
-                  int made, int status_round):
+    def __init__(self, sender, receiver, good, quantity, price, currency,
+                 sell, id, made):
         self.sender = sender
         self.receiver = receiver
         self.good = good
@@ -127,41 +111,27 @@ cdef class Offer:
         self.quantity = quantity
         self.price = price
         self.sell = sell
-        self.status = status
-        self.final_quantity = final_quantity
+        self.status = 'new'
+        self.final_quantity = None
         self.id = id
         self.made = made
-        self.status_round = status_round
-
-    def __reduce__(self):
-        return (rebuild_offer, (self.sender, self.receiver, self.good, self.quantity, self.price, self.currency,
-                self.sell, self.status, self.final_quantity, self.id,
-                self.made, self.status_round))
+        self.status_round = None
 
     def __repr__(self):
-        return """<{sender: %s, receiver_group: %s, good: %s, quantity: %f, price: %f,
-                sell: %r, status: %s, final_quantity: % f, id: %i,
-                made: %i, status_round: %i }>""" % (
+        return ("""<{sender: %s, receiver: %s, good: %s, quantity: %f, price: %f, currency: %f,
+                sell: %s, status: %s, final_quantity: % f, id: %i, made: %s, status_round: %s }>""" %
+                (self.sender, self.receiver, self.good, self.quantity, self.price, self.currency,
+                 self.sell, self.status, self.final_quantity, self.id, self.made, self.status_round))
 
-                    self.sender, self.receiver, self.good, self.quantity, self.price,
-                    self.sell, self.status, self.final_quantity, self.id,
-                    self.made, self.status_round)
-
-def rebuild_offer(object sender, object receiver, object good, double quantity, double price,
-                  str currency, bint sell, str status, double final_quantity,
-                  long id, int made, int status_round):
-    return Offer(sender, receiver, good, quantity, price, currency,
-                sell, status, final_quantity, id,
-                made, status_round)
 
 class Trade:
     """ Agents can trade with each other. The clearing of the trade is taken care
-    of fully by ABCE.
+    of fully by abcEconomics.
     Selling a good works in the following way:
 
     1. An agent sends an offer. :meth:`~.sell`
 
-       *The good offered is blocked and self.possession(...) does shows the decreased amount.*
+       *abcEconomics does not allow you to sell the same good twice; self.free(good) shows how much good is not reserved yet*
 
     2. **Next subround:** An agent receives the offer :meth:`~.get_offers`, and can
        :meth:`~.accept`, :meth:`~.reject` or partially accept it. :meth:`~.accept`
@@ -171,7 +141,7 @@ class Trade:
     3. **Next subround:**
 
        - in case of acceptance *the money is automatically credited.*
-       - in case of partial acceptance *the money is credited and part of the blocked good is unblocked.*
+       - in case of partial acceptance *the money is credited and part of the reserved good is unblocked.*
        - in case of rejection *the good is unblocked.*
 
     Analogously for buying: :meth:`~.buy`
@@ -250,12 +220,14 @@ class Trade:
         self._trade_log = defaultdict(int)
 
     def get_buy_offers_all(self, descending=False, sorted=True):
+        """ """
         goods = list(self._open_offers_buy.keys())
-        return {good: self.get_offers(good, descending, sorted) for good in goods}
+        return {good: self.get_buy_offers(good, descending, sorted) for good in goods}
 
     def get_sell_offers_all(self, descending=False, sorted=True):
+        """ """
         goods = list(self._open_offers_sell.keys())
-        return {good: self.get_offers(good, descending, sorted) for good in goods}
+        return {good: self.get_sell_offers(good, descending, sorted) for good in goods}
 
     def get_offers_all(self, descending=False, sorted=True):
         """ returns all offers in a dictionary, with goods as key. The in each
@@ -275,7 +247,7 @@ class Trade:
 
         Returns:
 
-            a dictionary with good types as keys and list of :class:`abce.trade.Offer`
+            a dictionary with good types as keys and list of :class:`abcEconomics.trade.Offer`
             as values
 
         Example::
@@ -289,12 +261,13 @@ class Trade:
                     self.accept(offer)
 
          for offer in oo.beer:
-            print(offer.price, offer.sender_group, offer.sender_id)
+            print(offer.price, offer.sender)
         """
-        goods = list(self._open_offers_sell.keys()) + list(self._open_offers_buy.keys())
+        goods = list(self._open_offers_sell.keys() + self._open_offers_buy.keys())
         return {good: self.get_offers(good, descending, sorted) for good in goods}
 
     def get_buy_offers(self, good, sorted=True, descending=False, shuffled=True):
+        """ """
         ret = list(self._open_offers_buy[good].values())
         self._polled_offers.update(self._open_offers_buy[good])
         del self._open_offers_buy[good]
@@ -305,6 +278,7 @@ class Trade:
         return ret
 
     def get_sell_offers(self, good, sorted=True, descending=False, shuffled=True):
+        """ """
         ret = list(self._open_offers_sell[good].values())
         self._polled_offers.update(self._open_offers_sell[good])
         del self._open_offers_sell[good]
@@ -339,7 +313,7 @@ class Trade:
                 simulation considerably, but introduces a bias.
 
         Returns:
-            A list of :class:`abce.trade.Offer` ordered by price.
+            A list of :class:`abcEconomics.trade.Offer` ordered by price.
 
         Example::
 
@@ -361,6 +335,7 @@ class Trade:
         return ret
 
     def peak_buy_offers(self, good, sorted=True, descending=False, shuffled=True):
+        """ """
         ret = []
         for offer in self._open_offers_buy[good].values():
             ret.append(offer)
@@ -371,6 +346,7 @@ class Trade:
         return ret
 
     def peak_sell_offers(self, good, sorted=True, descending=False, shuffled=True):
+        """ """
         ret = []
         for offer in self._open_offers_sell[good].values():
             ret.append(offer)
@@ -414,20 +390,13 @@ class Trade:
         return ret
 
     def sell(self, receiver,
-             good, double quantity, double price, str currency='money', double epsilon=epsilon):
-        """ commits to sell the quantity of good at price
-
-        The good is not available for the agent. When the offer is
-        rejected it is automatically re-credited. When the offer is
-        accepted the money amount is credited. (partial acceptance
-        accordingly)
+             good, quantity, price, currency='money', epsilon=epsilon):
+        """ Sends a offer to sell a particular good to somebody. The amount promised
+        is reserved. (self.free(good), shows the not yet reserved goods)
 
         Args:
-            receiver_group:
-                group of the receiving agent
-
-            receiver_id:
-                number of the receiving agent
+            receiver:
+                the receiving agent
 
             'good':
                 name of the good
@@ -463,47 +432,35 @@ class Trade:
                     offer.status == 'rejected':
                     print('On diet')
         """
-        cdef double available
         assert price > - epsilon, 'price %.30f is smaller than 0 - epsilon (%.30f)' % (price, - epsilon)
         if price < 0:
             price = 0
         # makes sure the quantity is between zero and maximum available, but
         # if its only a little bit above or below its set to the bounds
-        available = self._inventory[good]
         assert quantity > - epsilon, 'quantity %.30f is smaller than 0 - epsilon (%.30f)' % (quantity, - epsilon)
         if quantity < 0:
             quantity = 0
-        if quantity > available + epsilon + epsilon * fmax(quantity, available):
-            raise NotEnoughGoods(self.name, good, quantity - available)
-        if quantity > available:
-            quantity = available
+
+        self._inventory.reserve(good, quantity)
 
         offer_id = self._offer_counter()
-        self._inventory.reserve(good, quantity)
-        cdef Offer offer = Offer(self.name,
-                                 receiver,
-                                 good,
-                                 quantity,
-                                 price,
-                                 currency,
-                                 True,
-                                 'new',
-                                 -2,
-                                 offer_id,
-                                 self.time,
-                                 -2)
+        offer = Offer(self.name,
+                      receiver,
+                      good,
+                      quantity,
+                      price,
+                      currency,
+                      True,
+                      offer_id,
+                      self.time)
         self.given_offers[offer_id] = offer
-        self.send(receiver, 'abce_propose_sell', offer)
+        self.send(receiver, 'abcEconomics_propose_sell', offer)
         return offer
 
     def buy(self, receiver, good,
-            double quantity, double price, str currency='money', double epsilon=epsilon):
-        """ commits to sell the quantity of good at price
-
-        The goods are not in haves or self.count(). When the offer is
-        rejected it is automatically re-credited. When the offer is
-        accepted the money amount is credited. (partial acceptance
-        accordingly)
+            quantity, price, currency='money', epsilon=epsilon):
+        """ Sends a offer to buy a particular good to somebody. The money promised
+        is reserved. (self.free(currency), shows the not yet reserved goods)
 
         Args:
             receiver:
@@ -527,8 +484,6 @@ class Trade:
                 a fraction of number to high or low. You can increase the
                 floating point tolerance. See troubleshooting -- floating point problems
         """
-        cdef double available
-        cdef double money_amount
         assert price > - epsilon, 'price %.30f is smaller than 0 - epsilon (%.30f)' % (price, - epsilon)
         if price < 0:
             price = 0
@@ -544,23 +499,20 @@ class Trade:
 
         offer_id = self._offer_counter()
         self._inventory.reserve(currency, money_amount)
-        cdef Offer offer = Offer(self.name,
-                                 receiver,
-                                 good,
-                                 quantity,
-                                 price,
-                                 currency,
-                                 False,
-                                 'new',
-                                 -1,
-                                 offer_id,
-                                 self.time,
-                                 -1)
-        self.send(receiver, 'abce_propose_buy', offer)
+        offer = Offer(self.name,
+                      receiver,
+                      good,
+                      quantity,
+                      price,
+                      currency,
+                      False,
+                      offer_id,
+                      self.time)
+        self.send(receiver, 'abcEconomics_propose_buy', offer)
         self.given_offers[offer_id] = offer
         return offer
 
-    def accept(self, Offer offer, double quantity=-999, double epsilon=epsilon):
+    def accept(self, offer, quantity=-999, epsilon=epsilon):
         """ The buy or sell offer is accepted and cleared. If no quantity is
         given the offer is fully accepted; If a quantity is given the offer is
         partial accepted.
@@ -580,16 +532,13 @@ class Trade:
         Return:
             Returns a dictionary with the good's quantity and the amount paid.
         """
-        cdef double money_amount
-        cdef double offer_quantity = offer.quantity
-        cdef double available
-
+        offer_quantity = offer.quantity
         if quantity == -999:
             quantity = offer_quantity
         assert quantity > - epsilon, 'quantity %.30f is smaller than 0 - epsilon (%.30f)' % (quantity, - epsilon)
         if quantity < 0:
             quantity = 0
-        if quantity > offer_quantity + epsilon * fmax(quantity, offer_quantity):
+        if quantity > offer_quantity + epsilon * max(quantity, offer_quantity):
             raise AssertionError('accepted more than offered %s: %.100f >= %.100f'
                                  % (offer.good, quantity, offer_quantity))
         if quantity > offer_quantity:
@@ -624,15 +573,14 @@ class Trade:
             self._inventory.haves[offer.good] -= quantity
             self._inventory.haves[offer.currency] += quantity * offer.price
         offer.final_quantity = quantity
-        self.send(offer.sender, 'abce_receive_accept', (offer.id, quantity))
+        self.send(offer.sender, 'abcEconomics_receive_accept', (offer.id, quantity))
         del self._polled_offers[offer.id]
-        if offer.sell:  # ord('s')
+        if offer.sell:
             return {offer.good: - quantity, offer.currency: money_amount}
         else:
             return {offer.good: quantity, offer.currency: - money_amount}
 
     def _reject_polled_but_not_accepted_offers(self):
-        cdef Offer offer
         for offer in self._polled_offers.values():
             self._reject(offer)
         self._polled_offers = {}
@@ -645,9 +593,9 @@ class Trade:
                 the offer the other party made
                 (offer not quote!)
         """
-        self.send(offer.sender, 'abce_receive_reject', offer.id)
+        self.send(offer.sender, 'abcEconomics_receive_reject', offer.id)
 
-    def reject(self, Offer offer):
+    def reject(self, offer):
         """ Rejects and offer, if the offer is subsequently accepted in the
         same subround it is accepted'. Peaked offers can not be rejected.
 
@@ -658,26 +606,12 @@ class Trade:
         """
         pass
 
-    def _log_receive_accept_group(self, offer):
-        if offer.sell:
-            self._trade_log[(offer.good, self.group, offer.receiver[0], offer.price)] += offer.quantity
-        else:
-            self._trade_log[(offer.good, offer.receiver[0], self.group, offer.price)] += offer.quantity
-
-    def _log_receive_accept_agent(self, offer):
-        if offer.sell:
-            self._trade_log[(offer.good, self.name_without_colon, '%s_%i' % (
-                offer.receiver[0], offer.receiver[1]), offer.price)] += offer.quantity
-        else:
-            self._trade_log[(offer.good, '%s_%i' % (
-                offer.receiver[0], offer.receiver[1]), self.name_without_colon, offer.price)] += offer.quantity
-
     def _receive_accept(self, offer_id_final_quantity):
         """ When the other party partially accepted the  money or good is
         received, remaining good or money is added back to haves and the offer
         is deleted
         """
-        cdef Offer offer = self.given_offers[offer_id_final_quantity[0]]
+        offer = self.given_offers[offer_id_final_quantity[0]]
         offer.final_quantity = offer_id_final_quantity[1]
         if offer.sell:
             self._inventory.commit(offer.good, offer.quantity, offer.final_quantity)
@@ -692,15 +626,15 @@ class Trade:
 
     def _log_receive_accept_group(self, offer):
         if offer.sell:
-            self._trade_log[(offer.good, self.group, offer.receiver_group, offer.price)] += offer.final_quantity
+            self._trade_log[(offer.good, self.group, offer.receiver[0], offer.price)] += offer.final_quantity
         else:
-            self._trade_log[(offer.good, offer.receiver_group, self.group, offer.price)] += offer.final_quantity
+            self._trade_log[(offer.good, offer.receiver[0], self.group, offer.price)] += offer.final_quantity
 
     def _log_receive_accept_agent(self, offer):
         if offer.sell:
-            self._trade_log[(offer.good, self.name_without_colon, '%s_%i' % (offer.receiver_group, offer.receiver_id), offer.price)] += offer.final_quantity
+            self._trade_log[(offer.good, self.name_without_colon, '%s_%i' % (*offer.receiver, offer.price))] += offer.final_quantity
         else:
-            self._trade_log[(offer.good, '%s_%i' % (offer.receiver_group, offer.receiver_id), self.name_without_colon, offer.price)] += offer.final_quantity
+            self._trade_log[(offer.good, '%s_%i' % (*offer.receiver, self.name_without_colon, offer.price))] += offer.final_quantity
 
     def _receive_reject(self, offer_id):
         """ deletes a given offer
@@ -709,7 +643,7 @@ class Trade:
         or at the end of the subround when agent retracted the offer
 
         """
-        cdef Offer offer = self.given_offers[offer_id]
+        offer = self.given_offers[offer_id]
         if offer.sell:
             self._inventory.rewind(offer.good, offer.quantity)
         else:
@@ -720,13 +654,13 @@ class Trade:
         del self.given_offers[offer_id]
 
     def _delete_given_offer(self, offer_id):
-        cdef Offer offer = self.given_offers.pop(offer_id)
+        offer = self.given_offers.pop(offer_id)
         if offer.sell:
             self._inventory.rewind(offer.good, offer.quantity)
         else:
             self._inventory.rewind(offer.currency, offer.quantity * offer.price)
 
-    def give(self, receiver, good, double quantity, double epsilon=epsilon):
+    def give(self, receiver, good, quantity, epsilon=epsilon):
         """ gives a good to another agent
 
         Args:
@@ -752,10 +686,9 @@ class Trade:
 
         Example::
 
-            self.log('taxes', self.give('money': 0.05 * self.possession('money'))
+            self.log('taxes', self.give('money': 0.05 * self['money'])
 
         """
-        cdef double available
         assert quantity > - epsilon, 'quantity %.30f is smaller than 0 - epsilon (%.30f)' % (quantity, - epsilon)
         if quantity < 0:
             quantity = 0
@@ -765,21 +698,18 @@ class Trade:
         if quantity > available:
             quantity = available
         self._inventory.haves[good] -= quantity
-        self.send(receiver, 'abce_receive_good', [good, quantity])
+        self.send(receiver, 'abcEconomics_receive_good', [good, quantity])
         return {good: quantity}
 
-    def take(self, receiver, good, double quantity, double epsilon=epsilon):
+    def take(self, receiver, good, quantity, epsilon=epsilon):
         """ take a good from another agent. The other agent has to accept.
         using self.accept()
 
         Args:
 
 
-            receiver_group:
-                group of the receiving agent
-
-            receiver_id:
-                number of the receiving agent
+            receiver:
+                the receiving agent
 
             good:
                 the good to be taken
@@ -795,12 +725,10 @@ class Trade:
         self.buy(receiver, good=good, quantity=quantity, price=0, epsilon=epsilon)
 
 
-# TODO when cython supports function overloading overload this function with compare_with_ties(int x, int y)
-cdef int compare_with_ties(double x, double y):
+def compare_with_ties(x, y):
     if x < y:
         return -1
     elif x > y:
         return 1
     else:
         return random.randint(0, 1) * 2 - 1
-

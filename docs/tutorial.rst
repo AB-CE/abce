@@ -7,14 +7,14 @@ Tutorial for Plant Modeling
 
 1. Lets write the 1st agent:
 
-    a. Create a file chpplant.py import abce and create a Plant class.
+    a. Create a file chpplant.py import abcEconomics and create a Plant class.
 
        .. code:: python
 
-           import abce
+           import abcEconomics
 
 
-           class CHPPlant(abce.Agent, abce.Firm):
+           class CHPPlant(abcEconomics.Agent, abcEconomics.Firm):
 
 
     #. In :py:`def init(self):` (not __init__!) we need to create some initial goods
@@ -74,18 +74,18 @@ Tutorial for Plant Modeling
 
 3. Create a file :code:`start.py` to run this incomplete simulation.
 
-    a. Import abce and the plant:
+    a. Import abcEconomics and the plant:
 
         .. code:: python
 
-            import abce
+            import abcEconomics
             from chpplant import CHPPlant
 
     #. Create a simulation instance:
 
         .. code:: python
 
-            simulation = abce.Simulation()
+            simulation = abcEconomics.Simulation()
 
     #. Build an a plant
 

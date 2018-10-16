@@ -1,11 +1,11 @@
 
 from __future__ import division
 from __future__ import print_function
-import abce
-from abce.agents import Firm
+import abcEconomics
+from abcEconomics.agents import Firm
 
 
-class BuyExpiringCapital(abce.Agent, Firm):
+class BuyExpiringCapital(abcEconomics.Agent, Firm):
     def init(self, rounds):
         self.last_round = rounds - 1
 

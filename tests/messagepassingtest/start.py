@@ -1,7 +1,7 @@
 from __future__ import division
 from firm import Firm
 from household import Household
-from abce import Simulation, gui
+from abcEconomics import Simulation, gui
 from pprint import pprint
 
 simulation_parameters = {'name': 'name',

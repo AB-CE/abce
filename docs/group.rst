@@ -2,11 +2,11 @@ Groups
 ======
 
 
-.. default-domain::abce.Group
+.. default-domain::abcEconomics.Group
 
-.. automodule:: abce.group
+.. automodule:: abcEconomics.group
 
-.. autoclass:: abce.Group
+.. autoclass:: abcEconomics.Group
     :members:
     :undoc-members:
     :show-inheritance:

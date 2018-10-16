@@ -1,6 +1,6 @@
 import random
-from abce.agent import Agent
-from abce import NotEnoughGoods
+from abcEconomics.agent import Agent
+from abcEconomics import NotEnoughGoods
 from tools import is_zero
 
 
@@ -92,9 +92,9 @@ class Buy(Agent):
     def all_tests_completed(self):
         if self.time == self.last_round and self.id == 0:
             assert all(self.tests.values(
-            )), 'not all tests have been run; ABCE workes correctly, restart the unittesting to do all tests %s' % self.tests
-            print('Test abce.buy:\t\t\t\t\tOK')
-            print('Test abce.accept\t(abce.buy):\t\tOK')
-            print('Test abce.reject\t(abce.buy):\t\tOK')
-            print('Test abce.accept, partial\t(abce.buy):\tOK')
-            print('Test reject pending automatic \t(abce.buy):\tOK')
+            )), 'not all tests have been run; abcEconomics workes correctly, restart the unittesting to do all tests %s' % self.tests
+            print('Test abcEconomics.buy:\t\t\t\t\tOK')
+            print('Test abcEconomics.accept\t(abcEconomics.buy):\t\tOK')
+            print('Test abcEconomics.reject\t(abcEconomics.buy):\t\tOK')
+            print('Test abcEconomics.accept, partial\t(abcEconomics.buy):\tOK')
+            print('Test reject pending automatic \t(abcEconomics.buy):\tOK')

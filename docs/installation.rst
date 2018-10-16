@@ -1,7 +1,7 @@
 Download and Installation
 =========================
 
-ABCE works exclusively with python 3!
+abcEconomics works exclusively with python 3!
 
 
 Installation Ubuntu
@@ -14,7 +14,7 @@ Installation Ubuntu
 
 #. In terminal::
 
-    sudo pip3 install abce
+    sudo pip3 install abcEconomics
 
 #. download and unzip the
    `zip file with examples and the template <https://github.com/AB-CE/examples>`_
@@ -26,7 +26,7 @@ Installation Ubuntu
 
 #. Install pypy3 additionally::
 
-   sudo pypy3 -m pip install abce
+   sudo pypy3 -m pip install abcEconomics
 
 #. For pypy execute models with :code:`pypy3 start.py` instead
    of :code:`python3 start.py`
@@ -44,14 +44,14 @@ Installation Mac
 
 #.  In terminal::
 
-      sudo pip3 install abce
+      sudo pip3 install abcEconomics
 
 
 #. If you are on El Capitain, OSX will ask you to install cc - xcode "Command Line Developer Tools", click accept. [#update]_
 
 #. If XCODE was installed type again in terminal::
 
-    sudo pip3 install abce
+    sudo pip3 install abcEconomics
 
 #. download and unzip the
    `zip file with examples and the template <https://github.com/AB-CE/examples>`_
@@ -63,7 +63,7 @@ Installation Mac
 
 #. Install pypy3 additionally::
 
-   sudo pypy3 -m pip install abce
+   sudo pypy3 -m pip install abcEconomics
 
 #. For pypy execute models with :code:`pypy3 start.py` instead
    of :code:`python3 start.py`
@@ -72,7 +72,7 @@ Installation Mac
 Installation Windows
 --------------------
 
-ABCE works best with anaconda python 3.5 follow
+abcEconomics works best with anaconda python 3.5 follow
 the instructions blow.
 
 
@@ -81,7 +81,7 @@ the instructions blow.
 
 3. anaconda prompt or in the command line (cmd) type::
 
-    pip install abce
+    pip install abcEconomics
 
 3. download and unzip the
    `zip file with examples and the template <https://github.com/AB-CE/examples>`_

@@ -2,7 +2,7 @@ from __future__ import division
 import multiprocessing as mp
 from firm import Firm
 from household import Household
-from abce import Simulation
+from abcEconomics import Simulation
 
 simulation_parameters = {'name': 'test_sim_1_',
                          'random_seed': None,

@@ -1,7 +1,7 @@
 Examples
 ========
 
-ABCE's examples can be downloaded from here: https://github.com/AB-CE/examples
+abcEconomics's examples can be downloaded from here: https://github.com/AB-CE/examples
 
 Concepts used in examples
 -------------------------
@@ -133,7 +133,7 @@ Two sector model
 ````````````````
 
 The two sector model is similar to the one sector model. It has two
-firms and showcases ABCE's ability to control the creation of agents
+firms and showcases abcEconomics's ability to control the creation of agents
 from an excel sheet.
 
 There are two firms. One firm manufactures an intermediary good. The
