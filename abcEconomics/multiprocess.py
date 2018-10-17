@@ -42,15 +42,18 @@ class ProcessorGroup(SingleProcess):
     def add_agents(self, Agent, simulation_parameters, agent_parameters, default_sim_params, maxid):
         """appends an agent to a group """
         if isinstance(agent_parameters, int):
-            agent_parameters = ([] for _ in range(agent_parameters))
+            agent_parameters = ({} for _ in range(agent_parameters))
 
         names = {}
+        _sim_parameters = {**default_sim_params, **simulation_parameters}
+        group = _sim_parameters['group']
         for id, ap in enumerate(agent_parameters, maxid):
-            agent = Agent(id, ap, {**default_sim_params, **simulation_parameters})
-            agent.send = agent._send_multiprocessing
-            agent._out = defaultdict(list)
-            agent.init(**ChainMap(simulation_parameters, ap))
-            if hash(agent.name) % self.processes == self.batch:
+            agent_name = ap.get('name', (group, id))
+            if hash(agent_name) % self.processes == self.batch:
+                agent = Agent(id, ap, _sim_parameters, name=agent_name)
+                agent.send = agent._send_multiprocessing
+                agent._out = defaultdict(list)
+                agent.init(**ChainMap(simulation_parameters, ap))
                 assert agent.name not in self.agents, ('Two agents with the same name %s' % str(agent.name))
                 agent._str_name = re.sub('[^0-9a-zA-Z_]', '', str(agent.name))
                 names[agent.name] = agent.name

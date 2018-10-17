@@ -76,7 +76,7 @@ class Agent(Logger, Trade, Messenger, Goods):
 
     """
 
-    def __init__(self, id, agent_parameters, simulation_parameters):
+    def __init__(self, id, agent_parameters, simulation_parameters, name=None):
         """ Do not overwrite __init__ instead use a method called init instead.
         init is called whenever the agent are build.
         """
@@ -86,7 +86,9 @@ class Agent(Logger, Trade, Messenger, Goods):
         group = simulation_parameters['group']
         start_round = simulation_parameters.get('start_round', None)
 
-        self.name = (group, id)
+        if name is None:
+            name = (group, id)
+        self.name = name
         self.id = id
         """ self.name returns the agents name, which is the group name and the
         id
