@@ -118,10 +118,12 @@ class Offer(object):
         self.status_round = None
 
     def __repr__(self):
-        return ("""<{sender: %s, receiver: %s, good: %s, quantity: %f, price: %f, currency: %f,
-                sell: %s, status: %s, final_quantity: % f, id: %i, made: %s, status_round: %s }>""" %
+        final_quantity = str(self.final_quantity)  # to anticipate for the case when it is None
+        status_round = str(self.status_round)  # to anticipate for the case when it is None
+        return ("""<{sender: %s, receiver: %s, good: %s, quantity: %f, price: %f, currency: %s,
+                sell: %s, status: %s, final_quantity: %s, id: %i, made: %s, status_round: %s }>""" %
                 (self.sender, self.receiver, self.good, self.quantity, self.price, self.currency,
-                 self.sell, self.status, self.final_quantity, self.id, self.made, self.status_round))
+                 self.sell, self.status, final_quantity, self.id, self.made, status_round))
 
 
 class Trade:
