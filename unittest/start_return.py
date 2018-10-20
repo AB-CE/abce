@@ -48,4 +48,4 @@ if __name__ == '__main__':
     main(processes=1, rounds=30)
     if (platform.system() != 'Windows' and
             platform.python_implementation() != 'PyPy'):
-        main(processes=4, rounds=30)
+        main(processes=2, rounds=30)

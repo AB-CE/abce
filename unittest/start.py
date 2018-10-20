@@ -23,7 +23,7 @@ def run_test(name, test):
 
     if (platform.system() != 'Windows' and platform.python_implementation() != 'PyPy'):
         print("%s test, 4 cores" % name)
-        test.main(processes=4, rounds=10)
+        test.main(processes=2, rounds=10)
         print('Iteration of %s testing with multiple processes finished' % name)
     else:
         print("PYPY and windows: functions not tested with multi-processes")
