@@ -15,8 +15,8 @@ cache:
     #- $HOME/Library/Caches/Homebrew
     - $HOME/Library/Caches/pip
     #- $HOME/env/python3.7.0/lib/python3.7/site-packages
-    #di- $HOME/.cache  # cython cache
-    #di- $HOME/.ccache  # compiler cache
+    - $HOME/.cache  # cython cache
+    - $HOME/.ccache  # compiler cache
 
 matrix:
   include:
