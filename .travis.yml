@@ -13,7 +13,7 @@ cache:
     pip: true
     directories:
     #- $HOME/Library/Caches/Homebrew
-    - $HOME/env
+    - $HOME/env/python3.7.0/lib/python3.7/site-packages
     #di- $HOME/.cache  # cython cache
     #di- $HOME/.ccache  # compiler cache
 
@@ -32,7 +32,6 @@ matrix:
       - pip install virtualenv
       - virtualenv env -p python3
       - source env/bin/activate
-      - python --version
 
 install:
   - pip install -r requirements-dev.txt
