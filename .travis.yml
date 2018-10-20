@@ -13,7 +13,8 @@ cache:
     pip: true
     directories:
     #- $HOME/Library/Caches/Homebrew
-    - $HOME/env/python3.7.0/lib/python3.7/site-packages
+    - $HOME/Library/Caches/pip
+    #- $HOME/env/python3.7.0/lib/python3.7/site-packages
     #di- $HOME/.cache  # cython cache
     #di- $HOME/.ccache  # compiler cache
 
