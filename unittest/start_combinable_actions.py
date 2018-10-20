@@ -1,12 +1,13 @@
+import logging
 import abcEconomics
 
 
 class Agent(abcEconomics.Agent):
     def actionA(self):
-        print(self.name, 'actionA')
+        logging.debug(self.name, 'actionA')
 
     def actionB(self):
-        print(self.name, 'actionB')
+        logging.debug(self.name, 'actionB')
 
 
 def main(processes, rounds):
