@@ -50,6 +50,7 @@ import re
 import time
 import random
 import queue
+import logging
 import multiprocessing as mp
 from collections import OrderedDict
 from .logger import ThreadingDatabase, MultiprocessingDatabase
@@ -215,7 +216,7 @@ class Simulation(object):
 
     def advance_round(self, time):
         self._time = time
-        print("\rRound" + str(time))
+        logging.debug("\rRound" + str(time))
         str_time = re.sub('[^0-9a-zA-Z_]', '', str(time))
         self.scheduler.advance_round(time, str_time)
 
