@@ -139,13 +139,15 @@ cdef class Offer:
                 self.made, self.status_round))
 
     def __repr__(self):
-        return """<{sender: %s, receiver_group: %s, good: %s, quantity: %f, price: %f,
-                sell: %r, status: %s, final_quantity: % f, id: %i,
-                made: %i, status_round: %i }>""" % (
+        final_quantity = str(self.final_quantity)  # to anticipate for the case when it is None
+        status_round = str(self.status_round)  # to anticipate for the case when it is None
+        return """<{sender: %s, receiver_group: %s, good: %s, quantity: %f, price: %f, currency: %s,
+                sell: %r, status: %s, final_quantity: %s, id: %i,
+                made: %i, status_round: %s }>""" % (
 
-                    self.sender, self.receiver, self.good, self.quantity, self.price,
-                    self.sell, self.status, self.final_quantity, self.id,
-                    self.made, self.status_round)
+                    self.sender, self.receiver, self.good, self.quantity, self.price, self.currency,
+                    self.sell, self.status, final_quantity, self.id,
+                    self.made, status_round)
 
 def rebuild_offer(object sender, object receiver, object good, double quantity, double price,
                   str currency, bint sell, str status, double final_quantity,
