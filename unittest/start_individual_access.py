@@ -1,25 +1,27 @@
+import logging
+
 import abcEconomics
 import platform
 
 
 class MyAgent(abcEconomics.Agent):
     def init(self, agent_parameters):
-        print('init', agent_parameters)
+        logging.debug('init', agent_parameters)
         self.mine = agent_parameters
         self.diff = False
 
     def call_me_maybe(self):
-        print(self.name, self.mine)
+        logging.debug(self.name, self.mine)
 
 
 class DifferentAgent(abcEconomics.Agent):
     def init(self, agent_parameters):
-        print('init', agent_parameters)
+        logging.debug('init', agent_parameters)
         self.mine = agent_parameters
         self.diff = True
 
     def call_me_maybe(self):
-        print('I am different', self.name, self.mine)
+        logging.debug('I am different', self.name, self.mine)
 
 
 def main(processes, rounds):
@@ -85,4 +87,4 @@ if __name__ == '__main__':
     main(processes=1, rounds=30)
     if (platform.system() != 'Windows' and
             platform.python_implementation() != 'PyPy'):
-        main(processes=4, rounds=30)
+        main(processes=2, rounds=30)

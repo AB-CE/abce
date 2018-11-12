@@ -76,4 +76,4 @@ def main(processes, rounds):
 if __name__ == '__main__':
     main(processes=1, rounds=None)
     if (platform.system() != 'Windows' and platform.python_implementation() != 'PyPy'):
-        main(processes=4, rounds=None)
+        main(processes=2, rounds=None)

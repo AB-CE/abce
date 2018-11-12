@@ -2,6 +2,8 @@ version: "{build}"
 #image: Visual Studio 2017
 # see https://github.com/ogrisel/python-appveyor-demo/blob/master/appveyor.yml
 os: Windows Server 2012 R2
+cache:
+  - '%LOCALAPPDATA%\pip\Cache'
 environment:
   matrix:
     - PYTHON: "C:\\Python35"
