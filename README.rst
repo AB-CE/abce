@@ -73,7 +73,7 @@ Install with::
 
 The documentation is here:
 
-    http://abcEconomics.readthedocs.io/
+    http://abce.readthedocs.io/
 
 An example is here:
 
