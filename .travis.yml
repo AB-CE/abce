@@ -1,4 +1,5 @@
 dist: trusty
+sudo: false
 # osx build as per https://github.com/travis-ci/travis-ci/issues/9929#issuecomment-410672090
 
 language: python
@@ -27,12 +28,15 @@ matrix:
       sudo: required
       language: generic
       before_install:
-      #  Manually install python on osx
-      #- brew update
-      #- brew upgrade python
       - pip install virtualenv
       - virtualenv env -p python3
       - source env/bin/activate
+    - os: windows
+      language: generic
+      before_install:
+      - choco install python3
+      #- pip install virtualenv
+      #- virtualenv env -p python3
 
 install:
   - pip install --upgrade pip
