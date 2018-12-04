@@ -12,7 +12,7 @@ except ImportError:
 setup(
     name='trade',
     ext_modules=[
-        Extension('trade', ['trade.pyx']),
+        Extension('trade', ['trade.py']),
         Extension('logger/online_variance', ['logger/online_variance.pyx'])],
     cmdclass={'build_ext': build_ext}
 )

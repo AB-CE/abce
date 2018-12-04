@@ -40,19 +40,23 @@ Messaging between agents:
 # ***************************************************************************************** #
 import random
 from collections import defaultdict, OrderedDict
+
+import cython
+
 from abcEconomics.notenoughgoods import NotEnoughGoods
 
-epsilon = 0.00000000001
+epsilon: cython.double = 0.00000000001
 
 
 def get_epsilon():
     return epsilon
 
 
+# @cython.cclass
 class Offer(object):
-    __slots__ = ('sender', 'receiver', 'good', 'quantity', 'price', 'currency',
-                 'sell', 'status', 'final_quantity', 'id',
-                 'made', 'status_round')
+    # __slots__ = ('sender', 'receiver', 'good', 'quantity', 'price', 'currency',
+    #              'sell', 'status', 'final_quantity', 'id',
+    #              'made', 'status_round')
     """ This is an offer container that is send to the other agent. You can
     access the offer container both at the receiver as well as at the sender,
     if you have saved the offer. (e.G. self.offer = self.sell(...))
@@ -102,22 +106,22 @@ class Offer(object):
         id:
             a unique identifier
     """
-    def __init__(self, sender, receiver, good, quantity, price, currency,
-                 sell, id, made):
-        self.sender = sender
-        self.receiver = receiver
-        self.good = good
-        self.currency = currency
-        self.quantity = quantity
-        self.price = price
-        self.sell = sell
-        self.status = 'new'
-        self.final_quantity = None
-        self.id = id
-        self.made = made
-        self.status_round = None
+    def __init__(self, sender: object, receiver: object, good: object, quantity: cython.double, price: cython.double, currency: str,
+                 sell: cython.bint, id: cython.long, made: cython.int) -> None:
+        self.sender: object = sender
+        self.receiver: object = receiver
+        self.good: object = good
+        self.currency: str = currency
+        self.quantity: cython.double = quantity
+        self.price: cython.double = price
+        self.sell: cython.bint = sell
+        self.status: str = 'new'
+        self.final_quantity: object = None
+        self.id: object = id
+        self.made: cython.int = made
+        self.status_round: object = None
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         final_quantity = str(self.final_quantity)  # to anticipate for the case when it is None
         status_round = str(self.status_round)  # to anticipate for the case when it is None
         return ("""<{sender: %s, receiver: %s, good: %s, quantity: %f, price: %f, currency: %s,
@@ -392,7 +396,7 @@ class Trade:
         return ret
 
     def sell(self, receiver,
-             good, quantity, price, currency='money', epsilon=epsilon):
+             good, quantity: cython.double, price: cython.double, currency: str = 'money', epsilon: cython.double = epsilon):
         """ Sends a offer to sell a particular good to somebody. The amount promised
         is reserved. (self.free(good), shows the not yet reserved goods)
 
@@ -446,21 +450,22 @@ class Trade:
         self._inventory.reserve(good, quantity)
 
         offer_id = self._offer_counter()
-        offer = Offer(self.name,
-                      receiver,
-                      good,
-                      quantity,
-                      price,
-                      currency,
-                      True,
-                      offer_id,
-                      self.time)
+        offer: Offer = Offer(
+            self.name,
+            receiver,
+            good,
+            quantity,
+            price,
+            currency,
+            True,
+            offer_id,
+            self.time)
         self.given_offers[offer_id] = offer
         self.send(receiver, 'abcEconomics_propose_sell', offer)
         return offer
 
     def buy(self, receiver, good,
-            quantity, price, currency='money', epsilon=epsilon):
+            quantity: cython.double, price: cython.double, currency: str = 'money', epsilon: cython.double = epsilon):
         """ Sends a offer to buy a particular good to somebody. The money promised
         is reserved. (self.free(currency), shows the not yet reserved goods)
 
@@ -495,26 +500,27 @@ class Trade:
         assert quantity > - epsilon, '%s quantity %.30f is smaller than 0 - epsilon (%.30f)' % (currency, quantity, - epsilon)
         if quantity < 0:
             quantity = 0
-        money_amount = quantity * price
+        money_amount: cython.double = quantity * price
         if money_amount > available:
             money_amount = available
 
         offer_id = self._offer_counter()
         self._inventory.reserve(currency, money_amount)
-        offer = Offer(self.name,
-                      receiver,
-                      good,
-                      quantity,
-                      price,
-                      currency,
-                      False,
-                      offer_id,
-                      self.time)
+        offer: Offer = Offer(
+            self.name,
+            receiver,
+            good,
+            quantity,
+            price,
+            currency,
+            False,
+            offer_id,
+            self.time)
         self.send(receiver, 'abcEconomics_propose_buy', offer)
         self.given_offers[offer_id] = offer
         return offer
 
-    def accept(self, offer, quantity=-999, epsilon=epsilon):
+    def accept(self, offer: Offer, quantity: cython.double = -999, epsilon: cython.double = epsilon):
         """ The buy or sell offer is accepted and cleared. If no quantity is
         given the offer is fully accepted; If a quantity is given the offer is
         partial accepted.
@@ -534,7 +540,7 @@ class Trade:
         Return:
             Returns a dictionary with the good's quantity and the amount paid.
         """
-        offer_quantity = offer.quantity
+        offer_quantity: cython.double = offer.quantity
         if quantity == -999:
             quantity = offer_quantity
         assert quantity > - epsilon, 'quantity %.30f is smaller than 0 - epsilon (%.30f)' % (quantity, - epsilon)
@@ -550,7 +556,8 @@ class Trade:
             self.reject(offer)
             return {offer.good: 0, offer.currency: 0}
 
-        money_amount = quantity * offer.price
+        money_amount: cython.double = quantity * offer.price
+        available: cython.double
         if offer.sell:  # ord('s')
             assert money_amount > - epsilon, 'money = quantity * offer.price %.30f is smaller than 0 - epsilon (%.30f)' % (money_amount, - epsilon)
             if money_amount < 0:
@@ -582,7 +589,8 @@ class Trade:
         else:
             return {offer.good: quantity, offer.currency: - money_amount}
 
-    def _reject_polled_but_not_accepted_offers(self):
+    def _reject_polled_but_not_accepted_offers(self) -> None:
+        offer: Offer
         for offer in self._polled_offers.values():
             self._reject(offer)
         self._polled_offers = {}
@@ -597,7 +605,7 @@ class Trade:
         """
         self.send(offer.sender, 'abcEconomics_receive_reject', offer.id)
 
-    def reject(self, offer):
+    def reject(self, offer: Offer):
         """ Rejects and offer, if the offer is subsequently accepted in the
         same subround it is accepted'. Peaked offers can not be rejected.
 
@@ -613,7 +621,7 @@ class Trade:
         received, remaining good or money is added back to haves and the offer
         is deleted
         """
-        offer = self.given_offers[offer_id_final_quantity[0]]
+        offer: Offer = self.given_offers[offer_id_final_quantity[0]]
         offer.final_quantity = offer_id_final_quantity[1]
         if offer.sell:
             self._inventory.commit(offer.good, offer.quantity, offer.final_quantity)
@@ -645,7 +653,7 @@ class Trade:
         or at the end of the subround when agent retracted the offer
 
         """
-        offer = self.given_offers[offer_id]
+        offer: Offer = self.given_offers[offer_id]
         if offer.sell:
             self._inventory.rewind(offer.good, offer.quantity)
         else:
@@ -656,7 +664,7 @@ class Trade:
         del self.given_offers[offer_id]
 
     def _delete_given_offer(self, offer_id):
-        offer = self.given_offers.pop(offer_id)
+        offer: Offer = self.given_offers.pop(offer_id)
         if offer.sell:
             self._inventory.rewind(offer.good, offer.quantity)
         else:
@@ -694,7 +702,7 @@ class Trade:
         assert quantity > - epsilon, 'quantity %.30f is smaller than 0 - epsilon (%.30f)' % (quantity, - epsilon)
         if quantity < 0:
             quantity = 0
-        available = self._inventory[good]
+        available: cython.double = self._inventory[good]
         if quantity > available + epsilon + epsilon * max(quantity, available):
             raise NotEnoughGoods(self.name, good, quantity - available)
         if quantity > available:
@@ -727,7 +735,9 @@ class Trade:
         self.buy(receiver, good=good, quantity=quantity, price=0, epsilon=epsilon)
 
 
-def compare_with_ties(x, y):
+# TODO when cython supports function overloading overload this function with compare_with_ties(int x, int y)
+@cython.cfunc
+def compare_with_ties(x: cython.double, y: cython.double) -> cython.int:
     if x < y:
         return -1
     elif x > y:
