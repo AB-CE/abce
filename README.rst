@@ -49,8 +49,9 @@ effort or intervention from the modeler to run the simulation on a
 multi-core system.
 The speed advantages of using abcEconomics with multi-processes enabled.
 abcEconomics are typically only observed for 10000 agents and more. Below, it
-might be slower than pure python implementation. abcEconomics supports pypy3,
-which is approximately 10 times faster than CPython.
+might be slower than pure python implementation. abcEconomics supports pypy3
+(if the mypy type annotation of trade.py is removed), which is approximately 10
+times faster than CPython.
 
 abcEconomics is a scheduler and a set of agent classes.
 According to the schedule the simulation class calls - each sub-round - agents
