@@ -21,7 +21,7 @@ cache:
 matrix:
   include:
     - python: 3.6
-    - python: 'pypy3.5-5.10.0'
+      #- python: 'pypy3.5-5.10.0'
     - os: osx
       osx_image: xcode10
       sudo: required
