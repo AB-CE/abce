@@ -52,7 +52,7 @@ def get_epsilon():
     return epsilon
 
 
-# @cython.cclass
+#@cython.cclass
 class Offer(object):
     # __slots__ = ('sender', 'receiver', 'good', 'quantity', 'price', 'currency',
     #              'sell', 'status', 'final_quantity', 'id',
@@ -106,18 +106,18 @@ class Offer(object):
         id:
             a unique identifier
     """
-    def __init__(self, sender: object, receiver: object, good: object, quantity: cython.double, price: cython.double, currency: str,
+    def __init__(self, sender: object, receiver: object, good: str, quantity: cython.double, price: cython.double, currency: str,
                  sell: cython.bint, id: cython.long, made: cython.int) -> None:
         self.sender: object = sender
         self.receiver: object = receiver
-        self.good: object = good
+        self.good: str = good
         self.currency: str = currency
         self.quantity: cython.double = quantity
         self.price: cython.double = price
         self.sell: cython.bint = sell
         self.status: str = 'new'
         self.final_quantity: object = None
-        self.id: object = id
+        self.id: cython.long = id
         self.made: cython.int = made
         self.status_round: object = None
 
