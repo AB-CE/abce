@@ -35,6 +35,7 @@ ext_modules = []
 
 install_requires = ['flexx >= 0.4.1',
                     'future',
+                    'normality == 0.6.1',
                     'dataset == 0.8']
 
 
