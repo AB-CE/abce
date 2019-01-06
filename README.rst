@@ -73,7 +73,10 @@ Install with::
 
 NOTE: As of Jan 2019, one of the library's dependencies, `dataset` requires the latest
 version of `pyICU`, which is tedious to install.
-We recommend to install via `pip3 install git+https://github.com/AB-CE/abce.git#egg=abce`
+We recommend to install via::
+
+    pip3 install git+https://github.com/AB-CE/abce.git#egg=abce
+
 to avoid this issue, at least until the next abcEconomics release when the fix is included.
 When that happens, this note will be removed.
 
