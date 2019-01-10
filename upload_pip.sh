@@ -1,1 +1,3 @@
-sudo python setup.py sdist upload -r pypi
+ rm -r dist/
+ python setup.py sdist
+ twine upload dist/*
