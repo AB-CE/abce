@@ -62,7 +62,7 @@ if not readthedocs:
                                  'tornado == 4.3']
 
 
-version = '0.9.5b0'
+version = '0.9.7b0'
 
 
 setup(name='abcEconomics',
