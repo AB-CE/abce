@@ -44,7 +44,7 @@ readthedocs = os.environ.get('READTHEDOCS') == 'True'
 if not readthedocs:
     try:
         ext_modules += [
-            Extension("abcEconomics.trade", ["abcEconomics/trade.pyx"]),
+            Extension("abcEconomics.trade", ["abcEconomics/trade.py"]),
             Extension("abcEconomics.logger.online_variance", ["abcEconomics/logger/online_variance.pyx"]),
         ]
         cmdclass.update({'build_ext': TXEntension})
