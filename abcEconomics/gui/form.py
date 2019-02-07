@@ -142,8 +142,9 @@ def form(parameter_mask, names):
             self.emit('run_simulation',
                       {'simulation_parameter': parameter})
 
-        def stt(self, events):  # This is executed in python, but should
-                        # be executed in JS without server interaction
+        def stt(self, events):
+            # This is executed in python, but should
+            # be executed in JS without server interaction
             slider = events['source']
             if slider in self.int_sliders:
                 self.slider_to_textfield[slider].text = int(
@@ -152,8 +153,9 @@ def form(parameter_mask, names):
                 self.slider_to_textfield[slider].text = float(
                     events['new_value'])
 
-        def tts(self, events):  # This is executed in python, but should
-                        # be executed in JS without serve interaction
+        def tts(self, events):
+            # This is executed in python, but should
+            # be executed in JS without serve interaction
             slider = self.textfield_to_slider[events['source']]
             if slider in self.int_sliders:
                 new_value = int(events['source'].text)

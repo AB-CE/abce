@@ -113,4 +113,4 @@ class BokehWidget(Widget):
         @event.connect('size')
         def __resize_plot(self, *events):
             if self.plot and self.parent:
-                    self.plot.resize()
+                self.plot.resize()
