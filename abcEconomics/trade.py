@@ -679,15 +679,17 @@ class Trade:
 
     def _log_receive_accept_group(self, offer):
         if offer.sell:
-            self._trade_log[(offer.good, self.group, offer.receiver_group, offer.price)] += offer.final_quantity
+            self._trade_log[(offer.good, self.group, offer.receiver[0], offer.price)] += offer.quantity
         else:
-            self._trade_log[(offer.good, offer.receiver_group, self.group, offer.price)] += offer.final_quantity
+            self._trade_log[(offer.good, offer.receiver[0], self.group, offer.price)] += offer.quantity
 
     def _log_receive_accept_agent(self, offer):
         if offer.sell:
-            self._trade_log[(offer.good, self.name_without_colon, '%s_%i' % (offer.receiver_group, offer.receiver_id), offer.price)] += offer.final_quantity
+            self._trade_log[(offer.good, self.name_without_colon, '%s_%i' % (
+                offer.receiver[0], offer.receiver[1]), offer.price)] += offer.quantity
         else:
-            self._trade_log[(offer.good, '%s_%i' % (offer.receiver_group, offer.receiver_id), self.name_without_colon, offer.price)] += offer.final_quantity
+            self._trade_log[(offer.good, '%s_%i' % (
+                offer.receiver[0], offer.receiver[1]), self.name_without_colon, offer.price)] += offer.quantity
 
     def _receive_reject(self, offer_id):
         """ deletes a given offer
