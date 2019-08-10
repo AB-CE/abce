@@ -6,28 +6,7 @@ try:
 except ImportError:
     from distutils.core import setup
     from distutils.extension import Extension
-try:
-    from Cython.Distutils import build_ext
-except ImportError:
-    from distutils.command.build_ext import build_ext
-from distutils.errors import CCompilerError, DistutilsExecError, \
-    DistutilsPlatformError
 import platform
-
-
-class TXEntension(build_ext):
-    # This class allows C extension building to fail.
-    def run(self):
-        try:
-            build_ext.run(self)
-        except DistutilsPlatformError:
-            raise Exception("BuildFailed")
-
-    def build_extension(self, ext):
-        try:
-            build_ext.build_extension(self, ext)
-        except (CCompilerError, DistutilsExecError, DistutilsPlatformError):
-            pass  # raise BuildFailed()
 
 
 cmdclass = {}
@@ -42,17 +21,10 @@ install_requires = ['flexx >= 0.4.1',
 readthedocs = os.environ.get('READTHEDOCS') == 'True'
 
 if not readthedocs:
-    try:
-        ext_modules += [
-            Extension("abcEconomics.trade", ["abcEconomics/trade.py"]),
-            Extension("abcEconomics.logger.online_variance", ["abcEconomics/logger/online_variance.pyx"]),
-        ]
-        cmdclass.update({'build_ext': TXEntension})
-    except ImportError:
-        ext_modules += [
-            Extension("abcEconomics.trade", ["abcEconomics/trade.c"]),
-            Extension("abcEconomics.logger.online_variance", ["abcEconomics/logger/online_variance.c"]),
-        ]
+    ext_modules += [
+        Extension("abcEconomics.trade", ["abcEconomics/trade.py"]),
+        Extension("abcEconomics.logger.online_variance", ["abcEconomics/logger/online_variance.pyx"]),
+    ]
 
     if not platform.python_implementation() == "PyPy":
         install_requires += ['numpy >= 1.10.2p']
@@ -79,6 +51,7 @@ setup(name='abcEconomics',
                    },
       packages=['abcEconomics'],
       long_description=open('README.rst').read(),
+      setup_requires=['setuptools>=18.0', 'cython'],
       install_requires=install_requires,
       include_package_data=True,
       ext_modules=ext_modules,
