@@ -49,7 +49,7 @@ def main(processes, rounds):
 
 
 if __name__ == '__main__':
-    main(processes=1, rounds=3)
+    main(processes=1, rounds=20)
     print('Iteration with 1 core finished')
-    main(processes=2, rounds=3)
+    main(processes=2, rounds=20)
     print('Iteration with multiple processes finished')

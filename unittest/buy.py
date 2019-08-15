@@ -35,10 +35,10 @@ class Buy(Agent):
             oo = self.get_offers('cookies')
             assert oo
             for offer in oo:
-                if random.randint(0, 10) == 0:
+                if self.time % 3 == 0:
                     self.tests['not_answered'] = True
                     continue
-                elif random.randint(0, 10) == 0:
+                elif self.time % 3 == 1:
                     self.reject(offer)
                     assert self['money'] == 0
                     assert self['cookies'] == cookies

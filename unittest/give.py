@@ -21,13 +21,12 @@ class Give(abcEconomics.Agent):
 
     def two(self):
         if self.id == 1:
-            rnd = random.randint(0, 1)
-            if rnd == 0:
+            if self.time % 2 == 0:
                 msg = self.get_messages_all()
                 msg = msg['tpc']
                 self.tests['all'] = True
                 assert len(msg) == 1, len(msg)
-            elif rnd == 1:
+            elif self.time % 2 == 1:
                 msg = self.get_messages('tpc')
                 self.tests['topic'] = True
                 assert len(msg) == 1, len(msg)
