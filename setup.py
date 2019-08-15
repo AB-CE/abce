@@ -2,15 +2,12 @@
 import os
 try:
     from setuptools import setup
-    from setuptools import Extension
 except ImportError:
     from distutils.core import setup
-    from distutils.extension import Extension
 import platform
 
 
 cmdclass = {}
-ext_modules = []
 
 install_requires = ['flexx >= 0.4.1',
                     'future',
@@ -21,11 +18,6 @@ install_requires = ['flexx >= 0.4.1',
 readthedocs = os.environ.get('READTHEDOCS') == 'True'
 
 if not readthedocs:
-    ext_modules += [
-        Extension("abcEconomics.trade", ["abcEconomics/trade.py"]),
-        Extension("abcEconomics.logger.online_variance", ["abcEconomics/logger/online_variance.pyx"]),
-    ]
-
     if not platform.python_implementation() == "PyPy":
         install_requires += ['numpy >= 1.10.2p']
         if ('APPVEYOR' not in os.environ) or ('TRAVIS' not in os.environ):
@@ -54,5 +46,4 @@ setup(name='abcEconomics',
       setup_requires=['setuptools>=18.0', 'cython'],
       install_requires=install_requires,
       include_package_data=True,
-      ext_modules=ext_modules,
       cmdclass=cmdclass)
