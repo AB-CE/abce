@@ -106,7 +106,7 @@ class Offer:
         id:
             a unique identifier
     """
-    def __cinit__(self, sender, receiver, good, quantity, price, currency,
+    def __init__(self, sender, receiver, good, quantity, price, currency,
                   sell, status, final_quantity, id,
                   made, status_round):
         self.sender = sender
