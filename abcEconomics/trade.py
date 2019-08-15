@@ -571,7 +571,6 @@ class Trade:
             Returns a dictionary with the good's quantity and the amount paid.
         """
         offer_quantity = offer.quantity
-        available
 
         if quantity == -999:
             quantity = offer_quantity
