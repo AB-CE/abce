@@ -6,7 +6,7 @@ from abcEconomics import Simulation
 
 
 def main(processes, rounds):
-    s = Simulation(processes=processes, name='unittest')
+    s = Simulation(processes=processes, name='unittest', trade_logging='group')
 
     print('build Buy')
     buy = s.build_agents(Buy, 'buy', 1000, rounds=rounds)
