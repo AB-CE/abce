@@ -58,8 +58,7 @@ from .agent import Agent  # noqa: F401
 from .group import Group
 from .notenoughgoods import NotEnoughGoods  # noqa: F401
 from .agents import Firm, Household  # noqa: F401
-from .singleprocess import SingleProcess
-from .multiprocess import MultiProcess
+from .scheduler import SingleProcess, MultiProcess
 
 try:
     # hack: make gui import optional
