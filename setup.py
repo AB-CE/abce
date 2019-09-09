@@ -40,6 +40,7 @@ setup(name='abcEconomics',
                    'abcEconomics.agents': 'abcEconomics/agents',
                    'abcEconomics.contracts': 'abcEconomics/contracts',
                    'abcEconomics.logger': 'abcEconomics/logger',
+                   'abcEconomics.scheduler': 'abcEconomics/scheduler'
                    },
       packages=['abcEconomics'],
       long_description=open('README.rst').read(),
