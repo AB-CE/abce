@@ -5,4 +5,4 @@ bokeh == 0.12.7
 flexx == 0.4.1
 normality == 0.6.1
 dataset == 0.8
-tornado == 4.3
+tornado
