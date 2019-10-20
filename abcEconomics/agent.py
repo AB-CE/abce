@@ -29,9 +29,9 @@ Logging and data creation, see :doc:`Database`.
 Messaging between agents, see :doc:`Messenger`.
 """
 from .logger import Logger
-from .trade import Trade
-from .messenger import Messenger
-from .goods import Goods
+from .agents.trade import Trade
+from .agents.messenger import Messenger
+from .agents.goods import Goods
 
 
 class Agent(Logger, Trade, Messenger, Goods):

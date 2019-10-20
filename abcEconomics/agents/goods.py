@@ -1,5 +1,5 @@
-from .inventory import Inventory
-from .notenoughgoods import NotEnoughGoods
+from ..inventory import Inventory
+from ..notenoughgoods import NotEnoughGoods
 
 
 class Goods:

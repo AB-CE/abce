@@ -17,10 +17,11 @@
 """
 The Household class extends the agent by giving him utility functions and the ability to consume goods.
 """
-from abcEconomics import NotEnoughGoods
+
 import operator
 from functools import reduce
-from ..trade import get_epsilon
+from ..notenoughgoods import NotEnoughGoods
+from .trade import get_epsilon
 epsilon = get_epsilon()
 
 
