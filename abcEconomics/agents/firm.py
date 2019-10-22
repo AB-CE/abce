@@ -28,7 +28,7 @@ import operator
 from functools import reduce
 from collections import ChainMap
 from ..notenoughgoods import NotEnoughGoods
-from .trade import get_epsilon
+from .trader import get_epsilon
 epsilon = get_epsilon()
 
 

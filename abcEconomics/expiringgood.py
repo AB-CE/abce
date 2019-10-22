@@ -1,6 +1,6 @@
 from collections import deque
 from abcEconomics.notenoughgoods import NotEnoughGoods
-from abcEconomics.agents.trade import get_epsilon
+from abcEconomics.agents.trader import get_epsilon
 epsilon = get_epsilon()
 
 
