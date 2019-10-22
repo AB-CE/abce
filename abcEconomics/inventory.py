@@ -1,4 +1,4 @@
-from abcEconomics.agents.trade import get_epsilon
+from abcEconomics.agents.trader import get_epsilon
 from collections import defaultdict
 from abcEconomics.notenoughgoods import NotEnoughGoods
 from .expiringgood import ExpiringGood
