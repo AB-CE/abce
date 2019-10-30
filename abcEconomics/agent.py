@@ -29,9 +29,9 @@ Logging and data creation, see :doc:`Database`.
 Messaging between agents, see :doc:`Messenger`.
 """
 from .logger import Logger
-from .trade import Trade
-from .messenger import Messenger
-from .goods import Goods
+from .agents.trade import Trade
+from .agents.messenger import Messenger
+from .agents.goods import Goods
 
 
 class Agent(Logger, Trade, Messenger, Goods):
@@ -89,6 +89,8 @@ class Agent(Logger, Trade, Messenger, Goods):
         if name is None:
             name = (group, id)
         self.name = name
+        # name_without_colon is used for logging purpose
+        self.name_without_colon = '%s_%i' % (group, id)
         self.id = id
         """ self.name returns the agents name, which is the group name and the
         id

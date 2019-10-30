@@ -27,8 +27,8 @@ methods use this variable to produce with the according technology.
 import operator
 from functools import reduce
 from collections import ChainMap
-from abcEconomics import NotEnoughGoods
-from ..trade import get_epsilon
+from ..notenoughgoods import NotEnoughGoods
+from .trade import get_epsilon
 epsilon = get_epsilon()
 
 

@@ -54,9 +54,6 @@ start.py
         def main():
             simulation = Simulation()
 
-            simulation.declare_round_endowment(resource='labor_endowment', units=1, product='labor')
-            simulation.declare_perishable(good='labor')
-
             firms = simulation.build_agents(Firm, 'firm', 1)
             households = simulation.build_agents(Household, 'household', 1)
 
@@ -70,6 +67,7 @@ start.py
                 firms.sell_goods()
                 households.buy_goods()
                 households.consumption()
+                (households + firms).refresh_services(service='labor' , derived_from='labor_endowment', units=1)
 
             simulation.graphs()
 
@@ -195,48 +193,23 @@ Special goods and services
 Now we will establish properties of special goods. A normal good can just be
 created or produced by an agent; it can also be destroyed, transformed or consumed
 by an agent.
-Some goods 'replenish' every round. And
-some goods 'perish' every round. These properties have to be declared:
-
-
-This example declares 'corn' perishable and every round the agent gets 100 units of
-of 'corn' for every unit of field he possesses. If the corn is not consumed, it
-automatically disappears at the end of the round.
+some goods 'perish' every round. These properties have to be refreshed at the
+end of every round:
 
 .. code-block:: python
 
-   simulation.declare_round_endowment('field', 100, 'corn')
+    for round in range(1000):
+        simulation.advance_round(round)
+        # ...
+        (households + firms).refresh_services(service='labor' , derived_from='labor_endowment', units=1)
 
-   simulation.declare_round_endowment(resource='labor_endowment',
-                                           units=1,
-                                           product='labor'
-        )
-
-declare_round_endowment, establishes that at the beginning of every round,
-every agent that possesses x units of a resource, gets x*units units of the product.
-Every owner of x fields gets 100*x units of corn. Every owner of labor_endowment
-gets one unit of labor for each unit of labor_endowment he owns. An agent has to
-create the field or labor_endowment by :code:`self.create('field', 5)`, for
-labor_endowment respectively.
-
-.. code-block:: python
-
-        simulation.declare_perishable('corn')
-        simulation.declare_perishable(good='labor')
-
-
-declare_perishable, establishes that every unit of the specified good that is not used by
-the end of the round ceases to exist.
-
-Declaring a good as replenishing and perishable is abcEconomics's way of treating services.
-In this example every household has some units of labor that can be used in the
-particular period. :py:meth:`abcEconomics.Simulation.declare_service` is a synthetic way
-of declaring a good as a service.
+In this example, the refresh_services removes the existing 'labor' goods and
+regenerates 1 unit of labor from scratch from every unit of labor_endowment
 
 One important remark, for a logically consistent **macro-model** it is best to
 not create any goods during the simulation, but only in
 :py:meth:`abcEconomics.Agent.init`. During the simulation the only new goods
-should be created by :py:meth:`abcEconomics.Simulation.declare_round_endowment`.
+should be created by :py:meth:`abcEconomics.Goods.refresh_services`.
 In this way the economy is physically closed.
 
 .. code-block:: python
