@@ -15,28 +15,7 @@
 #  License for the specific language governing permissions and limitations under
 # the License.
 
-
-class Chain:
-    def __init__(self, iterables):
-        self.iterables = iterables
-
-    def __iter__(self):
-        for it in self.iterables:
-            for element in it:
-                yield element
-
-    def __repr__(self):
-        return repr(list(self.iterables))
-
-    def __str__(self):
-        return str(list(self.iterables))
-
-    def __getitem__(self, item):
-        try:
-            return self.iterables[item]
-        except IndexError:
-            self.iterables = [i for i in iter(self)]
-            return self.iterables[item]
+from itertools import chain
 
 
 class Action:
@@ -57,8 +36,7 @@ class Action:
     def __call__(self, *args, **kwargs):
         for names, command, _, __ in self.actions:
             self._scheduler.do(names, command, args, kwargs)
-        return Chain([self._scheduler.post_messages(action[0]) for action in self.actions])
-        # itertools.chain, does not work here
+        return chain([self._scheduler.post_messages(action[0]) for action in self.actions])
 
 
 class Group:
