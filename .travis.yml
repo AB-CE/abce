@@ -1,4 +1,4 @@
-dist: xenial
+dist: bionic
 # osx build as per https://github.com/travis-ci/travis-ci/issues/9929#issuecomment-410672090
 
 language: python
