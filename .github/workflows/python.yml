@@ -23,7 +23,7 @@ jobs:
         pip install -r requirements-dev.txt
     - name: Lint with flake8
       run: |
-        flake8 . --ignore=F403,E501,E123,E128,F401,F405,E402,F821,F841,E721,E265,F811,W504 --exclude=docs,build,env
+        flake8 . --ignore=F403,E501,E123,E128,F401,F405,E402,F821,F841,E721,E265,F811,W504,E741 --exclude=docs,build,env
     - name: Run tests
       run: |
         cd unittest
