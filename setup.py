@@ -9,7 +9,7 @@ import platform
 
 cmdclass = {}
 
-install_requires = ['flexx >= 0.4.1',
+install_requires = ['flexx == 0.4.1',
                     'future',
                     'normality == 0.6.1',
                     'dataset == 0.8']
@@ -26,7 +26,7 @@ if not readthedocs:
                                  'tornado == 4.3']
 
 
-version = '0.9.7b0'
+version = '0.9.7b1'
 
 
 setup(name='abcEconomics',

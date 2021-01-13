@@ -6,7 +6,7 @@ from abcEconomics import Simulation
 
 
 def main(processes, rounds):
-    s = Simulation(processes=processes, name='unittest')
+    s = Simulation(processes=processes, name='unittest', trade_logging='group')
 
     print('build Buy')
     buy = s.build_agents(Buy, 'buy', 1000, rounds=rounds)
@@ -49,7 +49,7 @@ def main(processes, rounds):
 
 
 if __name__ == '__main__':
-    main(processes=1, rounds=3)
+    main(processes=1, rounds=20)
     print('Iteration with 1 core finished')
-    main(processes=2, rounds=3)
+    main(processes=2, rounds=20)
     print('Iteration with multiple processes finished')

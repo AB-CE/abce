@@ -1,3 +1,4 @@
+import random
 import abcEconomics
 from tools import is_zero
 import random
@@ -29,17 +30,17 @@ class Sell(abcEconomics.Agent):
             oo = self.get_offers('cookies')
             assert oo, oo
             for offer in oo:
-                if random.randrange(0, 10) == 0:
+                if self.time % 4 == 0:
                     self.tests['not_answered'] = True
                     continue
-                elif random.randrange(0, 10) == 0:
+                elif self.time % 4 == 1:
                     self.reject(offer)
                     assert self['money'] == money
                     assert self['cookies'] == 0
                     self.tests['rejected'] = True
                     break  # tests the automatic clean-up of polled offers
                 try:
-                    if random.randrange(2) == 0:
+                    if self.time % 4 == 2:
                         self.accept(offer)
                         assert self['cookies'] == offer.quantity
                         assert self['money'] == money - offer.quantity * offer.price
