@@ -9,8 +9,7 @@ import platform
 
 cmdclass = {}
 
-install_requires = ['flexx >= 0.4.1',
-                    'future',
+install_requires = ['future',
                     'normality == 0.6.1',
                     'dataset == 0.8']
 
@@ -36,7 +35,6 @@ setup(name='abcEconomics',
       description='Agent-Based Complete Economy modelling platform',
       url='https://github.com/AB-CE/abce.git',
       package_dir={'abcEconomics': 'abcEconomics',
-                   'abcEconomics.gui': 'abcEconomics/gui',
                    'abcEconomics.agents': 'abcEconomics/agents',
                    'abcEconomics.contracts': 'abcEconomics/contracts',
                    'abcEconomics.logger': 'abcEconomics/logger',

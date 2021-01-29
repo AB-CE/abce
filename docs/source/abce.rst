@@ -8,7 +8,6 @@ Subpackages
 
     abcEconomics.agents
     abcEconomics.contracts
-    abcEconomics.gui
 
 Submodules
 ----------
@@ -153,14 +152,6 @@ abcEconomics\.quote module
 ------------------
 
 .. automodule:: abcEconomics.quote
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-abcEconomics\.show module
------------------
-
-.. automodule:: abcEconomics.show
     :members:
     :undoc-members:
     :show-inheritance:

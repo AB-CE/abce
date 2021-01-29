@@ -36,11 +36,11 @@ This is a minimal template for a start.py::
         agents.one()
         agents.two()
         agents.three()
-    simulation.graphs()
+    simulation.finalize()
 
-Note two things are important: there must be either a
+Note two things are important: there must be a
 
-:func:`~abcEconomics.simulation.graphs` or a :func:`~abcEconomics.simulation.finalize` at the end
+:func:`~abcEconomics.simulation.finalize` at the end
 otherwise the simulation blocks at the end.
 Furthermore, every round needs to be announced using simulation.advance_round(time),
 where time is any representation of time.
@@ -59,12 +59,6 @@ from .group import Group
 from .notenoughgoods import NotEnoughGoods  # noqa: F401
 from .agents import Firm, Household  # noqa: F401
 from .scheduler import SingleProcess, MultiProcess
-
-try:
-    # hack: make gui import optional
-    from .gui import gui, graph  # noqa: F401
-except Exception:
-    pass
 
 
 class Simulation(object):
@@ -142,7 +136,6 @@ class Simulation(object):
             households.consume()
 
         w.finalize()
-        w.graphs()
     """
 
     def __init__(self, name='abcEconomics', random_seed=None, trade_logging='off', processes=1, dbplugin=None,
@@ -338,22 +331,3 @@ class Simulation(object):
         """
         group = self._groups[group]
         group.delete_agents(ids)
-
-    def graph(self):
-        """ after the simulation is run, graphs() shows graphs of all data
-        collected in the simulation. Shows the same output as the @gui
-        decorator shows.
-
-
-        Example::
-
-            simulation = Simulation(...)
-            for r in range(100):
-                simulation.advance_round(r)
-                agents.do_something()
-                ...
-
-            simulation.graphs()
-        """
-        self.finalize()
-        graph(self.sim_parameters)

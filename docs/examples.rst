@@ -78,7 +78,7 @@ CCE
 ```
 
 This is the most complete example featuring an agent-based model of climate change tax policies for
-the United States. It includes a GUI, is databased and and uses production and utility functions.
+the United States. It is databased and uses production and utility functions.
 
 One sector model
 ````````````````

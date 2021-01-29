@@ -1,17 +1,13 @@
 from __future__ import division
 from firm import Firm
 from household import Household
-from abcEconomics import Simulation, gui
+from abcEconomics import Simulation
 from pprint import pprint
 
 simulation_parameters = {'name': 'name',
                          'rounds': 2,
                          'firms': 3,
                          'households': 3}
-
-# commend out simulation.graphs() and uncomment
-# this line to run the simulation with a Graphical
-#@gui(simulation_parameters) # User Interface
 
 
 def main(simulation_parameters):
