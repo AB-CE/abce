@@ -92,14 +92,6 @@ Advanced
    spatial
    plugins
 
-Graphical User Interface and Results
-====================================
-.. toctree::
-   :maxdepth: 1
-
-   gui
-   deploy
-
 Frequently asked Questions
 ==========================
 .. toctree::

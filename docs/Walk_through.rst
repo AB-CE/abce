@@ -46,7 +46,7 @@ start.py
             timeline.
         """
 
-        from abcEconomics import Simulation, gui
+        from abcEconomics import Simulation
         from firm import Firm
         from household import Household
 
@@ -69,73 +69,12 @@ start.py
                 households.consumption()
                 (households + firms).refresh_services(service='labor' , derived_from='labor_endowment', units=1)
 
-            simulation.graphs()
+            simulation.finalize()
 
         if __name__ == '__main__':
             main()
 
-It is of utter most importance to end with either simulation.graphs() or simulation.finalize()
-
-A simulation with GUI
-~~~~~~~~~~~~~~~~~~~~~
-
-In start.py the simulation, thus the parameters, objects, agents and time line are
-set up. Further it is declared, what is observed and written to the database.
-
-.. code-block:: python
-
-    from abcEconomics import Simulation, gui
-    from firm import Firm
-    from household import Household
-
-Here the Agent class Firm is imported from the file firm.py. Likewise the Household class.
-Further the Simulation base class and the graphical user interface (gui) are imported
-
-
-
-
-Parameters are specified as a python dictionary
-
-.. code-block:: python
-
-    parameters = {'name': '2x2',
-                  'random_seed': None,
-                  'rounds': 10,
-                  'slider': 100.0,
-                  'Checkbox': True,
-                  'Textbox': 'type here',
-                  'integer_slider': 100,
-                  'limited_slider': (20, 25, 50)}
-
-
-    @gui(parameters)
-    def main(parameters):
-        . . .
-
-    if __name__ == '__main__':
-        main(parameters)
-
-The main function is generating and executing the simulation. When the main
-function is preceded with :code:`@gui(simulation_parameters)` The graphical user interface is started
-in your browser the simulation_parameters are used as default values. If no
-browser window open you have to go manually to the
-address "http://127.0.0.1:8000/". The graphical user interface starts the
-simulation.
-
-During development its often more practical run the simulation without
-graphical user interface (GUI). In order to switch of the GUI comment
-out the :code:`#@gui(simulation_parameters)`.
-In order show graphs at the end of the simulation add :code:`simulation.graphs()`
-after :code:`simulation.run`, as it is done in start.py above.
-
-
-To set up a new model, you create a class instance a that will comprise your model
-
-.. code-block:: python
-
-    simulation = Simulation(name="abcEconomics")
-
-    ...
+It is of utter most importance to end with simulation.finalize()
 
 The order of actions: The order of actions within a round
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -524,8 +463,8 @@ Trade Logging
 
 when you specify :code:`Simulation(..., trade_logging='individual')`
 all trades are recorded and a SAM or IO matrix is created.
-This matrices are currently not display in the GUI, but
-accessible as csv files in the :code:`simulation.path` directory
+This matrices are accessible as csv files in the :code:`simulation.path`
+directory
 
 Manual in agent logging
 +++++++++++++++++++++++
@@ -543,12 +482,6 @@ and most other methods such as :py:meth:`abcEconomics.Firm.produce` with :py:met
 
 Retrieving the logged data
 ++++++++++++++++++++++++++
-
-If the GUI is switched off there must be a
-:py:meth:`abcEconomics.Simulation.graphs` after :py:meth:`abcEconomics.Simulation.run` .
-Otherwise no graphs are displayed.
-If no browser window open you have to go manually to the
-address "http://127.0.0.1:8000/"
 
 The results are stored in a subfolder of the ./results/ folder.
 :code:`simulation.path` gives you the path to that folder.
