@@ -211,7 +211,7 @@ The Household agent
             2. Sets the utility function to utility = consumption of good "GOOD"
             """
             self.create('labor_endowment', 1)
-            self.set_cobb_douglas_utility_function({"GOOD": 1})
+            self.utility_function = self.create_cobb_douglas_utility_function({"GOOD": 1})
             self.current_utility = 0
 
         def sell_labor(self):
@@ -230,7 +230,7 @@ The Household agent
         def consumption(self):
             """ consumes_everything and logs the aggregate utility. current_utility
             """
-            self.current_utility = self.consume_everything()
+            self.current_utility = self.consume(self.utility_function, ['GOOD'])
             self.log('HH', self.current_utility)
 
 The Firm agent
@@ -247,7 +247,9 @@ The Firm agent
             2. create a cobb_douglas function: GOOD = 1 * labor ** 1.
             """
             self.create('money', 1)
-            self.set_cobb_douglas("GOOD", 1, {"labor": 1})
+            self.inputs = {"labor": 1}
+            self.output = "GOOD"
+            self.pf = self.create_cobb_douglas(self.output, 1, self.inputs)
 
         def buy_labor(self):
             """ receives all labor offers and accepts them one by one """
@@ -258,7 +260,7 @@ The Firm agent
         def production(self):
             """ uses all labor that is available and produces
             according to the set cobb_douglas function """
-            self.produce_use_everything()
+            self.produce(self.pf, self.inputs)
 
         def sell_goods(self):
             """ offers one unit of labor to firm 0, for the price of 1 "money" """
