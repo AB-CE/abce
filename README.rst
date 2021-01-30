@@ -75,10 +75,6 @@ The documentation is here:
 
     http://abce.readthedocs.io/
 
-An example is here:
-
-    `Insurance Market <http://35.176.189.179/abcEconomics/>`_
-
 A code example is here:
 
     `Jupyter Tutorial <https://github.com/AB-CE/examples/tree/master/examples/jupyter_tutorial>`_
