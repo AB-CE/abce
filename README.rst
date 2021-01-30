@@ -1,4 +1,4 @@
-abcEconomics the Agent-Based Computational Economy platform that makes modeling easier
+abcEconomics: the Agent-Based Computational Economy platform that makes modeling easier
 //////////////////////////////////////////////////////////////////////////////////////
 
 abcEconomics is a Python based modeling platform for economic simulations.
