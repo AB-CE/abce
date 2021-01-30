@@ -10,13 +10,9 @@ of goods and production and consumption.
 .. image:: https://zenodo.org/badge/4157636.svg
    :target: https://zenodo.org/badge/latestdoi/4157636
 
-.. image:: https://travis-ci.org/AB-CE/abce.svg?branch=master
-   :alt: abcEconomics build status on Travis CI
-   :target: https://travis-ci.org/AB-CE/abce
-
-.. image:: https://ci.appveyor.com/api/projects/status/c2w73u9im2b87reb?svg=true
-   :alt: abcEconomics build status on Appveyor CI
-   :target: https://ci.appveyor.com/project/AB-CE/abce
+.. image:: https://github.com/ab-ce/abce/workflows/build/badge.svg
+   :alt: Build CI
+   :target: https://github.com/ab-ce/abce/actions?query=workflow%3Abuild
 
 .. image:: https://img.shields.io/pypi/v/abcEconomics.svg
    :alt:  Pypi version
