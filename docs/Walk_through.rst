@@ -59,6 +59,7 @@ start.py
 
             for r in range(100):
                 simulation.advance_round(r)
+                households.refresh_services(service='labor' , derived_from='labor_endowment', units=1)
                 households.sell_labor()
                 firms.buy_labor()
                 firms.production()
@@ -67,7 +68,6 @@ start.py
                 firms.sell_goods()
                 households.buy_goods()
                 households.consumption()
-                (households + firms).refresh_services(service='labor' , derived_from='labor_endowment', units=1)
 
             simulation.finalize()
 
@@ -140,7 +140,7 @@ end of every round:
     for round in range(1000):
         simulation.advance_round(round)
         # ...
-        (households + firms).refresh_services(service='labor' , derived_from='labor_endowment', units=1)
+        households.refresh_services(service='labor' , derived_from='labor_endowment', units=1)
 
 In this example, the refresh_services removes the existing 'labor' goods and
 regenerates 1 unit of labor from scratch from every unit of labor_endowment
@@ -210,7 +210,7 @@ The Household agent
             in start.py one unit of labor per month
             2. Sets the utility function to utility = consumption of good "GOOD"
             """
-            self.create('labor_endowment', 1)
+            self.labor_endowment = 1
             self.utility_function = self.create_cobb_douglas_utility_function({"GOOD": 1})
             self.current_utility = 0
 
