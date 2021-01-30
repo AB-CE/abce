@@ -322,8 +322,8 @@ which is called when the agents are created**
 .. code-block:: python
 
     def init(self, parameters, agent_parameters):
-        self.create('labor_endowment', 1)
-        self.set_cobb_douglas_utility_function({"MLK": 0.300, "BRD": 0.700})
+        self.labor_endownment = 1
+        self.utility_function = self.create_cobb_douglas_utility_function({"MLK": 0.300, "BRD": 0.700})
         self.type = agent_parameters['type']
         self.watt = agent_parameters['watt']
         self.number_of_firms = parameters['number_of_firms']
@@ -341,9 +341,9 @@ good can be created. Generally speaking. In order to have a physically consisten
 economy goods should only be created in the init method. The good money is used
 in transactions.
 
-This agent class inherited :py:meth:`abcEconomics.Household.set_cobb_douglas_utility_function`
+This agent class inherited :py:meth:`abcEconomics.Household.create_cobb_douglas_utility_function`
 from :class:`abcEconomics.Household`. With
-:meth:`abcEconomics.Household.set_cobb_douglas_utility_function` you can create a
+:meth:`abcEconomics.Household.create_cobb_douglas_utility_function` you can create a
 cobb-douglas function. Other functional forms are also available.
 
 In order to let the agent remember a parameter it has to be saved in the self
@@ -365,8 +365,8 @@ consume function would not work anymore.
 
     class Household(abcEconomics.Agent, abcEconomics.Household):
         def init(self, simulation_parameters, agent_parameters):
-            self.create('labor_endowment', 1)
-            self.set_cobb_douglas_utility_function({"GOOD": 1})
+            self.labor_endowment = 1
+            self.utility_function = self.create_cobb_douglas_utility_function({"GOOD": 1})
             self.current_utility = 0
 
         . . .
