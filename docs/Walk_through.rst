@@ -63,7 +63,7 @@ start.py
                 households.sell_labor()
                 firms.buy_labor()
                 firms.production()
-                (households + firms).panel_log(possessions=['money', 'GOOD'])
+                (households + firms).panel_log(goods=['money', 'GOOD'])
                 households.panel_log(variables=['current_utility'])
                 firms.sell_goods()
                 households.buy_goods()
@@ -153,9 +153,9 @@ In this way the economy is physically closed.
 
 .. code-block:: python
 
-        firms.panel_log(possessions=['good1', 'good2') # a list of firm possessions to track here
+        firms.panel_log(goods=['good1', 'good2') # a list of firm possessions to track here
 
-        households.agg_log('household', possessions=['good1', 'good2'],
+        households.agg_log('household', goods=['good1', 'good2'],
                             variables=['utility']) #  a list of household variables to track here
 
 The possessions good1 and good2 are tracked, the agent's variable :code:`self.utility` is tracked.
