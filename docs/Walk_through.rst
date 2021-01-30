@@ -205,7 +205,7 @@ The Household agent
 
 
     class Household(abcEconomics.Agent, abcEconomics.Household):
-        def init(self, simulation_parameters, agent_parameters):
+        def init(self):
             """ 1. labor_endowment, which produces, because of simulation.declare_resource(...)
             in start.py one unit of labor per month
             2. Sets the utility function to utility = consumption of good "GOOD"
@@ -242,7 +242,7 @@ The Firm agent
 
 
     class Firm(abcEconomics.Agent, abcEconomics.Firm):
-        def init(self, simulation_parameters, agent_parameters):
+        def init(self):
             """ 1. Gets an initial amount of money
             2. create a cobb_douglas function: GOOD = 1 * labor ** 1.
             """
