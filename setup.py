@@ -21,7 +21,7 @@ if not readthedocs:
         if ('APPVEYOR' not in os.environ) or ('TRAVIS' not in os.environ):
             install_requires += ['pandas >= 0.17.1',
                                  'bokeh == 0.12.16',
-                                 'tornado == 4.3']
+                                 'tornado']
 
 
 version = '0.9.7b0'
