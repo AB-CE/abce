@@ -62,8 +62,7 @@ Python general purpose language.
 The audience of abcEconomics are economists that want to model agent-based
 models of trade and production.
 
-abcEconomics does support an accounting framework
-for financial simulations. `ESL can be downloaded here <https://github.com/AB-CE/abcESL>`_.
+abcEconomics does support an accounting framework for financial simulations: abcFinance (https://github.com/ab-ce/abcFinance).
 
 abcEconomics runs on macOS, Windows, and Linux. abcEconomics runs 10x faster on pypy!
 
