@@ -10,7 +10,6 @@ import platform
 cmdclass = {}
 
 install_requires = ['future',
-                    'normality == 0.6.1',
                     'dataset == 0.8']
 
 
