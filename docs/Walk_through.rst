@@ -266,7 +266,7 @@ The Firm agent
             """ offers one unit of labor to firm 0, for the price of 1 "money" """
             self.sell(('household', 0),
                       good="GOOD",
-                      quantity=self.possession("GOOD"),
+                      quantity=self["GOOD"],
                       price=1)
 
 
@@ -435,7 +435,7 @@ when the agent offers a trade and sets the criteria to accept the trade
                 try:
                     self.accept(offer)
                 except NotEnoughGoods:
-                    self.accept(offer, self.possession('money') / offer.price)
+                    self.accept(offer, self['money'] / offer.price)
 
 
 .. code-block:: python
@@ -448,7 +448,7 @@ Agent 1 sends a selling offer to Agent 2, which is the agent with the id :code:`
 Agent 2 receives all offers, he accepts all offers with a price smaller that 0.5. If
 he has insufficient funds to accept an offer an NotEnoughGoods exception is thrown.
 If a NotEnoughGoods exception is thrown the except block
-:code:`self.accept(offer, self.possession('money') / offer.price)` is executed, which
+:code:`self.accept(offer, self['money'] / offer.price)` is executed, which
 leads to a partial accept. Only as many goods as the agent can afford are accepted.
 If a polled offer is not accepted its automatically rejected. It can also be explicitly
 rejected with :code:`self.reject(offer)` (:py:meth:`abcEconomics.Trade.reject`).
