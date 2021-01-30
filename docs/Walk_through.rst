@@ -216,7 +216,7 @@ The Household agent
 
         def sell_labor(self):
             """ offers one unit of labor to firm 0, for the price of 1 "money" """
-            self.sell('firm', 0,
+            self.sell(('firm', 0),
                       good="labor",
                       quantity=1,
                       price=1)
@@ -264,7 +264,7 @@ The Firm agent
 
         def sell_goods(self):
             """ offers one unit of labor to firm 0, for the price of 1 "money" """
-            self.sell('household', 0,
+            self.sell(('household', 0),
                       good="GOOD",
                       quantity=self.possession("GOOD"),
                       price=1)
