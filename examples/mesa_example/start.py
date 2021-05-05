@@ -45,7 +45,7 @@ def main(x_size, y_size):
     server = ModularServer(MoneyModel,
                            [grid, chart],
                            "abcEconomics and MESA integrated",
-                           x_size * y_size, x_size, y_size)
+                           {'num_agents': 1000, 'x_size': x_size, 'y_size': y_size})
     server.port = 8534  # change this number if address is in use
     server.launch()
 
