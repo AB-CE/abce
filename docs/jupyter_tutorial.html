@@ -12218,7 +12218,7 @@ Round6
         
     <span class="k">def</span> <span class="nf">sell_to_customers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">offer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_offers</span><span class="p">(</span><span class="s1">&#39;drugs&#39;</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">offer</span><span class="o">.</span><span class="n">price</span> <span class="o">&gt;=</span> <span class="mi">10</span> <span class="ow">and</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;drugs&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">offer</span><span class="o">.</span><span class="n">price</span> <span class="o">&gt;=</span> <span class="mi">10</span> <span class="ow">and</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;drugs&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">accept</span><span class="p">(</span><span class="n">offer</span><span class="p">)</span>
     
     <span class="k">def</span> <span class="nf">print_possessions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -12358,16 +12358,16 @@ Customer offers 10 dollar:
     drug_dealer{&#39;drugs&#39;: 1.0}
     customer{&#39;money&#39;: 90.0}
 Drug Dealer accepts or rejects the offer:
-    drug_dealer{&#39;drugs&#39;: 1.0}
-    customer{&#39;money&#39;: 100.0}
+    drug_dealer{&#39;drugs&#39;: 0}
+    customer{&#39;money&#39;: 90.0, &#39;drugs&#39;: 1.0}
 
 Round1
 Customer offers 10 dollar:
-    drug_dealer{&#39;drugs&#39;: 1.0}
-    customer{&#39;money&#39;: 90.0}
+    drug_dealer{&#39;drugs&#39;: 0}
+    customer{&#39;money&#39;: 80.0, &#39;drugs&#39;: 1.0}
 Drug Dealer accepts or rejects the offer:
     drug_dealer{&#39;drugs&#39;: 1.0}
-    customer{&#39;money&#39;: 100.0}
+    customer{&#39;money&#39;: 90.0, &#39;drugs&#39;: 1.0}
 
 </pre>
 </div>
@@ -12381,7 +12381,7 @@ Drug Dealer accepts or rejects the offer:
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>When looking at round one one can see that after the customer offered 10 dollars, the 10 dollars are not available to him util the deal has either been accepted or rejected. After the drug dealer accepts the offer in the 0 round. The money is transfered to the drug dealer and the drugs to the customer.</p>
+<p>When looking at round one, one can see that after the customer offered 10 dollars, the 10 dollars are not available to the dealer util the deal has either been accepted or rejected. After the drug dealer accepts the offer in the 0 round, the money is transfered to the drug dealer and the drugs to the customer.</p>
 <p>In round 1, where the drug dealer runs out of drugs the 10 dollars go back to the customer.</p>
 
 </div>
