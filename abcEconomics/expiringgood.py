@@ -29,8 +29,9 @@ class ExpiringGood(object):
     def __sub__(self, other):
         if isinstance(other, ExpiringGood):
             other = float(other)
-        if sum(self.time_structure) < - epsilon:
-            raise NotEnoughGoods
+        sum_time_structure = sum(self.time_structure)
+        if sum_time_structure < - epsilon:
+            raise NotEnoughGoods("AnAgent", "ExpiringGood", -sum_time_structure)
         for i in range(len(self.time_structure)):
             if other >= self.time_structure[i]:
                 other -= self.time_structure[i]

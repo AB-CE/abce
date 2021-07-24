@@ -127,7 +127,7 @@ class Firm:
 
         for good, quantity in input_goods.items():
             if self._inventory.haves[good] - quantity + result.get(good, 0) < -epsilon:
-                raise NotEnoughGoods
+                raise NotEnoughGoods(self.name, good, quantity - self._inventory.haves[good])
 
         for good, quantity in input_goods.items():
             self._inventory.haves[good] -= quantity
