@@ -1,12 +1,12 @@
-Trade
+Trader
 ===========
 
 
-.. default-domain::abcEconomics.Trade
+.. default-domain::abcEconomics.agents.trader.Trader
 
-.. autoclass:: abcEconomics.Trade
+.. autoclass:: abcEconomics.agents.trader.Trader
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. autofunction:: abcEconomics.trade.Offer
+.. autofunction:: abcEconomics.agents.trader.Offer
