@@ -106,14 +106,13 @@ Tutorial for Plant Modeling
                 chpplant.panel_log(goods=['electricity', 'biogas', 'water', 'steam'], variables=[])
                 chpplant.refill()
 
-            simulation.graphs()
             simulation.finalize()
 
 
 
        This will tell the simulation that in every round, the plant execute the :py:`production` method we specified in CHPPLant. Then it refills the input goods. Lastly, it creates a snapshot of the goods of chpplant as will be specified in (e).
 
-       simulation.advance_round(r) sets the time r. Lastly **:py:`simulation.graphs()`** or :py:`simulation.finalize()` tells the simulation that the loop is done. Otherwise the program hangs at the end.
+       simulation.advance_round(r) sets the time r. Lastly :py:`simulation.finalize()` tells the simulation that the loop is done. Otherwise the program hangs at the end.
 
  4. To run your simulation, the best is to use the terminal and in the directory of your simulation type :code:`python start.py`. In SPYDER make sure that BEFORE you run the simulation for the first time you modify the ‘Run Setting’ and choose ‘Execute in external System Terminal’. If you the simulation in the IDE without making this changes the GUI might block.
 
