@@ -17,7 +17,7 @@ readthedocs = os.environ.get('READTHEDOCS') == 'True'
 
 if not readthedocs:
     if not platform.python_implementation() == "PyPy":
-        install_requires += ['numpy >= 1.10.2p']
+        install_requires += ['numpy >= 1.10.2']
         if ('APPVEYOR' not in os.environ) or ('TRAVIS' not in os.environ):
             install_requires += ['pandas >= 0.17.1',
                                  'bokeh == 0.12.16',
