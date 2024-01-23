@@ -10,7 +10,7 @@ import platform
 cmdclass = {}
 
 install_requires = ['future',
-                    'dataset == 0.8']
+                    'dataset >= 0.8']
 
 
 readthedocs = os.environ.get('READTHEDOCS') == 'True'
