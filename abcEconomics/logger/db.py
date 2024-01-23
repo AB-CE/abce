@@ -34,6 +34,7 @@ class DbDatabase:
     database"""
 
     def __init__(self, directory, name, in_sok, trade_log, plugin=None, pluginargs=[]):
+        return
         super().__init__()
 
         # setting up directory
@@ -68,6 +69,7 @@ class DbDatabase:
         self.pluginargs = pluginargs
 
     def run(self):
+        return
         if self.plugin is not None:
             self.plugin = self.plugin(*self.pluginargs)
         self.dataset_db = dataset.connect('sqlite://')
@@ -155,6 +157,7 @@ class DbDatabase:
             to_csv(self.directory, self.dataset_db)
 
     def make_aggregation_and_write(self):
+        return
         for group, table in self.aggregation.items():
             result = {'round': self.round}
             for key, data in table.items():
@@ -170,12 +173,14 @@ class DbDatabase:
             self.aggregation[group].clear()
 
     def finalize(self, data):
+        return
         self.in_sok.put('close')
         while self.is_alive():
             time.sleep(0.05)
         self._write_description_file(data)
 
     def _write_description_file(self, data):
+        return
         if self.directory is not None:
             with open(os.path.abspath(self.directory + '/description.txt'), 'w') as description:
                 description.write(json.dumps(
